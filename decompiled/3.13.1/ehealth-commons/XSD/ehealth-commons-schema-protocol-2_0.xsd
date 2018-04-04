@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:commons:core:v2" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2" targetNamespace="urn:be:fgov:ehealth:commons:protocol:v2"
+  elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
+  <xs:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="ehealth-commons-schema-core-2_0.xsd" />
+  <xs:complexType name="RequestType">
+    <xs:annotation>
+      <xs:documentation>Basic eHealth SOA Request Type. EHealth Service Requests SHOULD extend from this element.</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" type="xs:ID" />
+    <xs:attribute name="IssueInstant" type="xs:dateTime" use="required" />
+  </xs:complexType>
+  <xs:complexType name="AuthorRequestType">
+    <xs:annotation>
+      <xs:documentation>eHealth SOA Request Type for Services that require an Author as input.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="Author" type="core:AuthorType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="PaginationRequestType">
+    <xs:annotation>
+      <xs:documentation>eHealth SOA Request Type for Services that require a Pagination as input.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:attributeGroup ref="core:PaginationAttributeGroup" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="AuthorPaginationRequestType">
+    <xs:annotation>
+      <xs:documentation>eHealth SOA Request Type for Services that require an author and pagination as input.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:AuthorRequestType">
+        <xs:attributeGroup ref="core:PaginationAttributeGroup" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ResponseType">
+    <xs:annotation>
+      <xs:documentation>Basic eHealth SOA Response Type. EHealth Service Responses SHOULD extend from this element.</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" type="xs:ID" use="required" />
+    <xs:attribute name="InResponseTo" type="xs:string" />
+    <xs:attribute name="IssueInstant" type="xs:dateTime" use="required" />
+  </xs:complexType>
+  <xs:complexType name="StatusResponseType">
+    <xs:annotation>
+      <xs:documentation>eHealth SOA Response Type for Services that require a Status as output.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:ResponseType">
+        <xs:sequence>
+          <xs:element ref="core:Status" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="PaginationResponseType">
+    <xs:annotation>
+      <xs:documentation>eHealth SOA Response Type for Services that require a Pagination as input.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:ResponseType">
+        <xs:attributeGroup ref="core:PaginationAttributeGroup" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="PaginationStatusResponseType">
+    <xs:annotation>
+      <xs:documentation>eHealth SOA Response Type for Services that require a Pagination as input and a Status as output.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:attributeGroup ref="core:PaginationAttributeGroup" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

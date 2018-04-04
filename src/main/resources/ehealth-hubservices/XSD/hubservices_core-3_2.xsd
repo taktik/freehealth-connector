@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:cd="http://www.ehealth.fgov.be/standards/kmehr/cd/v1" xmlns:id="http://www.ehealth.fgov.be/standards/kmehr/id/v1" xmlns:kmehr="http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
+xmlns="http://www.ehealth.fgov.be/hubservices/core/v3" targetNamespace="http://www.ehealth.fgov.be/hubservices/core/v3" elementFormDefault="qualified" attributeFormDefault="unqualified" version="3.2">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD Hubservices v3
+ Specification-Version: 3.2
+ Implementation-Version: 3.2.0
+ Build-Time: 20170828-1346 
+ </xs:appinfo>
+ </xs:annotation>
+	<xsd:import namespace="http://www.ehealth.fgov.be/standards/kmehr/id/v1" schemaLocation="../../ehealth-kmehr/XSD/id-1_19.xsd" />
+	<xsd:import namespace="http://www.ehealth.fgov.be/standards/kmehr/cd/v1" schemaLocation="../../ehealth-kmehr/XSD/cd-1_19.xsd" />
+	<xsd:import namespace="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" schemaLocation="../../ehealth-kmehr/XSD/kmehr-1_19.xsd" />
+    <!-- Common Request Type and Element -->
+	<xsd:complexType name="RequestType">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-KMEHR"/>
+			<xsd:element name="author" type="kmehr:authorType"/>
+			<xsd:element name="date" type="xsd:date"/>
+			<xsd:element name="time" type="xsd:time"/>
+			<xsd:element name="maxrows" type="xsd:decimal" minOccurs="0"/>
+			<xsd:element name="breaktheglass" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Common Response Type and Element -->
+	<xsd:complexType name="AcknowledgeType">
+		<xsd:sequence>
+			<xsd:element name="iscomplete" type="xsd:boolean"/>
+			<xsd:element name="error" type="kmehr:errorType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ResponseType">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-KMEHR"/>
+			<xsd:element name="author" type="kmehr:authorType"/>
+			<xsd:element name="date" type="xsd:date"/>
+			<xsd:element name="time" type="xsd:time"/>
+			<xsd:element name="request" type="RequestType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Common Type -->
+	<xsd:complexType name="PatientIdType">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-PATIENT" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="HCPartyIdType">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-HCPARTY" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TransactionIdType">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-KMEHR" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="LocalSearchType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="local"/>
+			<xsd:enumeration value="global"/>
+			<xsd:enumeration value="external"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="ConsentType">
+		<xsd:sequence>
+			<xsd:element name="patient" type="PatientIdType"/>
+			<xsd:element name="cd" type="cd:CD-CONSENT" maxOccurs="2"/>
+			<xsd:element name="signdate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="revokedate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="author" type="kmehr:authorType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ConsentHCPartyType">
+		<xsd:sequence>
+			<xsd:element name="hcparty" type="HCPartyIdType"/>
+			<xsd:element name="signdate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="revokedate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="author" type="kmehr:authorType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TherapeuticLinkType">
+		<xsd:sequence>
+			<xsd:element name="patient" type="PatientIdType"/>
+			<xsd:element name="hcparty" type="HCPartyIdType"/>
+			<xsd:element name="cd" type="cd:CD-THERAPEUTICLINK"/>
+			<xsd:element name="startdate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="enddate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="comment" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TherapeuticLinkListType">
+		<xsd:sequence>
+			<xsd:element name="therapeuticlink" type="TherapeuticLinkType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AccessRightType">
+		<xsd:sequence>
+			<xsd:element name="transaction" type="TransactionIdType"/>
+			<xsd:element name="hcparty" type="hcpartyType"/>
+			<xsd:element name="cd" type="cd:CD-ACCESSRIGHT"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AccessRightListType">
+		<xsd:sequence>
+			<xsd:element name="accessright" type="AccessRightType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="LatestUpdateListType">
+		<xsd:sequence>
+			<xsd:element name="latestupdate" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="patient" type="PatientIdType"/>
+						<xsd:element name="cd" type="cd:CD-TRANSACTION"/>
+						<xsd:element name="version" type="xsd:string" minOccurs="0"/>
+						<xsd:element name="createdatetime" type="xsd:dateTime" minOccurs="0"/>
+						<xsd:element name="updatedatetime" type="xsd:dateTime"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Select Type -->
+	<xsd:complexType name="SelectGetTransactionListType">
+		<xsd:sequence>
+			<xsd:element name="patient" type="PatientIdType"/>
+			<xsd:element name="transaction" type="transactionWithPeriodType" minOccurs="0"/>
+			<xsd:element name="searchtype" type="LocalSearchType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SelectGetTransactionType">
+		<xsd:sequence>
+			<xsd:element name="patient" type="PatientIdType"/>
+			<xsd:element name="transaction" type="transactionBaseType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SelectRevokeTransactionType">
+		<xsd:sequence>
+			<xsd:element name="patient" type="PatientIdType"/>
+			<xsd:element name="transaction" type="transactionBaseType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SelectGetPatientConsentType">
+		<xsd:sequence>
+			<xsd:element name="patient" type="PatientIdType"/>
+			<xsd:element name="consent" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="cd" type="cd:CD-CONSENT" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SelectGetPatientType">
+		<xsd:sequence>
+			<xsd:element name="patient" type="PatientIdType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SelectGetHCPartyType">
+		<xsd:sequence>
+			<xsd:element name="hcparty" type="HCPartyIdType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SelectGetHCPartyConsentType">
+		<xsd:sequence>
+			<xsd:element name="hcparty" type="HCPartyIdType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SelectGetHCPartyPatientConsentType">
+		<xsd:sequence>
+			<xsd:choice maxOccurs="2">
+				<xsd:element name="patient" type="PatientIdType" minOccurs="0"/>
+				<xsd:element name="hcparty" type="HCPartyIdType" minOccurs="0"/>
+			</xsd:choice>
+			<xsd:element name="cd" type="cd:CD-THERAPEUTICLINK" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="begindate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="enddate" type="xsd:date" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SelectGetAccessRightType">
+		<xsd:sequence>
+			<xsd:element name="transaction" type="TransactionIdType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SelectRevokeAccessRightType">
+		<xsd:sequence>
+			<xsd:element name="transaction" type="TransactionIdType"/>
+			<xsd:element name="hcparty" type="hcpartyType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SelectGetPatientAuditTrailType">
+		<xsd:sequence>
+			<xsd:element name="patient" type="PatientIdType" minOccurs="0"/>
+			<xsd:element name="transaction" type="transactionBaseType" minOccurs="0"/>
+			<xsd:element name="hcparty" type="HCPartyIdType" minOccurs="0"/>
+			<xsd:element name="begindate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="enddate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="searchtype" type="LocalSearchType" minOccurs="0"/>
+			<xsd:element name="breaktheglass" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SelectRequestPublicationType">
+		<xsd:sequence>
+			<xsd:element name="patient" type="PatientIdType"/>
+			<xsd:element name="transaction" type="transactionWithPeriodType"/>
+			<xsd:element name="comment" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SelectGetLatestUpdateType">
+		<xsd:sequence>
+			<xsd:element name="criteria" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="patient" type="PatientIdType"/>
+						<xsd:element name="cd" type="cd:CD-TRANSACTION" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Specialized input/output Type -->
+	<xsd:complexType name="DeclareTransactionRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="kmehrheader" type="KmehrHeaderDeclareTransactionType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DeclareTransactionResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="transaction" type="TransactionIdType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutTransactionRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="kmehrmessage" type="kmehr:kmehrmessageType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutTransactionResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="transaction" type="TransactionIdType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetTransactionListRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectGetTransactionListType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetTransactionListResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="kmehrheader" type="KmehrHeaderGetTransactionListType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetTransactionRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectGetTransactionType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetTransactionResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="kmehrmessage" type="kmehr:kmehrmessageType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RevokeTransactionRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectRevokeTransactionType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RevokeTransactionResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutPatientRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="patient" type="kmehr:personType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutPatientResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="patient" type="kmehr:personType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetPatientRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectGetPatientType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetPatientResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="patient" type="kmehr:personType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutPatientConsentRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="consent" type="ConsentType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutPatientConsentResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetPatientConsentRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectGetPatientConsentType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetPatientConsentResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="consent" type="ConsentType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RevokePatientConsentRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="consent" type="ConsentType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RevokePatientConsentResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutHCPartyRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="hcparty" type="HCPartyAdaptedType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutHCPartyResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="hcparty" type="HCPartyAdaptedType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetHCPartyRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectGetHCPartyType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetHCPartyResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="hcparty" type="HCPartyAdaptedType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutHCPartyConsentRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="consent" type="ConsentHCPartyType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutHCPartyConsentResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetHCPartyConsentRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectGetHCPartyConsentType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetHCPartyConsentResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="consent" type="ConsentHCPartyType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RevokeHCPartyConsentRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="consent" type="ConsentHCPartyType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RevokeHCPartyConsentResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutTherapeuticLinkRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="therapeuticlink" type="TherapeuticLinkType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutTherapeuticLinkResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetTherapeuticLinkRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectGetHCPartyPatientConsentType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetTherapeuticLinkResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="therapeuticlinklist" type="TherapeuticLinkListType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RevokeTherapeuticLinkRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="therapeuticlink" type="TherapeuticLinkType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RevokeTherapeuticLinkResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutAccessRightRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="accessright" type="AccessRightType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PutAccessRightResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetAccessRightRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectGetAccessRightType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetAccessRightResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="accessrightlist" type="AccessRightListType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RevokeAccessRightRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="accessright" type="SelectRevokeAccessRightType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RevokeAccessRightResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetLatestUpdateRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectGetLatestUpdateType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetLatestUpdateResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="latestupdatelist" type="LatestUpdateListType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Kmehr services types -->
+	<xsd:complexType name="KmehrHeaderDeclareTransactionType">
+		<xsd:sequence>
+			<xsd:element name="folder" type="folderType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- <xsd:complexType name="KmehrMessagePutTransactionType"> <xsd:sequence> <xsd:element name="folder"> <xsd:complexType> <xsd:sequence> <xsd:element name="patient" type="PatientIdType"/> <xsd:element ref="transaction"/> </xsd:sequence> </xsd:complexType> 
+    </xsd:element> </xsd:sequence> </xsd:complexType> -->
+	<xsd:complexType name="TransactionSummaryType">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-KMEHR" maxOccurs="unbounded"/>
+			<xsd:element name="cd" type="cd:CD-TRANSACTION" maxOccurs="unbounded"/>
+			<xsd:element name="date" type="xsd:date"/>
+			<xsd:element name="time" type="xsd:time"/>
+			<xsd:element name="author" type="kmehr:authorType"/>
+			<xsd:element name="iscomplete" type="xsd:boolean"/>
+			<xsd:element name="isvalidated" type="xsd:boolean"/>
+			<xsd:element name="recorddatetime" type="xsd:dateTime"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="KmehrHeaderGetTransactionList" type="KmehrHeaderGetTransactionListType"/>
+	<xsd:complexType name="KmehrHeaderGetTransactionListType">
+		<xsd:sequence>
+			<xsd:element name="folder" type="folderTypeUnbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="HCPartyAdaptedType">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-HCPARTY" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>ideally this should refer to a INAMI/RIZIV number. It can refer to alternative local identifiers. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="cd" type="cd:CD-HCPARTY" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>must at least refer to a value of CD-HCPARTY.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:choice minOccurs="0">
+				<xsd:element name="name" type="xsd:string"/>
+				<xsd:sequence>
+					<xsd:element name="firstname" type="xsd:string"/>
+					<xsd:element name="familyname" type="xsd:string"/>
+				</xsd:sequence>
+			</xsd:choice>
+			<xsd:element name="address" type="kmehr:addressType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="telecom" type="kmehr:telecomType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="recorddatetime" type="xsd:dateTime"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetPatientAuditTrailRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectGetPatientAuditTrailType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="GetPatientAuditTrailResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="transactionaccesslist" type="TransactionAccessListType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TransactionAccessListType">
+		<xsd:sequence>
+			<xsd:element name="transactionaccess" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="patient" type="PatientIdType" minOccurs="0"/>
+						<xsd:element name="transaction" type="transactionWithSpecificTime" minOccurs="0"/>
+						<xsd:element name="hcparty" type="kmehr:hcpartyType" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element name="accessdatetime" type="xsd:dateTime"/>
+						<xsd:element name="breaktheglass" type="xsd:string" minOccurs="0"/>
+						<!--<xsd:element name="acknowledge" type="AcknowledgeType"/> -->
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RequestPublicationResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RequestPublicationRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectRequestPublicationType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="KmehrHeaderDeclareTransaction" type="KmehrHeaderDeclareTransactionType"/>
+	<xsd:complexType name="folderType">
+		<xsd:sequence>
+			<xsd:element name="patient" type="PatientIdType"/>
+			<xsd:element name="transaction" type="TransactionSummaryType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="folderTypeUnbounded">
+		<xsd:sequence>
+			<xsd:element name="patient" type="kmehr:personType"/>
+			<xsd:element name="transaction" type="TransactionSummaryType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="hcpartyType">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-HCPARTY" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="cd" type="cd:CD-HCPARTY" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="transactionWithPeriodType">
+		<xsd:sequence>
+			<xsd:element name="cd" type="cd:CD-TRANSACTION" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="author" type="kmehr:authorType" minOccurs="0"/>
+			<xsd:element name="begindate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="enddate" type="xsd:date" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="transactionBaseType">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-KMEHR"/>
+			<xsd:element name="cd" type="cd:CD-TRANSACTION" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="author" type="kmehr:authorType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="transactionWithSpecificTime">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-KMEHR" maxOccurs="unbounded"/>
+			<xsd:element name="cd" type="cd:CD-TRANSACTION" maxOccurs="unbounded"/>
+			<xsd:element name="date" type="xsd:date"/>
+			<xsd:element name="time" type="xsd:time"/>
+			<xsd:element name="author" type="kmehr:authorType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="PatientIdType" type="PatientIdType"/>
+	<xsd:element name="TransactionIdType" type="TransactionIdType"/>
+	<xsd:element name="transactionWithPeriodType" type="transactionWithPeriodType"/>
+	<xsd:element name="transactionBaseType" type="transactionBaseType"/>
+	<xsd:element name="HCPartyAdaptedType" type="HCPartyAdaptedType"/>
+	<xsd:element name="HCPartyIdType" type="HCPartyIdType"/>
+	<xsd:element name="ConsentHCPartyType" type="ConsentHCPartyType"/>
+	<xsd:element name="ConsentType" type="ConsentType"/>
+	<xsd:element name="SelectGetPatientConsentType" type="SelectGetPatientConsentType"/>
+	<xsd:element name="TherapeuticLinkType" type="TherapeuticLinkType"/>
+	<xsd:element name="SelectGetHCPartyPatientConsentType" type="SelectGetHCPartyPatientConsentType"/>
+	<xsd:element name="AccessRightType" type="AccessRightType"/>
+	<xsd:element name="SelectRevokeAccessRightType" type="SelectRevokeAccessRightType"/>
+	<xsd:element name="SelectGetPatientAuditTrailType" type="SelectGetPatientAuditTrailType"/>
+	<xsd:element name="AccessRightListType" type="AccessRightListType"/>
+	<xsd:element name="TransactionAccessListType" type="TransactionAccessListType"/>
+</xsd:schema>

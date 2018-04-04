@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:notification xmlns:p="http://services.recipe.be" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://services.recipe.be notification.xsd">
+	<text>this is a notification</text>
+	<kmehrmessage>
+		<header xmlns="http://www.ehealth.fgov.be/standards/kmehr/schema/v1">
+			<standard>
+				<cd S="CD-STANDARD" SV="1.1">20100601</cd>
+			</standard>
+			<id S="ID-KMEHR" SV="1.0">14675011004.20090110090000000</id>
+			<id S="LOCAL" SL="ID-MEDISOFT" SV="1.0">8e1c4ea4-3825-48e4-bcc2b8cadfa7a897</id>
+			<date>2010-08-01</date>
+			<time>09:00:00</time>
+			<sender>
+				<hcparty>
+					<id S="ID-HCPARTY" SV="1.0">14675011004</id>
+					<cd S="CD-HCPARTY" SV="1.0">persphysician</cd>
+					<name>Dr. Duck Donald</name>
+				</hcparty>
+			</sender>
+			<recipient>
+				<hcparty>
+					<id S="ID-HCPARTY" SV="1.0">RECIPE</id>
+					<cd S="CD-HCPARTY" SV="1.0">orgpublichealth</cd>
+					<name>Recip-e</name>
+				</hcparty>
+			</recipient>
+		</header>
+		<folder   xmlns="http://www.ehealth.fgov.be/standards/kmehr/schema/v1">
+			<id S="ID-KMEHR" SV="1.0">1</id>
+			<patient>
+				<id S="ID-PATIENT" SV="1.0">87990949113</id>
+				<firstname>Fred</firstname>
+				<familyname> Flintstone</familyname>
+				<birthdate>
+					<date>1933-10-23</date>
+				</birthdate>
+				<sex>
+					<cd S="CD-SEX" SV="1.0">male</cd>
+				</sex>
+			</patient>
+			<transaction>
+				<id S="ID-KMEHR" SV="1.0">1</id>
+				<cd S="CD-TRANSACTION" SV="1.1">pharmaceuticalprescription</cd>
+				<date>2010-08-01</date>
+				<time>09:00:00</time>
+				<author>
+					<hcparty>
+						<id S="ID-HCPARTY" SV="1.0">14675011004</id>
+						<cd S="CD-HCPARTY" SV="1.0">persphysician</cd>
+						<name>Dr. Duck Donald</name>
+					</hcparty>
+				</author>
+				<iscomplete>true</iscomplete>
+				<isvalidated>true</isvalidated>
+				<expirationdate>2013-08-01</expirationdate>
+				<heading>
+					<id S="ID-KMEHR" SV="1.0">1</id>
+					<cd S="CD-HEADING" SV="1.1">prescription</cd>
+					<item>
+						<id S="ID-KMEHR" SV="1.0">1</id>
+						<cd S="CD-ITEM" SV="1.1">medication</cd>
+						<content>
+							<medicinalproduct>
+								<intendedcd S="CD-DRUG-CNK" SV="2.0">0318717</intendedcd>
+								<intendedname>Adalat Oros 30 (c) 30mg </intendedname>
+							</medicinalproduct>
+						</content>
+						<lifecycle>
+							<cd S="CD-LIFECYCLE" SV="1.0">prescribed</cd>
+						</lifecycle>
+						<quantity>
+							<decimal>1</decimal>
+						</quantity>
+						<frequency>
+							<periodicity>
+								<cd S="CD-PERIODICITY" SV="1.0">D</cd>
+							</periodicity>
+						</frequency>
+						<dayperiod>
+							<cd S="CD-DAYPERIOD" SV="1.0">evening</cd>
+						</dayperiod>
+						<posology>
+							<text L="nl">1x</text>
+						</posology>
+					</item>
+					<item>
+						<id S="ID-KMEHR" SV="1.0">2</id>
+						<cd S="CD-ITEM" SV="1.1">medication</cd>
+						<content>
+							<medicinalproduct>
+								<intendedcd S="CD-DRUG-CNK" SV="2.0">1085885</intendedcd>
+								<intendedname>Actrapid HM Penfill (c) 100IU/ml
+								</intendedname>
+							</medicinalproduct>
+						</content>
+						<lifecycle>
+							<cd S="CD-LIFECYCLE" SV="1.0">prescribed</cd>
+						</lifecycle>
+						<quantity>
+							<decimal>1</decimal>
+						</quantity>
+						<posology>
+							<text L="nl">2x/d 12E voor de maaltijd SC</text>
+						</posology>
+					</item>
+					<item>
+						<id S="ID-KMEHR" SV="1.0">3</id>
+						<cd S="CD-ITEM" SV="1.1">medication</cd>
+						<content>
+							<medicinalproduct>
+								<intendedcd S="CD-DRUG-CNK" SV="2.0">1077718</intendedcd>
+								<intendedname>Insulatard HM Penfill (c) 100IU/m
+								</intendedname>
+							</medicinalproduct>
+						</content>
+						<lifecycle>
+							<cd S="CD-LIFECYCLE" SV="1.0">prescribed</cd>
+						</lifecycle>
+						<quantity>
+							<decimal>1</decimal>
+						</quantity>
+						<posology>
+							<text L="nl">1x/d 7E voor het slapen</text>
+						</posology>
+					</item>
+					<item>
+						<id S="ID-KMEHR" SV="1.0">4</id>
+						<cd S="CD-ITEM" SV="1.1">medication</cd>
+						<content>
+							<medicinalproduct>
+								<intendedcd S="CD-DRUG-CNK" SV="2.0">1057959</intendedcd>
+								<intendedname>Spironolactone E.G. (c) 100mg
+								</intendedname>
+							</medicinalproduct>
+						</content>
+						<lifecycle>
+							<cd S="CD-LIFECYCLE" SV="1.0">prescribed</cd>
+						</lifecycle>
+						<quantity>
+							<decimal>1</decimal>
+						</quantity>
+						<frequency>
+							<periodicity>
+								<cd S="CD-PERIODICITY" SV="1.0">D</cd>
+							</periodicity>
+						</frequency>
+						<dayperiod>
+							<cd S="CD-DAYPERIOD" SV="1.0">morning</cd>
+						</dayperiod>
+						<posology>
+							<text L="nl">1x/d</text>
+						</posology>
+					</item>
+				</heading>
+			</transaction>
+		</folder>
+	</kmehrmessage>
+</p:notification>

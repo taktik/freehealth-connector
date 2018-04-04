@@ -1,0 +1,82 @@
+<xsd:schema targetNamespace="http://beans.codage.ehealth.smals.be/" xmlns:cod="http://beans.codage.ehealth.smals.be/" xmlns:dss="urn:oasis:names:tc:dss:1.0:core:schema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s0="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:s1="http://schemas.xmlsoap.org/wsdl/" xmlns:s2="http://beans.codage.ehealth.smals.be/" xmlns:s3="http://www.ehealth.be/webservices/cod" xmlns:s4="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://www.ehealth.be/webservices/cod" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="encodeRequest" type="cod:EncodeRequestType"/>
+  <xsd:complexType name="EncodeRequestType">
+	<xsd:sequence>
+	  <xsd:element name="applicationName" type="xsd:string"/>
+	  <xsd:element maxOccurs="unbounded" name="originalData" type="cod:OriginalDataType"/>
+	</xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="encodeResponse" type="cod:EncodeResponseType"/>
+  <xsd:complexType name="EncodeResponseType">
+	<xsd:sequence>
+	  <xsd:element name="ticketNumber" type="xsd:string"/>
+	  <xsd:element name="applicationName" type="xsd:string"  minOccurs="0"/>
+	  <xsd:choice>
+		<xsd:element maxOccurs="unbounded" name="response" type="cod:ChoiceEncodedDataErrorType"/>
+		<xsd:element name="globalError" type="cod:GlobalErrorType"/>
+	  </xsd:choice>
+	</xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="decodeRequest" type="cod:DecodeRequestType"/>
+  <xsd:complexType name="DecodeRequestType">
+	<xsd:sequence>
+	  <xsd:element name="applicationName" type="xsd:string"/>
+	  <xsd:element maxOccurs="unbounded" name="encodedData" type="cod:EncodedDataType"/>
+	</xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="decodeResponse" type="cod:DecodeResponseType"/>
+  <xsd:complexType name="DecodeResponseType">
+	<xsd:sequence>
+	  <xsd:element name="ticketNumber" type="xsd:string"/>
+	  <xsd:element name="applicationName" type="xsd:string" minOccurs="0"/>
+	  <xsd:choice>
+		<xsd:element maxOccurs="unbounded" name="response" type="cod:ChoiceDecodedDataErrorType"/>
+		<xsd:element name="globalError" type="cod:GlobalErrorType"/>
+	  </xsd:choice>
+	</xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ChoiceDecodedDataErrorType">
+	<xsd:choice>
+	  <xsd:element name="decodedData" type="cod:DecodedDataType"/>
+	  <xsd:element name="error" type="cod:ErrorType"/>
+	</xsd:choice>
+  </xsd:complexType>
+  <xsd:complexType name="OriginalDataType">
+	<xsd:sequence>
+	  <xsd:element name="id" type="xsd:string"/>
+	  <xsd:element name="randomize" type="xsd:boolean"/>
+	  <xsd:element name="inputData" type="xsd:string"/>
+	</xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ChoiceEncodedDataErrorType">
+	<xsd:choice>
+	  <xsd:element name="encodedData" type="cod:EncodedDataType"/>
+	  <xsd:element name="error" type="cod:ErrorType"/>
+	</xsd:choice>
+  </xsd:complexType>
+  <xsd:complexType name="EncodedDataType">
+	<xsd:sequence>
+	  <xsd:element name="id" type="xsd:string"/>
+	  <xsd:element name="value" type="xsd:base64Binary"/>
+	</xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="DecodedDataType">
+	<xsd:sequence>
+	  <xsd:element name="id" type="xsd:string"/>
+	  <xsd:element name="outputData" type="xsd:string"/>
+	</xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ErrorType">
+	<xsd:sequence>
+	  <xsd:element name="id" type="xsd:string"/>
+	  <xsd:element name="errorCode" type="xsd:long"/>
+	  <xsd:element name="errorValue" type="xsd:string"/>
+	</xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="GlobalErrorType">
+	<xsd:sequence>
+	  <xsd:element name="errorCode" type="xsd:long"/>
+	  <xsd:element name="errorValue" type="xsd:string"/>
+	</xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

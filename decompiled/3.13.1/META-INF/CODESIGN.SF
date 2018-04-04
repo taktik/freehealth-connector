@@ -1,0 +1,45 @@
+Signature-Version: 1.0
+SHA-256-Digest-Manifest-Main-Attributes: 8diaMjsYF1djJDfnJorT95TCDRxhH
+ 7d/Zwrgmq6ojus=
+SHA-256-Digest-Manifest: vhLm6Zk2eMNMcEpa3LE+barO6eSDCc/5QNtO/0rJd6w=
+Created-By: 1.8.0_91 (Oracle Corporation)
+
+Name: be/ehealth/businessconnector/addressbook/session/AddressbookSess
+ ionService.class
+SHA-256-Digest: 6qlm7XxTTMAXpiLQGOzu9EEGYreiREi4VCrHMlVO2jI=
+
+Name: disclaimer/release.notes.business-addressbook.txt
+SHA-256-Digest: kgUevn38ledzPNq6l8cqAvspzvxM0knuliA2moP3s2o=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-addr
+ essbook/pom.xml
+SHA-256-Digest: qAceHBmDwPR8a8mAmkWDvbN4UGKTaHdYNP5SQm6jkeY=
+
+Name: be/ehealth/businessconnector/addressbook/service/AddressbookToke
+ nService.class
+SHA-256-Digest: xzofB/4WCyoJnsMYOrM/bqlrhJ3FRVYJwLW1AiQkgx0=
+
+Name: be/ehealth/businessconnector/addressbook/session/impl/Addressboo
+ kSessionServiceImpl.class
+SHA-256-Digest: 7/WH9GgfkqhGuu3JKOulPKHkvwQ0W2VU06jlMtpkzZQ=
+
+Name: be/ehealth/businessconnector/addressbook/session/impl/Addressboo
+ kSessionServiceImplFactory.class
+SHA-256-Digest: /ZSQ1sNOUpS+uRnZbPXeqnOq44wuYEGzk7VsrYHbKM0=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-addr
+ essbook/pom.properties
+SHA-256-Digest: lCzytm/ncRpeh2sE/DWPc4HMTvg5Tm0xVerythFM5bg=
+
+Name: be/ehealth/businessconnector/addressbook/service/impl/Addressboo
+ kTokenServiceImpl.class
+SHA-256-Digest: 85e82wqUwCJM2MdawIKdv/b4N7mOysLuyUvXtdYwV2I=
+
+Name: be/ehealth/businessconnector/addressbook/session/AddressbookSess
+ ionServiceFactory.class
+SHA-256-Digest: uxid/kzw2VAPP+keB/oTA1jv0scWqBNrwW6aBkuG3ME=
+
+Name: be/ehealth/businessconnector/addressbook/service/TokenServiceFac
+ tory.class
+SHA-256-Digest: l3vCuhdJn6OX7zLWQ7KTDi9u2Kv7Rw0cwPy8feyuTsU=
+

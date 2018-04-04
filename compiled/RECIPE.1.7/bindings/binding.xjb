@@ -1,0 +1,10 @@
+<bindings xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns="http://java.sun.com/xml/ns/jaxb"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	extensionBindingPrefixes="xjc"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd" version="2.1">
+  <globalBindings>
+    <serializable uid="1" />
+  </globalBindings>
+</bindings>

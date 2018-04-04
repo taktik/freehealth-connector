@@ -1,0 +1,29 @@
+package be.ehealth.businessconnector.chapterIV.builders;
+
+import be.ehealth.businessconnector.chapterIV.domain.ChapterIVKmehrResponseWithTimeStampInfo;
+import be.ehealth.businessconnector.chapterIV.exception.ChapterIVBusinessConnectorException;
+import be.ehealth.technicalconnector.exception.TechnicalConnectorException;
+import be.ehealth.technicalconnector.exception.UnsealConnectorException;
+import be.fgov.ehealth.chap4.core.v1.FaultType;
+import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementResponse;
+import be.fgov.ehealth.chap4.protocol.v1.ConsultChap4MedicalAdvisorAgreementResponse;
+import be.fgov.ehealth.commons.protocol.v1.ResponseType;
+import be.fgov.ehealth.medicalagreement.core.v1.Kmehrresponse;
+import java.io.Serializable;
+import org.bouncycastle.tsp.TimeStampResponse;
+
+public interface ResponseBuilder extends Serializable {
+   FaultType retrieveReturnInfo(ResponseType var1);
+
+   ChapterIVKmehrResponseWithTimeStampInfo validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(AskChap4MedicalAdvisorAgreementResponse var1) throws ChapterIVBusinessConnectorException, TechnicalConnectorException;
+
+   TimeStampResponse convertToTimeStampResponse(byte[] var1) throws TechnicalConnectorException;
+
+   Kmehrresponse convertToKmehrResKmehrresponse(byte[] var1) throws ChapterIVBusinessConnectorException;
+
+   ChapterIVKmehrResponseWithTimeStampInfo validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(ConsultChap4MedicalAdvisorAgreementResponse var1) throws ChapterIVBusinessConnectorException, TechnicalConnectorException;
+
+   ChapterIVKmehrResponseWithTimeStampInfo validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(AskChap4MedicalAdvisorAgreementResponse var1, boolean var2) throws UnsealConnectorException, ChapterIVBusinessConnectorException, TechnicalConnectorException;
+
+   ChapterIVKmehrResponseWithTimeStampInfo validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(ConsultChap4MedicalAdvisorAgreementResponse var1, boolean var2) throws UnsealConnectorException, ChapterIVBusinessConnectorException, TechnicalConnectorException;
+}

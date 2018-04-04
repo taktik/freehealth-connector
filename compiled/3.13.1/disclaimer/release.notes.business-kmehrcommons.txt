@@ -1,0 +1,71 @@
+**********************************************************
+* eHealth Business kmehr commons  RELEASE NOTES          *
+**********************************************************
+3.13.1 release (july 2017)
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . improvement             Creation of KmehrValidator classes
+  
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . update                  using technical connector 3.11.0
+  . update                  now using latest kmehr version 1.18.0
+ 
+
+3.10.4 release (september 2016)
+  . using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  . internal release
+  
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+  .   change                  some minor checkstyle fixes
+  .   change                  added methods to create codes and identifiers
+ 
+
+  3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)  
+3.4.0-beta-9 release
+  .   change                  new kmehr version 1.14
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+  
+3.4.0-beta-7 release
+  . using latest version of technical connector 3.4.0-beta-7
+	
+3.4.0 beta-6 release
+  . using latest version of technical connector 3.4.0-beta-6
+  
+3.4.0-beta-5 release
+ . change                made id and code version configurable and change config properties for ids and codes
+ . change                KmehrIdGenerator is now automatically registered in IdGeneratorFactory when HcPartyUtils is used
+ . change                HcPartyBuilder : added some extra utility methods like idFromSessionNiss , idFromSessionNihii, ...
+ . change                KmehrIdGenerator now defines its own tag to be registered in factory
+ . change                refactory HcPartyUtil internally and moved kmherIdGeneratorTag public property to KmehrIdGenerator class
+ . change                Some static string is now defined in a local variable (Avoid duplicate literals).
+ . change                Unnecessary Local Before Return dropped
+ 
+3.4.0-beta-4 release
+ . change                added method HcPartyUtil.getAuthorKmehrQuality()
+
+3.4.0 beta release
+ . change                mapping refactoring in HcPartyUtil
+ . change                deprecated createKmehrIdPrefix() , implementation was not correct, replaced with retrieveMainAuthorId(String projectName)
+
+3.3.0 beta-2 release
+  .    change                added kmehr specifig id generator which is compatible with mycarenetcommons requirements
+ 
+ 
+3.3.0 beta release

@@ -1,0 +1,46 @@
+<!-- edited with XMLSpy v2009 (http://www.altova.com) by Smals-MVM ASBL/VZW (Smals-MVM ASBL/VZW) --><xs:schema targetNamespace="urn:be:fgov:ehealth:recipe:core:v1" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:recipe:core:v1" xmlns:core="urn:be:fgov:ehealth:commons:core:v1"> 
+	<xs:import namespace="urn:be:fgov:ehealth:commons:core:v1" schemaLocation="ehealth-commons-schema-core-1_4.xsd"/> 
+	<!-- Recipe services types --> 
+	<xs:complexType name="SecuredContentType"> 
+		<xs:sequence> 
+			<xs:element name="SecuredContent" type="xs:base64Binary"/> 
+		</xs:sequence> 
+	</xs:complexType> 
+	<xs:complexType name="CreatePrescriptionAdministrativeInformationType"> 
+		<xs:complexContent> 
+			<xs:extension base="PrescriberServiceAdministrativeInformationType"> 
+				<xs:sequence> 
+					<!-- NIHII11 prescriber --> 
+					<xs:element name="PrescriberIdentifier" type="core:IdentifierType"/> 
+					<!-- Two-letter code --> 
+					<xs:element name="PrescriptionType" type="xs:string"/> 
+					<xs:element name="KeyIdentifier" type="xs:base64Binary"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="SendNotificationAdministrativeInformationType"> 
+		<xs:complexContent> 
+			<xs:extension base="PrescriberServiceAdministrativeInformationType"> 
+				<xs:sequence> 
+					<!-- NIHII or SSIN executor --> 
+					<xs:element name="ExecutorIdentifier" type="core:IdentifierType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="PrescriberServiceAdministrativeInformationType"> 
+		<xs:sequence> 
+			<!-- SSIN patient --> 
+			<xs:element name="PatientIdentifier" type="core:IdentifierType"/> 
+		</xs:sequence> 
+	</xs:complexType> 
+	<xs:complexType name="ExecutorServiceAdministrativeInformationType"> 
+		<xs:sequence> 
+			<!-- NIHII11 prescriber --> 
+			<xs:element name="PrescriberIdentifier" type="core:IdentifierType"/> 
+			<!-- SSIN patient --> 
+			<xs:element name="PatientIdentifier" type="core:IdentifierType"/> 
+		</xs:sequence> 
+	</xs:complexType> 
+</xs:schema>

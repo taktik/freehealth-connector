@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="urn:be:fgov:ehealth:etee:ra:csr:1_0:protocol" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="urn:be:fgov:ehealth:etee:ra:csr:1_0:protocol" elementFormDefault="qualified">
+  <xs:element name="EHealthCertificateRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="ContactData" type="ContactDataType" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="AdditionalSearchCriterium" type="SearchCriteriumType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="Csr" type="xs:base64Binary" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="Contract" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        <xs:sequence>
+          <xs:element name="UsagesType" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="UsageType" type="UsageType" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:element name="EHActorQualitiesSignedData" type="xs:base64Binary" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ContactDataType">
+    <xs:sequence>
+      <xs:element name="EmailPrivate" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="EmailGeneral" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="PhonePrivate" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="PhoneGeneral" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SearchCriteriumType">
+    <xs:sequence>
+      <xs:element name="Type" type="xs:string"/>
+      <xs:element name="Value" type="xs:string"/>
+      <xs:element name="ApplicationID" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="UsageType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Timestamping"/>
+      <xs:enumeration value="ConsultationRN"/>
+      <xs:enumeration value="Codage"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

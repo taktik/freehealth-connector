@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="urn:be:fgov:ehealth:etkra:protocol:v1" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:be:fgov:ehealth:etkra:protocol:v1"
+  elementFormDefault="qualified">
+
+  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v1" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-1_7.xsd" />
+
+  <xs:element name="StartEtkRegistrationRequest">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="protocol:RequestType">
+          <xs:sequence>
+            <xs:element name="publicEncryptionKey" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="StartEtkRegistrationResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0">
+            <xs:element name="Challenge" type="xs:base64Binary" />
+            <xs:element name="Signature" type="xs:base64Binary" />
+            <xs:element name="Certificate" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CompleteEtkRegistrationRequest">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="protocol:RequestType">
+          <xs:sequence>
+            <xs:element name="ToBeRegistered" type="xs:base64Binary" />
+            <xs:element name="SignedCredentials" type="SignedCredentialsType" minOccurs="0" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CompleteEtkRegistrationResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0">
+            <xs:element name="ETK" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetValidAuthCertsRequest">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="protocol:RequestType">
+          <xs:sequence>
+            <xs:element name="DistinguishedName" type="EhealthDistinguishedNameType" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetValidAuthCertsResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0">
+            <xs:element name="SignedCertificate" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ProcessCsrRequest">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="protocol:RequestType">
+          <xs:sequence>
+            <xs:element name="SignedCsrAndContract" type="xs:base64Binary" />
+            <xs:element name="ContactData" type="ContactDataType" />
+            <xs:element name="SignedCredentials" type="SignedCredentialsType" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ProcessCsrResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0">
+            <xs:element name="SignedCertificate" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ActivateETKRequest">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="protocol:RequestType">
+          <xs:sequence>
+            <xs:element name="SignedRequest" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ActivateETKResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <xs:element name="RevokeAndActivateRequest">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="protocol:RequestType">
+          <xs:sequence>
+            <xs:element name="DistinguishedName" type="EhealthDistinguishedNameType" />
+            <xs:element name="SignedCredentials" type="SignedCredentialsType" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RevokeAndActivateResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0">
+            <xs:element name="SignedCertificate" type="xs:base64Binary" />
+            <xs:element name="ETK" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RevokeRequest">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="protocol:RequestType">
+          <xs:sequence>
+            <xs:element name="SignedContract" type="xs:base64Binary" />
+            <xs:element name="certificateToRevoke" type="xs:base64Binary" />
+            <xs:element name="SignedCredentials" type="SignedCredentialsType" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RevokeResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0" />
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="RaResponseType">
+    <xs:sequence>
+      <xs:element name="Response" type="protocol:ResponseType" />
+      <xs:choice minOccurs="0">
+        <xs:element name="Error" type="ErrorType" minOccurs="1" maxOccurs="unbounded" />
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="ErrorType">
+    <xs:sequence>
+      <xs:element name="Code" type="xs:string" />
+      <xs:element name="Message" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SignedCredentialsType">
+    <xs:sequence>
+      <xs:element name="Type" type="xs:string" />
+      <xs:element name="Value" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ContactDataType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="Email" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="EhealthDistinguishedNameType">
+    <xs:sequence>
+      <xs:element name="CommonName" type="xs:string" />
+      <xs:element name="OrganisationUnit" type="xs:string" />
+      <xs:element name="Organisation" type="xs:string" />
+      <xs:element name="SerialNumber" type="xs:string" />
+      <xs:element name="EmailAddress" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

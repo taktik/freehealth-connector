@@ -1,0 +1,14 @@
+package be.ehealth.businessconnector.genins.session;
+
+import be.ehealth.businessconnector.genins.exception.GenInsBusinessConnectorException;
+import be.ehealth.technicalconnector.exception.SessionManagementException;
+import be.ehealth.technicalconnector.exception.TechnicalConnectorException;
+import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsFlatResponse;
+import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsXmlOrFlatRequestType;
+import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityResponse;
+
+public interface GenInsService {
+   GetInsurabilityResponse getInsurability(GetInsurabilityAsXmlOrFlatRequestType var1) throws GenInsBusinessConnectorException, TechnicalConnectorException, SessionManagementException;
+
+   GetInsurabilityAsFlatResponse getInsurabilityAsFlat(GetInsurabilityAsXmlOrFlatRequestType var1) throws GenInsBusinessConnectorException, TechnicalConnectorException, SessionManagementException;
+}

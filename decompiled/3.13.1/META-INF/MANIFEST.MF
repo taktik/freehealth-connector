@@ -1,0 +1,52 @@
+Manifest-Version: 1.0
+Implementation-Title: Connector Business Address Book
+Maven-Artifact-Id: connector-business-addressbook
+Implementation-Version: 3.13.1
+Archiver-Version: Plexus Archiver
+Built-By: smals-bed
+Build-Time: 20170628-1328
+CMDB-Catalog-Part: 
+Build-Jdk: 1.7.0_40
+Created-By: Apache Maven 3.1.1
+Specification-Version: 1.0.0
+Maven-Group-Id: be.fgov.ehealth.connector
+
+Name: be/ehealth/businessconnector/addressbook/session/AddressbookSess
+ ionService.class
+SHA-256-Digest: q9faAFIZKU8i/o19FQ516ZsSh89XdKVfvUU17a7BwQM=
+
+Name: disclaimer/release.notes.business-addressbook.txt
+SHA-256-Digest: ia50nLIjZpBA+XT75bjPNM5komaX9+LdWKIX2Ycf6rs=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-addr
+ essbook/pom.xml
+SHA-256-Digest: cW2nRj/qS7V5EiSkj0pFHuiB1RX+XKC9zLBFzeQILSw=
+
+Name: be/ehealth/businessconnector/addressbook/service/AddressbookToke
+ nService.class
+SHA-256-Digest: t0lvWPIqWCbOx+B5KblzuoGAeKJKBmaF53HXO41GYsc=
+
+Name: be/ehealth/businessconnector/addressbook/session/impl/Addressboo
+ kSessionServiceImpl.class
+SHA-256-Digest: ODOmXuPKXPs60M0UIfduRljZ7lPl+3v4b5lg4cLNqTo=
+
+Name: be/ehealth/businessconnector/addressbook/session/impl/Addressboo
+ kSessionServiceImplFactory.class
+SHA-256-Digest: x2Orr2KDxyC50cWIoqBUr6jethKRcOFGoDXY4jmiDRc=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-addr
+ essbook/pom.properties
+SHA-256-Digest: ZYFqFtwzYxWGZHAStjTMuwiFQE9Ym7iZ3OuOpkD1/T4=
+
+Name: be/ehealth/businessconnector/addressbook/service/impl/Addressboo
+ kTokenServiceImpl.class
+SHA-256-Digest: GxAHX3kEmxpxafd4YMN+ZiGewqJBzvwXiUh5a3JyZgI=
+
+Name: be/ehealth/businessconnector/addressbook/session/AddressbookSess
+ ionServiceFactory.class
+SHA-256-Digest: gKf6Rt1HqUs41ecNg3zSNtzdv6EYPzR2KX4zE7yCVTQ=
+
+Name: be/ehealth/businessconnector/addressbook/service/TokenServiceFac
+ tory.class
+SHA-256-Digest: 0t3EzAWWQBxBWnmhlP7u3Aj52fWloCtvhX7IxjP4uXw=
+

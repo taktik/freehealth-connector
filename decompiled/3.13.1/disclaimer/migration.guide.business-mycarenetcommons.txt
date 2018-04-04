@@ -1,0 +1,69 @@
+****************************************************************
+* eHealth Business Connector Mycarenet Commons MIGRATION GUIDE *
+****************************************************************
+3.13.0 release (july 2017)
+  . The domain and util code not coupled to a version of mycarenet xsd has been moved to to the be.ehealth.business.mycarenetdomaincommons
+    namespace. This makes this code and genericasync reusable for different versions of the xsd's.
+    the mycarenetcommons packages impacted are:
+        be.ehealth.business.mycarenetcommons.builders
+        be.ehealth.business.mycarenetcommons.domain
+        be.ehealth.business.mycarenetcommons.exception
+        be.ehealth.business.mycarenetcommons.mapper
+        be.ehealth.business.mycarenetcommons.util
+        be.ehealth.business.mycarenetcommons.validator
+
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+  
+3.4.0-beta-7 release
+  . using latest version of technical connector 3.4.0-beta-7
+	
+3.4.0 beta-6 release
+  . using latest version of technical connector 3.4.0-beta-6
+  
+3.4.0-beta-5 release
+        replace calls to ResponseBuilderFactory.getResponseBuilder with calls that use the parameter projectName 
+        you should use the method ResponseBuilder.validateXades(SendResponseType responseType) instead of validateXades(SendResponseType responseType, Blob blob)
+        use BlobBuilderFactory to create a BlobBuilder instead of the RequestBuilderFactory
+        
+        property files should now also contain the following : 
+        mycarenet.blobbuilder.default.encodingtype=text/xml
+        mycarenet.blobbuilder.default.contenttype=none
+        mycarenet.blobbuilder.default.id=blob
+ and for each project using the BlobUtil to validate the response:
+        mycarenet.{projectName}.response.requiredxades=none/xades/xadest
+
+3.3.0-beta-4 release
+        If you use the mycarenet common builders, 
+        the parts to fill out in the mycarenet xml part are defined in the property file. 
+
+        as with the kmehr builders , you can choose per project to use the default config , or a project specific config .
+        the optional parameter mycarenet.{projectName}.usedefaultproperties=false enables a project specific config.
+        if you  choose this , you must provide the config yourself , using the same properties as for the default,
+        but with the .default. replaced with .{projectName}. 
+
+        more info can be found in the javadoc, but below is an example for a pharmacy 
+
+        ##############################################################################################################################################
+        # default configuration of mycarenet common builder                                                                                           #
+        #                                                                                                                                              #
+        ##############################################################################################################################################
+        mycarenet.commonbuilder.class=be.ehealth.business.GenericCommonBuilderImpl
+        #mycarenet.default.sender.physicalperson.name=sender
+        #mycarenet.default.sender.physicalperson.nihii.quality=pharmacy-holder
+        #mycarenet.default.sender.physicalperson.nihii.value=${user.nihii}
+        #mycarenet.default.sender.physicalperson.ssin==${user.inss}
+        #mycarenet.default.sender.organization.name=
+        #mycarenet.default.sender.organization.nihii.quality=
+        #mycarenet.default.sender.organization.nihii.value=
+        #mycarenet.default.sender.organization.cbe=
+        mycarenet.default.careprovider.nihii.quality=pharmacy-holder
+        mycarenet.default.careprovider.nihii.value=${pharmacy-holder.nihii}
+        mycarenet.default.careprovider.physicalperson.name=${pharmacy-holder.firstname}
+        #mycarenet.default.careprovider.physicalperson.nihii.quality=
+        #mycarenet.default.careprovider.physicalperson.nihii.value=
+        mycarenet.default.careprovider.physicalperson.ssin=${pharmacy-holder.ssin}
+        mycarenet.default.careprovider.organization.name=${pharmacy.name}
+        mycarenet.default.careprovider.organization.nihii.quality=pharmacy
+        mycarenet.default.careprovider.organization.nihii.value=${pharmacy.nihii}
+        mycarenet.default.siteId=

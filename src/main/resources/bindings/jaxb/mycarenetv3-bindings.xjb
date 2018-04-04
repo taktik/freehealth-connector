@@ -1,0 +1,14 @@
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:simplify="http://jaxb2-commons.dev.java.net/basic/simplify" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+               jaxb:extensionBindingPrefixes="xjc" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.1">
+
+    <!-- Set <simplify:as-element-property /> to simplify generation of repeatable choices. -->
+    <!-- More information on Simplify Plugin: http://confluence.highsource.org/display/J2B/Simplify+Plugin -->
+
+    <jaxb:globalBindings localScoping="toplevel">
+        <xjc:javaType adapter="be.ehealth.technicalconnector.adapter.XmlDateNoTzAdapter" name="org.joda.time.DateTime" xmlType="xsd:date" />
+        <xjc:javaType adapter="be.ehealth.technicalconnector.adapter.XmlDateTimeAdapter" name="org.joda.time.DateTime" xmlType="xsd:dateTime" />
+        <xjc:javaType adapter="be.ehealth.technicalconnector.adapter.XmlTimeAdapter" name="org.joda.time.DateTime" xmlType="xsd:time" />
+        <xjc:serializable uid='1' />
+        <xjc:simple />
+    </jaxb:globalBindings>
+</jaxb:bindings>

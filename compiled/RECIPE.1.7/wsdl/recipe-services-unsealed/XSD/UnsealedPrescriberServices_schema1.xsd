@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="http:/services.recipe.be/prescriber" xmlns:ns1="http://services.recipe.be" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http://services.recipe.be" schemaLocation="UnsealedPrescriberServices_schema2.xsd"/>
+
+  <xs:element name="createPrescriptionParam" type="ns1:createPrescriptionParam"/>
+
+  <xs:element name="createPrescriptionResult" type="ns1:createPrescriptionResult"/>
+
+  <xs:element name="getListOpenPrescriptionParam" type="ns1:getListOpenPrescriptionParam"/>
+
+  <xs:element name="getListOpenPrescriptionResult" type="ns1:GetListOpenPrescriptionResult"/>
+
+  <xs:element name="getPrescriptionForPrescriberParam" type="ns1:getPrescriptionForPrescriberParam"/>
+
+  <xs:element name="getPrescriptionForPrescriberResult" type="ns1:getPrescriptionForPrescriberResult"/>
+
+  <xs:element name="listFeedbackItem" type="ns1:ListFeedbackItem"/>
+
+  <xs:element name="listFeedbacksParam" type="ns1:listFeedbacksParam"/>
+
+  <xs:element name="listFeedbacksResult" type="ns1:ListFeedbacksResult"/>
+
+  <xs:element name="revokePrescriptionParam" type="ns1:revokePrescriptionParam"/>
+
+  <xs:element name="sendNotificationParam" type="ns1:sendNotificationParam"/>
+
+  <xs:element name="updateFeedbackFlagParam" type="ns1:updateFeedbackFlagParam"/>
+
+
+
+
+
+
+
+
+
+
+
+
+</xs:schema>
+

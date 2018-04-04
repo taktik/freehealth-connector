@@ -1,0 +1,104 @@
+**********************************************************
+* eHealth Business therlink  RELEASE NOTES               *
+**********************************************************
+3.13.1 release (july 2017)
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . improvement             now using HandlerChainUtil.buildChainWithValidator in ServiceFactory
+  . improvement             BinaryProof.getBinary now returns clone of internal copy
+  . bugfix                  Deprecated method OperationContext with calendar now works again
+  . improvement               Default values added for the endpoint and the input validation
+
+3.12.0 internal release (mai 2017)
+ 
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . update                  using technical connector 3.11.0
+  . bugfix                  fixed bug (classcast exception) when providing patient without first/lastname for a therapeutic link
+  . update                  version of hubservice xsd is updated to 2.2.2 to use latest version of kmehr, this will enable the treatment of new types
+
+3.10.4 release (september 2016)
+  . using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  . internal release
+  
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+  .   change                  added bootstrapping
+  .   change                  some minor checkstyle fixes
+
+  3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)  
+3.4.0-beta-9 release
+  .   change                  new kmehr version 1.14
+  .   using latest version of technical connector 3.4.0-beta-9 
+  
+ 3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+  
+3.4.0-beta-7 release
+  . using latest version of technical connector 3.4.0-beta-7
+	
+3.4.0 beta-6 release
+  . using latest version of technical connector 3.4.0-beta-6
+  
+3.4.0-beta-5 release
+ .    change                    refactored ImplementationClassFactory : crypto parameters are not provided anymore
+ .    change                    HcPartyMapper is now retrieved with MapperFactory.getHcPartyMapper()
+ .    change                    using ConfigurableFactoryHelper without .class parameter now ( old interface deprecated)
+ .    change                    Author.toString doesn't print deprecated properties anymore, but now prints ids and cds
+ .    change                    replaced deprecated GetTherapeuticLinkRequest constructors with new ones in RequestObjectMapper
+ .    change                    now always places isi card number in patient for request
+ .    change                    replaced deprecated method AbstractRequestBuilder.getEnduserHcpType() with HcPartyUtil.getAuthorKmehrQuality() in internal implementations
+ .    change                    HcParty.equals use EqualsBuilder to avoid cyclomatic complexity
+ .    change                    Some static string is now defined in a local variable (Avoid duplicate literals).
+ .    change                    Unnecessary Local Before Return dropped
+ .    change                    modifier not usefull dropped
+ .    improvement               now using ConfigurableFactoryHelper method without class parameter instead of deprecated method
+      
+
+3.4.0-beta-4 release
+ .  change                 updated service to use new code to configure HandlerChain
+
+
+3.4.0 beta release
+ .  change                    moved HcParty mapping code to HcPartyMapper 
+ .  change                    using HcPartyUtils to create kmehrId 
+ .    change                    added support for isi card
+ .    change                    therlink Patient object deprecated , will throw exception when used for isi+ card , use be.ehealth.business.common.domain.Patient instead
+ .    change                    using DateTime objects instead of Date objects. alternative getters and setters provided
+ .    change                    default builders now use generic builders , configured in property file 
+ .    bugfix                    removed duplicate of TherlinkService in main b.e.b.therlink package
+ .    bugfix                    changed named of this release notes file
+ .    change                    now retrieves kmehr id prefix with HcPartyUtil.retrieveMainAuthorId(BuilderConstants.PROJECT_NAME) , the property kmehr." + {therlink/default} + ".identifier.id.idhcparty should be present
+ .    bugfix                    now using correct method to calculate kmehr suffix ( no impact on behaviour , just naming ) 
+ .    change                    use of a deprecated method fixed , now using new method ( which uses datetimes instead of dates )
+ .    change                    change the setting for therlink.maxrows in example property file from 1000 to 50
+ .    change                    made RequestObjectBuilder.PROP_HCP_TYPE deprecated : property not used anymore in new implementation class
+ .    change                    parameters therlink.application.id and therlink.enduser.hcpartytype are now not required anymore ( therlink.enduser.hcpartytype is now looked up in kmehr config main.kmehr.quality
+ .    change                    therlink properties have changed -> see example property file
+ 
+3.3.0 beta-2 release
+ .    change                    fixed response mapper : now maps ids and cds correctly 
+
+3.3.0 beta release
+ .    improvement                removed public constructor for Builder and Factory classes , no instances needed
+ .    bugfix                    HcParty : lists are initialises with empty list in when object is constructed
+ .    change                    extracted commons package into seperate project : added dependency to this project
+ .    change                    Some properties are required now for therlink : the properties kmehr.single.hcparty.template.careprovider.in.therapeuticlink.*
+ .  improvement                now also supports pharmacists
+ .    improvement                logging standardized on sl4j 
+ .    improvement/change        now uses standard configuration for mycarenet CommonInput see javadoc be.ehealth.business.mycarenetcommons.builders.CommonBuilder for config parameters
+ .    improvement/change        now uses standard configuration for kmehrbuilder , see javadoc HcPartyUtil for config parameters
+ .     change                     careprovider is now configured with the properties kmehr.single.hcparty.template.* , see javadoc in business-kmehrcommons HcPartyUtil 
+ 

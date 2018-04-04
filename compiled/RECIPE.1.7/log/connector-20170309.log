@@ -1,0 +1,244 @@
+2017-03-09 12:21:01,772 [Thread-0] INFO  be.business.connector.core.utils.LoggingUtil (LoggingUtil.java:71) - Loading log4j config from C:\Workspace\BusinessConnector\dist\prescriber\conf\log4j.xml
+2017-03-09 12:21:01,792 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:93) - Properties updated.....
+2017-03-09 12:21:01,794 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:100) - Log4j initialized.....
+2017-03-09 12:21:01,797 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:206) - loading property MESSAGE_QUEUE_FOLDER DefaultValue : null value returned : %CONF%/msg_queue
+2017-03-09 12:21:01,799 [Thread-0] INFO  be.business.connector.core.utils.MessageQueueHelper (MessageQueueHelper.java:48) - No directory found on location: %CONF%/msg_queue. No files unlocked
+2017-03-09 12:21:01,799 [Thread-0] INFO  be.business.connector.common.ApplicationConfig (ApplicationConfig.java:105) - Application config successfully initialized.
+2017-03-09 12:26:03,737 [Thread-0] INFO  be.business.connector.core.utils.LoggingUtil (LoggingUtil.java:71) - Loading log4j config from C:\Workspace\BusinessConnector\dist\prescriber\conf\log4j.xml
+2017-03-09 12:26:03,755 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:93) - Properties updated.....
+2017-03-09 12:26:03,756 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:100) - Log4j initialized.....
+2017-03-09 12:26:03,758 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:206) - loading property MESSAGE_QUEUE_FOLDER DefaultValue : null value returned : %CONF%/msg_queue
+2017-03-09 12:26:03,760 [Thread-0] INFO  be.business.connector.core.utils.MessageQueueHelper (MessageQueueHelper.java:48) - No directory found on location: %CONF%/msg_queue. No files unlocked
+2017-03-09 12:26:03,760 [Thread-0] INFO  be.business.connector.common.ApplicationConfig (ApplicationConfig.java:105) - Application config successfully initialized.
+2017-03-09 12:27:00,421 [Thread-0] INFO  be.business.connector.core.utils.LoggingUtil (LoggingUtil.java:71) - Loading log4j config from C:\Workspace\BusinessConnector\dist\prescriber\conf\log4j.xml
+2017-03-09 12:27:00,441 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:93) - Properties updated.....
+2017-03-09 12:27:00,443 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:100) - Log4j initialized.....
+2017-03-09 12:27:00,446 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:206) - loading property MESSAGE_QUEUE_FOLDER DefaultValue : null value returned : %CONF%/msg_queue
+2017-03-09 12:27:00,447 [Thread-0] INFO  be.business.connector.core.utils.MessageQueueHelper (MessageQueueHelper.java:48) - No directory found on location: %CONF%/msg_queue. No files unlocked
+2017-03-09 12:27:00,448 [Thread-0] INFO  be.business.connector.common.ApplicationConfig (ApplicationConfig.java:105) - Application config successfully initialized.
+2017-03-09 12:41:43,227 [Thread-0] INFO  be.business.connector.core.utils.LoggingUtil (LoggingUtil.java:71) - Loading log4j config from C:\Workspace\BusinessConnector\dist\prescriber\conf\log4j.xml
+2017-03-09 12:41:43,262 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:93) - Properties updated.....
+2017-03-09 12:41:43,263 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:100) - Log4j initialized.....
+2017-03-09 12:41:43,267 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:206) - loading property MESSAGE_QUEUE_FOLDER DefaultValue : null value returned : %CONF%/msg_queue
+2017-03-09 12:41:43,268 [Thread-0] INFO  be.business.connector.core.utils.MessageQueueHelper (MessageQueueHelper.java:48) - No directory found on location: %CONF%/msg_queue. No files unlocked
+2017-03-09 12:41:43,269 [Thread-0] INFO  be.business.connector.common.ApplicationConfig (ApplicationConfig.java:105) - Application config successfully initialized.
+2017-03-09 12:47:20,230 [Thread-0] INFO  be.business.connector.core.utils.LoggingUtil (LoggingUtil.java:71) - Loading log4j config from C:\Workspace\BusinessConnector\dist\prescriber\conf\log4j.xml
+2017-03-09 12:47:20,265 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:93) - Properties updated.....
+2017-03-09 12:47:20,268 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:100) - Log4j initialized.....
+2017-03-09 12:47:20,271 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:206) - loading property MESSAGE_QUEUE_FOLDER DefaultValue : null value returned : %CONF%/msg_queue
+2017-03-09 12:47:20,272 [Thread-0] INFO  be.business.connector.core.utils.MessageQueueHelper (MessageQueueHelper.java:48) - No directory found on location: %CONF%/msg_queue. No files unlocked
+2017-03-09 12:47:20,273 [Thread-0] INFO  be.business.connector.common.ApplicationConfig (ApplicationConfig.java:105) - Application config successfully initialized.
+2017-03-09 12:50:34,077 [Thread-0] INFO  be.business.connector.core.utils.LoggingUtil (LoggingUtil.java:71) - Loading log4j config from C:\Workspace\BusinessConnector\dist\prescriber\conf\log4j.xml
+2017-03-09 12:50:34,112 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:93) - Properties updated.....
+2017-03-09 12:50:34,113 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:100) - Log4j initialized.....
+2017-03-09 12:50:34,117 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:206) - loading property MESSAGE_QUEUE_FOLDER DefaultValue : null value returned : %CONF%/msg_queue
+2017-03-09 12:50:34,118 [Thread-0] INFO  be.business.connector.core.utils.MessageQueueHelper (MessageQueueHelper.java:48) - No directory found on location: %CONF%/msg_queue. No files unlocked
+2017-03-09 12:50:34,119 [Thread-0] INFO  be.business.connector.common.ApplicationConfig (ApplicationConfig.java:105) - Application config successfully initialized.
+2017-03-09 12:50:34,127 [Thread-0] INFO  be.business.connector.common.module.AbstractIntegrationModule (AbstractIntegrationModule.java:122) - Init abstractIntegrationModule!
+2017-03-09 12:50:34,128 [Thread-0] INFO  be.business.connector.core.utils.LoggingUtil (LoggingUtil.java:66) - ****************  Init LOG4J
+2017-03-09 12:50:34,129 [Thread-0] INFO  be.business.connector.core.utils.PropertyHandler (PropertyHandler.java:206) - loading property LOG4J DefaultValue : log4j.xml value returned : C:/Workspace/BusinessConnector/dist/prescriber/conf/log4j.xml
+2017-03-09 12:50:34,141 [Thread-0] INFO  be.business.connector.core.utils.LoggingUtil (LoggingUtil.java:71) - Loading log4j config from C:\Workspace\BusinessConnector\dist\prescriber\conf\log4j.xml
+2017-03-09 12:50:41,660 [Thread-0] INFO  be.apb.gfddpp.common.utils.JaxContextCentralizer (JaxContextCentralizer.java:76) - Jaxbcontext for class be.apb.standards.smoa.schema.v1.SingleMessage cached
+2017-03-09 12:50:41,701 [Thread-0] INFO  be.apb.gfddpp.common.utils.JaxContextCentralizer (JaxContextCentralizer.java:76) - Jaxbcontext for class be.fgov.ehealth.etee.kgss._1_0.protocol.GetKeyRequestContent cached
+2017-03-09 12:50:41,711 [Thread-0] INFO  be.apb.gfddpp.common.utils.JaxContextCentralizer (JaxContextCentralizer.java:76) - Jaxbcontext for class be.fgov.ehealth.etee.kgss._1_0.protocol.GetKeyResponseContent cached
+2017-03-09 12:50:42,037 [Thread-0] INFO  be.business.connector.common.module.AbstractIntegrationModule (AbstractIntegrationModule.java:152) - INIT CACHE MANAGER
+2017-03-09 12:50:42,042 [Thread-0] ERROR be.business.connector.common.module.AbstractIntegrationModule (AbstractIntegrationModule.java:146) - Exception in init abstractIntegrationModule: 
+java.lang.NoClassDefFoundError: net.sf.ehcache.CacheManager
+	at IKVM.Runtime.ByteCodeHelper.LoadTypeWrapper(Unknown Source)
+	at IKVM.Runtime.ByteCodeHelper.DynamicLoadMethodHandleImpl(Unknown Source)
+	at IKVM.Runtime.ByteCodeHelper.DynamicBinderMemberLookup(Unknown Source)
+	at be.business.connector.common.module.AbstractIntegrationModule.initCaching(AbstractIntegrationModule.java:153)
+	at be.business.connector.common.module.AbstractIntegrationModule.init(AbstractIntegrationModule.java:142)
+	at be.business.connector.common.module.AbstractIntegrationModule.<init>(AbstractIntegrationModule.java:116)
+	at be.business.connector.recipe.prescriber.PrescriberIntegrationModuleImpl.<init>(PrescriberIntegrationModuleImpl.java:54)
+	at cli.RecipePrescriptionTool.PrescriptionTool.GetModule(PrescriptionTool.vb:54)
+	at cli.RecipePrescriptionTool.PrescriptionTool.PrescriptionTool_Activated(PrescriptionTool.vb:295)
+	at cli.System.Windows.Forms.Form.OnActivated(Unknown Source)
+	at cli.System.Windows.Forms.Form.set_Active(Unknown Source)
+	at cli.System.Windows.Forms.Form.WmActivate(Unknown Source)
+	at cli.System.Windows.Forms.Form.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.Control$ControlNativeWindow.OnMessage(Unknown Source)
+	at cli.System.Windows.Forms.Control$ControlNativeWindow.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.NativeWindow.DebuggableCallback(Unknown Source)
+	at cli.System.Windows.Forms.UnsafeNativeMethods.SetForegroundWindow(Unknown Source)
+	at cli.System.Windows.Forms.Form.Activate(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.HideSplashScreen(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.MainFormLoadingDone(Unknown Source)
+	at cli.System.Windows.Forms.Form.OnLoad(Unknown Source)
+	at cli.System.Windows.Forms.Form.OnCreateControl(Unknown Source)
+	at cli.System.Windows.Forms.Control.CreateControl(Unknown Source)
+	at cli.System.Windows.Forms.Control.CreateControl(Unknown Source)
+	at cli.System.Windows.Forms.Control.WmShowWindow(Unknown Source)
+	at cli.System.Windows.Forms.Control.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.ScrollableControl.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.Form.WmShowWindow(Unknown Source)
+	at cli.System.Windows.Forms.Form.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.Control$ControlNativeWindow.OnMessage(Unknown Source)
+	at cli.System.Windows.Forms.Control$ControlNativeWindow.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.NativeWindow.DebuggableCallback(Unknown Source)
+	at cli.System.Windows.Forms.SafeNativeMethods.ShowWindow(Unknown Source)
+	at cli.System.Windows.Forms.Control.SetVisibleCore(Unknown Source)
+	at cli.System.Windows.Forms.Form.SetVisibleCore(Unknown Source)
+	at cli.System.Windows.Forms.Control.set_Visible(Unknown Source)
+	at cli.System.Windows.Forms.Application$ThreadContext.RunMessageLoopInner(Unknown Source)
+	at cli.System.Windows.Forms.Application$ThreadContext.RunMessageLoop(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.OnRun(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.DoApplicationModel(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.Run(Unknown Source)
+	at cli.RecipePrescriptionTool.My.MyApplication.Main(Unknown Source)
+	at cli.System.AppDomain._nExecuteAssembly(Unknown Source)
+	at cli.System.AppDomain.ExecuteAssembly(Unknown Source)
+	at cli.Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly(Unknown Source)
+Caused by: java.lang.ClassNotFoundException: net.sf.ehcache.CacheManager
+	at ikvm.runtime.AppDomainAssemblyClassLoader.findClass(AppDomainAssemblyClassLoader.java:51)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:440)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:375)
+	at java.lang.ClassLoader.loadClassInternal(ClassLoader.java:490)
+	at IKVM.Internal.ClassLoaderWrapper.LoadClassImpl(Unknown Source)
+	at IKVM.Internal.AssemblyClassLoader.LoadClassImpl(Unknown Source)
+	at IKVM.Internal.ClassLoaderWrapper.LoadClassByDottedNameFastImpl(Unknown Source)
+	at IKVM.Internal.ClassLoaderWrapper.LoadClassByDottedName(Unknown Source)
+	... 45 more
+2017-03-09 12:50:42,053 [Thread-0] ERROR be.business.connector.core.utils.Exceptionutils (Exceptionutils.java:33) - 
+java.lang.NoClassDefFoundError: net.sf.ehcache.CacheManager
+	at IKVM.Runtime.ByteCodeHelper.LoadTypeWrapper(Unknown Source)
+	at IKVM.Runtime.ByteCodeHelper.DynamicLoadMethodHandleImpl(Unknown Source)
+	at IKVM.Runtime.ByteCodeHelper.DynamicBinderMemberLookup(Unknown Source)
+	at be.business.connector.common.module.AbstractIntegrationModule.initCaching(AbstractIntegrationModule.java:153)
+	at be.business.connector.common.module.AbstractIntegrationModule.init(AbstractIntegrationModule.java:142)
+	at be.business.connector.common.module.AbstractIntegrationModule.<init>(AbstractIntegrationModule.java:116)
+	at be.business.connector.recipe.prescriber.PrescriberIntegrationModuleImpl.<init>(PrescriberIntegrationModuleImpl.java:54)
+	at cli.RecipePrescriptionTool.PrescriptionTool.GetModule(PrescriptionTool.vb:54)
+	at cli.RecipePrescriptionTool.PrescriptionTool.PrescriptionTool_Activated(PrescriptionTool.vb:295)
+	at cli.System.Windows.Forms.Form.OnActivated(Unknown Source)
+	at cli.System.Windows.Forms.Form.set_Active(Unknown Source)
+	at cli.System.Windows.Forms.Form.WmActivate(Unknown Source)
+	at cli.System.Windows.Forms.Form.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.Control$ControlNativeWindow.OnMessage(Unknown Source)
+	at cli.System.Windows.Forms.Control$ControlNativeWindow.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.NativeWindow.DebuggableCallback(Unknown Source)
+	at cli.System.Windows.Forms.UnsafeNativeMethods.SetForegroundWindow(Unknown Source)
+	at cli.System.Windows.Forms.Form.Activate(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.HideSplashScreen(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.MainFormLoadingDone(Unknown Source)
+	at cli.System.Windows.Forms.Form.OnLoad(Unknown Source)
+	at cli.System.Windows.Forms.Form.OnCreateControl(Unknown Source)
+	at cli.System.Windows.Forms.Control.CreateControl(Unknown Source)
+	at cli.System.Windows.Forms.Control.CreateControl(Unknown Source)
+	at cli.System.Windows.Forms.Control.WmShowWindow(Unknown Source)
+	at cli.System.Windows.Forms.Control.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.ScrollableControl.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.Form.WmShowWindow(Unknown Source)
+	at cli.System.Windows.Forms.Form.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.Control$ControlNativeWindow.OnMessage(Unknown Source)
+	at cli.System.Windows.Forms.Control$ControlNativeWindow.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.NativeWindow.DebuggableCallback(Unknown Source)
+	at cli.System.Windows.Forms.SafeNativeMethods.ShowWindow(Unknown Source)
+	at cli.System.Windows.Forms.Control.SetVisibleCore(Unknown Source)
+	at cli.System.Windows.Forms.Form.SetVisibleCore(Unknown Source)
+	at cli.System.Windows.Forms.Control.set_Visible(Unknown Source)
+	at cli.System.Windows.Forms.Application$ThreadContext.RunMessageLoopInner(Unknown Source)
+	at cli.System.Windows.Forms.Application$ThreadContext.RunMessageLoop(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.OnRun(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.DoApplicationModel(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.Run(Unknown Source)
+	at cli.RecipePrescriptionTool.My.MyApplication.Main(Unknown Source)
+	at cli.System.AppDomain._nExecuteAssembly(Unknown Source)
+	at cli.System.AppDomain.ExecuteAssembly(Unknown Source)
+	at cli.Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly(Unknown Source)
+Caused by: java.lang.ClassNotFoundException: net.sf.ehcache.CacheManager
+	at ikvm.runtime.AppDomainAssemblyClassLoader.findClass(AppDomainAssemblyClassLoader.java:51)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:440)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:375)
+	at java.lang.ClassLoader.loadClassInternal(ClassLoader.java:490)
+	at IKVM.Internal.ClassLoaderWrapper.LoadClassImpl(Unknown Source)
+	at IKVM.Internal.AssemblyClassLoader.LoadClassImpl(Unknown Source)
+	at IKVM.Internal.ClassLoaderWrapper.LoadClassByDottedNameFastImpl(Unknown Source)
+	at IKVM.Internal.ClassLoaderWrapper.LoadClassByDottedName(Unknown Source)
+	... 45 more
+2017-03-09 12:50:42,062 [Thread-0] INFO  be.business.connector.core.utils.I18nHelper (I18nHelper.java:54) - Loading resource bundle for locale nl
+2017-03-09 12:50:42,063 [Thread-0] ERROR be.business.connector.core.exceptions.IntegrationModuleException (IntegrationModuleException.java:37) - [ERR200018] Een technische fout is opgetreden. Als het probleem zich blijft voordoen, neem dan contact op met de helpdesk.
+be.business.connector.core.exceptions.IntegrationModuleException: [ERR200018] Een technische fout is opgetreden. Als het probleem zich blijft voordoen, neem dan contact op met de helpdesk.
+	at IKVM.Internal.ExceptionHelper.toString(Unknown Source)
+	at java.lang.Throwable.toString(map.xml:1318)
+	at java.lang.Throwable.toString(map.xml:1318)
+	at java.lang.Object.toString(map.xml)
+	at java.lang.StringHelper.valueOf(StringHelper.java:2390)
+	at java.lang.String.valueOf(map.xml:397)
+	at java.io.PrintWriter.println(PrintWriter.java:754)
+	at java.lang.ThrowableHelper$WrappedPrintWriter.println(ThrowableHelper.java:342)
+	at java.lang.ThrowableHelper.printStackTrace(ThrowableHelper.java:232)
+	at java.lang.ThrowableHelper.printStackTrace(ThrowableHelper.java:299)
+	at java.lang.Throwable.printStackTrace(map.xml:1191)
+	at java.lang.Throwable.printStackTrace(map.xml:1191)
+	at org.apache.log4j.DefaultThrowableRenderer.render(DefaultThrowableRenderer.java:60)
+	at org.apache.log4j.spi.ThrowableInformation.getThrowableStrRep(ThrowableInformation.java:87)
+	at org.apache.log4j.spi.LoggingEvent.getThrowableStrRep(LoggingEvent.java:413)
+	at org.apache.log4j.WriterAppender.subAppend(WriterAppender.java:313)
+	at org.apache.log4j.rolling.RollingFileAppender.subAppend(RollingFileAppender.java:397)
+	at org.apache.log4j.WriterAppender.append(WriterAppender.java:162)
+	at org.apache.log4j.AppenderSkeleton.doAppend(AppenderSkeleton.java:251)
+	at org.apache.log4j.helpers.AppenderAttachableImpl.appendLoopOnAppenders(AppenderAttachableImpl.java:64)
+	at org.apache.log4j.Category.callAppenders(Category.java:206)
+	at org.apache.log4j.Category.forcedLog(Category.java:391)
+	at org.apache.log4j.Category.error(Category.java:322)
+	at be.business.connector.core.exceptions.IntegrationModuleException.<init>(IntegrationModuleException.java:37)
+	at be.business.connector.core.utils.Exceptionutils.errorHandler(Exceptionutils.java:33)
+	at be.business.connector.common.module.AbstractIntegrationModule.init(AbstractIntegrationModule.java:148)
+	at be.business.connector.common.module.AbstractIntegrationModule.<init>(AbstractIntegrationModule.java:116)
+	at be.business.connector.recipe.prescriber.PrescriberIntegrationModuleImpl.<init>(PrescriberIntegrationModuleImpl.java:54)
+	at cli.RecipePrescriptionTool.PrescriptionTool.GetModule(PrescriptionTool.vb:54)
+	at cli.RecipePrescriptionTool.PrescriptionTool.PrescriptionTool_Activated(PrescriptionTool.vb:295)
+	at cli.System.Windows.Forms.Form.OnActivated(Unknown Source)
+	at cli.System.Windows.Forms.Form.set_Active(Unknown Source)
+	at cli.System.Windows.Forms.Form.WmActivate(Unknown Source)
+	at cli.System.Windows.Forms.Form.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.Control$ControlNativeWindow.OnMessage(Unknown Source)
+	at cli.System.Windows.Forms.Control$ControlNativeWindow.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.NativeWindow.DebuggableCallback(Unknown Source)
+	at cli.System.Windows.Forms.UnsafeNativeMethods.SetForegroundWindow(Unknown Source)
+	at cli.System.Windows.Forms.Form.Activate(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.HideSplashScreen(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.MainFormLoadingDone(Unknown Source)
+	at cli.System.Windows.Forms.Form.OnLoad(Unknown Source)
+	at cli.System.Windows.Forms.Form.OnCreateControl(Unknown Source)
+	at cli.System.Windows.Forms.Control.CreateControl(Unknown Source)
+	at cli.System.Windows.Forms.Control.CreateControl(Unknown Source)
+	at cli.System.Windows.Forms.Control.WmShowWindow(Unknown Source)
+	at cli.System.Windows.Forms.Control.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.ScrollableControl.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.Form.WmShowWindow(Unknown Source)
+	at cli.System.Windows.Forms.Form.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.Control$ControlNativeWindow.OnMessage(Unknown Source)
+	at cli.System.Windows.Forms.Control$ControlNativeWindow.WndProc(Unknown Source)
+	at cli.System.Windows.Forms.NativeWindow.DebuggableCallback(Unknown Source)
+	at cli.System.Windows.Forms.SafeNativeMethods.ShowWindow(Unknown Source)
+	at cli.System.Windows.Forms.Control.SetVisibleCore(Unknown Source)
+	at cli.System.Windows.Forms.Form.SetVisibleCore(Unknown Source)
+	at cli.System.Windows.Forms.Control.set_Visible(Unknown Source)
+	at cli.System.Windows.Forms.Application$ThreadContext.RunMessageLoopInner(Unknown Source)
+	at cli.System.Windows.Forms.Application$ThreadContext.RunMessageLoop(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.OnRun(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.DoApplicationModel(Unknown Source)
+	at cli.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.Run(Unknown Source)
+	at cli.RecipePrescriptionTool.My.MyApplication.Main(Unknown Source)
+	at cli.System.AppDomain._nExecuteAssembly(Unknown Source)
+	at cli.System.AppDomain.ExecuteAssembly(Unknown Source)
+	at cli.Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly(Unknown Source)
+Caused by: java.lang.NoClassDefFoundError: net.sf.ehcache.CacheManager
+	at IKVM.Runtime.ByteCodeHelper.LoadTypeWrapper(Unknown Source)
+	at IKVM.Runtime.ByteCodeHelper.DynamicLoadMethodHandleImpl(Unknown Source)
+	at IKVM.Runtime.ByteCodeHelper.DynamicBinderMemberLookup(Unknown Source)
+	at be.business.connector.common.module.AbstractIntegrationModule.initCaching(AbstractIntegrationModule.java:153)
+	at be.business.connector.common.module.AbstractIntegrationModule.init(AbstractIntegrationModule.java:142)
+	... 40 more
+Caused by: java.lang.ClassNotFoundException: net.sf.ehcache.CacheManager
+	at ikvm.runtime.AppDomainAssemblyClassLoader.findClass(AppDomainAssemblyClassLoader.java:51)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:440)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:375)
+	at java.lang.ClassLoader.loadClassInternal(ClassLoader.java:490)
+	at IKVM.Internal.ClassLoaderWrapper.LoadClassImpl(Unknown Source)
+	at IKVM.Internal.AssemblyClassLoader.LoadClassImpl(Unknown Source)
+	at IKVM.Internal.ClassLoaderWrapper.LoadClassByDottedNameFastImpl(Unknown Source)
+	at IKVM.Internal.ClassLoaderWrapper.LoadClassByDottedName(Unknown Source)
+	... 45 more

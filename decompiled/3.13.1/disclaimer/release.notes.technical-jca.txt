@@ -1,0 +1,57 @@
+**************************************************
+* eHealth Technical Connector JCA  RELEASE NOTES *
+**************************************************
+3.13.1 release (july 2017)
+  . N/A
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . N/A
+
+3.12.0 internal release (mai 2017)
+  . N/A
+
+3.11.1 release (october 2016)
+  . N/A
+
+3.11.0 internal release (october 2016)
+  . N/A
+
+3.10.4 release (september 2016)
+  . N/A
+
+3.10.3 release
+  . internal release
+
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release (july 2016)
+  . N/A
+
+3.10.0 release (june 2016)
+  . improvement                                                                     uniformisation of all connector versions
+
+3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+3.4.0-beta-10 release
+  . N/A
+
+3.4.0-beta-9 release
+  . improvement b.f.e.t.distributedkeys.DistributedKeyStoreRegistry               Adding flushCache method to clean the cached keystores
+  . bug-fix     b.f.e.t.distributedkeys.jca.DistributedKeyStore                   Cache is linked to the KeyStore and not longer to all the keystores
+  . improvement b.e.t.beid.BeIDInfo                                               Prevent resource leaking (closing beidcard after mapping objects)
+
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+3.4.0-beta-7 release
+  . N/A
+
+3.4.0-beta-6 release
+  . internal ehealth release (not published or distributed)
+
+3.4.0-beta-5 release
+  . initial version

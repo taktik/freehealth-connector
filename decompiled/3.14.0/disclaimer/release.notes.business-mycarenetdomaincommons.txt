@@ -1,0 +1,7 @@
+**********************************************************
+* eHealth Business Mycarenet Commons RELEASE NOTES       *
+**********************************************************
+3.13.1 release (july 2017)
+  . Initial release (see also migration.guide.business-mycarenetcommons.txt)
+  
+3.13.0 internal release (july 2017)

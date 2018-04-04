@@ -1,0 +1,114 @@
+/*
+ *
+ * Copyright (C) 2018 Taktik SA
+ *
+ * This file is part of FreeHealthConnector.
+ *
+ * FreeHealthConnector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation.
+ *
+ * FreeHealthConnector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with FreeHealthConnector.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package org.taktik.freehealth.middleware.service.impl
+
+import be.fgov.ehealth.genericinsurability.core.v1.CareProviderType
+import be.fgov.ehealth.genericinsurability.core.v1.CareReceiverIdType
+import be.fgov.ehealth.genericinsurability.core.v1.CommonInputType
+import be.fgov.ehealth.genericinsurability.core.v1.IdType
+import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityContactTypeType.AMBULATORY_CARE
+import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityContactTypeType.HOSPITALIZED_ELSEWHERE
+import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityRequestDetailType
+import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityRequestTypeType.INFORMATION
+import be.fgov.ehealth.genericinsurability.core.v1.LicenseType
+import be.fgov.ehealth.genericinsurability.core.v1.NihiiType
+import be.fgov.ehealth.genericinsurability.core.v1.OriginType
+import be.fgov.ehealth.genericinsurability.core.v1.PackageType
+import be.fgov.ehealth.genericinsurability.core.v1.PeriodType
+import be.fgov.ehealth.genericinsurability.core.v1.RecordCommonInputType
+import be.fgov.ehealth.genericinsurability.core.v1.RequestType
+import be.fgov.ehealth.genericinsurability.core.v1.SingleInsurabilityRequestType
+import be.fgov.ehealth.genericinsurability.core.v1.ValueRefString
+import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsXmlOrFlatRequestType
+import ma.glasnost.orika.MapperFacade
+import org.joda.time.DateTime
+import org.springframework.stereotype.Service
+import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
+import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
+import org.taktik.connector.technical.config.ConfigFactory
+import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
+import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
+import org.taktik.freehealth.middleware.mapper.toInsurabilityInfoDto
+import org.taktik.freehealth.middleware.service.GenInsService
+import org.taktik.freehealth.middleware.service.STSService
+import java.math.BigDecimal
+import java.util.*
+
+@Service
+class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : GenInsService {
+    private val freehealthGenInsService: org.taktik.connector.business.genins.service.GenInsService = org.taktik.connector.business.genins.service.impl.GenInsServiceImpl()
+    private val config = ConfigFactory.getConfigValidator(listOf())
+
+    override fun getGeneralInsurabity(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patientSsin: String?, io: String?, ioMembership: String?, date: Date?, hospitalized: Boolean): InsurabilityInfoDto {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        assert(patientSsin != null || io != null && ioMembership != null)
+
+        val packageInfo = McnConfigUtil.retrievePackageInfo("genins")
+        val request = GetInsurabilityAsXmlOrFlatRequestType().apply {
+            recordCommonInput = RecordCommonInputType().apply { inputReference = BigDecimal(IdGeneratorFactory.getIdGenerator().generateId()) }
+            commonInput = CommonInputType().apply {
+                request = RequestType().apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
+                inputReference = ""+IdGeneratorFactory.getIdGenerator().generateId()
+                origin = OriginType().apply {
+                    `package` = PackageType().apply {
+                        license = LicenseType().apply {
+                            username = packageInfo.userName
+                            password = packageInfo.password
+                        }
+                        name = ValueRefString().apply { value = packageInfo.packageName }
+                    }
+                    siteID = ValueRefString().apply { value = config.getProperty( "mycarenet.${PropertyUtil.retrieveProjectNameToUse("genins", "mycarenet.")}.site.id") }
+                    careProvider = CareProviderType().apply {
+                        nihii = NihiiType().apply { quality = hcpQuality; value = ValueRefString().apply { value = hcpNihii } }
+                        physicalPerson = IdType().apply {
+                            name = ValueRefString().apply { value = hcpName }
+                            ssin = ValueRefString().apply { value = hcpSsin }
+                            nihii = NihiiType().apply { quality = "doctor"; value = ValueRefString().apply { value = hcpNihii } }
+                        }
+                    }
+                }
+            }
+            request = SingleInsurabilityRequestType().apply {
+                insurabilityRequestDetail = InsurabilityRequestDetailType().apply {
+                    insurabilityRequestType = INFORMATION
+                    careReceiverId = CareReceiverIdType().apply {
+                        inss = patientSsin
+                        mutuality = io
+                        regNrWithMut = ioMembership
+                    }
+                    insurabilityContactType = if (hospitalized) HOSPITALIZED_ELSEWHERE else AMBULATORY_CARE
+                    insurabilityReference = "" + System.currentTimeMillis()
+                    period = PeriodType().apply {
+                        val dateTime = date?.let { DateTime(it.time) } ?: DateTime()
+                        periodStart = dateTime
+                        periodEnd = dateTime
+                    }
+                }
+            }
+        }
+
+        return try {
+            freehealthGenInsService.getInsurability(samlToken, request).toInsurabilityInfoDto()
+        } catch (e: javax.xml.ws.soap.SOAPFaultException) {
+            InsurabilityInfoDto(faultCode = e.fault?.faultCode, faultSource = e.message, faultMessage = e.fault.faultString)
+        }
+    }
+}

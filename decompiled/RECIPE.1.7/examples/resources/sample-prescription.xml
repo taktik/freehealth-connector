@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<kmehrmessage xmlns="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ehealth.fgov.be/standards/kmehr/schema/v1 ../ehealth-kmehr/XSD/recipe_PP_kmehr_elements-1_17.xsd">
+	<header>
+		<standard>
+			<cd S="CD-STANDARD" SV="1.18">20160601</cd>
+		</standard>
+		<id S="ID-KMEHR" SV="1.0">19006951001.20090110090000000</id>
+		<id S="LOCAL" SL="ID-MEDISOFT" SV="versie 1.23.25.0">8e1c4ea4-3825-48e4-bcc2b8cadfa7a897</id>
+		<date>2016-09-28</date>
+		<time>09:00:00</time>
+		<sender>
+			<hcparty>
+				<id S="ID-HCPARTY" SV="1.0">19006951001</id>
+				<cd S="CD-HCPARTY" SV="1.9">persphysician</cd>
+				<firstname>Donald</firstname>
+				<familyname>Duck</familyname>
+			</hcparty>
+			<hcparty>
+				<cd S="CD-HCPARTY" SV="1.9">application</cd>
+				<name>MySoftware</name>
+				<telecom>
+					<cd S="CD-ADDRESS" SV="1.1">work</cd>
+					<cd S="CD-TELECOM" SV="1.0">phone</cd>
+					<telecomnumber>02/100.11.12</telecomnumber>
+				</telecom>
+				<telecom>
+					<cd S="CD-ADDRESS" SV="1.1">work</cd>
+					<cd S="CD-TELECOM" SV="1.0">email</cd>
+					<telecomnumber>tom@mysoftware.com</telecomnumber>
+				</telecom>
+			</hcparty>
+		</sender>
+		<recipient>
+			<hcparty>
+				<id S="ID-HCPARTY" SV="1.0">RECIPE</id>
+				<cd S="CD-HCPARTY" SV="1.9">orgpublichealth</cd>
+				<name>Recip-e</name>
+			</hcparty>
+		</recipient>
+	</header>
+	<folder>
+		<id S="ID-KMEHR" SV="1.0">1</id>
+		<patient>
+			<id S="ID-PATIENT" SV="1.0">76020727360</id>
+			<firstname>Fred</firstname>
+			<familyname>Flintstone</familyname>
+			<birthdate>
+				<date>1976-02-07</date>
+			</birthdate>
+			<sex>
+				<cd S="CD-SEX" SV="1.1">male</cd>
+			</sex>
+		</patient>
+		<transaction>
+			<id S="ID-KMEHR" SV="1.0">1</id>
+			<cd S="CD-TRANSACTION" SV="1.9">pharmaceuticalprescription</cd>
+			<date>2016-09-28</date>
+			<time>09:00:00</time>
+			<author>
+				<hcparty>
+					<id S="ID-HCPARTY" SV="1.0">19006951001</id>
+					<cd S="CD-HCPARTY" SV="1.9">persphysician</cd>
+					<name>Dr. Duck Donald</name>
+					<address>
+						<cd S="CD-ADDRESS" SV="1.1">work</cd>
+						<country>
+							<cd S="CD-FED-COUNTRY" SV="1.2">be</cd>
+						</country>
+						<zip>1000</zip>
+						<city>Brussel</city>
+						<street>Grote Markt</street>
+						<housenumber>7</housenumber>
+					</address>
+					<telecom>
+						<cd S="CD-ADDRESS" SV="1.1">work</cd>
+						<cd S="CD-TELECOM" SV="1.0">phone</cd>
+						<telecomnumber>02/221.21.21</telecomnumber>
+					</telecom>
+				</hcparty>
+			</author>
+			<iscomplete>true</iscomplete>
+			<isvalidated>true</isvalidated>
+			<heading>
+				<id S="ID-KMEHR" SV="1.0">1</id>
+				<cd S="CD-HEADING" SV="1.2">prescription</cd>
+				<item>
+					<id S="ID-KMEHR" SV="1.0">1</id>
+					<cd S="CD-ITEM" SV="1.9">medication</cd>
+					<content>
+						<medicinalproduct>
+							<intendedcd S="CD-DRUG-CNK" SV="LOCALDB">0318717</intendedcd>
+							<intendedname>ADALAT OROS 30 COMP 28 X 30 MG</intendedname>
+						</medicinalproduct>
+					</content>
+					<beginmoment>
+						<date>2016-09-28</date>
+					</beginmoment>
+					<lifecycle>
+						<cd S="CD-LIFECYCLE" SV="1.7">prescribed</cd>
+					</lifecycle>
+					<quantity>
+						<decimal>1</decimal>
+					</quantity>
+					<posology>
+						<text L="nl">1 tablet per dag</text>
+					</posology>
+				</item>
+			</heading>
+		</transaction>
+	</folder>
+</kmehrmessage>

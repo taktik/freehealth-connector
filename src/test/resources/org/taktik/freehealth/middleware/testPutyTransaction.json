@@ -1,0 +1,281 @@
+{
+  "response": {
+    "id": {
+      "value": "c27d9a0d-2283-4ffa-aa50-c5378ffaf344",
+      "s": "ID_KMEHR",
+      "sv": "1.0",
+      "sl": null
+    },
+    "author": {
+      "hcparties": [
+        {
+          "ids": [
+            {
+              "value": "1990001916",
+              "s": "ID_HCPARTY",
+              "sv": "1.0",
+              "sl": null
+            }
+          ],
+          "cds": [
+            {
+              "value": "hub",
+              "s": "CD_HCPARTY",
+              "sv": "1.0",
+              "dn": null,
+              "l": "en",
+              "sl": null
+            }
+          ],
+          "firstname": null,
+          "familyname": null,
+          "name": "VITALINK",
+          "addresses": [],
+          "telecoms": []
+        }
+      ]
+    },
+    "date": {
+      "millisOfDay": 0,
+      "secondOfDay": 0,
+      "minuteOfDay": 0,
+      "centuryOfEra": 21,
+      "yearOfEra": 2017,
+      "yearOfCentury": 17,
+      "weekyear": 2017,
+      "monthOfYear": 10,
+      "weekOfWeekyear": 42,
+      "hourOfDay": 0,
+      "minuteOfHour": 0,
+      "secondOfMinute": 0,
+      "millisOfSecond": 0,
+      "era": 1,
+      "dayOfYear": 291,
+      "dayOfWeek": 3,
+      "dayOfMonth": 18,
+      "year": 2017,
+      "zone": {
+        "fixed": true,
+        "id": "+02:00"
+      },
+      "millis": 1508277600000,
+      "chronology": {
+        "zone": {
+          "fixed": true,
+          "id": "+02:00"
+        },
+        "minimumDaysInFirstWeek": 4
+      },
+      "afterNow": false,
+      "beforeNow": true,
+      "equalNow": false
+    },
+    "time": {
+      "millisOfDay": 47195607,
+      "secondOfDay": 47195,
+      "minuteOfDay": 786,
+      "centuryOfEra": 20,
+      "yearOfEra": 1970,
+      "yearOfCentury": 70,
+      "weekyear": 1970,
+      "monthOfYear": 1,
+      "weekOfWeekyear": 1,
+      "hourOfDay": 13,
+      "minuteOfHour": 6,
+      "secondOfMinute": 35,
+      "millisOfSecond": 607,
+      "era": 1,
+      "dayOfYear": 1,
+      "dayOfWeek": 4,
+      "dayOfMonth": 1,
+      "year": 1970,
+      "zone": {
+        "fixed": true,
+        "id": "+02:00"
+      },
+      "millis": 39995607,
+      "chronology": {
+        "zone": {
+          "fixed": true,
+          "id": "+02:00"
+        },
+        "minimumDaysInFirstWeek": 4
+      },
+      "afterNow": false,
+      "beforeNow": true,
+      "equalNow": false
+    },
+    "request": {
+      "id": {
+        "value": "null.11478761004",
+        "s": "ID_KMEHR",
+        "sv": "1.0",
+        "sl": null
+      },
+      "author": {
+        "hcparties": [
+          {
+            "ids": [
+              {
+                "value": "11478761004",
+                "s": "ID_HCPARTY",
+                "sv": "1.0",
+                "sl": null
+              },
+              {
+                "value": "11478761004",
+                "s": "ID_ENCRYPTION_ACTOR",
+                "sv": "1.0",
+                "sl": null
+              }
+            ],
+            "cds": [
+              {
+                "value": "persphysician",
+                "s": "CD_HCPARTY",
+                "sv": "1.0",
+                "dn": null,
+                "l": "en",
+                "sl": null
+              },
+              {
+                "value": "NIHII",
+                "s": "CD_ENCRYPTION_ACTOR",
+                "sv": "1.0",
+                "dn": null,
+                "l": "en",
+                "sl": null
+              }
+            ],
+            "firstname": null,
+            "familyname": null,
+            "name": null,
+            "addresses": [],
+            "telecoms": []
+          },
+          {
+            "ids": [
+              {
+                "value": "HDMP_HEALTHONE_72",
+                "s": "LOCAL",
+                "sv": "1.0",
+                "sl": "endusersoftwareinfo"
+              }
+            ],
+            "cds": [
+              {
+                "value": "application",
+                "s": "CD_HCPARTY",
+                "sv": "1.0",
+                "dn": null,
+                "l": "en",
+                "sl": null
+              }
+            ],
+            "firstname": null,
+            "familyname": null,
+            "name": null,
+            "addresses": [],
+            "telecoms": []
+          }
+        ]
+      },
+      "date": {
+        "millisOfDay": 0,
+        "secondOfDay": 0,
+        "minuteOfDay": 0,
+        "centuryOfEra": 21,
+        "yearOfEra": 2017,
+        "yearOfCentury": 17,
+        "weekyear": 2017,
+        "monthOfYear": 10,
+        "weekOfWeekyear": 42,
+        "hourOfDay": 0,
+        "minuteOfHour": 0,
+        "secondOfMinute": 0,
+        "millisOfSecond": 0,
+        "era": 1,
+        "dayOfYear": 291,
+        "dayOfWeek": 3,
+        "dayOfMonth": 18,
+        "year": 2017,
+        "zone": {
+          "fixed": true,
+          "id": "+02:00"
+        },
+        "millis": 1508277600000,
+        "chronology": {
+          "zone": {
+            "fixed": true,
+            "id": "+02:00"
+          },
+          "minimumDaysInFirstWeek": 4
+        },
+        "afterNow": false,
+        "beforeNow": true,
+        "equalNow": false
+      },
+      "time": {
+        "millisOfDay": 47192501,
+        "secondOfDay": 47192,
+        "minuteOfDay": 786,
+        "centuryOfEra": 20,
+        "yearOfEra": 1970,
+        "yearOfCentury": 70,
+        "weekyear": 1970,
+        "monthOfYear": 1,
+        "weekOfWeekyear": 1,
+        "hourOfDay": 13,
+        "minuteOfHour": 6,
+        "secondOfMinute": 32,
+        "millisOfSecond": 501,
+        "era": 1,
+        "dayOfYear": 1,
+        "dayOfWeek": 4,
+        "dayOfMonth": 1,
+        "year": 1970,
+        "zone": {
+          "fixed": true,
+          "id": "+02:00"
+        },
+        "millis": 39992501,
+        "chronology": {
+          "zone": {
+            "fixed": true,
+            "id": "+02:00"
+          },
+          "minimumDaysInFirstWeek": 4
+        },
+        "afterNow": false,
+        "beforeNow": true,
+        "equalNow": false
+      },
+      "maxrows": null,
+      "breaktheglass": null
+    }
+  },
+  "acknowledge": {
+    "iscomplete": false,
+    "errors": [
+      {
+        "ids": [],
+        "cds": [
+          {
+            "value": "427",
+            "s": "LOCAL",
+            "sv": "1.0",
+            "sl": "vitalinkstatuscode",
+            "dn": null,
+            "l": "en"
+          }
+        ],
+        "description": {
+          "value": "Invalid \"Region Information\". It must be a valid and existing NIS code.",
+          "l": "en"
+        },
+        "url": null
+      }
+    ]
+  },
+  "transaction": null
+}

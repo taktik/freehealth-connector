@@ -1,0 +1,48 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:errors:core:v1" xmlns:soa="urn:be:fgov:ehealth:errors:soa:v1" targetNamespace="urn:be:fgov:ehealth:errors:soa:v1"
+    elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+    <xs:annotation>
+        <xs:documentation xml:lang="en">
+            This schema describes the structure of an error detail as it
+            is communicated by the SOA Platform to the consumer. This error detail might
+            be embedded in another structure. This is the case when the
+            SOAP
+            protocol is used. In that case this structure is
+            embedded in the Soap:Fault "detail" element
+		</xs:documentation>
+    </xs:annotation>
+    <xs:import namespace="urn:be:fgov:ehealth:errors:core:v1" schemaLocation="ehealth-errors-schema-core-1_0.xsd" />
+    <xs:element name="SystemError">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="soa:SOAErrorType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="BusinessError">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="soa:SOAErrorType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="SOAErrorType">
+        <xs:complexContent>
+            <xs:extension base="core:ErrorType">
+                <xs:sequence>
+                    <xs:element name="Environment">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Development" />
+                                <xs:enumeration value="Test" />
+                                <xs:enumeration value="Integration" />
+                                <xs:enumeration value="Acceptation" />
+                                <xs:enumeration value="Simulation" />
+                                <xs:enumeration value="Production" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

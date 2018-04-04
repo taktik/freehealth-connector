@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- CVS Version 1.13 --><!-- edited with XMLSpy v2009 (http://www.altova.com) by Smals-MVM ASBL/VZW (Smals-MVM ASBL/VZW) --><xsd:schema targetNamespace="http://www.ehealth.fgov.be/hubservices/protocol/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ehealth.fgov.be/hubservices/protocol/v1" xmlns:core="http://www.ehealth.fgov.be/hubservices/core/v1">
+	<xsd:import namespace="http://www.ehealth.fgov.be/hubservices/core/v1" schemaLocation="hubservices_core-1_1.xsd"/>
+	<!-- DeclareTransaction Service -->
+	<xsd:element name="DeclareTransactionRequest" type="core:DeclareTransactionRequestType"/>
+	<xsd:element name="DeclareTransactionResponse" type="core:DeclareTransactionResponseType"/>
+	<!-- PutTransaction Service -->
+	<xsd:element name="PutTransactionRequest" type="core:PutTransactionRequestType"/>
+	<xsd:element name="PutTransactionResponse" type="core:PutTransactionResponseType"/>
+	<!-- GetTransactionList Service -->
+	<xsd:element name="GetTransactionListRequest" type="core:GetTransactionListRequestType"/>
+	<xsd:element name="GetTransactionListResponse" type="core:GetTransactionListResponseType"/>
+	<!-- GetTransaction -->
+	<xsd:element name="GetTransactionRequest" type="core:GetTransactionRequestType"/>
+	<xsd:element name="GetTransactionResponse" type="core:GetTransactionResponseType"/>
+	<!-- RevokeTransaction -->
+	<xsd:element name="RevokeTransactionRequest" type="core:RevokeTransactionRequestType"/>
+	<xsd:element name="RevokeTransactionResponse" type="core:RevokeTransactionResponseType"/>
+	<!-- PutPatient Service -->
+	<xsd:element name="PutPatientRequest" type="core:PutPatientRequestType"/>
+	<xsd:element name="PutPatientResponse" type="core:PutPatientResponseType"/>
+	<!-- GetPatient Service -->
+	<xsd:element name="GetPatientRequest" type="core:GetPatientRequestType"/>
+	<xsd:element name="GetPatientResponse" type="core:GetPatientResponseType"/>
+	<!-- PutPatientConsent Service -->
+	<xsd:element name="PutPatientConsentRequest" type="core:PutPatientConsentRequestType"/>
+	<xsd:element name="PutPatientConsentResponse" type="core:PutPatientConsentResponseType"/>
+	<!-- GetPatientConsent Service -->
+	<xsd:element name="GetPatientConsentRequest" type="core:GetPatientConsentRequestType"/>
+	<xsd:element name="GetPatientConsentResponse" type="core:GetPatientConsentResponseType"/>
+	<!-- RevokePatientConsent Service -->
+	<xsd:element name="RevokePatientConsentRequest" type="core:RevokePatientConsentRequestType"/>
+	<xsd:element name="RevokePatientConsentResponse" type="core:RevokePatientConsentResponseType"/>
+	<!-- PutHCParty Service -->
+	<xsd:element name="PutHCPartyRequest" type="core:PutHCPartyRequestType"/>
+	<xsd:element name="PutHCPartyResponse" type="core:PutHCPartyResponseType"/>
+	<!-- GetHCParty Service -->
+	<xsd:element name="GetHCPartyRequest" type="core:GetHCPartyRequestType"/>
+	<xsd:element name="GetHCPartyResponse" type="core:GetHCPartyResponseType"/>
+	<!-- PutHCPartyConsent Service -->
+	<xsd:element name="PutHCPartyConsentRequest" type="core:PutHCPartyConsentRequestType"/>
+	<xsd:element name="PutHCPartyConsentResponse" type="core:PutHCPartyConsentResponseType"/>
+	<!-- GetHCPartyConsent Service -->
+	<xsd:element name="GetHCPartyConsentRequest" type="core:GetHCPartyConsentRequestType"/>
+	<xsd:element name="GetHCPartyConsentResponse" type="core:GetHCPartyConsentResponseType"/>
+	<!-- RevokeHCPartyConsent Service -->
+	<xsd:element name="RevokeHCPartyConsentRequest" type="core:RevokeHCPartyConsentRequestType"/>
+	<xsd:element name="RevokeHCPartyConsentResponse" type="core:RevokeHCPartyConsentResponseType"/>
+	<!-- PutHCPartyPatientConsent Service -->
+	<xsd:element name="PutTherapeuticLinkRequest" type="core:PutTherapeuticLinkRequestType"/>
+	<xsd:element name="PutTherapeuticLinkResponse" type="core:PutTherapeuticLinkResponseType"/>
+	<!-- GetHCPartyPatientConsent Service -->
+	<xsd:element name="GetTherapeuticLinkRequest" type="core:GetTherapeuticLinkRequestType"/>
+	<xsd:element name="GetTherapeuticLinkResponse" type="core:GetTherapeuticLinkResponseType"/>
+	<!-- RevokeHCPartyPatientConsent Service -->
+	<xsd:element name="RevokeTherapeuticLinkRequest" type="core:RevokeTherapeuticLinkRequestType"/>
+	<xsd:element name="RevokeTherapeuticLinkResponse" type="core:RevokeTherapeuticLinkResponseType"/>
+	<!-- PutAccessRight Service -->
+	<xsd:element name="PutAccessRightRequest" type="core:PutAccessRightRequestType"/>
+	<xsd:element name="PutAccessRightResponse" type="core:PutAccessRightResponseType"/>
+	<!-- GetAccessRight Service -->
+	<xsd:element name="GetAccessRightRequest" type="core:GetAccessRightRequestType"/>
+	<xsd:element name="GetAccessRightResponse" type="core:GetAccessRightResponseType"/>
+	<!-- RevokeAccessRight Service -->
+	<xsd:element name="RevokeAccessRightRequest" type="core:RevokeAccessRightRequestType"/>
+	<xsd:element name="RevokeAccessRightResponse" type="core:RevokeAccessRightResponseType"/>
+	<!--GetPatientAuditTrail -->
+	<xsd:element name="GetPatientAuditTrailRequest" type="core:GetPatientAuditTrailRequestType"/>
+	<xsd:element name="GetPatientAuditTrailResponse" type="core:GetPatientAuditTrailResponseType"/>
+	<!--RequestPublication -->
+	<xsd:element name="RequestPublicationRequest" type="core:RequestPublicationRequestType"/>
+	<xsd:element name="RequestPublicationResponse" type="core:RequestPublicationResponseType"/>
+</xsd:schema>

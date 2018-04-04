@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="urn:be:fgov:ehealth:certra:protocol:v1" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v1" xmlns:etee="urn:be:fgov:ehealth:etee:commons:core:v1"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:be:fgov:ehealth:certra:protocol:v1" elementFormDefault="qualified">
+
+  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v1" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-1_7.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:etee:commons:core:v1" schemaLocation="ehealth-etee-schema-core-1_1.xsd" />
+
+  <xs:element name="GetEHActorQualitiesResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0">
+            <xs:element name="EHActorQualitiesDataResponse" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetEHActorQualitiesRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="EHActorQualitiesDataRequest" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetRevocableCertificatesRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="RevocableCertificatesDataRequest" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetRevocableCertificatesResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0">
+            <xs:element name="RevocableCertificatesDataResponse" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RevokeRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="RevokeDataRequest" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RevokeResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType" />
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GenerateCertificateRequest">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="protocol:RequestType">
+          <xs:sequence>
+            <xs:element name="ehcsr" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GenerateCertificateResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0">
+            <xs:element name="requestId" type="xs:string" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GenerateCertificateForRenewalRequest">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="protocol:RequestType">
+          <xs:sequence>
+            <xs:element name="ehcsr" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GenerateCertificateForRenewalResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0">
+            <xs:element name="requestId" type="xs:string" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCertificateRequest">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="protocol:RequestType">
+          <xs:sequence>
+            <xs:element name="requestId" type="xs:string" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCertificateResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0">
+            <xs:element name="certificate" type="xs:base64Binary" />
+            <xs:element name="caCertificates" type="xs:base64Binary" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ValidateRenewRequest">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="protocol:RequestType">
+          <xs:sequence>
+            <xs:element name="signedDn" type="xs:base64Binary" />
+            <xs:element name="dn" type="xs:string" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ValidateRenewResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0">
+            <xs:element name="requestValid" type="xs:boolean" />
+            <xs:element name="additionalSearchCriterium" type="SearchCriteriumType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="validNotAfterDate" type="xs:string" />
+            <xs:element name="numberOfDaysBeforeExpiration" type="xs:int" />
+            <xs:element name="contactDataType" type="ContactDataType" minOccurs="0" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <!-- Response Element made optional because ValidateRenewResponse and 
+       GetExistingApplicationIdsResponse don't get a Response Element from ra-ws.
+       TODO: Fix in a future release -->
+  <xs:complexType name="RaResponseType">
+    <xs:sequence>
+      <xs:element name="Response" type="protocol:ResponseType" minOccurs="0" />
+      <xs:choice minOccurs="0">
+        <xs:element name="Error" type="ErrorType" minOccurs="1" maxOccurs="unbounded" />
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="ErrorType">
+    <xs:sequence>
+      <xs:element name="Code" type="xs:string" />
+      <xs:element name="Message" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ContactDataType">
+    <xs:sequence>
+      <xs:element name="EmailPrivate" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="EmailGeneral" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="PhonePrivate" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="PhoneGeneral" type="xs:string" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SearchCriteriumType">
+    <xs:sequence>
+      <xs:element name="Type" type="xs:string" />
+      <xs:element name="Value" type="xs:string" />
+      <xs:element name="ApplicationID" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="OrganizationTypeResponse">
+    <xs:complexType>
+      <xs:sequence minOccurs="0">
+        <xs:element ref="etee:OrganizationTypes" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OrganizationTypeRequest" nillable="true" />
+  <xs:element name="GetExistingApplicationIdsRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="SearchCriterium" type="SearchCriteriumType" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetExistingApplicationIdsResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="RaResponseType">
+          <xs:sequence minOccurs="0">
+            <xs:element name="SearchCriterium" type="SearchCriteriumType" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

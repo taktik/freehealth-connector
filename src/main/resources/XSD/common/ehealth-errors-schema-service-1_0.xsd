@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Oracle JAX-WS 2.1.5. --><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:see="urn:be:fgov:ehealth:errors:service:v1" xmlns:core="urn:be:fgov:ehealth:errors:core:v1" targetNamespace="urn:be:fgov:ehealth:errors:service:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+    <xs:annotation>
+        <xs:documentation xml:lang="en">
+            This schema describes the structure of an Error detail as it is
+            communicated by the SOA Service Component to the SOA Platform
+            Not all fields are communicated to the Consumer ! (This
+            error is transformed to
+            a SOA Error) 
+		</xs:documentation>
+    </xs:annotation>
+    <xs:import namespace="urn:be:fgov:ehealth:errors:core:v1" schemaLocation="ehealth-errors-schema-core-1_0.xsd"/>
+    <xs:element name="SystemError" type="see:ServiceErrorType"/>
+    <xs:element name="BusinessError" type="see:ServiceErrorType"/>
+    <xs:complexType name="ServiceErrorType">
+        <xs:complexContent>
+            <xs:extension base="core:ErrorType">
+                <xs:sequence>
+                    <xs:element name="Actor" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The actor is the element - in the message path - which detected/generated the fault.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="DateTime" type="xs:dateTime"/>
+                    <xs:element name="Trace" type="see:TraceType" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>
+                                could be a java stacktrace or any other kind of trace, used internally, to document on the cause of this error.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="TraceType">
+        <xs:sequence>
+            <xs:element name="TraceElement" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

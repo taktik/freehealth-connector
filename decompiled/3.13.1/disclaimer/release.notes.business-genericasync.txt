@@ -1,0 +1,100 @@
+**********************************************************
+* eHealth Business generic asycn connector RELEASE NOTES *
+**********************************************************
+3.13.1 release (july 2017)
+  . improvement               moved some dependencies from mycarenetcommons to mycarenetdomaincommons
+                              Were modified as a result:
+                              genericasync/pom.xml
+                              genericasync/src/main/java/be/ehealth/businessconnector/genericasync/builders/impl/RequestObjectBuilderImpl.java
+                              genericasync/src/main/java/be/ehealth/businessconnector/genericasync/mappers/CommonInputMapper.java
+                              genericasync/src/main/resources/dozer/genasync-commoninput.xml
+                              genericasync/src/test/java/be/ehealth/businessconnector/genericasync/integration/GenAsyncIntegrationTest.java
+                              genericasync/src/test/java/be/ehealth/businessconnector/genericasync/integration/GenAsyncIntegrationTestUtil.java
+                              genericasync/src/test/java/be/ehealth/businessconnector/genericasync/integration/GenAsyncUsageTemplate.java
+                              genericasync/src/test/java/be/ehealth/businessconnector/genericasync/integration/ParametrizedExternalScenariosIntegrationTest.java
+                              genericasync/src/test/java/be/ehealth/businessconnector/genericasync/mappers/CommonInputMapperTest.java
+                              genericasync/src/test/net/be/ehealth/businessconnector/genericasync/integration/GenAsyncIntegrationTest.cs
+                              genericasync/src/test/net/be/ehealth/businessconnector/genericasync/integration/GenAsyncIntegrationTestUtil.cs
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . improvement               using new McnPackageInfo class and corresponding utility methods
+  . improvement               now using HandlerChainUtil.buildChainWithValidator in GenAsyncServiceImpl
+  . improvement               added @Deprecation comments where needed
+  . improvement               Refactoring in ResponseObjectBuilderImpl, IncomingSecurityHandler, SAMLHolderOfKeyHandler and in GenAsyncServiceImpl
+
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  .   update                  using technical connector 3.11.0
+  .   improvement             added some explanatory comments
+  .   improvement             added methods generateXadesForBlob , with Blob domain object as input instead of BlobType
+  .   change                  now using mycarenet urls with port 9943          
+  .   change                  now using latest WSS4J implementation(2.0.7)
+
+3.10.4 release (september 2016)
+  . using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  . internal release
+  
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+
+3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+3.4.0-beta-11 release
+  . bugfix              removed duplicate SOAPHandler WsAddressingHandlerV200508
+  . change              added support for streaming
+  . change              refactoring to allow clockskew on incoming message
+  . change              added bootstrapping
+  . change              some minor checkstyle fixes
+  . change              adding possibility to modify default handlerchain for service
+  . change              adding XOP for genericAsync
+  . change              avoiding NPE when no SOAP header
+  
+
+3.4.0-beta-10 release
+  .   using latest version of technical connector 3.4.0-beta-9 
+
+3.4.0-beta-9 release
+  .   using latest version of technical connector 3.4.0-beta-9 
+
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+  
+3.4.0 beta-7 release
+       improvement       b.e.b.g.b.ResponseObjectBuilder now returns Map<Object, SignatureVerificationResult> when validation succeeds.
+       improvement       b.e.b.g.b.BuilderFactory.BuilderConfig : refactored (private) constructor, removed unnecessary parameter 
+
+3.4.0 beta-6 release
+  . using latest version of technical connector 3.4.0-beta-6
+
+3.4.0 beta-5 release
+ .    bugfix              fixed bug in handling xades signatures.
+ .    change              Crypto parameter not provided anymore to serviceFactory ( no impact on behaviour or interface )
+ .    change              now using factory to create GenericWsSender instead of constructor 
+ .    improvement               replaced new GenericWsSenderImpl() with factory method in service
+  
+3.4.0-beta-4 release
+.    change               removed internally used object Xades , now works directly with byte arrays
+ .  change                updated service to use new code to configure HandlerChain
+
+3.4.0 beta release
+.    change               added new method buildConfirmRequestWithHashes(OrigineType origin, List<byte[]> msgResponses, List<byte[]> tackResponses) on RequestObjectBuilderImpl
+.    change               updated location XSD files 
+
+3.3.0 beta release
+ .    improvement        logging standardized on sl4j
+ .    change             fixed issue with deflated
+ .    change             unused handler removed from ServiceFactory

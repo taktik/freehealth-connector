@@ -1,0 +1,59 @@
+<!--Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Oracle JAX-WS 2.1.3-07/10/2008 08:41 PM(bt).-->
+<!--edited with XMLSpy v2009 sp1 (http://www.altova.com) by user Eight (Smals)-->
+<xs:schema targetNamespace="urn:be:fgov:ehealth:etkdepot:1_0:protocol" elementFormDefault="qualified" xmlns="urn:be:fgov:ehealth:etkdepot:1_0:protocol" xmlns:core="urn:be:fgov:ehealth:commons:1_0:core" xmlns:protocol="urn:be:fgov:ehealth:commons:1_0:protocol" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:import namespace="urn:be:fgov:ehealth:commons:1_0:core" schemaLocation="../common/ehealth-commons-schema-core-1_0.xsd"/>
+   <xs:import namespace="urn:be:fgov:ehealth:commons:1_0:protocol" schemaLocation="../common/ehealth-commons-schema-protocol-1_0.xsd"/>
+   <xs:element name="GetEtkRequest">
+      <xs:complexType>
+         <xs:complexContent>
+            <xs:extension base="protocol:RequestType">
+               <xs:sequence>
+                  <xs:element name="SearchCriteria" type="SearchCriteriaType"/>
+               </xs:sequence>
+            </xs:extension>
+         </xs:complexContent>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="GetEtkResponse">
+      <xs:complexType>
+         <xs:complexContent>
+            <xs:extension base="protocol:ResponseType">
+               <xs:sequence minOccurs="0">
+                  <xs:element name="GivenSearchCriteria" type="SearchCriteriaType"/>
+                  <xs:choice minOccurs="0">
+                     <xs:element ref="MatchingEtk" minOccurs="1" maxOccurs="unbounded"/>
+                     <xs:element name="ETK" type="xs:base64Binary"/>
+                     <xs:element name="Error" type="ErrorType" minOccurs="1" maxOccurs="unbounded"/>
+                  </xs:choice>
+               </xs:sequence>
+            </xs:extension>
+         </xs:complexContent>
+      </xs:complexType>
+   </xs:element>
+   <xs:complexType name="IdentifierType">
+      <xs:sequence>
+         <xs:element name="Type" type="xs:string"/>
+         <xs:element name="Value" type="xs:string"/>
+         <xs:element name="ApplicationID" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="ErrorType">
+      <xs:sequence>
+         <xs:element name="Code" type="xs:string"/>
+         <xs:element name="Message" type="xs:string"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:element name="ETK" type="xs:base64Binary"/>
+   <xs:complexType name="SearchCriteriaType">
+      <xs:sequence>
+         <xs:element name="Identifier" type="IdentifierType" minOccurs="1" maxOccurs="unbounded"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:element name="MatchingEtk">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="Identifier" type="IdentifierType" minOccurs="1" maxOccurs="unbounded"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>

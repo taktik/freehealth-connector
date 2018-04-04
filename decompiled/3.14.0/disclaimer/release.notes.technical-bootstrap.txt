@@ -1,0 +1,62 @@
+*********************************************************
+* eHealth Technical Connector Bootstrap   RELEASE NOTES *
+*********************************************************
+3.13.1 release (july 2017)
+  . N/A
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . bug-fix     b.f.e.t.boostrap.bcp.EndpointUpdater                               bug-fix for java.io.tempdir inconsitency.
+
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . N/A
+
+3.10.4 release (september 2016)
+  . bug-fix      b.f.e.t.bootstrap.bcp.EndpointUpdater                             adding reset of EndpointDistributor
+
+3.10.3 release
+  . internal release
+
+3.10.2 release (july 2016)
+  . improvement  b.f.e.t.bootstrap.tsl.TrustStoreUpdater                            Improved logging
+  . bug-fix      b.f.e.t.bootstrap.tsl.parser.TrustServiceStatusListParser          Fixing issue with namespace validation
+  . bug-fix      b.f.e.t.bootstrap.tsl.parser.signature.Trust..Verifier             Specify UTF-8 as charset encoding
+  . improvement  b.f.e.t.bootstrap.utils.BootStrapUtils                             minor refactoring (code cleanup)
+
+3.10.1 release
+  . internal release
+
+3.10.0 release (june 2016)
+  . added        b.f.e.t.bootstrap.bcp.*                                            Adding support for the BCP solution.
+  . bug-fix      b.f.e.t.bootstrap.tsl.parser.TrustServiceStatusListParser          Fixing issue with next element parsing
+  . renamed      b.f.e.t.bootstrap.tsl.signature.Trust..Verifier                    Fixing typo in FQN
+                                                                                    All the exposed methods are public static
+                                                                                    Improved logging
+  . improvement  b.f.e.t.bootstrap.TrustStoreUpdater                                Using static methods instead of 'local' ones
+  . improvement  b.f.e.t.boostrap.uddi.UddiUpdater                                  minor refactoring (code cleanup)
+  . improvement  b.f.e.t.boostrap.utils.BootstrapUtils                              minor refactoring (code cleanup)
+  . improvement                                                                     uniformisation of all connector versions
+
+3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)  
+
+
+3.4.0-beta-10 release
+  . added        b.f.e.t.bootstrap.tsl.TrustStoreUpdater                            Adding the update of TSLO store
+                                                                                    Merging self signed certificates for TSLO list into CA certficates store
+                                                                                    minor refactoring (code cleanup)
+  . bug-fix      b.f.e.t.bootstrap.tsl.parser.TrustServiceStatusListParser          fixing issue for obtaining nextUpdate field
+                                                                                    using InputStream instead of InputSoure
+  . improvement  b.f.e.t.bootstrap.tsl.signature.Trust..Verifier                    using the TSL signing store instead of all the crt files on the classpath
+  . added        b.f.e.t.bootstrap.utils.BootStrapUtils                             when writing to a keystore the aliases are prefixed with a sequence number
+                                                                                    possibility to transfer selfsigned certificates from on store to another.
+  . remove       b.f.e.t.bootstrap.utils.ResourceList                               removed unused class
+
+
+3.4.0-beta-9 release
+  initial release

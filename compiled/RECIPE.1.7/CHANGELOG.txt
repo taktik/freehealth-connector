@@ -1,0 +1,182 @@
+
+V0.1.0 - 20/07/2010
+
+	Inital version including module and its dependencies. A mock version is also included in the module.
+
+	
+V0.2.0 - 06/09/2010
+
+	Changes versus V0.1.0 : 
+		- Sample prescription can be updated in mock modules. See config parameters section MOCK_%.
+		- MY_ETK parameter is removed. The ETK of the sender is retrieved from ETK Depot.
+		- Executor Module : Service GetPrescription, new attributes are added : sealedPrescription, encryptionKey
+		- Back-end connectivity enabled by default :
+			- STS @ eHealth
+			- ETK depot simulated by Recip-e central system
+			- KGSS simulated by Recip-e central system
+		- Executor Module : New service revokePrescription.
+		
+V0.3.0 - 20/10/2010
+
+	Changes versus V0.2.0 :
+		- Kmehr schema is upgraded to version 20100901. ("ns1" prefix is not required anymore)
+		- E-Health services are used (ETKDepot, KGSS, ESB, ...)
+		- Security enabled : the EID and the in code are requested on CreateSession(). 
+			- Pharmacy : EID can be the one of anybody.
+			- Prescriber : EID must belong to a valid prescriber. Contact us to link a test NIHII id to your EID.
+		- Application requires a system certificate to communicate with the server :
+			- Pharmacy : system certificate is linked to the pharmacy NIHII-PHARMACY. Contact us to get a test certificate.
+			- Prescriber : system certificate is linked to the software ex : CBE=****, MedicalSoft. Contact us to get a test certificate.
+		- Personal certificates are required for FallbackSession and must be added to the applicaiton keystore. Follow this procedure to get a personal certificate :
+			1. Use the ETEE requestor tool fase 1 to create an ehcsr. (http://wwwacc.ehealth.fgov.be/JWS/ETEE/etee-requestor_nl.jnlp) 
+			   => Please fill in the correct contact information (personal email and group email). 
+			2. Send an e-mail to ehealthdev@ehealth.fgov.be, kris.vanaken@ehealth.fgov.be, bernard.meurisse@ehealth.fgov.be 
+			   This e-mail must contains the generated ehcsr in step 1 and also the additional NIHII number needed for searching the ETK. 
+			3. You will recieve an e-mail, using the contact information in step 1 , from eHealth (AccessCoordination) with in this e-mail the public key and root CA.         
+			4. Use the ETEE requestor tool fase 2 to generate and register the ETK's. 
+			Note : the tool keystore explorer can be used to maintain the keystore and define the passwords of each provate key. (http://www.lazgosoftware.com)
+		- Bug fixing :
+			- NullPointerException on first hasValidSession() invokation
+			- XSD loading issue when path contains spaces
+			- Modules behind proxy configuration
+		- Sample :
+			- Command line tools can run with a session already open previously (see option -Dsession)
+			- GUI tools improved : Copy/Paste of RID
+
+V0.4.0 - 12/01/2011
+
+	Changes versus V0.3.0 :
+		- Modules configured to use Pre-Prod Environment
+		- Certificate management improved using P12 certificates.
+		- Bug Fixing : 
+			- Login not possible when specific character in the user name
+			- Decryption of messages sealed with expired certificates
+
+V0.5.0 - 23/05/2011
+
+	Changes versus V0.4.0 :
+		- Minor Bug fixing (error management, etc)
+		- MyCarenet (Executor module only), more information can be found in the integration specifications
+		
+V0.6.0 - 25/10/2011
+
+	Changes versus V0.5.0 :
+		- Bug fixing 
+			- Certificate parser couldn't handle production certificates
+		- MyCarenet (Executor module only):
+			- MessageId shown in GUI and logged in the log files.
+			- Minor text changes in GUI
+			- Possible to do a mutuality insurability search.
+		- Updated error messages
+
+V0.7.0 - 19/01/2012
+	Changes versus V0.6.1:
+		- Fixed double error messages in the log and wrong error message shown to the user.
+		
+V0.8.0 - 12/07/2012
+	Changes versus V0.7.0:
+		- System keystores information can be configured by calling setSystemKeystoreProperties. Keystore information in the property file is deprecated.
+		- Old notifications can be opened by providing the previous keystore information.
+		- Bug Fixing : 
+			- Patient id with leading zero's were not correctly send to recip-e.
+			- Exception �Objectverwijzing is niet op een exemplaar van een object ingesteld" with the eid solved
+
+v0.9.0 - 25/09/2012
+	Changes versus v0.8.0:
+		- SDK refactoring 
+			- Each project has his own integration module.
+		- Added the GFD DPP project
+
+v0.9.5T - 12/03/2013
+	Changes versus v0.9.0:
+		- Not used Recip-e code has been removed.
+		- Bug fixing (error management, etc)
+		- Modules configured to use the Integration environment.
+
+
+v0.9.6T - 26/04/2013
+	Changes versus v0.9.5:
+		- Bug fixing:
+			- Issues related to the session management
+			- Issues related to the com wrapper
+			- ...
+		- More information can be found in GFD DPP integration specifications version 0.5.0
+
+v0.9.7T - 25/07/2013
+	Changes versus v0.9.6T:
+		- More information can be found in GFD DPP integration specifications version 0.6.0	
+				
+v0.9.8T - 30/08/2013
+	Changes versus v0.9.7T:
+		- More information can be found in GFD DPP integration specifications version 1.0.0	
+
+v0.9.9T - 01/10/2013
+	Changes versus v0.9.8T:
+		- More information can be found in GFD DPP integration specifications version 1.1.0
+
+v1.0.0T - 31/10/2013
+	Changes versus v0.9.9T:
+		- More information can be found in Recip-e integration specifications version 2.1.0
+
+v1.1.0T - 12/12/2013
+	Changes versus v1.0.0T:
+		- More information can be found in Recip-e integration specifications version 2.1.1
+		
+v1.1.1T - 13/12/2013
+	Changes versus v1.1.0T:
+		- More information can be found in Recip-e integration specifications version 2.1.2
+
+v1.1.2T - 28/01/2014
+	Changes versus v1.1.1T:
+		- More information can be found in Recip-e integration specifications version 2.1.3
+		
+v1.2.0 - 07/04/2014
+	Changes versus v1.1.2:
+		- More information can be found in Recip-e integration specifications version 1.2.0
+	NOTE:
+	We equalized the version of the intgration specs to the same version as the sdk. 
+	
+v1.3.0 - 20/05/2014
+	Changes versus v1.2.0:
+		- More information can be found in Recip-e integration specifications version 1.3.0
+
+v1.3.1 - 12/06/2014
+	Changes versus v1.3.0:
+		- More information can be found in Recip-e integration specifications version 1.3.1
+
+v1.4.0 - 25/06/2014
+	Changes versus v1.3.1:
+		- More information can be found in Recip-e integration specifications version 1.4.0
+
+v1.4.1 - 16/10/2014
+	Changes versus v1.4.0:
+		- More information can be found in Recip-e integration specifications version 1.4.1
+
+v1.4.2 - 31/10/2014
+	Changes versus v1.4.1:
+		- More information can be found in Recip-e integration specifications version 1.4.2
+
+v1.5.0 - 08/12/2015
+	Changes versus v1.4.2:
+		- Migration to latest version of eHealth Technical Connector (3.4.0-beta-9).
+		- ListOpenPrescription function now requires PatientId as argument (in case no PatientId is provided, an "empty" message will be returned)
+		- Security modifications.
+		- Addition of self-signed Government CA 2011 certificate to caCertificateKeystore.jks.
+		- Bugfix connector not correctly loading truststore.jks.
+
+v1.6.0 - 29/10/2016
+	Changes versus v1.5.0:
+		- dentists and midwifes are accecpted as prescribers		
+		- Java to version 1.7
+		- Ehealth technical connector to version 3.10.4
+		- Kmehr to version 1.17.1
+
+ v1.6.1 - 21/12/2016
+ 	Changes versus v1.6.0:
+  	- Kmehr to version 1.19
+
+v1.7.0 - TBD
+    Changes versus v1.6.1:
+    -	Ehealth connectors to version 3.11.1
+    -	Removal of the session-management functionality
+    -	API changes: introduction of ApplicationConfig for system initialization and removal of CommonIntegrationModule

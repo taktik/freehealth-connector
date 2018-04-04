@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Build-Time: 20170907-1007
+CMDB-Catalog-Part: 
+Implementation-Title: Connector Business Address Book
+Implementation-Version: 3.14.0-beta-0
+Maven-Group-Id: be.fgov.ehealth.connector
+Built-By: smals-bed
+Build-Jdk: 1.7.0_40
+Maven-Artifact-Id: connector-business-addressbook
+Created-By: Apache Maven 3.1.1
+Specification-Version: 1.0.0
+Archiver-Version: Plexus Archiver
+

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 rel. 2 sp1 (x64) (http://www.altova.com) by smals (SMALS-MVM ASBL/VZW) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:etee:commons:core:v1" targetNamespace="urn:be:fgov:ehealth:etee:commons:core:v1" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.3">
+  <xs:element name="OrganizationTypes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="NameFr" type="xs:string" />
+        <xs:element name="NameNl" type="xs:string" />
+        <xs:element name="IdentifierType" type="xs:string" />
+        <xs:element name="ValidationRegEx" type="xs:string" />
+        <xs:element name="CheckDigitAlgorithm" type="core:CheckDigitType" minOccurs="0" />
+        <xs:element name="ETKUsageTypeAuthorized" type="core:ETKUsageType" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="ETKUsageType">
+    <xs:annotation>
+      <xs:documentation>Restricted type for usage of encryption tokens. 'OTH' for unspecified.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TS" />
+      <xs:enumeration value="COD" />
+      <xs:enumeration value="CRN" />
+      <xs:enumeration value="OTH" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="CheckDigitType">
+    <xs:annotation>
+      <xs:documentation>Restricted type for patterns of check digit verification.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CHECK-MOD-97" />
+      <xs:enumeration value="CHECK-97-MOD-97" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

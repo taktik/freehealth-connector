@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:sea="urn:be:fgov:ehealth:seals:protocol:v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v1" xmlns:core="urn:be:fgov:ehealth:seals:core:v1"
+  targetNamespace="urn:be:fgov:ehealth:seals:protocol:v1" version="1.0" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+  <xsd:import namespace="urn:be:fgov:ehealth:commons:protocol:v1" schemaLocation="../common/ehealth-commons-schema-protocol-1_4.xsd" />
+  <xsd:import namespace="urn:be:fgov:ehealth:seals:core:v1" schemaLocation="ehealth-seals-schema-core-1_0.xsd" />
+  <xsd:element name="EncodeRequest" type="sea:EncodeRequestType" />
+  <xsd:complexType name="EncodeRequestType">
+    <xsd:complexContent>
+      <xsd:extension base="protocol:RequestType">
+        <xsd:sequence>
+          <xsd:element name="ApplicationName" type="xsd:string" />
+          <xsd:element name="OriginalData" type="core:OriginalDataType" maxOccurs="unbounded" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="EncodeResponse" type="sea:EncodeResponseType" />
+  <xsd:complexType name="EncodeResponseType">
+    <xsd:complexContent>
+      <xsd:extension base="protocol:ResponseType">
+        <xsd:sequence minOccurs="0">
+          <xsd:element name="ApplicationName" type="xsd:string" />
+          <xsd:element name="Response" type="core:ChoiceEncodedDataErrorType" maxOccurs="unbounded" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="DecodeRequest" type="sea:DecodeRequestType" />
+  <xsd:complexType name="DecodeRequestType">
+  <xsd:complexContent>
+      <xsd:extension base="protocol:RequestType">
+    <xsd:sequence>
+      <xsd:element name="ApplicationName" type="xsd:string" />
+      <xsd:element name="EncodedData" type="core:EncodedDataType" maxOccurs="unbounded" />
+    </xsd:sequence>
+    </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="DecodeResponse" type="sea:DecodeResponseType" />
+  <xsd:complexType name="DecodeResponseType">
+    <xsd:complexContent>
+      <xsd:extension base="protocol:ResponseType">
+        <xsd:sequence minOccurs="0">
+          <xsd:element name="ApplicationName" type="xsd:string" />
+          <xsd:element name="Response" type="core:ChoiceDecodedDataErrorType" maxOccurs="unbounded" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

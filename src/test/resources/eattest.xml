@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns6:SendTransactionRequest xmlns="http://www.ehealth.fgov.be/standards/kmehr/id/v1"
+                            xmlns:ns2="http://www.ehealth.fgov.be/messageservices/core/v1"
+                            xmlns:ns3="http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
+                            xmlns:ns4="http://www.w3.org/2001/04/xmlenc#" xmlns:ns5="http://www.w3.org/2000/09/xmldsig#"
+                            xmlns:ns6="http://www.ehealth.fgov.be/messageservices/protocol/v1"
+                            messageProtocoleSchemaVersion="1.18">
+    <ns2:request>
+        <ns2:id S="ID-KMEHR" SV="1.0">11478761004.20171206094700</ns2:id>
+        <ns2:author>
+            <ns3:hcparty>
+                <ns3:id S="ID-HCPARTY" SV="1.0">11478761004</ns3:id>
+                <ns3:id S="INSS" SV="1.0">79121430944</ns3:id>
+                <ns3:cd S="CD-HCPARTY" SV="1.10">persphysician</ns3:cd>
+                <ns3:firstname>Antoine</ns3:firstname>
+                <ns3:familyname>Baudoux</ns3:familyname>
+            </ns3:hcparty>
+        </ns2:author>
+        <ns2:date>2017-12-06</ns2:date>
+        <ns2:time>09:47:00+01:00</ns2:time>
+    </ns2:request>
+    <ns2:kmehrmessage>
+        <ns3:header>
+            <ns3:standard>
+                <ns3:cd S="CD-STANDARD" SV="1.19">20160901</ns3:cd>
+            </ns3:standard>
+            <ns3:id S="ID-KMEHR" SV="1.0">1</ns3:id>
+            <ns3:date>2017-12-06</ns3:date>
+            <ns3:time>09:47:00+01:00</ns3:time>
+            <ns3:sender>
+                <ns3:hcparty>
+                    <ns3:id S="ID-HCPARTY" SV="1.0">11478761004</ns3:id>
+                    <ns3:id S="INSS" SV="1.0">79121430944</ns3:id>
+                    <ns3:cd S="CD-HCPARTY" SV="1.10">persphysician</ns3:cd>
+                    <ns3:firstname>Antoine</ns3:firstname>
+                    <ns3:familyname>Baudoux</ns3:familyname>
+                </ns3:hcparty>
+            </ns3:sender>
+            <ns3:recipient>
+                <ns3:hcparty>
+                    <ns3:cd S="CD-HCPARTY" SV="1.10">application</ns3:cd>
+                    <ns3:name>mycarenet</ns3:name>
+                </ns3:hcparty>
+            </ns3:recipient>
+        </ns3:header>
+        <ns3:folder>
+            <ns3:id S="ID-KMEHR" SV="1.0">1</ns3:id>
+            <ns3:patient>
+                <ns3:id S="ID-PATIENT" SV="1.0">13070421120</ns3:id>
+                <ns3:firstname></ns3:firstname>
+                <ns3:familyname></ns3:familyname>
+                <ns3:sex>
+                    <ns3:cd S="CD-SEX" SV="1.1">unknown</ns3:cd>
+                </ns3:sex>
+            </ns3:patient>
+            <ns3:transaction>
+                <ns3:id S="ID-KMEHR" SV="1.0">1</ns3:id>
+                <ns3:cd S="CD-TRANSACTION-MYCARENET" SV="1.2">cga</ns3:cd>
+                <ns3:date>2017-12-06</ns3:date>
+                <ns3:time>09:47:00+01:00</ns3:time>
+                <ns3:author>
+                    <ns3:hcparty>
+                        <ns3:id S="ID-HCPARTY" SV="1.0">11478761004</ns3:id>
+                        <ns3:id S="INSS" SV="1.0">79121430944</ns3:id>
+                        <ns3:cd S="CD-HCPARTY" SV="1.10">persphysician</ns3:cd>
+                        <ns3:firstname>Antoine</ns3:firstname>
+                        <ns3:familyname>Baudoux</ns3:familyname>
+                    </ns3:hcparty>
+                </ns3:author>
+                <ns3:iscomplete>true</ns3:iscomplete>
+                <ns3:isvalidated>true</ns3:isvalidated>
+                <ns3:item>
+                    <ns3:id S="ID-KMEHR" SV="1.0">1</ns3:id>
+                    <ns3:cd S="CD-ITEM-MYCARENET" SV="1.3">patientpaid</ns3:cd>
+                    <ns3:cost>
+                        <ns3:decimal>6</ns3:decimal>
+                        <ns3:unit>
+                            <ns3:cd S="CD-CURRENCY" SV="1.0">EUR</ns3:cd>
+                        </ns3:unit>
+                    </ns3:cost>
+                </ns3:item>
+                <ns3:item>
+                    <ns3:id S="ID-KMEHR" SV="1.0">2</ns3:id>
+                    <ns3:cd S="CD-ITEM-MYCARENET" SV="1.3">paymentreceivingparty</ns3:cd>
+                    <ns3:content>
+                        <ns3:id S="ID-CBE" SV="1.0">0999999922</ns3:id>
+                    </ns3:content>
+                </ns3:item>
+            </ns3:transaction>
+            <ns3:transaction>
+                <ns3:id S="ID-KMEHR" SV="1.0">2</ns3:id>
+                <ns3:cd S="CD-TRANSACTION-MYCARENET" SV="1.2">cgd</ns3:cd>
+                <ns3:date>2017-12-06</ns3:date>
+                <ns3:time>09:47:00+01:00</ns3:time>
+                <ns3:author>
+                    <ns3:hcparty>
+                        <ns3:id S="ID-HCPARTY" SV="1.0">11478761004</ns3:id>
+                        <ns3:id S="INSS" SV="1.0">79121430944</ns3:id>
+                        <ns3:cd S="CD-HCPARTY" SV="1.10">persphysician</ns3:cd>
+                        <ns3:firstname>Antoine</ns3:firstname>
+                        <ns3:familyname>Baudoux</ns3:familyname>
+                    </ns3:hcparty>
+                </ns3:author>
+                <ns3:iscomplete>true</ns3:iscomplete>
+                <ns3:isvalidated>true</ns3:isvalidated>
+                <ns3:item>
+                    <ns3:id S="ID-KMEHR" SV="1.0">1</ns3:id>
+                    <ns3:cd S="CD-ITEM" SV="1.10">claim</ns3:cd>
+                    <ns3:content>
+                        <ns3:cd S="CD-NIHDI" SV="1.0">101076</ns3:cd>
+                    </ns3:content>
+                    <ns3:content>
+                        <ns3:cd S="LOCAL" SV="1.0" SL="NIHDI-CLAIM-NORM">0</ns3:cd>
+                    </ns3:content>
+                    <ns3:quantity>
+                        <ns3:decimal>1</ns3:decimal>
+                    </ns3:quantity>
+                </ns3:item>
+                <ns3:item>
+                    <ns3:id S="ID-KMEHR" SV="1.0">2</ns3:id>
+                    <ns3:cd S="CD-ITEM" SV="1.10">encounterdatetime</ns3:cd>
+                    <ns3:content>
+                        <ns3:date>2017-12-06</ns3:date>
+                    </ns3:content>
+                </ns3:item>
+            </ns3:transaction>
+            <ns3:transaction>
+                <ns3:id S="ID-KMEHR" SV="1.0">3</ns3:id>
+                <ns3:cd S="CD-TRANSACTION-MYCARENET" SV="1.2">cgd</ns3:cd>
+                <ns3:date>2017-12-06</ns3:date>
+                <ns3:time>09:47:00+01:00</ns3:time>
+                <ns3:author>
+                    <ns3:hcparty>
+                        <ns3:id S="ID-HCPARTY" SV="1.0">11478761004</ns3:id>
+                        <ns3:id S="INSS" SV="1.0">79121430944</ns3:id>
+                        <ns3:cd S="CD-HCPARTY" SV="1.10">persphysician</ns3:cd>
+                        <ns3:firstname>Antoine</ns3:firstname>
+                        <ns3:familyname>Baudoux</ns3:familyname>
+                    </ns3:hcparty>
+                </ns3:author>
+                <ns3:iscomplete>true</ns3:iscomplete>
+                <ns3:isvalidated>true</ns3:isvalidated>
+                <ns3:item>
+                    <ns3:id S="ID-KMEHR" SV="1.0">1</ns3:id>
+                    <ns3:cd S="CD-ITEM" SV="1.10">claim</ns3:cd>
+                    <ns3:content>
+                        <ns3:cd S="CD-NIHDI" SV="1.0">102432</ns3:cd>
+                    </ns3:content>
+                    <ns3:content>
+                        <ns3:cd S="LOCAL" SV="1.0" SL="NIHDI-CLAIM-NORM">0</ns3:cd>
+                    </ns3:content>
+                    <ns3:quantity>
+                        <ns3:decimal>1</ns3:decimal>
+                    </ns3:quantity>
+                </ns3:item>
+                <ns3:item>
+                    <ns3:id S="ID-KMEHR" SV="1.0">2</ns3:id>
+                    <ns3:cd S="CD-ITEM" SV="1.10">encounterdatetime</ns3:cd>
+                    <ns3:content>
+                        <ns3:date>2017-12-06</ns3:date>
+                    </ns3:content>
+                </ns3:item>
+            </ns3:transaction>
+            <ns3:transaction>
+                <ns3:id S="ID-KMEHR" SV="1.0">4</ns3:id>
+                <ns3:cd S="CD-TRANSACTION-MYCARENET" SV="1.2">cgd</ns3:cd>
+                <ns3:date>2017-12-06</ns3:date>
+                <ns3:time>09:47:00+01:00</ns3:time>
+                <ns3:author>
+                    <ns3:hcparty>
+                        <ns3:id S="ID-HCPARTY" SV="1.0">11478761004</ns3:id>
+                        <ns3:id S="INSS" SV="1.0">79121430944</ns3:id>
+                        <ns3:cd S="CD-HCPARTY" SV="1.10">persphysician</ns3:cd>
+                        <ns3:firstname>Antoine</ns3:firstname>
+                        <ns3:familyname>Baudoux</ns3:familyname>
+                    </ns3:hcparty>
+                </ns3:author>
+                <ns3:iscomplete>true</ns3:iscomplete>
+                <ns3:isvalidated>true</ns3:isvalidated>
+                <ns3:item>
+                    <ns3:id S="ID-KMEHR" SV="1.0">1</ns3:id>
+                    <ns3:cd S="CD-ITEM" SV="1.10">claim</ns3:cd>
+                    <ns3:content>
+                        <ns3:cd S="CD-NIHDI" SV="1.0">475075</ns3:cd>
+                    </ns3:content>
+                    <ns3:content>
+                        <ns3:cd S="LOCAL" SV="1.0" SL="NIHDI-CLAIM-NORM">0</ns3:cd>
+                    </ns3:content>
+                    <ns3:quantity>
+                        <ns3:decimal>1</ns3:decimal>
+                    </ns3:quantity>
+                </ns3:item>
+                <ns3:item>
+                    <ns3:id S="ID-KMEHR" SV="1.0">2</ns3:id>
+                    <ns3:cd S="CD-ITEM" SV="1.10">encounterdatetime</ns3:cd>
+                    <ns3:content>
+                        <ns3:date>2017-12-06</ns3:date>
+                    </ns3:content>
+                </ns3:item>
+            </ns3:transaction>
+        </ns3:folder>
+    </ns2:kmehrmessage>
+</ns6:SendTransactionRequest>
