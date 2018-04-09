@@ -15,6 +15,9 @@ import org.taktik.connector.business.domain.Error;
 public class DmgMessage implements Serializable {
     protected boolean complete;
     private List<Error> errors = new ArrayList<>();
+    private String io;
+    private String reference;
+    private String valueHash;
 
     public DmgMessage() {
     }
@@ -37,5 +40,29 @@ public class DmgMessage implements Serializable {
 
     public void setErrors(List<Error> errors) {
         this.errors = errors;
+    }
+
+    public String getIo() {
+        return io;
+    }
+
+    public void setIo(String io) {
+        this.io = io;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public String getValueHash() {
+        return valueHash;
+    }
+
+    public void setValueHash(String valueHash) {
+        this.valueHash = valueHash;
     }
 }

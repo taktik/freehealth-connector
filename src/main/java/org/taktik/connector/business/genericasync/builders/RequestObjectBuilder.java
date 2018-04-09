@@ -16,15 +16,10 @@ import java.util.List;
 import java.util.zip.DataFormatException;
 
 public interface RequestObjectBuilder extends ConfigurableImplementation {
-   Query createQuery(Integer var1, Boolean var2);
-
-   MsgQuery createMsgQuery(Integer var1, Boolean var2, String... var3);
-
-   Post buildPostRequest(CommonInput var1, Blob var2, byte[] var3);
-
-   Get buildGetRequest(OrigineType var1, MsgQuery var2, Query var3);
-
-   Confirm buildConfirmRequest(OrigineType var1, List<MsgResponse> var2, List<TAckResponse> var3) throws TechnicalConnectorException, DataFormatException;
-
-   Confirm buildConfirmRequestWithHashes(OrigineType var1, List<byte[]> var2, List<byte[]> var3);
+   Post buildPostRequest(CommonInput commonInput, Blob blob, byte[] xades);
+   Get buildGetRequest(OrigineType origin, MsgQuery msgQuery, Query tackQuery);
+   Confirm buildConfirmRequest(OrigineType origin, List<MsgResponse> msgResponses, List<TAckResponse> tackResponses) throws TechnicalConnectorException, DataFormatException;
+   Confirm buildConfirmRequestWithHashes(OrigineType origin, List<byte[]> msgHashValues, List<byte[]> tackContents);
+   Query createQuery(Integer max, Boolean include);
+   MsgQuery createMsgQuery(Integer max, Boolean include, String... messageNames);
 }

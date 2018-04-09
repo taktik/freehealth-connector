@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.zip.DataFormatException;
 
 public class RequestObjectBuilderImpl implements RequestObjectBuilder {
+   @Override
    public final Post buildPostRequest(CommonInput commonInput, Blob blob, byte[] xades) {
       Post post = new Post();
       post.setCommonInput(commonInput);
@@ -31,6 +32,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder {
       return post;
    }
 
+   @Override
    public final Get buildGetRequest(OrigineType origin, MsgQuery msgQuery, Query tackQuery) {
       Get get = new Get();
       get.setMsgQuery(msgQuery);
@@ -39,6 +41,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder {
       return get;
    }
 
+   @Override
    public final Confirm buildConfirmRequest(OrigineType origin, List<MsgResponse> msgResponses, List<TAckResponse> tackResponses) throws TechnicalConnectorException, DataFormatException {
       List<byte[]> msgHashValues = new ArrayList();
       List<byte[]> tackContents = new ArrayList();
@@ -68,6 +71,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder {
       return this.buildConfirmRequestWithHashes(origin, msgHashValues, tackContents);
    }
 
+   @Override
    public Confirm buildConfirmRequestWithHashes(OrigineType origin, List<byte[]> msgHashValues, List<byte[]> tackContents) {
       Confirm confirm = new Confirm();
       confirm.setOrigin(origin);
@@ -76,6 +80,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder {
       return confirm;
    }
 
+   @Override
    public Query createQuery(Integer max, Boolean include) {
       Query query = new Query();
       query.setInclude(include);
@@ -83,6 +88,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder {
       return query;
    }
 
+   @Override
    public MsgQuery createMsgQuery(Integer max, Boolean include, String... messageNames) {
       MsgQuery msgQuery = new MsgQuery();
       msgQuery.setInclude(include);

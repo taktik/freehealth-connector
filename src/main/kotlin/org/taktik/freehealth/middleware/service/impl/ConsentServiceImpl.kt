@@ -20,7 +20,6 @@
 
 package org.taktik.freehealth.middleware.service.impl
 
-import be.ehealth.business.kmehrcommons.CDConsentBuilderUtil
 import be.fgov.ehealth.hubservices.core.v2.AuthorWithPatientAndPersonType
 import be.fgov.ehealth.hubservices.core.v2.ConsentType
 import be.fgov.ehealth.hubservices.core.v2.GetPatientConsentResponse
@@ -36,6 +35,7 @@ import org.joda.time.DateTime
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.common.util.HandlerChainUtil
 import org.taktik.connector.business.domain.consent.ConsentMessage
+import org.taktik.connector.business.kmehrcommons.CDConsentBuilderUtil
 import org.taktik.connector.business.kmehrcommons.builders.HcPartyBuilder
 import org.taktik.connector.business.wsconsent.builders.RequestObjectBuilderFactory
 import org.taktik.connector.technical.config.ConfigFactory

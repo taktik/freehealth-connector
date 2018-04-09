@@ -21,10 +21,9 @@
 package org.taktik.connector.business.ehbox.service
 
 
-import be.ehealth.business.common.util.HandlerChainUtil
+import org.taktik.connector.business.common.util.HandlerChainUtil
 import org.taktik.connector.business.ehbox.api.domain.exception.EhboxBusinessConnectorException
 import org.taktik.connector.technical.config.ConfigFactory
-import org.taktik.connector.technical.config.ConfigValidator
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.ws.domain.GenericRequest
@@ -44,8 +43,8 @@ object ServiceFactory {
         val genReq = GenericRequest()
         genReq.setEndpoint(config.getProperty("endpoint.ehbox.consultation.v3", "\$uddi{uddi:ehealth-fgov-be:business:ehboxconsultation:v3}"))
         genReq.setCredential(token, TokenType.SAML)
-        genReq.setDefaultHandlerChain()
-        genReq.setHandlerChain(HandlerChainUtil.buildChainWithValidator("validation.incoming.ehbox.v3.message", "/ehealth-ehbox/XSD/ehealth-ehBox-consultation-schema-protocol-3_0.xsd"))
+        genReq.addDefaulHandlerChain()
+        genReq.addHandlerChain(HandlerChainUtil.buildChainWithValidator("validation.incoming.ehbox.v3.message", "/ehealth-ehbox/XSD/ehealth-ehBox-consultation-schema-protocol-3_0.xsd"))
         return genReq
     }
 
@@ -54,8 +53,8 @@ object ServiceFactory {
         val genReq = GenericRequest()
         genReq.setEndpoint(config.getProperty("endpoint.ehbox.publication.v3", "\$uddi{uddi:ehealth-fgov-be:business:ehboxpublication:v3}"))
         genReq.setCredential(token, TokenType.SAML)
-        genReq.setDefaultHandlerChain()
-        genReq.setHandlerChain(HandlerChainUtil.buildChainWithValidator("validation.incoming.ehbox.v3.message", "/ehealth-ehbox/XSD/ehealth-ehBox-publication-schema-protocol-3_0.xsd"))
+        genReq.addDefaulHandlerChain()
+        genReq.addHandlerChain(HandlerChainUtil.buildChainWithValidator("validation.incoming.ehbox.v3.message", "/ehealth-ehbox/XSD/ehealth-ehBox-publication-schema-protocol-3_0.xsd"))
         return genReq
     }
 }

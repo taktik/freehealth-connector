@@ -1,0 +1,2662 @@
+[
+  {
+    "context": "EH",
+    "code": "CO.INPUT.25",
+    "message": {
+      "en": "The signing date is mandatory"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "CO.INPUT.26",
+    "message": {
+      "en": "The revocation date is mandatory"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "CO.INPUT.30",
+    "message": {
+      "en": "The eID card number or SIS card number of the patient is mandatory"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "IDS2.ACCESS.15",
+    "message": {
+      "en": "Invalid Legal context – Missing.",
+      "fr": "Contexte légal invalide - Manquant"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "IDS2.ACCESS.16",
+    "message": {
+      "en": "Invalid Legal context – Invalid.",
+      "fr": "Contexte légal invalide - Invalide"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "IDS2.INPUT.37",
+    "message": {
+      "en": "Identification data - Invalid type combination (expecting either [inss and carnumber] or [barcoded]).",
+      "fr": "Donnée d'identification - Combinaison de types invalide"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "IDS2.INPUT.52",
+    "message": {
+      "en": "Identification data - Invalid type.",
+      "fr": "Donnée d'identification - Type invalide"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "IDS2.INPUT.53",
+    "message": {
+      "en": "Identification data - Format error.",
+      "fr": "Donnée d'identification - Erreur de format"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "IDS2.INPUT.54",
+    "message": {
+      "en": "Identification data - Checksum error.",
+      "fr": "Donnée d'identification - Erreur dans la checksum"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.ACCESS.8",
+    "message": {
+      "en": "Consent already exists for the patient"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.ACCESS.8",
+    "message": {
+      "en": "Consent already exists for the patient",
+      "fr": "Un consentement existe déjà pour ce patient"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.ACCESS.9",
+    "message": {
+      "en": "No active consent for the patient"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.15",
+    "message": {
+      "en": "Invalid signing date"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.15",
+    "message": {
+      "en": "Invalid signing date",
+      "fr": "Date de signature incorrecte"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.16",
+    "message": {
+      "en": "The date of signing cannot be posterior to the current date"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.16",
+    "message": {
+      "en": "The date of signing cannot be posterior to the current date",
+      "fr": "La date de signature ne peut être postérieure à la date du jour"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.17",
+    "message": {
+      "en": "Invalid revocation date"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.18",
+    "message": {
+      "en": "The date of revocation cannot be posterior to the current date"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.19",
+    "message": {
+      "en": "Invalid patient identifier"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.19",
+    "message": {
+      "en": "Invalid patient identifier",
+      "fr": "Identifiant patient invalide"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.2",
+    "message": {
+      "en": "Invalid request sender"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.2",
+    "message": {
+      "en": "Invalid request sender",
+      "fr": "Expéditeur incorrect"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.20",
+    "message": {
+      "en": "Invalid Healthcare party identifier",
+      "fr": "Identifiant prestataire de soin invalide"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.22",
+    "message": {
+      "en": "Invalid transaction identifier",
+      "fr": "Identifiant de transaction invalide"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.22",
+    "message": {
+      "en": "Invalid transaction identifier."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.24",
+    "message": {
+      "en": "Invalid consent type"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.24",
+    "message": {
+      "en": "Invalid consent type",
+      "fr": "Type de consentement invalide"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.31",
+    "message": {
+      "en": "Invalid eid-inss or sis-niss pair"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.31",
+    "message": {
+      "en": "Invalid eid-inss or sis-niss pair",
+      "fr": "Paire eid/niss invalide"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.32",
+    "message": {
+      "en": "Invalid revocation date"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.32",
+    "message": {
+      "en": "Invalid revocation date",
+      "fr": "Date de révocation invalide"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "MH2.INPUT.33",
+    "message": {
+      "en": "Revocation date cannot be posterior to the current date",
+      "fr": "La date de révocation ne peut être postérieure à la date du jour"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "NIP.AUTH.license",
+    "message": {
+      "en": "License Invalid for siemens."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "NIP.GENERIC.TlProcessBean",
+    "message": {
+      "en": "an unexpected error occured with the message: be.cin.nippin.kernel.core.exception.GenericCanceli ngException: therapeutic link already revoked or could not be revoked."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "NIP.INPUT.RequestValidation",
+    "message": {
+      "en": "an unexpected error occured with the message: The proof element should not be provided."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "NIP.META.TlServiceBean",
+    "message": {
+      "en": "an unexpected error occured with the message: a valid therapeutic link exists: ..."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "NIP.META.TlServiceBean",
+    "message": {
+      "en": "an unexpected error occured with the message: no therapeutic link found."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL. ACCESS.20",
+    "message": {
+      "en": "Author - Authentic source failure for validation."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL. ACCESS.21",
+    "message": {
+      "en": "Author - Authentic source failure for enrichment."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL. ACCESS.22",
+    "message": {
+      "en": "Therapeutic Link - Authentic source failure for enrichment."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.ACCESS.05",
+    "message": {
+      "en": "Author – The user is not authorized to perform the operation."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.ACCESS.06",
+    "message": {
+      "en": "Author – The category of the author is different from the category of the healthcare professional concerned by the therapeutic link."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.ACCESS.07",
+    "message": {
+      "en": "Author – The patient performing the operation is different from the patient concerned by the therapeutic link."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.ACCESS.08",
+    "message": {
+      "en": "Author - The healthcare professional is excluded by the patient concerned by the therapeutic link."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.ACCESS.09",
+    "message": {
+      "en": "Author - Therapeutic link does not exist between the author and the concerned patient."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.ACCESS.10",
+    "message": {
+      "en": "Therapeutic Link – A valid therapeutic link exists."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.ACCESS.11",
+    "message": {
+      "en": "Therapeutic Link - Therapeutic link not found."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.ACCESS.12",
+    "message": {
+      "en": "Therapeutic Link - Therapeutic Link already revoked or could not be revoked."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.ACCESS.14",
+    "message": {
+      "en": "Therapeutic Link – Only therapeutic links between patient and healthcare professional are supported."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.ACCESS.15",
+    "message": {
+      "en": "The id of the provided author must be the same as the person starting the session (provided in STS token)."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.05",
+    "message": {
+      "en": "Author - Missing patient identifier (SSIN)."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.06",
+    "message": {
+      "en": "Author - Invalid patient identifier."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.07",
+    "message": {
+      "en": "Author - Invalid eiD-SSIN or SIS-SSIN pair of the patient."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.10",
+    "message": {
+      "en": "Author - Missing healthcare professional identifier."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.11",
+    "message": {
+      "en": "Author - Invalid SSIN of the healthcare professional."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.12",
+    "message": {
+      "en": "Author - Invalid NIHII."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.13",
+    "message": {
+      "en": "Author - NIHII does not correspond to the healthcare professional SSIN."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.14",
+    "message": {
+      "en": "Author - NIHII does not correspond to the professional category."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.15",
+    "message": {
+      "en": "Author - Invalid professional category."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.16",
+    "message": {
+      "en": "Author - Missing pharmacy identifier."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.17",
+    "message": {
+      "en": "Author - Invalid pharmacy identifier (NIHII)."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.18",
+    "message": {
+      "en": "Author - The pharmacy is not a recognized pharmacy."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.19",
+    "message": {
+      "en": "Author - Missing pharmacy holder identifier."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.20",
+    "message": {
+      "en": "Author - Invalid SSIN of pharmacy holder."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.21",
+    "message": {
+      "en": "Author - Invalid NIHII of the pharmacy holder."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.22",
+    "message": {
+      "en": "Author - NIHII does not correspond to the pharmacy holder SSIN."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.23",
+    "message": {
+      "en": "Author - NIHII of the pharmacy holder does not correspond to the professional category."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.24",
+    "message": {
+      "en": "Author - The pharmacy holder is not the certified pharmacy holder of the given pharmacy"
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.25",
+    "message": {
+      "en": "Author - The pharmacist end-user is unknown of the pharmacy."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.26",
+    "message": {
+      "en": "Author - Missing organization identifier."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.27",
+    "message": {
+      "en": "Author - Invalid organization identifier."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.28",
+    "message": {
+      "en": "Author – Unsupported organization."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.29",
+    "message": {
+      "en": "Author – Missing organization’s healthcare professional identifier."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.30",
+    "message": {
+      "en": "Therapeutic link - Missing patient identifier (SSIN)."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.31",
+    "message": {
+      "en": "Therapeutic link - Invalid patient identifier."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.31.01",
+    "message": {
+      "en": "Therapeutic link - Invalid patient identifier (more than 1 INSS)."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.31.02",
+    "message": {
+      "en": "Therapeutic link - Invalid patient identifier (INSS wrongly formatted)."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.31.03",
+    "message": {
+      "en": "Therapeutic Link - Invalid patient identifier (more than 1 CARDNO)."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.31.04",
+    "message": {
+      "en": "Therapeutic link - Invalid patient identifier (SIS- CARDNO wrongly formatted)."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.31.05",
+    "message": {
+      "en": "Therapeutic link - Invalid patient identifier (EID- CARDNO wrongly formatted)."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.32",
+    "message": {
+      "en": "Therapeutic link - Missing patient eID card number."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.33",
+    "message": {
+      "en": "Therapeutic link - Missing patient SIS card number."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.34",
+    "message": {
+      "en": "Therapeutic link - Invalid eiD-SSIN or SIS-SSIN pair."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.35",
+    "message": {
+      "en": "Therapeutic link - Missing patient first name and family name."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.35",
+    "message": {
+      "en": "Therapeutic link - Missing patient first name or family name."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.40",
+    "message": {
+      "en": "Therapeutic link - Invalid SSIN of the healthcare professional."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.41",
+    "message": {
+      "en": "Therapeutic link - Invalid NIHII of the healthcare professional."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.42",
+    "message": {
+      "en": "Therapeutic link – NIHII does not correspond to the healthcare professional SSIN."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.43",
+    "message": {
+      "en": "Therapeutic link – Missing professional category."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.44",
+    "message": {
+      "en": "Therapeutic link – Invalid professional category."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.44.1",
+    "message": {
+      "en": "Therapeutic link – The professional category of the concerned professional is not supported."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.45",
+    "message": {
+      "en": "Therapeutic link - NIHII does not correspond to the professional category."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.45",
+    "message": {
+      "en": "Therapeutic link – NIHII does not correspond to the professional category."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.46",
+    "message": {
+      "en": "Therapeutic link - The pharmacist is not the pharmacy holder."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.47",
+    "message": {
+      "en": "Therapeutic link – Healthcare professional not found."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.50",
+    "message": {
+      "en": "Therapeutic Link – Invalid type of therapeutic link."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.51",
+    "message": {
+      "en": "Therapeutic Link - The type of therapeutic link is not allowed for the operation."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.52",
+    "message": {
+      "en": "Therapeutic Link – GMD is not supported."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.60",
+    "message": {
+      "en": "Therapeutic Link – Invalid period of relation."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.61",
+    "message": {
+      "en": "Therapeutic Link - The start date of the relation must be equal or greater than the declaration date."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.62",
+    "message": {
+      "en": "Therapeutic Link - The start date must be equal to the declaration date."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.63",
+    "message": {
+      "en": "Therapeutic Link - The end date of the relation must be equal or greater than the start date."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.64",
+    "message": {
+      "en": "Therapeutic Link - The end date is anterior to the current date."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.64.01",
+    "message": {
+      "en": "Therapeutic Link - The end date must be equal to the start date plus three months."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.64.02",
+    "message": {
+      "en": "Therapeutic Link - The end date must be equal to the start date plus six months."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.65",
+    "message": {
+      "en": "Therapeutic Link – Invalid time period."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.66",
+    "message": {
+      "en": "Therapeutic Link – GMD does not support time period."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.67",
+    "message": {
+      "en": "Therapeutic Link – If the begin date (end date) is provided then the end date (begin date) must be also provided."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.67.01",
+    "message": {
+      "en": "Therapeutic Link – Revocation end date must be greater or equal to the original start date of relation and less than the original end date of the relation."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.67.02",
+    "message": {
+      "en": "Therapeutic Link – Consultation ‘all’, ‘inactive’ are not supported with time period."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.69",
+    "message": {
+      "en": "Therapeutic Link – Missing patient for consultation."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.70",
+    "message": {
+      "en": "Proof - Missing proof."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.71",
+    "message": {
+      "en": "Proof - Invalid proof."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.72",
+    "message": {
+      "en": "Proof - Invalid type of proof."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.73",
+    "message": {
+      "en": "Proof – The proof is not sufficient to perform the operation."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.74",
+    "message": {
+      "en": "Proof - Missing binary proof."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.75",
+    "message": {
+      "en": "Proof - Invalid method of binary operation."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.76",
+    "message": {
+      "en": "Proof - Invalid value of the binary proof."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.77",
+    "message": {
+      "en": "Proof - The proof was not signed by the patient concerned by the therapeutic link."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.78",
+    "message": {
+      "en": "Proof – Certificate expired."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.79",
+    "message": {
+      "en": "Proof – Certificate invalid."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.80",
+    "message": {
+      "en": "Proof – Certificate is not made to be signed."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.81",
+    "message": {
+      "en": "Proof – Certificate does not trust CA."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.82",
+    "message": {
+      "en": "Proof – The binary value of the patient does not correspond to the concerned patient."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.83",
+    "message": {
+      "en": "Proof – The binary value of the healthcare professional does not correspond to the concerned healthcare professional."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.84",
+    "message": {
+      "en": "Proof- eID/SIS reading does not support binary proof."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.INPUT.85",
+    "message": {
+      "en": "The proof element should not be provided."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.OTHER.10",
+    "message": {
+      "en": "The maximum of rows that can be requested is 1000."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.OTHER.15",
+    "message": {
+      "en": "The maximum length of the comment is 256."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.OTHER.20",
+    "message": {
+      "en": "Invalid license."
+    }
+  },
+  {
+    "context": "EH",
+    "code": "TL.OTHER.5",
+    "message": {
+      "en": "More results than supported by the service."
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-00001",
+    "message": {
+      "en": "Service error"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-00001",
+    "message": {
+      "en": "Service error"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-01001",
+    "message": {
+      "en": "Service call not authenticated"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-01001",
+    "message": {
+      "en": "Service call not authenticated"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-01002",
+    "message": {
+      "en": "Service call not authorized"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-01002",
+    "message": {
+      "en": "Service call not authorized"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-02001",
+    "message": {
+      "en": "Service not available. Please contact service desk"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-02001",
+    "message": {
+      "en": "Service temporarily not available. Please try later",
+      "fr": "Service momentanément indisponible."
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-02002",
+    "message": {
+      "en": "Message must be SOAP"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-02002",
+    "message": {
+      "en": "Service temporarily not available. Please try later"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03001",
+    "message": {
+      "en": "Malformed message"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03001",
+    "message": {
+      "en": "Malformed message"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03002",
+    "message": {
+      "en": "Message must be SOAP"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03002",
+    "message": {
+      "en": "Message must be SOAP"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03003",
+    "message": {
+      "en": "Message must contain SOAP body"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03003",
+    "message": {
+      "en": "Message must contain SOAP body"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03004",
+    "message": {
+      "en": "WS-I compliance failure"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03004",
+    "message": {
+      "en": "WS-I compliance failure"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03005",
+    "message": {
+      "en": "WSDL compliance failure"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03005",
+    "message": {
+      "en": "WSDL compliance failure"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03006",
+    "message": {
+      "en": "XSD compliance failure"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03006",
+    "message": {
+      "en": "XSD compliance failure"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03007",
+    "message": {
+      "en": "Message content validation failure"
+    }
+  },
+  {
+    "context": "SOA",
+    "code": "SOA-03007",
+    "message": {
+      "en": "Message content validation failure"
+    }
+  },
+  {
+    "context": "VL",
+    "code": "365",
+    "message": {
+      "en": "Authorization failed: No consent is given by subject with SSIN"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "100",
+    "message": {
+      "fr": "Item obligatoire non complété"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "112",
+    "message": {
+      "fr": "Erreur check digit"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "113",
+    "message": {
+      "fr": "Date invraisemblable"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "120",
+    "message": {
+      "fr": "ID-PATIENT (NISS) pas connu à l’OA ou patient plus affilié à l'OA à la date de début de période"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "121",
+    "message": {
+      "fr": "N° mutualité inconnu"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "122",
+    "message": {
+      "fr": "N° inscription inconnu à l'OA ou patient plus affilié à l'OA à la date de début de période"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "130",
+    "message": {
+      "fr": "Valeur non permise"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "136",
+    "message": {
+      "fr": "Code sexe incompatible avec le NISS"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "140",
+    "message": {
+      "fr": "Prestataire non habilité pour ce type de demande à la date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "141",
+    "message": {
+      "fr": "Prestataire pas connu à l’OA à la date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "145",
+    "message": {
+      "fr": "Date de demande < Date du jour – 2 ans."
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "146",
+    "message": {
+      "fr": "Date > Date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "155",
+    "message": {
+      "fr": "Valeur incohérente avec celle du Web Service"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "156",
+    "message": {
+      "fr": "Valeur author incohérente avec celle du Request/Author"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "158",
+    "message": {
+      "fr": "Données d’identification incohérentes"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "160",
+    "message": {
+      "fr": "Combinaison de critères de « Select » non supportée"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "161",
+    "skip": "true",
+    "message": {
+      "fr": "Le médecin ne peut envoyer une notification DMG pour ce patient car le patient a déjà un droit DMG chez lui pour cette année (soit par notification, soit via le paiement de la prolongation accélérée)."
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "162",
+    "message": {
+      "fr": "Le médecin ne peut envoyer une notification DMG pour ce patient car le patient a un contrat maison médicale"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "163",
+    "message": {
+      "fr": "Le médecin ne peut pas envoyer une notification DMG car il n’est pas inscrit dans MyCareNet"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "165",
+    "message": {
+      "fr": "Le médecin ne peut envoyer une notification pour ce patient à cette date (encounterdatetime identique) car une autre notification avec date de prestation identique pour le même patient a déjà été reçue par l'OA."
+    }
+  },
+  {
+    "context": "CINNIC",
+    "code": "166",
+    "message": {
+      "fr": "encounterdatetime < date du jour - 7 jours"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "ID",
+    "code": "100",
+    "message": {
+      "fr": "Identification du message: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "ID",
+    "code": "111",
+    "message": {
+      "fr": "Identification du message: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "ID",
+    "code": "155",
+    "message": {
+      "fr": "Identification du message: Valeur de id incohérente avec celle du Web Service"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Request/author",
+    "code": "100",
+    "message": {
+      "fr": "Auteur du message: Zone obligatoire non complétée"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Request/author",
+    "code": "111",
+    "message": {
+      "fr": "Auteur du message: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Request/author",
+    "code": "140",
+    "message": {
+      "fr": "Auteur du message: Prestataire non habilité pour ce type de demande à la date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Request/author",
+    "code": "141",
+    "message": {
+      "fr": "Auteur du message: Prestataire pas connu à l’OA à la date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Request/author",
+    "code": "155",
+    "message": {
+      "fr": "Auteur du message: Valeur du author incohérente avec celle du Web Service"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Request/date",
+    "code": "100",
+    "message": {
+      "fr": "Date de la requête: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Request/date",
+    "code": "111",
+    "message": {
+      "fr": "Date de la requête: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Request/time",
+    "code": "100",
+    "message": {
+      "fr": "Moment de la requête: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Request/time",
+    "code": "111",
+    "message": {
+      "fr": "Moment de la requête: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select",
+    "code": "100",
+    "message": {
+      "fr": "Corps du message: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select",
+    "code": "160",
+    "message": {
+      "fr": "Corps du message: Combinaison de critères de « Select » non supportée"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient",
+    "code": "100",
+    "message": {
+      "fr": "Patient: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient",
+    "code": "158",
+    "message": {
+      "fr": "Patient: Données d’identification incohérentes"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/id",
+    "code": "100",
+    "message": {
+      "fr": "Identification du patient: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/id",
+    "code": "111",
+    "message": {
+      "fr": "Identification du patient: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/id",
+    "code": "112",
+    "message": {
+      "fr": "Identification du patient: Erreur check digit"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/id",
+    "code": "120",
+    "message": {
+      "fr": "Identification du patient: ID-PATIENT (NISS) pas connu à l’OA ou patient plus affilié à l'OA à la date de début de période"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/id",
+    "code": "155",
+    "message": {
+      "fr": "Identification du patient: Valeur du ID-PATIENT (NISS) incohérente avec celle du Web Service (pour le routage)"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/sex",
+    "code": "100",
+    "message": {
+      "fr": "Sexe du patient: Zone non complétée si la zone ID-PATIENT est vide"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/sex",
+    "code": "111",
+    "message": {
+      "fr": "Sexe du patient: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/sex",
+    "code": "130",
+    "message": {
+      "fr": "Sexe du patient: Valeur non permise"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/sex",
+    "code": "136",
+    "message": {
+      "fr": "Sexe du patient: Code sexe incompatible avec le NISS"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/insurancymembership",
+    "code": "100",
+    "message": {
+      "fr": "Inscription mutulelle du patient: Zone non présente si la zone ID-PATIENT est vide"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/insurancymembership/id",
+    "code": "100",
+    "message": {
+      "fr": "Identification de la mutuelle: Zone non complétée si la zone ID-PATIENT est vide"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/insurancymembership/id",
+    "code": "111",
+    "message": {
+      "fr": "Identification de la mutuelle: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/insurancymembership/id",
+    "code": "121",
+    "message": {
+      "fr": "Identification de la mutuelle: N° mutualité inconnu"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/insurancymembership/id",
+    "code": "155",
+    "message": {
+      "fr": "Identification de la mutuelle: Valeur de la mutualité incohérente avec celle du Web Service (pour le routage)"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/insurancymembership/membership",
+    "code": "100",
+    "message": {
+      "fr": "Identification de l'inscription mutuelle: Zone non complétée si la zone ID-PATIENT est vide"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/insurancymembership/membership",
+    "code": "111",
+    "message": {
+      "fr": "Identification de l'inscription mutuelle: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-CONS",
+    "zone": "Select/patient/insurancymembership/membership",
+    "code": "112",
+    "message": {
+      "fr": "Identification de l'inscription mutuelle: Erreur check digit"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Request/id",
+    "code": "100",
+    "message": {
+      "fr": "Request/id: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Request/id",
+    "code": "111",
+    "message": {
+      "fr": "Request/id: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Request/id",
+    "code": "155",
+    "message": {
+      "fr": "Request/id: Valeur de id incohérente avec celle du Web Service"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Request/author",
+    "code": "100",
+    "message": {
+      "fr": "Request/author: Zone obligatoire non complétée"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Request/author",
+    "code": "111",
+    "message": {
+      "fr": "Request/author: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Request/author",
+    "code": "140",
+    "message": {
+      "fr": "Request/author: Prestataire non habilité pour ce type de demande à la date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Request/author",
+    "code": "141",
+    "message": {
+      "fr": "Request/author: Prestataire pas connu à l’OA à la date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Request/author",
+    "code": "155",
+    "message": {
+      "fr": "Request/author: Valeur du author incohérente avec celle du Web Service"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Request/date",
+    "code": "100",
+    "message": {
+      "fr": "Request/date: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Request/date",
+    "code": "111",
+    "message": {
+      "fr": "Request/date: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Request/time",
+    "code": "100",
+    "message": {
+      "fr": "Request/time: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Request/time",
+    "code": "111",
+    "message": {
+      "fr": "Request/time: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select",
+    "code": "100",
+    "message": {
+      "fr": "Select: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select",
+    "code": "160",
+    "message": {
+      "fr": "Select: Combinaison de critères de « Select » non supportée"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select/transaction",
+    "code": "100",
+    "message": {
+      "fr": "Select/transaction: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select/transaction/cd",
+    "code": "100",
+    "message": {
+      "fr": "Item obligatoire non complété"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select/transaction/cd",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select/transaction/cd",
+    "code": "130",
+    "message": {
+      "fr": "Valeur non permise"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select/transaction/author",
+    "code": "100",
+    "message": {
+      "fr": "Select/transaction/author: Zone obligatoire non complétée"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select/transaction/author",
+    "code": "111",
+    "message": {
+      "fr": "Select/transaction/author: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select/transaction/author",
+    "code": "156",
+    "message": {
+      "fr": "Select/transaction/author: Valeur du author incohérente avec celle du Request/Author"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select/transaction/begindate",
+    "code": "100",
+    "message": {
+      "fr": "Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select/transaction/begindate",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select/transaction/begindate",
+    "code": "113",
+    "message": {
+      "fr": "Date invraisemblable"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select/transaction/begindate",
+    "code": "145",
+    "message": {
+      "fr": "Date de demande < Date du jour – 2 ans."
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-LISTREQ",
+    "zone": "Select/transaction/begindate",
+    "code": "146",
+    "message": {
+      "fr": "Date > Date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Request/id",
+    "code": "100",
+    "message": {
+      "fr": "Request/id: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Request/id",
+    "code": "111",
+    "message": {
+      "fr": "Request/id: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Request/id",
+    "code": "155",
+    "message": {
+      "fr": "Valeur de ID incohérente avec celle du Web Service"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Request/author",
+    "code": "100",
+    "message": {
+      "fr": "Request/author: Zone obligatoire non complétée"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Request/author",
+    "code": "111",
+    "message": {
+      "fr": "Request/author: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Request/author",
+    "code": "140",
+    "message": {
+      "fr": "Request/author: Prestataire non habilité pour ce type de demande à la date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Request/author",
+    "code": "141",
+    "message": {
+      "fr": "Request/author: Prestataire pas connu à l’OA à la date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Request/author",
+    "code": "155",
+    "message": {
+      "fr": "Valeur du author incohérente avec celle du Web Service"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Request/date",
+    "code": "100",
+    "message": {
+      "fr": "Request/date: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Request/date",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Request/time",
+    "code": "100",
+    "message": {
+      "fr": "Request/time: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Request/time",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage",
+    "code": "100",
+    "message": {
+      "fr": "Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header",
+    "code": "100",
+    "message": {
+      "fr": "Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/standard",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/header/standard: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/standard",
+    "code": "111",
+    "message": {
+      "fr": "Kmehrmessage/header/standard: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/standard",
+    "code": "130",
+    "message": {
+      "fr": "Valeur non permise"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/id",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/header/id: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/id",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/date",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/header/date: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/date",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/time",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/header/time: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/time",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/sender",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/header/sender: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/sender",
+    "code": "111",
+    "message": {
+      "fr": "Kmehrmessage/header/sender: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/sender",
+    "code": "156",
+    "message": {
+      "fr": "Kmehrmessage/Header/sender est différent de Request/author"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/recipient",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/header/recipient: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/header/recipient",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder",
+    "code": "100",
+    "message": {
+      "fr": "Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/id",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/folder/id: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/id",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient",
+    "code": "158",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient: Données d’identification incohérentes"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient",
+    "code": "161",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient: Le médecin ne peut envoyer une notification DMG pour ce patient car le patient a déjà un droit DMG chez lui pour cette année (soit par notification, soit via le paiement de la prolongation accélérée)."
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient",
+    "code": "162",
+    "message": {
+      "fr": "Le médecin ne peut envoyer une notification DMG pour ce patient car le patient a un contrat maison médicale"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/id",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/id: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/id",
+    "code": "111",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/id: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/id",
+    "code": "112",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/id: Erreur check digit"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/id",
+    "code": "120",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/id: ID-PATIENT (NISS) pas connu à l’OA ou patient plus affilié à l'OA à la date de début de période"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/id",
+    "code": "155",
+    "message": {
+      "fr": "Valeur du ID-PATIENT (NISS) incohérente avec celle du Web Service (pour le routage)"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/firstname",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/firstname: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/firstname",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/familyname",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/familyname: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/familyname",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/birthdate",
+    "code": "111",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/birthdate: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/birthdate",
+    "code": "113",
+    "message": {
+      "fr": "Date invraisemblable"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/sex",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/sex: Zone non complétée si la zone ID-PATIENT est vide"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/sex",
+    "code": "111",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/sex: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/sex",
+    "code": "130",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/sex: Valeur non permise"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/sex",
+    "code": "136",
+    "message": {
+      "fr": "Code sexe incompatible avec le NISS"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/insurancymembership",
+    "code": "100",
+    "message": {
+      "fr": "Zone non présente si la zone ID-PATIENT est vide"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/insurancymembership/id",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/insurancymembership/id: Zone non complétée si la zone ID-PATIENT est vide"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/insurancymembership/id",
+    "code": "111",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/insurancymembership/id: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/insurancymembership/id",
+    "code": "121",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/insurancymembership/id: N° mutualité inconnu"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/insurancymembership/id",
+    "code": "155",
+    "message": {
+      "fr": "Valeur de la mutualité incohérente avec celle du Web Service (pour le routage)"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/insurancymembership/membership",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/insurancymembership/membership: Zone non complétée si la zone ID-PATIENT est vide"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/insurancymembership/membership",
+    "code": "111",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/insurancymembership/membership: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/insurancymembership/membership",
+    "code": "112",
+    "message": {
+      "fr": "Kmehrmessage/folder/patient/insurancymembership/membership: Erreur check digit"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/patient/insurancymembership/membership",
+    "code": "122",
+    "message": {
+      "fr": "N° inscription inconnu à l'OA ou patient plus affilié à l'OA à la date de début de période"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/transaction",
+    "code": "100",
+    "message": {
+      "fr": "Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/transaction/id",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/folder/transaction/id: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/transaction/id",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/transaction/cd",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/folder/transaction/cd: Item obligatoire non complété"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/transaction/cd",
+    "code": "111",
+    "message": {
+      "fr": "Kmehrmessage/folder/transaction/cd: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/transaction/cd",
+    "code": "130",
+    "message": {
+      "fr": "Valeur non permise"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/transaction/date",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/folder/transaction/date: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/transaction/date",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/transaction/time",
+    "code": "100",
+    "message": {
+      "fr": "Kmehrmessage/folder/transaction/time: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "Kmehrmessage/folder/transaction/time",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/author",
+    "code": "100",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/author: Zone obligatoire non complétée"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/author",
+    "code": "111",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/author: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/author",
+    "code": "140",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/author: Prestataire non habilité pour ce type de demande à la date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/author",
+    "code": "141",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/author: Prestataire pas connu à l’OA à la date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/author",
+    "code": "156",
+    "message": {
+      "fr": "Le kmehrmessage/folder/transaction/Author est différent de Kmehrmessage/Header/sender"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/iscomplete",
+    "code": "100",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/iscomplete: Zone obligatoire non complétée"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/iscomplete",
+    "code": "111",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/iscomplete: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/iscomplete",
+    "code": "130",
+    "message": {
+      "fr": "Valeur non permise"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/isvalidated",
+    "code": "100",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/isvalidated: Zone obligatoire non complétée"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/isvalidated",
+    "code": "111",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/isvalidated: Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/isvalidated",
+    "code": "130",
+    "message": {
+      "fr": "Valeur non permise"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item",
+    "code": "100",
+    "message": {
+      "fr": "Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/id",
+    "code": "100",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/item/id: Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/id",
+    "code": "111",
+    "message": {
+      "fr": "Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='gmdmanager'",
+    "code": "100",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/item/CD-ITEM='gmdmanager': Item obligatoire non complété"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='gmdmanager'",
+    "code": "111",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/item/CD-ITEM='gmdmanager': Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='gmdmanager'",
+    "code": "156",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/item/CD-ITEM='gmdmanager': Le gmdmanager est différent de l’auteur de la transaction"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='gmdmanager'",
+    "code": "163",
+    "message": {
+      "fr": "Le médecin ne peut pas envoyer une notification DMG car il n’est pas inscrit dans MyCareNet"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='encounterdatetime'",
+    "code": "100",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/item/CD-ITEM='encounterdatetime': Zone obligatoire non présente"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='encounterdatetime'",
+    "code": "111",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/item/CD-ITEM='encounterdatetime': Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='encounterdatetime'",
+    "code": "113",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/item/CD-ITEM='encounterdatetime': Date invraisemblable"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='encounterdatetime'",
+    "code": "146",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/item/CD-ITEM='encounterdatetime': Date > Date du jour"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='encounterdatetime'",
+    "code": "165",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/item/CD-ITEM='encounterdatetime': Le médecin ne peut envoyer une notification pour ce patient à cette date (encounterdatetime identique) car une autre notification avec date de prestation identique pour le même patient a déjà été reçue par l'OA."
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='gmdmanager'",
+    "code": "166",
+    "message": {
+      "fr": "encounterdatetime < date du jour - 7 jours"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='claim'",
+    "code": "100",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/item/CD-ITEM='claim': Item obligatoire non complété"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='claim'",
+    "code": "111",
+    "message": {
+      "fr": "kmehrmessage/folder/transaction/item/CD-ITEM='claim': Erreur format"
+    }
+  },
+  {
+    "context": "CINNIC",
+    "subcontext": "DMG-NOTIF",
+    "zone": "kmehrmessage/folder/transaction/item/CD-ITEM='gmdmanager'",
+    "code": "130",
+    "message": {
+      "fr": "Valeur non permise"
+    }
+  }
+]

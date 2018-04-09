@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
 import org.junit.Test
 
 import org.junit.runner.RunWith
@@ -11,6 +12,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
+import java.io.File
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
@@ -21,6 +23,14 @@ class GenInsControllerTest : EhealthTest() {
 
     @Autowired
     private val restTemplate: TestRestTemplate? = null
+
+    @Before
+    fun setUp() {
+        try { System.setProperty("mycarenet.license.password",this.javaClass.getResourceAsStream("/org/taktik/freehealth/middleware/mycarenet.license").reader(Charsets.UTF_8).readText()) } catch (e:NullPointerException) {
+            System.setProperty("mycarenet.license.password", File("src/test/resources/org/taktik/freehealth/middleware/mycarenet.license").reader(Charsets.UTF_8).readText())
+        }
+    }
+
 
     @Test
     fun getGeneralInsurability() {
