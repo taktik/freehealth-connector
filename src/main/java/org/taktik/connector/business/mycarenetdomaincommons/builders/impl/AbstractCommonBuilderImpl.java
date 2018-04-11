@@ -94,7 +94,7 @@ public abstract class AbstractCommonBuilderImpl implements CommonBuilder {
 
    public Routing createRouting(Patient patientInfo, DateTime refDate) {
       Routing routing = new Routing();
-      routing.setPeriod((Period)null);
+      routing.setPeriod(null);
       routing.setCareReceiver(this.createCareReceiver(patientInfo));
       routing.setReferenceDate(refDate);
       return routing;
@@ -102,7 +102,7 @@ public abstract class AbstractCommonBuilderImpl implements CommonBuilder {
 
    public Routing createRoutingToMutuality(String mutuality, DateTime refDate) {
       Routing routing = new Routing();
-      routing.setPeriod((Period)null);
+      routing.setPeriod(null);
       routing.setCareReceiver(this.createCareReceiverForMutuality(mutuality));
       routing.setReferenceDate(refDate);
       return routing;
@@ -114,7 +114,7 @@ public abstract class AbstractCommonBuilderImpl implements CommonBuilder {
    }
 
    protected final CareReceiverId createCareReceiverForMutuality(String mutuality) {
-      CareReceiverId careReceiver = new CareReceiverId((String)null, (String)null, mutuality);
+      CareReceiverId careReceiver = new CareReceiverId(null, null, mutuality);
       return careReceiver;
    }
 

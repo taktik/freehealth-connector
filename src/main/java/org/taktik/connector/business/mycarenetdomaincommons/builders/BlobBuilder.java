@@ -5,18 +5,15 @@ import org.taktik.connector.business.mycarenetdomaincommons.exception.InvalidBlo
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.utils.ConfigurableImplementation;
 
+import java.util.Map;
+
 public interface BlobBuilder extends ConfigurableImplementation {
-   String PROJECT_NAME_KEY = "projectName";
+   void initialize(Map<String, Object> parameterMap) throws TechnicalConnectorException;
+   Blob build(byte[] input) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
+   Blob build(byte[] input, String id) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
+   Blob build(byte[] input, String encodingType, String id, String contentType) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
+   Blob build(byte[] input, String encodingType, String id, String contentType, String messageName) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
+   Blob build(byte[] input, String encodingType, String id, String contentType, String messageName, String contentEncryption) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
 
-   Blob build(byte[] var1) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
-
-   Blob build(byte[] var1, String var2) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
-
-   Blob build(byte[] var1, String var2, String var3, String var4) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
-
-   Blob build(byte[] var1, String var2, String var3, String var4, String var5) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
-
-   Blob build(byte[] var1, String var2, String var3, String var4, String var5, String var6) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
-
-   byte[] checkAndRetrieveContent(Blob var1) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
+   byte[] checkAndRetrieveContent(Blob blob) throws TechnicalConnectorException;
 }

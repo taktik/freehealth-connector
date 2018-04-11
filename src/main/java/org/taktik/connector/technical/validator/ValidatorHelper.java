@@ -64,7 +64,7 @@ public final class ValidatorHelper {
    public static void validate(Object jaxbObj, Class xmlClass, String rootSchemaFileLocation) throws TechnicalConnectorException {
       if (jaxbObj == null) {
          LOG.error("Message is null");
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_XML_INVALID, new Object[]{"Message is null"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_XML_INVALID, "Message is null");
       } else {
          ConnectorXmlUtils.dump(jaxbObj);
          LOG.debug("Validating with schema [" + rootSchemaFileLocation + "]");

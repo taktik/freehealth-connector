@@ -158,13 +158,13 @@ public class ConfigurableFactoryHelper<T> {
       try {
          if (result instanceof ConfigurableImplementation) {
             if (configParameters == null) {
-               throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.CORE_TECHNICAL, new Object[]{"addConfigParamsIfNeeded : parameter configParameters is null!"});
+               throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.CORE_TECHNICAL, "addConfigParamsIfNeeded : parameter configParameters is null!");
             }
 
             ConfigurableImplementation resultAsConfigurable = (ConfigurableImplementation)result;
             resultAsConfigurable.initialize(configParameters);
          } else if (configParameters != null && !configParameters.isEmpty()) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.CORE_TECHNICAL, new Object[]{"non configurable implementation " + result.getClass() + " called with non empty configParameters : the class should implement the interface ConfigurableImplementation to use configParameters with the ConfigurableFactoryHelper!"});
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.CORE_TECHNICAL, "non configurable implementation " + result.getClass() + " called with non empty configParameters : the class should implement the interface ConfigurableImplementation to use configParameters with the ConfigurableFactoryHelper!");
          }
 
       } catch (TechnicalConnectorException var5) {
