@@ -35,7 +35,7 @@ class GenInsControllerTest : EhealthTest() {
     @Test
     fun getGeneralInsurability() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val genIns = this.restTemplate!!.getForObject("http://localhost:$port/genins/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${"11478761004"}&hcpSsin=${ssin1}&hcpName=${"Antoine Baudoux"}&hcpQuality=${"doctor"}&passPhrase=$passPhrase", String::class.java)
+        val genIns = this.restTemplate.getForObject("http://localhost:$port/genins/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${"11478761004"}&hcpSsin=${ssin1}&hcpName=${"Antoine Baudoux"}&hcpQuality=${"doctor"}&passPhrase=$passPhrase", String::class.java)
         assertThat(genIns != null)
     }
 }

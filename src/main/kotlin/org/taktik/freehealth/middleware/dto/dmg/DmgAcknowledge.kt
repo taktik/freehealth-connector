@@ -11,5 +11,6 @@ import java.util.Date
  * To change this template use File | Settings | File Templates.
  */
 class DmgAcknowledge(var major: String, var minor: String, var message: String) : DmgMessage(), Serializable {
+	constructor() : this("","","")
 	var date: Date? = null
 }

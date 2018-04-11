@@ -213,7 +213,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 						}
 					}
 				}
-				this.inputReference = this.inputReference
+				this.inputReference = references.inputReference
 			}
 			routing = RoutingType().apply {
 				careReceiver = CareReceiverIdType().apply { ssin = patientInfo.inss; regNrWithMut = patientInfo.regNrWithMut; mutuality = patientInfo.mutuality }
@@ -356,15 +356,13 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 					item.add(ItemType().apply {
 						ItemType().apply {
 							cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "claim" })
-							ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "2"; sv = "1.0" })
+							ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "3"; sv = "1.0" })
 							contents.add(ContentType().apply { cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI; sv = "1.0"; value = nomenclature }) })
 						}
 					})
 				})
 			})
 		}
-		val kmehrRequestMarshaller = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
-
 		val gmdRequest = buildSendNotifyRequest(istest, credential, ref, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, pI, dateReference, kmehrmessage)
 
 		val response = ResponseObjectBuilderFactory.getResponseObjectBuilder().handleSendResponseType(org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(GenericRequest().apply {
