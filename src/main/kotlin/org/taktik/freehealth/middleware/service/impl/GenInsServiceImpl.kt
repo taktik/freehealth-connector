@@ -81,7 +81,7 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                         physicalPerson = IdType().apply {
                             name = ValueRefString().apply { value = hcpName }
                             ssin = ValueRefString().apply { value = hcpSsin }
-                            nihii = NihiiType().apply { quality = "doctor"; value = ValueRefString().apply { value = hcpNihii } }
+                            nihii = NihiiType().apply { quality = hcpQuality; value = ValueRefString().apply { value = hcpNihii } }
                         }
                     }
                 }
