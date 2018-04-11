@@ -57,7 +57,7 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
     private val freehealthGenInsService: org.taktik.connector.business.genins.service.GenInsService = org.taktik.connector.business.genins.service.impl.GenInsServiceImpl()
     private val config = ConfigFactory.getConfigValidator(listOf())
 
-    override fun getGeneralInsurabity(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patientSsin: String?, io: String?, ioMembership: String?, date: Date?, hospitalized: Boolean): InsurabilityInfoDto {
+    override fun getGeneralInsurabity(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patientSsin: String?, io: String?, ioMembership: String?, startDate: Date?, endDate: Date?, hospitalized: Boolean): InsurabilityInfoDto {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         assert(patientSsin != null || io != null && ioMembership != null)
 
@@ -97,9 +97,8 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                     insurabilityContactType = if (hospitalized) HOSPITALIZED_ELSEWHERE else AMBULATORY_CARE
                     insurabilityReference = "" + System.currentTimeMillis()
                     period = PeriodType().apply {
-                        val dateTime = date?.let { DateTime(it.time) } ?: DateTime()
-                        periodStart = dateTime
-                        periodEnd = dateTime
+                        periodStart = startDate?.let { DateTime(it.time) } ?: DateTime()
+                        periodEnd = endDate?.let { DateTime(it.time) } ?: DateTime()
                     }
                 }
             }

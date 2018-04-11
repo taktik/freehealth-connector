@@ -24,5 +24,5 @@ import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import java.util.*
 
 interface GenInsService {
-    fun getGeneralInsurabity(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patientSsin: String?, io: String?, ioMembership: String?, date: Date?, hospitalized: Boolean): InsurabilityInfoDto
+    fun getGeneralInsurabity(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patientSsin: String?, io: String?, ioMembership: String?, startDate: Date?, endDate: Date?, hospitalized: Boolean): InsurabilityInfoDto
 }
