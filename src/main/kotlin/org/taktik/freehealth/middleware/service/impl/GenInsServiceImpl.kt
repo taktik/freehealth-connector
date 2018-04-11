@@ -98,7 +98,7 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                     insurabilityReference = "" + System.currentTimeMillis()
                     period = PeriodType().apply {
                         periodStart = startDate?.let { DateTime(it.time) } ?: DateTime()
-                        periodEnd = endDate?.let { DateTime(it.time) } ?: DateTime()
+                        periodEnd = endDate?.let { DateTime(it.time) } ?: periodStart
                     }
                 }
             }
