@@ -31,7 +31,7 @@ class AddressbookControllerTest : EhealthTest() {
     @Test
     fun searchHcp() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val searchHcp = this.restTemplate.getForObject("http://localhost:$port/ab/search/hcp/Duch*?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        val searchHcp = this.restTemplate.getForObject("http://localhost:$port/ab/search/hcp/Duch*?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", String::class.java, passPhrase)
         Assertions.assertThat(searchHcp != null && searchHcp.length>2 && searchHcp.startsWith("["))
         val hcps : List<HealthcareParty> = gson.fromJson(searchHcp, object : TypeToken<ArrayList<HealthcareParty>>() {}.getType())
         Assertions.assertThat(20).isLessThan(hcps.size)
@@ -41,7 +41,7 @@ class AddressbookControllerTest : EhealthTest() {
     @Test
     fun searchOrg() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val searchOrg = this.restTemplate.getForObject("http://localhost:$port/ab/search/org/*clinique*?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        val searchOrg = this.restTemplate.getForObject("http://localhost:$port/ab/search/org/*clinique*?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", String::class.java, passPhrase)
         Assertions.assertThat(searchOrg != null && searchOrg.length>2 && searchOrg.startsWith("["))
         val hcps : List<HealthcareParty> = gson.fromJson(searchOrg, object : TypeToken<ArrayList<HealthcareParty>>() {}.getType())
         Assertions.assertThat(10).isLessThan(hcps.size)
@@ -51,7 +51,7 @@ class AddressbookControllerTest : EhealthTest() {
     @Test
     fun getHcpByNihii() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getHcp = this.restTemplate.getForObject("http://localhost:$port/ab/hcp/nihii/10032669001?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        val getHcp = this.restTemplate.getForObject("http://localhost:$port/ab/hcp/nihii/10032669001?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", String::class.java, passPhrase)
         Assertions.assertThat(getHcp != null && getHcp.length>2 && getHcp.startsWith("{"))
         val hcp = gson.fromJson(getHcp,HealthcareParty::class.java)
         Assertions.assertThat("DUCHATEAU").isEqualToIgnoringCase(hcp.lastName)
@@ -61,7 +61,7 @@ class AddressbookControllerTest : EhealthTest() {
     @Test
     fun getHcpBySsin() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getHcp = this.restTemplate.getForObject("http://localhost:$port/ab/hcp/ssin/74010414733?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        val getHcp = this.restTemplate.getForObject("http://localhost:$port/ab/hcp/ssin/74010414733?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", String::class.java, passPhrase)
         Assertions.assertThat(getHcp != null && getHcp.length>2 && getHcp.startsWith("{"))
         val hcp = gson.fromJson(getHcp,HealthcareParty::class.java)
         Assertions.assertThat("DUCHATEAU").isEqualToIgnoringCase(hcp.lastName)
@@ -72,7 +72,7 @@ class AddressbookControllerTest : EhealthTest() {
     @Test
     fun getOrgByHce() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getOrg = this.restTemplate.getForObject("http://localhost:$port/ab/org/nihii/71072393?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        val getOrg = this.restTemplate.getForObject("http://localhost:$port/ab/org/nihii/71072393?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", String::class.java, passPhrase)
         Assertions.assertThat(getOrg != null && getOrg.length>2 && getOrg.startsWith("{"))
         val hcp = gson.fromJson(getOrg,HealthcareParty::class.java)
         Assertions.assertThat("Clinique Ste-Anne St-Remi").isEqualToIgnoringCase(hcp.name)

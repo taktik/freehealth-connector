@@ -42,8 +42,8 @@ class TokenServiceFactory private constructor() {
             val genReq = GenericRequest()
             genReq.setEndpoint(config.getProperty("endpoint.addressbook", "\$uddi{uddi:ehealth-fgov-be:business:addressbook:v1}"))
             genReq.setCredential(token, TokenType.SAML)
-            genReq.setDefaultHandlerChain()
-            genReq.setHandlerChain(HandlerChainUtil.buildChainWithValidator("validation.incoming.message.addressbook", "/XSD/ehealth-addressbook/XSD/ehealth-addressbook-protocol-1_1.xsd"))
+            genReq.addDefaulHandlerChain()
+            genReq.addHandlerChain(HandlerChainUtil.buildChainWithValidator("validation.incoming.message.addressbook", "/XSD/ehealth-addressbook/XSD/ehealth-addressbook-protocol-1_1.xsd"))
             return genReq
         }
     }

@@ -9,12 +9,4 @@ public class DmgBusinessConnectorException extends ConnectorException {
    public DmgBusinessConnectorException(DmgBusinessConnectorExceptionValues errorCodeValue, Object... params) {
       super(MessageFormat.format(errorCodeValue.getMessage(), params), errorCodeValue.getErrorCode());
    }
-
-   public DmgBusinessConnectorException(DmgBusinessConnectorExceptionValues errorCodeValue) {
-      super(errorCodeValue.getMessage(), errorCodeValue.getErrorCode());
-   }
-
-   public DmgBusinessConnectorException(DmgBusinessConnectorExceptionValues errorCodeValue, Throwable cause, Object... params) {
-      super(MessageFormat.format(errorCodeValue.getMessage(), params), errorCodeValue.getErrorCode(), cause);
-   }
 }

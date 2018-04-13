@@ -12,6 +12,7 @@ import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Query
 import be.cin.nip.sync.reg.v1.RegistrationStatus
+import be.fgov.ehealth.globalmedicalfile.core.v1.BlobType
 import be.fgov.ehealth.globalmedicalfile.core.v1.CareReceiverIdType
 import be.fgov.ehealth.globalmedicalfile.core.v1.CommonInputType
 import be.fgov.ehealth.globalmedicalfile.core.v1.OriginType
@@ -72,7 +73,6 @@ import org.taktik.connector.business.dmg.builders.ResponseObjectBuilderFactory
 import org.taktik.connector.business.dmg.domain.DMGReferences
 import org.taktik.connector.business.dmg.exception.DmgBusinessConnectorException
 import org.taktik.connector.business.dmg.exception.DmgBusinessConnectorExceptionValues
-import org.taktik.connector.business.dmg.mappers.RequestObjectMapper
 import org.taktik.connector.business.dmg.util.DmgConstants
 import org.taktik.connector.business.domain.dmg.DmgAcknowledge
 import org.taktik.connector.business.domain.dmg.DmgClosure
@@ -219,7 +219,13 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 				careReceiver = CareReceiverIdType().apply { ssin = patientInfo.inss; regNrWithMut = patientInfo.regNrWithMut; mutuality = patientInfo.mutuality }
 				this.referenceDate = referenceDate
 			}
-			detail = RequestObjectMapper.mapBlobTypefromBlob(blob)
+			detail = BlobType().apply {
+				this.value = blob.content
+				this.id = blob.id
+				this.contentEncoding = blob.contentEncoding
+				this.hashValue = blob.hashValue
+				this.contentType = blob.contentType
+			}
 			val xadesValue = if (ArrayUtils.isEmpty(ArrayUtils.EMPTY_BYTE_ARRAY) && false) {
 				SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES).sign(credential, ConnectorXmlUtils.toByteArray(this), mapOf<kotlin.String?, kotlin.Any?>(
 						"baseURI" to detail.id,

@@ -26,7 +26,8 @@ class GenInsControllerTest : EhealthTest() {
 
     @Before
     fun setUp() {
-        try { System.setProperty("mycarenet.license.password",this.javaClass.getResourceAsStream("/org/taktik/freehealth/middleware/mycarenet.license").reader(Charsets.UTF_8).readText()) } catch (e:NullPointerException) {
+        try {
+            System.setProperty("mycarenet.license.password",this.javaClass.getResourceAsStream("/org/taktik/freehealth/middleware/mycarenet.license").reader(Charsets.UTF_8).readText()) } catch (e:NullPointerException) {
             System.setProperty("mycarenet.license.password", File("src/test/resources/org/taktik/freehealth/middleware/mycarenet.license").reader(Charsets.UTF_8).readText())
         }
     }
@@ -35,7 +36,7 @@ class GenInsControllerTest : EhealthTest() {
     @Test
     fun getGeneralInsurability() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val genIns = this.restTemplate.getForObject("http://localhost:$port/genins/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${"11478761004"}&hcpSsin=${ssin1}&hcpName=${"Antoine Baudoux"}&hcpQuality=${"doctor"}&passPhrase=$passPhrase", String::class.java)
+        val genIns = this.restTemplate.getForObject("http://localhost:$port/genins/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpName={hcpName}&passPhrase={passPhrase}", String::class.java, fullName1, passPhrase)
         assertThat(genIns != null)
     }
 }
