@@ -25,7 +25,7 @@ class HubControllerTest : EhealthTest() {
     fun getTransactionList() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val gettTransactionsListResult = this.restTemplate.getForObject("http://localhost:$port/hub/list/${"73032929895"}?hcpNihii=11478761004&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        val gettTransactionsListResult = this.restTemplate.getForObject("http://localhost:$port/hub/list/${"73032929895"}?hcpNihii=11478761004&hcpZip=6000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
         Assertions.assertThat(gettTransactionsListResult != null && gettTransactionsListResult.length>2 && gettTransactionsListResult.startsWith("["))
     }
 
