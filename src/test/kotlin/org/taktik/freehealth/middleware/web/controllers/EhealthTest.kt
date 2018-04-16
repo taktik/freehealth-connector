@@ -38,6 +38,10 @@ open class EhealthTest {
     @Value("\${org.taktik.icure.keystore1.name}") var fullName1 : String? = null
     @Value("\${org.taktik.icure.keystore2.name}") var fullName2 : String? = null
 
+   init {
+   	System.setProperty("spring.output.ansi.enabled","always")
+   }
+
     protected fun uploadKeystore(path: String, port: Int, restTemplate: TestRestTemplate): UUID? {
         val map = LinkedMultiValueMap<String, Any>()
         map.add("file", FileSystemResource(path))

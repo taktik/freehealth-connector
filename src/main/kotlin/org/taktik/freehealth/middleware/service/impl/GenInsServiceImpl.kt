@@ -38,13 +38,16 @@ import be.fgov.ehealth.genericinsurability.core.v1.RequestType
 import be.fgov.ehealth.genericinsurability.core.v1.SingleInsurabilityRequestType
 import be.fgov.ehealth.genericinsurability.core.v1.ValueRefString
 import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsXmlOrFlatRequestType
+import be.fgov.ehealth.messageservices.core.v1.RetrieveTransactionRequest
 import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
+import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import org.taktik.freehealth.middleware.mapper.toInsurabilityInfoDto
 import org.taktik.freehealth.middleware.service.GenInsService
@@ -54,6 +57,7 @@ import java.util.*
 
 @Service
 class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : GenInsService {
+    private val log = LoggerFactory.getLogger(this.javaClass)
     private val freehealthGenInsService: org.taktik.connector.business.genins.service.GenInsService = org.taktik.connector.business.genins.service.impl.GenInsServiceImpl()
     private val config = ConfigFactory.getConfigValidator(listOf())
 
@@ -105,6 +109,12 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
         }
 
         return try {
+            if (log.isDebugEnabled) {
+                val kmehrRequestMarshaller = MarshallerHelper(GetInsurabilityAsXmlOrFlatRequestType::class.java, GetInsurabilityAsXmlOrFlatRequestType::class.java)
+                val xmlString = kmehrRequestMarshaller.toXMLByteArray(request).toString(Charsets.UTF_8)
+                log.debug("Genins request: {}", xmlString)
+            }
+
             freehealthGenInsService.getInsurability(samlToken, request).toInsurabilityInfoDto()
         } catch (e: javax.xml.ws.soap.SOAPFaultException) {
             InsurabilityInfoDto(faultCode = e.fault?.faultCode, faultSource = e.message, faultMessage = e.fault.faultString)
