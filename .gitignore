@@ -2,4 +2,6 @@ src/test/resources/org/taktik/freehealth/middleware/mycarenet.license
 *.acc-p12
 test.properties
 .gradle
+.idea
+*.iml
 build
