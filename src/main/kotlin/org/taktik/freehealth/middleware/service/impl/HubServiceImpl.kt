@@ -139,7 +139,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 }
             }
         })
-        return transaction.kmehrmessage.toString()
+        return MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
     }
 
     override fun putPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, niss: String, firstName: String, lastName: String, gender: Gender, dateOfBirth: LocalDateTime) {
