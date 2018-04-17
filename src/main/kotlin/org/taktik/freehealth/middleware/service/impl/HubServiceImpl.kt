@@ -67,6 +67,7 @@ import org.taktik.freehealth.middleware.service.HubService
 import org.taktik.freehealth.middleware.service.STSService
 import java.time.LocalDateTime
 import java.util.*
+import javax.xml.bind.JAXB
 
 @Service
 class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : HubService {
@@ -94,7 +95,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     }
 
     override fun getTransactionsList(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpZip: String, ssin: String, from: Long?, to: Long?, authorNihii: String?, authorSsin: String?, isGlobal: Boolean): List<TransactionSummary> {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
         val transactionList = freehealthHubService.getTransactionList(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , GetTransactionListRequest().apply {
             request = createRequestType(hcpNihii, hcpZip, false)
             select = SelectGetTransactionListType().apply {
@@ -124,12 +125,13 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 author = mapper.map(it.author, AuthorDto::class.java)
                 ids = it.ids.map { KmehrId().apply { s =  it.s.value(); sv = it.sv; sl = it.sl; value = it.value } }
                 cds = it.cds.map { KmehrCd().apply { s =  it.s.value(); sv = it.sv; sl = it.sl; value = it.value } }
+
             }
         } ?: listOf()
     }
 
     override fun getTransaction(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpZip: String, ssin: String, sv: String, sl: String, value: String): String {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
         val transaction = freehealthHubService.getTransaction(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , GetTransactionRequest().apply {
             request = createRequestType(hcpNihii, hcpZip, true)
             select = SelectGetTransactionType().apply {
@@ -140,13 +142,14 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             }
         })
         return transaction.kmehrmessage.toString()
+
     }
 
     override fun putPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, niss: String, firstName: String, lastName: String, gender: Gender, dateOfBirth: LocalDateTime) {
     }
 
     override fun putTransaction(endpoint: String, hubId : Long, hubApplication : String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpZip: String, ssin: String, transaction: String): PutTransactionResponse {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
         val marshallerHelper = MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java)
         return freehealthHubService.putTransaction(endpoint, hubId, hubApplication, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , PutTransactionRequest().apply {
             request = createRequestType(hcpNihii, hcpZip, true)
