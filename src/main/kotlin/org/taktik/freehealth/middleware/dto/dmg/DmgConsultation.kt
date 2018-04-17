@@ -12,7 +12,10 @@ import java.time.Instant
  * Time: 21:27
  * To change this template use File | Settings | File Templates.
  */
-class DmgConsultation(complete: Boolean) : DmgMessage(complete), Serializable {
+class DmgConsultation(complete: Boolean?) : DmgMessage(complete), Serializable {
+
+	constructor() : this(null)
+
 	var inss: String? = null
 	var firstName: String? = null
 	var lastName: String? = null

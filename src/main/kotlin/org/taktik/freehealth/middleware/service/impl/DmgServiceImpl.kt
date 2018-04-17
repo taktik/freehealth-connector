@@ -12,6 +12,7 @@ import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Query
 import be.cin.nip.sync.reg.v1.RegistrationStatus
+import be.fgov.ehealth.globalmedicalfile.core.v1.BlobType
 import be.fgov.ehealth.globalmedicalfile.core.v1.CareReceiverIdType
 import be.fgov.ehealth.globalmedicalfile.core.v1.CommonInputType
 import be.fgov.ehealth.globalmedicalfile.core.v1.OriginType
@@ -72,7 +73,6 @@ import org.taktik.connector.business.dmg.builders.ResponseObjectBuilderFactory
 import org.taktik.connector.business.dmg.domain.DMGReferences
 import org.taktik.connector.business.dmg.exception.DmgBusinessConnectorException
 import org.taktik.connector.business.dmg.exception.DmgBusinessConnectorExceptionValues
-import org.taktik.connector.business.dmg.mappers.RequestObjectMapper
 import org.taktik.connector.business.dmg.util.DmgConstants
 import org.taktik.connector.business.domain.dmg.DmgAcknowledge
 import org.taktik.connector.business.domain.dmg.DmgClosure
@@ -213,13 +213,19 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 						}
 					}
 				}
-				this.inputReference = this.inputReference
+				this.inputReference = references.inputReference
 			}
 			routing = RoutingType().apply {
 				careReceiver = CareReceiverIdType().apply { ssin = patientInfo.inss; regNrWithMut = patientInfo.regNrWithMut; mutuality = patientInfo.mutuality }
 				this.referenceDate = referenceDate
 			}
-			detail = RequestObjectMapper.mapBlobTypefromBlob(blob)
+			detail = BlobType().apply {
+				this.value = blob.content
+				this.id = blob.id
+				this.contentEncoding = blob.contentEncoding
+				this.hashValue = blob.hashValue
+				this.contentType = blob.contentType
+			}
 			val xadesValue = if (ArrayUtils.isEmpty(ArrayUtils.EMPTY_BYTE_ARRAY) && false) {
 				SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES).sign(credential, ConnectorXmlUtils.toByteArray(this), mapOf<kotlin.String?, kotlin.Any?>(
 						"baseURI" to detail.id,
@@ -356,15 +362,13 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 					item.add(ItemType().apply {
 						ItemType().apply {
 							cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "claim" })
-							ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "2"; sv = "1.0" })
+							ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "3"; sv = "1.0" })
 							contents.add(ContentType().apply { cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI; sv = "1.0"; value = nomenclature }) })
 						}
 					})
 				})
 			})
 		}
-		val kmehrRequestMarshaller = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
-
 		val gmdRequest = buildSendNotifyRequest(istest, credential, ref, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, pI, dateReference, kmehrmessage)
 
 		val response = ResponseObjectBuilderFactory.getResponseObjectBuilder().handleSendResponseType(org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(GenericRequest().apply {

@@ -25,7 +25,7 @@ class HubControllerTest : EhealthTest() {
     fun getTransactionList() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val gettTransactionsListResult = this.restTemplate!!.getForObject("http://localhost:$port/hub/list/${"73032929895"}?hcpNihii=11478761004&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        val gettTransactionsListResult = this.restTemplate.getForObject("http://localhost:$port/hub/list/${"73032929895"}?hcpNihii=11478761004&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
         Assertions.assertThat(gettTransactionsListResult != null && gettTransactionsListResult.length>2 && gettTransactionsListResult.startsWith("["))
     }
 
@@ -33,7 +33,7 @@ class HubControllerTest : EhealthTest() {
     fun getTransaction() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getTransactionResult = this.restTemplate!!.getForObject("http://localhost:$port/hub/${"73032929895"}/1.0/RswLOCAL/journalnote_73032929895_201709111442025604?hcpNihii=11478761004&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        val getTransactionResult = this.restTemplate.getForObject("http://localhost:$port/hub/${"73032929895"}/1.0/RswLOCAL/journalnote_73032929895_201709111442025604?hcpNihii=11478761004&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
         Assertions.assertThat(getTransactionResult != null && getTransactionResult.length>2 && getTransactionResult.startsWith("["))
     }
 
@@ -41,7 +41,7 @@ class HubControllerTest : EhealthTest() {
     fun putTransaction() {
         val endpoint = "https://vitalink-acpt.ehealth.fgov.be/vpmg/vitalink-gateway/IntraHubService"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val putTransactionResult = this.restTemplate!!.postForObject("http://localhost:$port/hub/${"1990001916"}/${"73032929895"}?hcpNihii=11478761004&hcpZip=8300&hubApplication=${"VITALINKGATEWAY"}&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String(MyTestsConfiguration::class.java.getResourceAsStream("sumehr.xml").readBytes(), Charsets.UTF_8), String::class.java)
+        val putTransactionResult = this.restTemplate.postForObject("http://localhost:$port/hub/${"1990001916"}/${"73032929895"}?hcpNihii=11478761004&hcpZip=8300&hubApplication=${"VITALINKGATEWAY"}&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String(MyTestsConfiguration::class.java.getResourceAsStream("sumehr.xml").readBytes(), Charsets.UTF_8), String::class.java)
         Assertions.assertThat(putTransactionResult != null && putTransactionResult.length>2 && putTransactionResult.startsWith("["))
     }
 

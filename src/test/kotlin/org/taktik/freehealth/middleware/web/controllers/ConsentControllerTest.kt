@@ -51,7 +51,7 @@ class ConsentControllerTest : EhealthTest() {
     @Test
     fun getConsent() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val consent = this.restTemplate.getForObject("http://localhost:$port/consent/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${"11478761004"}&hcpSsin=${ssin1}&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&passPhrase=$passPhrase", String::class.java)
+        val consent = this.restTemplate.getForObject("http://localhost:$port/consent/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpFirstName={firstName}&hcpLastName={lastName}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&passPhrase={passPhrase}", String::class.java, firstName1, lastName1, passPhrase)
         assertThat(consent != null)
         val msg = gson.fromJson(consent, ConsentMessageDto::class.java)
         assertThat(msg.complete).isTrue()
@@ -60,23 +60,23 @@ class ConsentControllerTest : EhealthTest() {
     @Test
     fun revokeConsent() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val consent = gson.fromJson(this.restTemplate.getForObject("http://localhost:$port/consent/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${"11478761004"}&hcpSsin=${ssin1}&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&passPhrase=$passPhrase", String::class.java), ConsentMessageDto::class.java)
-        val revoke = this.restTemplate.postForObject("http://localhost:$port/consent/revoke/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${"11478761004"}&hcpSsin=${ssin1}&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&passPhrase=$passPhrase", consent.consent, String::class.java)
+        val consent = gson.fromJson(this.restTemplate.getForObject("http://localhost:$port/consent/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpFirstName={firstName}&hcpLastName={lastName}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&passPhrase={passPhrase}", String::class.java, firstName1, lastName1, passPhrase), ConsentMessageDto::class.java)
+        val revoke = this.restTemplate.postForObject("http://localhost:$port/consent/revoke/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpFirstName={firstName}&hcpLastName={lastName}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&passPhrase={passPhrase}", consent.consent, String::class.java, firstName1, lastName1, passPhrase)
         assertThat(revoke != null)
         val msg = gson.fromJson(revoke, ConsentMessageDto::class.java)
         assertThat(msg.complete).isTrue()
         //Reestablish
-        this.restTemplate.postForObject("http://localhost:$port/consent/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${"11478761004"}&hcpSsin=${ssin1}&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&passPhrase=$passPhrase", null, String::class.java)
+        this.restTemplate.postForObject("http://localhost:$port/consent/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpFirstName={firstName}&hcpLastName={lastName}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&passPhrase={passPhrase}", null, String::class.java, firstName1, lastName1, passPhrase)
     }
 
     @Test
     fun registerConsent() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         //First revoke
-        val consent = gson.fromJson(this.restTemplate.getForObject("http://localhost:$port/consent/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${"11478761004"}&hcpSsin=${ssin1}&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&passPhrase=$passPhrase", String::class.java), ConsentMessageDto::class.java)
-        val revoke = this.restTemplate.postForObject("http://localhost:$port/consent/revoke/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${"11478761004"}&hcpSsin=${ssin1}&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&passPhrase=$passPhrase", consent.consent, String::class.java)
+        val consent = gson.fromJson(this.restTemplate.getForObject("http://localhost:$port/consent/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpFirstName={firstName}&hcpLastName={lastName}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&passPhrase={passPhrase}", String::class.java, firstName1, lastName1, passPhrase), ConsentMessageDto::class.java)
+        val revoke = this.restTemplate.postForObject("http://localhost:$port/consent/revoke/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpFirstName={firstName}&hcpLastName={lastName}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&passPhrase={passPhrase}", consent.consent, String::class.java, firstName1, lastName1, passPhrase)
 
-        val newConsent = this.restTemplate.postForObject("http://localhost:$port/consent/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${"11478761004"}&hcpSsin=${ssin1}&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&passPhrase=$passPhrase", null, String::class.java)
+        val newConsent = this.restTemplate.postForObject("http://localhost:$port/consent/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpFirstName={firstName}&hcpLastName={lastName}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&passPhrase={passPhrase}", null, String::class.java, firstName1, lastName1, passPhrase)
         assertThat(newConsent != null)
         val msg = gson.fromJson(newConsent, ConsentMessageDto::class.java)
         assertThat(msg.complete).isTrue()

@@ -13,9 +13,11 @@ import java.util.ArrayList
  * To change this template use File | Settings | File Templates.
  */
 open class DmgMessage(complete: Boolean? = null) : Serializable {
+	constructor() : this(null)
+
 	var io: String? = null
 	var reference: String? = null
 	var valueHash: String? = null
 	var isComplete: Boolean? = complete
-	var errors: List<Error> = ArrayList()
+	var errors: MutableList<Error> = ArrayList()
 }

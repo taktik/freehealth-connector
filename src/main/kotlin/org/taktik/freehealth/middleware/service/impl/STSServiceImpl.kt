@@ -68,7 +68,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap : IM
         }
     }
 
-    override fun requestToken(keystoreId: UUID, ssin: String, passPhrase: String): SamlTokenResult {
+    override fun requestToken(keystoreId: UUID, nihiiOrSsin: String, passPhrase: String, medicalHouse: Boolean, extraDesignators: List<Pair<String,String>>): SamlTokenResult {
         val keyStore = getKeyStore(keystoreId, passPhrase)
         val credential = KeyStoreCredential(keyStore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keyStore, passPhrase.toCharArray())
@@ -84,18 +84,29 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap : IM
             throw TechnicalConnectorException(ERROR_CONFIG, arrayOf<Any>("The certificate from the ETK don't match with the one in the encryption keystore"))
         }
 
-        val designators = listOf(
-                SAMLAttributeDesignator("urn:be:fgov:ehealth:1.0:certificateholder:person:ssin", "urn:be:fgov:identification-namespace"),
-                SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
-                SAMLAttributeDesignator("urn:be:fgov:person:ssin:doctor:boolean", "urn:be:fgov:certified-namespace:ehealth"),
-                SAMLAttributeDesignator("urn:be:fgov:person:ssin:ehealth:1.0:doctor:nihii11", "urn:be:fgov:certified-namespace:ehealth"),
-                SAMLAttributeDesignator("urn:be:fgov:person:ssin:ehealth:1.0:fpsph:doctor:boolean", "urn:be:fgov:certified-namespace:ehealth")
+        val designators =
+                if (medicalHouse) listOf(
+                        SAMLAttributeDesignator("urn:fgov:be:1.0:medicalhouse:nihii-number", "urn:be:fgov:identification-namespace"),
+                        SAMLAttributeDesignator("urn:fgov:be:1.0:certificateholder:medicalhouse:nihii-number", "urn:be:fgov:identification-namespace"),
+                        SAMLAttributeDesignator("urn:fgov:be:1.0:medicalhouse:nihii-number", "urn:be:fgov:certified-namespace:ehealth"),
+                        SAMLAttributeDesignator("urn:fgov:be:1.0:certificateholder:medicalhouse:nihii-number", "urn:be:fgov:certified-namespace:ehealth")
+                ) else listOf(
+                        SAMLAttributeDesignator("urn:be:fgov:ehealth:1.0:certificateholder:person:ssin", "urn:be:fgov:identification-namespace"),
+                        SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
+                        SAMLAttributeDesignator("urn:be:fgov:person:ssin:doctor:boolean", "urn:be:fgov:certified-namespace:ehealth"),
+                        SAMLAttributeDesignator("urn:be:fgov:person:ssin:ehealth:1.0:doctor:nihii11", "urn:be:fgov:certified-namespace:ehealth"),
+                        SAMLAttributeDesignator("urn:be:fgov:person:ssin:ehealth:1.0:fpsph:doctor:boolean", "urn:be:fgov:certified-namespace:ehealth")
+                ) +
+                extraDesignators.map { SAMLAttributeDesignator(it.second, it.first) }
+
+        val attributes = if (medicalHouse) listOf(
+                SAMLAttribute("urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number", "urn:be:fgov:identification-namespace",nihiiOrSsin),
+                SAMLAttribute("urn:be:fgov:ehealth:1.0:certificateholder:medicalhouse:nihii-number", "urn:be:fgov:identification-namespace",nihiiOrSsin)
+        ) else listOf(
+                SAMLAttribute("urn:be:fgov:ehealth:1.0:certificateholder:person:ssin", "urn:be:fgov:identification-namespace",nihiiOrSsin),
+                SAMLAttribute("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace",nihiiOrSsin)
         )
 
-        val attributes = listOf(
-                SAMLAttribute("urn:be:fgov:ehealth:1.0:certificateholder:person:ssin", "urn:be:fgov:identification-namespace",ssin),
-                SAMLAttribute("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace",ssin)
-        )
         val assertion = freehealthStsService.getToken(credential, credential, attributes, designators, "urn:oasis:names:tc:SAML:1.0:cm:holder-of-key", 24)
 
         //Serialize
