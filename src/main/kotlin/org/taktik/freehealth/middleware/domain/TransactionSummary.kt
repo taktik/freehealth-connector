@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.domain
 
+import org.joda.time.DateTime
 import org.taktik.freehealth.middleware.dto.common.AuthorDto
 import org.taktik.freehealth.middleware.dto.common.KmehrCd
 import org.taktik.freehealth.middleware.dto.common.KmehrId
