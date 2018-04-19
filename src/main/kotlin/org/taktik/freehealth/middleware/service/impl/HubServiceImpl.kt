@@ -20,7 +20,16 @@
 
 package org.taktik.freehealth.middleware.service.impl
 
-import be.fgov.ehealth.hubservices.core.v3.*
+import be.fgov.ehealth.hubservices.core.v3.GetTransactionListRequest
+import be.fgov.ehealth.hubservices.core.v3.GetTransactionRequest
+import be.fgov.ehealth.hubservices.core.v3.PatientIdType
+import be.fgov.ehealth.hubservices.core.v3.PutTransactionRequest
+import be.fgov.ehealth.hubservices.core.v3.PutTransactionResponse
+import be.fgov.ehealth.hubservices.core.v3.RequestType
+import be.fgov.ehealth.hubservices.core.v3.SelectGetTransactionListType
+import be.fgov.ehealth.hubservices.core.v3.SelectGetTransactionType
+import be.fgov.ehealth.hubservices.core.v3.TransactionBaseType
+import be.fgov.ehealth.hubservices.core.v3.TransactionWithPeriodType
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESSschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCOUNTRY
@@ -44,17 +53,17 @@ import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.kmehrcommons.HcPartyUtil
-import org.taktik.connector.technical.enumeration.Charset
+import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
-import org.taktik.freehealth.middleware.dto.common.AuthorDto
 import org.taktik.freehealth.middleware.domain.Consent
-import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.domain.HcPartyConsent
+import org.taktik.freehealth.middleware.domain.TransactionSummary
+import org.taktik.freehealth.middleware.dto.common.AuthorDto
+import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.dto.common.KmehrCd
 import org.taktik.freehealth.middleware.dto.common.KmehrId
 import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkDto
-import org.taktik.freehealth.middleware.domain.TransactionSummary
 import org.taktik.freehealth.middleware.service.HubService
 import org.taktik.freehealth.middleware.service.STSService
 import java.time.LocalDateTime
@@ -62,6 +71,7 @@ import java.util.*
 
 @Service
 class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : HubService {
+    private val config = ConfigFactory.getConfigValidator(listOf())
     private val freehealthHubService: org.taktik.connector.business.hubv3.service.HubTokenService = org.taktik.connector.business.hubv3.service.impl.HubTokenServiceImpl()
     private val nisCodesPerZip = Gson().fromJson<Map<String,String>>(this.javaClass.getResourceAsStream("/NisCodes.json").bufferedReader(Charsets.UTF_8), HashMap<String, String>().javaClass)
 
@@ -117,7 +127,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 ids = it.ids.map { KmehrId().apply { s =  it.s.value(); sv = it.sv; sl = it.sl; value = it.value } }
                 cds = it.cds.map { KmehrCd().apply { s =  it.s.value(); sv = it.sv; sl = it.sl; value = it.value } }
                 date = it.date.millis
-                dateTime = it.time.millis
+                time = it.time.millis
+                recorddatetime = it.recorddatetime.millis
                 iscomplete = it.isIscomplete
                 isvalidated = it.isIsvalidated
 
@@ -178,7 +189,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                     })
                 })
                 hcparties.add(HcpartyType().apply {
-                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.LOCAL; sl = "endusersoftwareinfo"; sv = "1.0"; value = "Jade" })
+                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.LOCAL; sl = "endusersoftwareinfo"; sv = "1.0"; value = config.getProperty("package.name") ?: "iCure" })
                     cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.1"; value = "application" })
                 })
             }
