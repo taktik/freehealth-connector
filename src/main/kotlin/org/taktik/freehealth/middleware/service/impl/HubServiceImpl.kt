@@ -119,13 +119,13 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 }
             }
         })
-        return transactionList.kmehrheader.folder.transactions.map {
+        return transactionList.kmehrheader?.folder?.transactions?.map {
             TransactionSummary().apply {
                 author = mapper.map(it.author, AuthorDto::class.java)
                 ids = it.ids.map { KmehrId().apply { s =  it.s.value(); sv = it.sv; sl = it.sl; value = it.value } }
                 cds = it.cds.map { KmehrCd().apply { s =  it.s.value(); sv = it.sv; sl = it.sl; value = it.value } }
             }
-        }
+        } ?: listOf()
     }
 
     override fun getTransaction(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpZip: String, ssin: String, sv: String, sl: String, value: String): String {
@@ -139,7 +139,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 }
             }
         })
-        return transaction.kmehrmessage.toString()
+        return MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
     }
 
     override fun putPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, niss: String, firstName: String, lastName: String, gender: Gender, dateOfBirth: LocalDateTime) {
