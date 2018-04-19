@@ -5,3 +5,4 @@ test.properties
 .idea
 *.iml
 build
+org.taktik.connector.technical.properties
