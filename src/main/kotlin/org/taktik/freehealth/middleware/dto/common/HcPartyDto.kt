@@ -27,6 +27,7 @@ class HcPartyDto : Serializable {
 	var name: String? = null
 	var firstName: String? = null
 	var familyName: String? = null
+	var familyname: String? = null
 	val ids = ArrayList<KmehrId>()
 	val cds = ArrayList<KmehrCd>()
 
