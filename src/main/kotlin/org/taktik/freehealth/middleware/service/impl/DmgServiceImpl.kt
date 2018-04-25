@@ -108,6 +108,7 @@ import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.connector.technical.ws.domain.GenericRequest
 import org.taktik.connector.technical.ws.domain.TokenType
 import org.taktik.freehealth.middleware.domain.BusinessError
+import org.taktik.freehealth.middleware.dto.common.KmehrId
 import org.taktik.freehealth.middleware.service.DmgService
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3._2005._05.xmlmime.Base64Binary
@@ -641,7 +642,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
 		val retrieveTransactionRequest = RetrieveTransactionRequest().apply {
 			request = RequestType().apply {
-				id = HcPartyUtil.createKmehrId(DmgConstants.PROJECT_IDENTIFIER, inputReference)
+				id = IDKMEHR()//TODO HcPartyUtil.createKmehrId(DmgConstants.PROJECT_IDENTIFIER, inputReference)
 				this.author = author
 				date = now
 				time = now

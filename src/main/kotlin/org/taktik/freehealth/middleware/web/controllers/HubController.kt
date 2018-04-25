@@ -36,7 +36,7 @@ import java.util.*
 @RequestMapping("/hub")
 class HubController(val hubService: HubService) {
     @GetMapping("/list/{ssin}")
-    fun getTransactionsList(@RequestParam endpoint: String, @RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase:String, @RequestParam hcpNihii:String, @RequestParam hcpZip:String,
+    fun getTransactionsList(@RequestParam endpoint: String, @RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase:String, @RequestParam hcpNihii:String, @RequestParam hcpSsin:String, @RequestParam hcpZip:String,
                             @PathVariable ssin: String, @RequestParam(required = false) from: Long? = null, @RequestParam(required = false) to: Long? = null,
                             @RequestParam(required = false) authorNihii: String? = null, @RequestParam(required = false) authorSsin: String? = null, @RequestParam(required = false) isGlobal: Boolean = false): List<TransactionSummary> {
         return hubService.getTransactionsList(
@@ -46,6 +46,7 @@ class HubController(val hubService: HubService) {
                 passPhrase = passPhrase,
                 hcpNihii = hcpNihii,
                 hcpZip = hcpZip,
+                hcpSsin = hcpSsin,
                 ssin = ssin,
                 from = from,
                 to = to,
@@ -56,7 +57,7 @@ class HubController(val hubService: HubService) {
     }
 
     @GetMapping("/{ssin}/{sv}/{sl}/{value}")
-    fun getTransaction(@RequestParam endpoint: String, @RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase:String, @RequestParam hcpNihii:String, @RequestParam hcpZip:String,
+    fun getTransaction(@RequestParam endpoint: String, @RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase:String, @RequestParam hcpNihii:String, @RequestParam hcpSsin:String, @RequestParam hcpZip:String,
                             @PathVariable ssin: String, @PathVariable sv: String, @PathVariable sl: String, @PathVariable value: String): String {
         return hubService.getTransaction(
                 endpoint = endpoint,
@@ -64,6 +65,7 @@ class HubController(val hubService: HubService) {
                 tokenId = tokenId,
                 passPhrase = passPhrase,
                 hcpNihii = hcpNihii,
+                hcpSsin = hcpSsin,
                 hcpZip = hcpZip,
                 ssin = ssin,
                 sv = sv,
@@ -73,7 +75,7 @@ class HubController(val hubService: HubService) {
     }
 
     @PostMapping("/{hubId}/{ssin}")
-    fun putTransaction(@RequestParam endpoint: String, @RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase:String, @RequestParam hcpNihii:String, @RequestParam hcpZip:String,
+    fun putTransaction(@RequestParam endpoint: String, @RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase:String, @RequestParam hcpNihii:String, @RequestParam hcpSsin:String, @RequestParam hcpZip:String,
                        @PathVariable hubId : Long, @RequestParam(required = false) hubApplication : String?, @PathVariable ssin: String, @RequestBody message : String): PutTransactionResponse {
         return hubService.putTransaction(
                 endpoint = endpoint,
@@ -83,6 +85,7 @@ class HubController(val hubService: HubService) {
                 tokenId = tokenId,
                 passPhrase = passPhrase,
                 hcpNihii = hcpNihii,
+                hcpSsin = hcpSsin,
                 hcpZip = hcpZip,
                 ssin = ssin,
                 transaction = message

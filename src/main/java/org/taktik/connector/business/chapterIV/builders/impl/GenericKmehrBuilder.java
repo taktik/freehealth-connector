@@ -26,7 +26,7 @@ public class GenericKmehrBuilder extends AbstractKmehrBuilderImpl implements Kme
    }
 
    String getKmerhIDPrefix() throws TechnicalConnectorException {
-      return HcPartyUtil.retrieveMainAuthorId("chapterIV");
+      return "";//TODO HcPartyUtil.retrieveMainAuthorId("chapterIV");
    }
 
    public void bootstrap() {

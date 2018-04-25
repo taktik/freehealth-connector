@@ -35,8 +35,8 @@ interface HubService {
     fun registerPatientConsent(token: String, dateOfBirth: LocalDateTime, niss: String, firstName: String, lastName: String, gender: Gender)
     fun registerTherapeuticLink(token: String, ssin: String, start: Date, comment: String)
     fun getTherapeuticLinks(token: String, nissPatient: String, inamiDoctor: String, nissDoctor: String): List<TherapeuticLinkDto>
-    fun putPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, niss: String, firstName: String, lastName: String, gender: Gender, dateOfBirth: LocalDateTime)
-    fun putTransaction(endpoint: String, hubId: Long, hubApplication: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpZip: String, ssin: String, transaction: String): PutTransactionResponse
-    fun getTransaction(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpZip: String, ssin: String, sv: String, sl: String, value: String): String
-    fun getTransactionsList(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpZip: String, ssin: String, from: Long?, to: Long?, authorNihii: String?, authorSsin: String?, isGlobal: Boolean): List<TransactionSummary>
+    fun putPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, niss: String, firstName: String, lastName: String, gender: Gender, dateOfBirth: LocalDateTime)
+    fun putTransaction(endpoint: String, hubId: Long, hubApplication: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, ssin: String, transaction: String): PutTransactionResponse
+    fun getTransaction(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, ssin: String, sv: String, sl: String, value: String): String
+    fun getTransactionsList(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, ssin: String, from: Long?, to: Long?, authorNihii: String?, authorSsin: String?, isGlobal: Boolean): List<TransactionSummary>
 }

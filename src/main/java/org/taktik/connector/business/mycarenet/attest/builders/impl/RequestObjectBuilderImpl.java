@@ -2,6 +2,7 @@ package org.taktik.connector.business.mycarenet.attest.builders.impl;
 
 import be.cin.encrypted.BusinessContent;
 import be.cin.encrypted.EncryptedKnownContent;
+import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR;
 import org.taktik.connector.business.common.domain.Patient;
 import org.taktik.connector.business.kmehrcommons.HcPartyUtil;
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory;
@@ -82,7 +83,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder, Configura
 
    private RequestType buildRequest(InputReference references) throws TechnicalConnectorException {
       RequestType req = new RequestType();
-      req.setId(HcPartyUtil.createKmehrId("attest", references.getInputReference()));
+      req.setId(new IDKMEHR()/* TODO HcPartyUtil.createKmehrId("attest", references.getInputReference())*/);
       req.setAuthor(HcPartyUtil.createAuthor("attest"));
       req.setDate(new DateTime());
       req.setTime(new DateTime());
