@@ -121,11 +121,14 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 }
             }
         })
+
+        //print(MarshallerHelper(GetTransactionListResponse::class.java, GetTransactionListResponse::class.java).toXMLByteArray(transactionList).toString(Charsets.UTF_8))
+
         return transactionList.kmehrheader?.folder?.transactions?.map {
             TransactionSummary().apply {
                 author = mapper.map(it.author, AuthorDto::class.java)
-                ids = it.ids.map { KmehrId().apply { s =  it.s.value(); sv = it.sv; sl = it.sl; value = it.value } }
-                cds = it.cds.map { KmehrCd().apply { s =  it.s.value(); sv = it.sv; sl = it.sl; value = it.value } }
+                ids = it.ids.map { KmehrId().apply { s =  it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value } }
+                cds = it.cds.map { KmehrCd().apply { s =  it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value } }
                 date = it.date.millis
                 time = it.time.millis
                 recorddatetime = it.recorddatetime.millis
@@ -139,7 +142,20 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     override fun getTransaction(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpZip: String, ssin: String, sv: String, sl: String, value: String): String {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
 
+        val requestQuery = GetTransactionRequest().apply {
+            request = createRequestType(hcpNihii, hcpZip, true)
+            select = SelectGetTransactionType().apply {
+                patient = PatientIdType().apply { ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin }) }
+                transaction = TransactionBaseType().apply {
+                    id = IDKMEHR().apply { this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl = sl; this.value = value }
+                }
+            }
+        }
+
+        print(MarshallerHelper(GetTransactionRequest::class.java, GetTransactionRequest::class.java).toXMLByteArray(requestQuery).toString(Charsets.UTF_8))
+
         val transaction = freehealthHubService.getTransaction(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , GetTransactionRequest().apply {
+
             request = createRequestType(hcpNihii, hcpZip, true)
             select = SelectGetTransactionType().apply {
                 patient = PatientIdType().apply { ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin }) }
@@ -149,11 +165,12 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             }
         })
 
-        //return MarshallerHelper(GetTransactionRequest::class.java, GetTransactionRequest::class.java).toXMLByteArray(requestQuery).toString(Charsets.UTF_8)
+        print(MarshallerHelper(GetTransactionResponse::class.java, GetTransactionResponse::class.java).toXMLByteArray(transaction).toString(Charsets.UTF_8))
+
         return MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
-        //return MarshallerHelper(GetTransactionResponse::class.java, GetTransactionResponse::class.java).toXMLByteArray(transaction).toString(Charsets.UTF_8)
 
     }
+
 
     override fun putPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, niss: String, firstName: String, lastName: String, gender: Gender, dateOfBirth: LocalDateTime) {
     }
@@ -175,6 +192,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             author = AuthorType().apply {
                 hcparties.add(HcpartyType().apply {
                     ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
+                    
                     cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.0"; value = "persphysician" })
 
                     if (encrypted) {
