@@ -30,6 +30,14 @@ class HubControllerTest : EhealthTest() {
     }
 
     @Test
+    fun putPatient() {
+        val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val putPatientResult = this.restTemplate.postForObject("http://localhost:$port/hub/patient/${"Duchâteau"}/${"73032929895"}?hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&firstName=Antoine&dateOfBirth=19740104&gender=male", null, String::class.java)
+        Assertions.assertThat(putPatientResult != null && putPatientResult.length>2 && putPatientResult.startsWith("["))
+    }
+
+    @Test
     fun getTransactionList() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)

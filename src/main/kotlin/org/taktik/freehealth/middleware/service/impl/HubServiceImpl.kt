@@ -183,7 +183,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         } ?: listOf()
     }
 
-    override fun putPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, patientSsin: String, firstName: String, lastName: String, gender: Gender, dateOfBirth: LocalDateTime) {
+    override fun putPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, patientSsin: String, firstName: String, lastName: String, gender: Gender, dateOfBirth: LocalDateTime) : Patient? {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
         val transaction = freehealthHubService.putPatient(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , PutPatientRequest().apply {
             request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
@@ -195,6 +195,15 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 birthdate = DateType().apply { date = org.joda.time.DateTime(dateOfBirth.year, dateOfBirth.monthValue, dateOfBirth.dayOfMonth, 0, 0) }
             }
         })
+        return transaction.patient?.let {
+            Patient().apply {
+                this.firstName = it.firstnames.firstOrNull()
+                this.lastName = it.familyname
+                this.gender = it.sex?.cd?.value?.value()?.let { Gender.valueOf(it) } ?: Gender.undefined
+                ssin = it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT }?.value
+                addresses = it.addresses?.map { mapper.map(it, Address::class.java) }?.toMutableSet() ?: HashSet()
+            }
+        }
     }
 
     override fun getPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, patientSsin: String): Patient? {
