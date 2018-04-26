@@ -21,6 +21,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +121,16 @@ public class MarshallerHelper<X, Y> {
 
    public X toObject(Node source) {
       try {
+         StringWriter sw = new StringWriter();
+         try {
+            Transformer t = TransformerFactory.newInstance().newTransformer();
+            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            t.transform(new DOMSource(source), new StreamResult(sw));
+         } catch (TransformerException te) {
+            System.out.println("nodeToString Transformer Exception");
+         }
+         String content =  sw.toString();
+
          return (X) this.getUnMarshaller().unmarshal(source);
       } catch (JAXBException var5) {
          JAXBException e = var5;

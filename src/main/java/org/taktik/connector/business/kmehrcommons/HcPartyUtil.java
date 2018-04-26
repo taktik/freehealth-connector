@@ -175,24 +175,6 @@ public final class HcPartyUtil {
       }
    }
 
-   public static String createKmehrIdString(String projectName, String kmehrIdSuffix) throws TechnicalConnectorException {
-      String tempKmehrIdSuffix = kmehrIdSuffix;
-      if (kmehrIdSuffix == null) {
-         tempKmehrIdSuffix = createKmehrIdSuffix();
-      }
-
-      return retrieveMainAuthorId(projectName) + "." + tempKmehrIdSuffix;
-   }
-
-   public static String createKmehrIdString(String projectName) throws TechnicalConnectorException {
-      return createKmehrIdString(projectName, (String)null);
-   }
-
-   public static String retrieveMainAuthorId(String projectName) throws TechnicalConnectorException {
-      String finalProjectName = determineProjectNameToUse(projectName);
-      String mainAuthorIdProperty = "kmehr." + finalProjectName + ".identifier.id.idhcparty.value";
-      return ConfigFactory.getConfigValidatorFor(mainAuthorIdProperty).getProperty(mainAuthorIdProperty);
-   }
 
    /** @deprecated */
    @Deprecated
@@ -203,15 +185,7 @@ public final class HcPartyUtil {
    public static String createKmehrIdSuffix() throws TechnicalConnectorException {
       return IdGeneratorFactory.getIdGenerator("kmehr").generateId();
    }
-
-   public static IDKMEHR createKmehrId(String projectName, String kmehrIdSuffix) throws TechnicalConnectorException {
-      IDKMEHR id = new IDKMEHR();
-      id.setS(IDKMEHRschemes.ID_KMEHR);
-      id.setSV("1.0");
-      id.setValue(createKmehrIdString(projectName, kmehrIdSuffix));
-      return id;
-   }
-
+   
    public static IDHCPARTY createInssId(String insz) {
       return buildId("1.0", insz, IDHCPARTYschemes.INSS);
    }

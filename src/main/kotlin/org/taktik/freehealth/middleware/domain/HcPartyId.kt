@@ -23,7 +23,4 @@ package org.taktik.freehealth.middleware.domain
 import org.taktik.freehealth.middleware.dto.common.KmehrId
 import java.io.Serializable
 
-class HcPartyId : Serializable {
-    var ids: List<KmehrId> = mutableListOf()
-
-}
+class HcPartyId(var ids: List<KmehrId> = mutableListOf()) : Serializable

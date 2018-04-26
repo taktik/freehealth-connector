@@ -233,7 +233,8 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     private fun <T> executeOperation(token: SAMLToken, endpoint: String, keystore: KeyStore, passPhrase: String, operation: String, request: Any, clazz: Class<T>): T {
         try {
             val service = ServiceFactory.getIntraHubPort(endpoint, token, keystore, passPhrase, operation).setPayload(request)
-            return org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service).asObject(clazz)
+            val genericResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            return genericResponse.asObject(clazz)
         } catch (ex: SOAPException) {
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
         } catch (ex: WebServiceException) {

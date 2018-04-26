@@ -21,7 +21,7 @@ public class KmehrBuilderPersPhysician extends AbstractKmehrBuilderImpl implemen
    private static final String SV_VERSION_1_0 = "1.0";
 
    String getKmerhIDPrefix() throws TechnicalConnectorException {
-      return HcPartyUtil.retrieveMainAuthorId("chapterIV");
+      return "";//TODO HcPartyUtil.retrieveMainAuthorId("chapterIV");
    }
 
    public List<HcpartyType> generateHcPartiesForTransactionAuthor() throws TechnicalConnectorException {

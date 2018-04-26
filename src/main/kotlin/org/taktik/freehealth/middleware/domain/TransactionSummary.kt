@@ -43,7 +43,6 @@ class TransactionSummary : Serializable {
     var iscomplete: Boolean = false
     var isvalidated: Boolean = false
     var recorddatetime: Long? = null
-    var dateTime: Long? = null
     var authorsList: String? = null
     var desc: String? = null
 }

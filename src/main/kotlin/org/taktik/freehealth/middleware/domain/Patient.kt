@@ -35,7 +35,7 @@ class Patient : Person {
     var active = true
     var ssin: String? = null
     override var civility: String? = null
-    override var gender: Gender? = Gender.unknown
+    override var gender: Gender? = Gender.undefined
     var maidenName: String? = null // Never changes (nom de jeune fille)
     var spouseName: String? = null // Name of the spouse after marriage
     var partnerName: String? = null // Name of the partner, sometimes equal to spouseName
@@ -121,7 +121,7 @@ class Patient : Person {
         if (this.civility == null && other.civility != null) {
             this.civility = other.civility
         }
-        if (this.gender == null && other.gender != null && other.gender !== Gender.unknown) {
+        if (this.gender == null && other.gender != null && other.gender !== Gender.undefined) {
             this.gender = other.gender
         }
         if (this.maidenName == null && other.maidenName != null) {
@@ -190,7 +190,7 @@ class Patient : Person {
         if (other.civility != null) {
             this.civility = other.civility
         }
-        if (other.gender != null && other.gender !== Gender.unknown) {
+        if (other.gender != null && other.gender !== Gender.undefined) {
             this.gender = other.gender
         }
         if (other.maidenName != null) {

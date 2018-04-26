@@ -1,5 +1,6 @@
 package org.taktik.connector.business.hubv3.util;
 
+import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR;
 import org.taktik.connector.business.kmehrcommons.HcPartyUtil;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.utils.SessionUtil;
@@ -16,7 +17,7 @@ public class RequestTypeBuilder {
       RequestType newRequest = new RequestType();
       newRequest.setDate(new DateTime());
       newRequest.setTime(new DateTime());
-      newRequest.setId(HcPartyUtil.createKmehrId("hubservicev3", SessionUtil.getNihii()));
+      newRequest.setId(new IDKMEHR()/* TODO HcPartyUtil.createKmehrId("hubservicev3", SessionUtil.getNihii())*/);
       requestTypeBuilder.request = newRequest;
       return requestTypeBuilder;
    }

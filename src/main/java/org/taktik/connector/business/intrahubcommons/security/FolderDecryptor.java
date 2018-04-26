@@ -6,6 +6,7 @@ import org.taktik.connector.technical.service.etee.Crypto;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.stream.IntStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -48,15 +50,24 @@ final class FolderDecryptor {
             ConnectorXmlUtils.dump(decryptedMessage);
             NodeList folders = getFolders(decryptedMessage);
 
-            for(int i = 0; i < folders.getLength(); ++i) {
-               Element folderElement = (Element)folders.item(i);
-               Node folder = base64EncryptedDataParentNode.getOwnerDocument().importNode(folderElement, true);
+            IntStream.range(0, folders.getLength()).mapToObj(folders::item).forEach((Node e) -> {
+               Element folderElement = (Element) e;
+               Element folder = base64EncryptedDataParentNode.getOwnerDocument().createElementNS("http://www.ehealth.fgov.be/standards/kmehr/schema/v1", "folder");
+               NodeList folderChildren = folderElement.getChildNodes();
+               IntStream.range(0, folderChildren.getLength()).mapToObj(folderChildren::item).forEach((Node fn) -> {
+                  folder.appendChild(base64EncryptedDataParentNode.getOwnerDocument().importNode(fn, true));
+               });
+               NamedNodeMap m = folderElement.getAttributes();
+               for (int ii = 0; ii < m.getLength(); ii++) {
+                  Node attr = m.item(ii);
+                  folder.setAttribute(attr.getNodeName(), attr.getNodeValue());
+               }
                base64EncryptedDataParentNode.appendChild(folder);
-            }
+            });
          } catch (SAXException var13) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_SAX_EXCEPTION, new Object[]{"SAXException when decrypting the SOAP folder", var13});
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_SAX_EXCEPTION, "SAXException when decrypting the SOAP folder", var13);
          } catch (IOException var14) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_IOEXCEPTION, new Object[]{"IOException when decrypting the SOAP folder", var14});
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_IOEXCEPTION, "IOException when decrypting the SOAP folder", var14);
          }
       } else if (folderNodes.getLength() == 0) {
          LOG.debug("No node with name Base64EncryptedDatafound to decrypt");
@@ -68,7 +79,8 @@ final class FolderDecryptor {
 
    private static NodeList getFolders(byte[] decryptedMessage) throws SAXException, IOException {
       Document doc = builder.parse(new InputSource(new ByteArrayInputStream(decryptedMessage)));
-      return doc.getElementsByTagNameNS("http://www.ehealth.fgov.be/standards/kmehr/schema/v1", "folder");
+
+      return doc.getElementsByTagName("folder");
    }
 
    static {
