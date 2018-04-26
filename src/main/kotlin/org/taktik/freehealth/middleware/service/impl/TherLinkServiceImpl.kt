@@ -32,7 +32,7 @@ import org.joda.time.LocalTime
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.common.domain.Patient
 import org.taktik.connector.business.common.util.HandlerChainUtil
-import org.taktik.connector.business.domain.therlink.TherapeuticLinkMessage
+import org.taktik.connector.business.therlink.domain.TherapeuticLinkMessage
 import org.taktik.connector.business.therlink.domain.Author
 import org.taktik.connector.business.therlink.domain.HcParty
 import org.taktik.connector.business.therlink.domain.Proof
@@ -46,12 +46,9 @@ import org.taktik.connector.business.therlink.domain.requests.TherapeuticLinkSta
 import org.taktik.connector.business.therlink.mappers.RequestObjectMapper
 import org.taktik.connector.business.therlink.mappers.ResponseObjectMapper
 import org.taktik.connector.technical.config.ConfigFactory
-import org.taktik.connector.technical.handler.SchemaValidatorHandler
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.BeIDCredential
 import org.taktik.connector.technical.ws.domain.GenericRequest
-import org.taktik.connector.technical.ws.domain.HandlerChain
-import org.taktik.connector.technical.ws.domain.HandlerPosition
 import org.taktik.connector.technical.ws.domain.TokenType
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.TherLinkService

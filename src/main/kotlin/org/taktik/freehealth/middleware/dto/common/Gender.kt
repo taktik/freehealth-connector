@@ -26,7 +26,7 @@ import java.io.Serializable
  * Created by aduchate on 21/01/13, 14:56
  */
 enum class Gender constructor(val code: String) : Serializable {
-    male("M"), female("F"), indeterminate("I"), changed("C"), changedToMale("Y"), changedToFemale("X"), unknown("U");
+    male("M"), female("F"), indeterminate("I"), changed("C"), changedToMale("Y"), changedToFemale("X"), undefined("U");
     override fun toString(): String = code
     companion object { fun fromCode(code: String?): Gender? = if (code == null) null else Gender.values().firstOrNull { it.code == code } }
 }

@@ -20,7 +20,7 @@
 
 package org.taktik.freehealth.middleware.service
 
-import org.taktik.connector.business.domain.therlink.TherapeuticLinkMessage
+import org.taktik.connector.business.therlink.domain.TherapeuticLinkMessage
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
 import java.util.*
 

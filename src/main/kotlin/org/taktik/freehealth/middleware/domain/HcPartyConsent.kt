@@ -31,11 +31,10 @@ import java.io.Serializable
  * Time: 20:44
  * To change this template use File | Settings | File Templates.
  */
-class HcPartyConsent : Serializable {
-    var hcparty: HcPartyId? = null
-    var signdate: Long? = null
-    var revokedate: Long? = null
-    var author: AuthorDto? = null
-    var hubId: String? = null
-
-}
+class HcPartyConsent(
+        var hcparty: HcPartyId? = null,
+        var signdate: Long? = null,
+        var revokedate: Long? = null,
+        var author: AuthorDto? = null,
+        var hubId: String? = null
+) : Serializable

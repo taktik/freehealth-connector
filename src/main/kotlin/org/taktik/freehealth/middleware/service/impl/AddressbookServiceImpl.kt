@@ -55,7 +55,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
                     lastName = it.lastName,
                     ssin = it.ssin,
                     nihii = (it.professions.find { it.professionCodes.any { it.value == "PHYSICIAN" } } ?: it.professions.firstOrNull())?.nihii,
-                    gender = Gender.fromCode(it.gender) ?: Gender.unknown)
+                    gender = Gender.fromCode(it.gender) ?: Gender.undefined)
         }
     }
 
@@ -96,7 +96,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
         return HealthcareParty(firstName = it.firstName,
                 lastName = it.lastName,
                 ssin = it.ssin,
-                gender = Gender.fromCode(it.gender) ?: Gender.unknown,
+                gender = Gender.fromCode(it.gender) ?: Gender.undefined,
                 nihii = professionalInformation?.profession?.nihii
         ).apply {
             addresses.addAll(professionalInformation?.addresses?.map {
