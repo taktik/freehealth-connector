@@ -87,6 +87,7 @@ import org.taktik.freehealth.middleware.domain.Consent
 import org.taktik.freehealth.middleware.domain.HcPartyConsent
 import org.taktik.freehealth.middleware.domain.Patient
 import org.taktik.freehealth.middleware.domain.TransactionSummary
+import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.common.AuthorDto
 import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.dto.common.KmehrCd
@@ -96,6 +97,7 @@ import org.taktik.freehealth.middleware.service.STSService
 import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.collections.HashSet
 
 @Service
 class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : HubService {
@@ -203,8 +205,15 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 patient = PatientIdType().apply { ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = patientSsin }) }
             }
         })
-
-        return patient.patient?.let { mapper.map(it, Patient::class.java) }
+        return patient.patient?.let {
+            Patient().apply {
+                firstName = it.firstnames.firstOrNull()
+                lastName = it.familyname
+                gender = it.sex?.cd?.value?.value()?.let { Gender.valueOf(it) } ?: Gender.undefined
+                ssin = it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT }?.value
+                addresses = it.addresses?.map { mapper.map(it, Address::class.java) }?.toMutableSet() ?: HashSet()
+            }
+        }
     }
 
     override fun getTransaction(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, ssin: String, sv: String, sl: String, value: String): String {
