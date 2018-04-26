@@ -38,6 +38,30 @@ class HubControllerTest : EhealthTest() {
     }
 
     @Test
+    fun getHcpConsent() {
+        val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val getPatientResult = this.restTemplate.getForObject("http://localhost:$port/hub/hcpconsent/${nihii1}?hcpSsin=${ssin1}&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        Assertions.assertThat(getPatientResult != null && getPatientResult.length>2 && getPatientResult.startsWith("["))
+    }
+
+    @Test
+    fun getPatientConsent() {
+        val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val getPatientResult = this.restTemplate.getForObject("http://localhost:$port/hub/consent/${"73032929895"}?hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        Assertions.assertThat(getPatientResult != null && getPatientResult.length>2 && getPatientResult.startsWith("["))
+    }
+
+    @Test
+    fun putPatientConsent() {
+        val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val putPatientResult = this.restTemplate.postForObject("http://localhost:$port/hub/consent/${"73032929895"}?hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&eidCardNumber=592363302467", null, String::class.java)
+        Assertions.assertThat(putPatientResult != null && putPatientResult.length>2 && putPatientResult.startsWith("["))
+    }
+
+    @Test
     fun getTransactionList() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)

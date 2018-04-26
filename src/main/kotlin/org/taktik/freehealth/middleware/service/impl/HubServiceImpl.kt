@@ -105,7 +105,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     private val freehealthHubService: org.taktik.connector.business.hubv3.service.HubTokenService = org.taktik.connector.business.hubv3.service.impl.HubTokenServiceImpl()
     private val nisCodesPerZip = Gson().fromJson<Map<String,String>>(this.javaClass.getResourceAsStream("/NisCodes.json").bufferedReader(Charsets.UTF_8), HashMap<String, String>().javaClass)
 
-    override fun getHcPartyConsent(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, inss: String, nihii: String): HcPartyConsent? {
+    override fun getHcPartyConsent(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String): HcPartyConsent? {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
         val hcPartyConsent = freehealthHubService.getHCPartyConsent(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase, GetHCPartyConsentRequest().apply {
             request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
@@ -144,6 +144,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                     ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = patientSsin })
                     patientEidCardNumber?.let { ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber }) }
                 }
+	            cds.add(CDCONSENT().apply { s=CDCONSENTschemes.CD_CONSENTTYPE; sv="1.0"; value = CDCONSENTvalues.RETROSPECTIVE })
+	            author = AuthorType().apply { hcparties.add(request.author.hcparties.first()) }
             }
         })
     }
