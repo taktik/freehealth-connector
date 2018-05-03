@@ -62,7 +62,7 @@ class HubController(val hubService: HubService) {
 
 	@GetMapping("/patient/{patientSsin}")
 	fun getPatient(@RequestParam endpoint: String, @RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String,
-	               @RequestParam hcpZip: String, @PathVariable patientSsin: String): Patient? = hubService.getPatient(
+	               @RequestParam hcpZip: String, @PathVariable patientSsin: String) = hubService.getPatient(
 			endpoint = endpoint,
 			keystoreId = keystoreId,
 			tokenId = tokenId,
@@ -73,7 +73,19 @@ class HubController(val hubService: HubService) {
 			patientSsin = patientSsin
 	)
 
-	@PostMapping("/consent/{lastName}/{patientSsin}")
+	@GetMapping("/hcpconsent/{hcpNihii}")
+	fun getHcpConsent(@RequestParam endpoint: String, @RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable hcpNihii: String, @RequestParam hcpSsin: String,
+	                      @RequestParam hcpZip: String) = hubService.getHcPartyConsent(
+			endpoint = endpoint,
+			keystoreId = keystoreId,
+			tokenId = tokenId,
+			passPhrase = passPhrase,
+			hcpNihii = hcpNihii,
+			hcpSsin = hcpSsin,
+			hcpZip = hcpZip
+	)
+
+	@PostMapping("/consent/{patientSsin}")
 	fun registerPatientConsent(@RequestParam endpoint: String, @RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String,
 	                           @RequestParam hcpZip: String, @PathVariable patientSsin: String, @RequestParam(required = false) patientEidCardNumber: String?) = hubService.registerPatientConsent(
 			endpoint = endpoint,

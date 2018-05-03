@@ -87,6 +87,7 @@ import org.taktik.freehealth.middleware.domain.Consent
 import org.taktik.freehealth.middleware.domain.HcPartyConsent
 import org.taktik.freehealth.middleware.domain.Patient
 import org.taktik.freehealth.middleware.domain.TransactionSummary
+import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.common.AuthorDto
 import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.dto.common.KmehrCd
@@ -96,6 +97,7 @@ import org.taktik.freehealth.middleware.service.STSService
 import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.collections.HashSet
 
 @Service
 class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : HubService {
@@ -103,7 +105,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     private val freehealthHubService: org.taktik.connector.business.hubv3.service.HubTokenService = org.taktik.connector.business.hubv3.service.impl.HubTokenServiceImpl()
     private val nisCodesPerZip = Gson().fromJson<Map<String,String>>(this.javaClass.getResourceAsStream("/NisCodes.json").bufferedReader(Charsets.UTF_8), HashMap<String, String>().javaClass)
 
-    override fun getHcPartyConsent(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, inss: String, nihii: String): HcPartyConsent? {
+    override fun getHcPartyConsent(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String): HcPartyConsent? {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
         val hcPartyConsent = freehealthHubService.getHCPartyConsent(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase, GetHCPartyConsentRequest().apply {
             request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
@@ -142,6 +144,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                     ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = patientSsin })
                     patientEidCardNumber?.let { ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber }) }
                 }
+	            cds.add(CDCONSENT().apply { s=CDCONSENTschemes.CD_CONSENTTYPE; sv="1.0"; value = CDCONSENTvalues.RETROSPECTIVE })
+	            author = AuthorType().apply { hcparties.add(request.author.hcparties.first()) }
             }
         })
     }
@@ -181,7 +185,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         } ?: listOf()
     }
 
-    override fun putPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, patientSsin: String, firstName: String, lastName: String, gender: Gender, dateOfBirth: LocalDateTime) {
+    override fun putPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, patientSsin: String, firstName: String, lastName: String, gender: Gender, dateOfBirth: LocalDateTime) : Patient? {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
         val transaction = freehealthHubService.putPatient(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , PutPatientRequest().apply {
             request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
@@ -193,6 +197,15 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 birthdate = DateType().apply { date = org.joda.time.DateTime(dateOfBirth.year, dateOfBirth.monthValue, dateOfBirth.dayOfMonth, 0, 0) }
             }
         })
+        return transaction.patient?.let {
+            Patient().apply {
+                this.firstName = it.firstnames.firstOrNull()
+                this.lastName = it.familyname
+                this.gender = it.sex?.cd?.value?.value()?.let { Gender.valueOf(it) } ?: Gender.undefined
+                ssin = it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT }?.value
+                addresses = it.addresses?.map { mapper.map(it, Address::class.java) }?.toMutableSet() ?: HashSet()
+            }
+        }
     }
 
     override fun getPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, patientSsin: String): Patient? {
@@ -203,8 +216,15 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 patient = PatientIdType().apply { ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = patientSsin }) }
             }
         })
-
-        return patient.patient?.let { mapper.map(it, Patient::class.java) }
+        return patient.patient?.let {
+            Patient().apply {
+                firstName = it.firstnames.firstOrNull()
+                lastName = it.familyname
+                gender = it.sex?.cd?.value?.value()?.let { Gender.valueOf(it) } ?: Gender.undefined
+                ssin = it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT }?.value
+                addresses = it.addresses?.map { mapper.map(it, Address::class.java) }?.toMutableSet() ?: HashSet()
+            }
+        }
     }
 
     override fun getTransaction(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, ssin: String, sv: String, sl: String, value: String): String {
