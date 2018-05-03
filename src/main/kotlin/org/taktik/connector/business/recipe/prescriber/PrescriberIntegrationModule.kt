@@ -26,31 +26,70 @@ import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationM
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.SAMLToken
+import java.security.KeyStore
 
 interface PrescriberIntegrationModule {
     @Throws(IntegrationModuleException::class)
-    fun createPrescription(samlToken: SAMLToken, credential: Credential, nihii: String, feedbackRequested: Boolean, patientId: String, prescription: ByteArray, prescriptionType: String): String?
+    fun createPrescription(
+        samlToken: SAMLToken,
+        credential: Credential,
+        nihii: String,
+        feedbackRequested: Boolean,
+        patientId: String,
+        prescription: ByteArray,
+        prescriptionType: String
+                          ): String?
 
     @Throws(IntegrationModuleException::class)
     fun revokePrescription(samlToken: SAMLToken, credential: Credential, nihii: String, rid: String, reason: String)
 
     @Throws(IntegrationModuleException::class)
-    fun getPrescription(samlToken: SAMLToken, credential: Credential, nihii: String, rid: String): GetPrescriptionForPrescriberResult?
+    fun getPrescription(
+        samlToken: SAMLToken,
+        credential: Credential,
+        keystore: KeyStore,
+        passPhrase: String,
+        nihii: String,
+        rid: String
+                       ): GetPrescriptionForPrescriberResult?
 
     @Throws(IntegrationModuleException::class)
-    fun listOpenPrescription(samlToken: SAMLToken, credential: Credential, nihii: String, patientId: String): List<String>
+    fun listOpenPrescription(
+        samlToken: SAMLToken,
+        credential: Credential,
+        nihii: String,
+        patientId: String
+                            ): List<String>
 
     @Throws(IntegrationModuleException::class)
     fun listOpenPrescription(samlToken: SAMLToken, credential: Credential, nihii: String): List<String>
 
     @Throws(IntegrationModuleException::class)
-    fun sendNotification(samlToken: SAMLToken, credential: Credential, nihii: String, notificationText: ByteArray, patientId: String, executorId: String)
+    fun sendNotification(
+        samlToken: SAMLToken,
+        credential: Credential,
+        nihii: String,
+        notificationText: ByteArray,
+        patientId: String,
+        executorId: String
+                        )
 
     @Throws(IntegrationModuleException::class)
-    fun updateFeedbackFlag(samlToken: SAMLToken, credential: Credential, nihii: String, rid: String, feedbackAllowed: Boolean)
+    fun updateFeedbackFlag(
+        samlToken: SAMLToken,
+        credential: Credential,
+        nihii: String,
+        rid: String,
+        feedbackAllowed: Boolean
+                          )
 
     @Throws(IntegrationModuleException::class)
-    fun listFeedback(samlToken: SAMLToken, credential: Credential, nihii: String, readFlag: Boolean): List<ListFeedbackItem>
+    fun listFeedback(
+        samlToken: SAMLToken,
+        credential: Credential,
+        nihii: String,
+        readFlag: Boolean
+                    ): List<ListFeedbackItem>
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
     fun ping(samlToken: SAMLToken, credential: Credential)

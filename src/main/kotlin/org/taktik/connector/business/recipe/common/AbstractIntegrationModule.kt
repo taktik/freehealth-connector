@@ -39,6 +39,7 @@ import net.sf.ehcache.CacheManager
 import org.apache.log4j.Logger
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Base64
+import org.slf4j.LoggerFactory
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.connector.business.recipeprojects.core.utils.ETKHelper
 import org.taktik.connector.business.recipeprojects.core.utils.EncryptionUtils
@@ -51,6 +52,7 @@ import org.taktik.connector.business.recipeprojects.core.utils.PropertyHandler
 import org.taktik.connector.technical.service.kgss.KgssService
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.kgss.impl.KgssServiceImpl
+import org.taktik.connector.technical.service.sts.security.SAMLToken
 
 import javax.crypto.spec.SecretKeySpec
 import java.io.File
@@ -63,8 +65,8 @@ import java.util.Arrays
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-abstract class AbstractIntegrationModule @Throws(IntegrationModuleException::class)
-constructor() {
+abstract class AbstractIntegrationModule @Throws(IntegrationModuleException::class) constructor() {
+    private val log = LoggerFactory.getLogger(this.javaClass)
     private val ridPattern = Pattern.compile(RID_PATTERN)
 
     protected var dataUnsealer: DataUnsealer? = null
@@ -98,8 +100,6 @@ constructor() {
     @Throws(IntegrationModuleException::class)
     protected fun init() {
         try {
-            LOG.info("Init abstractIntegrationModule!")
-            LoggingUtil.initLog4J(propertyHandler)
 
             jaxContextCentralizer.addContext(GetKeyRequestContent::class.java)
             jaxContextCentralizer.addContext(GetKeyResponseContent::class.java)
@@ -113,38 +113,36 @@ constructor() {
             System.setProperty("javax.xml.soap.SOAPFactory", "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl")
 
             // Extra debug information
-            if (LOG.isDebugEnabled) {
-                LOG.debug("Curdir : " + File(".").canonicalPath)
-                LOG.debug("Support P12 keystores : " + KeyStore.getInstance("PKCS12"))
+            if (log.isDebugEnabled) {
+                log.debug("Curdir : " + File(".").canonicalPath)
+                log.debug("Support P12 keystores : " + KeyStore.getInstance("PKCS12"))
             }
 
             //initCaching();
             //initEncryption();
-            LOG.info("End Init abstractIntegrationModule!")
+            log.info("End Init abstractIntegrationModule!")
         } catch (t: Throwable) {
-            LOG.error("Exception in init abstractIntegrationModule: ", t)
+            log.error("Exception in init abstractIntegrationModule: ", t)
             Exceptionutils.errorHandler(t)
         }
-
     }
 
     private fun initCaching() {
-        LOG.info("INIT CACHE MANAGER")
-        val url = javaClass.getResource("/cache/config/ehcache.xml")
-        cacheManager = CacheManager.newInstance(url)
+        log.info("INIT CACHE MANAGER")
+        cacheManager = CacheManager.newInstance(javaClass.getResource("/cache/config/ehcache.xml"))
 
-        LOG.info("DOES KGSS CACHE EXIST?")
+        log.info("DOES KGSS CACHE EXIST?")
         kgssCache = cacheManager!!.getCache("KGSS")
         if (kgssCache == null) {
-            LOG.info("NEW KGSS CACHE")
+            log.info("NEW KGSS CACHE")
             kgssCache = Cache("KGSS", 0, false, false, 0, 0)
             cacheManager!!.addCache(kgssCache)
         }
 
-        LOG.info("DOES ETK CACHE EXIST?")
+        log.info("DOES ETK CACHE EXIST?")
         etkCache = cacheManager!!.getCache("ETK")
         if (etkCache == null) {
-            LOG.info("NEW ETK CACHE")
+            log.info("NEW ETK CACHE")
             etkCache = Cache("ETK", 0, false, false, 0, 0)
             cacheManager!!.addCache(etkCache)
         }
@@ -154,25 +152,24 @@ constructor() {
     private fun initEncryption() {
         try {
 
-            LOG.info("Init the encryption - create symmKey")
+            log.info("Init the encryption - create symmKey")
             symmKey = encryptionUtils.generateSecretKey()
 
             if (encryptionUtils.oldKeyStore != null) {
                 oldDataSealer = encryptionUtils.initOldSealing()
                 oldDataUnsealer = encryptionUtils.initOldUnSealing()
             }
-            LOG.info("Init the encryption - init etkHelper")
+            log.info("Init the encryption - init etkHelper")
             etkHelper = ETKHelper(propertyHandler, encryptionUtils)
 
             // if (hasPersonalEtk()) { //only for care providers
-            // LOG.info("Init the encryption - care provider has a personal ETK");
+            // log.info("Init the encryption - care provider has a personal ETK");
             // encrUtils.verifyDecryption(etkHelper.getSystemETK().get(0));
             // }
         } catch (t: Throwable) {
-            LOG.error("Exception occured when initializing the encryption util: ", t)
+            log.error("Exception occured when initializing the encryption util: ", t)
             Exceptionutils.errorHandler(t, "error.initialization")
         }
-
     }
 
     @Synchronized
@@ -221,13 +218,13 @@ constructor() {
 
             if (result.hasErrors()) { // 3.A.A. There are no errors or failures
                 for (error in result.errors) {
-                    LOG.error(error.name)
+                    log.error(error.name)
                 }
                 for (warning in result.warnings) {
-                    LOG.error(warning.name)
+                    log.error(warning.name)
                 }
                 if (result.fatal != null) {
-                    LOG.error(result.fatal.errorMessage)
+                    log.error(result.fatal.errorMessage)
                 }
             }
 
@@ -244,23 +241,27 @@ constructor() {
         var unsealedNotification: ByteArray? = null
         var calledUnsealNotifOld = false
         try {
-            LOG.debug("Start unseal notification: " + org.apache.commons.io.IOUtils.toString(message, "UTF-8"))
+            log.debug("Start unseal notification: " + org.apache.commons.io.IOUtils.toString(message, "UTF-8"))
             unsealedNotification = unseal(message)
             if (unsealedNotification != null) {
                 return unsealedNotification
             }
             if (oldDataUnsealer != null) {
-                LOG.debug("Unseal notification was null. Start unseal notification with old keystore: " + Arrays.toString(message))
+                log.debug(
+                    "Unseal notification was null. Start unseal notification with old keystore: " + Arrays.toString(
+                        message
+                    )
+                )
                 calledUnsealNotifOld = true
                 unsealedNotification = unsealNotifOld(message)
                 if (unsealedNotification != null) {
                     return unsealNotifOld(message)
                 }
             } else {
-                LOG.debug("OldDataUnsealer is null.")
+                log.debug("OldDataUnsealer is null.")
             }
         } catch (t: Throwable) {
-            LOG.error("Exception occured with unsealing notification: ", t)
+            log.error("Exception occured with unsealing notification: ", t)
             if (calledUnsealNotifOld) {
                 if (t is CryptoResultException && t.message?.contains("There is no data available") == true) {
                     return null
@@ -268,7 +269,11 @@ constructor() {
                 Exceptionutils.errorHandler(t, "error.data.unseal")
             } else {
                 try {
-                    LOG.debug("Exception occured with unsealing notification. Trying to unseal notification with old keystore: " + Arrays.toString(message))
+                    log.debug(
+                        "Exception occured with unsealing notification. Trying to unseal notification with old keystore: " + Arrays.toString(
+                            message
+                        )
+                    )
                     unsealedNotification = unsealNotifOld(message)
                 } catch (te: Throwable) {
                     if (t is CryptoResultException && t.message?.contains("There is no data available") == true) {
@@ -297,22 +302,24 @@ constructor() {
     }
 
     @Throws(IntegrationModuleException::class)
-    protected fun getKeyFromKgss(keyId: String, myEtk: ByteArray): KeyResult? {
+    protected fun getKeyFromKgss(keystore: KeyStore, samlToken: SAMLToken, passPhrase: String, keyId: String, myEtk: ByteArray): KeyResult? {
         var keyResult: KeyResult? = null
         try {
             // For test, when a sim key is specified in the config
             if (propertyHandler.hasProperty("test_kgss_key")) {
-                val part1 = propertyHandler.getProperty("test_kgss_key").split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
-                val part2 = propertyHandler.getProperty("test_kgss_key").split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
-                // LOG.info("KGSS key retrieved from configuration. Key Id = part1);
+                val part1 =
+                    propertyHandler.getProperty("test_kgss_key").split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+                val part2 =
+                    propertyHandler.getProperty("test_kgss_key").split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+                // log.info("KGSS key retrieved from configuration. Key Id = part1);
                 val keyResponse = Base64.decode(part2)
                 return KeyResult(SecretKeySpec(keyResponse, "AES"), part1)
             }
 
-            keyResult = null //TODO kgssService.retrieveKeyFromKgss(keyId.getBytes(), myEtk, etkHelper.getKGSS_ETK().get(0).getEncoded());
-
+            keyResult =
+                kgssService.retrieveKeyFromKgss(keystore, samlToken, passPhrase, keyId.toByteArray(Charsets.UTF_8), myEtk, etkHelper!!.kgsS_ETK[0].encoded);
         } catch (t: Throwable) {
-            LOG.error("Exception in getKeyFromKgss abstractIntegrationModule: ", t)
+            log.error("Exception in getKeyFromKgss abstractIntegrationModule: ", t)
             Exceptionutils.errorHandler(t)
         }
 
@@ -323,14 +330,14 @@ constructor() {
     protected fun validateRid(rid: String) {
         val matcher = ridPattern.matcher(rid)
         if (!matcher.find()) {
-            LOG.error("Invalid RID was provided.")
+            log.error("Invalid RID was provided.")
             throw IntegrationModuleException(I18nHelper.getLabel("error.rid.validation", arrayOf<Any>(rid)))
         }
     }
 
     companion object {
 
-        private val LOG = Logger.getLogger(AbstractIntegrationModule::class.java)
+        private val log = Logger.getLogger(AbstractIntegrationModule::class.java)
 
         val EHEALTH_SUCCESS_CODE_100 = "100"
         val EHEALTH_SUCCESS_CODE_200 = "200"

@@ -76,6 +76,7 @@ import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 
 import java.io.ByteArrayInputStream
+import java.security.KeyStore
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -107,7 +108,13 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
     @Throws(IntegrationModuleException::class)
     override fun prepareCreatePrescription(nihii: String, patientId: String, prescriptionType: String) {
         val cacheId = "($patientId#$prescriptionType)"
-        getNewKeyFromKgss(prescriptionType, nihii, null, patientId, etkHelper!!.systemETK[0].encoded)?.let { keyCache.put(cacheId, it) }
+        getNewKeyFromKgss(
+            prescriptionType,
+            nihii,
+            null,
+            patientId,
+            etkHelper!!.systemETK[0].encoded
+        )?.let { keyCache.put(cacheId, it) }
     }
 
     /**
@@ -146,7 +153,6 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
 
         LOG.info("Ping response : " + response.aliveCheckResult)
         checkStatus(response)
-
     }
 
     /**
@@ -201,7 +207,8 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
 
             // create request
             val request = CreatePrescriptionRequest()
-            request.securedCreatePrescriptionRequest = createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(params)))
+            request.securedCreatePrescriptionRequest =
+                createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(params)))
 
             // create administrative info
             val info = CreatePrescriptionAdministrativeInformationType()
@@ -299,7 +306,14 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
      */
 
     @Throws(IntegrationModuleException::class)
-    override fun getPrescription(samlToken: SAMLToken, credential: Credential, nihii: String, rid: String): GetPrescriptionForPrescriberResult? {
+    override fun getPrescription(
+        samlToken: SAMLToken,
+        credential: Credential,
+        keystore: KeyStore,
+        passPhrase: String,
+        nihii: String,
+        rid: String
+    ): GetPrescriptionForPrescriberResult? {
         validateRid(rid)
         try {
 
@@ -339,7 +353,7 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
             // unseal WS response
             val result = helper.unsealWithSymmKey(response.securedGetPrescriptionForPrescriberResponse.securedContent, symmKey)
 
-            getKeyFromKgss(result.encryptionKeyId, etkHelper!!.systemETK[0].encoded)?.let {key ->
+            getKeyFromKgss(keystore, samlToken, passPhrase, result.encryptionKeyId, etkHelper!!.systemETK[0].encoded)?.let { key ->
                 result.prescription = IOUtils.decompress(unsealPrescriptionForUnknown(key, result.prescription))
             }
 
