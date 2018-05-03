@@ -56,7 +56,5 @@ class STSControllerTest : EhealthTest() {
 
         val res = this.restTemplate?.getForObject("http://localhost:$port/sts/checkKeystore/${keystoreId}", String::class.java)
         assertThat(res != null)
-
-        print("Result: "+res)
     }
 }

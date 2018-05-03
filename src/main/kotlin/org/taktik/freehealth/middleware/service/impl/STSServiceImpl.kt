@@ -141,7 +141,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap : IM
 
         val keystoreData = keystoresMap.get(keystoreId)
 
-        if(keystoreData?.size != null){
+        if(keystoreData != null){
             return 1
         }
 
