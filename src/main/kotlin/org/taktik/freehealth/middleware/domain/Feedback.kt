@@ -23,10 +23,11 @@ package org.taktik.freehealth.middleware.domain
 import java.io.Serializable
 import java.util.Date
 
-class Feedback(var rid: String? = null,
-               var sentBy: Long? = null,
-               var sentDate: Date? = null,
-               var textContent: String? = null
+class Feedback(
+    var rid: String? = null,
+    var sentBy: Long? = null,
+    var sentDate: Date? = null,
+    var textContent: String? = null
 ) : Serializable, Comparable<Feedback> {
 
     override fun compareTo(other: Feedback): Int {
@@ -55,5 +56,4 @@ class Feedback(var rid: String? = null,
         result = 31 * result + (textContent?.hashCode() ?: 0)
         return result
     }
-
 }

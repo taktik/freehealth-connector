@@ -24,10 +24,10 @@ import java.io.Serializable
 
 class Telecom(val telecomType: TelecomType = TelecomType.email, val telecomNumber: String? = null) : Serializable {
     fun mergeFrom(other: Telecom): Telecom = Telecom(
-            telecomNumber = if (this.telecomNumber == null && other.telecomNumber != null) other.telecomNumber else this.telecomNumber
+        telecomNumber = if (this.telecomNumber == null && other.telecomNumber != null) other.telecomNumber else this.telecomNumber
     )
 
     fun forceMergeFrom(other: Telecom) = Telecom(
-            telecomNumber = other.telecomNumber ?: this.telecomNumber
+        telecomNumber = other.telecomNumber ?: this.telecomNumber
     )
 }

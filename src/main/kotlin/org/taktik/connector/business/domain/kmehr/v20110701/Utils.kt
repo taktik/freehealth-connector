@@ -26,47 +26,77 @@ import org.taktik.connector.business.domain.kmehr.v20110701.be.fgov.ehealth.stan
 import javax.xml.datatype.DatatypeConstants.FIELD_UNDEFINED
 
 class Utils {
-    fun makeXMLGregorianCalendarFromFuzzyLong(date : Long?) : XMLGregorianCalendarImpl? {
+    fun makeXMLGregorianCalendarFromFuzzyLong(date: Long?): XMLGregorianCalendarImpl? {
         return date?.let {
-            if (it%10000000000 == 0L) it/10000000000 else if (it%100000000 == 0L) it/100000000 else if (it<99991231 && it%10000 == 0L) it/10000 else if (it<99991231 && it%100 == 0L) it/100 else it /*normalize*/
+            when {
+                it % 10000000000 == 0L -> it / 10000000000
+                it % 100000000 == 0L -> it / 100000000
+                it < 99991231 && it % 10000 == 0L -> it / 10000
+                it < 99991231 && it % 100 == 0L -> it / 100
+                else -> it
+            } /*normalize*/
         }?.let { d ->
             XMLGregorianCalendarImpl().apply {
                 millisecond = FIELD_UNDEFINED
                 timezone = FIELD_UNDEFINED
                 when (d) {
-                    in 0..9999 -> {  year = d.toInt(); month = FIELD_UNDEFINED; day = FIELD_UNDEFINED }
-                    in 0..999912 -> { year = (d / 100).toInt(); month = (d % 100).toInt(); day = FIELD_UNDEFINED }
-                    in 0..99991231 -> { year = (d / 10000).toInt(); month = ((d / 100) % 100).toInt(); day = (d % 100).toInt() }
+                    in 0..9999 -> {
+                        year = d.toInt(); month = FIELD_UNDEFINED; day = FIELD_UNDEFINED
+                    }
+                    in 0..999912 -> {
+                        year = (d / 100).toInt(); month = (d % 100).toInt(); day = FIELD_UNDEFINED
+                    }
+                    in 0..99991231 -> {
+                        year = (d / 10000).toInt(); month = ((d / 100) % 100).toInt(); day = (d % 100).toInt()
+                    }
                     else -> {
-                        year = (d / 10000000000).toInt(); month = ((d / 100000000) % 100).toInt(); day = ((d / 1000000) % 100).toInt()
-                        hour = ((d / 10000) % 100).toInt(); minute = ((d / 100) % 100).toInt(); second = (d % 100).toInt()
+                        year = (d / 10000000000).toInt(); month = ((d / 100000000) % 100).toInt(); day =
+                            ((d / 1000000) % 100).toInt()
+                        hour = ((d / 10000) % 100).toInt(); minute = ((d / 100) % 100).toInt(); second =
+                            (d % 100).toInt()
                     }
                 }
             }
         }
     }
 
-    fun makeDateTypeFromFuzzyLong(date : Long?) : DateType? {
+    fun makeDateTypeFromFuzzyLong(date: Long?): DateType? {
         return makeXMLGregorianCalendarFromFuzzyLong(date)?.let {
             DateType().apply {
                 when (FIELD_UNDEFINED) {
-                    it.month -> { year = it }
-                    it.day -> { yearmonth = it }
-                    it.hour -> { this.date = it }
-                    else -> { this.date = it; this.time = it }
+                    it.month -> {
+                        year = it
+                    }
+                    it.day -> {
+                        yearmonth = it
+                    }
+                    it.hour -> {
+                        this.date = it
+                    }
+                    else -> {
+                        this.date = it; this.time = it
+                    }
                 }
             }
         }
     }
 
-    fun makeMomentTypeFromFuzzyLong(date : Long?) : MomentType? {
+    fun makeMomentTypeFromFuzzyLong(date: Long?): MomentType? {
         return makeXMLGregorianCalendarFromFuzzyLong(date)?.let {
             MomentType().apply {
                 when (FIELD_UNDEFINED) {
-                    it.month -> { year = it }
-                    it.day -> { yearmonth = it }
-                    it.hour -> { this.date = it }
-                    else -> { this.date = it; this.time = it }
+                    it.month -> {
+                        year = it
+                    }
+                    it.day -> {
+                        yearmonth = it
+                    }
+                    it.hour -> {
+                        this.date = it
+                    }
+                    else -> {
+                        this.date = it; this.time = it
+                    }
                 }
             }
         }

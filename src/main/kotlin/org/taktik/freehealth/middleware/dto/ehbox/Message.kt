@@ -24,20 +24,20 @@ import org.taktik.freehealth.middleware.dto.common.Addressee
 import java.io.Serializable
 
 abstract class Message(
-        val id: String? = null,
-        val publicationId: String? = null,
-        val sender: Addressee? = null,
-        val mandatee: Addressee? = null,
-        val destinations: List<Addressee>? = null,
-        val isImportant: Boolean = false,
-        val isEncrypted: Boolean = false,
-        val isUsePublicationReceipt: Boolean = false,
-        val isUseReceivedReceipt: Boolean = false,
-        val isUseReadReceipt: Boolean = false,
-        val isHasAnnex: Boolean = false,
-        val isHasFreeInformations: Boolean = false,
-        val publicationDateTime: Long? = null,
-        val expirationDateTime: Long? = null,
-        val size: String? = null,
-        val customMetas: Map<String, String>? = null
+    val id: String? = null,
+    val publicationId: String? = null,
+    val sender: Addressee? = null,
+    val mandatee: Addressee? = null,
+    val destinations: List<Addressee>? = null,
+    val isImportant: Boolean = false,
+    val isEncrypted: Boolean = false,
+    val isUsePublicationReceipt: Boolean = false,
+    val isUseReceivedReceipt: Boolean = false,
+    val isUseReadReceipt: Boolean = false,
+    val isHasAnnex: Boolean = false,
+    val isHasFreeInformations: Boolean = false,
+    val publicationDateTime: Long? = null,
+    val expirationDateTime: Long? = null,
+    val size: String? = null,
+    val customMetas: Map<String, String>? = null
 ) : Serializable

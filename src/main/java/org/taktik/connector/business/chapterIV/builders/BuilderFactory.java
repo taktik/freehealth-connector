@@ -1,7 +1,6 @@
 package org.taktik.connector.business.chapterIV.builders;
 
 import org.taktik.connector.business.chapterIV.builders.impl.AdmissionBuilderImpl;
-import org.taktik.connector.business.chapterIV.builders.impl.CommonBuilderImpl;
 import org.taktik.connector.business.chapterIV.builders.impl.ConsultationBuilderImpl;
 import org.taktik.connector.business.chapterIV.builders.impl.ResponseBuilderImpl;
 import org.taktik.connector.business.chapterIV.validators.Chapter4XmlValidator;
@@ -50,22 +49,6 @@ public final class BuilderFactory {
          SessionItem sessionItem = Session.getInstance().getSession();
          return getBuilderFactoryForSession(sessionItem);
       }
-   }
-
-   private CommonBuilder getCommonBuilder() throws TechnicalConnectorException {
-      if (this.commonBuilder == null) {
-         this.commonBuilder = new CommonBuilderImpl(this.chapter4XmlValidator, this.kmehrValidator, KmehrBuilderFactory.getKmehrBuilder());
-      }
-
-      return this.commonBuilder;
-   }
-
-   public ConsultationBuilder getConsultationBuilder() throws TechnicalConnectorException {
-      return new ConsultationBuilderImpl(this.getCommonBuilder());
-   }
-
-   public AdmissionBuilder getAdmissionBuilder() throws TechnicalConnectorException {
-      return new AdmissionBuilderImpl(this.getCommonBuilder());
    }
 
    public ResponseBuilder getResponseBuilder() throws TechnicalConnectorException {

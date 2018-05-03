@@ -22,12 +22,13 @@ package org.taktik.freehealth.middleware.domain
 
 import org.taktik.freehealth.middleware.dto.Code
 
-data class Compound(var substanceProduct : Substance? = null,
-                    var medicinalProduct : Medicinalproduct? = null,
-                    var quantityprefix : Code? = null /* CD-QUANTITYPREFIX */,
-                    var quantity: KmehrQuantity? = null
-                    ) {
-    fun isValid() : Boolean {
+data class Compound(
+    var substanceProduct: Substance? = null,
+    var medicinalProduct: Medicinalproduct? = null,
+    var quantityprefix: Code? = null /* CD-QUANTITYPREFIX */,
+    var quantity: KmehrQuantity? = null
+) {
+    fun isValid(): Boolean {
         return substanceProduct == null || medicinalProduct == null
     }
 }

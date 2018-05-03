@@ -45,42 +45,6 @@ import org.slf4j.LoggerFactory;
 public class RequestObjectBuilderImpl implements RequestObjectBuilder, ConfigurationModuleBootstrap.ModuleBootstrapHook {
    private static final Logger LOG = LoggerFactory.getLogger(RequestObjectBuilderImpl.class);
 
-   public SendAttestationRequest buildSendAttestationRequest(boolean isTest, InputReference references, Ssin patientSsin, DateTime referenceDate, Kmehrmessage msg) throws TechnicalConnectorException, AttestBusinessConnectorException, JAXBException, TransformerException, UnsupportedEncodingException {
-      this.checkInputParameters(references, patientSsin, referenceDate);
-      SendAttestationRequest sendAttestationRequest = new SendAttestationRequest();
-      String detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId();
-      SendTransactionRequest request = new SendTransactionRequest();
-      request.setRequest(this.buildRequest(references));
-      request.setKmehrmessage(msg);
-      EncryptedKnownContent encryptedKnownContent = new EncryptedKnownContent();
-      encryptedKnownContent.setReplyToEtk(KeyDepotManagerFactory.getKeyDepotManager().getETK(KeyDepotManager.EncryptionTokenType.HOLDER_OF_KEY).getEncoded());
-      BusinessContent businessContent = new BusinessContent();
-      businessContent.setId(detailId);
-      MarshallerHelper<SendTransactionRequest, SendTransactionRequest> kmehrMarshallHelper = new MarshallerHelper(SendTransactionRequest.class, SendTransactionRequest.class);
-      businessContent.setValue(kmehrMarshallHelper.toXMLByteArray(request));
-      encryptedKnownContent.setBusinessContent(businessContent);
-      byte[] xmlByteArray = (new AttestEncryptionUtil()).handleEncryption(encryptedKnownContent, SessionUtil.getHolderOfKeyCrypto(), detailId);
-      if (xmlByteArray != null && ConfigFactory.getConfigValidator().getBooleanProperty("org.taktik.connector.business.attest.builders.impl.dumpMessages", false).booleanValue()) {
-         LOG.debug("RequestObjectBuilder : created blob content: " + new String(xmlByteArray));
-      }
-
-      Blob blob = BlobBuilderFactory.getBlobBuilder("attest").build(xmlByteArray, "none", detailId, "text/xml", (String)null, "encryptedForKnownCINNIC");
-      blob.setMessageName("E-ATTEST");
-      this.buildAttestationRequest(isTest, references, patientSsin, referenceDate, sendAttestationRequest, blob);
-      (new AttestXmlValidatorImpl()).validate(sendAttestationRequest);
-      return sendAttestationRequest;
-   }
-
-   private void buildAttestationRequest(boolean isTest, InputReference references, Ssin patientSsin, DateTime referenceDate, SendAttestationRequest sendAttestationRequest, Blob blob) throws TechnicalConnectorException {
-      CommonBuilder commonBuilder = RequestBuilderFactory.getCommonBuilder("attest");
-      sendAttestationRequest.setCommonInput(CommonInputMapper.mapCommonInputType(commonBuilder.createCommonInput(McnConfigUtil.retrievePackageInfo("attest"), isTest, references.getInputReference())));
-      sendAttestationRequest.setId(IdGeneratorFactory.getIdGenerator("xsid").generateId());
-      sendAttestationRequest.setIssueInstant(new DateTime());
-      Patient patient = (new Patient.Builder()).withInss(patientSsin.getValue()).build();
-      sendAttestationRequest.setRouting(RoutingMapper.mapRoutingType(commonBuilder.createRouting(patient, referenceDate)));
-      sendAttestationRequest.setDetail(BlobMapper.mapBlobTypefromBlob(blob));
-   }
-
    private RequestType buildRequest(InputReference references) throws TechnicalConnectorException {
       RequestType req = new RequestType();
       req.setId(new IDKMEHR()/* TODO HcPartyUtil.createKmehrId("attest", references.getInputReference())*/);

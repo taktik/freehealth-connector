@@ -31,9 +31,10 @@ import java.util.Date
  * To change this template use File | Settings | File Templates.
  */
 open class Prescription(
-        var creationDate: Date,
-        var encryptionKeyId: String,
-        var rid: String,
-        var isFeedbackAllowed: Boolean = false,
-        var patientId: String? = null,
-        var notificationWasSent: Boolean? = null) : Serializable {}
+    var creationDate: Date,
+    var encryptionKeyId: String,
+    var rid: String,
+    var isFeedbackAllowed: Boolean = false,
+    var patientId: String? = null,
+    var notificationWasSent: Boolean? = null
+) : Serializable

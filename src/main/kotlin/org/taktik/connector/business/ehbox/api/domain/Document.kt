@@ -32,9 +32,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.Serializable
 import java.text.MessageFormat
-import org.apache.commons.lang.ArrayUtils
 import org.bouncycastle.util.Arrays
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class Document : Serializable {
@@ -60,12 +58,20 @@ class Document : Serializable {
             fos.write(this.content!!)
             fos.flush()
         } catch (var8: IOException) {
-            LOG.debug("\t## " + MessageFormat.format(EhboxBusinessConnectorExceptionValues.ERROR_EHBOX_DOCUMENT_OUTPUTSTREAM.message, file.toURI()))
-            throw EhboxBusinessConnectorException(EhboxBusinessConnectorExceptionValues.ERROR_EHBOX_DOCUMENT_OUTPUTSTREAM, var8, *arrayOf<Any>(file.toURI()))
+            LOG.debug(
+                "\t## " + MessageFormat.format(
+                    EhboxBusinessConnectorExceptionValues.ERROR_EHBOX_DOCUMENT_OUTPUTSTREAM.message,
+                    file.toURI()
+                )
+            )
+            throw EhboxBusinessConnectorException(
+                EhboxBusinessConnectorExceptionValues.ERROR_EHBOX_DOCUMENT_OUTPUTSTREAM,
+                var8,
+                *arrayOf<Any>(file.toURI())
+            )
         } finally {
             ConnectorIOUtils.closeQuietly(fos as Any?)
         }
-
     }
 
     @Throws(UnsealConnectorException::class)
@@ -80,7 +86,6 @@ class Document : Serializable {
     fun setContent(content: ByteArray?) {
         this.content = content?.let { Arrays.clone(it) }
     }
-
 
     @Throws(TechnicalConnectorException::class)
     fun setContent(inputStream: InputStream) {

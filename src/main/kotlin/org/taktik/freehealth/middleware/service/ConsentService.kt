@@ -25,7 +25,44 @@ import org.taktik.connector.business.domain.consent.ConsentMessage
 import java.util.*
 
 interface ConsentService {
-	fun registerPatientConsent(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, patientSsin: String, patientFirstName: String, patientLastName: String, eidCardNumber: String?, isiCardNumber: String?): ConsentMessage
-	fun getPatientConsent(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, patientSsin: String, patientFirstName: String, patientLastName: String): ConsentMessage
-	fun revokePatientConsent(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, existingConsent: ConsentType, eidCardNumber: String?, isiCardNumber: String?): ConsentMessage
+    fun registerPatientConsent(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientSsin: String,
+        patientFirstName: String,
+        patientLastName: String,
+        eidCardNumber: String?,
+        isiCardNumber: String?
+    ): ConsentMessage
+
+    fun getPatientConsent(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientSsin: String,
+        patientFirstName: String,
+        patientLastName: String
+    ): ConsentMessage
+
+    fun revokePatientConsent(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        existingConsent: ConsentType,
+        eidCardNumber: String?,
+        isiCardNumber: String?
+    ): ConsentMessage
 }

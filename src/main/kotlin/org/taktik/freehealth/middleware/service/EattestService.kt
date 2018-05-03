@@ -21,10 +21,21 @@
 package org.taktik.freehealth.middleware.service
 
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
-import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResultWithResponse
 import java.util.*
 
 interface EattestService {
-    fun sendAttest(keystoreId: UUID, tokenId: UUID, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, hcpCbe: String, passPhrase: String, patientSsin: String, referenceDate: Int?, attest: Eattest): SendAttestResultWithResponse?
+    fun sendAttest(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        hcpCbe: String,
+        passPhrase: String,
+        patientSsin: String,
+        referenceDate: Int?,
+        attest: Eattest
+    ): SendAttestResultWithResponse?
 }

@@ -24,7 +24,6 @@ import org.taktik.connector.business.ehbox.api.domain.Message
 import org.taktik.connector.business.ehbox.api.domain.exception.EhboxBusinessConnectorException
 import org.taktik.connector.business.ehbox.v3.builders.ConsultationMessageBuilder
 import org.taktik.connector.technical.exception.TechnicalConnectorException
-import org.taktik.connector.technical.service.etee.Crypto
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetFullMessageResponse
 
 import java.security.KeyStore
@@ -39,12 +38,20 @@ class ConsultationMessageBuilderImpl : ConsultationMessageBuilder {
     }
 
     @Throws(EhboxBusinessConnectorException::class, TechnicalConnectorException::class)
-    override fun buildFullMessage(keystore: KeyStore, passPhrase: String, msg: GetFullMessageResponse): Message<GetFullMessageResponse> {
+    override fun buildFullMessage(
+        keystore: KeyStore,
+        passPhrase: String,
+        msg: GetFullMessageResponse
+    ): Message<GetFullMessageResponse> {
         return this.fullBuilder.buildFullMessage(keystore, passPhrase, msg)
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    override fun buildMessage(keystore: KeyStore, passPhrase: String, msg: be.fgov.ehealth.ehbox.consultation.protocol.v3.Message): Message<be.fgov.ehealth.ehbox.consultation.protocol.v3.Message> {
+    override fun buildMessage(
+        keystore: KeyStore,
+        passPhrase: String,
+        msg: be.fgov.ehealth.ehbox.consultation.protocol.v3.Message
+    ): Message<be.fgov.ehealth.ehbox.consultation.protocol.v3.Message> {
         return this.reducedBuilder.buildMessage(keystore, passPhrase, msg)
     }
 }

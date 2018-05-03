@@ -20,8 +20,10 @@
 
 package org.taktik.freehealth.middleware.dto.eattest
 
-class SendAttestResultWithResponse(acknowledge: EattestAcknowledgeType? = null,
-                                   invoicingNumber : String? = null,
-                                   attest: Eattest? = null,
-                                   var kmehrMessage : ByteArray?,
-                                   var xades : ByteArray?) : SendAttestResult(acknowledge, invoicingNumber, attest)
+class SendAttestResultWithResponse(
+    acknowledge: EattestAcknowledgeType? = null,
+    invoicingNumber: String? = null,
+    attest: Eattest? = null,
+    var kmehrMessage: ByteArray?,
+    var xades: ByteArray?
+) : SendAttestResult(acknowledge, invoicingNumber, attest)

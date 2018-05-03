@@ -30,7 +30,7 @@ import java.util.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 class Patient : Person {
     override var firstName: String? = null
-    override var lastName: String? = null  //Is usually either maidenName or spouseName
+    override var lastName: String? = null //Is usually either maidenName or spouseName
     var alias: String? = null
     var active = true
     var ssin: String? = null
@@ -58,7 +58,8 @@ class Patient : Person {
 
     override var addresses: MutableSet<Address> = HashSet()
     var insurabilities: List<Insurability> = ArrayList()
-    override var languages: MutableList<String> = ArrayList() //alpha-2 code http://www.loc.gov/standards/iso639-2/ascii_8bits.html
+    override var languages: MutableList<String> =
+        ArrayList() //alpha-2 code http://www.loc.gov/standards/iso639-2/ascii_8bits.html
     var financialInstitutionInformation: List<FinancialInstitutionInformation> = ArrayList()
 
     var parameters: Map<String, List<String>> = HashMap()
@@ -76,32 +77,23 @@ class Patient : Person {
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other)
-            return true
+        if (this === other) return true
         if (other == null) {
             return false
         }
         if (other is Patient) {
             if (dateOfBirth == null) {
-                if (other.dateOfBirth != null)
-                    return false
-            } else if (dateOfBirth != other.dateOfBirth)
-                return false
+                if (other.dateOfBirth != null) return false
+            } else if (dateOfBirth != other.dateOfBirth) return false
             if (firstName == null) {
-                if (other.firstName != null)
-                    return false
-            } else if (firstName != other.firstName)
-                return false
+                if (other.firstName != null) return false
+            } else if (firstName != other.firstName) return false
             if (lastName == null) {
-                if (other.lastName != null)
-                    return false
-            } else if (lastName != other.lastName)
-                return false
+                if (other.lastName != null) return false
+            } else if (lastName != other.lastName) return false
             if (ssin == null) {
-                if (other.ssin != null)
-                    return false
-            } else if (ssin != other.ssin)
-                return false
+                if (other.ssin != null) return false
+            } else if (ssin != other.ssin) return false
             return true
         } else {
             return false
@@ -168,7 +160,8 @@ class Patient : Person {
         }
 
         for (fromAddress in other.addresses) {
-            val destAddress = this.addresses.stream().filter { address -> address.addressType === fromAddress.addressType }.findAny()
+            val destAddress =
+                this.addresses.stream().filter { address -> address.addressType === fromAddress.addressType }.findAny()
             if (destAddress.isPresent) {
                 destAddress.orElseThrow<IllegalStateException>({ IllegalStateException() }).mergeFrom(fromAddress)
             } else {
@@ -241,7 +234,8 @@ class Patient : Person {
 
     private fun forceMergeAddresses(otherAddresses: Set<Address>) {
         for (fromAddress in otherAddresses) {
-            val destAddress = this.addresses.stream().filter { address -> address.addressType === fromAddress.addressType }.findAny()
+            val destAddress =
+                this.addresses.stream().filter { address -> address.addressType === fromAddress.addressType }.findAny()
             if (destAddress.isPresent) {
                 destAddress.orElseThrow<IllegalStateException>({ IllegalStateException() }).forceMergeFrom(fromAddress)
             } else {

@@ -96,9 +96,15 @@ object FuzzyValues {
             m = (time / 100L % 100L).toInt()
             s = (time % 100L).toInt()
 
-            if (s == 60) { s = 0; m++ }
-            if (m == 60) { m = 0; h++ }
-            if (h == 24) { h = 0; plusOne = true }
+            if (s == 60) {
+                s = 0; m++
+            }
+            if (m == 60) {
+                m = 0; h++
+            }
+            if (h == 24) {
+                h = 0; plusOne = true
+            }
         }
 
         val y = (date / 10000L).toInt()
@@ -112,15 +118,20 @@ object FuzzyValues {
             d = 1
         }
 
-        if (h > 24) {  return null }
-        if (m > 60) {  return null }
-        if (s > 60) {  return null }
+        if (h > 24) {
+            return null
+        }
+        if (m > 60) {
+            return null
+        }
+        if (s > 60) {
+            return null
+        }
 
         return LocalDateTime.of(y, mm, d, h, m, s).plus(Period.ofDays(if (plusOne) 1 else 0))
     }
 
-
-    fun getJodaDateTime(dateTime: Long) : DateTime? {
+    fun getJodaDateTime(dateTime: Long): DateTime? {
         val localDateTime = getLocalDateTime(dateTime)
 
         return localDateTime?.let { DateTime(it.year, it.monthValue, it.dayOfMonth, it.hour, it.minute, it.second) }
@@ -150,34 +161,38 @@ object FuzzyValues {
             dateTime = dateTime.minusDays(1)
         }
 
-
-        return getFuzzyDate(dateTime, precision) * 1000000L + if (precision === ChronoUnit.DAYS)
-            0
-        else
-            hours * 10000L + if (precision === ChronoUnit.HOURS)
-                0
-            else
-                minutes * 100L + if (precision === ChronoUnit.MINUTES) 0 else seconds
+        return getFuzzyDate(dateTime, precision) * 1000000L + if (precision === ChronoUnit.DAYS) 0
+        else hours * 10000L + if (precision === ChronoUnit.HOURS) 0
+        else minutes * 100L + if (precision === ChronoUnit.MINUTES) 0 else seconds
     }
 
     fun getFuzzyDate(dateTime: LocalDateTime, precision: TemporalUnit = ChronoUnit.DAYS): Long {
-        return dateTime.year * 10000L + if (precision === ChronoUnit.YEARS)
-            0
-        else
-            dateTime.monthValue * 100L + if (precision === ChronoUnit.MONTHS)
-                0
-            else
-                dateTime.dayOfMonth
+        return dateTime.year * 10000L + if (precision === ChronoUnit.YEARS) 0
+        else dateTime.monthValue * 100L + if (precision === ChronoUnit.MONTHS) 0
+        else dateTime.dayOfMonth
     }
 
-    fun getFuzzyDate(instant: Instant, zoneId: ZoneId = ZoneId.systemDefault(), precision: TemporalUnit = ChronoUnit.DAYS): Long {
+    fun getFuzzyDate(
+        instant: Instant,
+        zoneId: ZoneId = ZoneId.systemDefault(),
+        precision: TemporalUnit = ChronoUnit.DAYS
+    ): Long {
         return getFuzzyDate(LocalDateTime.ofInstant(instant, zoneId), precision)
     }
 
     fun getFuzzyDate(dateTime: DateTime, precision: TemporalUnit = ChronoUnit.DAYS): Long {
-        return getFuzzyDate(LocalDateTime.of(dateTime.year, dateTime.monthOfYear, dateTime.dayOfMonth, dateTime.hourOfDay, dateTime.minuteOfHour, dateTime.secondOfMinute, dateTime.millisOfSecond*1_000_000), precision)
+        return getFuzzyDate(
+            LocalDateTime.of(
+                dateTime.year,
+                dateTime.monthOfYear,
+                dateTime.dayOfMonth,
+                dateTime.hourOfDay,
+                dateTime.minuteOfHour,
+                dateTime.secondOfMinute,
+                dateTime.millisOfSecond * 1_000_000
+            ), precision
+        )
     }
-
 
     /**
      * Indicates if the submitted text is a fully-formed or partially-formed date.
@@ -233,13 +248,11 @@ object FuzzyValues {
             year = if (fields[2].isEmpty()) "0000" else String.format("%1$04d", Integer.parseInt(fields[2]))
 
             result = year + month + day
-
         } else if (fields.size == 2) {
             month = if (fields[0].isEmpty()) "00" else String.format("%1$02d", Integer.parseInt(fields[0]))
             year = if (fields[1].isEmpty()) "0000" else String.format("%1$04d", Integer.parseInt(fields[1]))
 
             result = year + month + day
-
         } else {
             if (isPartiallyFormedYYYYMMDD(text)) {
                 if (text.length <= 4) {
@@ -254,7 +267,6 @@ object FuzzyValues {
                 }
 
                 result = year + month + day
-
             } else {
                 result = text
             }

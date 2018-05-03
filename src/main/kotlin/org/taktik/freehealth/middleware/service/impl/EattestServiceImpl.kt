@@ -136,19 +136,35 @@ import javax.xml.xpath.XPathFactory
 class EattestServiceImpl(private val stsService: STSService) : EattestService {
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val config = ConfigFactory.getConfigValidator(listOf())
-    private val freehealthEattestService: org.taktik.connector.business.eattest.EattestService = org.taktik.connector.business.eattest.impl.EattestServiceImpl()
-    private val eAttestErrors = Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/eAttestErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid }, { it })
+    private val freehealthEattestService: org.taktik.connector.business.eattest.EattestService =
+        org.taktik.connector.business.eattest.impl.EattestServiceImpl()
+    private val eAttestErrors =
+        Gson().fromJson(
+            this.javaClass.getResourceAsStream("/be/errors/eAttestErrors.json").reader(Charsets.UTF_8),
+            arrayOf<MycarenetError>().javaClass
+        ).associateBy({ it.uid }, { it })
     private val xPathfactory = XPathFactory.newInstance()
 
     fun NodeList.forEach(action: (Node) -> Unit) {
-        (0 until this.length)
-                .asSequence()
-                .map { this.item(it) }
-                .forEach { action(it) }
+        (0 until this.length).asSequence().map { this.item(it) }.forEach { action(it) }
     }
 
-    override fun sendAttest(keystoreId: UUID, tokenId: UUID, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, hcpCbe: String, passPhrase: String, patientSsin: String, referenceDate: Int?, attest: Eattest): SendAttestResultWithResponse? {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+    override fun sendAttest(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        hcpCbe: String,
+        passPhrase: String,
+        patientSsin: String,
+        referenceDate: Int?,
+        attest: Eattest
+    ): SendAttestResultWithResponse? {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
@@ -166,12 +182,19 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             val sendTransactionRequest = SendTransactionRequest().apply {
                 messageProtocoleSchemaVersion = BigDecimal("1.18")
                 request = RequestType().apply {
-                    id = IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = hcpNihii + "." + refDateTime.toString("yyyyMMddHHmmss") }
+                    id =
+                        IDKMEHR().apply {
+                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = hcpNihii + "." +
+                            refDateTime.toString("yyyyMMddHHmmss")
+                        }
                     author = AuthorType().apply {
                         hcparties.add(HcpartyType().apply {
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = "persphysician" })
+                            cds.add(CDHCPARTY().apply {
+                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                "persphysician"
+                            })
                             firstname = hcpFirstName
                             familyname = hcpLastName
                         })
@@ -181,21 +204,34 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
 
                 kmehrmessage = Kmehrmessage().apply {
                     header = HeaderType().apply {
-                        standard = StandardType().apply { cd = CDSTANDARD().apply { s = "CD-STANDARD"; sv = "1.19"; value = "20160901" } }
+                        standard =
+                            StandardType().apply {
+                                cd =
+                                    CDSTANDARD().apply { s = "CD-STANDARD"; sv = "1.19"; value = "20160901" }
+                            }
                         ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                         date = refDateTime; time = refDateTime
                         sender = SenderType().apply {
                             hcparties.add(HcpartyType().apply {
-                                ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
+                                ids.add(IDHCPARTY().apply {
+                                    s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                    hcpNihii
+                                })
                                 ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                                cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = "persphysician" })
+                                cds.add(CDHCPARTY().apply {
+                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                    "persphysician"
+                                })
                                 firstname = hcpFirstName
                                 familyname = hcpLastName
                             })
                         }
                         recipients.add(RecipientType().apply {
                             hcparties.add(HcpartyType().apply {
-                                cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = "application" })
+                                cds.add(CDHCPARTY().apply {
+                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                    "application"
+                                })
                                 name = "mycarenet"
                             })
                         })
@@ -205,66 +241,140 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
 
                         ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                         patient = PersonType().apply {
-                            ids.add(IDPATIENT().apply { s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value = patientSsin })
+                            ids.add(IDPATIENT().apply {
+                                s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value =
+                                patientSsin
+                            })
                             firstnames.add("")
                             familyname = ""
-                            sex = SexType().apply { cd = CDSEX().apply { s = "CD-SEX"; sv = "1.1"; value = CDSEXvalues.UNKNOWN } }
+                            sex =
+                                SexType().apply {
+                                    cd =
+                                        CDSEX().apply { s = "CD-SEX"; sv = "1.1"; value = CDSEXvalues.UNKNOWN }
+                                }
                         }
                         transactions.addAll(listOf(TransactionType().apply {
                             var itemId = 1
 
-                            ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (trnsId++).toString() })
+                            ids.add(IDKMEHR().apply {
+                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                (trnsId++).toString()
+                            })
                             cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MYCARENET; sv = "1.2"; value = "cga" })
                             date = refDateTime; time = refDateTime
                             author = AuthorType().apply {
                                 hcparties.add(HcpartyType().apply {
-                                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
-                                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = "persphysician" })
+                                    ids.add(IDHCPARTY().apply {
+                                        s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                        hcpNihii
+                                    })
+                                    ids.add(IDHCPARTY().apply {
+                                        s = IDHCPARTYschemes.INSS; sv = "1.0"; value =
+                                        hcpSsin
+                                    })
+                                    cds.add(CDHCPARTY().apply {
+                                        s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                        "persphysician"
+                                    })
                                     firstname = hcpFirstName
                                     familyname = hcpLastName
                                 })
                             }
                             isIscomplete = true
                             isIsvalidated = true
-                            item.addAll(listOf(
-                                    ItemType().apply {
-                                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (itemId++).toString() })
-                                        cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.3"; value = "patientpaid" })
-                                        cost = CostType().apply {
-                                            decimal = BigDecimal.valueOf(attest.codes.sumBy { Math.round(((it.reimbursement ?: 0.0) + (it.reglementarySupplement ?: 0.0)) * 100).toInt() }.toLong()).divide(BigDecimal(100L))
-                                            unit = UnitType().apply {
-                                                cd = CDUNIT().apply { s = CDUNITschemes.CD_CURRENCY; sv = "1.0"; value = "EUR" }
+                            item.addAll(listOf(ItemType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                    (itemId++).toString()
+                                })
+                                cds.add(CDITEM().apply {
+                                    s = CD_ITEM_MYCARENET; sv = "1.3"; value =
+                                    "patientpaid"
+                                })
+                                cost = CostType().apply {
+                                    decimal =
+                                        BigDecimal.valueOf(attest.codes.sumBy {
+                                            Math.round(
+                                                ((it.reimbursement ?: 0.0) + (it.reglementarySupplement ?: 0.0)) * 100
+                                            ).toInt()
+                                        }.toLong()).divide(BigDecimal(100L))
+                                    unit = UnitType().apply {
+                                        cd =
+                                            CDUNIT().apply {
+                                                s = CDUNITschemes.CD_CURRENCY; sv = "1.0"; value =
+                                                "EUR"
                                             }
-                                        }
-                                    },
-                                    attest.codes.sumBy { Math.round((it.doctorSupplement ?: 0.0) * 100).toInt() }.let {
-                                        if (it>0) ItemType().apply {
-                                            ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (itemId++).toString() })
-                                            cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.3"; value = "supplement" })
-                                            cost = CostType().apply {
-                                                decimal = BigDecimal.valueOf(it.toLong()).divide(BigDecimal("100"))
-                                                unit = UnitType().apply {
-                                                    cd = CDUNIT().apply { s = CDUNITschemes.CD_CURRENCY; sv = "1.0"; value = "EUR" }
-                                                }
-                                            }
-                                        } else null
-                                    },
-                                    ItemType().apply {
-                                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =(itemId++).toString() })
-                                        cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.3"; value = "paymentreceivingparty" })
-                                        contents.add(ContentType().apply { ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_CBE; sv = "1.0"; value = hcpCbe }) })
-                                    }).filterNotNull())
+                                    }
+                                }
+                            },
+                                               attest.codes.sumBy {
+                                                   Math.round((it.doctorSupplement ?: 0.0) * 100)
+                                                       .toInt()
+                                               }.let {
+                                                   if (it > 0) ItemType().apply {
+                                                       ids.add(IDKMEHR().apply {
+                                                           s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                                           (itemId++).toString()
+                                                       })
+                                                       cds.add(CDITEM().apply {
+                                                           s = CD_ITEM_MYCARENET; sv = "1.3"; value =
+                                                           "supplement"
+                                                       })
+                                                       cost = CostType().apply {
+                                                           decimal =
+                                                               BigDecimal.valueOf(it.toLong()).divide(BigDecimal("100"))
+                                                           unit = UnitType().apply {
+                                                               cd =
+                                                                   CDUNIT().apply {
+                                                                       s = CDUNITschemes.CD_CURRENCY; sv =
+                                                                       "1.0"; value = "EUR"
+                                                                   }
+                                                           }
+                                                       }
+                                                   } else null
+                                               },
+                                               ItemType().apply {
+                                                   ids.add(IDKMEHR().apply {
+                                                       s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                                       (itemId++).toString()
+                                                   })
+                                                   cds.add(CDITEM().apply {
+                                                       s = CD_ITEM_MYCARENET; sv = "1.3"; value =
+                                                       "paymentreceivingparty"
+                                                   })
+                                                   contents.add(ContentType().apply {
+                                                       ids.add(IDKMEHR().apply {
+                                                           s =
+                                                               IDKMEHRschemes.ID_CBE; sv = "1.0"; value = hcpCbe
+                                                       })
+                                                   })
+                                               }).filterNotNull()
+                            )
                         }).plus(attest.codes.map { code ->
                             TransactionType().apply {
-                                ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (trnsId++).toString() })
-                                cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MYCARENET; sv = "1.2"; value = "cgd" })
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                    (trnsId++).toString()
+                                })
+                                cds.add(CDTRANSACTION().apply {
+                                    s = CD_TRANSACTION_MYCARENET; sv = "1.2"; value =
+                                    "cgd"
+                                })
                                 date = refDateTime; time = refDateTime
                                 author = AuthorType().apply {
                                     hcparties.add(HcpartyType().apply {
-                                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
-                                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = "persphysician" })
+                                        ids.add(IDHCPARTY().apply {
+                                            s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                            hcpNihii
+                                        })
+                                        ids.add(IDHCPARTY().apply {
+                                            s = IDHCPARTYschemes.INSS; sv = "1.0"; value =
+                                            hcpSsin
+                                        })
+                                        cds.add(CDHCPARTY().apply {
+                                            s = CDHCPARTYschemes.CD_HCPARTY; sv =
+                                            "1.10"; value = "persphysician"
+                                        })
                                         firstname = hcpFirstName
                                         familyname = hcpLastName
                                     })
@@ -275,94 +385,213 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                 var itemId = 1
 
                                 item.addAll(listOf(ItemType().apply {
-                                    ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (itemId++).toString() })
+                                    ids.add(IDKMEHR().apply {
+                                        s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                        (itemId++).toString()
+                                    })
                                     cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "claim" })
-                                    contents.addAll(listOf(
-                                            ContentType().apply { cds.add(CDCONTENT().apply { s = CD_NIHDI; sv = "1.0"; value = code.riziv }) },
-                                            ContentType().apply { cds.add(CDCONTENT().apply { s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl = "NIHDI-CLAIM-NORM"; value = code.norm.toString() }) },
-                                            code.relativeService?.let { ContentType().apply { cds.add(CDCONTENT().apply { s = CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value = code.relativeService }) } }
-                                    ).filterNotNull())
+                                    contents.addAll(listOf(ContentType().apply {
+                                        cds.add(CDCONTENT().apply {
+                                            s = CD_NIHDI; sv =
+                                            "1.0"; value = code.riziv
+                                        })
+                                    },
+                                                           ContentType().apply {
+                                                               cds.add(CDCONTENT().apply {
+                                                                   s =
+                                                                       CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                                   "NIHDI-CLAIM-NORM"; value = code.norm.toString()
+                                                               })
+                                                           },
+                                                           code.relativeService?.let {
+                                                               ContentType().apply {
+                                                                   cds.add(CDCONTENT().apply {
+                                                                       s =
+                                                                           CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value =
+                                                                       code.relativeService
+                                                                   })
+                                                               }
+                                                           }).filterNotNull())
                                     quantity = QuantityType().apply { decimal = BigDecimal(code.quantity) }
                                 }, ItemType().apply {
-                                    ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (itemId++).toString() })
+                                    ids.add(IDKMEHR().apply {
+                                        s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                        (itemId++).toString()
+                                    })
                                     cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "encounterdatetime" })
                                     contents.add(ContentType().apply { date = dateTime(code.date) ?: refDateTime })
                                 }, code.location?.let { loc ->
                                     ItemType().apply {
-                                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (itemId++).toString() })
-                                        cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "encounterlocation" })
-                                        contents.addAll(listOf(
-                                                ContentType().apply {
-                                                    hcparty = HcpartyType().apply {
-                                                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = loc.idHcParty })
-                                                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = loc.cdHcParty })
-                                                    }
-                                                }
-                                        ))
+                                        ids.add(IDKMEHR().apply {
+                                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                            (itemId++).toString()
+                                        })
+                                        cds.add(CDITEM().apply {
+                                            s = CD_ITEM; sv = "1.10"; value =
+                                            "encounterlocation"
+                                        })
+                                        contents.addAll(listOf(ContentType().apply {
+                                            hcparty = HcpartyType().apply {
+                                                ids.add(IDHCPARTY().apply {
+                                                    s =
+                                                        IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                                    loc.idHcParty
+                                                })
+                                                cds.add(CDHCPARTY().apply {
+                                                    s =
+                                                        CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                                    loc.cdHcParty
+                                                })
+                                            }
+                                        }))
                                     }
                                 }, code.requestor?.let { req ->
                                     ItemType().apply {
-                                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (itemId++).toString() })
+                                        ids.add(IDKMEHR().apply {
+                                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                            (itemId++).toString()
+                                        })
                                         cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "requestor" })
-                                        contents.addAll(listOf(
-                                                ContentType().apply {
-                                                    hcparty = HcpartyType().apply {
-                                                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = req.hcp!!.idHcParty })
-                                                        req.hcp!!.idSsin?.let { ssin -> ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = ssin })}
-                                                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = req.hcp!!.cdHcParty })
-                                                        firstname = req.hcp!!.firstName ?: ""
-                                                        familyname = req.hcp!!.lastName ?: ""
-                                                    }
-                                                },
-                                                ContentType().apply { date = dateTime(req.date) ?: theDayBeforeRefDate }
-                                        ))
+                                        contents.addAll(listOf(ContentType().apply {
+                                            hcparty = HcpartyType().apply {
+                                                ids.add(IDHCPARTY().apply {
+                                                    s =
+                                                        IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                                    req.hcp!!.idHcParty
+                                                })
+                                                req.hcp!!.idSsin?.let { ssin ->
+                                                    ids.add(IDHCPARTY().apply {
+                                                        s =
+                                                            IDHCPARTYschemes.INSS; sv = "1.0"; value = ssin
+                                                    })
+                                                }
+                                                cds.add(CDHCPARTY().apply {
+                                                    s =
+                                                        CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                                    req.hcp!!.cdHcParty
+                                                })
+                                                firstname = req.hcp!!.firstName ?: ""
+                                                familyname = req.hcp!!.lastName ?: ""
+                                            }
+                                        },
+                                                               ContentType().apply {
+                                                                   date = dateTime(req.date)
+                                                                       ?: theDayBeforeRefDate
+                                                               }))
                                     }
                                 }, code.gmdManager?.let { gmdm ->
                                     ItemType().apply {
-                                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (itemId++).toString() })
+                                        ids.add(IDKMEHR().apply {
+                                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                            (itemId++).toString()
+                                        })
                                         cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "gmdmanager" })
-                                        contents.addAll(listOf(
-                                                ContentType().apply {
-                                                    hcparty = HcpartyType().apply {
-                                                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = gmdm.idHcParty })
-                                                        gmdm.idSsin?.let { ssin -> ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = ssin }) }
-                                                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = gmdm.cdHcParty })
-                                                        firstname = gmdm.firstName ?: ""
-                                                        familyname = gmdm.lastName ?: ""
-                                                    }
+                                        contents.addAll(listOf(ContentType().apply {
+                                            hcparty = HcpartyType().apply {
+                                                ids.add(IDHCPARTY().apply {
+                                                    s =
+                                                        IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                                    gmdm.idHcParty
+                                                })
+                                                gmdm.idSsin?.let { ssin ->
+                                                    ids.add(IDHCPARTY().apply {
+                                                        s =
+                                                            IDHCPARTYschemes.INSS; sv = "1.0"; value = ssin
+                                                    })
                                                 }
-                                        ))
+                                                cds.add(CDHCPARTY().apply {
+                                                    s =
+                                                        CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                                    gmdm.cdHcParty
+                                                })
+                                                firstname = gmdm.firstName ?: ""
+                                                familyname = gmdm.lastName ?: ""
+                                            }
+                                        }))
                                     }
                                 }, code.internship?.let { intern ->
                                     ItemType().apply {
-                                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (itemId++).toString() })
-                                        cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.3"; value = "internship" })
-                                        contents.addAll(listOf(
-                                                ContentType().apply {
-                                                    hcparty = HcpartyType().apply {
-                                                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = intern.idHcParty })
-                                                        intern.idSsin?.let { ssin -> ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = ssin }) }
-                                                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = intern.cdHcParty })
-                                                        firstname = intern.firstName ?: ""
-                                                        familyname = intern.lastName ?: ""
-                                                    }
+                                        ids.add(IDKMEHR().apply {
+                                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                            (itemId++).toString()
+                                        })
+                                        cds.add(CDITEM().apply {
+                                            s = CD_ITEM_MYCARENET; sv = "1.3"; value =
+                                            "internship"
+                                        })
+                                        contents.addAll(listOf(ContentType().apply {
+                                            hcparty = HcpartyType().apply {
+                                                ids.add(IDHCPARTY().apply {
+                                                    s =
+                                                        IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                                    intern.idHcParty
+                                                })
+                                                intern.idSsin?.let { ssin ->
+                                                    ids.add(IDHCPARTY().apply {
+                                                        s =
+                                                            IDHCPARTYschemes.INSS; sv = "1.0"; value = ssin
+                                                    })
                                                 }
-                                        ))
+                                                cds.add(CDHCPARTY().apply {
+                                                    s =
+                                                        CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                                    intern.cdHcParty
+                                                })
+                                                firstname = intern.firstName ?: ""
+                                                familyname = intern.lastName ?: ""
+                                            }
+                                        }))
                                     }
                                 }, code.cardReading?.let { cr ->
                                     ItemType().apply {
-                                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (itemId++).toString() })
+                                        ids.add(IDKMEHR().apply {
+                                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                            (itemId++).toString()
+                                        })
                                         cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "documentidentity" })
-                                        contents.addAll(listOf(
-                                                ContentType().apply {
-                                                    date = (dateTime(cr.date) ?: now)
-                                                    time = cr.time?.let { dateTime(cr.date)?.withHourOfDay(it / 10000)?.withMinuteOfHour((it / 100) % 100)?.withSecondOfMinute(it % 100) }
-                                                },
-                                                ContentType().apply { cds.add(CDCONTENT().apply { s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl = "NIHDI-ID-DOC-INPUT-TYPE"; value = cr.inputType.toString() }) },
-                                                cr.manualInputReason?.let { ContentType().apply { cds.add(CDCONTENT().apply { s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl = "NIHDI-ID-DOC-MANUAL-INOUT-JUSTIFICATION"; value = it.toString() }) } },
-                                                ContentType().apply { cds.add(CDCONTENT().apply { s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl = "NIHDI-ID-DOC-MEDIA-TYPE"; value = cr.mediaType.toString() }) },
-                                                cr.serial?.let { ContentType().apply { texts.add(TextType().apply { l = "en"; value = it }) } }
-                                        ).filterNotNull())
+                                        contents.addAll(listOf(ContentType().apply {
+                                            date = (dateTime(cr.date) ?: now)
+                                            time =
+                                                cr.time?.let {
+                                                    dateTime(cr.date)?.withHourOfDay(it / 10000)
+                                                        ?.withMinuteOfHour((it / 100) % 100)
+                                                        ?.withSecondOfMinute(it % 100)
+                                                }
+                                        },
+                                                               ContentType().apply {
+                                                                   cds.add(CDCONTENT().apply {
+                                                                       s =
+                                                                           CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                                       "NIHDI-ID-DOC-INPUT-TYPE"; value =
+                                                                       cr.inputType.toString()
+                                                                   })
+                                                               },
+                                                               cr.manualInputReason?.let {
+                                                                   ContentType().apply {
+                                                                       cds.add(CDCONTENT().apply {
+                                                                           s =
+                                                                               CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                                           "NIHDI-ID-DOC-MANUAL-INOUT-JUSTIFICATION"; value =
+                                                                           it.toString()
+                                                                       })
+                                                                   }
+                                                               },
+                                                               ContentType().apply {
+                                                                   cds.add(CDCONTENT().apply {
+                                                                       s =
+                                                                           CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                                       "NIHDI-ID-DOC-MEDIA-TYPE"; value =
+                                                                       cr.mediaType.toString()
+                                                                   })
+                                                               },
+                                                               cr.serial?.let {
+                                                                   ContentType().apply {
+                                                                       texts.add(TextType().apply {
+                                                                           l =
+                                                                               "en"; value = it
+                                                                       })
+                                                                   }
+                                                               }).filterNotNull())
                                     }
                                 }).filterNotNull())
                             }
@@ -370,66 +599,104 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     })
                 }
             }
-            val kmehrMarshallHelper = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
+            val kmehrMarshallHelper =
+                MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
             val requestXml = kmehrMarshallHelper.toXMLByteArray(sendTransactionRequest)
 
-            val sendAttestationResponse = freehealthEattestService.sendAttestion(samlToken,
-                    SendAttestationRequest().apply {
-                        val encryptedKnownContent = EncryptedKnownContent()
-                        encryptedKnownContent.replyToEtk = it.encoded
-                        val businessContent = BusinessContent().apply { id = detailId }
-                        encryptedKnownContent.businessContent = businessContent
+            val sendAttestationResponse =
+                freehealthEattestService.sendAttestion(samlToken, SendAttestationRequest().apply {
+                    val encryptedKnownContent = EncryptedKnownContent()
+                    encryptedKnownContent.replyToEtk = it.encoded
+                    val businessContent = BusinessContent().apply { id = detailId }
+                    encryptedKnownContent.businessContent = businessContent
 
-                        businessContent.value = requestXml
-                        log.info("Request is: " + businessContent.value.toString(Charsets.UTF_8))
-                        val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
-                        val blob = BlobBuilderFactory.getBlobBuilder("attest").build(xmlByteArray, "none", detailId, "text/xml", null as String?, "encryptedForKnownCINNIC")
-                        blob.messageName = "E-ATTEST"
+                    businessContent.value = requestXml
+                    log.info("Request is: " + businessContent.value.toString(Charsets.UTF_8))
+                    val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
+                    val blob =
+                        BlobBuilderFactory.getBlobBuilder("attest")
+                            .build(
+                                xmlByteArray,
+                                "none",
+                                detailId,
+                                "text/xml",
+                                null as String?,
+                                "encryptedForKnownCINNIC"
+                            )
+                    blob.messageName = "E-ATTEST"
 
-                        val packageInfo = McnConfigUtil.retrievePackageInfo("attest")
-                        this.commonInput = CommonInputType().apply {
-                            request = be.fgov.ehealth.mycarenet.commons.core.v3.RequestType().apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
-                            this.inputReference = inputReference
-                            origin = OriginType().apply {
-                                `package` = PackageType().apply {
-                                    license = LicenseType().apply {
-                                        username = packageInfo.userName
-                                        password = packageInfo.password
-                                    }
-                                    name = ValueRefString().apply { value = packageInfo.packageName }
+                    val packageInfo = McnConfigUtil.retrievePackageInfo("attest")
+                    this.commonInput = CommonInputType().apply {
+                        request =
+                            be.fgov.ehealth.mycarenet.commons.core.v3.RequestType()
+                                .apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
+                        this.inputReference = inputReference
+                        origin = OriginType().apply {
+                            `package` = PackageType().apply {
+                                license = LicenseType().apply {
+                                    username = packageInfo.userName
+                                    password = packageInfo.password
                                 }
-                                siteID = ValueRefString().apply { value = config.getProperty("mycarenet.${PropertyUtil.retrieveProjectNameToUse("genins", "mycarenet.")}.site.id") }
-                                careProvider = CareProviderType().apply {
-                                    nihii = NihiiType().apply { quality = "doctor"; value = ValueRefString().apply { value = hcpNihii } }
-                                    physicalPerson = IdType().apply {
-                                        name = ValueRefString().apply { value = hcpFirstName + " " + hcpLastName }
-                                        ssin = ValueRefString().apply { value = hcpSsin }
-                                        nihii = NihiiType().apply { quality = "doctor"; value = ValueRefString().apply { value = hcpNihii } }
+                                name = ValueRefString().apply { value = packageInfo.packageName }
+                            }
+                            siteID =
+                                ValueRefString().apply {
+                                    value =
+                                        config.getProperty(
+                                            "mycarenet.${PropertyUtil.retrieveProjectNameToUse(
+                                                "genins",
+                                                "mycarenet."
+                                            )}.site.id"
+                                        )
+                                }
+                            careProvider = CareProviderType().apply {
+                                nihii =
+                                    NihiiType().apply {
+                                        quality = "doctor"; value =
+                                        ValueRefString().apply { value = hcpNihii }
                                     }
+                                physicalPerson = IdType().apply {
+                                    name = ValueRefString().apply { value = hcpFirstName + " " + hcpLastName }
+                                    ssin = ValueRefString().apply { value = hcpSsin }
+                                    nihii =
+                                        NihiiType().apply {
+                                            quality = "doctor"; value =
+                                            ValueRefString().apply { value = hcpNihii }
+                                        }
                                 }
                             }
                         }
-                        this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                        this.issueInstant = DateTime()
-                        this.routing = RoutingType().apply {
-                            careReceiver = CareReceiverIdType().apply {
-                                ssin = patientSsin
-                            }
-                            this.referenceDate = refDateTime
-                        }
-                        this.detail = BlobMapper.mapBlobTypefromBlob(blob)
                     }
-            )
+                    this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
+                    this.issueInstant = DateTime()
+                    this.routing = RoutingType().apply {
+                        careReceiver = CareReceiverIdType().apply {
+                            ssin = patientSsin
+                        }
+                        this.referenceDate = refDateTime
+                    }
+                    this.detail = BlobMapper.mapBlobTypefromBlob(blob)
+                })
             val blobType = sendAttestationResponse.`return`.detail
             val blob = BlobMapper.mapBlobfromBlobType(blobType)
-            val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
-            val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
+            val unsealedData =
+                crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
+            val encryptedKnownContent =
+                MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
+                    unsealedData
+                )
             val xades = encryptedKnownContent!!.xades
             val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
             val options = emptyMap<String, Any>()
             val signatureVerificationResult = xades?.let { builder.verify(unsealedData, it, options) }
 
-            val decryptedAndVerifiedResponse = AttestBuilderResponse(MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult)
+            val decryptedAndVerifiedResponse =
+                AttestBuilderResponse(
+                    MarshallerHelper(
+                        SendTransactionResponse::class.java,
+                        SendTransactionResponse::class.java
+                    ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
+                )
 
             val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
                 e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
@@ -437,28 +704,37 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                 } ?: setOf()
             }
             decryptedAndVerifiedResponse.sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
-                SendAttestResultWithResponse(
-                        EattestAcknowledgeType(iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete, errors = errors ?: listOf()),
-                        invoicingNumber = folder.transactions.find { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cga" } }?.let { it.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "invoicingnumber" } }?.contents?.firstOrNull()?.texts?.firstOrNull()?.value },
-                        attest = Eattest(codes = folder.transactions?.filter { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cgd" } }?.map { t ->
-                            Eattest.EattestCode(
-                                    riziv = t.item.find { it.cds.any { it.s == CD_ITEM && it.value == "claim" } }?.contents?.mapNotNull { it.cds?.find { it.s == CD_NIHDI }?.value }?.firstOrNull(),
-                                    fee = t.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "fee" } }?.cost?.decimal?.toDouble()
-                            )
-                        } ?: listOf()),
-                        kmehrMessage = encryptedKnownContent.businessContent.value,
-                        xades = xades
-                )
+                SendAttestResultWithResponse(EattestAcknowledgeType(
+                    iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
+                    errors = errors ?: listOf()
+                ),
+                                             invoicingNumber = folder.transactions.find { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cga" } }?.let {
+                                                 it.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "invoicingnumber" } }
+                                                     ?.contents?.firstOrNull()?.texts?.firstOrNull()?.value
+                                             },
+                                             attest = Eattest(codes = folder.transactions?.filter { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cgd" } }?.map { t ->
+                                                 Eattest.EattestCode(riziv = t.item.find { it.cds.any { it.s == CD_ITEM && it.value == "claim" } }?.contents?.mapNotNull {
+                                                     it.cds?.find { it.s == CD_NIHDI }
+                                                         ?.value
+                                                 }?.firstOrNull(),
+                                                                     fee = t.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "fee" } }?.cost?.decimal?.toDouble()
+                                                 )
+                                             } ?: listOf()),
+                                             kmehrMessage = encryptedKnownContent.businessContent.value,
+                                             xades = xades)
             } ?: SendAttestResultWithResponse(
-                    EattestAcknowledgeType(iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete, errors = errors ?: listOf()),
-                    kmehrMessage = null,
-                    xades = xades
+                EattestAcknowledgeType(
+                    iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
+                    errors = errors ?: listOf()
+                ), kmehrMessage = null, xades = xades
             )
         }
     }
 
-    private fun dateTime(intDate: Int?) =
-            intDate?.let { DateTime(0).withYear(intDate / 10000).withMonthOfYear((intDate / 100) % 100).withDayOfMonth(intDate % 100) }
+    private fun dateTime(intDate: Int?) = intDate?.let {
+        DateTime(0).withYear(intDate / 10000).withMonthOfYear((intDate / 100) % 100)
+            .withDayOfMonth(intDate % 100)
+    }
 
     private fun extractError(sendTransactionRequest: ByteArray, ec: String, errorUrl: String?): Set<MycarenetError> {
         return errorUrl?.let { url ->
@@ -472,7 +748,10 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             val expr = xpath.compile(if (url.startsWith("/")) url else "/" + url)
             val result = mutableSetOf<MycarenetError>()
 
-            (expr.evaluate(builder.parse(ByteArrayInputStream(sendTransactionRequest)), XPathConstants.NODESET) as NodeList).let { it ->
+            (expr.evaluate(
+                builder.parse(ByteArrayInputStream(sendTransactionRequest)),
+                XPathConstants.NODESET
+            ) as NodeList).let { it ->
                 if (it.length > 0) {
                     var node = it.item(0)
                     val textContent = node.textContent
@@ -481,11 +760,21 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                         base = "/${nodeDescr(node.parentNode)}$base"
                         node = node.parentNode
                     }
-                    val elements = eAttestErrors.values.filter { it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*"))) }
+                    val elements =
+                        eAttestErrors.values.filter {
+                            it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+                        }
                     elements.forEach { it.value = textContent }
                     result.addAll(elements)
                 } else {
-                    result.add(MycarenetError(code = ec, path = url, msgFr = "Erreur générique, xpath invalide", msgNl = "Onbekend foutmelding, xpath ongeldig"))
+                    result.add(
+                        MycarenetError(
+                            code = ec,
+                            path = url,
+                            msgFr = "Erreur générique, xpath invalide",
+                            msgNl = "Onbekend foutmelding, xpath ongeldig"
+                        )
+                    )
                 }
             }
             result
@@ -498,7 +787,8 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         xpath.namespaceContext = object : NamespaceContext {
             override fun getNamespaceURI(prefix: String?) = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
             override fun getPrefix(namespaceURI: String?) = "ns1"
-            override fun getPrefixes(namespaceURI: String?): Iterator<Any?> = if (namespaceURI == "http://www.ehealth.fgov.be/standards/kmehr/schema/v1") listOf("ns1").iterator() else listOf<String>().iterator()
+            override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
+                if (namespaceURI == "http://www.ehealth.fgov.be/standards/kmehr/schema/v1") listOf("ns1").iterator() else listOf<String>().iterator()
         }
         if (localName == "transaction") {
             return "transaction[${xpath.evaluate("ns1:cd[@S=\"CD-TRANSACTION-MYCARENET\"]", node)}]"
@@ -512,7 +802,12 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         return localName
     }
 
-    private fun handleEncryption(request: EncryptedKnownContent, credential: Credential, crypto: Crypto, detailId: String): ByteArray? {
+    private fun handleEncryption(
+        request: EncryptedKnownContent,
+        credential: Credential,
+        crypto: Crypto,
+        detailId: String
+    ): ByteArray? {
         val marshaller = JAXBContext.newInstance(request.javaClass).createMarshaller()
         val res = DOMResult()
         marshaller.marshal(request, res)
@@ -535,7 +830,15 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             result
         })
         val encryptedKnowContent = builder.sign(credential, content.toByteArray(charset("UTF-8")), options)
-        return crypto.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, KeyDepotManagerFactory.getKeyDepotManager().getEtkSet(IdentifierType.CBE, 820563481L, "MYCARENET"), encryptedKnowContent)
+        return crypto.seal(
+            Crypto.SigningPolicySelector.WITH_NON_REPUDIATION,
+            KeyDepotManagerFactory.getKeyDepotManager().getEtkSet(
+                IdentifierType.CBE,
+                820563481L,
+                "MYCARENET"
+            ),
+            encryptedKnowContent
+        )
     }
 
     @Throws(TransformerException::class)
@@ -558,7 +861,8 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         val parser = CertificateParser(cred.certificate)
         if (parser.identifier != null && !StringUtils.isEmpty(parser.id) && StringUtils.isNumeric(parser.id)) {
             try {
-                return KeyDepotManagerImpl.getInstance().getEtk(parser.identifier, java.lang.Long.parseLong(parser.id), parser.application)
+                return KeyDepotManagerImpl.getInstance()
+                    .getEtk(parser.identifier, java.lang.Long.parseLong(parser.id), parser.application)
             } catch (ex: NumberFormatException) {
                 log.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.message)
                 throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, ex)

@@ -26,12 +26,12 @@ import org.taktik.freehealth.middleware.dto.HealthcareParty
 import java.util.*
 
 class PrescriptionRequest(
-        var patient: Patient? = null,
-        var hcp: HealthcareParty? = null,
-        var feedback: Boolean? = null,
-        var medications: List<Medication>? = null,
-        var prescriptionType: String? = null,
-        var notification: String? = null,
-        var executorId: String? = null,
-        var deliveryDate: Date? = null
+    var patient: Patient? = null,
+    var hcp: HealthcareParty? = null,
+    var feedback: Boolean? = null,
+    var medications: List<Medication>? = null,
+    var prescriptionType: String? = null,
+    var notification: String? = null,
+    var executorId: String? = null,
+    var deliveryDate: Date? = null
 )

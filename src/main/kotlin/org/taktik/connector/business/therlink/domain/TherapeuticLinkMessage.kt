@@ -1,11 +1,9 @@
 package org.taktik.connector.business.therlink.domain
 
-
 import java.io.Serializable
 import java.util.ArrayList
 
 import org.taktik.connector.business.domain.Error
-import org.taktik.connector.business.therlink.domain.TherapeuticLink
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,14 +13,14 @@ import org.taktik.connector.business.therlink.domain.TherapeuticLink
  * To change this template use File | Settings | File Templates.
  */
 class TherapeuticLinkMessage : Serializable {
-	var isComplete: Boolean = false
-	var errors: List<Error> = ArrayList()
-	var therapeuticLink: TherapeuticLink? = null
+    var isComplete: Boolean = false
+    var errors: List<Error> = ArrayList()
+    var therapeuticLink: TherapeuticLink? = null
 
-	constructor()
+    constructor()
 
-	constructor(therapeuticLink: TherapeuticLink) {
-		this.therapeuticLink = therapeuticLink
-		this.isComplete = true
-	}
+    constructor(therapeuticLink: TherapeuticLink) {
+        this.therapeuticLink = therapeuticLink
+        this.isComplete = true
+    }
 }

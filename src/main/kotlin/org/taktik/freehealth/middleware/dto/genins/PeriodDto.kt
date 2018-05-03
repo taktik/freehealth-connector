@@ -21,9 +21,8 @@
 package org.taktik.freehealth.middleware.dto.genins
 
 import java.io.Serializable
-import java.time.Instant
 
 class PeriodDto(
-        val periodStart: Long? = null,
-        val periodEnd: Long? = null
+    val periodStart: Long? = null,
+    val periodEnd: Long? = null
 ) : Serializable

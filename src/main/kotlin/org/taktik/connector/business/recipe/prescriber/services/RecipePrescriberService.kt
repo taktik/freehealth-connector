@@ -43,26 +43,58 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 
 interface RecipePrescriberService {
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    fun aliveCheck(samlToken: SAMLToken, credential: Credential, paramAliveCheckRequest: AliveCheckRequest): AliveCheckResponse
+    fun aliveCheck(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramAliveCheckRequest: AliveCheckRequest
+    ): AliveCheckResponse
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    fun createPrescription(samlToken: SAMLToken, credential: Credential, paramCreatePrescriptionRequest: CreatePrescriptionRequest): CreatePrescriptionResponse
+    fun createPrescription(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramCreatePrescriptionRequest: CreatePrescriptionRequest
+    ): CreatePrescriptionResponse
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    fun revokePrescription(samlToken: SAMLToken, credential: Credential, paramRevokePrescriptionRequest: RevokePrescriptionRequest): RevokePrescriptionResponse
+    fun revokePrescription(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramRevokePrescriptionRequest: RevokePrescriptionRequest
+    ): RevokePrescriptionResponse
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    fun getPrescriptionForPrescriber(samlToken: SAMLToken, credential: Credential, paramGetPrescriptionForPrescriberRequest: GetPrescriptionForPrescriberRequest): GetPrescriptionForPrescriberResponse
+    fun getPrescriptionForPrescriber(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramGetPrescriptionForPrescriberRequest: GetPrescriptionForPrescriberRequest
+    ): GetPrescriptionForPrescriberResponse
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    fun listOpenPrescriptions(samlToken: SAMLToken, credential: Credential, paramListOpenPrescriptionsRequest: ListOpenPrescriptionsRequest): ListOpenPrescriptionsResponse
+    fun listOpenPrescriptions(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramListOpenPrescriptionsRequest: ListOpenPrescriptionsRequest
+    ): ListOpenPrescriptionsResponse
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    fun sendNotification(samlToken: SAMLToken, credential: Credential, paramSendNotificationRequest: SendNotificationRequest): SendNotificationResponse
+    fun sendNotification(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramSendNotificationRequest: SendNotificationRequest
+    ): SendNotificationResponse
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    fun updateFeedbackFlag(samlToken: SAMLToken, credential: Credential, paramUpdateFeedbackFlagRequest: UpdateFeedbackFlagRequest): UpdateFeedbackFlagResponse
+    fun updateFeedbackFlag(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramUpdateFeedbackFlagRequest: UpdateFeedbackFlagRequest
+    ): UpdateFeedbackFlagResponse
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    fun listFeedbacks(samlToken: SAMLToken, credential: Credential, paramListFeedbacksRequest: ListFeedbacksRequest): ListFeedbacksResponse
+    fun listFeedbacks(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramListFeedbacksRequest: ListFeedbacksRequest
+    ): ListFeedbacksResponse
 }

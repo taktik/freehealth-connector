@@ -79,80 +79,240 @@ import java.security.KeyStore
 
 interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
-    fun declareTransaction(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: DeclareTransactionRequest): DeclareTransactionResponse
+    fun declareTransaction(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: DeclareTransactionRequest
+    ): DeclareTransactionResponse
 
     @Throws(IntraHubBusinessConnectorException::class, TechnicalConnectorException::class)
-    fun putTransaction(endpoint: String, hubId : Long, hubApplication : String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutTransactionRequest): PutTransactionResponse
+    fun putTransaction(
+        endpoint: String,
+        hubId: Long,
+        hubApplication: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutTransactionRequest
+    ): PutTransactionResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun revokeTransaction(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: RevokeTransactionRequest): RevokeTransactionResponse
+    fun revokeTransaction(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: RevokeTransactionRequest
+    ): RevokeTransactionResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun getTransactionList(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetTransactionListRequest): GetTransactionListResponse
+    fun getTransactionList(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetTransactionListRequest
+    ): GetTransactionListResponse
 
     @Throws(TechnicalConnectorException::class, IntraHubBusinessConnectorException::class)
-    fun getTransaction(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetTransactionRequest): GetTransactionResponse
+    fun getTransaction(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetTransactionRequest
+    ): GetTransactionResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun requestPublication(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: RequestPublicationRequest): RequestPublicationResponse
+    fun requestPublication(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: RequestPublicationRequest
+    ): RequestPublicationResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun putHCParty(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutHCPartyRequest): PutHCPartyResponse
+    fun putHCParty(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutHCPartyRequest
+    ): PutHCPartyResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun getHCParty(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetHCPartyRequest): GetHCPartyResponse
+    fun getHCParty(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetHCPartyRequest
+    ): GetHCPartyResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun putPatient(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutPatientRequest): PutPatientResponse
+    fun putPatient(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutPatientRequest
+    ): PutPatientResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun getPatient(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetPatientRequest): GetPatientResponse
+    fun getPatient(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetPatientRequest
+    ): GetPatientResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun putHCPartyConsent(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutHCPartyConsentRequest): PutHCPartyConsentResponse
+    fun putHCPartyConsent(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutHCPartyConsentRequest
+    ): PutHCPartyConsentResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun getHCPartyConsent(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetHCPartyConsentRequest): GetHCPartyConsentResponse
+    fun getHCPartyConsent(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetHCPartyConsentRequest
+    ): GetHCPartyConsentResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun revokeHCPartyConsent(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: RevokeHCPartyConsentRequest): RevokeHCPartyConsentResponse
+    fun revokeHCPartyConsent(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: RevokeHCPartyConsentRequest
+    ): RevokeHCPartyConsentResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun putPatientConsent(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutPatientConsentRequest): PutPatientConsentResponse
+    fun putPatientConsent(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutPatientConsentRequest
+    ): PutPatientConsentResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun getPatientConsent(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetPatientConsentRequest): GetPatientConsentResponse
+    fun getPatientConsent(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetPatientConsentRequest
+    ): GetPatientConsentResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun revokePatientConsent(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: RevokePatientConsentRequest): RevokePatientConsentResponse
+    fun revokePatientConsent(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: RevokePatientConsentRequest
+    ): RevokePatientConsentResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun putTherapeuticLink(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutTherapeuticLinkRequest): PutTherapeuticLinkResponse
+    fun putTherapeuticLink(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutTherapeuticLinkRequest
+    ): PutTherapeuticLinkResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun getTherapeuticLink(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetTherapeuticLinkRequest): GetTherapeuticLinkResponse
+    fun getTherapeuticLink(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetTherapeuticLinkRequest
+    ): GetTherapeuticLinkResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun revokeTherapeuticLink(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: RevokeTherapeuticLinkRequest): RevokeTherapeuticLinkResponse
+    fun revokeTherapeuticLink(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: RevokeTherapeuticLinkRequest
+    ): RevokeTherapeuticLinkResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun putAccessRight(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutAccessRightRequest): PutAccessRightResponse
+    fun putAccessRight(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutAccessRightRequest
+    ): PutAccessRightResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun getAccessRight(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetAccessRightRequest): GetAccessRightResponse
+    fun getAccessRight(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetAccessRightRequest
+    ): GetAccessRightResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun revokeAccessRight(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: RevokeAccessRightRequest): RevokeAccessRightResponse
+    fun revokeAccessRight(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: RevokeAccessRightRequest
+    ): RevokeAccessRightResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun getPatientAuditTrail(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetPatientAuditTrailRequest): GetPatientAuditTrailResponse
+    fun getPatientAuditTrail(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetPatientAuditTrailRequest
+    ): GetPatientAuditTrailResponse
 
     @Throws(TechnicalConnectorException::class, IntraHubBusinessConnectorException::class)
-    fun putTransactionSet(endpoint: String, hubId : Long, hubApplication : String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutTransactionSetRequest): PutTransactionSetResponse
+    fun putTransactionSet(
+        endpoint: String,
+        hubId: Long,
+        hubApplication: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutTransactionSetRequest
+    ): PutTransactionSetResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun getTransactionSet(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetTransactionSetRequest): GetTransactionSetResponse
+    fun getTransactionSet(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetTransactionSetRequest
+    ): GetTransactionSetResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun getLatestUpdate(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetLatestUpdateRequest): GetLatestUpdateResponse
+    fun getLatestUpdate(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetLatestUpdateRequest
+    ): GetLatestUpdateResponse
 }

@@ -20,19 +20,13 @@
 
 package org.taktik.connector.business.ehbox.api.domain
 
-import org.taktik.connector.business.ehbox.api.domain.exception.EhboxBusinessConnectorException
-import org.taktik.connector.business.ehbox.api.domain.exception.EhboxBusinessConnectorExceptionValues
 import org.taktik.connector.technical.enumeration.MimeType
-import org.apache.commons.lang.ArrayUtils
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class NewsMessage<T> : DocumentMessage<T>() {
     var news: Document?
-        @Deprecated("")
-        get() = this.document
-        @Deprecated("")
-        set(news) {
+        @Deprecated("") get() = this.document
+        @Deprecated("") set(news) {
             this.document = news
         }
 

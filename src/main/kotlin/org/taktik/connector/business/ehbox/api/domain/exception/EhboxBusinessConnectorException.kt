@@ -25,9 +25,20 @@ import java.text.MessageFormat
 
 class EhboxBusinessConnectorException : ConnectorException {
 
-    constructor(errorCodeValue: EhboxBusinessConnectorExceptionValues, vararg params: Any) : super(MessageFormat.format(errorCodeValue.message, *params), errorCodeValue.errorCode) {}
+    constructor(errorCodeValue: EhboxBusinessConnectorExceptionValues, vararg params: Any) : super(
+        MessageFormat.format(
+            errorCodeValue.message,
+            *params
+        ), errorCodeValue.errorCode
+    ) {
+    }
 
-    constructor(errorCodeValue: EhboxBusinessConnectorExceptionValues, e: Throwable, vararg params: Any) : super(MessageFormat.format(errorCodeValue.message, *params), errorCodeValue.errorCode, e) {}
+    constructor(errorCodeValue: EhboxBusinessConnectorExceptionValues, e: Throwable, vararg params: Any) : super(
+        MessageFormat.format(errorCodeValue.message, *params),
+        errorCodeValue.errorCode,
+        e
+    ) {
+    }
 
     companion object {
         private val serialVersionUID = 236496056490741436L

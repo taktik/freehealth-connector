@@ -23,4 +23,4 @@ package org.taktik.freehealth.middleware.domain
 /**
  * @author Bernard Paulus on 12/04/17.
  */
-data class MedicationRenewal(var allowedRenewals : Int? = null, var delayBetweenDeliveries : Duration? = null)
+data class MedicationRenewal(var allowedRenewals: Int? = null, var delayBetweenDeliveries: Duration? = null)

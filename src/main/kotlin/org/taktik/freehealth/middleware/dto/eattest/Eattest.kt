@@ -24,22 +24,38 @@ import java.io.Serializable
 
 class Eattest(var codes: List<EattestCode> = listOf()) : Serializable {
     class EattestCode(
-            var date: Int? = null,
-            var riziv: String? = null,
-            var quantity: Int = 1,
-            var relativeService: String? = null,
-            var reimbursement: Double? = null,
-            var reglementarySupplement: Double? = null,
-            var fee: Double? = null, // Sum of the 2 above
-            var doctorSupplement: Double? = null,
-            var norm: Int = 0,
-            var cardReading: EattestCardReading? = null,
-            var requestor: EattestRequestor? = null,
-            var location: EattestHcParty? = null,
-            var internship: EattestHcParty? = null,
-            var gmdManager: EattestHcParty? = null
+        var date: Int? = null,
+        var riziv: String? = null,
+        var quantity: Int = 1,
+        var relativeService: String? = null,
+        var reimbursement: Double? = null,
+        var reglementarySupplement: Double? = null,
+        var fee: Double? = null, // Sum of the 2 above
+        var doctorSupplement: Double? = null,
+        var norm: Int = 0,
+        var cardReading: EattestCardReading? = null,
+        var requestor: EattestRequestor? = null,
+        var location: EattestHcParty? = null,
+        var internship: EattestHcParty? = null,
+        var gmdManager: EattestHcParty? = null
     ) : Serializable
-    class EattestCardReading(var date: Int? = null, var time:Int? = null, var mediaType: Int = 1, var inputType: Int = 1, var manualInputReason : Int? = null, var serial: String? = null): Serializable
-    class EattestHcParty(var idHcParty: String? = null, var idSsin: String? = null, var cdHcParty: String? = null, var firstName: String? = null, var lastName: String? = null) : Serializable
+
+    class EattestCardReading(
+        var date: Int? = null,
+        var time: Int? = null,
+        var mediaType: Int = 1,
+        var inputType: Int = 1,
+        var manualInputReason: Int? = null,
+        var serial: String? = null
+    ) : Serializable
+
+    class EattestHcParty(
+        var idHcParty: String? = null,
+        var idSsin: String? = null,
+        var cdHcParty: String? = null,
+        var firstName: String? = null,
+        var lastName: String? = null
+    ) : Serializable
+
     class EattestRequestor(var date: Int? = null, var hcp: EattestHcParty? = null) : Serializable
 }

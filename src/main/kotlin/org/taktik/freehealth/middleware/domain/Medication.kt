@@ -29,64 +29,74 @@ import java.io.Serializable
 import java.util.stream.Collectors
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-data class Medication(@Deprecated("retained for backward compatibility with the db", ReplaceWith("compoundPrescriptionV2"))
-					  var compoundPrescription : String? = null,
-                      var compoundPrescriptionV2: CompoundPrescription? = null,
-                      var substanceProduct : Substanceproduct? = null,
-                      var medicinalProduct : Medicinalproduct? = null,
-                      var numberOfPackages : Int? = null,
-                      /** vaccine batch number bought by the doctor: do not send to Recip-e */
-					  var batch : String? = null,
-                      @Deprecated("not supported in Recipe 1.19")
-					  var commentForDelivery : String? = null,
-                      var beginMoment : Long? = null,
-                      var endMoment : Long? = null,
-                      var temporality : Code? = null, // CD-TEMPORALITY
-                      var duration : Duration? = null,
-                      var knownUsage : Boolean? = null,
-                      var regimen : MutableList<RegimenItem>? = null,
-                      var renewal : MedicationRenewal? = null,
-                      var intakeRoute : Code? = null, // CD-DRUG-ROUTE
-                      var instructionForPatient : String? = null,
-                      var instructionsForReimbursement : ReimbursementInstructions? = null,
-                      var substitutionAllowed : Boolean? = null,
-                      var recipeInstructionForPatient : String? = null,
-                      var options : MutableMap<String, Content>? = null
+data class Medication(
+    @Deprecated(
+        "retained for backward compatibility with the db",
+        ReplaceWith("compoundPrescriptionV2")
+    ) var compoundPrescription: String? = null,
+    var compoundPrescriptionV2: CompoundPrescription? = null,
+    var substanceProduct: Substanceproduct? = null,
+    var medicinalProduct: Medicinalproduct? = null,
+    var numberOfPackages: Int? = null,
+    /** vaccine batch number bought by the doctor: do not send to Recip-e */
+    var batch: String? = null,
+    @Deprecated("not supported in Recipe 1.19") var commentForDelivery: String? = null,
+    var beginMoment: Long? = null,
+    var endMoment: Long? = null,
+    var temporality: Code? = null, // CD-TEMPORALITY
+    var duration: Duration? = null,
+    var knownUsage: Boolean? = null,
+    var regimen: MutableList<RegimenItem>? = null,
+    var renewal: MedicationRenewal? = null,
+    var intakeRoute: Code? = null, // CD-DRUG-ROUTE
+    var instructionForPatient: String? = null,
+    var instructionsForReimbursement: ReimbursementInstructions? = null,
+    var substitutionAllowed: Boolean? = null,
+    var recipeInstructionForPatient: String? = null,
+    var options: MutableMap<String, Content>? = null
 ) : Serializable {
 
-	@JsonIgnore
-	fun getPosology(language : String? = null) : String? {
-		val lang = language ?: "en"
-		require(lang in listOf("fr", "nl", "en"), { "unknown language $lang" })
-		if (knownUsage ?: false) {
-			return mapOf("nl" to "gekend gebruik", "fr" to "usage connu", "en" to "known usage")[lang]
-		}
-		if (!StringUtils.isEmpty(instructionForPatient)) {
-			return this.instructionForPatient
-		}
-		if (regimen == null || regimen!!.size == 0) {
-			return null
-		}
+    @JsonIgnore
+    fun getPosology(language: String? = null): String? {
+        val lang = language ?: "en"
+        require(lang in listOf("fr", "nl", "en"), { "unknown language $lang" })
+        if (knownUsage ?: false) {
+            return mapOf("nl" to "gekend gebruik", "fr" to "usage connu", "en" to "known usage")[lang]
+        }
+        if (!StringUtils.isEmpty(instructionForPatient)) {
+            return this.instructionForPatient
+        }
+        if (regimen == null || regimen!!.size == 0) {
+            return null
+        }
 
-		var unit = regimen!![0].administratedQuantity?.administrationUnit?.code ?:  regimen!![0].administratedQuantity?.unit
-		var quantity = regimen!![0].administratedQuantity?.quantity
+        var unit =
+            regimen!![0].administratedQuantity?.administrationUnit?.code ?: regimen!![0].administratedQuantity?.unit
+        var quantity = regimen!![0].administratedQuantity?.quantity
 
-		for (ri in regimen!!.subList(1, regimen!!.size)) {
-			val oUnit = ri.administratedQuantity?.administrationUnit?.code ?: ri.administratedQuantity?.unit
-			val oQuantity = ri.administratedQuantity?.quantity
+        for (ri in regimen!!.subList(1, regimen!!.size)) {
+            val oUnit = ri.administratedQuantity?.administrationUnit?.code ?: ri.administratedQuantity?.unit
+            val oQuantity = ri.administratedQuantity?.quantity
 
-			if (!StringUtils.equals(unit,oUnit)) {
-				unit = "take(s)"
-			}
-			if ((quantity == null && oQuantity != null) || (quantity != null && oQuantity == null) || (quantity!= null && quantity != oQuantity)) {
-				quantity = -1.0
-			}
-		}
-		return String.format("%s, %d x %s, %s", if (quantity == null || quantity == -1.0) "x" else quantity.toString(), regimen!!.size, "daily", Joiner.on(", ").skipNulls().join(regimen!!.stream().map(RegimenItem::toString).collect(Collectors.toList()) as Iterable<String>))
-	}
+            if (!StringUtils.equals(unit, oUnit)) {
+                unit = "take(s)"
+            }
+            if ((quantity == null && oQuantity != null) || (quantity != null && oQuantity == null) || (quantity != null && quantity != oQuantity)) {
+                quantity = -1.0
+            }
+        }
+        return String.format(
+            "%s, %d x %s, %s",
+            if (quantity == null || quantity == -1.0) "x" else quantity.toString(),
+            regimen!!.size,
+            "daily",
+            Joiner.on(", ").skipNulls().join(
+                regimen!!.stream().map(RegimenItem::toString).collect(Collectors.toList()) as Iterable<String>
+            )
+        )
+    }
 
-	companion object {
-		const val REIMBURSED = "REIMBURSED"
-	}
+    companion object {
+        const val REIMBURSED = "REIMBURSED"
+    }
 }
-

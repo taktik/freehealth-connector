@@ -28,7 +28,6 @@ import org.taktik.freehealth.utils.InstantSerializer
 import java.io.Serializable
 import java.time.Instant
 
-
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 class Content() : Serializable {
     @JsonProperty("s")
@@ -61,29 +60,27 @@ class Content() : Serializable {
         this.stringValue = stringValue
     }
 
-    constructor(numberValue: Double?) : this()  {
+    constructor(numberValue: Double?) : this() {
         this.numberValue = numberValue
     }
 
-    constructor(booleanValue: Boolean?) : this()  {
+    constructor(booleanValue: Boolean?) : this() {
         this.booleanValue = booleanValue
     }
 
-    constructor(instantValue: Instant) : this()  {
+    constructor(instantValue: Instant) : this() {
         this.instantValue = instantValue
     }
 
-    constructor(measureValue: Measure) : this()  {
+    constructor(measureValue: Measure) : this() {
         this.measureValue = measureValue
     }
 
-    constructor(binaryValue: ByteArray) : this()  {
+    constructor(binaryValue: ByteArray) : this() {
         this.binaryValue = binaryValue
     }
 
-    constructor(medicationValue: Medication) : this()  {
+    constructor(medicationValue: Medication) : this() {
         this.medicationValue = medicationValue
     }
-
-
 }

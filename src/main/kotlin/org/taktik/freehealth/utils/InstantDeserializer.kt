@@ -35,7 +35,10 @@ class InstantDeserializer : JsonDeserializer<Instant>() {
     }
 
     private fun getInstant(value: BigDecimal): Instant {
-        return Instant.ofEpochSecond(value.divide(aThousand).toLong(), value.remainder(aThousand).multiply(aMillion).toLong())
+        return Instant.ofEpochSecond(
+            value.divide(aThousand).toLong(),
+            value.remainder(aThousand).multiply(aMillion).toLong()
+        )
     }
 
     companion object {

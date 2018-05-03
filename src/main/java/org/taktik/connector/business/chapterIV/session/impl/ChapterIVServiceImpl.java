@@ -45,26 +45,19 @@ public class ChapterIVServiceImpl implements ChapterIVService {
    }
 
    public ConsultChap4MedicalAdvisorAgreementResponse consultChap4MedicalAdvisorAgreement(FolderType folder, String inputReference, boolean isTest, String commonReference, String commonNIPReference, DateTime agreementStartDate) throws ChapterIVBusinessConnectorException, TechnicalConnectorException, SessionManagementException {
-      ConsultationBuilder builder = this.factory.getConsultationBuilder();
+      ConsultationBuilder builder = null; //TODO this.factory.getConsultationBuilder();
       ChapterIVReferences references = new ChapterIVReferences(commonReference);
       references.setCommonNIPReference(commonNIPReference);
       return this.consultChap4MedicalAdvisorAgreement(builder.buildRequest(folder, isTest, references, agreementStartDate));
    }
 
-   public ConsultationBuilder getConsultationBuilder() throws TechnicalConnectorException {
-      return this.factory.getConsultationBuilder();
-   }
-
    public AskChap4MedicalAdvisorAgreementResponse askChap4MedicalAdvisorAgreementResponse(FolderType folder, String inputReference, boolean isTest, String commonReference, String commonNIPReference, DateTime agreementStartDate) throws ChapterIVBusinessConnectorException, TechnicalConnectorException, SessionManagementException {
-      AdmissionBuilder builder = this.factory.getAdmissionBuilder();
+      AdmissionBuilder builder = null; //TODO this.factory.getAdmissionBuilder();
       ChapterIVReferences references = new ChapterIVReferences(commonReference);
       references.setCommonNIPReference(commonNIPReference);
       return this.askChap4MedicalAdvisorAgreementResponse(builder.buildRequest(folder, isTest, references, agreementStartDate));
    }
 
-   public AdmissionBuilder getAdmissionBuilder() throws TechnicalConnectorException {
-      return this.factory.getAdmissionBuilder();
-   }
 
    public ResponseBuilder getResponseBuilder() throws TechnicalConnectorException {
       return this.factory.getResponseBuilder();

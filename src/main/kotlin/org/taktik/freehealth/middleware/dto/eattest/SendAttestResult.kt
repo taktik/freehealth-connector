@@ -20,7 +20,8 @@
 
 package org.taktik.freehealth.middleware.dto.eattest
 
-
-open class SendAttestResult(var acknowledge: EattestAcknowledgeType? = null,
-                            var invoicingNumber : String? = null,
-                            var attest: Eattest? = null)
+open class SendAttestResult(
+    var acknowledge: EattestAcknowledgeType? = null,
+    var invoicingNumber: String? = null,
+    var attest: Eattest? = null
+)

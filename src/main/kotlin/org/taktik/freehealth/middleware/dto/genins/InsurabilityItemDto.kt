@@ -20,9 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto.genins
 
-import org.taktik.freehealth.middleware.dto.genins.PeriodDto
 import java.io.Serializable
-import java.time.Instant
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,11 +30,11 @@ import java.time.Instant
  * To change this template use File | Settings | File Templates.
  */
 class InsurabilityItemDto(
-        val regNrWithMut: String? = null,
-        val mutuality: String? = null,
-        val period: PeriodDto? = null,
-        val ct1: String? = null,
-        val ct2: String? = null,
-        val paymentApproval: String? = null,
-        val insurabilityDate: Long? = null
+    val regNrWithMut: String? = null,
+    val mutuality: String? = null,
+    val period: PeriodDto? = null,
+    val ct1: String? = null,
+    val ct2: String? = null,
+    val paymentApproval: String? = null,
+    val insurabilityDate: Long? = null
 ) : Serializable

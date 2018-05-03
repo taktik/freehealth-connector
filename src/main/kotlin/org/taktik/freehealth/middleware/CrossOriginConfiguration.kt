@@ -54,13 +54,8 @@ class CrossOriginConfiguration {
     fun corsConfigurer(): WebMvcConfigurer {
         return object : WebMvcConfigurerAdapter() {
             override fun addCorsMappings(registry: CorsRegistry) {
-                registry
-                        .addMapping("/**")
-                        .allowCredentials(true)
-                        .allowedOrigins("*")
-                        .allowedMethods("*")
+                registry.addMapping("/**").allowCredentials(true).allowedOrigins("*").allowedMethods("*")
             }
         }
     }
-
 }

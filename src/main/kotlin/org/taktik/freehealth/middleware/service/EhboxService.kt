@@ -28,8 +28,31 @@ import java.util.*
 interface EhboxService {
     fun getInfos(keystoreId: UUID, tokenId: UUID, passPhrase: String): BoxInfo
     fun getFullMessage(keystoreId: UUID, tokenId: UUID, passPhrase: String, boxId: String, messageId: String): Message
-    fun sendMessage(keystoreId: UUID, tokenId: UUID, passPhrase: String, message: DocumentMessage, publicationReceipt: Boolean, receptionReceipt: Boolean, readReceipt: Boolean): Boolean
+    fun sendMessage(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        message: DocumentMessage,
+        publicationReceipt: Boolean,
+        receptionReceipt: Boolean,
+        readReceipt: Boolean
+    ): Boolean
+
     fun loadMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, boxId: String, limit: Int?): List<Message>
-    fun moveMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, messageIds: List<String>, source: String, destination: String): Boolean
-    fun deleteMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, messageIds: List<String>, source: String): Boolean
+    fun moveMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        messageIds: List<String>,
+        source: String,
+        destination: String
+    ): Boolean
+
+    fun deleteMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        messageIds: List<String>,
+        source: String
+    ): Boolean
 }

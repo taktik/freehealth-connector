@@ -21,13 +21,13 @@
 package org.taktik.freehealth.middleware.dto
 
 class MycarenetError(
-        var uid:String? = null,
-        var path:String? = null,
-        var regex:String? = null,
-        var locFr:String? = null,
-        var locNl:String? = null,
-        var msgFr:String? = null,
-        var msgNl:String? = null,
-        var code:String? = null,
-        var value:String ? = null
+    var uid: String? = null,
+    var path: String? = null,
+    var regex: String? = null,
+    var locFr: String? = null,
+    var locNl: String? = null,
+    var msgFr: String? = null,
+    var msgNl: String? = null,
+    var code: String? = null,
+    var value: String? = null
 )

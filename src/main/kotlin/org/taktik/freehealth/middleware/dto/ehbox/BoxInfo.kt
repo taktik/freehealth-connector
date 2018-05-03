@@ -21,9 +21,9 @@
 package org.taktik.freehealth.middleware.dto.ehbox
 
 class BoxInfo(
-        val boxId: String,
-        val quality: String,
-        val nbrMessagesInStandBy: Int,
-        val currentSize: Long,
-        val maxSize: Long
+    val boxId: String,
+    val quality: String,
+    val nbrMessagesInStandBy: Int,
+    val currentSize: Long,
+    val maxSize: Long
 )

@@ -21,8 +21,6 @@
 package org.taktik.freehealth.middleware.service
 
 import org.taktik.connector.technical.exception.ConnectorException
-import org.taktik.connector.technical.service.sts.security.Credential
-import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.domain.Feedback
 import org.taktik.freehealth.middleware.dto.HealthcareParty
@@ -45,27 +43,110 @@ import javax.xml.bind.JAXBException
  */
 interface RecipeService {
     @Throws(ConnectorException::class)
-    fun createPrescription(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patient: Patient, hcp: HealthcareParty, feedback: Boolean, medications: List<Medication>, prescriptionType: String?, notification: String?, executorId: String?, deliveryDate: Date?): Prescription
+    fun createPrescription(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String,
+        patient: Patient,
+        hcp: HealthcareParty,
+        feedback: Boolean,
+        medications: List<Medication>,
+        prescriptionType: String?,
+        notification: String?,
+        executorId: String?,
+        deliveryDate: Date?
+    ): Prescription
 
     @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
-    fun listOpenPrescriptions(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String): List<Prescription>
+    fun listOpenPrescriptions(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String
+    ): List<Prescription>
 
-    @Throws(ConnectorException::class, DataFormatException::class, KeyStoreException::class, CertificateExpiredException::class)
-    fun sendNotification(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String,  patientId: String, executorId: String, rid: String, text: String)
+    @Throws(
+        ConnectorException::class,
+        DataFormatException::class,
+        KeyStoreException::class,
+        CertificateExpiredException::class
+    )
+    fun sendNotification(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String,
+        patientId: String,
+        executorId: String,
+        rid: String,
+        text: String
+    )
 
     @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
-    fun revokePrescription(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, rid: String, reason: String)
+    fun revokePrescription(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String,
+        rid: String,
+        reason: String
+    )
 
     @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
-    fun updateFeedbackFlag(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, rid: String, feedbackFlag: Boolean)
+    fun updateFeedbackFlag(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String,
+        rid: String,
+        feedbackFlag: Boolean
+    )
 
-    @Throws(ConnectorException::class, DataFormatException::class, KeyStoreException::class, CertificateExpiredException::class)
-    fun listFeedbacks(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String): List<Feedback>
+    @Throws(
+        ConnectorException::class,
+        DataFormatException::class,
+        KeyStoreException::class,
+        CertificateExpiredException::class
+    )
+    fun listFeedbacks(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String
+    ): List<Feedback>
 
     @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
-    fun listOpenPrescriptions(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String,  patientId: String): List<Prescription>
+    fun listOpenPrescriptions(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String,
+        patientId: String
+    ): List<Prescription>
 
-	fun getGalToAdministrationUnit(galId: String): Code?
+    fun getGalToAdministrationUnit(galId: String): Code?
 
     @Throws(JAXBException::class)
     fun getPrescription(rid: String): PrescriptionFullWithFeedback?

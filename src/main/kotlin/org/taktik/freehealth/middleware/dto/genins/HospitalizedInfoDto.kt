@@ -21,10 +21,9 @@
 package org.taktik.freehealth.middleware.dto.genins
 
 import java.io.Serializable
-import java.time.Instant
 
 class HospitalizedInfoDto(
-        val hospital: String? = null,
-        val admissionDate: Long? = null,
-        val admissionService: String? = null
+    val hospital: String? = null,
+    val admissionDate: Long? = null,
+    val admissionService: String? = null
 ) : Serializable

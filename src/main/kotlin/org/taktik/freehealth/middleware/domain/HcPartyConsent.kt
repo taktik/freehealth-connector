@@ -32,9 +32,9 @@ import java.io.Serializable
  * To change this template use File | Settings | File Templates.
  */
 class HcPartyConsent(
-        var hcparty: HcPartyId? = null,
-        var signdate: Long? = null,
-        var revokedate: Long? = null,
-        var author: AuthorDto? = null,
-        var hubId: String? = null
+    var hcparty: HcPartyId? = null,
+    var signdate: Long? = null,
+    var revokedate: Long? = null,
+    var author: AuthorDto? = null,
+    var hubId: String? = null
 ) : Serializable

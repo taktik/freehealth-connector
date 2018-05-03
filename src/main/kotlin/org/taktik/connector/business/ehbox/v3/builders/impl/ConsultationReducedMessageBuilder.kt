@@ -20,14 +20,12 @@
 
 package org.taktik.connector.business.ehbox.v3.builders.impl
 
-import org.taktik.connector.business.ehbox.api.domain.Addressee
 import org.taktik.connector.business.ehbox.api.domain.Document
 import org.taktik.connector.business.ehbox.api.domain.DocumentMessage
 import org.taktik.connector.business.ehbox.api.domain.ErrorMessage
 import org.taktik.connector.business.ehbox.api.domain.exception.EhboxBusinessConnectorException
 import org.taktik.connector.technical.enumeration.Charset
 import org.taktik.connector.technical.exception.TechnicalConnectorException
-import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.utils.ConnectorIOUtils
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.Message
 import be.fgov.ehealth.ehbox.core.v3.ContentInfoType
@@ -37,7 +35,11 @@ import java.security.KeyStore
 class ConsultationReducedMessageBuilder : AbstractConsultationBuilder<Message>() {
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    fun buildMessage(keystore: KeyStore, passPhrase: String, response: Message): org.taktik.connector.business.ehbox.api.domain.Message<Message> {
+    fun buildMessage(
+        keystore: KeyStore,
+        passPhrase: String,
+        response: Message
+    ): org.taktik.connector.business.ehbox.api.domain.Message<Message> {
         val message = this.createMessage(response.contentSpecification, response, response.messageId, null)
         val container = AbstractConsultationBuilder.ExceptionContainer(message)
         this.processMessageInfo(response.messageInfo, message)
@@ -50,22 +52,37 @@ class ConsultationReducedMessageBuilder : AbstractConsultationBuilder<Message>()
         return container.getMessage()
     }
 
-    private fun processDestination(response: Message, message: org.taktik.connector.business.ehbox.api.domain.Message<Message>) {
+    private fun processDestination(
+        response: Message,
+        message: org.taktik.connector.business.ehbox.api.domain.Message<Message>
+    ) {
         if (response.destination != null) {
             val destination = this.buildAddressee(response.destination)
             message.getDestinations().add(destination)
         }
-
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    private fun processContent(keystore: KeyStore, passPhrase: String, response: ContentInfoType, message: org.taktik.connector.business.ehbox.api.domain.Message<Message>, container: AbstractConsultationBuilder.ExceptionContainer<Message>) {
+    private fun processContent(
+        keystore: KeyStore,
+        passPhrase: String,
+        response: ContentInfoType,
+        message: org.taktik.connector.business.ehbox.api.domain.Message<Message>,
+        container: AbstractConsultationBuilder.ExceptionContainer<Message>
+    ) {
         if (message is DocumentMessage<*>) {
             val documentMessage = message as DocumentMessage<*>
             val document = Document()
             document.title = response.title
             documentMessage.document = document
-            val decodedInss = this.handleAndDecryptIfNeeded(keystore, passPhrase, response.encryptableINSSPatient, documentMessage.isEncrypted, container)
+            val decodedInss =
+                this.handleAndDecryptIfNeeded(
+                    keystore,
+                    passPhrase,
+                    response.encryptableINSSPatient,
+                    documentMessage.isEncrypted,
+                    container
+                )
             if (decodedInss != null) {
                 documentMessage.patientInss = ConnectorIOUtils.toString(decodedInss, Charset.UTF_8)
             }
@@ -73,6 +90,5 @@ class ConsultationReducedMessageBuilder : AbstractConsultationBuilder<Message>()
             val errorMessage = message as ErrorMessage<*>
             errorMessage.title = response.title
         }
-
     }
 }

@@ -22,4 +22,4 @@ package org.taktik.freehealth.middleware.domain
 
 import java.util.*
 
-class SamlTokenResult(var tokenId: UUID? = null, var token:String? = null, var validity:Long? = null)
+class SamlTokenResult(var tokenId: UUID? = null, var token: String? = null, var validity: Long? = null)
