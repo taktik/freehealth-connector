@@ -35,7 +35,7 @@ class STSControllerTest : EhealthTest() {
 
     @Test
     fun requestToken() {
-        val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("92092412781.acc-p12").path, port, restTemplate!!)
+        val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("${ssin1}.acc-p12").path, port, restTemplate!!)
         val ssin = ssin1
         val passPhrase = password1
         val res = this.restTemplate.getForObject("http://localhost:$port/sts/token/$keystoreId?passPhrase={passPhrase}&ssin=$ssin", String::class.java, passPhrase)
@@ -43,7 +43,7 @@ class STSControllerTest : EhealthTest() {
         val saml = gson.fromJson(res, SamlTokenResult::class.java)
         assertThat(saml.tokenId).isNotNull()
         assertThat(saml.token).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Assertion")
-        assertThat(saml.token).containsIgnoringCase("OU=Maxime Mennechet")
+        assertThat(saml.token).containsIgnoringCase("OU=${firstName1} ${lastName1}")
     }
 
     @Test
@@ -52,7 +52,7 @@ class STSControllerTest : EhealthTest() {
 
     @Test
     fun checkKeystoreExist(){
-        val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("92092412781.acc-p12").path, port, restTemplate!!)
+        val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("${ssin1}.acc-p12").path, port, restTemplate!!)
 
         val res = this.restTemplate?.getForObject("http://localhost:$port/sts/checkKeystore/${keystoreId}", String::class.java)
         assertThat(res != null)
