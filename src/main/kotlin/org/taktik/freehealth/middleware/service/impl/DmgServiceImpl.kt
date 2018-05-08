@@ -11,7 +11,9 @@ import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Query
+import be.cin.nip.sync.reg.v1.RegistrationAnswerType
 import be.cin.nip.sync.reg.v1.RegistrationStatus
+import be.cin.nip.sync.reg.v1.RegistrationsAnswer
 import be.fgov.ehealth.globalmedicalfile.core.v1.BlobType
 import be.fgov.ehealth.globalmedicalfile.core.v1.CareReceiverIdType
 import be.fgov.ehealth.globalmedicalfile.core.v1.CommonInputType
@@ -207,8 +209,11 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             this.issueInstant = DateTime()
             this.routing = SendRequestMapper.mapRouting(Routing(careReceiver, DateTime()))
             this.detail = SendRequestMapper.mapBlobToBlobType(blob)
-        }
 
+            val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+            val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+            this.xades = BlobUtil.generateXades(this.detail,credential, "mcn.registration")
+        }
         val registrationsAnswer =
             ResponseHelper.toObject(
                 org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(

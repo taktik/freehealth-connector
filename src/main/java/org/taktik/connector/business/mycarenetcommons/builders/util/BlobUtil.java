@@ -7,6 +7,7 @@ import org.taktik.connector.technical.config.ConfigValidator;
 import org.taktik.connector.technical.config.impl.ConfigurationModuleBootstrap;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
+import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.session.Session;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
@@ -55,6 +56,37 @@ public class BlobUtil implements ConfigurationModuleBootstrap.ModuleBootstrapHoo
    public static Base64Binary generateXadesForBlob(Blob blob, String projectName) throws TechnicalConnectorException {
       BlobType blobForXades = SendRequestMapper.mapBlobToBlobType(blob);
       return generateXades(blobForXades, projectName);
+   }
+
+   public static Base64Binary generateXades(BlobType inValue, Credential credential, String projectName) throws TechnicalConnectorException {
+      ConfigValidator props = ConfigFactory.getConfigValidator();
+      String propValue = props.getProperty("mycarenet." + projectName + ".request.xadestype", "${mycarenet.default.request.xadestype}");
+      if (!"xades".equals(propValue) && !"xadest".equals(propValue)) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"Property mycarenet." + projectName + ".request.xadestype" + " with value " + propValue + " is not a supported value"});
+      } else {
+         Map<String, Object> options = new HashMap();
+         options.put("baseURI", inValue.getId());
+         List<String> transformList = new ArrayList();
+         transformList.add("http://www.w3.org/2000/09/xmldsig#base64");
+         if ("deflate".equals(inValue.getContentEncoding())) {
+            transformList.add("urn:nippin:xml:sig:transform:optional-deflate");
+         }
+
+         if ("text/xml".equals(inValue.getContentType())) {
+            transformList.add("http://www.w3.org/2001/10/xml-exc-c14n#");
+         }
+
+         options.put("transformerList", transformList);
+         AdvancedElectronicSignatureEnumeration xadesType;
+         if ("xadest".equals(propValue)) {
+            xadesType = AdvancedElectronicSignatureEnumeration.XAdES_T;
+         } else {
+            xadesType = AdvancedElectronicSignatureEnumeration.XAdES;
+         }
+
+         byte[] xadesValue = SignatureBuilderFactory.getSignatureBuilder(xadesType).sign(credential, ConnectorXmlUtils.toByteArray((Object)inValue), options);
+         return convertXadesToBinary(xadesValue);
+      }
    }
 
    public static Base64Binary generateXades(BlobType inValue, String projectName) throws TechnicalConnectorException {
