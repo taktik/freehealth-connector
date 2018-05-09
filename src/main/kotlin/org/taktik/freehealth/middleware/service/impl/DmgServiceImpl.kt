@@ -157,10 +157,22 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         val mapper = RegistrationRequestBuilderFactory.getRequestObjectBuilder()
 
         val request =
-            ("<reg:registrations xmlns:p=\"urn:be:cin:mycarenet:esb:common:v2\"\n" + "xmlns:reg=\"urn:be:cin:nip:sync:reg:v1\"\n" + "xmlns:other=\"urn:other\"\n" + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" + "xsi:schemaLocation=\"urn:be:cin:nip:sync:reg:v1Registrations-v1.xsd\"\n" + "StartDateTime=\"replaceWithDateYYYY-MM-DD\" >\n" + "<reg:registrant>\n" + "<reg:CareProvider>\n" + "<p:Nihii>\n" + "<p:Quality>doctor</p:Quality>\n" + "<p:Value>replaceWithNihiiNumber</p:Value>\n" + "</p:Nihii>\n" + "</reg:CareProvider>\n" + "</reg:registrant>\n" + "<reg:registration serviceName=\"GMD\" >\n" + "<reg:bankAccount bic=\"replaceWithBic\" iban=\"replaceWithIban\"/>\n" + "</reg:registration>\n" + "</reg:registrations>").replace(
-                "replaceWithDateYYYY-MM-DD".toRegex(),
+            ("<reg:registrations xmlns:p=\"urn:be:cin:mycarenet:esb:common:v2\"\n" +
+                "xmlns:reg=\"urn:be:cin:nip:sync:reg:v1\"\n" + "xmlns:other=\"urn:other\"\n" +
+                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "xsi:schemaLocation=\"urn:be:cin:nip:sync:reg:v1Registrations-v1.xsd\"\n" +
+                "StartDateTime=\"replaceWithDateYYYY-MM-DD\" >\n" + "<reg:registrant>\n" +
+                "<reg:CareProvider>\n" + "<p:Nihii>\n" + "<p:Quality>doctor</p:Quality>\n" +
+                "<p:Value>replaceWithNihiiNumber</p:Value>\n" +
+                "</p:Nihii>\n" +
+                "</reg:CareProvider>\n" +
+                "</reg:registrant>\n" +
+                "<reg:registration serviceName=\"GMD\" >\n" +
+                "<reg:bankAccount bic=\"replaceWithBic\" iban=\"replaceWithIban\"/>\n" +
+                "</reg:registration>\n" +
+                "</reg:registrations>").replace("replaceWithDateYYYY-MM-DD".toRegex(),
                 DateTime().toString("YYYY-MM-dd")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         )
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    )
                 .replace("replaceWithNihiiNumber".toRegex(), hcpNihii).replace("replaceWithBic".toRegex(), bic)
                 .replace("replaceWithIban".toRegex(), iban.toUpperCase())
 
@@ -212,7 +224,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
             val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
             val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-            this.xades = BlobUtil.generateXades(this.detail,credential, "mcn.registration")
+            this.xades = BlobUtil.generateXades(this.detail, credential, "mcn.registration")
         }
         val registrationsAnswer =
             ResponseHelper.toObject(
