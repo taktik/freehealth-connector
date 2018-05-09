@@ -1,281 +1,251 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<kmehrmessage xmlns="http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.ehealth.fgov.be/standards/kmehr/schema/v1 file://Users/aduchate/Sources/git.taktik.be/icure-cloud/src/main/resources/org/taktik/icure/logic/impl/be/ehealth/kmehr/schema/v20161201/ehealth-kmehr/XSD/kmehr_elements-1_19.xsd">
-    <header>
-        <standard>
-            <cd S="CD-STANDARD" SV="1.19" DN="">20161201</cd>
-        </standard>
-        <id S="ID-KMEHR" SV="1.0" SL="">EHP-1990000035.636439136857615036</id>
-        <date>2017-10-18</date>
-        <time>07:54:45.761+01:00</time>
-        <sender>
-            <hcparty>
-                <id S="ID-HCPARTY" SV="1.0" SL="">1990000035</id>
-                <cd S="CD-HCPARTY" SV="1.1" DN="">hub</cd>
-                <name>RSW</name>
-            </hcparty>
-        </sender>
-        <recipient>
-            <hcparty>
-                <id S="ID-HCPARTY" SV="1.0">18763461</id>
-                <id S="INSS" SV="1.0">69092702003</id>
-                <id S="ID-ENCRYPTION-ACTOR" SV="1.0">18763461</id>
-                <cd S="CD-HCPARTY" SV="1.1">persphysician</cd>
-                <cd S="CD-ENCRYPTION-ACTOR" SV="1.0">NIHII</cd>
-                <firstname>Anouk</firstname>
-                <familyname>Lassine</familyname>
-            </hcparty>
-            <hcparty>
-                <id S="ID-ENCRYPTION-APPLICATION" SV="1.0"></id>
-                <cd S="CD-APPLICATION" SV="1.1">APPLICATION</cd>
-            </hcparty>
-        </recipient>
-    </header>
-    <folder>
-        <id S="ID-KMEHR" SV="1.0">1</id>
-        <patient>
-            <id S="ID-PATIENT" SV="1.0">74010414733</id>
-            <firstname>Antoine</firstname>
-            <familyname>Duchâteau</familyname>
-            <birthdate>
-                <date>1974-01-04</date>
-            </birthdate>
-            <sex>
-                <cd S="CD-SEX" SV="1.0">male</cd>
-            </sex>
-            <address>
-                <cd S="CD-ADDRESS" SV="1.0" SL="" DN="" L="fr">home</cd>
-                <country>
-                    <cd S="CD-COUNTRY" SV="1.0" DN="" SL="" L="fr">BE</cd>
-                </country>
-                <zip>1190</zip>
-                <nis>04000</nis>
-                <city>Forest</city>
-                <street>Avenue Kersbeek 279 /A/TM</street>
-                <housenumber></housenumber>
-            </address>
-        </patient>
-        <transaction>
-            <id S="ID-KMEHR" SV="1.0">1</id>
-            <id S="LOCAL" SV="4.0.0" SL="iCure-Item">1173613f.1504857920005</id>
-            <cd S="CD-TRANSACTION" SV="1.0">sumehr</cd>
-            <date>2017-09-08</date>
-            <time>10:05:20.005+01:00</time>
-            <author>
-                <hcparty>
-                    <id S="ID-HCPARTY" SV="1.0">18763461003</id>
-                    <id S="INSS" SV="1.0">69092702003</id>
-                    <cd S="CD-HCPARTY" SV="1.0">persphysician</cd>
-                    <firstname>Anouk</firstname>
-                    <familyname>Lassine</familyname>
-                    <address>
-                        <cd S="CD-ADDRESS" SV="1.0">work</cd>
-                        <country>
-                            <cd S="CD-COUNTRY" SV="1.0">be</cd>
-                        </country>
-                        <zip>1190</zip>
-                        <city>Forest</city>
-                        <street>Avenue Denayer</street>
-                        <housenumber>89</housenumber>
-                    </address>
-                    <telecom>
-                        <cd S="CD-ADDRESS" SV="1.0">work</cd>
-                        <cd S="CD-TELECOM" SV="1.0">mobile</cd>
-                        <telecomnumber>0475 305893</telecomnumber>
-                    </telecom>
-                    <telecom>
-                        <cd S="CD-ADDRESS" SV="1.0">work</cd>
-                        <cd S="CD-TELECOM" SV="1.0">email</cd>
-                        <telecomnumber>docteurlassine@gmail.com</telecomnumber>
-                    </telecom>
-                </hcparty>
-            </author>
-            <iscomplete>true</iscomplete>
-            <isvalidated>true</isvalidated>
-            <heading>
-                <id S="ID-KMEHR" SV="1.0">1</id>
-                <cd S="CD-HEADING" SV="1.0">assessment</cd>
-                <item>
-                    <id S="ID-KMEHR" SV="1.0">1</id>
-                    <id S="LOCAL" SV="4.0.0" SL="iCure-Service">6dd5909d-444c-4b37-9636-9594d45ec9fe</id>
-                    <cd S="CD-ITEM" SV="1.0">adr</cd>
-                    <content>
-                        <text L="fr">octocrylènes</text>
-                    </content>
-                    <beginmoment>
-                        <date>2012-01-01</date>
-                    </beginmoment>
-                    <lifecycle>
-                        <cd S="CD-LIFECYCLE" SV="1.0">active</cd>
-                    </lifecycle>
-                    <isrelevant>true</isrelevant>
-                    <recorddatetime>2017-06-30T10:26:57.191+02:00</recorddatetime>
-                </item>
-                <item>
-                    <id S="ID-KMEHR" SV="1.0">2</id>
-                    <cd S="CD-ITEM" SV="1.0">gmdmanager</cd>
-                    <content>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" xmlns:v3="http://www.ehealth.fgov.be/hubservices/protocol/v3" xmlns:v31="http://www.ehealth.fgov.be/hubservices/core/v3">
+    <soapenv:Header/>
+    <soapenv:Body wsu:Id="id-6F4E75CCC706A7BFB51485271445896540" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+        <PutTransactionSetRequest>
+            <v31request>
+                <id S="ID-KMEHR" SV="1.0">GTL-1-005</id>
+                <author>
+                    <hcparty>
+                        <id S="ID-HCPARTY" SV="1.0">18785633004</id>
+                        <id S="INSS" SV="1.0">92092412781</id>
+                        <cd S="CD-HCPARTY" SV="1.0">persphysician</cd>
+                        <firstname>Mennechet</firstname>
+                        <familyname>Maxime</familyname>
+                        <address>
+                            <cd S="CD-ADDRESS" SV="1.0">work</cd>
+                            <country>
+                                <cd S="CD-COUNTRY" SV="1.0">be</cd>
+                            </country>
+                            <zip>1470</zip>
+                            <city>Genappe</city>
+                            <street>rue de Bruxelle</street>
+                            <housenumber>67</housenumber>
+                        </address>
+                    </hcparty>
+                </author>
+                <date>2018-05-09</date>
+                <time>09:27:09</time>
+            </v31request>
+            <kmehrmessage>
+                <header>
+                    <standard>
+                        <cd SV="1.0" S="CD-STANDARD">KMEHR_20161201</cd>
+                    </standard>
+                    <id SV="1.0" S="ID-KMEHR">71050643439.456</id>
+                    <date>2009-01-01</date>
+                    <time>12:00:00</time>
+                    <sender>
                         <hcparty>
-                            <id S="ID-HCPARTY" SV="1.0">18763461003</id>
-                            <id S="INSS" SV="1.0">69092702003</id>
-                            <cd S="CD-HCPARTY" SV="1.0">persphysician</cd>
-                            <firstname>Anouk</firstname>
-                            <familyname>Lassine</familyname>
-                            <address>
-                                <cd S="CD-ADDRESS" SV="1.0">work</cd>
-                                <country>
-                                    <cd S="CD-COUNTRY" SV="1.0">be</cd>
-                                </country>
-                                <zip>1190</zip>
-                                <city>Forest</city>
-                                <street>Avenue Denayer</street>
-                                <housenumber>89</housenumber>
-                            </address>
-                            <telecom>
-                                <cd S="CD-ADDRESS" SV="1.0">work</cd>
-                                <cd S="CD-TELECOM" SV="1.0">phone</cd>
-                                <telecomnumber>02 3769083</telecomnumber>
-                            </telecom>
-                            <telecom>
-                                <cd S="CD-ADDRESS" SV="1.0">work</cd>
-                                <cd S="CD-TELECOM" SV="1.0">mobile</cd>
-                                <telecomnumber>0475 305893</telecomnumber>
-                            </telecom>
-                            <telecom>
-                                <cd S="CD-ADDRESS" SV="1.0">work</cd>
-                                <cd S="CD-TELECOM" SV="1.0">email</cd>
-                                <telecomnumber>docteurlassine@gmail.com</telecomnumber>
-                            </telecom>
+                            <id SV="1.0" S="ID-HCPARTY">10082555045</id>
+                            <id SV="1.0" S="INSS">71050643439</id>
+                            <cd SV="1.1" S="CD-HCPARTY">persphysician</cd>
+                            <firstname>Toto</firstname>
+                            <familyname>LeHéros</familyname>
                         </hcparty>
-                    </content>
-                </item>
-                <item>
-                    <id S="ID-KMEHR" SV="1.0">3</id>
-                    <id S="LOCAL" SV="4.0.0" SL="iCure-Service">6dd350cc-a436-4156-9350-cca436315682</id>
-                    <cd S="CD-ITEM" SV="1.0">vaccine</cd>
-                    <cd S="LOCAL" SV="1.0" DN="iCure service label" SL="iCure-Label">Vaccin Boostrix</cd>
-                    <content>
-                        <cd S="CD-VACCINEINDICATION" SV="1.0">pertussis</cd>
-                        <cd S="CD-VACCINEINDICATION" SV="1.0">tetanus</cd>
-                        <cd S="CD-ATC" SV="1.0">J07AJ52</cd>
-                        <cd S="CD-VACCINEINDICATION" SV="1.0">diphteria</cd>
-                    </content>
-                    <beginmoment>
-                        <date>2014-02-10</date>
-                    </beginmoment>
-                    <lifecycle>
-                        <cd S="CD-LIFECYCLE" SV="1.0">active</cd>
-                    </lifecycle>
-                    <isrelevant>true</isrelevant>
-                    <recorddatetime>2014-05-26T15:52:35.176+02:00</recorddatetime>
-                </item>
-                <item>
-                    <id S="ID-KMEHR" SV="1.0">4</id>
-                    <id S="LOCAL" SV="4.0.0" SL="iCure-Service">19b93220-72db-4ad9-b932-2072db2ad96b</id>
-                    <cd S="CD-ITEM" SV="1.0">vaccine</cd>
-                    <cd S="LOCAL" SV="1.0" DN="iCure service label" SL="iCure-Label">Vaccin Poliomyélite</cd>
-                    <content>
-                        <cd S="CD-VACCINEINDICATION" SV="1.0">poliomyelitis</cd>
-                    </content>
-                    <beginmoment>
-                        <date>2014-02-10</date>
-                    </beginmoment>
-                    <lifecycle>
-                        <cd S="CD-LIFECYCLE" SV="1.0">active</cd>
-                    </lifecycle>
-                    <isrelevant>true</isrelevant>
-                    <recorddatetime>2014-05-26T15:52:35.181+02:00</recorddatetime>
-                </item>
-                <item>
-                    <id S="ID-KMEHR" SV="1.0">5</id>
-                    <id S="LOCAL" SV="4.0.0" SL="iCure-Service">dcf61644-5f19-4685-954c-7a3302eff86c</id>
-                    <cd S="CD-ITEM" SV="1.0">medication</cd>
-                    <cd S="LOCAL" SV="1.0" DN="CD-ITEM" SL="CD-ITEM">treatment</cd>
-                    <cd S="LOCAL" SV="1.0" DN="iCure service label" SL="iCure-Label">Prescription{m}</cd>
-                    <content>
-                        <text L="fr">Sofrasolone 10ml spray nas</text>
-                    </content>
-                    <content>
-                        <medicinalproduct>
-                            <intendedcd S="CD-DRUG-CNK" SV="01-2016">0857953</intendedcd>
-                            <intendedname>Sofrasolone 10ml spray nas</intendedname>
-                        </medicinalproduct>
-                    </content>
-                    <content>
-                        <cd S="CD-ATC" SV="1.0">R01AD52</cd>
-                    </content>
-                    <beginmoment>
-                        <date>2017-09-07</date>
-                        <time>15:40:32+01:00</time>
-                    </beginmoment>
-                    <endmoment>
-                        <date>2017-10-08</date>
-                    </endmoment>
-                    <lifecycle>
-                        <cd S="CD-LIFECYCLE" SV="1.0">inactive</cd>
-                    </lifecycle>
-                    <isrelevant>true</isrelevant>
-                    <posology>
-                        <text L="fr">1.0, 3 x daily, 1,000000 spray (nasal), morning, 1,000000 spray (nasal), afternoon,
-                            1,000000 spray (nasal), evening
-                        </text>
-                    </posology>
-                    <recorddatetime>2017-09-07T15:40:32.937+02:00</recorddatetime>
-                </item>
-                <item>
-                    <id S="ID-KMEHR" SV="1.0">6</id>
-                    <id S="LOCAL" SV="4.0.0" SL="iCure-Service">89baeb52-aadd-4b9f-baeb-52aadd2b9fcf</id>
-                    <cd S="CD-ITEM" SV="1.0">healthcareelement</cd>
-                    <content>
-                        <text L="fr">appendicectomie</text>
-                    </content>
-                    <beginmoment>
-                        <date>2012-10-18</date>
-                    </beginmoment>
-                    <lifecycle>
-                        <cd S="CD-LIFECYCLE" SV="1.0">active</cd>
-                    </lifecycle>
-                    <isrelevant>true</isrelevant>
-                    <recorddatetime>2016-04-22T12:30:57.735+02:00</recorddatetime>
-                </item>
-                <item>
-                    <id S="ID-KMEHR" SV="1.0">7</id>
-                    <id S="LOCAL" SV="4.0.0" SL="iCure-Service">2d0c0011-a35b-49bb-9d73-ebbf3996d5d5</id>
-                    <cd S="CD-ITEM" SV="1.0">healthcareelement</cd>
-                    <content>
-                        <text L="fr">vasectomie</text>
-                    </content>
-                    <beginmoment>
-                        <date>2017-06-01</date>
-                    </beginmoment>
-                    <lifecycle>
-                        <cd S="CD-LIFECYCLE" SV="1.0">active</cd>
-                    </lifecycle>
-                    <isrelevant>true</isrelevant>
-                    <recorddatetime>2017-06-30T10:26:57.191+02:00</recorddatetime>
-                </item>
-            </heading>
-            <heading>
-                <id S="ID-KMEHR" SV="1.0">2</id>
-                <cd S="CD-HEADING" SV="1.0">assessment</cd>
-                <item>
-                    <id S="ID-KMEHR" SV="1.0">1</id>
-                    <id S="LOCAL" SV="4.0.0" SL="iCure-Service">a540b3d9-23df-43c6-80b3-d923df53c608</id>
-                    <cd S="CD-ITEM" SV="1.0">healthcareelement</cd>
-                    <content>
-                        <text L="fr">colique néphrétique [colique néphrétique]</text>
-                    </content>
-                    <beginmoment>
-                        <date>2017-01-01</date>
-                    </beginmoment>
-                    <lifecycle>
-                        <cd S="CD-LIFECYCLE" SV="1.0">active</cd>
-                    </lifecycle>
-                    <isrelevant>true</isrelevant>
-                    <recorddatetime>2017-06-30T10:24:10.149+02:00</recorddatetime>
-                </item>
-            </heading>
-        </transaction>
-    </folder>
-</kmehrmessage>
+                    </sender>
+                    <recipient>
+                        <hcparty>
+                            <id SV="1.0" S="ID-HCPARTY">10082555045</id>
+                            <id SV="1.0" S="INSS">71050643439</id>
+                            <cd SV="1.1" S="CD-HCPARTY">persphysician</cd>
+                            <firstname>Toto</firstname>
+                            <familyname>LeHéros</familyname>
+                        </hcparty>
+                    </recipient>
+                </header>
+                <Base64EncryptedData>
+                    <cd S="CD-ENCRYPTION-METHOD" SV="1.0">CMS</cd>
+                    <Base64EncryptedValue>
+                        <kmehrmessage xmlns="http://www.ehealth.fgov.be/standards/kmehr/schema/v1">
+                            <header>
+                                <standard>
+                                    <cd SV="1.0" S="CD-STANDARD">20161201</cd>
+                                </standard>
+                                <id SV="1.0" S="ID-KMEHR">710999812.456</id>
+                                <date>2009-01-01</date>
+                                <time>12:00:00</time>
+                                <sender>
+                                    <hcparty>
+                                        <id SV="1.0" S="ID-HCPARTY">71099812</id>
+                                        <cd SV="1.1" S="CD-HCPARTY">orghospital</cd>
+                                        <name>Another Hospital</name>
+                                    </hcparty>
+                                </sender>
+                                <recipient>
+                                    <hcparty>
+                                        <cd S="CD-HCPARTY" SV="1.3">application</cd>
+                                        <name>VITALINK</name>
+                                    </hcparty>
+                                </recipient>
+                            </header>
+                            <folder>
+                                <id S="ID-KMEHR" SV="1.0">1</id>
+                                <patient>
+                                    <id S="INSS" SV="1.0">86081408794</id>
+                                    <firstname>Test</firstname>
+                                    <familyname>Dummy Patient</familyname>
+                                    <sex>
+                                        <cd S="CD-SEX" SV="1.0">male</cd>
+                                    </sex>
+                                </patient>
+                                <transaction>
+                                    <id S="ID-KMEHR" SV="1.0">1</id>
+                                    <id S="LOCAL" SL="vitalinkuri" SV="1.0">/subject/82121210976/medication-scheme/</id>
+                                    <cd S="CD-TRANSACTION" SV="1.4">medicationscheme</cd>
+                                    <date>2013-11-07</date>
+                                    <time>09:12:34</time>
+                                    <author>
+                                        <hcparty>
+                                            <id S="ID-HCPARTY" SV="1.0">11530231003</id>
+                                            <id SV="1.0" S="INSS">49112002395</id>
+                                            <cd S="CD-HCPARTY" SV="1.3">persphysician</cd>
+                                            <firstname>GP</firstname>
+                                            <familyname>Test</familyname>
+                                        </hcparty>
+                                    </author>
+                                    <iscomplete>true</iscomplete>
+                                    <isvalidated>true</isvalidated>
+                                    <version>1</version>
+                                </transaction>
+                                <transaction>
+                                    <id S="ID-KMEHR" SV="1.0">2</id>
+                                    <id S="LOCAL" SL="vitalinkuri" SV="1.0">/subject/82121210976/medication-scheme/11111/1</id>
+                                    <cd S="CD-TRANSACTION" SV="1.4">medicationschemeelement</cd>
+                                    <date>2013-11-07</date>
+                                    <time>09:12:34</time>
+                                    <author>
+                                        <hcparty>
+                                            <id S="ID-HCPARTY" SV="1.0">11530231003</id>
+                                            <id SV="1.0" S="INSS">49112002395</id>
+                                            <cd S="CD-HCPARTY" SV="1.3">persphysician</cd>
+                                            <firstname>GP</firstname>
+                                            <familyname>Test</familyname>
+                                        </hcparty>
+                                    </author>
+                                    <iscomplete>true</iscomplete>
+                                    <isvalidated>true</isvalidated>
+                                    <item>
+                                        <id SV="1.0" S="ID-KMEHR">1</id>
+                                        <cd SV="1.4" S="CD-ITEM">healthcareelement</cd>
+                                        <content>
+                                            <cd SV="1.0" S="CD-ITEM-MS">adaptationflag</cd>
+                                            <cd SV="1.0" S="CD-MS-ADAPTATION">medication</cd>
+                                        </content>
+                                    </item>
+                                    <item>
+                                        <id SV="1.0" S="ID-KMEHR">2</id>
+                                        <cd SV="1.4" S="CD-ITEM">medication</cd>
+                                        <content>
+                                            <medicinalproduct>
+                                                <intendedcd SV="2010-07" S="CD-DRUG-CNK">3012184</intendedcd>
+                                                <intendedname>MOXONIDINE MYLAN 0,4 MG COMP PEL 100 X 0,4 MG</intendedname>
+                                            </medicinalproduct>
+                                        </content>
+                                        <beginmoment>
+                                            <date>2016-06-17</date>
+                                        </beginmoment>
+                                        <temporality>
+                                            <cd S="CD-TEMPORALITY" SV="1.0">chronic</cd>
+                                        </temporality>
+                                        <frequency>
+                                            <periodicity>
+                                                <cd S="CD-PERIODICITY" SV="1.0">D</cd>
+                                            </periodicity>
+                                        </frequency>
+                                        <regimen>
+                                            <daytime>
+                                                <dayperiod>
+                                                    <cd S="CD-DAYPERIOD" SV="1.1">beforebreakfast</cd>
+                                                </dayperiod>
+                                            </daytime>
+                                            <quantity>
+                                                <decimal>1</decimal>
+                                            </quantity>
+                                        </regimen>
+                                    </item>
+                                    <item>
+                                        <id SV="1.0" S="ID-KMEHR">3</id>
+                                        <cd SV="1.3" S="CD-ITEM">healthcareelement</cd>
+                                        <content>
+                                            <cd SV="1.0" S="CD-ITEM-MS">medicationuse</cd>
+                                        </content>
+                                        <content>
+                                            <text L="nl">bloeddruk</text>
+                                        </content>
+                                    </item>
+                                </transaction>
+                                <transaction>
+                                    <id S="ID-KMEHR" SV="1.0">3</id>
+                                    <cd S="CD-TRANSACTION" SV="1.4">medicationschemeelement</cd>
+                                    <date>2013-11-07</date>
+                                    <time>09:12:34</time>
+                                    <author>
+                                        <hcparty>
+                                            <id S="ID-HCPARTY" SV="1.0">11530231003</id>
+                                            <id SV="1.0" S="INSS">49112002395</id>
+                                            <cd S="CD-HCPARTY" SV="1.3">persphysician</cd>
+                                            <firstname>GP</firstname>
+                                            <familyname>Test</familyname>
+                                        </hcparty>
+                                    </author>
+                                    <iscomplete>true</iscomplete>
+                                    <isvalidated>true</isvalidated>
+                                    <item>
+                                        <id SV="1.0" S="ID-KMEHR">1</id>
+                                        <cd SV="1.4" S="CD-ITEM">healthcareelement</cd>
+                                        <content>
+                                            <cd SV="1.0" S="CD-ITEM-MS">adaptationflag</cd>
+                                            <cd SV="1.0" S="CD-MS-ADAPTATION">medication</cd>
+                                        </content>
+                                    </item>
+                                    <item>
+                                        <id SV="1.0" S="ID-KMEHR">2</id>
+                                        <cd SV="1.4" S="CD-ITEM">medication</cd>
+                                        <content>
+                                            <medicinalproduct>
+                                                <intendedcd SV="2010-07" S="CD-DRUG-CNK">3012184</intendedcd>
+                                                <intendedname>MOXONIDINE MYLAN 0,4 MG COMP PEL 100 X 0,4 MG</intendedname>
+                                            </medicinalproduct>
+                                        </content>
+                                        <beginmoment>
+                                            <date>2016-06-17</date>
+                                        </beginmoment>
+                                        <temporality>
+                                            <cd S="CD-TEMPORALITY" SV="1.0">chronic</cd>
+                                        </temporality>
+                                        <frequency>
+                                            <periodicity>
+                                                <cd S="CD-PERIODICITY" SV="1.0">D</cd>
+                                            </periodicity>
+                                        </frequency>
+                                        <regimen>
+                                            <daytime>
+                                                <dayperiod>
+                                                    <cd S="CD-DAYPERIOD" SV="1.1">beforebreakfast</cd>
+                                                </dayperiod>
+                                            </daytime>
+                                            <quantity>
+                                                <decimal>1</decimal>
+                                            </quantity>
+                                        </regimen>
+                                    </item>
+                                    <item>
+                                        <id SV="1.0" S="ID-KMEHR">3</id>
+                                        <cd SV="1.3" S="CD-ITEM">healthcareelement</cd>
+                                        <content>
+                                            <cd SV="1.0" S="CD-ITEM-MS">medicationuse</cd>
+                                        </content>
+                                        <content>
+                                            <text L="nl">bloeddruk</text>
+                                        </content>
+                                    </item>
+                                </transaction>
+                            </folder>
+                        </kmehrmessage>
+
+                    </Base64EncryptedValue>
+                </Base64EncryptedData>
+            </kmehrmessage>
+        </PutTransactionSetRequest>
+    </soapenv:Body>
+</soapenv:Envelope>
