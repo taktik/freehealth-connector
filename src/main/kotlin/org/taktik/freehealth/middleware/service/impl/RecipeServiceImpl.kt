@@ -224,13 +224,13 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
     }
 
     @Throws(ConnectorException::class, DataFormatException::class)
-    private fun getPrescriptionMessage(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, rid: String): Kmehrmessage? {
+    override fun getPrescriptionMessage(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, rid: String): Kmehrmessage? {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
         val service = PrescriberIntegrationModuleImpl()
-        val p = service.getPrescription(samlToken, credential, hcpNihii, rid)
+        val p = service.getPrescription(samlToken, credential, keystore, passPhrase, hcpNihii, rid)
 
         return p?.prescription?.let { JAXBContext.newInstance(Kmehrmessage::class.java).createUnmarshaller().unmarshal(ByteArrayInputStream(it) as InputStream) as Kmehrmessage }
     }
@@ -256,7 +256,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val es = Executors.newFixedThreadPool(5)
         try {
             val getFeedback = es.submit<List<Feedback>> { listFeedbacks(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase) }
-            val futures = es.invokeAll<GetPrescriptionForPrescriberResult>(ridList.map { rid -> Callable<GetPrescriptionForPrescriberResult> { ridCache[rid, { service!!.getPrescription(samlToken, credential, hcpNihii, rid) }] } })
+            val futures = es.invokeAll<GetPrescriptionForPrescriberResult>(ridList.map { rid -> Callable<GetPrescriptionForPrescriberResult> { ridCache[rid, { service!!.getPrescription(samlToken, credential, keystore, passPhrase, hcpNihii, rid) }] } })
             val result = futures.map { f -> f.get() }.map { r -> Prescription(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId) }
 
             try {
@@ -322,7 +322,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         return result
     }
 
-    private fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: Date?): Kmehrmessage {
+    override fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: Date?): Kmehrmessage {
         val config = KmehrPrescriptionConfig().apply {
             prescription.apply {
                 inami = hcp.nihii!!.replace("[^0-9]".toRegex(), "")
@@ -350,7 +350,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         return getKmehrPrescription(patient, hcp, medications, deliveryDate, config)
     }
 
-    private fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: Date?, config: KmehrPrescriptionConfig): Kmehrmessage {
+    override fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: Date?, config: KmehrPrescriptionConfig): Kmehrmessage {
         val language = config.prescription.language
         return Kmehrmessage().apply {
             header = RecipeheaderType().apply {
@@ -607,7 +607,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         }
     }
 
-    private fun toDaytime(intake: RegimenItem): RecipeitemType.Regimen.Daytime {
+    fun toDaytime(intake: RegimenItem): RecipeitemType.Regimen.Daytime {
         return RecipeitemType.Regimen.Daytime().apply {
             if (intake.timeOfDay != null) {
                 time = makeXMLGregorianCalendarFromHHMMSSLong(intake.timeOfDay!!)
@@ -626,7 +626,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         }
     }
 
-    private fun mapPeriodToFrequency(period: Period): RecipefrequencyType {
+    protected fun mapPeriodToFrequency(period: Period): RecipefrequencyType {
         val frequency = RecipefrequencyType()
         val periodCode = when (period.toBiggestTimeUnit()) {
         // when body generated with
@@ -901,7 +901,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         })
     }
 
-    private fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String {
+    override fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String {
         if (prescriptionType != null) {
             return prescriptionType
         }

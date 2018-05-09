@@ -26,13 +26,14 @@ import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationM
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.SAMLToken
+import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import java.security.KeyStore
 
 interface PrescriberIntegrationModule {
     @Throws(IntegrationModuleException::class)
     fun createPrescription(
         samlToken: SAMLToken,
-        credential: Credential,
+        credential: KeyStoreCredential,
         nihii: String,
         feedbackRequested: Boolean,
         patientId: String,
@@ -41,12 +42,12 @@ interface PrescriberIntegrationModule {
                           ): String?
 
     @Throws(IntegrationModuleException::class)
-    fun revokePrescription(samlToken: SAMLToken, credential: Credential, nihii: String, rid: String, reason: String)
+    fun revokePrescription(samlToken: SAMLToken, credential: KeyStoreCredential, nihii: String, rid: String, reason: String)
 
     @Throws(IntegrationModuleException::class)
     fun getPrescription(
         samlToken: SAMLToken,
-        credential: Credential,
+        credential: KeyStoreCredential,
         keystore: KeyStore,
         passPhrase: String,
         nihii: String,
@@ -56,18 +57,18 @@ interface PrescriberIntegrationModule {
     @Throws(IntegrationModuleException::class)
     fun listOpenPrescription(
         samlToken: SAMLToken,
-        credential: Credential,
+        credential: KeyStoreCredential,
         nihii: String,
         patientId: String
                             ): List<String>
 
     @Throws(IntegrationModuleException::class)
-    fun listOpenPrescription(samlToken: SAMLToken, credential: Credential, nihii: String): List<String>
+    fun listOpenPrescription(samlToken: SAMLToken, credential: KeyStoreCredential, nihii: String): List<String>
 
     @Throws(IntegrationModuleException::class)
     fun sendNotification(
         samlToken: SAMLToken,
-        credential: Credential,
+        credential: KeyStoreCredential,
         nihii: String,
         notificationText: ByteArray,
         patientId: String,
@@ -77,7 +78,7 @@ interface PrescriberIntegrationModule {
     @Throws(IntegrationModuleException::class)
     fun updateFeedbackFlag(
         samlToken: SAMLToken,
-        credential: Credential,
+        credential: KeyStoreCredential,
         nihii: String,
         rid: String,
         feedbackAllowed: Boolean
@@ -86,16 +87,13 @@ interface PrescriberIntegrationModule {
     @Throws(IntegrationModuleException::class)
     fun listFeedback(
         samlToken: SAMLToken,
-        credential: Credential,
+        credential: KeyStoreCredential,
         nihii: String,
         readFlag: Boolean
                     ): List<ListFeedbackItem>
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    fun ping(samlToken: SAMLToken, credential: Credential)
-
-    @Throws(IntegrationModuleException::class)
-    fun setPersonalPassword(nihii: String, niss: String, personalPassword: String)
+    fun ping(samlToken: SAMLToken, credential: KeyStoreCredential)
 
     @Throws(IntegrationModuleException::class)
     fun prepareCreatePrescription(nihii: String, patientId: String, prescriptionType: String)

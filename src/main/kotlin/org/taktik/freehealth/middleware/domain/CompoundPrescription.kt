@@ -23,8 +23,10 @@ package org.taktik.freehealth.middleware.domain
 import org.taktik.freehealth.middleware.dto.Code
 
 sealed class CompoundPrescription(var galenicForm : GalenicForm? = null, var quantity : KmehrQuantity? = null) {
+
     class Compounds(val compounds : MutableList<Compound> = mutableListOf()) : CompoundPrescription()
     data class MagistralText(var text : String? = null) : CompoundPrescription()
+
     sealed class FormularyReference : CompoundPrescription() {
         data class FormularyName(var name: String? = null) : FormularyReference()
         data class Formulary(var formularyId : String? = null /* CD-FORMULARY */, var reference : Code? = null /* CD-FORMULARYREFERENCE */) : FormularyReference()

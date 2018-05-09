@@ -95,4 +95,8 @@ public class KeyStoreCredential extends AbstractExtendedCredential {
    public KeyStore getKeyStore() throws TechnicalConnectorException {
       return this.keystore;
    }
+
+   public char[] getPwd() {
+      return pwd;
+   }
 }

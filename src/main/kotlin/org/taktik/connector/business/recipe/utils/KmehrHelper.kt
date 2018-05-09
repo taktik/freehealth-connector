@@ -91,7 +91,7 @@ class KmehrHelper(val properties: Properties) {
      * @param xmlDocument the xml document
      */
     @Throws(IntegrationModuleException::class)
-    private fun assertValidNotification(xmlDocument: ByteArray) {
+    fun assertValidNotification(xmlDocument: ByteArray) {
         xsdValidate(xmlDocument, "notification.XSD")
     }
 
@@ -112,7 +112,7 @@ class KmehrHelper(val properties: Properties) {
      * @param prescriptionType the prescription type
      */
     @Throws(IntegrationModuleException::class)
-    private fun assertValidKmehrPrescription(xmlDocument: ByteArray, prescriptionType: String) {
+    fun assertValidKmehrPrescription(xmlDocument: ByteArray, prescriptionType: String) {
         try {
             xsdValidate(xmlDocument, "kmehr.XSD")
 

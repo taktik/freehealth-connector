@@ -126,6 +126,12 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap : IM
         return keystoreId
     }
 
+    override fun uploadKeystore(data: ByteArray): UUID {
+        val keystoreId = UUID.randomUUID()
+        keystoresMap.put(keystoreId, data)
+        return keystoreId
+    }
+
     override fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore? {
         val keyStoreData = keystoresMap.get(keystoreId) ?: throw(IllegalArgumentException("Missing Keystore, please upload a keystore and use the returned keystoreId"))
         val keyStore = KeyManager.getKeyStore(keyStoreData.inputStream(), "PKCS12", passPhrase.toCharArray())

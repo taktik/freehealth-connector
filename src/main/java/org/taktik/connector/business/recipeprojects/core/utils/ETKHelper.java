@@ -22,10 +22,9 @@ import org.apache.log4j.Logger;
 import org.taktik.connector.business.recipeprojects.core.domain.KgssIdentifierType;
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException;
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleRuntimeException;
-import be.fgov.ehealth.etee.crypto.encrypt.EncryptionToken;
-import be.fgov.ehealth.etee.crypto.encrypt.EncryptionTokenFactory;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.ServiceFactory;
+import org.taktik.connector.technical.service.etee.domain.EncryptionToken;
 import org.taktik.connector.technical.service.keydepot.KeyDepotService;
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotServiceImpl;
 
@@ -98,7 +97,7 @@ public class ETKHelper {
                     InputStream etkStream = IOUtils.getResourceAsStream(myETK);
                     byte[] etk = IOUtils.getBytes(etkStream);
                     List<EncryptionToken> encryptionTokens = new ArrayList<>();
-                    EncryptionToken etkToken = EncryptionTokenFactory.getInstance().create(etk);
+                    EncryptionToken etkToken = new EncryptionToken(etk);
                     encryptionTokens.add(etkToken);
                     return encryptionTokens;
                 } catch (Exception e) {
@@ -231,7 +230,7 @@ public class ETKHelper {
         } else {
             if (!etks.contains(etk)) {
                 etks.add(etk);
-                EncryptionToken encryptionToken = EncryptionTokenFactory.getInstance().create(etk);
+                EncryptionToken encryptionToken = new EncryptionToken(etk);
                 encryptiontokens.add(encryptionToken);
             }
 
