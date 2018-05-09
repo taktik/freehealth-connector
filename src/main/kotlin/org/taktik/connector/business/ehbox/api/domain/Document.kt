@@ -70,11 +70,22 @@ class Document : Serializable {
 
     @Throws(UnsealConnectorException::class)
     fun getContent(): ByteArray {
-        return if (this.content == null && this.expection != null) {
+
+        var byteContent = ByteArray(0)
+
+        if(this.content != null){
+            byteContent = Arrays.clone(this.content)
+        }else{
+            byteContent = ByteArray(0)
+        }
+
+        return byteContent
+       /* return if (this.content == null && this.expection != null) {
             throw this.expection!!
         } else {
             Arrays.clone(this.content)
         }
+*/
     }
 
     fun setContent(content: ByteArray?) {

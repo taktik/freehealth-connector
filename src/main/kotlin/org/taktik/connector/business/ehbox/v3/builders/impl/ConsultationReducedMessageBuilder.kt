@@ -65,10 +65,14 @@ class ConsultationReducedMessageBuilder : AbstractConsultationBuilder<Message>()
             val document = Document()
             document.title = response.title
             documentMessage.document = document
-            val decodedInss = this.handleAndDecryptIfNeeded(keystore, passPhrase, response.encryptableINSSPatient, documentMessage.isEncrypted, container)
-            if (decodedInss != null) {
-                documentMessage.patientInss = ConnectorIOUtils.toString(decodedInss, Charset.UTF_8)
+
+            if(response.encryptableINSSPatient != null){
+                val decodedInss = this.handleAndDecryptIfNeeded(keystore, passPhrase, response.encryptableINSSPatient, documentMessage.isEncrypted, container)
+                if (decodedInss != null) {
+                    documentMessage.patientInss = ConnectorIOUtils.toString(decodedInss, Charset.UTF_8)
+                }
             }
+
         } else if (message is ErrorMessage<*>) {
             val errorMessage = message as ErrorMessage<*>
             errorMessage.title = response.title
