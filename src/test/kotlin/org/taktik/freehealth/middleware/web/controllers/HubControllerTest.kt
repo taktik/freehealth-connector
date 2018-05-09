@@ -93,7 +93,7 @@ class HubControllerTest : EhealthTest() {
         Assertions.assertThat(getTransactionSetResult != null && getTransactionSetResult.length>2 && getTransactionSetResult.startsWith("["))
     }
 
-    /*
+
     @Test
     fun putTransactionSet(){
         val endpoint = "https://vitalink-acpt.ehealth.fgov.be/vpmg/vitalink-gateway/IntraHubService"
@@ -101,5 +101,4 @@ class HubControllerTest : EhealthTest() {
         val putTransactionSetResult = this.restTemplate.postForObject("http://localhost:$port/hub/ts/${"1990001916"}/${"86081408794"}?hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=8300&hubApplication=${"VITALINKGATEWAY"}&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String(MyTestsConfiguration::class.java.getResourceAsStream("medicationScheme.xml").readBytes(), Charsets.UTF_8), String::class.java)
         Assertions.assertThat(putTransactionSetResult != null && putTransactionSetResult.length>2 && putTransactionSetResult.startsWith("["))
     }
-*/
 }
