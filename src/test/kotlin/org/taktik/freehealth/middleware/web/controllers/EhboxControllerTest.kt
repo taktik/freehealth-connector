@@ -48,4 +48,24 @@ class EhboxControllerTest : EhealthTest(){
         val fullMessages = this.restTemplate.getForObject("http://localhost:$port/ehbox/$boxType/$idMessage?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
         Assertions.assertThat(fullMessages != null)
     }
+
+    @Test
+    fun moveMessage(){
+        val source  = "INBOX"
+        val destination  = "BININBOX"
+        val messageIds = arrayListOf("1000010173227")
+
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val message = this.restTemplate.postForObject("http://localhost:$port/ehbox/move/from/$source/to/$destination?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", messageIds, String::class.java)
+        Assertions.assertThat(message != null)
+    }
+
+    @Test
+    fun deleteMessage(){
+        val messageIds = arrayListOf("1000010173227")
+        val source = "BININBOX"
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val message = this.restTemplate.postForObject("http://localhost:$port/ehbox/move/from/$source?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", messageIds, String::class.java)
+        Assertions.assertThat(message != null)
+    }
 }
