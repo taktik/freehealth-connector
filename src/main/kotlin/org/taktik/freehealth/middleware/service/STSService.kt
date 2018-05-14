@@ -32,7 +32,7 @@ interface STSService {
     fun registerToken(tokenId: UUID, token: String)
     fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken?
     fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore?
-    fun checkIfKeystoreExist(keystoreId: UUID): Int?
+    fun checkIfKeystoreExist(keystoreId: UUID): Boolean?
 }
 
 

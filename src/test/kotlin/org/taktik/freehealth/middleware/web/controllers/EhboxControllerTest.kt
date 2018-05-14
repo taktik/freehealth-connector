@@ -1,6 +1,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetMessagesListResponse
+
 import org.assertj.core.api.Assertions
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -11,7 +11,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
-import org.taktik.freehealth.middleware.dto.ehbox.BoxInfo
+
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)

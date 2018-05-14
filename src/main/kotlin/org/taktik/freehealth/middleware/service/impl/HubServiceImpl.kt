@@ -21,7 +21,6 @@
 package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.hubservices.core.v3.*
-import be.fgov.ehealth.hubservices.core.v3.FolderType
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESSschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONSENT
