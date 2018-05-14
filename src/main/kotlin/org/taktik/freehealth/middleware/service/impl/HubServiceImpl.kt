@@ -239,7 +239,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             }
         })
 
-        return MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
+       return MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
     }
 
 

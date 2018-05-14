@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.IntType
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -48,5 +49,9 @@ class STSController(private val stsService: STSService) {
     fun registerToken(@RequestBody token: String, @PathVariable tokenId: UUID) {
         stsService.registerToken(tokenId, token)
     }
+
+    @GetMapping("/checkKeystore/{keystoreId}")
+    fun checkKeystoreExist(@PathVariable keystoreId: UUID) = stsService.checkIfKeystoreExist(keystoreId)
+
 }
 

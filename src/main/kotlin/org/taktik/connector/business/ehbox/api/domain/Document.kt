@@ -32,9 +32,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.Serializable
 import java.text.MessageFormat
-import org.apache.commons.lang.ArrayUtils
 import org.bouncycastle.util.Arrays
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class Document : Serializable {
@@ -70,11 +68,15 @@ class Document : Serializable {
 
     @Throws(UnsealConnectorException::class)
     fun getContent(): ByteArray {
-        return if (this.content == null && this.expection != null) {
-            throw this.expection!!
-        } else {
-            Arrays.clone(this.content)
+
+        var byteContent = ByteArray(0)
+
+        if(this.content != null){
+            byteContent = Arrays.clone(this.content)
         }
+
+        return byteContent
+
     }
 
     fun setContent(content: ByteArray?) {

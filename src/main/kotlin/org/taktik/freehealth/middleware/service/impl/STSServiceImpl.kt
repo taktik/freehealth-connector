@@ -137,4 +137,17 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap : IM
         return this.freehealthKeyDepotService.getETKSet(identifierType, identifierType.formatIdentifierValue(identifierValue), application)?.let { if (it.size==1) it.iterator().next() else null } ?: throw TechnicalConnectorException(ERROR_ETK_NOTFOUND, arrayOfNulls<Any>(0))
     }
 
+    override fun checkIfKeystoreExist(keystoreId: UUID): Boolean?{
+
+        val keystoreData = keystoresMap.get(keystoreId)
+        var check = false
+
+        if(keystoreData != null){
+            check = true
+        }
+
+        return check
+
+    }
+
 }
