@@ -37,6 +37,10 @@ open class EhealthTest {
     @Value("\${org.taktik.icure.keystore2.firstName}") var firstName2: String? = null
     @Value("\${org.taktik.icure.keystore1.lastName}") var lastName1: String? = null
     @Value("\${org.taktik.icure.keystore2.lastName}") var lastName2: String? = null
+    @Value("\${org.taktik.icure.keystore1.BIC}") var BIC1: String? = null
+    @Value("\${org.taktik.icure.keystore2.BIC}") var BIC2: String? = null
+    @Value("\${org.taktik.icure.keystore1.IBAN}") var IBAN1: String? = null
+    @Value("\${org.taktik.icure.keystore2.IBAN}") var IBAN2: String? = null
 
   init {
    	System.setProperty("spring.output.ansi.enabled", "always")
