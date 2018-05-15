@@ -24,17 +24,17 @@ import java.io.Serializable
 import java.util.ArrayList
 
 class HcPartyDto : Serializable {
-	var name: String? = null
-	var firstname: String? = null
-	var familyname: String? = null
-	val ids = ArrayList<KmehrId>()
-	val cds = ArrayList<KmehrCd>()
+    var name: String? = null
+    var firstname: String? = null
+    var familyname: String? = null
+    val ids = ArrayList<KmehrId>()
+    val cds = ArrayList<KmehrCd>()
 
-	var type: String? = null
-	var nihii: String? = null
-	var inss: String? = null
-	var hubId: String? = null
-	var cbe: String? = null
-	var applicationID: String? = null
-	var eHP: String? = null
+    var type: String? = null
+    var nihii: String? = null
+    var inss: String? = null
+    var hubId: String? = null
+    var cbe: String? = null
+    var applicationID: String? = null
+    var eHP: String? = null
 }

@@ -10,12 +10,27 @@ import be.fgov.ehealth.hubservices.core.v2.RevokePatientConsentRequest
 import be.fgov.ehealth.hubservices.core.v2.SelectGetPatientConsentType
 
 interface RequestObjectBuilder {
-	@Throws(TechnicalConnectorException::class, WsConsentBusinessConnectorException::class, InstantiationException::class)
-	fun createPutRequest(author: AuthorWithPatientAndPersonType?, consent: ConsentType?): PutPatientConsentRequest
+    @Throws(
+        TechnicalConnectorException::class,
+        WsConsentBusinessConnectorException::class,
+        InstantiationException::class
+    )
+    fun createPutRequest(author: AuthorWithPatientAndPersonType?, consent: ConsentType?): PutPatientConsentRequest
 
-	@Throws(TechnicalConnectorException::class, WsConsentBusinessConnectorException::class, InstantiationException::class)
-	fun createGetRequest(author: AuthorWithPatientAndPersonType?, consent: SelectGetPatientConsentType?): GetPatientConsentRequest
+    @Throws(
+        TechnicalConnectorException::class,
+        WsConsentBusinessConnectorException::class,
+        InstantiationException::class
+    )
+    fun createGetRequest(
+        author: AuthorWithPatientAndPersonType?,
+        consent: SelectGetPatientConsentType?
+    ): GetPatientConsentRequest
 
-	@Throws(TechnicalConnectorException::class, WsConsentBusinessConnectorException::class, InstantiationException::class)
-	fun createRevokeRequest(author: AuthorWithPatientAndPersonType?, consent: ConsentType?): RevokePatientConsentRequest
+    @Throws(
+        TechnicalConnectorException::class,
+        WsConsentBusinessConnectorException::class,
+        InstantiationException::class
+    )
+    fun createRevokeRequest(author: AuthorWithPatientAndPersonType?, consent: ConsentType?): RevokePatientConsentRequest
 }

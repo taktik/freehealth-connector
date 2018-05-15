@@ -29,5 +29,5 @@ class KmehrId : Serializable {
     var l: String? = null
     var s: String? = null
 
-    var value: String? = null;
+    var value: String? = null
 }

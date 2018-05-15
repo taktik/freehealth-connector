@@ -30,12 +30,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.domain.Feedback
-import org.taktik.freehealth.middleware.domain.Medication
-import org.taktik.freehealth.middleware.domain.Patient
 import org.taktik.freehealth.middleware.domain.Prescription
 import org.taktik.freehealth.middleware.domain.PrescriptionFullWithFeedback
 import org.taktik.freehealth.middleware.dto.Code
-import org.taktik.freehealth.middleware.dto.HealthcareParty
 import org.taktik.freehealth.middleware.dto.recipe.PrescriptionRequest
 import org.taktik.freehealth.middleware.service.RecipeService
 import java.util.*
@@ -45,95 +42,106 @@ import java.util.*
 class RecipeController(val recipeService: RecipeService) {
 
     @PostMapping("")
-    fun createPrescription(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam passPhrase: String, @RequestBody prescription : PrescriptionRequest): Prescription =
-            recipeService.createPrescription(
-                    keystoreId = keystoreId,
-                    tokenId = tokenId,
-                    hcpQuality = hcpQuality,
-                    hcpNihii = hcpNihii,
-                    hcpSsin = hcpSsin,
-                    hcpName = hcpName,
-                    passPhrase = passPhrase,
-                    patient = prescription.patient!!,
-                    hcp = prescription.hcp!!,
-                    feedback = prescription.feedback!!,
-                    medications = prescription.medications!!,
-                    prescriptionType = prescription.prescriptionType,
-                    notification = prescription.notification,
-                    executorId = prescription.executorId,
-                    deliveryDate = prescription.deliveryDate
-            )
+    fun createPrescription(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam passPhrase: String, @RequestBody prescription: PrescriptionRequest): Prescription =
+        recipeService.createPrescription(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            hcpQuality = hcpQuality,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpName = hcpName,
+            passPhrase = passPhrase,
+            patient = prescription.patient!!,
+            hcp = prescription.hcp!!,
+            feedback = prescription.feedback!!,
+            medications = prescription.medications!!,
+            prescriptionType = prescription.prescriptionType,
+            notification = prescription.notification,
+            executorId = prescription.executorId,
+            deliveryDate = prescription.deliveryDate
+        )
 
     @GetMapping("")
     fun listOpenPrescriptions(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam passPhrase: String): List<Prescription> =
-            recipeService.listOpenPrescriptions(
-                    keystoreId = keystoreId,
-                    tokenId = tokenId,
-                    hcpQuality = hcpQuality,
-                    hcpNihii = hcpNihii,
-                    hcpSsin = hcpSsin,
-                    hcpName = hcpName,
-                    passPhrase = passPhrase
-            )
+        recipeService.listOpenPrescriptions(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            hcpQuality = hcpQuality,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpName = hcpName,
+            passPhrase = passPhrase
+        )
 
     @PostMapping("/notify/{rid}")
-    fun sendNotification(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam passPhrase: String, patientId: String, executorId: String, @PathVariable rid: String, text: String) =
-            recipeService.sendNotification(
-                    keystoreId = keystoreId,
-                    tokenId = tokenId,
-                    hcpQuality = hcpQuality,
-                    hcpNihii = hcpNihii,
-                    hcpSsin = hcpSsin,
-                    hcpName = hcpName,
-                    passPhrase = passPhrase,
-                    patientId = patientId,
-                    executorId = executorId,
-                    rid = rid,
-                    text = text
-            )
+    fun sendNotification(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam hcpQuality: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpName: String,
+        @RequestParam passPhrase: String,
+        patientId: String,
+        executorId: String,
+        @PathVariable rid: String,
+        text: String
+    ) = recipeService.sendNotification(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        hcpQuality = hcpQuality,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpName = hcpName,
+        passPhrase = passPhrase,
+        patientId = patientId,
+        executorId = executorId,
+        rid = rid,
+        text = text
+    )
 
     @DeleteMapping("/{rid}")
     fun revokePrescription(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam passPhrase: String, @PathVariable rid: String, @RequestParam reason: String) =
-            recipeService.revokePrescription(
-                    keystoreId = keystoreId,
-                    tokenId = tokenId,
-                    hcpQuality = hcpQuality,
-                    hcpNihii = hcpNihii,
-                    hcpSsin = hcpSsin,
-                    hcpName = hcpName,
-                    passPhrase = passPhrase,
-                    rid = rid,
-                    reason = reason
-            )
+        recipeService.revokePrescription(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            hcpQuality = hcpQuality,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpName = hcpName,
+            passPhrase = passPhrase,
+            rid = rid,
+            reason = reason
+        )
 
     @PutMapping("/{rid}/feedback/{feedbackFlag}")
     fun updateFeedbackFlag(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam passPhrase: String, @PathVariable rid: String, @PathVariable feedbackFlag: Boolean) =
-            recipeService.updateFeedbackFlag(
-                    keystoreId = keystoreId,
-                    tokenId = tokenId,
-                    hcpQuality = hcpQuality,
-                    hcpNihii = hcpNihii,
-                    hcpSsin = hcpSsin,
-                    hcpName = hcpName,
-                    passPhrase = passPhrase,
-                    rid = rid,
-                    feedbackFlag = feedbackFlag
-            )
+        recipeService.updateFeedbackFlag(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            hcpQuality = hcpQuality,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpName = hcpName,
+            passPhrase = passPhrase,
+            rid = rid,
+            feedbackFlag = feedbackFlag
+        )
 
     @GetMapping("/all/feedbacks")
     fun listFeedbacks(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam passPhrase: String): List<Feedback> =
-            recipeService.listFeedbacks(
-                    keystoreId = keystoreId,
-                    tokenId = tokenId,
-                    hcpQuality = hcpQuality,
-                    hcpNihii = hcpNihii,
-                    hcpSsin = hcpSsin,
-                    hcpName = hcpName,
-                    passPhrase = passPhrase
-            )
+        recipeService.listFeedbacks(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            hcpQuality = hcpQuality,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpName = hcpName,
+            passPhrase = passPhrase
+        )
 
     @GetMapping("/gal/{galId}")
-    fun getGalToAdministrationUnit( @PathVariable galId: String): Code? = recipeService.getGalToAdministrationUnit(galId)
+    fun getGalToAdministrationUnit(@PathVariable galId: String): Code? = recipeService.getGalToAdministrationUnit(galId)
 
     @GetMapping("/{rid}")
     fun getPrescription(@PathVariable rid: String): PrescriptionFullWithFeedback? = recipeService.getPrescription(rid)

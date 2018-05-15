@@ -30,13 +30,14 @@ class MiddlewareApplication
 fun main(args: Array<String>) {
     //Extract important files
     val root = File("/opt/ehealth").apply { mkdirs() }
-    listOf("acpt","prod").forEach { dir ->
+    listOf("acpt", "prod").forEach { dir ->
         val sdir = File(root, dir).apply { mkdirs() }
-        listOf("caCertificateKeystore.jks","truststore.jks","tsacertificate.jks","tslostore.jks").forEach { file ->
-        val os = File(sdir, file).outputStream()
-        MiddlewareApplication::class.java.getResourceAsStream("/$dir/$file").copyTo(os)
-        os.close()
-    } }
+        listOf("caCertificateKeystore.jks", "truststore.jks", "tsacertificate.jks", "tslostore.jks").forEach { file ->
+            val os = File(sdir, file).outputStream()
+            MiddlewareApplication::class.java.getResourceAsStream("/$dir/$file").copyTo(os)
+            os.close()
+        }
+    }
 
     SpringApplication.run(MiddlewareApplication::class.java, *args)
 }

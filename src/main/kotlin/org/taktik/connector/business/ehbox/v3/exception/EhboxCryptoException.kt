@@ -31,12 +31,19 @@ class EhboxCryptoException : TechnicalConnectorException {
         private set
     private var exceptions: MutableList<UnsealConnectorException>? = null
 
-    constructor(exceptions: MutableList<UnsealConnectorException>, ehBoxMessage: Message<*>) : super(TechnicalConnectorExceptionValues.ERROR_CRYPTO, "Unable to decrypt ehbox message.") {
+    constructor(exceptions: MutableList<UnsealConnectorException>, ehBoxMessage: Message<*>) : super(
+        TechnicalConnectorExceptionValues.ERROR_CRYPTO,
+        "Unable to decrypt ehbox message."
+    ) {
         this.exceptions = exceptions
         this.ehBoxMessage = ehBoxMessage
     }
 
-    constructor(exception: UnsealConnectorException, ehBoxMessage: Message<*>?) : super(TechnicalConnectorExceptionValues.ERROR_CRYPTO, exception as Throwable, "Unable to decrypt ehbox message.") {
+    constructor(exception: UnsealConnectorException, ehBoxMessage: Message<*>?) : super(
+        TechnicalConnectorExceptionValues.ERROR_CRYPTO,
+        exception as Throwable,
+        "Unable to decrypt ehbox message."
+    ) {
         this.exceptions = ArrayList()
         this.exceptions!!.add(exception)
         this.ehBoxMessage = ehBoxMessage

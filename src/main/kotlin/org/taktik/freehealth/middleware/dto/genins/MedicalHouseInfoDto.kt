@@ -20,9 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto.genins
 
-
 import java.io.Serializable
-import java.time.Instant
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,9 +30,9 @@ import java.time.Instant
  * To change this template use File | Settings | File Templates.
  */
 class MedicalHouseInfoDto(
-        val periodStart: Long? = null,
-        val periodEnd: Long? = null,
-        val isNurse: Boolean? = null,
-        val isMedical: Boolean? = null,
-        val isKine: Boolean? = null
+    val periodStart: Long? = null,
+    val periodEnd: Long? = null,
+    val isNurse: Boolean? = null,
+    val isMedical: Boolean? = null,
+    val isKine: Boolean? = null
 ) : Serializable

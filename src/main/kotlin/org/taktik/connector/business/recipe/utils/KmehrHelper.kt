@@ -31,11 +31,8 @@ import org.xml.sax.ErrorHandler
 import org.xml.sax.SAXException
 import org.xml.sax.SAXParseException
 
-import javax.xml.namespace.NamespaceContext
-import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
-import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathExpressionException
 import javax.xml.xpath.XPathFactory
@@ -43,7 +40,6 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
-import java.util.Objects
 import java.util.Properties
 
 /**
@@ -138,7 +134,6 @@ class KmehrHelper(val properties: Properties) {
             LOG.error("Error occured : ", t)
             throw IntegrationModuleException(getLabel("error.xml.invalid"), t)
         }
-
     }
 
     /**
@@ -168,8 +163,8 @@ class KmehrHelper(val properties: Properties) {
             factory.isValidating = true
             factory.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA_NS_URI)
             factory.setAttribute(
-                    JAXP_SCHEMA_SOURCE,
-                    arrayOf(xsd.canonicalPath))
+                JAXP_SCHEMA_SOURCE, arrayOf(xsd.canonicalPath)
+            )
 
             val builderNamespaceAware = factory.newDocumentBuilder()
             builderNamespaceAware.setErrorHandler(object : ErrorHandler {
@@ -198,7 +193,6 @@ class KmehrHelper(val properties: Properties) {
         } catch (e: ParserConfigurationException) {
             throw IntegrationModuleException(getLabel("error.xml.invalid"), e)
         }
-
     }
 
     /**
@@ -254,17 +248,26 @@ class KmehrHelper(val properties: Properties) {
                 }
                 // Expecting a property
                 // kmehr.assert.PP.1 = "/xpath"/, min occurs, [max occurs]
-                if (StringUtils.isBlank(xpathConfigWithVersion) && StringUtils.isBlank(xpathConfigWithoutVersion) && StringUtils.isBlank(xpathCountWithVersion1) && StringUtils.isBlank(
-                        xpathCountWithVersion2) && StringUtils.isBlank(xpathCountWithoutVersion1) && StringUtils.isBlank(xpathCountWithoutVersion2)) {
+                if (StringUtils.isBlank(xpathConfigWithVersion) && StringUtils.isBlank(xpathConfigWithoutVersion) && StringUtils.isBlank(
+                        xpathCountWithVersion1
+                    ) && StringUtils.isBlank(
+                        xpathCountWithVersion2
+                    ) && StringUtils.isBlank(xpathCountWithoutVersion1) && StringUtils.isBlank(xpathCountWithoutVersion2)) {
                     break
                 }
 
-                val xpathConfigsWithVersion = if (StringUtils.isNoneBlank(xpathConfigWithVersion)) xpathConfigWithVersion.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else null
-                val xpathConfigsWithoutVersion = if (StringUtils.isNoneBlank(xpathConfigWithoutVersion)) xpathConfigWithoutVersion.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else null
-                val xpathConfCountWithVersion1 = if (StringUtils.isNoneBlank(xpathCountWithVersion1)) xpathCountWithVersion1.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else null
-                val xpathConfCountWithoutVersion1 = if (StringUtils.isNoneBlank(xpathCountWithoutVersion1)) xpathCountWithoutVersion1.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else null
-                val xpathConfCountWithVersion2 = if (StringUtils.isNoneBlank(xpathCountWithVersion2)) xpathCountWithVersion2.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else null
-                val xpathConfCountWithoutVersion2 = if (StringUtils.isNoneBlank(xpathCountWithoutVersion2)) xpathCountWithoutVersion2.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else null
+                val xpathConfigsWithVersion =
+                    if (StringUtils.isNoneBlank(xpathConfigWithVersion)) xpathConfigWithVersion.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else null
+                val xpathConfigsWithoutVersion =
+                    if (StringUtils.isNoneBlank(xpathConfigWithoutVersion)) xpathConfigWithoutVersion.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else null
+                val xpathConfCountWithVersion1 =
+                    if (StringUtils.isNoneBlank(xpathCountWithVersion1)) xpathCountWithVersion1.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else null
+                val xpathConfCountWithoutVersion1 =
+                    if (StringUtils.isNoneBlank(xpathCountWithoutVersion1)) xpathCountWithoutVersion1.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else null
+                val xpathConfCountWithVersion2 =
+                    if (StringUtils.isNoneBlank(xpathCountWithVersion2)) xpathCountWithVersion2.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else null
+                val xpathConfCountWithoutVersion2 =
+                    if (StringUtils.isNoneBlank(xpathCountWithoutVersion2)) xpathCountWithoutVersion2.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() else null
 
                 var message = ""
                 if (xpathConfigsWithVersion != null && xpathConfigsWithVersion.size < 2) {
@@ -289,8 +292,14 @@ class KmehrHelper(val properties: Properties) {
                     throw IntegrationModuleException(message)
                 }
                 LOG.debug("validate xpathConfigsWithVersion[$i][$xpathConfigWithVersion] or xpathConfigsWithoutVersion[$i][$xpathConfigWithoutVersion].")
-                if (!verifyXpath(xpathConfigsWithVersion, doc) && !verifyXpath(xpathConfigsWithoutVersion, doc) && !verifyXpath(xpathConfCountWithVersion1, xpathConfCountWithVersion2, doc) &&
-                        !verifyXpath(xpathConfCountWithoutVersion1, xpathConfCountWithoutVersion2, doc)) {
+                if (!verifyXpath(xpathConfigsWithVersion, doc) && !verifyXpath(
+                        xpathConfigsWithoutVersion,
+                        doc
+                    ) && !verifyXpath(xpathConfCountWithVersion1, xpathConfCountWithVersion2, doc) && !verifyXpath(
+                        xpathConfCountWithoutVersion1,
+                        xpathConfCountWithoutVersion2,
+                        doc
+                    )) {
                     if (xpathConfigsWithVersion != null) {
                         message = "xpathConfigsWithVersion[$i][$xpathConfigWithVersion] is not valide."
                     } else if (xpathConfigsWithoutVersion != null) {
@@ -308,7 +317,6 @@ class KmehrHelper(val properties: Properties) {
         } catch (e: XPathExpressionException) {
             throw IntegrationModuleException(I18nHelper.getLabel("error.xml.invalid"), e)
         }
-
     }
 
     @Throws(XPathExpressionException::class, NumberFormatException::class, IntegrationModuleException::class)

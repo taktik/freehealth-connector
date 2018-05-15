@@ -40,5 +40,4 @@ class QualityType : Serializable {
         this.quality = quality
         this.identifierType = identfierType
     }
-
 }

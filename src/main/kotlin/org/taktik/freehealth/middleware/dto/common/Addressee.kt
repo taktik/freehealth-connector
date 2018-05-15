@@ -29,19 +29,29 @@ import org.apache.commons.lang.StringUtils.isEmpty
  * Created by aduchate on 8/11/13, 16:16
  */
 class Addressee(
-        val identifierType: IdentifierType,
-        val id: String? = null,
-        val quality: String? = null,
-        val applicationId: String? = null,
-        val lastName: String? = null,
-        val firstName: String? = null,
-        val organizationName: String? = null,
-        val personInOrganisation: String? = null
+    val identifierType: IdentifierType,
+    val id: String? = null,
+    val quality: String? = null,
+    val applicationId: String? = null,
+    val lastName: String? = null,
+    val firstName: String? = null,
+    val organizationName: String? = null,
+    val personInOrganisation: String? = null
 ) : Serializable {
     override fun toString(): String {
-        return if (isEmpty(organizationName))
-            String.format("%s %s %s", defaultString(quality!!.toString()), defaultString(firstName), defaultString(lastName))
-        else
-            String.format("%s %s - %s %s %s", defaultString(organizationName), defaultString(personInOrganisation), defaultString(quality!!.toString()), defaultString(firstName), defaultString(lastName))
+        return if (isEmpty(organizationName)) String.format(
+            "%s %s %s",
+            defaultString(quality!!.toString()),
+            defaultString(firstName),
+            defaultString(lastName)
+        )
+        else String.format(
+            "%s %s - %s %s %s",
+            defaultString(organizationName),
+            defaultString(personInOrganisation),
+            defaultString(quality!!.toString()),
+            defaultString(firstName),
+            defaultString(lastName)
+        )
     }
 }

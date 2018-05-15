@@ -14,20 +14,20 @@ import java.time.Instant
  */
 class DmgConsultation(complete: Boolean?) : DmgMessage(complete), Serializable {
 
-	constructor() : this(null)
+    constructor() : this(null)
 
-	var inss: String? = null
-	var firstName: String? = null
-	var lastName: String? = null
-	var birthday: Instant? = null
-	var deceased: Instant? = null
-	var sex: String? = null
-	var regNrWithMut: String? = null
-	var mutuality: String? = null
+    var inss: String? = null
+    var firstName: String? = null
+    var lastName: String? = null
+    var birthday: Instant? = null
+    var deceased: Instant? = null
+    var sex: String? = null
+    var regNrWithMut: String? = null
+    var mutuality: String? = null
 
-	var hcParty: HcpartyType? = null
-	var from: Instant? = null
-	var to: Instant? = null
+    var hcParty: HcpartyType? = null
+    var from: Instant? = null
+    var to: Instant? = null
 
-	var payment: Boolean? = null
+    var payment: Boolean? = null
 }

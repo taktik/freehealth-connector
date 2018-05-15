@@ -28,18 +28,18 @@ class KmehrPrescriptionConfig {
     val prescription = Prescription()
 
     inner class Header {
-        var _idKhmerId : String? = null
-        var date : XMLGregorianCalendar? = null
-        var time : XMLGregorianCalendar? = null
-        var recorddatetime : XMLGregorianCalendar? = null
-        var messageId : String? = null
+        var _idKhmerId: String? = null
+        var date: XMLGregorianCalendar? = null
+        var time: XMLGregorianCalendar? = null
+        var recorddatetime: XMLGregorianCalendar? = null
+        var messageId: String? = null
         fun getIdKmehr() = this@KmehrPrescriptionConfig.prescription.inami + '.' + _idKhmerId
     }
 
     inner class Prescription {
         var inami: String? = null
-        var language : String? = null
-		var substanceDb : String? = null
+        var language: String? = null
+        var substanceDb: String? = null
     }
 
     inner class ICure {
@@ -47,7 +47,7 @@ class KmehrPrescriptionConfig {
         var version: String? = null
         var phone: String? = null
         var mail: String? = null
-        var id : String? = null
+        var id: String? = null
         var prettyName: String? = null
     }
 }

@@ -21,26 +21,25 @@
 package org.taktik.freehealth.middleware.dto.ehbox
 
 import org.taktik.freehealth.middleware.dto.common.Addressee
-import java.util.ArrayList
 
 class ErrorMessage(
-        id: String? = null,
-        publicationId: String? = null,
-        sender: Addressee? = null,
-        mandatee: Addressee? = null,
-        destinations: List<Addressee>? = null,
-        size: String? = null,
-        customMetas: Map<String, String>? = null,
-        val title: String? = null,
-        val errorPublicationId: String? = null,
-        val errorCode: String? = null,
-        val errorMsg: List<String> = listOf()
+    id: String? = null,
+    publicationId: String? = null,
+    sender: Addressee? = null,
+    mandatee: Addressee? = null,
+    destinations: List<Addressee>? = null,
+    size: String? = null,
+    customMetas: Map<String, String>? = null,
+    val title: String? = null,
+    val errorPublicationId: String? = null,
+    val errorCode: String? = null,
+    val errorMsg: List<String> = listOf()
 ) : Message(
-        id = id,
-        publicationId = publicationId,
-        sender = sender,
-        mandatee = mandatee,
-        destinations = destinations,
-        size = size,
-        customMetas = customMetas
+    id = id,
+    publicationId = publicationId,
+    sender = sender,
+    mandatee = mandatee,
+    destinations = destinations,
+    size = size,
+    customMetas = customMetas
 )

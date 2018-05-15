@@ -22,4 +22,4 @@ package org.taktik.freehealth.middleware.dto.eattest
 
 import org.taktik.freehealth.middleware.dto.MycarenetError
 
-class EattestAcknowledgeType(var errors: List<MycarenetError> = listOf(), var iscomplete : Boolean = false)
+class EattestAcknowledgeType(var errors: List<MycarenetError> = listOf(), var iscomplete: Boolean = false)

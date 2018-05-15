@@ -23,4 +23,8 @@ package org.taktik.connector.business.genins.exception
 import org.taktik.connector.technical.exception.ConnectorException
 import java.text.MessageFormat
 
-class GenInsBusinessConnectorException(errorCodeValue: GenInsBusinessConnectorExceptionValues, cause: Throwable, vararg params: Any) : ConnectorException(MessageFormat.format(errorCodeValue.message, *params), errorCodeValue.errorCode, cause)
+class GenInsBusinessConnectorException(
+    errorCodeValue: GenInsBusinessConnectorExceptionValues,
+    cause: Throwable,
+    vararg params: Any
+) : ConnectorException(MessageFormat.format(errorCodeValue.message, *params), errorCodeValue.errorCode, cause)

@@ -42,7 +42,11 @@ class RequestBuilderImpl : RequestBuilder {
         return this.createDeleteMessageRequest(source, null, *messageIds as Array<String>)
     }
 
-    override fun createGetAllEhboxesMessagesListRequest(source: String, startIndex: Int?, endIndex: Int?): GetAllEhboxesMessagesListRequest {
+    override fun createGetAllEhboxesMessagesListRequest(
+        source: String,
+        startIndex: Int?,
+        endIndex: Int?
+    ): GetAllEhboxesMessagesListRequest {
         val request = GetAllEhboxesMessagesListRequest()
         request.source = source
         request.startIndex = startIndex
@@ -50,7 +54,12 @@ class RequestBuilderImpl : RequestBuilder {
         return request
     }
 
-    override fun createGetMessagesListRequest(source: String, startIndex: Int, endIndex: Int, boxId: BoxIdType): GetMessagesListRequest {
+    override fun createGetMessagesListRequest(
+        source: String,
+        startIndex: Int,
+        endIndex: Int,
+        boxId: BoxIdType
+    ): GetMessagesListRequest {
         val request = GetMessagesListRequest()
         request.source = source
         request.startIndex = startIndex
@@ -65,7 +74,11 @@ class RequestBuilderImpl : RequestBuilder {
         return request
     }
 
-    override fun createDeleteMessageRequest(source: String, boxId: BoxIdType?, vararg messageIds: String): DeleteMessageRequest {
+    override fun createDeleteMessageRequest(
+        source: String,
+        boxId: BoxIdType?,
+        vararg messageIds: String
+    ): DeleteMessageRequest {
         val deleteMessageRequest = DeleteMessageRequest()
         deleteMessageRequest.boxId = boxId
         deleteMessageRequest.source = source
@@ -93,7 +106,11 @@ class RequestBuilderImpl : RequestBuilder {
         return this.createAllEhboxesMessagesListRequest(source, null, null)
     }
 
-    override fun createAllEhboxesMessagesListRequest(source: String, startIndex: Int?, endIndex: Int?): GetAllEhboxesMessagesListRequest {
+    override fun createAllEhboxesMessagesListRequest(
+        source: String,
+        startIndex: Int?,
+        endIndex: Int?
+    ): GetAllEhboxesMessagesListRequest {
         val getAllEhboxesMessagesListRequest = GetAllEhboxesMessagesListRequest()
         getAllEhboxesMessagesListRequest.startIndex = startIndex
         getAllEhboxesMessagesListRequest.endIndex = endIndex
@@ -125,7 +142,11 @@ class RequestBuilderImpl : RequestBuilder {
         return this.createGetFullMessageRequest(messageId, source, null)
     }
 
-    override fun createGetFullMessageRequest(messageId: String, source: String, boxId: BoxIdType?): GetFullMessageRequest {
+    override fun createGetFullMessageRequest(
+        messageId: String,
+        source: String,
+        boxId: BoxIdType?
+    ): GetFullMessageRequest {
         val messageRequestType = GetFullMessageRequest()
         messageRequestType.boxId = boxId
         messageRequestType.messageId = messageId
@@ -149,11 +170,20 @@ class RequestBuilderImpl : RequestBuilder {
         return messageRequestType
     }
 
-    override fun createMoveMessageRequest(source: String, destination: String, vararg messageIds: String): MoveMessageRequest {
+    override fun createMoveMessageRequest(
+        source: String,
+        destination: String,
+        vararg messageIds: String
+    ): MoveMessageRequest {
         return this.createMoveMessageRequest(source, destination, null, *messageIds as Array<String>)
     }
 
-    override fun createMoveMessageRequest(source: String, destination: String, boxId: BoxIdType?, vararg messageIds: String): MoveMessageRequest {
+    override fun createMoveMessageRequest(
+        source: String,
+        destination: String,
+        boxId: BoxIdType?,
+        vararg messageIds: String
+    ): MoveMessageRequest {
         val moveMessageRequest = MoveMessageRequest()
         moveMessageRequest.boxId = boxId
         moveMessageRequest.destination = destination
@@ -172,7 +202,12 @@ class RequestBuilderImpl : RequestBuilder {
         return this.createGetMessageAcknowledgmentsStatusRequest(messageId, null, null, null)
     }
 
-    override fun createGetMessageAcknowledgmentsStatusRequest(messageId: String, startIndex: Int?, endIndex: Int?, boxId: BoxIdType?): GetMessageAcknowledgmentsStatusRequest {
+    override fun createGetMessageAcknowledgmentsStatusRequest(
+        messageId: String,
+        startIndex: Int?,
+        endIndex: Int?,
+        boxId: BoxIdType?
+    ): GetMessageAcknowledgmentsStatusRequest {
         val getMessageAcknowledgmentsStatusRequest = GetMessageAcknowledgmentsStatusRequest()
         getMessageAcknowledgmentsStatusRequest.boxId = boxId
         getMessageAcknowledgmentsStatusRequest.endIndex = endIndex
@@ -216,11 +251,20 @@ class RequestBuilderImpl : RequestBuilder {
         return getOoOListRequest
     }
 
-    override fun createInsertOoORequest(startDate: DateTime, endDate: DateTime, vararg substitutes: BoxIdType): InsertOoORequest {
+    override fun createInsertOoORequest(
+        startDate: DateTime,
+        endDate: DateTime,
+        vararg substitutes: BoxIdType
+    ): InsertOoORequest {
         return this.createInsertOoORequest(null, startDate, endDate, *substitutes as Array<BoxIdType>)
     }
 
-    override fun createInsertOoORequest(boxId: BoxIdType?, startDate: DateTime, endDate: DateTime, vararg substitutes: BoxIdType): InsertOoORequest {
+    override fun createInsertOoORequest(
+        boxId: BoxIdType?,
+        startDate: DateTime,
+        endDate: DateTime,
+        vararg substitutes: BoxIdType
+    ): InsertOoORequest {
         val insertOoORequest = InsertOoORequest()
         insertOoORequest.boxId = boxId
         insertOoORequest.startDate = startDate
@@ -239,23 +283,45 @@ class RequestBuilderImpl : RequestBuilder {
         return this.createDeleteMessageRequest(source, *messageIds.toTypedArray())
     }
 
-    override fun createDeleteMessageRequest(source: String, boxId: BoxIdType, messageIds: List<String>): DeleteMessageRequest {
+    override fun createDeleteMessageRequest(
+        source: String,
+        boxId: BoxIdType,
+        messageIds: List<String>
+    ): DeleteMessageRequest {
         return this.createDeleteMessageRequest(source, boxId, *messageIds.toTypedArray())
     }
 
-    override fun createMoveMessageRequest(source: String, destination: String, messageIds: List<String>): MoveMessageRequest {
+    override fun createMoveMessageRequest(
+        source: String,
+        destination: String,
+        messageIds: List<String>
+    ): MoveMessageRequest {
         return this.createMoveMessageRequest(source, destination, *messageIds.toTypedArray())
     }
 
-    override fun createMoveMessageRequest(source: String, destination: String, boxId: BoxIdType, messageIds: List<String>): MoveMessageRequest {
+    override fun createMoveMessageRequest(
+        source: String,
+        destination: String,
+        boxId: BoxIdType,
+        messageIds: List<String>
+    ): MoveMessageRequest {
         return this.createMoveMessageRequest(source, destination, boxId, *messageIds.toTypedArray())
     }
 
-    override fun createInsertOoORequest(startDate: DateTime, endDate: DateTime, substitutes: List<BoxIdType>): InsertOoORequest {
+    override fun createInsertOoORequest(
+        startDate: DateTime,
+        endDate: DateTime,
+        substitutes: List<BoxIdType>
+    ): InsertOoORequest {
         return this.createInsertOoORequest(startDate, endDate, *substitutes.toTypedArray())
     }
 
-    override fun createInsertOoORequest(boxId: BoxIdType, startDate: DateTime, endDate: DateTime, substitutes: List<BoxIdType>): InsertOoORequest {
+    override fun createInsertOoORequest(
+        boxId: BoxIdType,
+        startDate: DateTime,
+        endDate: DateTime,
+        substitutes: List<BoxIdType>
+    ): InsertOoORequest {
         return this.createInsertOoORequest(boxId, startDate, endDate, *substitutes.toTypedArray())
     }
 

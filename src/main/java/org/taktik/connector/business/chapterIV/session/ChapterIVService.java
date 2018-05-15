@@ -20,15 +20,11 @@ public interface ChapterIVService {
    @Deprecated
    ConsultChap4MedicalAdvisorAgreementResponse consultChap4MedicalAdvisorAgreement(FolderType var1, String var2, boolean var3, String var4, String var5, DateTime var6) throws ChapterIVBusinessConnectorException, TechnicalConnectorException, SessionManagementException;
 
-   ConsultationBuilder getConsultationBuilder() throws TechnicalConnectorException;
-
    AskChap4MedicalAdvisorAgreementResponse askChap4MedicalAdvisorAgreementResponse(AskChap4MedicalAdvisorAgreementRequest var1) throws ChapterIVBusinessConnectorException, TechnicalConnectorException, SessionManagementException;
 
    /** @deprecated */
    @Deprecated
    AskChap4MedicalAdvisorAgreementResponse askChap4MedicalAdvisorAgreementResponse(FolderType var1, String var2, boolean var3, String var4, String var5, DateTime var6) throws ChapterIVBusinessConnectorException, TechnicalConnectorException, SessionManagementException;
-
-   AdmissionBuilder getAdmissionBuilder() throws TechnicalConnectorException;
 
    ResponseBuilder getResponseBuilder() throws TechnicalConnectorException;
 }

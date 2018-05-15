@@ -28,6 +28,10 @@ import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsXmlOrFla
 import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityResponse
 
 interface GenInsService {
-    @Throws(GenInsBusinessConnectorException::class, TechnicalConnectorException::class, SessionManagementException::class)
+    @Throws(
+        GenInsBusinessConnectorException::class,
+        TechnicalConnectorException::class,
+        SessionManagementException::class
+    )
     fun getInsurability(token: SAMLToken, request: GetInsurabilityAsXmlOrFlatRequestType): GetInsurabilityResponse
 }

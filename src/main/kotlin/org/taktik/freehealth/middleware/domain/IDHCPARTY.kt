@@ -20,32 +20,30 @@
 
 package org.taktik.freehealth.middleware.domain
 
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
 import java.io.Serializable
 
-class IDHCPARTY :Serializable {
-	enum class IDHCPARTYSCHEMES(val value: String) {
-		ID_HCPARTY("ID-HCPARTY"),
-		INSS("INSS"),
-		LOCAL("LOCAL"),
-		ID_ENCRYPTION_APPLICATION("ID-ENCRYPTION-APPLICATION"),
-		ID_ENCRYPTION_ACTOR("ID-ENCRYPTION-ACTOR"),
-		ID_INSURANCE("ID-INSURANCE"),
-		ID_CBE("ID-CBE"),
-		ID_EHP("ID-EHP");
+class IDHCPARTY : Serializable {
+    enum class IDHCPARTYSCHEMES(val value: String) {
+        ID_HCPARTY("ID-HCPARTY"),
+        INSS("INSS"),
+        LOCAL("LOCAL"),
+        ID_ENCRYPTION_APPLICATION("ID-ENCRYPTION-APPLICATION"),
+        ID_ENCRYPTION_ACTOR("ID-ENCRYPTION-ACTOR"),
+        ID_INSURANCE("ID-INSURANCE"),
+        ID_CBE("ID-CBE"),
+        ID_EHP("ID-EHP");
 
-		companion object {
-			fun fromValue(value : String) : IDHCPARTYSCHEMES? {
-				return values().find { it.value == value }
-			}
-		}
-	}
+        companion object {
+            fun fromValue(value: String): IDHCPARTYSCHEMES? {
+                return values().find { it.value == value }
+            }
+        }
+    }
 
-	var value: String? = null
-	var s: IDHCPARTYSCHEMES? = null
-	var sv: String? = null
-	var dn: String? = null
-	var l: String? = null
-	var sl: String? = null
+    var value: String? = null
+    var s: IDHCPARTYSCHEMES? = null
+    var sv: String? = null
+    var dn: String? = null
+    var l: String? = null
+    var sl: String? = null
 }
-

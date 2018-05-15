@@ -29,8 +29,16 @@ import java.security.KeyStore
 
 interface ConsultationMessageBuilder {
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    fun buildMessage(keystore: KeyStore, passPhrase: String, msg: be.fgov.ehealth.ehbox.consultation.protocol.v3.Message): Message<be.fgov.ehealth.ehbox.consultation.protocol.v3.Message>
+    fun buildMessage(
+        keystore: KeyStore,
+        passPhrase: String,
+        msg: be.fgov.ehealth.ehbox.consultation.protocol.v3.Message
+    ): Message<be.fgov.ehealth.ehbox.consultation.protocol.v3.Message>
 
     @Throws(EhboxBusinessConnectorException::class, TechnicalConnectorException::class)
-    fun buildFullMessage(keystore: KeyStore, passPhrase: String, msg: GetFullMessageResponse): Message<GetFullMessageResponse>
+    fun buildFullMessage(
+        keystore: KeyStore,
+        passPhrase: String,
+        msg: GetFullMessageResponse
+    ): Message<GetFullMessageResponse>
 }

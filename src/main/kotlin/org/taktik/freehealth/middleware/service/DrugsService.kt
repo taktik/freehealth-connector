@@ -48,7 +48,13 @@ interface DrugsService {
      * @param count the number of results to return
      * @return The list of found Mpp in preview type.
      */
-    fun getMedecinePackages(searchString: String, lang: String, types: List<String>, first: Int, count: Int): List<MppPreview>
+    fun getMedecinePackages(
+        searchString: String,
+        lang: String,
+        types: List<String>,
+        first: Int,
+        count: Int
+    ): List<MppPreview>
 
     /**
      * Retrieve a list of MPP's by name or ingredients'.
@@ -59,7 +65,13 @@ interface DrugsService {
      * @param count the number of results to return
      * @return The list of found Mpp in preview type.
      */
-    fun getMedecinePackagesFromIngredients(searchString: String, lang: String, types: List<String>, first: Int, count: Int): List<MppPreview>
+    fun getMedecinePackagesFromIngredients(
+        searchString: String,
+        lang: String,
+        types: List<String>,
+        first: Int,
+        count: Int
+    ): List<MppPreview>
 
     /**
      * Retrieve detailed infos about a Mpp
@@ -80,8 +92,14 @@ interface DrugsService {
      * @return
      */
     @Throws(IOException::class)
-    fun fullTextSearch(search: String, lang: String, classes: List<String>, types: List<String>, first: Int, count: Int): List<FullTextSearchResult>
-
+    fun fullTextSearch(
+        search: String,
+        lang: String,
+        classes: List<String>,
+        types: List<String>,
+        first: Int,
+        count: Int
+    ): List<FullTextSearchResult>
 
     /**
      * Retrieve a preview of a doc
@@ -129,5 +147,11 @@ interface DrugsService {
 
     fun getCheapAlternativesBasedOnInn(innClusterId: String, lang: String): List<*>
 
-    fun getInnClusters(searchString: String, lang: String, types: List<String>, first: Int, count: Int): List<MppPreview>
+    fun getInnClusters(
+        searchString: String,
+        lang: String,
+        types: List<String>,
+        first: Int,
+        count: Int
+    ): List<MppPreview>
 }

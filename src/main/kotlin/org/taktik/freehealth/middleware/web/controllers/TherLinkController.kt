@@ -21,7 +21,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import ma.glasnost.orika.MapperFacade
-import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -36,108 +35,181 @@ import java.util.*
 
 @RestController
 @RequestMapping("/therlink")
-class TherLinkController(val therLinkService:TherLinkService, val mapper : MapperFacade) {
+class TherLinkController(val therLinkService: TherLinkService, val mapper: MapperFacade) {
 
-	@GetMapping("/{patientSsin}/{hcpNihii}")
-	fun getAllTherapeuticLinks(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String,
-	                           @PathVariable hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String,
-	                           @PathVariable patientSsin: String, @RequestParam patientFirstName: String, @RequestParam patientLastName: String,
-	                           @RequestParam(required = false) eidCardNumber : String? = null, @RequestParam(required = false) isiCardNumber : String? = null,
-	                           @RequestParam(required = false) startDate: Date? = null, @RequestParam(required = false) endDate: Date? = null, @RequestParam(required = false) type: String? = null, @RequestParam(required = false) sign: Boolean? = null) = therLinkService.getAllTherapeuticLinks(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			patientSsin = patientSsin,
-			patientFirstName = patientFirstName,
-			patientLastName = patientLastName,
-			eidCardNumber = eidCardNumber,
-			isiCardNumber = isiCardNumber,
-			startDate = startDate,
-			endDate = endDate,
-			type = type,
-			sign = sign
-	)?.map { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
+    @GetMapping("/{patientSsin}/{hcpNihii}")
+    fun getAllTherapeuticLinks(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @PathVariable hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @PathVariable patientSsin: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam(
+                    required = false
+                ) eidCardNumber: String? = null,
+        @RequestParam(required = false) isiCardNumber: String? = null,
+        @RequestParam(
+                    required = false
+                ) startDate: Date? = null,
+        @RequestParam(required = false) endDate: Date? = null,
+        @RequestParam(required = false) type: String? = null,
+        @RequestParam(
+                    required = false
+                ) sign: Boolean? = null
+    ) = therLinkService.getAllTherapeuticLinks(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpFirstName = hcpFirstName,
+        hcpLastName = hcpLastName,
+        patientSsin = patientSsin,
+        patientFirstName = patientFirstName,
+        patientLastName = patientLastName,
+        eidCardNumber = eidCardNumber,
+        isiCardNumber = isiCardNumber,
+        startDate = startDate,
+        endDate = endDate,
+        type = type,
+        sign = sign
+    )?.map { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
-	@PostMapping("/query")
-	fun getAllTherapeuticLinksWithQueryLink(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String,
-	                                        @RequestBody queryLink : TherapeuticLinkDto, @RequestParam(required = false) sign: Boolean? = null) = therLinkService.getAllTherapeuticLinksWithQueryLink(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			queryLink = mapper.map(queryLink, org.taktik.connector.business.therlink.domain.TherapeuticLink::class.java),
-			sign = sign
-	)?.map { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
+    @PostMapping("/query")
+    fun getAllTherapeuticLinksWithQueryLink(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @RequestBody queryLink: TherapeuticLinkDto,
+        @RequestParam(
+                    required = false
+                ) sign: Boolean? = null
+    ) = therLinkService.getAllTherapeuticLinksWithQueryLink(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        queryLink = mapper.map(queryLink, org.taktik.connector.business.therlink.domain.TherapeuticLink::class.java),
+        sign = sign
+    )?.map { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
-	@PostMapping("/check")
-	fun doesLinkExist(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestBody therLink: TherapeuticLinkDto) = therLinkService.doesLinkExist(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			therLink = mapper.map(therLink, org.taktik.connector.business.therlink.domain.TherapeuticLink::class.java)
-	)?.let { mapper.map(it, TherapeuticLinkDto::class.java) }
+    @PostMapping("/check")
+    fun doesLinkExist(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestBody therLink: TherapeuticLinkDto) =
+        therLinkService.doesLinkExist(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            therLink = mapper.map(therLink, org.taktik.connector.business.therlink.domain.TherapeuticLink::class.java)
+        )?.let { mapper.map(it, TherapeuticLinkDto::class.java) }
 
-	@PostMapping("/register")
-	fun registerTherapeuticLink(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String,
-	                            @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String,
-	                            @RequestParam patientSsin: String, @RequestParam patientFirstName: String, @RequestParam patientLastName: String,
-	                            @RequestParam(required = false) eidCardNumber: String? = null, @RequestParam(required = false) isiCardNumber: String? = null,
-	                            @RequestParam(required = false) start: Date? = null, @RequestParam(required = false) end: Date? = null,
-	                            @RequestParam(required = false) therLinkType: String? = null, @RequestParam(required = false) comment: String? = null,
-	                            @RequestParam(required = false) sign: Boolean? = null) = therLinkService.registerTherapeuticLink(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			patientSsin = patientSsin,
-			patientFirstName = patientFirstName,
-			patientLastName = patientLastName,
-			eidCardNumber = eidCardNumber,
-			isiCardNumber = isiCardNumber,
-			start = start,
-			end = end,
-			therLinkType = therLinkType,
-			comment = comment,
-			sign = sign
-	).let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
+    @PostMapping("/register")
+    fun registerTherapeuticLink(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam patientSsin: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam(
+                    required = false
+                ) eidCardNumber: String? = null,
+        @RequestParam(required = false) isiCardNumber: String? = null,
+        @RequestParam(
+                    required = false
+                ) start: Date? = null,
+        @RequestParam(required = false) end: Date? = null,
+        @RequestParam(required = false) therLinkType: String? = null,
+        @RequestParam(
+                    required = false
+                ) comment: String? = null,
+        @RequestParam(required = false) sign: Boolean? = null
+    ) = therLinkService.registerTherapeuticLink(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpFirstName = hcpFirstName,
+        hcpLastName = hcpLastName,
+        patientSsin = patientSsin,
+        patientFirstName = patientFirstName,
+        patientLastName = patientLastName,
+        eidCardNumber = eidCardNumber,
+        isiCardNumber = isiCardNumber,
+        start = start,
+        end = end,
+        therLinkType = therLinkType,
+        comment = comment,
+        sign = sign
+    ).let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
-	@PostMapping("/revoke/{patientSsin}/{hcpNihii}")
-	fun revokeLink( @RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable hcpNihii: String,
-	               @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String,
-	               @PathVariable patientSsin: String, @RequestParam patientFirstName: String, @RequestParam patientLastName: String,
-	               @RequestParam(required = false) eidCardNumber: String? = null, @RequestParam(required = false) isiCardNumber: String? = null, @RequestParam(required = false) start: Date? = null, @RequestParam(required = false) end: Date?,
-	               @RequestParam(required = false) therLinkType: String? = null, @RequestParam(required = false) comment: String? = null, @RequestParam(required = false) sign: Boolean? = null) = therLinkService.revokeLink(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			patientSsin = patientSsin,
-			patientFirstName = patientFirstName,
-			patientLastName = patientLastName,
-			eidCardNumber = eidCardNumber,
-			isiCardNumber = isiCardNumber,
-			start = start,
-			end = end,
-			therLinkType = therLinkType,
-			comment = comment,
-			sign = sign
-	).let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
+    @PostMapping("/revoke/{patientSsin}/{hcpNihii}")
+    fun revokeLink(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @PathVariable hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @PathVariable patientSsin: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam(
+                    required = false
+                ) eidCardNumber: String? = null,
+        @RequestParam(required = false) isiCardNumber: String? = null,
+        @RequestParam(
+                    required = false
+                ) start: Date? = null,
+        @RequestParam(required = false) end: Date?,
+        @RequestParam(required = false) therLinkType: String? = null,
+        @RequestParam(
+                    required = false
+                ) comment: String? = null,
+        @RequestParam(required = false) sign: Boolean? = null
+    ) = therLinkService.revokeLink(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpFirstName = hcpFirstName,
+        hcpLastName = hcpLastName,
+        patientSsin = patientSsin,
+        patientFirstName = patientFirstName,
+        patientLastName = patientLastName,
+        eidCardNumber = eidCardNumber,
+        isiCardNumber = isiCardNumber,
+        start = start,
+        end = end,
+        therLinkType = therLinkType,
+        comment = comment,
+        sign = sign
+    ).let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
-	@PostMapping("/revoke")
-	fun revokeLink(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestBody therLink: TherapeuticLinkDto, @RequestParam(required = false)sign: Boolean? = null) = therLinkService.revokeLink(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			therLink = mapper.map(therLink, org.taktik.connector.business.therlink.domain.TherapeuticLink::class.java),
-			sign = sign
-	).let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
+    @PostMapping("/revoke")
+    fun revokeLink(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @RequestBody therLink: TherapeuticLinkDto,
+        @RequestParam(
+                    required = false
+                ) sign: Boolean? = null
+    ) = therLinkService.revokeLink(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        therLink = mapper.map(therLink, org.taktik.connector.business.therlink.domain.TherapeuticLink::class.java),
+        sign = sign
+    ).let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 }

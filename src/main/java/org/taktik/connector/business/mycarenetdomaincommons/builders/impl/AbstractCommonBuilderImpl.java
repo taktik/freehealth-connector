@@ -45,34 +45,6 @@ public abstract class AbstractCommonBuilderImpl implements CommonBuilder {
       }
    }
 
-   /** @deprecated */
-   @Deprecated
-   public CommonInput createCommonInput(PackageInfo packageInfo, boolean isTest, String inputReference) throws TechnicalConnectorException {
-      Origin origin = this.createOrigin(packageInfo);
-      return new CommonInput(isTest, origin, inputReference);
-   }
-
-   public CommonInput createCommonInput(McnPackageInfo packageInfo, boolean isTest, String inputReference) throws TechnicalConnectorException {
-      Origin origin = this.createOrigin(packageInfo);
-      return new CommonInput(isTest, origin, inputReference);
-   }
-
-   /** @deprecated */
-   @Deprecated
-   public Origin createOrigin(PackageInfo packageInfo) throws TechnicalConnectorException {
-      Origin origin = new Origin(packageInfo, this.createCareProviderForOrigin());
-      origin.setSender(this.createSenderForOrigin());
-      origin.setSiteId(this.getSiteId());
-      return origin;
-   }
-
-   public Origin createOrigin(McnPackageInfo packageInfo) throws TechnicalConnectorException {
-      Origin origin = new Origin(packageInfo, this.createCareProviderForOrigin());
-      origin.setSender(this.createSenderForOrigin());
-      origin.setSiteId(this.getSiteId());
-      return origin;
-   }
-
    private String getSiteId() throws TechnicalConnectorException {
       if (this.projectName == null) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL, new Object[]{"projectName"});
@@ -82,14 +54,6 @@ public abstract class AbstractCommonBuilderImpl implements CommonBuilder {
          String siteId = this.config.getProperty(siteIdKey);
          return siteId;
       }
-   }
-
-   Party createSenderForOrigin() throws TechnicalConnectorException {
-      Party party = new Party();
-      String senderRootKey = "mycarenet." + PropertyUtil.retrieveProjectNameToUse(this.projectName, "mycarenet..") + ".sender";
-      party.setPhysicalPerson(this.createPerson(senderRootKey + ".physicalperson"));
-      party.setOrganization(this.createOrganization(senderRootKey + ".organization"));
-      return party;
    }
 
    public Routing createRouting(Patient patientInfo, DateTime refDate) {
@@ -118,53 +82,6 @@ public abstract class AbstractCommonBuilderImpl implements CommonBuilder {
       return careReceiver;
    }
 
-   protected Identification createOrganization(String key) throws TechnicalConnectorException {
-      Identification identification = this.getIdentification(key);
-      boolean containsOrganization = identification != null;
-      if (containsOrganization && identification.getCbe() == null && identification.getNihii() == null) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"Organization Sender properties are not coherent"});
-      } else {
-         return identification;
-      }
-   }
-
-   protected Identification createPerson(String key) throws TechnicalConnectorException {
-      Identification identification = this.getIdentification(key);
-      boolean containsPhysicalPerson = identification != null;
-      if (containsPhysicalPerson && identification.getSsin() == null) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"Physical person Sender properties are not coherent"});
-      } else {
-         return identification;
-      }
-   }
-
-   private Identification getIdentification(String key) {
-      Identification identification = new Identification();
-      String name = this.config.getProperty(key + ".name");
-      if (name != null) {
-         identification.setName(name);
-      }
-
-      String ssin = this.config.getProperty(key + ".ssin");
-      if (ssin != null) {
-         identification.setSsin(ssin);
-      }
-
-      String nihii = this.config.getProperty(key + ".nihii" + ".value");
-      String cbe;
-      if (nihii != null) {
-         cbe = this.config.getProperty(key + ".nihii" + ".quality");
-         Nihii nihiiObject = new Nihii(cbe, nihii);
-         identification.setNihii(nihiiObject);
-      }
-
-      cbe = this.config.getProperty(key + ".cbe");
-      if (cbe != null) {
-         identification.setCbe(cbe);
-      }
-
-      return this.isIdentificationEmpty(identification) ? null : identification;
-   }
 
    private boolean isIdentificationEmpty(Identification identification) {
       return identification.getCbe() == null && identification.getName() == null && identification.getNihii() == null && identification.getSsin() == null;

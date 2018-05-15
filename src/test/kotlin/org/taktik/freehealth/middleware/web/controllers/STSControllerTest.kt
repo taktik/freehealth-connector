@@ -10,9 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit4.SpringRunner
+import org.taktik.connector.technical.service.sts.STSService
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.SamlTokenResult
-
+import org.taktik.freehealth.middleware.service.impl.STSServiceImpl
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
@@ -23,17 +24,17 @@ class STSControllerTest : EhealthTest() {
 
     @Autowired
     private val restTemplate: TestRestTemplate? = null
-    private val gson : Gson = Gson()
+    private val gson: Gson = Gson()
 
     @Test
     fun uploadKeystore() {
-        val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("${ssin1}.acc-p12").path, port, restTemplate!!)
+        val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("$ssin1.acc-p12").path, port, restTemplate!!)
         assertThat(keystoreId != null)
     }
 
     @Test
     fun requestToken() {
-        val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("79121430944.acc-p12").path, port, restTemplate!!)
+        val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("${ssin1}.acc-p12").path, port, restTemplate!!)
         val ssin = ssin1
         val passPhrase = password1
         val res = this.restTemplate.getForObject("http://localhost:$port/sts/token/$keystoreId?passPhrase={passPhrase}&ssin=$ssin", String::class.java, passPhrase)
@@ -41,10 +42,18 @@ class STSControllerTest : EhealthTest() {
         val saml = gson.fromJson(res, SamlTokenResult::class.java)
         assertThat(saml.tokenId).isNotNull()
         assertThat(saml.token).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Assertion")
-        assertThat(saml.token).containsIgnoringCase("OU=ANTOINE BAUDOUX")
+        assertThat(saml.token).containsIgnoringCase("OU=${firstName1} ${lastName1}")
     }
 
     @Test
     fun registerToken() {
+    }
+
+    @Test
+    fun checkKeystoreExist(){
+        val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("${ssin1}.acc-p12").path, port, restTemplate!!)
+
+        val res = this.restTemplate?.getForObject("http://localhost:$port/sts/checkKeystore/${keystoreId}", String::class.java)
+        assertThat(res != null)
     }
 }

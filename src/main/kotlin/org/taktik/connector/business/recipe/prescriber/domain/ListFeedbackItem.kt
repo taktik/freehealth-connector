@@ -27,7 +27,6 @@ import java.util.Calendar
  */
 class ListFeedbackItem(val root: be.recipe.services.prescriber.ListFeedbackItem) : be.recipe.services.prescriber.ListFeedbackItem() {
 
-
     /** The root.  */
 
     /** The linked exception.  */
@@ -122,6 +121,4 @@ class ListFeedbackItem(val root: be.recipe.services.prescriber.ListFeedbackItem)
     override fun toString(): String {
         return root.toString()
     }
-
-
 }

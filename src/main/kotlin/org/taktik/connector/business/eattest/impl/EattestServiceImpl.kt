@@ -45,7 +45,6 @@ class EattestServiceImpl : EattestService, ConfigurationModuleBootstrap.ModuleBo
         } catch (ex: SOAPException) {
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
         }
-
     }
 
     override fun bootstrap() {

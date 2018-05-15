@@ -20,7 +20,6 @@
 
 package org.taktik.connector.business.ehbox.service
 
-
 import org.taktik.connector.business.common.util.HandlerChainUtil
 import org.taktik.connector.business.ehbox.api.domain.exception.EhboxBusinessConnectorException
 import org.taktik.connector.technical.config.ConfigFactory
@@ -41,20 +40,40 @@ object ServiceFactory {
     @Throws(MalformedURLException::class, TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     fun getConsultationService(token: SAMLToken): GenericRequest {
         val genReq = GenericRequest()
-        genReq.setEndpoint(config.getProperty("endpoint.ehbox.consultation.v3", "\$uddi{uddi:ehealth-fgov-be:business:ehboxconsultation:v3}"))
+        genReq.setEndpoint(
+            config.getProperty(
+                "endpoint.ehbox.consultation.v3",
+                "\$uddi{uddi:ehealth-fgov-be:business:ehboxconsultation:v3}"
+            )
+        )
         genReq.setCredential(token, TokenType.SAML)
         genReq.addDefaulHandlerChain()
-        genReq.addHandlerChain(HandlerChainUtil.buildChainWithValidator("validation.incoming.ehbox.v3.message", "/ehealth-ehbox/XSD/ehealth-ehBox-consultation-schema-protocol-3_0.xsd"))
+        genReq.addHandlerChain(
+            HandlerChainUtil.buildChainWithValidator(
+                "validation.incoming.ehbox.v3.message",
+                "/ehealth-ehbox/XSD/ehealth-ehBox-consultation-schema-protocol-3_0.xsd"
+            )
+        )
         return genReq
     }
 
     @Throws(MalformedURLException::class, TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     fun getPublicationService(token: SAMLToken): GenericRequest {
         val genReq = GenericRequest()
-        genReq.setEndpoint(config.getProperty("endpoint.ehbox.publication.v3", "\$uddi{uddi:ehealth-fgov-be:business:ehboxpublication:v3}"))
+        genReq.setEndpoint(
+            config.getProperty(
+                "endpoint.ehbox.publication.v3",
+                "\$uddi{uddi:ehealth-fgov-be:business:ehboxpublication:v3}"
+            )
+        )
         genReq.setCredential(token, TokenType.SAML)
         genReq.addDefaulHandlerChain()
-        genReq.addHandlerChain(HandlerChainUtil.buildChainWithValidator("validation.incoming.ehbox.v3.message", "/ehealth-ehbox/XSD/ehealth-ehBox-publication-schema-protocol-3_0.xsd"))
+        genReq.addHandlerChain(
+            HandlerChainUtil.buildChainWithValidator(
+                "validation.incoming.ehbox.v3.message",
+                "/ehealth-ehbox/XSD/ehealth-ehBox-publication-schema-protocol-3_0.xsd"
+            )
+        )
         return genReq
     }
 }

@@ -24,7 +24,11 @@ import org.taktik.connector.technical.exception.ConnectorException
 import be.fgov.ehealth.ehbox.core.v3.BoxIdType
 import be.fgov.ehealth.ehbox.publication.protocol.v3.Substitute
 
-class OoOPublicationException(message: String, errorCode: String, val oooForwardInformation: Map<BoxIdType, List<Substitute>>) : ConnectorException(message, errorCode) {
+class OoOPublicationException(
+    message: String,
+    errorCode: String,
+    val oooForwardInformation: Map<BoxIdType, List<Substitute>>
+) : ConnectorException(message, errorCode) {
     companion object {
         private val serialVersionUID = 1L
     }

@@ -27,6 +27,11 @@ import java.io.Serializable
  */
 enum class Gender constructor(val code: String) : Serializable {
     male("M"), female("F"), indeterminate("I"), changed("C"), changedToMale("Y"), changedToFemale("X"), undefined("U");
+
     override fun toString(): String = code
-    companion object { fun fromCode(code: String?): Gender? = if (code == null) null else Gender.values().firstOrNull { it.code == code } }
+
+    companion object {
+        fun fromCode(code: String?): Gender? =
+            if (code == null) null else Gender.values().firstOrNull { it.code == code }
+    }
 }

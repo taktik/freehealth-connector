@@ -29,10 +29,16 @@ import java.util.*
 interface STSService {
     fun uploadKeystore(data: ByteArray): UUID
     fun uploadKeystore(file: MultipartFile): UUID
-    fun requestToken(keystoreId: UUID, nihiiOrSsin: String, passPhrase: String, medicalHouse: Boolean = false, extraDesignators: List<Pair<String,String>> = listOf()): SamlTokenResult
+    fun requestToken(
+        keystoreId: UUID,
+        nihiiOrSsin: String,
+        passPhrase: String,
+        medicalHouse: Boolean = false,
+        extraDesignators: List<Pair<String, String>> = listOf()
+    ): SamlTokenResult
+
     fun registerToken(tokenId: UUID, token: String)
     fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken?
     fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore?
+    fun checkIfKeystoreExist(keystoreId: UUID): Boolean?
 }
-
-

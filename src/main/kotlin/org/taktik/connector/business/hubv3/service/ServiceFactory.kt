@@ -41,24 +41,47 @@ object ServiceFactory {
         get() = HubTokenServiceImpl()
 
     @Throws(TechnicalConnectorException::class)
-    fun getIntraHubPort(endPoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, soapAction: String): GenericRequest {
+    fun getIntraHubPort(
+        endPoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        soapAction: String
+    ): GenericRequest {
         Validate.notNull(token, "Required parameter SAMLToken is null.")
         Validate.notNull(soapAction, "Required parameter SOAPAction is null.")
 
-
-        return GenericRequest().setEndpoint(endPoint).setSoapAction(soapAction).setCredential(token, TokenType.SAML).addDefaulHandlerChain().addHandlerChain(HandlerChain().apply {
-            register(HandlerPosition.BEFORE,
-                    HubDecryptionHandler(CryptoFactory.getCrypto(KeyStoreCredential(keystore, "authentication", passPhrase), KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray()))))
+        return GenericRequest().setEndpoint(endPoint).setSoapAction(soapAction).setCredential(token, TokenType.SAML)
+            .addDefaulHandlerChain().addHandlerChain(HandlerChain().apply {
+            register(
+                HandlerPosition.BEFORE,
+                HubDecryptionHandler(
+                    CryptoFactory.getCrypto(
+                        KeyStoreCredential(keystore, "authentication", passPhrase),
+                        KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+                    )
+                )
+            )
         })
         //return GenericRequest().setEndpoint(endPoint).setSoapAction(soapAction).setCredential(token, TokenType.SAML).addDefaulHandlerChain().addHandlerChain(addHubServiceHandlerChain(keystore, passPhrase, HandlerChainUtil.buildChainWithValidator("validation.incoming.intrahubv3.message", "/ehealth-hubservices/XSD/hubservices_protocol-3_2.xsd")))
     }
 
     @Throws(TechnicalConnectorException::class)
-    private fun addHubServiceHandlerChain(keystore: KeyStore, passPhrase: String , chain: HandlerChain): HandlerChain {
+    private fun addHubServiceHandlerChain(keystore: KeyStore, passPhrase: String, chain: HandlerChain): HandlerChain {
 
-        chain.register(HandlerPosition.BEFORE, HubDecryptionHandler(CryptoFactory.getCrypto(KeyStoreCredential(keystore, "authentication", passPhrase), KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray()))))
+        chain.register(
+            HandlerPosition.BEFORE,
+            HubDecryptionHandler(
+                CryptoFactory.getCrypto(
+                    KeyStoreCredential(
+                        keystore,
+                        "authentication",
+                        passPhrase
+                    ), KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+                )
+            )
+        )
 
         return chain
     }
-
 }

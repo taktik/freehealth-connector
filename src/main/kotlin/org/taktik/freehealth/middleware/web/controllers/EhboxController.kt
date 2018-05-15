@@ -37,15 +37,41 @@ import java.util.*
 @RequestMapping("/ehbox")
 class EhboxController(val ehboxService: EhboxService) {
     @GetMapping("")
-    fun getInfos(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String): BoxInfo = ehboxService.getInfos(keystoreId, tokenId, passPhrase)
+    fun getInfos(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String): BoxInfo =
+        ehboxService.getInfos(keystoreId, tokenId, passPhrase)
+
     @GetMapping("/{boxId}")
-    fun loadMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable boxId: String, @RequestParam limit: Int?): List<Message> = ehboxService.loadMessages(keystoreId, tokenId, passPhrase, boxId, limit)
+    fun loadMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable boxId: String, @RequestParam limit: Int?): List<Message> =
+        ehboxService.loadMessages(keystoreId, tokenId, passPhrase, boxId, limit)
+
     @GetMapping("/{boxId}/{messageId}")
-    fun getFullMessage(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable boxId: String, @PathVariable messageId: String): Message = ehboxService.getFullMessage(keystoreId, tokenId, passPhrase, boxId, messageId)
+    fun getFullMessage(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable boxId: String, @PathVariable messageId: String): Message =
+        ehboxService.getFullMessage(keystoreId, tokenId, passPhrase, boxId, messageId)
+
     @PostMapping("")
-    fun sendMessage(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, message: DocumentMessage, @RequestParam publicationReceipt: Boolean?, @RequestParam receptionReceipt: Boolean?, @RequestParam readReceipt: Boolean?): Boolean = ehboxService.sendMessage(keystoreId, tokenId, passPhrase, message, publicationReceipt ?: false, receptionReceipt ?: false, readReceipt ?: false)
+    fun sendMessage(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        message: DocumentMessage,
+        @RequestParam publicationReceipt: Boolean?,
+        @RequestParam receptionReceipt: Boolean?,
+        @RequestParam readReceipt: Boolean?
+    ): Boolean = ehboxService.sendMessage(
+        keystoreId,
+        tokenId,
+        passPhrase,
+        message,
+        publicationReceipt ?: false,
+        receptionReceipt ?: false,
+        readReceipt ?: false
+    )
+
     @PostMapping("/move/from/{source}/to/{destination}")
-    fun moveMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestBody messageIds: List<String>, @PathVariable source: String, @PathVariable destination: String): Boolean = ehboxService.moveMessages(keystoreId, tokenId, passPhrase, messageIds, source, destination)
+    fun moveMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestBody messageIds: List<String>, @PathVariable source: String, @PathVariable destination: String): Boolean =
+        ehboxService.moveMessages(keystoreId, tokenId, passPhrase, messageIds, source, destination)
+
     @PostMapping("/move/from/{source}")
-    fun deleteMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestBody messageIds: List<String>, @PathVariable source: String): Boolean = ehboxService.deleteMessages(keystoreId, tokenId, passPhrase, messageIds, source)
+    fun deleteMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestBody messageIds: List<String>, @PathVariable source: String): Boolean =
+        ehboxService.deleteMessages(keystoreId, tokenId, passPhrase, messageIds, source)
 }
