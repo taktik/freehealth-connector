@@ -11,8 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit4.SpringRunner
+import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.dto.dmg.DmgConsultation
+import org.taktik.freehealth.middleware.dto.dmg.DmgRegistration
 import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -32,6 +34,7 @@ class DmgControllerTest : EhealthTest() {
             900 to listOf("60021055234", "33011334166", "48030158922", "52012945565", "10110111079", "98051354789")
     )
     private val oas = listOf("100", "300", "500", "600")
+    private val regOa = listOf("100") //do not register to all OA at the same time, deregister is not possible
     private fun getNisses(idx: Int) = listOf(nisses[100]!![idx], nisses[300]!![idx], nisses[500]!![idx], nisses[600]!![idx], nisses[900]!![idx])
 
     @Autowired
@@ -51,7 +54,7 @@ class DmgControllerTest : EhealthTest() {
         val now = LocalDateTime.now()
 
         val results = getNisses(0).map {
-            val str = this.restTemplate.getForObject("http://localhost:$port/gmd?hcpNihii=11478761004&hcpSsin=$ssin1&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientSsin=$it&requestDate=${now.minusMonths(25).toInstant(ZoneOffset.UTC).toEpochMilli()}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+            val str = this.restTemplate.getForObject("http://localhost:$port/gmd?hcpNihii=11478761004&hcpSsin=$ssin1&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientSsin=$it&requestDate=${now.minusMonths(25).toInstant(ZoneOffset.UTC).toEpochMilli()}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", String::class.java, passPhrase)
             val dmgc = gson.fromJson(str, DmgConsultation::class.java)
 
             dmgc
@@ -73,6 +76,22 @@ class DmgControllerTest : EhealthTest() {
             val dmgc = gson.fromJson(str, DmgConsultation::class.java)
 
             dmgc
+        }
+
+        results.forEach {
+            assertThat(it.errors).isEmpty()
+        }
+    }
+
+    @Test
+    fun scenario3() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val now = LocalDateTime.now()
+        val results = regOa.map {
+            val str = this.restTemplate.postForObject("http://localhost:$port/gmd/register/$it?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName1}&hcpLastName={lastName1}&bic=$BIC1&iban=$IBAN1", null, String::class.java, passPhrase, firstName1, lastName1)
+            val dmgr = gson.fromJson(str, DmgRegistration::class.java)
+
+            dmgr
         }
 
         results.forEach {
