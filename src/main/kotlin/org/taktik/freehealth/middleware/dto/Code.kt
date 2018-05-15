@@ -29,12 +29,17 @@ class Code(val type: String, val code: String, val version: String? = null) {
     //ex: type ICD (type + version + code combination must be unique) (or from tags -> CD-ITEM), code I06.2 (or from tags -> healthcareelement). Local codes are encoded as LOCAL:SLLOCALFROMMYSOFT, version must be lexicographically sortable
     var regions: Set<String> = HashSet() //ex: be,fr
     var level: Int? = null //ex: 0 = System, not to be modified by user, 1 = optional, created or modified by user
-    var label: MutableMap<String, String> = HashMap() //ex: {en: Rheumatic Aortic Stenosis, fr: Sténose rhumatoïde de l'Aorte}
+    var label: MutableMap<String, String> =
+        HashMap() //ex: {en: Rheumatic Aortic Stenosis, fr: Sténose rhumatoïde de l'Aorte}
     var links: List<String> = LinkedList() //Links towards related codes
     var searchTerms: Map<String, Set<String>> = HashMap()//Extra search terms/ language
     var data: String? = null
 
-    constructor(typeAndCodeAndVersion: String) : this(typeAndCodeAndVersion.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0], typeAndCodeAndVersion.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1], typeAndCodeAndVersion.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[2])
+    constructor(typeAndCodeAndVersion: String) : this(
+        typeAndCodeAndVersion.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0],
+        typeAndCodeAndVersion.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1],
+        typeAndCodeAndVersion.split("\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[2]
+    )
 
     override fun toString(): String {
         return this.type + ":" + this.code + ":" + this.version
@@ -44,9 +49,7 @@ class Code(val type: String, val code: String, val version: String? = null) {
         if (this === other) return true
         if (other == null || this.javaClass != other.javaClass) return false
         val code1 = other as Code?
-        return type == code1!!.type &&
-                code == code1.code &&
-                version == code1.version
+        return type == code1!!.type && code == code1.code && version == code1.version
     }
 
     override fun hashCode(): Int {

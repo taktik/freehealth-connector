@@ -50,25 +50,37 @@ import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 
 @Service
-class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap : IMap<UUID, String>) : STSService {
-    val freehealthStsService: org.taktik.connector.technical.service.sts.STSService = org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
-    val freehealthKeyDepotService: org.taktik.connector.technical.service.keydepot.KeyDepotService = org.taktik.connector.technical.service.keydepot.impl.KeyDepotServiceImpl()
+class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, String>) : STSService {
+    val freehealthStsService: org.taktik.connector.technical.service.sts.STSService =
+        org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
+    val freehealthKeyDepotService: org.taktik.connector.technical.service.keydepot.KeyDepotService =
+        org.taktik.connector.technical.service.keydepot.impl.KeyDepotServiceImpl()
     val transformer = TransformerFactory.newInstance().newTransformer()
 
     override fun registerToken(tokenId: UUID, token: String) {
         tokensMap[tokenId] = token
     }
 
-    override fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String) : SAMLToken? {
+    override fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken? {
         return tokensMap[tokenId]?.let {
             val keyStore = getKeyStore(keystoreId, passPhrase)
             val result = DOMResult()
             transformer.transform(StreamSource(StringReader(it)), result)
-            return SAMLTokenFactory.getInstance().createSamlToken(result.node.firstChild as Element, KeyStoreCredential(keyStore, "authentication", passPhrase))
+            return SAMLTokenFactory.getInstance()
+                .createSamlToken(
+                    result.node.firstChild as Element,
+                    KeyStoreCredential(keyStore, "authentication", passPhrase)
+                )
         }
     }
 
-    override fun requestToken(keystoreId: UUID, nihiiOrSsin: String, passPhrase: String, medicalHouse: Boolean, extraDesignators: List<Pair<String,String>>): SamlTokenResult {
+    override fun requestToken(
+        keystoreId: UUID,
+        nihiiOrSsin: String,
+        passPhrase: String,
+        medicalHouse: Boolean,
+        extraDesignators: List<Pair<String, String>>
+    ): SamlTokenResult {
         val keyStore = getKeyStore(keystoreId, passPhrase)
         val credential = KeyStoreCredential(keyStore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keyStore, passPhrase.toCharArray())
@@ -81,33 +93,77 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap : IM
 
         val etk = this.getEtk(identifierType, java.lang.Long.parseLong(identifierValue), application)
         if (!hokPrivateKeys.containsKey(etk.certificate.serialNumber.toString(10))) {
-            throw TechnicalConnectorException(ERROR_CONFIG, arrayOf<Any>("The certificate from the ETK don't match with the one in the encryption keystore"))
+            throw TechnicalConnectorException(
+                ERROR_CONFIG,
+                arrayOf<Any>("The certificate from the ETK don't match with the one in the encryption keystore")
+            )
         }
 
-        val designators =
-                if (medicalHouse) listOf(
-                        SAMLAttributeDesignator("urn:fgov:be:1.0:medicalhouse:nihii-number", "urn:be:fgov:identification-namespace"),
-                        SAMLAttributeDesignator("urn:fgov:be:1.0:certificateholder:medicalhouse:nihii-number", "urn:be:fgov:identification-namespace"),
-                        SAMLAttributeDesignator("urn:fgov:be:1.0:medicalhouse:nihii-number", "urn:be:fgov:certified-namespace:ehealth"),
-                        SAMLAttributeDesignator("urn:fgov:be:1.0:certificateholder:medicalhouse:nihii-number", "urn:be:fgov:certified-namespace:ehealth")
-                ) else listOf(
-                        SAMLAttributeDesignator("urn:be:fgov:ehealth:1.0:certificateholder:person:ssin", "urn:be:fgov:identification-namespace"),
-                        SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
-                        SAMLAttributeDesignator("urn:be:fgov:person:ssin:doctor:boolean", "urn:be:fgov:certified-namespace:ehealth"),
-                        SAMLAttributeDesignator("urn:be:fgov:person:ssin:ehealth:1.0:doctor:nihii11", "urn:be:fgov:certified-namespace:ehealth"),
-                        SAMLAttributeDesignator("urn:be:fgov:person:ssin:ehealth:1.0:fpsph:doctor:boolean", "urn:be:fgov:certified-namespace:ehealth")
-                ) +
-                extraDesignators.map { SAMLAttributeDesignator(it.second, it.first) }
+        val designators = if (medicalHouse) listOf(
+            SAMLAttributeDesignator(
+                "urn:fgov:be:1.0:medicalhouse:nihii-number",
+                "urn:be:fgov:identification-namespace"
+            ),
+            SAMLAttributeDesignator(
+                "urn:fgov:be:1.0:certificateholder:medicalhouse:nihii-number",
+                "urn:be:fgov:identification-namespace"
+            ),
+            SAMLAttributeDesignator(
+                "urn:fgov:be:1.0:medicalhouse:nihii-number",
+                "urn:be:fgov:certified-namespace:ehealth"
+            ),
+            SAMLAttributeDesignator(
+                "urn:fgov:be:1.0:certificateholder:medicalhouse:nihii-number",
+                "urn:be:fgov:certified-namespace:ehealth"
+            )
+        ) else listOf(
+            SAMLAttributeDesignator(
+                "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
+                "urn:be:fgov:identification-namespace"
+            ),
+            SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
+            SAMLAttributeDesignator(
+                "urn:be:fgov:person:ssin:doctor:boolean",
+                "urn:be:fgov:certified-namespace:ehealth"
+            ),
+            SAMLAttributeDesignator(
+                "urn:be:fgov:person:ssin:ehealth:1.0:doctor:nihii11",
+                "urn:be:fgov:certified-namespace:ehealth"
+            ),
+            SAMLAttributeDesignator(
+                "urn:be:fgov:person:ssin:ehealth:1.0:fpsph:doctor:boolean",
+                "urn:be:fgov:certified-namespace:ehealth"
+            )
+        ) + extraDesignators.map { SAMLAttributeDesignator(it.second, it.first) }
 
         val attributes = if (medicalHouse) listOf(
-                SAMLAttribute("urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number", "urn:be:fgov:identification-namespace",nihiiOrSsin),
-                SAMLAttribute("urn:be:fgov:ehealth:1.0:certificateholder:medicalhouse:nihii-number", "urn:be:fgov:identification-namespace",nihiiOrSsin)
+            SAMLAttribute(
+                "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number",
+                "urn:be:fgov:identification-namespace",
+                nihiiOrSsin
+            ),
+            SAMLAttribute(
+                "urn:be:fgov:ehealth:1.0:certificateholder:medicalhouse:nihii-number",
+                "urn:be:fgov:identification-namespace",
+                nihiiOrSsin
+            )
         ) else listOf(
-                SAMLAttribute("urn:be:fgov:ehealth:1.0:certificateholder:person:ssin", "urn:be:fgov:identification-namespace",nihiiOrSsin),
-                SAMLAttribute("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace",nihiiOrSsin)
+            SAMLAttribute(
+                "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
+                "urn:be:fgov:identification-namespace",
+                nihiiOrSsin
+            ), SAMLAttribute("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace", nihiiOrSsin)
         )
 
-        val assertion = freehealthStsService.getToken(credential, credential, attributes, designators, "urn:oasis:names:tc:SAML:1.0:cm:holder-of-key", 24)
+        val assertion =
+            freehealthStsService.getToken(
+                credential,
+                credential,
+                attributes,
+                designators,
+                "urn:oasis:names:tc:SAML:1.0:cm:holder-of-key",
+                24
+            )
 
         //Serialize
         val result = StreamResult(StringWriter())
@@ -127,14 +183,23 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap : IM
     }
 
     override fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore? {
-        val keyStoreData = keystoresMap.get(keystoreId) ?: throw(IllegalArgumentException("Missing Keystore, please upload a keystore and use the returned keystoreId"))
+        val keyStoreData =
+            keystoresMap.get(keystoreId)
+                ?: throw(IllegalArgumentException("Missing Keystore, please upload a keystore and use the returned keystoreId"))
         val keyStore = KeyManager.getKeyStore(keyStoreData.inputStream(), "PKCS12", passPhrase.toCharArray())
         return keyStore
     }
 
     @Throws(TechnicalConnectorException::class)
     fun getEtk(identifierType: IdentifierType, identifierValue: Long, application: String): EncryptionToken {
-        return this.freehealthKeyDepotService.getETKSet(identifierType, identifierType.formatIdentifierValue(identifierValue), application)?.let { if (it.size==1) it.iterator().next() else null } ?: throw TechnicalConnectorException(ERROR_ETK_NOTFOUND, arrayOfNulls<Any>(0))
+        return this.freehealthKeyDepotService.getETKSet(
+            identifierType,
+            identifierType.formatIdentifierValue(identifierValue),
+            application
+        )?.let { if (it.size == 1) it.iterator().next() else null } ?: throw TechnicalConnectorException(
+            ERROR_ETK_NOTFOUND,
+            arrayOfNulls<Any>(0)
+        )
     }
 
     override fun checkIfKeystoreExist(keystoreId: UUID): Boolean?{

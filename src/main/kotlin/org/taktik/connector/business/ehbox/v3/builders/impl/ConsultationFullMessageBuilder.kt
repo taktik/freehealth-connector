@@ -23,16 +23,11 @@ package org.taktik.connector.business.ehbox.v3.builders.impl
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.ConsultationAnnexType
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.ConsultationContentType
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.ConsultationDocumentType
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.ConsultationMessageType
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.ContentContextType
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.DestinationContextType
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetFullMessageResponse
-import be.fgov.ehealth.ehbox.core.v3.ErrorType
 import be.fgov.ehealth.ehbox.core.v3.FreeInformationsType
-import be.fgov.ehealth.ehbox.core.v3.Row
-import be.fgov.ehealth.ehbox.core.v3.Table
 import org.apache.commons.lang.ArrayUtils
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.taktik.connector.business.ehbox.api.domain.AcknowledgeMessage
 import org.taktik.connector.business.ehbox.api.domain.Addressee
@@ -56,9 +51,19 @@ import java.security.KeyStore
 class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessageResponse>() {
 
     @Throws(EhboxBusinessConnectorException::class, TechnicalConnectorException::class)
-    fun buildFullMessage(keystore: KeyStore, passPhrase: String, response: GetFullMessageResponse): Message<GetFullMessageResponse> {
+    fun buildFullMessage(
+        keystore: KeyStore,
+        passPhrase: String,
+        response: GetFullMessageResponse
+    ): Message<GetFullMessageResponse> {
         val receivedMsg = response.message
-        val message = this.createMessage(receivedMsg.contentContext.contentSpecification, response, receivedMsg.messageId, response.message.publicationId)
+        val message =
+            this.createMessage(
+                receivedMsg.contentContext.contentSpecification,
+                response,
+                receivedMsg.messageId,
+                response.message.publicationId
+            )
         val container = AbstractConsultationBuilder.ExceptionContainer(message)
         this.processMessageInfo(response.messageInfo, message)
         this.processSender(response.sender, null, message)
@@ -68,7 +73,13 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    private fun processContentContext(keystore: KeyStore, passPhrase: String, context: ContentContextType, message: Message<GetFullMessageResponse>, container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>) {
+    private fun processContentContext(
+        keystore: KeyStore,
+        passPhrase: String,
+        context: ContentContextType,
+        message: Message<GetFullMessageResponse>,
+        container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
+    ) {
         this.processContentSpecification(context.contentSpecification, message)
         this.processCustomMetas(context.customMetas, message)
         if (message is DocumentMessage<*>) {
@@ -108,7 +119,13 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    private fun processDocument(keystore: KeyStore, passPhrase: String, response: ConsultationContentType, message: Message<*>, container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>) {
+    private fun processDocument(
+        keystore: KeyStore,
+        passPhrase: String,
+        response: ConsultationContentType,
+        message: Message<*>,
+        container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
+    ) {
         val documentMessage = message as DocumentMessage<*>
         this.processINSSPatient(keystore, passPhrase, response.encryptableINSSPatient, documentMessage, container)
         this.processFreeText(keystore, passPhrase, response.freeInformations, documentMessage, container)
@@ -136,15 +153,27 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
             destination.quality = destinationContext.quality
             message.getDestinations().add(destination)
         }
-
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    private fun processAnnex(keystore: KeyStore, passPhrase: String, documentMessage: DocumentMessage<*>, annexType: ConsultationAnnexType, container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>) {
+    private fun processAnnex(
+        keystore: KeyStore,
+        passPhrase: String,
+        documentMessage: DocumentMessage<*>,
+        annexType: ConsultationAnnexType,
+        container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
+    ) {
         val annex = Document()
         annex.filename = annexType.downloadFileName
         annex.mimeType = annexType.mimeType
-        val annexTitle = this.handleAndDecryptIfNeeded(keystore, passPhrase, annexType.encryptableTitle, documentMessage.isEncrypted, container)
+        val annexTitle =
+            this.handleAndDecryptIfNeeded(
+                keystore,
+                passPhrase,
+                annexType.encryptableTitle,
+                documentMessage.isEncrypted,
+                container
+            )
         if (annexTitle != null) {
             annex.title = ConnectorIOUtils.toString(annexTitle, Charset.UTF_8)
         }
@@ -153,17 +182,39 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
         if (annexType.encryptableBinaryContent != null) {
             annexHandler = annexType.encryptableBinaryContent
             if (annexHandler != null) {
-                annex.setContent(this.base64decoding(keystore, passPhrase, annexHandler, documentMessage.isEncrypted, container))
+                annex.setContent(
+                    this.base64decoding(
+                        keystore,
+                        passPhrase,
+                        annexHandler,
+                        documentMessage.isEncrypted,
+                        container
+                    )
+                )
             }
         } else if (annexType.encryptableTextContent != null) {
-            annex.setContent(this.handleAndDecryptIfNeeded(keystore, passPhrase, annexType.encryptableTextContent, documentMessage.isEncrypted, container))
+            annex.setContent(
+                this.handleAndDecryptIfNeeded(
+                    keystore,
+                    passPhrase,
+                    annexType.encryptableTextContent,
+                    documentMessage.isEncrypted,
+                    container
+                )
+            )
         }
 
         documentMessage.annexList.add(annex)
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    private fun processMainDocument(keystore: KeyStore, passPhrase: String, response: ConsultationDocumentType, documentMessage: DocumentMessage<*>, container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>) {
+    private fun processMainDocument(
+        keystore: KeyStore,
+        passPhrase: String,
+        response: ConsultationDocumentType,
+        documentMessage: DocumentMessage<*>,
+        container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
+    ) {
         val document = Document()
         document.filename = response.downloadFileName
         document.mimeType = response.mimeType
@@ -173,24 +224,46 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
             responseHandler = response.encryptableBinaryContent
             if (responseHandler != null) {
                 try {
-                    document.setContent(this.base64decoding(keystore, passPhrase, responseHandler, documentMessage.isEncrypted, container))
+                    document.setContent(
+                        this.base64decoding(
+                            keystore,
+                            passPhrase,
+                            responseHandler,
+                            documentMessage.isEncrypted,
+                            container
+                        )
+                    )
                 } catch (var7: UnsealConnectorException) {
                     document.setException(var7)
                 }
-
             }
         } else if (response.encryptableTextContent != null) {
-            document.setContent(this.handleAndDecryptIfNeeded(keystore, passPhrase, response.encryptableTextContent, documentMessage.isEncrypted, container))
+            document.setContent(
+                this.handleAndDecryptIfNeeded(
+                    keystore,
+                    passPhrase,
+                    response.encryptableTextContent,
+                    documentMessage.isEncrypted,
+                    container
+                )
+            )
         }
 
         documentMessage.document = document
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    private fun processINSSPatient(keystore: KeyStore, passPhrase: String, encryptableINSSPatient: ByteArray?, documentMessage: DocumentMessage<*>, container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>) {
+    private fun processINSSPatient(
+        keystore: KeyStore,
+        passPhrase: String,
+        encryptableINSSPatient: ByteArray?,
+        documentMessage: DocumentMessage<*>,
+        container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
+    ) {
         if (encryptableINSSPatient != null) {
             val encrypted = documentMessage.isEncrypted
-            val patientInss = this.handleAndDecryptIfNeeded(keystore, passPhrase, encryptableINSSPatient, encrypted, container)
+            val patientInss =
+                this.handleAndDecryptIfNeeded(keystore, passPhrase, encryptableINSSPatient, encrypted, container)
             if (patientInss != null) {
                 documentMessage.patientInss = ConnectorIOUtils.toString(patientInss, Charset.UTF_8)
                 documentMessage.isEncrypted = encrypted
@@ -199,9 +272,22 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    private fun processFreeText(keystore: KeyStore, passPhrase: String, response: FreeInformationsType?, documentMessage: DocumentMessage<*>, container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>) {
+    private fun processFreeText(
+        keystore: KeyStore,
+        passPhrase: String,
+        response: FreeInformationsType?,
+        documentMessage: DocumentMessage<*>,
+        container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
+    ) {
         if (response != null) {
-            val freeText = this.handleAndDecryptIfNeeded(keystore, passPhrase, response.encryptableFreeText, documentMessage.isEncrypted, container)
+            val freeText =
+                this.handleAndDecryptIfNeeded(
+                    keystore,
+                    passPhrase,
+                    response.encryptableFreeText,
+                    documentMessage.isEncrypted,
+                    container
+                )
             if (freeText != null && freeText.size > 0) {
                 documentMessage.freeText = ConnectorIOUtils.toString(freeText, Charset.UTF_8)
             }
@@ -211,8 +297,22 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
                 documentMessage.freeInformationTableTitle = table.title
 
                 for (row in table.rows) {
-                    val decryptedKeyBytes = this.handleAndDecryptIfNeeded(keystore, passPhrase, row.encryptableLeftCell, documentMessage.isEncrypted, container)
-                    val decryptedValueBytes = this.handleAndDecryptIfNeeded(keystore, passPhrase, row.encryptableRightCell, documentMessage.isEncrypted, container)
+                    val decryptedKeyBytes =
+                        this.handleAndDecryptIfNeeded(
+                            keystore,
+                            passPhrase,
+                            row.encryptableLeftCell,
+                            documentMessage.isEncrypted,
+                            container
+                        )
+                    val decryptedValueBytes =
+                        this.handleAndDecryptIfNeeded(
+                            keystore,
+                            passPhrase,
+                            row.encryptableRightCell,
+                            documentMessage.isEncrypted,
+                            container
+                        )
                     val decryptedKey = ConnectorIOUtils.toString(decryptedKeyBytes, Charset.UTF_8)
                     val decryptedValue = ConnectorIOUtils.toString(decryptedValueBytes, Charset.UTF_8)
                     documentMessage.freeInformationTableRows.put(decryptedKey, decryptedValue)
@@ -222,7 +322,13 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    private fun base64decoding(keystore: KeyStore, passPhrase: String, dataHandler: DataHandler, encrypted: Boolean, container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>): ByteArray? {
+    private fun base64decoding(
+        keystore: KeyStore,
+        passPhrase: String,
+        dataHandler: DataHandler,
+        encrypted: Boolean,
+        container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
+    ): ByteArray? {
         var inputStream: InputStream? = null
 
         val result: ByteArray?
@@ -234,7 +340,11 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
             }
             result = this.handleAndDecryptIfNeeded(keystore, passPhrase, byteVal, encrypted, container)
         } catch (ex: IOException) {
-            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, ex, "Unable to decode datahandler")
+            throw TechnicalConnectorException(
+                TechnicalConnectorExceptionValues.ERROR_GENERAL,
+                ex,
+                "Unable to decode datahandler"
+            )
         } finally {
             ConnectorIOUtils.closeQuietly(inputStream)
         }

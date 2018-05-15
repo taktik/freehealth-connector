@@ -25,7 +25,12 @@ enum class ReimbursementInstructions(val translations: Map<String, String>) {
     FIRST_DOSE(mapOf("fr" to "1ère dose", "nl" to "1ste dosis")),
     SECOND_DOSE(mapOf("fr" to "2ème dose", "nl" to "2de dosis")),
     THIRD_DOSE(mapOf("fr" to "3ème dose", "nl" to "3de dosis")),
-    CHRONIC_KINDEY_DISEASE(mapOf("fr" to "Trajet de soins insuffisance rénale chronique", "nl" to "Zorgtraject chronische nierinsufficiëntie")),
+    CHRONIC_KINDEY_DISEASE(
+        mapOf(
+            "fr" to "Trajet de soins insuffisance rénale chronique",
+            "nl" to "Zorgtraject chronische nierinsufficiëntie"
+        )
+    ),
     DIABETES_TREATMENT(mapOf("fr" to "Trajet de soins diabète", "nl" to "Zorgtraject diabetes")),
     DIABETES_CONVENTION(mapOf("fr" to "Convention diabète", "nl" to "Diabetesconventie")),
     NOT_REIMBURSABLE(mapOf("fr" to "Non remboursable", "nl" to "Niet-vergoedbaar"))

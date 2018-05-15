@@ -25,7 +25,7 @@ class HubControllerTest : EhealthTest() {
     fun getPatient() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getPatientResult = this.restTemplate.getForObject("http://localhost:$port/hub/patient/${"73032929895"}?hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        val getPatientResult = this.restTemplate.getForObject("http://localhost:$port/hub/patient/${"73032929895"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
         Assertions.assertThat(getPatientResult != null && getPatientResult.length>2 && getPatientResult.startsWith("["))
     }
 
@@ -33,7 +33,7 @@ class HubControllerTest : EhealthTest() {
     fun putPatient() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val putPatientResult = this.restTemplate.postForObject("http://localhost:$port/hub/patient/${"Duchâteau"}/${"73032929895"}?hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&firstName=Antoine&dateOfBirth=19740104&gender=male", null, String::class.java)
+        val putPatientResult = this.restTemplate.postForObject("http://localhost:$port/hub/patient/${"Duchâteau"}/${"73032929895"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&firstName=Antoine&dateOfBirth=19740104&gender=male", null, String::class.java)
         Assertions.assertThat(putPatientResult != null && putPatientResult.length>2 && putPatientResult.startsWith("["))
     }
 
@@ -41,7 +41,7 @@ class HubControllerTest : EhealthTest() {
     fun getHcpConsent() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getPatientResult = this.restTemplate.getForObject("http://localhost:$port/hub/hcpconsent/${nihii1}?hcpSsin=${ssin1}&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        val getPatientResult = this.restTemplate.getForObject("http://localhost:$port/hub/hcpconsent/$nihii1?hcpSsin=$ssin1&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
         Assertions.assertThat(getPatientResult != null && getPatientResult.length>2 && getPatientResult.startsWith("["))
     }
 
@@ -49,15 +49,15 @@ class HubControllerTest : EhealthTest() {
     fun getPatientConsent() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getPatientResult = this.restTemplate.getForObject("http://localhost:$port/hub/consent/${"73032929895"}?hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
-        Assertions.assertThat(getPatientResult != null && getPatientResult.length>2 && getPatientResult.startsWith("["))
+        val getPatientResult = this.restTemplate.getForObject("http://localhost:$port/hub/consent/${"73032929895"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+            Assertions.assertThat(getPatientResult != null && getPatientResult.length>2 && getPatientResult.startsWith("["))
     }
 
     @Test
     fun putPatientConsent() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val putPatientResult = this.restTemplate.postForObject("http://localhost:$port/hub/consent/${"73032929895"}?hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&eidCardNumber=592363302467", null, String::class.java)
+        val putPatientResult = this.restTemplate.postForObject("http://localhost:$port/hub/consent/${"73032929895"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&eidCardNumber=592363302467", null, String::class.java)
         Assertions.assertThat(putPatientResult != null && putPatientResult.length>2 && putPatientResult.startsWith("["))
     }
 
@@ -65,7 +65,7 @@ class HubControllerTest : EhealthTest() {
     fun getTransactionList() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getTransactionsListResult = this.restTemplate.getForObject("http://localhost:$port/hub/list/${"73032929895"}?hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        val getTransactionsListResult = this.restTemplate.getForObject("http://localhost:$port/hub/list/${"73032929895"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
         Assertions.assertThat(getTransactionsListResult != null && getTransactionsListResult.length>2 && getTransactionsListResult.startsWith("["))
     }
 

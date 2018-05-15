@@ -33,17 +33,94 @@ import java.util.*
 @RequestMapping("/ab")
 class AddressbookController(val addressbookService: AddressbookService) {
     @GetMapping("/search/hcp/{lastName}")
-    fun searchHcp(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable lastName: String, @RequestParam(required = false) firstName: String? = null, @RequestParam(required = false) type : String?): List<HealthcareParty> = addressbookService.searchHcp(keystoreId, tokenId, passPhrase, lastName, firstName, type ?: "PHYSICIAN")
+    fun searchHcp(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @PathVariable lastName: String,
+        @RequestParam(
+                    required = false
+                ) firstName: String? = null,
+        @RequestParam(required = false) type: String?
+    ): List<HealthcareParty> = addressbookService.searchHcp(
+        keystoreId, tokenId, passPhrase, lastName, firstName, type ?: "PHYSICIAN"
+    )
+
     @GetMapping("/search/org/{name}")
-    fun searchOrg(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable name : String, @RequestParam(required = false) type : String?): List<HealthcareParty> = addressbookService.searchOrg(keystoreId, tokenId, passPhrase, name, type ?: "HOSPITAL")
+    fun searchOrg(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @PathVariable name: String,
+        @RequestParam(
+                    required = false
+                ) type: String?
+    ): List<HealthcareParty> = addressbookService.searchOrg(
+        keystoreId, tokenId, passPhrase, name, type ?: "HOSPITAL"
+    )
+
     @GetMapping("/hcp/nihii/{nihii}")
-    fun getHcpByNihii(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable nihii: String, @RequestParam(required = false) language: String?): HealthcareParty = addressbookService.getHcp(keystoreId,tokenId,passPhrase,nihii,null, language ?: "fr")
+    fun getHcpByNihii(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @PathVariable nihii: String,
+        @RequestParam(
+                    required = false
+                ) language: String?
+    ): HealthcareParty = addressbookService.getHcp(
+        keystoreId, tokenId, passPhrase, nihii, null, language ?: "fr"
+    )
+
     @GetMapping("/hcp/ssin/{ssin}")
-    fun getHcpBySsin(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable ssin: String, @RequestParam(required = false) language: String?): HealthcareParty = addressbookService.getHcp(keystoreId,tokenId,passPhrase,null, ssin, language ?: "fr")
+    fun getHcpBySsin(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @PathVariable ssin: String,
+        @RequestParam(
+                    required = false
+                ) language: String?
+    ): HealthcareParty = addressbookService.getHcp(
+        keystoreId, tokenId, passPhrase, null, ssin, language ?: "fr"
+    )
+
     @GetMapping("/org/nihii/{nihii}")
-    fun getOrgByNihii(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable nihii: String, @RequestParam(required = false) language: String?): HealthcareParty = addressbookService.getOrg(keystoreId,tokenId,passPhrase, null, null, nihii, language ?: "fr")
+    fun getOrgByNihii(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @PathVariable nihii: String,
+        @RequestParam(
+                    required = false
+                ) language: String?
+    ): HealthcareParty = addressbookService.getOrg(
+        keystoreId, tokenId, passPhrase, null, null, nihii, language ?: "fr"
+    )
+
     @GetMapping("/org/cbe/{cbe}")
-    fun getOrgByCbe(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable cbe: String?, @RequestParam(required = false) language: String?): HealthcareParty = addressbookService.getOrg(keystoreId,tokenId,passPhrase,null, cbe,null, language ?: "fr")
+    fun getOrgByCbe(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @PathVariable cbe: String?,
+        @RequestParam(
+                    required = false
+                ) language: String?
+    ): HealthcareParty = addressbookService.getOrg(
+        keystoreId, tokenId, passPhrase, null, cbe, null, language ?: "fr"
+    )
+
     @GetMapping("/org/ehp/{ehp}")
-    fun getOrgByEhp(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable ehp: String?, @RequestParam(required = false) language: String?): HealthcareParty = addressbookService.getOrg(keystoreId,tokenId,passPhrase,ehp, null,null, language ?: "fr")
+    fun getOrgByEhp(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @PathVariable ehp: String?,
+        @RequestParam(
+                    required = false
+                ) language: String?
+    ): HealthcareParty = addressbookService.getOrg(
+        keystoreId, tokenId, passPhrase, ehp, null, null, language ?: "fr"
+    )
 }

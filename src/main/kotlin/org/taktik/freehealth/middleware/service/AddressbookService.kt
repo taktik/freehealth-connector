@@ -24,8 +24,39 @@ import org.taktik.freehealth.middleware.dto.HealthcareParty
 import java.util.*
 
 interface AddressbookService {
-    fun searchHcp(keystoreId: UUID, tokenId: UUID, passPhrase: String, queryLastName: String, queryFirstName: String?, type : String = "PHYSICIAN"): List<HealthcareParty>
-    fun searchOrg(keystoreId: UUID, tokenId: UUID, passPhrase: String, name : String, type : String = "HOSPITAL"): List<HealthcareParty>
-    fun getHcp(keystoreId: UUID, tokenId: UUID, passPhrase: String, nihii: String?, ssin: String?, language: String ="fr"): HealthcareParty
-    fun getOrg(keystoreId: UUID, tokenId: UUID, passPhrase: String, ehp: String?, cbe: String?, nihii: String?, language: String ="fr"): HealthcareParty
+    fun searchHcp(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        queryLastName: String,
+        queryFirstName: String?,
+        type: String = "PHYSICIAN"
+    ): List<HealthcareParty>
+
+    fun searchOrg(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        name: String,
+        type: String = "HOSPITAL"
+    ): List<HealthcareParty>
+
+    fun getHcp(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        nihii: String?,
+        ssin: String?,
+        language: String = "fr"
+    ): HealthcareParty
+
+    fun getOrg(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        ehp: String?,
+        cbe: String?,
+        nihii: String?,
+        language: String = "fr"
+    ): HealthcareParty
 }

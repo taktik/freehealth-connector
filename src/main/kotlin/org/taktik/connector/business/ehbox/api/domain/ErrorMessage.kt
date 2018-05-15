@@ -29,6 +29,8 @@ class ErrorMessage<T> : Message<T>() {
     val errorMsg: MutableList<String> = ArrayList()
 
     override fun toString(): String {
-        return "ErrorMessage [getErrorTitle()=" + this.title + "]" + "Message [id=" + this.id + ", publicationId=" + this.publicationId + ", sender=" + this.sender + ", destinations=" + this.getDestinations() + ", important=" + this.isImportant + ", encrypted=" + this.isEncrypted + "]"
+        return "ErrorMessage [getErrorTitle()=${this.title}]Message [id=${this.id}, " +
+            "publicationId=${this.publicationId}, sender=${this.sender}, destinations=${this.getDestinations()}, " +
+            "important=${this.isImportant}, encrypted=${this.isEncrypted}]"
     }
 }

@@ -12,5 +12,4 @@ import javax.xml.transform.TransformerException;
 import org.joda.time.DateTime;
 
 public interface RequestObjectBuilder {
-   SendAttestationRequest buildSendAttestationRequest(boolean var1, InputReference var2, Ssin var3, DateTime var4, Kmehrmessage var5) throws TechnicalConnectorException, AttestBusinessConnectorException, JAXBException, TransformerException, UnsupportedEncodingException;
 }

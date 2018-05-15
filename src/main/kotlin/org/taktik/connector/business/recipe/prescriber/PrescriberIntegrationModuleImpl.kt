@@ -79,8 +79,7 @@ import java.io.ByteArrayInputStream
 import java.util.ArrayList
 import java.util.HashMap
 
-class PrescriberIntegrationModuleImpl @Throws(IntegrationModuleException::class)
-constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
+class PrescriberIntegrationModuleImpl @Throws(IntegrationModuleException::class) constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
 
     private val keyCache = HashMap<String, KeyResult>()
     /**
@@ -90,7 +89,6 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
     private val kgssService = KgssServiceImpl()
     private val recipePrescriberService = RecipePrescriberServiceImpl()
     private val kmehrHelper = KmehrHelper(PropertyHandler.getInstance().properties)
-
 
     init {
         LOG.info("*************** Prescriber System module init correctly *******************")
@@ -107,7 +105,13 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
     @Throws(IntegrationModuleException::class)
     override fun prepareCreatePrescription(nihii: String, patientId: String, prescriptionType: String) {
         val cacheId = "($patientId#$prescriptionType)"
-        getNewKeyFromKgss(prescriptionType, nihii, null, patientId, etkHelper!!.systemETK[0].encoded)?.let { keyCache.put(cacheId, it) }
+        getNewKeyFromKgss(
+            prescriptionType,
+            nihii,
+            null,
+            patientId,
+            etkHelper!!.systemETK[0].encoded
+        )?.let { keyCache.put(cacheId, it) }
     }
 
     /**
@@ -115,7 +119,7 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
      *
      *
      * @param nihii
-     * @param patientId        the patient id
+     * @param patientId the patient id
      * @param prescriptionType the prescription type
      * @return the new key
      * @throws IntegrationModuleException the integration module exception
@@ -134,7 +138,6 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
         return key
     }
 
-
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
     override fun ping(samlToken: SAMLToken, credential: Credential) {
         var response: AliveCheckResponse? = null
@@ -146,7 +149,6 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
 
         LOG.info("Ping response : " + response.aliveCheckResult)
         checkStatus(response)
-
     }
 
     /**
@@ -159,15 +161,23 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
      * @param credential
      * @param nihii
      * @param feedbackRequested the feedback requested
-     * @param patientId         the patient id
-     * @param prescription      the prescription
-     * @param prescriptionType  the prescription type
+     * @param patientId the patient id
+     * @param prescription the prescription
+     * @param prescriptionType the prescription type
      * @return the string
      * @throws IntegrationModuleException the integration module exception
      */
 
     @Throws(IntegrationModuleException::class)
-    override fun createPrescription(samlToken: SAMLToken, credential: Credential, nihii: String, feedbackRequested: Boolean, patientId: String, prescription: ByteArray, prescriptionType: String): String? {
+    override fun createPrescription(
+        samlToken: SAMLToken,
+        credential: Credential,
+        nihii: String,
+        feedbackRequested: Boolean,
+        patientId: String,
+        prescription: ByteArray,
+        prescriptionType: String
+    ): String? {
         if (StringUtils.isBlank(patientId)) {
             throw IntegrationModuleException("Patient ID is 0.")
         }
@@ -201,7 +211,8 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
 
             // create request
             val request = CreatePrescriptionRequest()
-            request.securedCreatePrescriptionRequest = createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(params)))
+            request.securedCreatePrescriptionRequest =
+                createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(params)))
 
             // create administrative info
             val info = CreatePrescriptionAdministrativeInformationType()
@@ -239,13 +250,19 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
      * @param samlToken
      * @param credential
      * @param nihii
-     * @param rid    the rid
+     * @param rid the rid
      * @param reason the reason
      * @throws IntegrationModuleException the integration module exception
      */
 
     @Throws(IntegrationModuleException::class)
-    override fun revokePrescription(samlToken: SAMLToken, credential: Credential, nihii: String, rid: String, reason: String) {
+    override fun revokePrescription(
+        samlToken: SAMLToken,
+        credential: Credential,
+        nihii: String,
+        rid: String,
+        reason: String
+    ) {
         validateRid(rid)
 
         try {
@@ -263,7 +280,8 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
 
             // create request
             val request = RevokePrescriptionRequest()
-            request.securedRevokePrescriptionRequest = createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(params)))
+            request.securedRevokePrescriptionRequest =
+                createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(params)))
 
             // Admin Info for eHealth
             val info = PrescriberServiceAdministrativeInformationType()
@@ -277,11 +295,9 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
             } catch (cte: ClientTransportException) {
                 throw IntegrationModuleException(I18nHelper.getLabel("error.connection.prescriber"), cte)
             }
-
         } catch (t: Throwable) {
             Exceptionutils.errorHandler(t)
         }
-
     }
 
     /**
@@ -299,12 +315,21 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
      */
 
     @Throws(IntegrationModuleException::class)
-    override fun getPrescription(samlToken: SAMLToken, credential: Credential, nihii: String, rid: String): GetPrescriptionForPrescriberResult? {
+    override fun getPrescription(
+        samlToken: SAMLToken,
+        credential: Credential,
+        nihii: String,
+        rid: String
+    ): GetPrescriptionForPrescriberResult? {
         validateRid(rid)
         try {
 
             // init helper
-            val helper = MarshallerHelper(GetPrescriptionForPrescriberResult::class.java, GetPrescriptionForPrescriberParam::class.java)
+            val helper =
+                MarshallerHelper(
+                    GetPrescriptionForPrescriberResult::class.java,
+                    GetPrescriptionForPrescriberParam::class.java
+                )
 
             // get recipe etk
             val etkRecipes = etkHelper!!.recipe_ETK
@@ -317,7 +342,8 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
 
             // build request
             val request = GetPrescriptionForPrescriberRequest()
-            request.securedGetPrescriptionForPrescriberRequest = createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(param)))
+            request.securedGetPrescriptionForPrescriberRequest =
+                createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(param)))
 
             val info = PrescriberServiceAdministrativeInformationType()
 
@@ -337,9 +363,10 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
             checkStatus(response)
 
             // unseal WS response
-            val result = helper.unsealWithSymmKey(response.securedGetPrescriptionForPrescriberResponse.securedContent, symmKey)
+            val result =
+                helper.unsealWithSymmKey(response.securedGetPrescriptionForPrescriberResponse.securedContent, symmKey)
 
-            getKeyFromKgss(result.encryptionKeyId, etkHelper!!.systemETK[0].encoded)?.let {key ->
+            getKeyFromKgss(result.encryptionKeyId, etkHelper!!.systemETK[0].encoded)?.let { key ->
                 result.prescription = IOUtils.decompress(unsealPrescriptionForUnknown(key, result.prescription))
             }
 
@@ -369,10 +396,16 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
      */
 
     @Throws(IntegrationModuleException::class)
-    override fun listOpenPrescription(samlToken: SAMLToken, credential: Credential, nihii: String, patientId: String): List<String> {
+    override fun listOpenPrescription(
+        samlToken: SAMLToken,
+        credential: Credential,
+        nihii: String,
+        patientId: String
+    ): List<String> {
         try {
             // init helper
-            val helper = MarshallerHelper(GetListOpenPrescriptionResult::class.java, GetListOpenPrescriptionParam::class.java)
+            val helper =
+                MarshallerHelper(GetListOpenPrescriptionResult::class.java, GetListOpenPrescriptionParam::class.java)
 
             // get recipe etk
             val etkRecipes = etkHelper!!.recipe_ETK
@@ -385,7 +418,8 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
 
             // create request
             val request = ListOpenPrescriptionsRequest()
-            request.securedListOpenPrescriptionsRequest = createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(param)))
+            request.securedListOpenPrescriptionsRequest =
+                createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(param)))
 
             // call sealed WS
             var response: ListOpenPrescriptionsResponse? = null
@@ -401,7 +435,6 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
             val result = helper.unsealWithSymmKey(response.securedListOpenPrescriptionsResponse.securedContent, symmKey)
 
             return if (result.prescriptions == null) ArrayList() else result.prescriptions
-
         } catch (t: Throwable) {
             Exceptionutils.errorHandler(t)
         }
@@ -434,13 +467,20 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
      * @param credential
      * @param nihii
      * @param notificationText the notification text
-     * @param patientId        the patient id
-     * @param executorId       the executor id
+     * @param patientId the patient id
+     * @param executorId the executor id
      * @throws IntegrationModuleException the integration module exception
      */
 
     @Throws(IntegrationModuleException::class)
-    override fun sendNotification(samlToken: SAMLToken, credential: Credential, nihii: String, notificationText: ByteArray, patientId: String, executorId: String) {
+    override fun sendNotification(
+        samlToken: SAMLToken,
+        credential: Credential,
+        nihii: String,
+        notificationText: ByteArray,
+        patientId: String,
+        executorId: String
+    ) {
         try {
             kmehrHelper.assertValidNotification(ByteArrayInputStream(notificationText))
             ValidationUtils.validatePatientId(patientId)
@@ -470,7 +510,8 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
 
                 // create request
                 val request = SendNotificationRequest()
-                request.securedSendNotificationRequest = createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(param)))
+                request.securedSendNotificationRequest =
+                    createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(param)))
                 val info = SendNotificationAdministrativeInformationType()
                 info.executorIdentifier = createIdentifierType(executorId, IdentifierTypes.SSIN.name)
                 info.patientIdentifier = createIdentifierType(patientId, IdentifierTypes.SSIN.name)
@@ -482,12 +523,10 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
                 } catch (cte: ClientTransportException) {
                     throw IntegrationModuleException(I18nHelper.getLabel("error.connection.prescriber"), cte)
                 }
-
             }
         } catch (t: Throwable) {
             Exceptionutils.errorHandler(t)
         }
-
     }
 
     /**
@@ -499,13 +538,19 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
      * @param samlToken
      * @param credential
      * @param nihii
-     * @param rid             the rid
+     * @param rid the rid
      * @param feedbackAllowed the feedback allowed
      * @throws IntegrationModuleException the integration module exception
      */
 
     @Throws(IntegrationModuleException::class)
-    override fun updateFeedbackFlag(samlToken: SAMLToken, credential: Credential, nihii: String, rid: String, feedbackAllowed: Boolean) {
+    override fun updateFeedbackFlag(
+        samlToken: SAMLToken,
+        credential: Credential,
+        nihii: String,
+        rid: String,
+        feedbackAllowed: Boolean
+    ) {
         validateRid(rid)
         try {
 
@@ -522,7 +567,8 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
             param.prescriberId = nihii
 
             val request = UpdateFeedbackFlagRequest()
-            request.securedUpdateFeedbackFlagRequest = createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(param)))
+            request.securedUpdateFeedbackFlagRequest =
+                createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(param)))
             val info = PrescriberServiceAdministrativeInformationType()
 
             // Admin Info for eHealth
@@ -535,16 +581,18 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
             } catch (cte: ClientTransportException) {
                 throw IntegrationModuleException(I18nHelper.getLabel("error.connection.prescriber"), cte)
             }
-
         } catch (t: Throwable) {
             Exceptionutils.errorHandler(t)
         }
-
     }
 
-
     @Throws(IntegrationModuleException::class)
-    override fun listFeedback(samlToken: SAMLToken, credential: Credential, nihii: String, readFlag: Boolean): List<ListFeedbackItem> {
+    override fun listFeedback(
+        samlToken: SAMLToken,
+        credential: Credential,
+        nihii: String,
+        readFlag: Boolean
+    ): List<ListFeedbackItem> {
 
         try {
             // check if personal password has been set
@@ -566,7 +614,8 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
 
             // create request
             val request = ListFeedbacksRequest()
-            request.securedListFeedbacksRequest = createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(param)))
+            request.securedListFeedbacksRequest =
+                createSecuredContentType(sealRequest(etkRecipes[0], helper.toXMLByteArray(param)))
 
             // call sealed WS
             var response: ListFeedbacksResponse? = null
@@ -580,16 +629,20 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
             checkStatus(response)
 
             // unseal WS response
-            val feedbacks = helper.unsealWithSymmKey(response.securedListFeedbacksResponse.securedContent, symmKey).feedbacks
+            val feedbacks =
+                helper.unsealWithSymmKey(response.securedListFeedbacksResponse.securedContent, symmKey).feedbacks
 
             for (i in feedbacks.indices) {
                 val item = org.taktik.connector.business.recipe.prescriber.domain.ListFeedbackItem(feedbacks[i])
-                item.content = try { unsealFeedback(item.content)?.let {IOUtils.decompress(it)} ?: item.content } catch (t: Throwable) {item.linkedException = t; item.content}
+                item.content = try {
+                    unsealFeedback(item.content)?.let { IOUtils.decompress(it) } ?: item.content
+                } catch (t: Throwable) {
+                    item.linkedException = t; item.content
+                }
 
                 feedbacks[i] = item
             }
             return feedbacks
-
         } catch (t: Throwable) {
             Exceptionutils.errorHandler(t)
         }
@@ -649,32 +702,35 @@ constructor() : AbstractIntegrationModule(), PrescriberIntegrationModule {
         } catch (e: Exception) {
             throw IntegrationModuleException(e)
         }
-
     }
-
 
     @Throws(IntegrationModuleException::class)
     protected fun unsealFeedback(message: ByteArray?): ByteArray? {
         return message?.let { unsealNotiffeed(it) }
     }
 
-
     @Throws(IntegrationModuleException::class)
-    protected fun getNewKeyFromKgss(prescriptionType: String, prescriberId: String, executorId: String?, patientId: String, myEtk: ByteArray): KeyResult? {
+    protected fun getNewKeyFromKgss(
+        prescriptionType: String,
+        prescriberId: String,
+        executorId: String?,
+        patientId: String,
+        myEtk: ByteArray
+    ): KeyResult? {
 
         val etkKgss = etkHelper!!.kgsS_ETK[0]
         val credentialTypes = propertyHandler.getMatchingProperties("kgss.createPrescription.ACL." + prescriptionType)
 
         var keyResult: KeyResult? = null
         try {
-            keyResult = null //TODO kgssService.retrieveNewKey(etkKgss.getEncoded(), credentialTypes, prescriberId, executorId, patientId, myEtk);
+            keyResult =
+                null //TODO kgssService.retrieveNewKey(etkKgss.getEncoded(), credentialTypes, prescriberId, executorId, patientId, myEtk);
         } catch (t: Throwable) {
             Exceptionutils.errorHandler(t)
         }
 
         return keyResult
     }
-
 
     @Throws(IntegrationModuleException::class)
     protected fun sealNotification(paramEncryptionToken: EncryptionToken, paramArrayOfByte: ByteArray): ByteArray {

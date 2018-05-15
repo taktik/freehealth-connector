@@ -23,20 +23,19 @@ package org.taktik.freehealth.middleware.domain
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
 import java.io.Serializable
 
-class CDHCPARTY :Serializable {
-	enum class CDHCPARTYSCHEMES(val value: String) {
-		CD_HCPARTY("CD-HCPARTY"),
-		CD_APPLICATION("CD-APPLICATION"),
-		CD_ENCRYPTION_ACTOR("CD-ENCRYPTION-ACTOR"),
-		CD_ROLE("CD-ROLE"),
-		LOCAL("LOCAL")
-	}
+class CDHCPARTY : Serializable {
+    enum class CDHCPARTYSCHEMES(val value: String) {
+        CD_HCPARTY("CD-HCPARTY"),
+        CD_APPLICATION("CD-APPLICATION"),
+        CD_ENCRYPTION_ACTOR("CD-ENCRYPTION-ACTOR"),
+        CD_ROLE("CD-ROLE"),
+        LOCAL("LOCAL")
+    }
 
-	var value: String? = null
-	var s: CDHCPARTYschemes? = null
-	var sv: String? = null
-	var dn: String? = null
-	var l: String? = null
-	var sl: String? = null
+    var value: String? = null
+    var s: CDHCPARTYschemes? = null
+    var sv: String? = null
+    var dn: String? = null
+    var l: String? = null
+    var sl: String? = null
 }
-

@@ -36,7 +36,6 @@ abstract class Message<T> : Serializable {
     var publicationId: String? = null
     var sender: Addressee? = null
 
-
     @Deprecated("")
     @get:Deprecated("")
     @set:Deprecated("")
@@ -55,21 +54,15 @@ abstract class Message<T> : Serializable {
     var size: String? = null
     private var customMetas: MutableMap<String, String>? = null
 
-
     var expirationDate: Date
-        @Deprecated("")
-        get() = this.expirationDateTime!!.toDate()
-        @Deprecated("")
-        set(expirationDate) {
+        @Deprecated("") get() = this.expirationDateTime!!.toDate()
+        @Deprecated("") set(expirationDate) {
             this.expirationDateTime = DateUtils.convert(expirationDate)
         }
 
-
     var publicationDate: Date
-        @Deprecated("")
-        get() = this.publicationDateTime!!.toDate()
-        @Deprecated("")
-        set(publicationDate) {
+        @Deprecated("") get() = this.publicationDateTime!!.toDate()
+        @Deprecated("") set(publicationDate) {
             this.publicationDateTime = DateUtils.convert(publicationDate)
         }
 
@@ -79,13 +72,18 @@ abstract class Message<T> : Serializable {
 
     fun generatePublicationId() {
         try {
-            this.publicationId = IdGeneratorFactory.getIdGenerator(ConfigFactory.getConfigValidator().getProperty("org.taktik.connector.business.ehbox.api.domain.message.idgenerator", "nano")).generateId()
+            this.publicationId =
+                IdGeneratorFactory.getIdGenerator(
+                    ConfigFactory.getConfigValidator().getProperty(
+                        "org.taktik.connector.business.ehbox.api.domain.message.idgenerator",
+                        "nano"
+                    )
+                ).generateId()
         } catch (var5: TechnicalConnectorException) {
             val time = System.nanoTime()
             val identifier = java.lang.Long.toString(time, 36).toUpperCase()
             this.publicationId = identifier
         }
-
     }
 
     fun getDestinations(): MutableList<Addressee> {
@@ -101,7 +99,8 @@ abstract class Message<T> : Serializable {
     }
 
     override fun toString(): String {
-        return "Message [id=" + this.publicationId + ", sender=" + this.sender + ", destinations=" + this.destinations + ", important=" + this.isImportant + ", encrypted=" + this.isEncrypted + "]"
+        return "Message [id=${this.publicationId}, sender=${this.sender}, " +
+            "destinations=${this.destinations}, important=${this.isImportant}, encrypted=${this.isEncrypted}]"
     }
 
     fun getCustomMetas(): MutableMap<String, String> {

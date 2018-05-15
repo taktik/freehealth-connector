@@ -38,7 +38,6 @@ import be.fgov.ehealth.genericinsurability.core.v1.RequestType
 import be.fgov.ehealth.genericinsurability.core.v1.SingleInsurabilityRequestType
 import be.fgov.ehealth.genericinsurability.core.v1.ValueRefString
 import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsXmlOrFlatRequestType
-import be.fgov.ehealth.messageservices.core.v1.RetrieveTransactionRequest
 import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
@@ -58,19 +57,41 @@ import java.util.*
 @Service
 class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : GenInsService {
     private val log = LoggerFactory.getLogger(this.javaClass)
-    private val freehealthGenInsService: org.taktik.connector.business.genins.service.GenInsService = org.taktik.connector.business.genins.service.impl.GenInsServiceImpl()
+    private val freehealthGenInsService: org.taktik.connector.business.genins.service.GenInsService =
+        org.taktik.connector.business.genins.service.impl.GenInsServiceImpl()
     private val config = ConfigFactory.getConfigValidator(listOf())
 
-    override fun getGeneralInsurabity(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patientSsin: String?, io: String?, ioMembership: String?, startDate: Date?, endDate: Date?, hospitalized: Boolean): InsurabilityInfoDto {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+    override fun getGeneralInsurabity(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String,
+        patientSsin: String?,
+        io: String?,
+        ioMembership: String?,
+        startDate: Date?,
+        endDate: Date?,
+        hospitalized: Boolean
+    ): InsurabilityInfoDto {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         assert(patientSsin != null || io != null && ioMembership != null)
 
         val packageInfo = McnConfigUtil.retrievePackageInfo("genins")
         val request = GetInsurabilityAsXmlOrFlatRequestType().apply {
-            recordCommonInput = RecordCommonInputType().apply { inputReference = BigDecimal(IdGeneratorFactory.getIdGenerator().generateId()) }
+            recordCommonInput =
+                RecordCommonInputType().apply {
+                    inputReference =
+                        BigDecimal(IdGeneratorFactory.getIdGenerator().generateId())
+                }
             commonInput = CommonInputType().apply {
-                request = RequestType().apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
-                inputReference = ""+IdGeneratorFactory.getIdGenerator().generateId()
+                request =
+                    RequestType().apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
+                inputReference = "" + IdGeneratorFactory.getIdGenerator().generateId()
                 origin = OriginType().apply {
                     `package` = PackageType().apply {
                         license = LicenseType().apply {
@@ -79,13 +100,30 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                         }
                         name = ValueRefString().apply { value = packageInfo.packageName }
                     }
-                    siteID = ValueRefString().apply { value = config.getProperty( "mycarenet.${PropertyUtil.retrieveProjectNameToUse("genins", "mycarenet.")}.site.id") }
+                    siteID =
+                        ValueRefString().apply {
+                            value =
+                                config.getProperty(
+                                    "mycarenet.${PropertyUtil.retrieveProjectNameToUse(
+                                        "genins",
+                                        "mycarenet."
+                                    )}.site.id"
+                                )
+                        }
                     careProvider = CareProviderType().apply {
-                        nihii = NihiiType().apply { quality = hcpQuality; value = ValueRefString().apply { value = hcpNihii } }
+                        nihii =
+                            NihiiType().apply {
+                                quality = hcpQuality; value =
+                                ValueRefString().apply { value = hcpNihii }
+                            }
                         physicalPerson = IdType().apply {
                             name = ValueRefString().apply { value = hcpName }
                             ssin = ValueRefString().apply { value = hcpSsin }
-                            nihii = NihiiType().apply { quality = hcpQuality; value = ValueRefString().apply { value = hcpNihii } }
+                            nihii =
+                                NihiiType().apply {
+                                    quality = hcpQuality; value =
+                                    ValueRefString().apply { value = hcpNihii }
+                                }
                         }
                     }
                 }
@@ -110,14 +148,22 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
 
         return try {
             if (log.isDebugEnabled) {
-                val kmehrRequestMarshaller = MarshallerHelper(GetInsurabilityAsXmlOrFlatRequestType::class.java, GetInsurabilityAsXmlOrFlatRequestType::class.java)
+                val kmehrRequestMarshaller =
+                    MarshallerHelper(
+                        GetInsurabilityAsXmlOrFlatRequestType::class.java,
+                        GetInsurabilityAsXmlOrFlatRequestType::class.java
+                    )
                 val xmlString = kmehrRequestMarshaller.toXMLByteArray(request).toString(Charsets.UTF_8)
                 log.debug("Genins request: {}", xmlString)
             }
 
             freehealthGenInsService.getInsurability(samlToken, request).toInsurabilityInfoDto()
         } catch (e: javax.xml.ws.soap.SOAPFaultException) {
-            InsurabilityInfoDto(faultCode = e.fault?.faultCode, faultSource = e.message, faultMessage = e.fault.faultString)
+            InsurabilityInfoDto(
+                faultCode = e.fault?.faultCode,
+                faultSource = e.message,
+                faultMessage = e.fault.faultString
+            )
         }
     }
 }

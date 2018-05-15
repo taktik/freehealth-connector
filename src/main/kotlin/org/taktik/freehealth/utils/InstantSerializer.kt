@@ -35,10 +35,11 @@ class InstantSerializer : JsonSerializer<Instant>() {
     }
 
     private fun getBigDecimal(value: Instant): BigDecimal {
-        return BigDecimal.valueOf(1000L * value.epochSecond).add(BigDecimal.valueOf(value.nano.toLong()).divide(aMillion))
+        return BigDecimal.valueOf(1000L * value.epochSecond)
+            .add(BigDecimal.valueOf(value.nano.toLong()).divide(aMillion))
     }
 
-    override fun isEmpty(provider: SerializerProvider,  value: Instant?): Boolean {
+    override fun isEmpty(provider: SerializerProvider, value: Instant?): Boolean {
         return value == null
     }
 

@@ -33,10 +33,16 @@ import be.fgov.ehealth.addressbook.protocol.v1.SearchProfessionalsResponse
 
 interface AddressbookTokenService {
     @Throws(TechnicalConnectorException::class)
-    fun getOrganizationContactInfo(token: SAMLToken, request: GetOrganizationContactInfoRequest): GetOrganizationContactInfoResponse
+    fun getOrganizationContactInfo(
+        token: SAMLToken,
+        request: GetOrganizationContactInfoRequest
+    ): GetOrganizationContactInfoResponse
 
     @Throws(TechnicalConnectorException::class)
-    fun getProfessionalContactInfo(token: SAMLToken, request: GetProfessionalContactInfoRequest): GetProfessionalContactInfoResponse
+    fun getProfessionalContactInfo(
+        token: SAMLToken,
+        request: GetProfessionalContactInfoRequest
+    ): GetProfessionalContactInfoResponse
 
     @Throws(TechnicalConnectorException::class)
     fun searchOrganizations(token: SAMLToken, request: SearchOrganizationsRequest): SearchOrganizationsResponse

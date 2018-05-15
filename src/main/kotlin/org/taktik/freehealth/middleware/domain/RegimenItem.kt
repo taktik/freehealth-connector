@@ -58,14 +58,34 @@ class RegimenItem : Serializable {
 
     override fun toString(): String {
         val df = SimpleDateFormat("dd/MM/yyyy")
-        var result: String? = if (this.date != null) String.format("the %s", df.format(this.date)) else if (this.dayNumber != null) String.format("on day %d", this.dayNumber) else if (this.weekday != null && this.weekday!!.weekDay != null && this.weekday!!.weekDay!!.code != null) String.format("on %s", this.weekday!!.weekDay!!.code) else null
+        var result: String? =
+            if (this.date != null) String.format(
+                "the %s",
+                df.format(this.date)
+            ) else if (this.dayNumber != null) String.format(
+                "on day %d",
+                this.dayNumber
+            ) else if (this.weekday != null && this.weekday!!.weekDay != null && this.weekday!!.weekDay!!.code != null) String.format(
+                "on %s",
+                this.weekday!!.weekDay!!.code
+            ) else null
 
         if (this.dayPeriod != null && !StringUtils.isEmpty(this.dayPeriod!!.code)) {
-            result = if (result != null) String.format("%s %s", result, this.dayPeriod!!.code) else this.dayPeriod!!.code
+            result =
+                if (result != null) String.format("%s %s", result, this.dayPeriod!!.code) else this.dayPeriod!!.code
         }
         if (this.timeOfDay != null) {
-            val timeOfDayDescr = if (this.timeOfDay == 120000L) "noon" else String.format("%d:%d", this.timeOfDay!! / 10000, this.timeOfDay!! / 100 % 100)
-            result = if (result != null) String.format("%s at %s", result, timeOfDayDescr) else String.format("at %s", timeOfDayDescr)
+            val timeOfDayDescr =
+                if (this.timeOfDay == 120000L) "noon" else String.format(
+                    "%d:%d",
+                    this.timeOfDay!! / 10000,
+                    this.timeOfDay!! / 100 % 100
+                )
+            result =
+                if (result != null) String.format("%s at %s", result, timeOfDayDescr) else String.format(
+                    "at %s",
+                    timeOfDayDescr
+                )
         }
 
         return String.format("%s, %s", this.administratedQuantity, result)

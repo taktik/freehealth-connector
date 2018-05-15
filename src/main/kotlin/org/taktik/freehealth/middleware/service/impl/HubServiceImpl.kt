@@ -102,101 +102,273 @@ import kotlin.collections.HashSet
 @Service
 class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : HubService {
     private val config = ConfigFactory.getConfigValidator(listOf())
-    private val freehealthHubService: org.taktik.connector.business.hubv3.service.HubTokenService = org.taktik.connector.business.hubv3.service.impl.HubTokenServiceImpl()
-    private val nisCodesPerZip = Gson().fromJson<Map<String,String>>(this.javaClass.getResourceAsStream("/NisCodes.json").bufferedReader(Charsets.UTF_8), HashMap<String, String>().javaClass)
+    private val freehealthHubService: org.taktik.connector.business.hubv3.service.HubTokenService =
+        org.taktik.connector.business.hubv3.service.impl.HubTokenServiceImpl()
+    private val nisCodesPerZip =
+        Gson().fromJson<Map<String, String>>(
+            this.javaClass.getResourceAsStream("/NisCodes.json").bufferedReader(Charsets.UTF_8),
+            HashMap<String, String>().javaClass
+        )
 
-    override fun getHcPartyConsent(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String): HcPartyConsent? {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val hcPartyConsent = freehealthHubService.getHCPartyConsent(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase, GetHCPartyConsentRequest().apply {
-            request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
-            select = SelectGetHCPartyConsentType().apply {
-                hcparty = HCPartyIdType().apply {
-                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
-                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                }
-            }
-        })
+    override fun getHcPartyConsent(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String
+    ): HcPartyConsent? {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val hcPartyConsent =
+            freehealthHubService.getHCPartyConsent(
+                endpoint,
+                samlToken,
+                stsService.getKeyStore(keystoreId, passPhrase)!!,
+                passPhrase,
+                GetHCPartyConsentRequest().apply {
+                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
+                    select = SelectGetHCPartyConsentType().apply {
+                        hcparty = HCPartyIdType().apply {
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+                        }
+                    }
+                })
         return hcPartyConsent.consent?.let {
             mapper.map(it, HcPartyConsent::class.java)
         }
     }
 
-    override fun getPatientConsent(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, patientSsin: String): Consent? {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val patientConsent = freehealthHubService.getPatientConsent(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase, GetPatientConsentRequest().apply {
-            request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
-            select = SelectGetPatientConsentType().apply {
-                patient = PatientIdType().apply { ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = patientSsin }) }
-                consent = be.fgov.ehealth.hubservices.core.v3.Consent().apply { cds.add(CDCONSENT().apply { s = CDCONSENTschemes.CD_CONSENTTYPE; sv ="1.0"; value = CDCONSENTvalues.RETROSPECTIVE }) }
-            }
-        })
+    override fun getPatientConsent(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String
+    ): Consent? {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val patientConsent =
+            freehealthHubService.getPatientConsent(
+                endpoint,
+                samlToken,
+                stsService.getKeyStore(keystoreId, passPhrase)!!,
+                passPhrase,
+                GetPatientConsentRequest().apply {
+                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
+                    select = SelectGetPatientConsentType().apply {
+                        patient =
+                            PatientIdType().apply {
+                                ids.add(IDPATIENT().apply {
+                                    this.s =
+                                        IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = patientSsin
+                                })
+                            }
+                        consent =
+                            be.fgov.ehealth.hubservices.core.v3.Consent()
+                                .apply {
+                                    cds.add(CDCONSENT().apply {
+                                        s = CDCONSENTschemes.CD_CONSENTTYPE; sv =
+                                        "1.0"; value = CDCONSENTvalues.RETROSPECTIVE
+                                    })
+                                }
+                    }
+                })
         return patientConsent.consent?.let {
             mapper.map(it, Consent::class.java)
         }
     }
 
-    override fun registerPatientConsent(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, patientSsin: String, patientEidCardNumber: String?) {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val patientConsent = freehealthHubService.putPatientConsent(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase, PutPatientConsentRequest().apply {
-            request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
-            consent = ConsentType().apply {
-                patient = PatientIdType().apply {
-                    ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = patientSsin })
-                    patientEidCardNumber?.let { ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber }) }
-                }
-	            cds.add(CDCONSENT().apply { s=CDCONSENTschemes.CD_CONSENTTYPE; sv="1.0"; value = CDCONSENTvalues.RETROSPECTIVE })
-	            author = AuthorType().apply { hcparties.add(request.author.hcparties.first()) }
-            }
-        })
+    override fun registerPatientConsent(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        patientEidCardNumber: String?
+    ) {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val patientConsent =
+            freehealthHubService.putPatientConsent(
+                endpoint,
+                samlToken,
+                stsService.getKeyStore(keystoreId, passPhrase)!!,
+                passPhrase,
+                PutPatientConsentRequest().apply {
+                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
+                    consent = ConsentType().apply {
+                        patient = PatientIdType().apply {
+                            ids.add(IDPATIENT().apply {
+                                this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value =
+                                patientSsin
+                            })
+                            patientEidCardNumber?.let {
+                                ids.add(IDPATIENT().apply {
+                                    this.s =
+                                        IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber
+                                })
+                            }
+                        }
+                        cds.add(CDCONSENT().apply {
+                            s = CDCONSENTschemes.CD_CONSENTTYPE; sv = "1.0"; value =
+                            CDCONSENTvalues.RETROSPECTIVE
+                        })
+                        author = AuthorType().apply { hcparties.add(request.author.hcparties.first()) }
+                    }
+                })
     }
 
-    override fun registerTherapeuticLink(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, patientSsin: String, patientEidCardNumber: String?) {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val link = freehealthHubService.putTherapeuticLink(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase, PutTherapeuticLinkRequest().apply {
-            request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
-            therapeuticlink = TherapeuticLinkType().apply {
-                patient = PatientIdType().apply {
-                    ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = patientSsin })
-                    patientEidCardNumber?.let { ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber }) }
-                }
-            }
-        })
+    override fun registerTherapeuticLink(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        patientEidCardNumber: String?
+    ) {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val link =
+            freehealthHubService.putTherapeuticLink(
+                endpoint,
+                samlToken,
+                stsService.getKeyStore(keystoreId, passPhrase)!!,
+                passPhrase,
+                PutTherapeuticLinkRequest().apply {
+                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
+                    therapeuticlink = TherapeuticLinkType().apply {
+                        patient = PatientIdType().apply {
+                            ids.add(IDPATIENT().apply {
+                                this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value =
+                                patientSsin
+                            })
+                            patientEidCardNumber?.let {
+                                ids.add(IDPATIENT().apply {
+                                    this.s =
+                                        IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber
+                                })
+                            }
+                        }
+                    }
+                })
     }
 
-    override fun getTherapeuticLinks(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, patientSsin: String, therLinkType: String?, from: Instant?, to: Instant?): List<TherapeuticLink> {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val therapeuticLinkResponse = freehealthHubService.getTherapeuticLink(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase, GetTherapeuticLinkRequest().apply {
-            request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
-            select = SelectGetHCPartyPatientConsentType().apply {
-                therLinkType?.let { cds.add(CDTHERAPEUTICLINK().apply { s=CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE; sv = "1.0"; value = it }) }
-                patientsAndHcparties.add(HCPartyIdType().apply {
-                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
-                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+    override fun getTherapeuticLinks(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        therLinkType: String?,
+        from: Instant?,
+        to: Instant?
+    ): List<TherapeuticLink> {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val therapeuticLinkResponse =
+            freehealthHubService.getTherapeuticLink(
+                endpoint,
+                samlToken,
+                stsService.getKeyStore(keystoreId, passPhrase)!!,
+                passPhrase,
+                GetTherapeuticLinkRequest().apply {
+                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
+                    select = SelectGetHCPartyPatientConsentType().apply {
+                        therLinkType?.let {
+                            cds.add(CDTHERAPEUTICLINK().apply {
+                                s =
+                                    CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE; sv = "1.0"; value = it
+                            })
+                        }
+                        patientsAndHcparties.add(HCPartyIdType().apply {
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+                        })
+                        patientsAndHcparties.add(PatientIdType().apply {
+                            ids.add(IDPATIENT().apply {
+                                this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value =
+                                patientSsin
+                            })
+                        })
+                        begindate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
+                        enddate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
+                    }
                 })
-                patientsAndHcparties.add(PatientIdType().apply {
-                    ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = patientSsin })
-                })
-                begindate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
-                enddate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
-            }
-        })
         return therapeuticLinkResponse.therapeuticlinklist?.let {
             it.therapeuticlinks.map { mapper.map(it, TherapeuticLink::class.java) }
         } ?: listOf()
     }
 
-    override fun putPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, patientSsin: String, firstName: String, lastName: String, gender: Gender, dateOfBirth: LocalDateTime) : Patient? {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val transaction = freehealthHubService.putPatient(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , PutPatientRequest().apply {
-            request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
-            patient = PersonType().apply {
-                firstnames.add(firstName)
-                familyname = lastName
-                sex = SexType().apply { cd = CDSEX().apply { sv = "1.0"; value = CDSEXvalues.fromValue(gender.name) } }
-                ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = patientSsin })
-                birthdate = DateType().apply { date = org.joda.time.DateTime(dateOfBirth.year, dateOfBirth.monthValue, dateOfBirth.dayOfMonth, 0, 0) }
-            }
-        })
+    override fun putPatient(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        firstName: String,
+        lastName: String,
+        gender: Gender,
+        dateOfBirth: LocalDateTime
+    ): Patient? {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val transaction =
+            freehealthHubService.putPatient(
+                endpoint,
+                samlToken,
+                stsService.getKeyStore(keystoreId, passPhrase)!!,
+                passPhrase,
+                PutPatientRequest().apply {
+                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
+                    patient = PersonType().apply {
+                        firstnames.add(firstName)
+                        familyname = lastName
+                        sex =
+                            SexType().apply {
+                                cd =
+                                    CDSEX().apply { sv = "1.0"; value = CDSEXvalues.fromValue(gender.name) }
+                            }
+                        ids.add(IDPATIENT().apply {
+                            this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value =
+                            patientSsin
+                        })
+                        birthdate =
+                            DateType().apply {
+                                date =
+                                    org.joda.time.DateTime(
+                                        dateOfBirth.year,
+                                        dateOfBirth.monthValue,
+                                        dateOfBirth.dayOfMonth,
+                                        0,
+                                        0
+                                    )
+                            }
+                    }
+                })
         return transaction.patient?.let {
             Patient().apply {
                 this.firstName = it.firstnames.firstOrNull()
@@ -208,14 +380,37 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         }
     }
 
-    override fun getPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, patientSsin: String): Patient? {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val patient = freehealthHubService.getPatient(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , GetPatientRequest().apply {
-            request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
-            select = SelectGetPatientType().apply {
-                patient = PatientIdType().apply { ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = patientSsin }) }
-            }
-        })
+    override fun getPatient(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String
+    ): Patient? {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val patient =
+            freehealthHubService.getPatient(
+                endpoint,
+                samlToken,
+                stsService.getKeyStore(keystoreId, passPhrase)!!,
+                passPhrase,
+                GetPatientRequest().apply {
+                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
+                    select = SelectGetPatientType().apply {
+                        patient =
+                            PatientIdType().apply {
+                                ids.add(IDPATIENT().apply {
+                                    this.s =
+                                        IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = patientSsin
+                                })
+                            }
+                    }
+                })
         return patient.patient?.let {
             Patient().apply {
                 firstName = it.firstnames.firstOrNull()
@@ -227,104 +422,250 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         }
     }
 
-    override fun getTransaction(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, ssin: String, sv: String, sl: String, value: String): String {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val transaction = freehealthHubService.getTransaction(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , GetTransactionRequest().apply {
-            request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
-            select = SelectGetTransactionType().apply {
-                patient = PatientIdType().apply { ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin }) }
-                transaction = TransactionBaseType().apply {
-                    id = IDKMEHR().apply { this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl = sl; this.value = value }
-                }
-            }
-        })
-
-       return MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
-    }
-
-
-    override fun putTransaction(endpoint: String, hubId : Long, hubApplication : String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, ssin: String, transaction: String): PutTransactionResponse {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val marshallerHelper = MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java)
-        return freehealthHubService.putTransaction(endpoint, hubId, hubApplication, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , PutTransactionRequest().apply {
-            request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
-            kmehrmessage = marshallerHelper.toObject(transaction.toByteArray(Charsets.UTF_8))
-        })
-    }
-
-
-    override fun getTransactionsList(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, ssin: String, from: Long?, to: Long?, authorNihii: String?, authorSsin: String?, isGlobal: Boolean): List<TransactionSummary> {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val transactionList = freehealthHubService.getTransactionList(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , GetTransactionListRequest().apply {
-            request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
-            select = SelectGetTransactionListType().apply {
-                patient = PatientIdType().apply { ids.add(IDPATIENT().apply { s = IDPATIENTschemes.INSS; sv = "1.0"; value = ssin }) }
-                transaction = TransactionWithPeriodType().apply {
-                    from?.let { begindate = DateTime(from) }
-                    to?.let { enddate = DateTime(to) }
-                    if (!StringUtils.isEmpty(authorNihii) || !StringUtils.isEmpty(authorSsin)) {
-                        author = AuthorType().apply {
-                            hcparties.add(HcpartyType().apply {
-                                cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.1"; value = "*" })
-                                ids.add(IDHCPARTY().apply {
-                                    if (StringUtils.isEmpty(authorSsin)) {
-                                        s = IDHCPARTYschemes.INSS; sv = "1.0"; value = authorSsin
-                                    } else {
-                                        s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = authorNihii
-                                    }
+    override fun getTransaction(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        sv: String,
+        sl: String,
+        value: String
+    ): String {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val transaction =
+            freehealthHubService.getTransaction(
+                endpoint,
+                samlToken,
+                stsService.getKeyStore(keystoreId, passPhrase)!!,
+                passPhrase,
+                GetTransactionRequest().apply {
+                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
+                    select = SelectGetTransactionType().apply {
+                        patient =
+                            PatientIdType().apply {
+                                ids.add(IDPATIENT().apply {
+                                    this.s =
+                                        IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin
                                 })
-                            })
+                            }
+                        transaction = TransactionBaseType().apply {
+                            id =
+                                IDKMEHR().apply {
+                                    this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
+                                    sl; this.value = value
+                                }
                         }
                     }
-                }
-            }
-        })
+                })
+
+        return MarshallerHelper(
+            Kmehrmessage::class.java,
+            Kmehrmessage::class.java
+        ).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
+    }
+
+    override fun putTransaction(
+        endpoint: String,
+        hubId: Long,
+        hubApplication: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        transaction: String
+    ): PutTransactionResponse {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val marshallerHelper = MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java)
+        return freehealthHubService.putTransaction(
+            endpoint,
+            hubId,
+            hubApplication,
+            samlToken,
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase,
+            PutTransactionRequest().apply {
+                request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
+                kmehrmessage =
+                    marshallerHelper.toObject(transaction.toByteArray(Charsets.UTF_8))
+            })
+    }
+
+    override fun getTransactionsList(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        from: Long?,
+        to: Long?,
+        authorNihii: String?,
+        authorSsin: String?,
+        isGlobal: Boolean
+    ): List<TransactionSummary> {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val transactionList =
+            freehealthHubService.getTransactionList(
+                endpoint,
+                samlToken,
+                stsService.getKeyStore(keystoreId, passPhrase)!!,
+                passPhrase,
+                GetTransactionListRequest().apply {
+                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
+                    select = SelectGetTransactionListType().apply {
+                        patient =
+                            PatientIdType().apply {
+                                ids.add(IDPATIENT().apply {
+                                    s = IDPATIENTschemes.INSS; sv =
+                                    "1.0"; value = ssin
+                                })
+                            }
+                        transaction = TransactionWithPeriodType().apply {
+                            from?.let { begindate = DateTime(from) }
+                            to?.let { enddate = DateTime(to) }
+                            if (!StringUtils.isEmpty(authorNihii) || !StringUtils.isEmpty(authorSsin)) {
+                                author = AuthorType().apply {
+                                    hcparties.add(HcpartyType().apply {
+                                        cds.add(CDHCPARTY().apply {
+                                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.1"; value =
+                                            "*"
+                                        })
+                                        ids.add(IDHCPARTY().apply {
+                                            if (StringUtils.isEmpty(authorSsin)) {
+                                                s = IDHCPARTYschemes.INSS; sv = "1.0"; value = authorSsin
+                                            } else {
+                                                s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = authorNihii
+                                            }
+                                        })
+                                    })
+                                }
+                            }
+                        }
+                    }
+                })
 
         return transactionList.kmehrheader?.folder?.transactions?.map {
             TransactionSummary().apply {
                 author = mapper.map(it.author, AuthorDto::class.java)
-                ids = it.ids.map { KmehrId().apply { s =  it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value } }
-                cds = it.cds.map { KmehrCd().apply { s =  it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value } }
+                ids = it.ids.map { KmehrId().apply { s = it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value } }
+                cds = it.cds.map { KmehrCd().apply { s = it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value } }
                 date = it.date.millis
                 time = it.time.millis
                 recorddatetime = it.recorddatetime.millis
                 iscomplete = it.isIscomplete
                 isvalidated = it.isIsvalidated
-
             }
         } ?: listOf()
     }
 
-    override fun getTransactionSet(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, ssin: String, sv: String, sl: String, value: String): String {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val transaction = freehealthHubService.getTransactionSet(endpoint, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , GetTransactionSetRequest().apply {
-            request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
-            select = SelectGetTransactionType().apply {
-                patient = PatientIdType().apply { ids.add(IDPATIENT().apply { this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin }) }
-                transaction = TransactionBaseType().apply {
-                    id = IDKMEHR().apply { this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl = sl; this.value = value }
-                }
-            }
-        })
+    override fun getTransactionSet(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        sv: String,
+        sl: String,
+        value: String
+    ): String {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val transaction =
+            freehealthHubService.getTransactionSet(
+                endpoint,
+                samlToken,
+                stsService.getKeyStore(keystoreId, passPhrase)!!,
+                passPhrase,
+                GetTransactionSetRequest().apply {
+                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
+                    select = SelectGetTransactionType().apply {
+                        patient =
+                            PatientIdType().apply {
+                                ids.add(IDPATIENT().apply {
+                                    this.s =
+                                        IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin
+                                })
+                            }
+                        transaction = TransactionBaseType().apply {
+                            id =
+                                IDKMEHR().apply {
+                                    this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
+                                    sl; this.value = value
+                                }
+                        }
+                    }
+                })
 
-        return MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
+        return MarshallerHelper(
+            Kmehrmessage::class.java,
+            Kmehrmessage::class.java
+        ).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
     }
 
-
-    override fun putTransactionSet(endpoint: String, hubId : Long, hubApplication : String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpZip: String, ssin: String, transaction: String): PutTransactionSetResponse {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+    override fun putTransactionSet(
+        endpoint: String,
+        hubId: Long,
+        hubApplication: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        transaction: String
+    ): PutTransactionSetResponse {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
         val marshallerHelper = MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java)
-        return freehealthHubService.putTransactionSet(endpoint, hubId, hubApplication, samlToken, stsService.getKeyStore(keystoreId, passPhrase)!!, passPhrase , PutTransactionSetRequest().apply {
-            request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
-            kmehrmessage = marshallerHelper.toObject(transaction.toByteArray(Charsets.UTF_8))
-        })
+        return freehealthHubService.putTransactionSet(
+            endpoint,
+            hubId,
+            hubApplication,
+            samlToken,
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase,
+            PutTransactionSetRequest().apply {
+                request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
+                kmehrmessage =
+                    marshallerHelper.toObject(transaction.toByteArray(Charsets.UTF_8))
+            })
     }
 
-    private fun createRequestType(hcpNihii: String, hcpSsin: String, hcpZip: String, encrypted: Boolean = false): RequestType {
+    private fun createRequestType(
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        encrypted: Boolean = false
+    ): RequestType {
         return RequestType().apply {
             date = DateTime.now()
             time = DateTime.now()
-            id = IDKMEHR().apply { s=IDKMEHRschemes.ID_KMEHR; sv="1.0"; value="${hcpNihii}.${Instant.now().toEpochMilli()}" }
+            id =
+                IDKMEHR().apply {
+                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                    "$hcpNihii.${Instant.now().toEpochMilli()}"
+                }
             author = AuthorType().apply {
                 hcparties.add(HcpartyType().apply {
                     ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
@@ -332,20 +673,33 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                     cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.1"; value = "persphysician" })
 
                     if (encrypted) {
-                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_ENCRYPTION_ACTOR; sv = "1.0"; value = hcpNihii.substring(0,8)})
-                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_ENCRYPTION_ACTOR; sv = "1.1"; value = IdentifierType.NIHII.getType(48) })
+                        ids.add(IDHCPARTY().apply {
+                            s = IDHCPARTYschemes.ID_ENCRYPTION_ACTOR; sv = "1.0"; value =
+                            hcpNihii.substring(0, 8)
+                        })
+                        cds.add(CDHCPARTY().apply {
+                            s = CDHCPARTYschemes.CD_ENCRYPTION_ACTOR; sv = "1.1"; value =
+                            IdentifierType.NIHII.getType(48)
+                        })
                     }
                     firstname = "Antoine"
                     familyname = "Baudoux"
                     addresses.add(AddressType().apply {
-                        cds.add(CDADDRESS().apply { s=CDADDRESSschemes.CD_ADDRESS; sv="1.1"; value = "work" })
-                        country = CountryType().apply { cd = CDCOUNTRY().apply { s = CDCOUNTRYschemes.CD_FED_COUNTRY; sv = "1.2"; value = "be" } }
+                        cds.add(CDADDRESS().apply { s = CDADDRESSschemes.CD_ADDRESS; sv = "1.1"; value = "work" })
+                        country =
+                            CountryType().apply {
+                                cd =
+                                    CDCOUNTRY().apply { s = CDCOUNTRYschemes.CD_FED_COUNTRY; sv = "1.2"; value = "be" }
+                            }
                         zip = hcpZip
                         nis = nisCodesPerZip[hcpZip]
                     })
                 })
                 hcparties.add(HcpartyType().apply {
-                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.LOCAL; sl = "endusersoftwareinfo"; sv = "1.0"; value = config.getProperty("package.name") ?: "iCure" })
+                    ids.add(IDHCPARTY().apply {
+                        s = IDHCPARTYschemes.LOCAL; sl = "endusersoftwareinfo"; sv =
+                        "1.0"; value = config.getProperty("package.name") ?: "iCure"
+                    })
                     cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.1"; value = "application" })
                 })
             }

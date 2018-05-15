@@ -15,7 +15,6 @@ import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.SamlTokenResult
 import org.taktik.freehealth.middleware.service.impl.STSServiceImpl
 
-
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -25,11 +24,11 @@ class STSControllerTest : EhealthTest() {
 
     @Autowired
     private val restTemplate: TestRestTemplate? = null
-    private val gson : Gson = Gson()
+    private val gson: Gson = Gson()
 
     @Test
     fun uploadKeystore() {
-        val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("${ssin1}.acc-p12").path, port, restTemplate!!)
+        val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("$ssin1.acc-p12").path, port, restTemplate!!)
         assertThat(keystoreId != null)
     }
 

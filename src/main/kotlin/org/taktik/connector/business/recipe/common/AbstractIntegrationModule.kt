@@ -25,13 +25,9 @@ package org.taktik.connector.business.recipe.common
 
 import be.apb.gfddpp.common.utils.JaxContextCentralizer
 import be.fgov.ehealth.etee.crypto.decrypt.DataUnsealer
-import be.fgov.ehealth.etee.crypto.decrypt.UnsealedData
 import be.fgov.ehealth.etee.crypto.encrypt.DataSealer
 import be.fgov.ehealth.etee.crypto.encrypt.EncryptionToken
-import be.fgov.ehealth.etee.crypto.status.CryptoResult
 import be.fgov.ehealth.etee.crypto.status.CryptoResultException
-import be.fgov.ehealth.etee.crypto.status.NotificationError
-import be.fgov.ehealth.etee.crypto.status.NotificationWarning
 import be.fgov.ehealth.etee.kgss._1_0.protocol.GetKeyRequestContent
 import be.fgov.ehealth.etee.kgss._1_0.protocol.GetKeyResponseContent
 import net.sf.ehcache.Cache
@@ -48,23 +44,18 @@ import org.taktik.connector.business.recipeprojects.core.utils.IOUtils
 import org.taktik.connector.business.recipeprojects.core.utils.LoggingUtil
 import org.taktik.connector.business.recipeprojects.core.utils.MessageDumper
 import org.taktik.connector.business.recipeprojects.core.utils.PropertyHandler
-import org.taktik.connector.technical.service.kgss.KgssService
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.kgss.impl.KgssServiceImpl
 
 import javax.crypto.spec.SecretKeySpec
 import java.io.File
-import java.io.InputStream
-import java.net.URL
 import java.security.Key
 import java.security.KeyStore
 import java.security.Security
 import java.util.Arrays
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-abstract class AbstractIntegrationModule @Throws(IntegrationModuleException::class)
-constructor() {
+abstract class AbstractIntegrationModule @Throws(IntegrationModuleException::class) constructor() {
     private val ridPattern = Pattern.compile(RID_PATTERN)
 
     protected var dataUnsealer: DataUnsealer? = null
@@ -110,7 +101,10 @@ constructor() {
 
             // When running in DOTNET, the current context class loader must be overriden to avoid class not found exceptions!!!
             Thread.currentThread().contextClassLoader = javaClass.classLoader
-            System.setProperty("javax.xml.soap.SOAPFactory", "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl")
+            System.setProperty(
+                "javax.xml.soap.SOAPFactory",
+                "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl"
+            )
 
             // Extra debug information
             if (LOG.isDebugEnabled) {
@@ -125,7 +119,6 @@ constructor() {
             LOG.error("Exception in init abstractIntegrationModule: ", t)
             Exceptionutils.errorHandler(t)
         }
-
     }
 
     private fun initCaching() {
@@ -172,7 +165,6 @@ constructor() {
             LOG.error("Exception occured when initializing the encryption util: ", t)
             Exceptionutils.errorHandler(t, "error.initialization")
         }
-
     }
 
     @Synchronized
@@ -250,7 +242,11 @@ constructor() {
                 return unsealedNotification
             }
             if (oldDataUnsealer != null) {
-                LOG.debug("Unseal notification was null. Start unseal notification with old keystore: " + Arrays.toString(message))
+                LOG.debug(
+                    "Unseal notification was null. Start unseal notification with old keystore: " + Arrays.toString(
+                        message
+                    )
+                )
                 calledUnsealNotifOld = true
                 unsealedNotification = unsealNotifOld(message)
                 if (unsealedNotification != null) {
@@ -268,7 +264,11 @@ constructor() {
                 Exceptionutils.errorHandler(t, "error.data.unseal")
             } else {
                 try {
-                    LOG.debug("Exception occured with unsealing notification. Trying to unseal notification with old keystore: " + Arrays.toString(message))
+                    LOG.debug(
+                        "Exception occured with unsealing notification. Trying to unseal notification with old keystore: " + Arrays.toString(
+                            message
+                        )
+                    )
                     unsealedNotification = unsealNotifOld(message)
                 } catch (te: Throwable) {
                     if (t is CryptoResultException && t.message?.contains("There is no data available") == true) {
@@ -276,7 +276,6 @@ constructor() {
                     }
                     Exceptionutils.errorHandler(te, "error.data.unseal")
                 }
-
             }
         }
 
@@ -285,7 +284,6 @@ constructor() {
         }
         return unsealedNotification
     }
-
 
     @Throws(IntegrationModuleException::class)
     protected fun unsealPrescriptionForUnknown(key: KeyResult, protectedMessage: ByteArray): ByteArray {
@@ -302,15 +300,17 @@ constructor() {
         try {
             // For test, when a sim key is specified in the config
             if (propertyHandler.hasProperty("test_kgss_key")) {
-                val part1 = propertyHandler.getProperty("test_kgss_key").split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
-                val part2 = propertyHandler.getProperty("test_kgss_key").split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+                val part1 =
+                    propertyHandler.getProperty("test_kgss_key").split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+                val part2 =
+                    propertyHandler.getProperty("test_kgss_key").split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
                 // LOG.info("KGSS key retrieved from configuration. Key Id = part1);
                 val keyResponse = Base64.decode(part2)
                 return KeyResult(SecretKeySpec(keyResponse, "AES"), part1)
             }
 
-            keyResult = null //TODO kgssService.retrieveKeyFromKgss(keyId.getBytes(), myEtk, etkHelper.getKGSS_ETK().get(0).getEncoded());
-
+            keyResult =
+                null //TODO kgssService.retrieveKeyFromKgss(keyId.getBytes(), myEtk, etkHelper.getKGSS_ETK().get(0).getEncoded());
         } catch (t: Throwable) {
             LOG.error("Exception in getKeyFromKgss abstractIntegrationModule: ", t)
             Exceptionutils.errorHandler(t)

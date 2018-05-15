@@ -43,15 +43,33 @@ import java.util.ArrayList
 class DrugsServiceImpl : DrugsService {
     private var drugsLogic: DrugsLogic? = null
 
-    override fun getMedecinePackages(searchString: String, lang: String, types: List<String>, first: Int, count: Int): List<MppPreview> {
+    override fun getMedecinePackages(
+        searchString: String,
+        lang: String,
+        types: List<String>,
+        first: Int,
+        count: Int
+    ): List<MppPreview> {
         return drugsLogic!!.getMedecinePackages(searchString, lang, types, first, count)
     }
 
-    override fun getInnClusters(searchString: String, lang: String, types: List<String>, first: Int, count: Int): List<MppPreview> {
+    override fun getInnClusters(
+        searchString: String,
+        lang: String,
+        types: List<String>,
+        first: Int,
+        count: Int
+    ): List<MppPreview> {
         return drugsLogic!!.getInnClusters("be", searchString, lang, types, first, count)
     }
 
-    override fun getMedecinePackagesFromIngredients(searchString: String, lang: String, types: List<String>, first: Int, count: Int): List<MppPreview> {
+    override fun getMedecinePackagesFromIngredients(
+        searchString: String,
+        lang: String,
+        types: List<String>,
+        first: Int,
+        count: Int
+    ): List<MppPreview> {
         return drugsLogic!!.getMedecinePackagesFromIngredients(searchString, lang, types, first, count)
     }
 
@@ -80,7 +98,14 @@ class DrugsServiceImpl : DrugsService {
     }
 
     @Throws(IOException::class)
-    override fun fullTextSearch(search: String, lang: String, classes: List<String>, types: List<String>, from: Int, count: Int): List<FullTextSearchResult> {
+    override fun fullTextSearch(
+        search: String,
+        lang: String,
+        classes: List<String>,
+        types: List<String>,
+        from: Int,
+        count: Int
+    ): List<FullTextSearchResult> {
         return drugsLogic!!.fullTextSearch(search, lang, classes, types, from, count)
     }
 

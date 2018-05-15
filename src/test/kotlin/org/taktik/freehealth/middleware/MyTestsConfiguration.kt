@@ -1,4 +1,3 @@
 package org.taktik.freehealth.middleware
 
-class MyTestsConfiguration {
-}
+class MyTestsConfiguration

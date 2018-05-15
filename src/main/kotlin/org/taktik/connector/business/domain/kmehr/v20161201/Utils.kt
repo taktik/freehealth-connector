@@ -23,7 +23,8 @@ package org.taktik.connector.business.domain.kmehr.v20161201
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.MomentType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.DateType
-import java.util.*
+import java.util.Date
+import java.util.GregorianCalendar
 
 import javax.xml.datatype.DatatypeConstants.FIELD_UNDEFINED
 import javax.xml.datatype.DatatypeFactory
@@ -33,7 +34,7 @@ class Utils {
 
     companion object {
         @JvmStatic
-        fun makeXMLGregorianCalendarFromFuzzyLong(date : Long?) : XMLGregorianCalendarImpl? {
+        fun makeXMLGregorianCalendarFromFuzzyLong(date: Long?): XMLGregorianCalendarImpl? {
             return date?.let { date ->
                 /*normalize*/
                 when {
@@ -48,51 +49,76 @@ class Utils {
                     millisecond = FIELD_UNDEFINED
                     timezone = FIELD_UNDEFINED
                     when (d) {
-                        in 0..9999 -> {  year = d.toInt(); month = FIELD_UNDEFINED; day = FIELD_UNDEFINED }
-                        in 0..999912 -> { year = (d / 100).toInt(); month = (d % 100).toInt(); day = FIELD_UNDEFINED }
-                        in 0..99991231 -> { year = (d / 10000).toInt(); month = ((d / 100) % 100).toInt(); day = (d % 100).toInt() }
+                        in 0..9999 -> {
+                            year = d.toInt(); month = FIELD_UNDEFINED; day = FIELD_UNDEFINED
+                        }
+                        in 0..999912 -> {
+                            year = (d / 100).toInt(); month = (d % 100).toInt(); day = FIELD_UNDEFINED
+                        }
+                        in 0..99991231 -> {
+                            year = (d / 10000).toInt(); month = ((d / 100) % 100).toInt(); day = (d % 100).toInt()
+                        }
                         else -> {
-                            year = (d / 10000000000).toInt(); month = ((d / 100000000) % 100).toInt(); day = ((d / 1000000) % 100).toInt()
-                            hour = ((d / 10000) % 100).toInt(); minute = ((d / 100) % 100).toInt(); second = (d % 100).toInt()
+                            year = (d / 10000000000).toInt()
+                            month = ((d / 100000000) % 100).toInt()
+                            day = ((d / 1000000) % 100).toInt()
+                            hour = ((d / 10000) % 100).toInt()
+                            minute = ((d / 100) % 100).toInt()
+                            second = (d % 100).toInt()
                         }
                     }
                 }
             }
         }
 
-		@JvmStatic
-		fun makeXMLGregorianCalendarFromHHMMSSLong(date : Long) : XMLGregorianCalendarImpl? {
-			return XMLGregorianCalendarImpl().apply {
-				hour = (date / 10000 % 100).toInt()
-				minute = (date / 100 % 100).toInt()
-				second = (date % 100).toInt()
-			}
-		}
-
+        @JvmStatic
+        fun makeXMLGregorianCalendarFromHHMMSSLong(date: Long): XMLGregorianCalendarImpl? {
+            return XMLGregorianCalendarImpl().apply {
+                hour = (date / 10000 % 100).toInt()
+                minute = (date / 100 % 100).toInt()
+                second = (date % 100).toInt()
+            }
+        }
 
         @JvmStatic
-        fun makeDateTypeFromFuzzyLong(date : Long?) : DateType? {
+        fun makeDateTypeFromFuzzyLong(date: Long?): DateType? {
             return makeXMLGregorianCalendarFromFuzzyLong(date)?.let {
                 DateType().apply {
                     when (FIELD_UNDEFINED) {
-                        it.month -> { year = it }
-                        it.day -> { yearmonth = it }
-                        it.hour -> { this.date = it }
-                        else -> { this.date = it; this.time = it }
+                        it.month -> {
+                            year = it
+                        }
+                        it.day -> {
+                            yearmonth = it
+                        }
+                        it.hour -> {
+                            this.date = it
+                        }
+                        else -> {
+                            this.date = it; this.time = it
+                        }
                     }
                 }
             }
         }
 
         @JvmStatic
-        fun makeMomentTypeFromFuzzyLong(date : Long?) : MomentType? {
+        fun makeMomentTypeFromFuzzyLong(date: Long?): MomentType? {
             return makeXMLGregorianCalendarFromFuzzyLong(date)?.let {
                 MomentType().apply {
                     when (FIELD_UNDEFINED) {
-                        it.month -> { year = it }
-                        it.day -> { yearmonth = it }
-                        it.hour -> { this.date = it }
-                        else -> { this.date = it; this.time = it }
+                        it.month -> {
+                            year = it
+                        }
+                        it.day -> {
+                            yearmonth = it
+                        }
+                        it.hour -> {
+                            this.date = it
+                        }
+                        else -> {
+                            this.date = it; this.time = it
+                        }
                     }
                 }
             }
@@ -101,7 +127,10 @@ class Utils {
         @JvmStatic
         fun makeXGC(date: Long?): XMLGregorianCalendar? {
             return date?.let {
-                DatatypeFactory.newInstance().newXMLGregorianCalendar(GregorianCalendar.getInstance().apply { time = Date(date) } as GregorianCalendar).apply { timezone = FIELD_UNDEFINED }
+                DatatypeFactory.newInstance()
+                    .newXMLGregorianCalendar(GregorianCalendar.getInstance().apply {
+                        time = Date(date)
+                    } as GregorianCalendar).apply { timezone = FIELD_UNDEFINED }
             }
         }
     }

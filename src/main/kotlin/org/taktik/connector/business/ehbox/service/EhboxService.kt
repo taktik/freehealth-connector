@@ -52,30 +52,49 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 interface EhboxService {
     @Throws(ConnectorException::class)
     fun getBoxInfo(token: SAMLToken, getBoxInfoRequest: GetBoxInfoRequest): GetBoxInfoResponse
+
     @Throws(ConnectorException::class)
     fun getFullMessage(token: SAMLToken, request: GetFullMessageRequest): GetFullMessageResponse
+
     @Throws(ConnectorException::class)
     fun getFullMessage(token: SAMLToken, request: MessageRequestType): GetFullMessageResponse
+
     @Throws(ConnectorException::class)
     fun getMessageHistory(token: SAMLToken, request: MessageRequestType): GetHistoryResponse
+
     @Throws(ConnectorException::class)
     fun getMessageHistory(token: SAMLToken, request: GetHistoryRequest): GetHistoryResponse
+
     @Throws(ConnectorException::class)
     fun getMessageList(token: SAMLToken, request: GetMessagesListRequest): GetMessagesListResponse
+
     @Throws(ConnectorException::class)
-    fun getMessageAcknowledgmentsStatusResponse(token: SAMLToken, request: GetMessageAcknowledgmentsStatusRequest): GetMessageAcknowledgmentsStatusResponse
+    fun getMessageAcknowledgmentsStatusResponse(
+        token: SAMLToken,
+        request: GetMessageAcknowledgmentsStatusRequest
+    ): GetMessageAcknowledgmentsStatusResponse
+
     @Throws(ConnectorException::class)
     fun deleteMessage(token: SAMLToken, request: DeleteMessageRequest): DeleteMessageResponse
+
     @Throws(ConnectorException::class)
     fun moveMessage(token: SAMLToken, request: MoveMessageRequest): MoveMessageResponse
+
     @Throws(ConnectorException::class)
     fun insertOoO(token: SAMLToken, request: InsertOoORequest): InsertOoOResponse
+
     @Throws(ConnectorException::class)
     fun deleteOoO(token: SAMLToken, request: DeleteOoORequest): DeleteOoOResponse
+
     @Throws(ConnectorException::class)
     fun getOoOList(token: SAMLToken, request: GetOoOListRequest): GetOoOListResponse
+
     @Throws(ConnectorException::class)
-    fun getAllEhboxesMessagesList(token: SAMLToken, request: GetAllEhboxesMessagesListRequest): GetAllEhboxesMessagesListResponse
+    fun getAllEhboxesMessagesList(
+        token: SAMLToken,
+        request: GetAllEhboxesMessagesListRequest
+    ): GetAllEhboxesMessagesListResponse
+
     @Throws(EhboxBusinessConnectorException::class, ConnectorException::class)
     fun sendMessage(token: SAMLToken, request: SendMessageRequest): SendMessageResponse
 }

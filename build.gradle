@@ -1,5 +1,6 @@
 configurations {
 	jaxb
+	ktlint
 	all {
 		exclude group: 'log4j', module: 'log4j'
 	}
@@ -48,6 +49,7 @@ compileTestKotlin {
 
 repositories {
 	mavenCentral()
+	jcenter()
 	maven {
 		url = "http://repo.ehealth.fgov.be/artifactory/maven2/"
 	}
@@ -99,6 +101,7 @@ task genJaxb {
 // end::wsdl[]
 
 dependencies {
+	ktlint "com.github.shyiko:ktlint:0.22.0"
 	compile('org.springframework.boot:spring-boot-starter-web'){
 		exclude module: "spring-boot-starter-tomcat"
 	}
@@ -158,4 +161,22 @@ dependencies {
 	//kapt 'org.mapstruct:mapstruct-processor:1.2.0.Final'
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+task ktlint(type: JavaExec, group: "verification") {
+	description = "Check Kotlin code style."
+	classpath = configurations.ktlint
+	main = "com.github.shyiko.ktlint.Main"
+	args "src/**/*.kt"
+	// to generate report in checkstyle format prepend following args:
+	// "--reporter=plain", "--reporter=checkstyle,output=${buildDir}/ktlint.xml"
+	// see https://github.com/shyiko/ktlint#usage for more
+}
+check.dependsOn ktlint
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+	description = "Fix Kotlin code style deviations."
+	classpath = configurations.ktlint
+	main = "com.github.shyiko.ktlint.Main"
+	args "-F", "src/**/*.kt"
 }
