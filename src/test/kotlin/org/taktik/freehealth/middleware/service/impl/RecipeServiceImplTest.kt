@@ -5,9 +5,13 @@ import org.hamcrest.Matchers
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.connector.business.domain.kmehr.v20161201.be.ehealth.logic.recipe.xsd.v20160906.RecipeNotification
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS
@@ -69,29 +73,58 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.recipe.utils.KmehrHelper
 import org.taktik.connector.business.recipe.utils.KmehrValidator
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
+import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.CompoundPrescription
 import org.taktik.freehealth.middleware.domain.Medication
 import org.taktik.freehealth.middleware.domain.Patient
 import org.taktik.freehealth.middleware.domain.RegimenItem
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
-import org.taktik.freehealth.middleware.service.STSService
-import org.taktik.freehealth.middleware.service.impl.RecipeServiceImpl
+import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Companion.taktik
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications.Companion.compoundPrescriptionP2
 import java.io.ByteArrayOutputStream
 import java.math.BigDecimal
 import java.util.Date
 import java.util.Properties
+import java.util.UUID
 import javax.xml.bind.JAXBContext
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.datatype.XMLGregorianCalendar
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class RecipeServiceImplTest(val recipeService: RecipeServiceImpl, val stsService: STSService) {
-	val kmehrHelper = KmehrHelper(Properties().apply { load(javaClass.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
-    private val validator = KmehrValidator(recipeService)
+@TestPropertySource(locations = ["classpath:/test.properties"])
+class RecipeServiceImplTest {
+    @Autowired
+    lateinit var stsService : STSServiceImpl
+    @Autowired
+    lateinit var recipeService : RecipeServiceImpl
+
+    @Value("\${org.taktik.icure.keystore1.ssin}") var ssin : String? = null
+    @Value("\${org.taktik.icure.keystore1.nihii}") var nihii : String? = null
+    @Value("\${org.taktik.icure.keystore1.password}") var passPhrase : String? = null
+
+    private var tokenId: UUID? = null
+    private var keystoreId: UUID? = null
+
+    private lateinit var hcp: HealthcareParty
+    private val patient = RecipeTestUtils.createPatient()
+    private val validator by lazy { KmehrValidator(recipeService) }
+
+    init {
+        System.setProperty("spring.output.ansi.enabled", "always")
+    }
+
+    @Before
+    fun setup() {
+        hcp = RecipeTestUtils.createHealthcareParty()
+        keystoreId = stsService.uploadKeystore((MyTestsConfiguration::class).java.getResource("$ssin.acc-p12").readBytes())
+        tokenId = stsService.requestToken(keystoreId!!, ssin!!, passPhrase!!, false).tokenId
+    }
+
+
+    val kmehrHelper = KmehrHelper(Properties().apply { load(javaClass.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
 
     @Test
     fun validatePrescription() {
@@ -215,13 +248,13 @@ class RecipeServiceImplTest(val recipeService: RecipeServiceImpl, val stsService
             <standard>
                 <cd S="CD-STANDARD" SV="1.19">20161201</cd>
             </standard>
-            <id S="ID-KMEHR" SV="1.0">10032669001.1490777844496</id>
+            <id S="ID-KMEHR" SV="1.0">11478761004.1490777844496</id>
             <id S="LOCAL" SV="4.0.3-on7ns4_e991da3" SL="ICure"></id>
             <date>2017-03-29</date>
             <time>10:57:24.490</time>
             <sender>
                 <hcparty>
-                    <id S="ID-HCPARTY" SV="1.0">10032669001</id>
+                    <id S="ID-HCPARTY" SV="1.0">11478761004</id>
                     <id S="INSS" SV="1.0">74010414733</id>
                     <cd S="CD-HCPARTY" SV="1.9">persphysician</cd>
                     <firstname>Antoine</firstname>
@@ -270,7 +303,7 @@ class RecipeServiceImplTest(val recipeService: RecipeServiceImpl, val stsService
                 <time>10:57:24.514</time>
                 <author>
                     <hcparty>
-                        <id S="ID-HCPARTY" SV="1.0">10032669001</id>
+                        <id S="ID-HCPARTY" SV="1.0">11478761004</id>
                         <cd S="CD-HCPARTY" SV="1.9">persphysician</cd>
                         <firstname>Antoine</firstname>
                         <familyname>Duchâteau</familyname>
@@ -337,13 +370,13 @@ class RecipeServiceImplTest(val recipeService: RecipeServiceImpl, val stsService
                     standard = StandardType().apply {
                         cd = CDSTANDARD().apply { s  = "CD-STANDARD"; sv = "1.19"; value = "20161201" }
                     }
-                    ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1" ; value = "10032669001.1490777844496" })
+                    ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1" ; value = "11478761004.1490777844496" })
                     ids.add(IDKMEHR().apply { s = IDKMEHRschemes.LOCAL; sv = "4.0.3-on7ns4_e991da3"; sl = "ICure"; value = ""})
                     date = DatatypeFactory.newInstance().newXMLGregorianCalendar("2017-03-29")
                     time = DatatypeFactory.newInstance().newXMLGregorianCalendar("10:57:24.490")
                     sender = SenderType().apply {
                         hcparties.add(HcpartyType().apply {
-                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = "10032669001" })
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = "11478761004" })
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = "74010414733" })
                             cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY;sv = "1.9"; value = "persphysician" })
                             firstname = "Antoine"
@@ -387,12 +420,12 @@ class RecipeServiceImplTest(val recipeService: RecipeServiceImpl, val stsService
                             time = DatatypeFactory.newInstance().newXMLGregorianCalendar("10:57:24.514")
                             author = RecipeauthorType().apply {
                                 hcparties.add(HcpartyType().apply {
-                                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = "10032669001" })
+                                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = "11478761004" })
                                     cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.11"; value = "persphysician" })
                                     firstname = "Antoine"
                                     familyname = "Duchâteau"
                                     addresses.add(AddressType().apply {
-                                        cds.add(CDADDRESS().apply { s = CDADDRESSschemes.CD_ADDRESS; sv = "1.1"; value = "10032669001" })
+                                        cds.add(CDADDRESS().apply { s = CDADDRESSschemes.CD_ADDRESS; sv = "1.1"; value = "11478761004" })
                                         country = CountryType().apply { cd = CDCOUNTRY().apply { s = CDCOUNTRYschemes.CD_COUNTRY; sv = "1.2"; value = "BE" } }
                                         zip = "1420"
                                         city = "Braine-l'Alleud"

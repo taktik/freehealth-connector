@@ -1,20 +1,19 @@
 package org.taktik.freehealth.middleware.service.impl
 
-import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.connector.business.recipe.utils.KmehrValidator
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.Medication
 import org.taktik.freehealth.middleware.domain.Prescription
 import org.taktik.freehealth.middleware.dto.HealthcareParty
-import org.taktik.freehealth.middleware.service.RecipeService
-import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications.Companion.compoundPrescriptionP2
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications.Companion.medicinalProductP0
@@ -31,7 +30,13 @@ import javax.xml.bind.JAXBContext
  */
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CreatePrescriptionTest(val recipeService: RecipeService, val stsService: STSService) {
+@TestPropertySource(locations = ["classpath:/test.properties"])
+class CreatePrescriptionTest {
+
+    @Autowired
+    lateinit var stsService : STSServiceImpl
+    @Autowired
+    lateinit var recipeService : RecipeServiceImpl
 
     @Value("\${org.taktik.icure.keystore1.ssin}") var ssin : String? = null
     @Value("\${org.taktik.icure.keystore1.nihii}") var nihii : String? = null
@@ -44,11 +49,15 @@ class CreatePrescriptionTest(val recipeService: RecipeService, val stsService: S
     private val patient = RecipeTestUtils.createPatient()
     private val validator by lazy { KmehrValidator(recipeService) }
 
+    init {
+        System.setProperty("spring.output.ansi.enabled", "always")
+    }
+
     @Before
     fun setup() {
         hcp = RecipeTestUtils.createHealthcareParty()
         keystoreId = stsService.uploadKeystore((MyTestsConfiguration::class).java.getResource("$ssin.acc-p12").readBytes())
-        tokenId = stsService.requestToken(keystoreId!!, nihii!!, passPhrase!!, false).tokenId
+        tokenId = stsService.requestToken(keystoreId!!, ssin!!, passPhrase!!, false).tokenId
     }
 
 
@@ -94,7 +103,7 @@ class CreatePrescriptionTest(val recipeService: RecipeService, val stsService: S
 
     fun assertKmehrValid(medication: Medication) {
         val os = ByteArrayOutputStream()
-        JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(recipeService.getKmehrPrescription(patient, hcp, listOf(medication), null), os)
+        JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createMarshaller().marshal(recipeService.getKmehrPrescription(patient, hcp, listOf(medication), null), os)
         val prescription = os.toByteArray()
         validator.validatePrescription(prescription, recipeService.inferPrescriptionType(listOf(medication), null))
 

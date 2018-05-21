@@ -146,12 +146,4 @@ interface DrugsService {
     fun getInteractions(medecinePackageID: MppId, otherCnks: List<String>): List<*>
 
     fun getCheapAlternativesBasedOnInn(innClusterId: String, lang: String): List<*>
-
-    fun getInnClusters(
-        searchString: String,
-        lang: String,
-        types: List<String>,
-        first: Int,
-        count: Int
-    ): List<MppPreview>
 }

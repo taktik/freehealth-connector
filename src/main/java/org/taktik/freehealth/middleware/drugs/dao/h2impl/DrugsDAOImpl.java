@@ -35,7 +35,6 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Repository;
 import org.taktik.freehealth.middleware.drugs.Atc;
 import org.taktik.freehealth.middleware.drugs.Doc;
-import org.taktik.freehealth.middleware.drugs.Gal;
 import org.taktik.freehealth.middleware.drugs.Iam;
 import org.taktik.freehealth.middleware.drugs.Mp;
 import org.taktik.freehealth.middleware.drugs.Mpp;
@@ -46,13 +45,20 @@ import org.taktik.freehealth.middleware.drugs.civics.Paragraph;
 import org.taktik.freehealth.middleware.drugs.civics.Therapy;
 import org.taktik.freehealth.middleware.drugs.civics.Verse;
 import org.taktik.freehealth.middleware.drugs.dao.DrugsDAO;
-import org.taktik.freehealth.middleware.drugs.dto.*;
-import org.taktik.freehealth.middleware.drugs.logic.DrugsDatabaseConnectionFailedException;
+import org.taktik.freehealth.middleware.drugs.dto.AtcId;
+import org.taktik.freehealth.middleware.drugs.dto.DocId;
+import org.taktik.freehealth.middleware.drugs.dto.FullTextSearchResult;
+import org.taktik.freehealth.middleware.drugs.dto.MpId;
+import org.taktik.freehealth.middleware.drugs.dto.MppId;
 import org.taktik.freehealth.middleware.drugs.logic.DrugsDatabaseNotFoundException;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -61,15 +67,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-@Repository
+@Repository("drugsDAO")
 public class DrugsDAOImpl implements DrugsDAO {
+
     protected final Log log = LogFactory.getLog(getClass());
 
     private SessionFactory sessionFactory;
     private IndexSearcher indexSearcher;
 
-    protected Map<String, Analyzer> analyzers;
+    private Map<String, Analyzer> analyzers;
 
     private String dbMainFile = "drugs.h2.db";
     private File dbDir;
@@ -78,7 +87,44 @@ public class DrugsDAOImpl implements DrugsDAO {
         buildAnalyzerMap();
     }
 
-    public File getDbDir() {
+    private File getDbDir() throws IOException {
+        if (dbDir == null) {
+            File tempDir = Files.createTempDirectory("freehealth").toFile();
+            File drugsDir = new File(tempDir, "drugs");
+            if (drugsDir.exists() && drugsDir.isDirectory()) {
+                dbDir = drugsDir;
+            } else {
+                if (!drugsDir.exists() && !drugsDir.mkdirs()) { throw new IOException("Cannot create temp dir for holding drugs db"); }
+                if (drugsDir.exists() && drugsDir.isDirectory()) {
+                    InputStream stream = this.getClass().getClassLoader().getResourceAsStream("be/drugs.zip");
+                    ZipInputStream zis = new ZipInputStream(stream);
+                    ZipEntry ze;
+                    byte[] buffer = new byte[10 * 1024];
+                    // while there are entries I process them
+                    try {
+                        while ((ze = zis.getNextEntry()) != null) {
+                            String fileName = ze.getName();
+                            File newFile = new File(drugsDir, fileName);
+                            new File(newFile.getParent()).mkdirs();
+                            FileOutputStream fos = new FileOutputStream(newFile);
+                            int len;
+                            while ((len = zis.read(buffer)) > 0) {
+                                fos.write(buffer, 0, len);
+                            }
+                            fos.close();
+                        }
+                        dbDir = drugsDir;
+                    } catch (Exception ignored) {
+                    } finally {
+                        try {
+                            zis.close();
+                            stream.close();
+                        } catch (IOException ignored) {
+                        }
+                    }
+                }
+            }
+        }
         return dbDir;
     }
 
@@ -137,23 +183,22 @@ public class DrugsDAOImpl implements DrugsDAO {
         return result.get(0);
     }
 
-    protected HibernateTemplate getHibernateTemplate() {
+    private HibernateTemplate getHibernateTemplate() {
         return new HibernateTemplate(getSessionFactory());
     }
 
-    protected SessionFactory getSessionFactory() {
+    private SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
-            if (!isDataBasePresent()) {
+            if (!isDatabasePresent()) {
                 throw new DrugsDatabaseNotFoundException();
             }
-            String dbPath = getDbDir().getAbsolutePath() + "/drugs";
             try {
                 Configuration cfg = new Configuration()
                         .addClass(org.taktik.freehealth.middleware.drugs.Mpp.class)
                         .addClass(org.taktik.freehealth.middleware.drugs.Atc.class)
                         .addClass(org.taktik.freehealth.middleware.drugs.Composition.class)
                         .addClass(org.taktik.freehealth.middleware.drugs.Doc.class)
-                        .addClass(Gal.class)
+                        .addClass(org.taktik.freehealth.middleware.drugs.Gal.class)
                         .addClass(org.taktik.freehealth.middleware.drugs.Informationresponsible.class)
                         .addClass(org.taktik.freehealth.middleware.drugs.Ingredient.class)
                         .addClass(org.taktik.freehealth.middleware.drugs.Iam.class)
@@ -174,7 +219,7 @@ public class DrugsDAOImpl implements DrugsDAO {
 //                    .addClass(org.taktik.freehealth.middleware.drugs.civics.Atc.class)
                         .addClass(org.taktik.freehealth.middleware.drugs.civics.Atm.class)
                         .addClass(org.taktik.freehealth.middleware.drugs.civics.Company.class)
-                                //.addClass(org.taktik.freehealth.middleware.drugs.civics.Copayment.class)
+                        //.addClass(org.taktik.freehealth.middleware.drugs.civics.Copayment.class)
 //                    .addClass(org.taktik.freehealth.middleware.drugs.civics.Exclusion.class)
                         .addClass(org.taktik.freehealth.middleware.drugs.civics.FormType.class)
 /*                  .addClass(org.taktik.freehealth.middleware.drugs.civics.HActualIngredientStrength.class)
@@ -237,11 +282,10 @@ public class DrugsDAOImpl implements DrugsDAO {
                 cfg.setProperty("hibernate.connection.password", "");
                 cfg.setProperty("hibernate.connection.username", "sa");
                 cfg.setProperty("hibernate.default_schema", "PUBLIC");
-                cfg.setProperty("hibernate.connection.url", "jdbc:h2:" + dbPath);
+                cfg.setProperty("hibernate.connection.url", "jdbc:h2:" + getDbDir().getAbsolutePath() + "/drugs");
                 sessionFactory = cfg.buildSessionFactory();
             } catch (Exception e) {
-                throw new DrugsDatabaseConnectionFailedException("failed to connect to " + dbPath
-                        + ": h2 db connection might already be in use.", e);
+                log.error(e);
             }
         }
         return sessionFactory;
@@ -254,7 +298,7 @@ public class DrugsDAOImpl implements DrugsDAO {
 
     public void openDataStoreSession() {
         SessionFactory factory = getSessionFactory();
-        if (factory!=null) {
+        if (factory != null) {
             factory.getCurrentSession().beginTransaction();
         }
     }
@@ -288,6 +332,7 @@ public class DrugsDAOImpl implements DrugsDAO {
             return null;
         }
         Validate.isTrue(result.size() == 1, "More than One Mp found!");
+
         return result.get(0);
     }
 
@@ -338,7 +383,7 @@ public class DrugsDAOImpl implements DrugsDAO {
 
     private IndexSearcher getIndexSearcher() {
         if (indexSearcher == null) {
-            if (!isDataBasePresent()) {
+            if (!isDatabasePresent()) {
                 throw new DrugsDatabaseNotFoundException();
             }
             try {
@@ -352,7 +397,7 @@ public class DrugsDAOImpl implements DrugsDAO {
         return indexSearcher;
     }
 
-    protected static Transformer<Document, FullTextSearchResult> DOC_TO_SEARCHRESULT = new Transformer<Document, FullTextSearchResult>() {
+    private static Transformer<Document, FullTextSearchResult> DOC_TO_SEARCHRESULT = new Transformer<Document, FullTextSearchResult>() {
 
         public FullTextSearchResult transform(Document doc) {
             FullTextSearchResult ftsr = new FullTextSearchResult();
@@ -370,7 +415,7 @@ public class DrugsDAOImpl implements DrugsDAO {
         Validate.notNull(search, "Search string must not be null");
         // Normalize search string
         search = search.replaceAll("\\*|\\?", "").trim();
-        List<FullTextSearchResult> results = new ArrayList<FullTextSearchResult>();
+        List<FullTextSearchResult> results = new ArrayList<>();
         if (search.length() == 0) {
             return results;
         }
@@ -379,7 +424,7 @@ public class DrugsDAOImpl implements DrugsDAO {
         TokenStream ts = std.tokenStream("content", new StringReader(search));
         CharTermAttribute cattr = ts.addAttribute(CharTermAttribute.class);
         ts.reset();
-        List<String> searchTerms2 = new ArrayList<String>();
+        List<String> searchTerms2 = new ArrayList<>();
         while (ts.incrementToken()) {
             searchTerms2.add(cattr.toString());
         }
@@ -486,8 +531,12 @@ public class DrugsDAOImpl implements DrugsDAO {
     }
 
 
-    public boolean isDataBasePresent() {
-        return new File(getDbDir(), dbMainFile).exists();
+    public boolean isDatabasePresent() {
+        try {
+            return new File(getDbDir(), dbMainFile).exists();
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     public void initDrugsDatabase() {
@@ -516,7 +565,7 @@ public class DrugsDAOImpl implements DrugsDAO {
 	} */
 
     private void buildAnalyzerMap() {
-        analyzers = new HashMap<String, Analyzer>();
+        analyzers = new HashMap<>();
         analyzers.put("fr", new FrenchAnalyzer(Version.LUCENE_47));
         analyzers.put("nl", new DutchAnalyzer(Version.LUCENE_47));
         analyzers.put("en", new StandardAnalyzer(Version.LUCENE_47));
@@ -546,7 +595,7 @@ public class DrugsDAOImpl implements DrugsDAO {
     public List<Mp> getMpsWithAtc(Atc atc) {
         Session sess = getHibernateTemplate().getSessionFactory().getCurrentSession();
 
-        Set<Mp> mps = new HashSet<Mp>();
+        Set<Mp> mps = new HashSet<>();
         if (atc != null && atc.getCode() != null)
             for (Atc a : (List<Atc>) sess.createCriteria(Atc.class).add(Restrictions.eq("code", atc.getCode())).add(Restrictions.eq("current", true)).list()) {
                 if (a.getId().getLang().equals(atc.getId().getLang())) {
@@ -556,13 +605,13 @@ public class DrugsDAOImpl implements DrugsDAO {
                     }
                 }
             }
-        return new ArrayList<Mp>(mps);
+        return new ArrayList<>(mps);
     }
 
     public List<Mpp> getCheapMppsWithInn(String inn, String lang) {
         if (inn != null && lang != null) {
             Session sess = getHibernateTemplate().getSessionFactory().getCurrentSession();
-            ArrayList<Mpp> result = new ArrayList<Mpp>();
+            ArrayList<Mpp> result = new ArrayList<>();
             for (Mpp candidate : (Collection<Mpp>) sess.createCriteria(Mpp.class).add(Restrictions.eq("inncluster", inn)).addOrder(Order.asc("index")).list()) {
                 if (candidate.getId().getLang().equals(lang) && candidate.getRrsstate() != null && (candidate.getRrsstate().equals("G") || candidate.getRrsstate().equals("C") || candidate.getRrsstate().equals("B"))) {
                     result.add(candidate);
@@ -570,13 +619,13 @@ public class DrugsDAOImpl implements DrugsDAO {
             }
             return result;
         }
-        return new ArrayList<Mpp>();
+        return new ArrayList<>();
     }
 
     public List<Mpp> getMppsWithInn(String inn, String lang) {
         if (inn != null && lang != null) {
             Session sess = getHibernateTemplate().getSessionFactory().getCurrentSession();
-            ArrayList<Mpp> result = new ArrayList<Mpp>();
+            ArrayList<Mpp> result = new ArrayList<>();
             for (Mpp candidate : (Collection<Mpp>) sess.createCriteria(Mpp.class).add(Restrictions.eq("inncluster", inn)).addOrder(Order.asc("index")).list()) {
                 if (candidate.getId().getLang().equals(lang)) {
                     result.add(candidate);
@@ -584,13 +633,13 @@ public class DrugsDAOImpl implements DrugsDAO {
             }
             return result;
         }
-        return new ArrayList<Mpp>();
+        return new ArrayList<>();
     }
 
     public List<Iam> getIams(String id, String lang) {
         if (id != null) {
             Session sess = getHibernateTemplate().getSessionFactory().getCurrentSession();
-            List<Iam> result = new ArrayList<Iam>();
+            List<Iam> result = new ArrayList<>();
             for (Iam iam : (List<Iam>) sess.createCriteria(Iam.class).add(Restrictions.eq("atc1", id)).list()) {
                 if (iam.getIamId().getLang().equals(lang)) {
                     result.add(iam);
@@ -598,7 +647,7 @@ public class DrugsDAOImpl implements DrugsDAO {
             }
             return result;
         }
-        return new ArrayList<Iam>();
+        return new ArrayList<>();
     }
 
     @Override
@@ -661,10 +710,10 @@ public class DrugsDAOImpl implements DrugsDAO {
     @Override
     public List<Paragraph> findParagraphsWithCnk(Long cnk, String language) {
         if (cnk != null) {
-            Set<Paragraph> result = new HashSet<Paragraph>();
+            Set<Paragraph> result = new HashSet<>();
             Session sess = getHibernateTemplate().getSessionFactory().getCurrentSession();
 
-           Map<String, List<String>> chapterParagraphs = new HashMap<String, List<String>>();
+            Map<String, List<String>> chapterParagraphs = new HashMap<>();
             for (Therapy t : (List<Therapy>) sess.createCriteria(Therapy.class, "a_th")
                     .createAlias("a_th.atm", "a_atm")
                     .createAlias("a_atm.amps", "a_amp")
@@ -674,29 +723,29 @@ public class DrugsDAOImpl implements DrugsDAO {
                     .list()) {
                 List<String> pns = chapterParagraphs.get(t.getChapterName());
                 if (pns == null) {
-                    chapterParagraphs.put(t.getChapterName(), pns = new ArrayList<String>());
+                    chapterParagraphs.put(t.getChapterName(), pns = new ArrayList<>());
                 }
                 pns.add(t.getParagraphName());
             }
 
             List<String> vals = chapterParagraphs.get("IV");
-            if (vals != null && vals.size()>0) {
-            //for (Map.Entry<String, List<String>> k : chapterParagraphs.entrySet()) {
+            if (vals != null && vals.size() > 0) {
+                //for (Map.Entry<String, List<String>> k : chapterParagraphs.entrySet()) {
                 result.addAll(sess.createCriteria(Paragraph.class)
                         .add(Restrictions.eq("chapterName", "IV"))
                         .add(Restrictions.in("paragraphName", vals))
                         .list());
-            //}
+                //}
             }
-            return new ArrayList<Paragraph>(result);
+            return new ArrayList<>(result);
         }
-        return new ArrayList<Paragraph>();
+        return new ArrayList<>();
     }
 
     @Override
     public List<Paragraph> findParagraphs(String searchString, String language) {
-        if (searchString != null && searchString.length()>=2) {
-            Set<Paragraph> result = new HashSet<Paragraph>();
+        if (searchString != null && searchString.length() >= 2) {
+            Set<Paragraph> result = new HashSet<>();
             Session sess = getHibernateTemplate().getSessionFactory().getCurrentSession();
 
             result.addAll(sess.createCriteria(Paragraph.class)
@@ -706,7 +755,7 @@ public class DrugsDAOImpl implements DrugsDAO {
                     ))
                     .list());
 
-            List<Long> ids = new LinkedList<Long>();
+            List<Long> ids = new LinkedList<>();
             for (Mpp mpp : getMedecinePackages(searchString, language, null, 0, 100)) {
                 if (mpp.getId().getId().matches("^[0-9]+$")) {
                     ids.add(Long.parseLong(mpp.getId().getId()));
@@ -714,7 +763,7 @@ public class DrugsDAOImpl implements DrugsDAO {
             }
 
 
-            Map<String, List<String>> chapterParagraphs = new HashMap<String, List<String>>();
+            Map<String, List<String>> chapterParagraphs = new HashMap<>();
             for (Therapy t : (List<Therapy>) sess.createCriteria(Therapy.class, "a_th")
                     .createAlias("a_th.atm", "a_atm")
                     .createAlias("a_atm.amps", "a_amp")
@@ -724,13 +773,13 @@ public class DrugsDAOImpl implements DrugsDAO {
                     .list()) {
                 List<String> pns = chapterParagraphs.get(t.getChapterName());
                 if (pns == null) {
-                    chapterParagraphs.put(t.getChapterName(), pns = new ArrayList<String>());
+                    chapterParagraphs.put(t.getChapterName(), pns = new ArrayList<>());
                 }
                 pns.add(t.getParagraphName());
             }
 
             List<String> vals = chapterParagraphs.get("IV");
-            if (vals != null && vals.size()>0) {
+            if (vals != null && vals.size() > 0) {
                 //for (Map.Entry<String, List<String>> k : chapterParagraphs.entrySet()) {
                 result.addAll(sess.createCriteria(Paragraph.class)
                         .add(Restrictions.eq("chapterName", "IV"))
@@ -738,9 +787,9 @@ public class DrugsDAOImpl implements DrugsDAO {
                         .list());
                 //}
             }
-            return new ArrayList<Paragraph>(result);
+            return new ArrayList<>(result);
         }
-        return new ArrayList<Paragraph>();
+        return new ArrayList<>();
     }
 
     @Override
@@ -772,11 +821,12 @@ public class DrugsDAOImpl implements DrugsDAO {
         if (nameId != null && lng != null) {
             Session sess = getHibernateTemplate().getSessionFactory().getCurrentSession();
             return ((NameTranslation) sess.createCriteria(NameTranslation.class)
-                    .createAlias("name","n")
+                    .createAlias("name", "n")
                     .add(Restrictions.eq("n.id", nameId))
                     .add(Restrictions.eq("languageCv", lng))
                     .uniqueResult()).getShortText();
         }
         return null;
     }
+
 }

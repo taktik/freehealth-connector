@@ -1,4 +1,4 @@
-package org.taktik.icure.be.ehealth.logic.recipe.impl
+package org.taktik.freehealth.middleware.service.impl
 
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
@@ -11,8 +11,10 @@ import org.junit.Assume.assumeThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.dt.v1.TextType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
@@ -20,14 +22,19 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeformularyreferenceType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipegalenicformType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipequantityType
+import org.taktik.connector.business.recipe.utils.KmehrValidator
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.CompoundPrescription
 import org.taktik.freehealth.middleware.domain.Feedback
 import org.taktik.freehealth.middleware.domain.Prescription
+import org.taktik.freehealth.middleware.dto.HealthcareParty
 import org.taktik.freehealth.middleware.service.RecipeService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.middleware.service.impl.RecipeServiceImpl
+import org.taktik.freehealth.middleware.service.impl.STSServiceImpl
 import org.taktik.freehealth.middleware.service.impl.examples.PrescriptionExample
+import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils
 import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample1
 import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample10
 import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample11
@@ -58,17 +65,37 @@ import javax.xml.bind.JAXBElement
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(locations = ["classpath:/test.properties"])
+class RecipeStories {
 
-class RecipeStories(val recipeService: RecipeService, val stsService: STSService) {
+    @Autowired
+    lateinit var stsService : STSServiceImpl
+    @Autowired
+    lateinit var recipeService : RecipeServiceImpl
+
     @Value("\${org.taktik.icure.keystore1.ssin}") var ssin : String? = null
     @Value("\${org.taktik.icure.keystore1.nihii}") var nihii : String? = null
     @Value("\${org.taktik.icure.keystore1.password}") var passPhrase : String? = null
 
     private var tokenId: UUID? = null
     private var keystoreId: UUID? = null
-    private val hcp = RecipeTestUtils.createHealthcareParty()
+
+    private var hcp: HealthcareParty = RecipeTestUtils.createHealthcareParty()
+    private val patient = RecipeTestUtils.createPatient()
+    private val validator by lazy { KmehrValidator(recipeService) }
+
+    init {
+        System.setProperty("spring.output.ansi.enabled", "always")
+    }
+
+    @Before
+    fun setup() {
+        keystoreId = stsService.uploadKeystore((MyTestsConfiguration::class).java.getResource("$ssin.acc-p12").readBytes())
+        tokenId = stsService.requestToken(keystoreId!!, ssin!!, passPhrase!!, false).tokenId
+    }
+
     private val prescriptions = listOf(
-    prescriptionExample1(),
+    prescriptionExample1()/*,
     prescriptionExample2(),
     prescriptionExample3(),
     prescriptionExample4(),
@@ -86,14 +113,8 @@ class RecipeStories(val recipeService: RecipeService, val stsService: STSService
     prescriptionExample16(),
     prescriptionExample17(),
     prescriptionExample18(),
-    prescriptionExample19()
+    prescriptionExample19()*/
     ).map { it.copy(hcp = hcp) }
-
-    @Before
-    fun setup() {
-        keystoreId = stsService.uploadKeystore((MyTestsConfiguration::class).java.getResource("$ssin.acc-p12").readBytes())
-        tokenId = stsService.requestToken(keystoreId!!, nihii!!, passPhrase!!, false).tokenId
-    }
 
     @Test
     fun prescription_createGet_requestedEqualsResult() {

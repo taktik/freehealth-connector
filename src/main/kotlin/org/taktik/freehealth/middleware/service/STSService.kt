@@ -21,7 +21,9 @@
 package org.taktik.freehealth.middleware.service
 
 import org.springframework.web.multipart.MultipartFile
+import org.taktik.connector.technical.service.etee.domain.EncryptionToken
 import org.taktik.connector.technical.service.sts.security.SAMLToken
+import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.freehealth.middleware.domain.SamlTokenResult
 import java.security.KeyStore
 import java.util.*
@@ -41,4 +43,5 @@ interface STSService {
     fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken?
     fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore?
     fun checkIfKeystoreExist(keystoreId: UUID): Boolean?
+    fun getHolderOfKeysEtk(credential: KeyStoreCredential): EncryptionToken
 }

@@ -53,16 +53,6 @@ class DrugsServiceImpl : DrugsService {
         return drugsLogic!!.getMedecinePackages(searchString, lang, types, first, count)
     }
 
-    override fun getInnClusters(
-        searchString: String,
-        lang: String,
-        types: List<String>,
-        first: Int,
-        count: Int
-    ): List<MppPreview> {
-        return drugsLogic!!.getInnClusters("be", searchString, lang, types, first, count)
-    }
-
     override fun getMedecinePackagesFromIngredients(
         searchString: String,
         lang: String,

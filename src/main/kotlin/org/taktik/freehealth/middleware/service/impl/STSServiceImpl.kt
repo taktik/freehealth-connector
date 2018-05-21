@@ -84,14 +84,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val keyStore = getKeyStore(keystoreId, passPhrase)
         val credential = KeyStoreCredential(keyStore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keyStore, passPhrase.toCharArray())
-        val cert = credential.getCertificate()
-
-        val parser = CertificateParser(cert)
-        val identifierType = parser.getIdentifier()
-        val identifierValue = parser.getId()
-        val application = parser.getApplication()
-
-        val etk = this.getEtk(identifierType, java.lang.Long.parseLong(identifierValue), application)
+        val etk = getHolderOfKeysEtk(credential)
         if (!hokPrivateKeys.containsKey(etk.certificate.serialNumber.toString(10))) {
             throw TechnicalConnectorException(
                 ERROR_CONFIG,
@@ -174,6 +167,18 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         tokensMap[randomUUID] = samlToken
 
         return SamlTokenResult(randomUUID, samlToken, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
+    }
+
+    override fun getHolderOfKeysEtk(credential: KeyStoreCredential): EncryptionToken {
+        val cert = credential.certificate
+
+        val parser = CertificateParser(cert)
+        val identifierType = parser.identifier
+        val identifierValue = parser.id
+        val application = parser.application
+
+        val etk = this.getEtk(identifierType, java.lang.Long.parseLong(identifierValue), application)
+        return etk
     }
 
     override fun uploadKeystore(file: MultipartFile): UUID {

@@ -55,7 +55,6 @@ abstract class AbstractIntegrationModule {
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val ridPattern = Pattern.compile(RID_PATTERN)
 
-    protected var dataUnsealer: DataUnsealer? = null
     var oldDataSealer: DataSealer? = null
     var oldDataUnsealer: DataUnsealer? = null
 
@@ -113,7 +112,7 @@ abstract class AbstractIntegrationModule {
                 oldDataUnsealer = encryptionUtils.initOldUnSealing()
             }
             log.info("Init the encryption - init etkHelper")
-            etkHelper = ETKHelper(propertyHandler, encryptionUtils)
+            etkHelper = ETKHelper()
         } catch (t: Throwable) {
             log.error("Exception occured when initializing the encryption util: ", t)
             Exceptionutils.errorHandler(t, "error.initialization")

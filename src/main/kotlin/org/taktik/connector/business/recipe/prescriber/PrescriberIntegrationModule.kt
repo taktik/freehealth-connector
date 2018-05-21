@@ -24,7 +24,6 @@ import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
 import be.recipe.services.prescriber.ListFeedbackItem
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.connector.technical.exception.TechnicalConnectorException
-import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import java.security.KeyStore
@@ -32,7 +31,7 @@ import java.security.KeyStore
 interface PrescriberIntegrationModule {
     @Throws(IntegrationModuleException::class)
     fun createPrescription(
-        samlToken: SAMLToken,
+        keystore: KeyStore, samlToken: SAMLToken, passPhrase: String,
         credential: KeyStoreCredential,
         nihii: String,
         feedbackRequested: Boolean,
@@ -59,7 +58,7 @@ interface PrescriberIntegrationModule {
         samlToken: SAMLToken,
         credential: KeyStoreCredential,
         nihii: String,
-        patientId: String
+        patientId: String?
                             ): List<String>
 
     @Throws(IntegrationModuleException::class)
@@ -95,6 +94,4 @@ interface PrescriberIntegrationModule {
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
     fun ping(samlToken: SAMLToken, credential: KeyStoreCredential)
 
-    @Throws(IntegrationModuleException::class)
-    fun prepareCreatePrescription(nihii: String, patientId: String, prescriptionType: String)
 }

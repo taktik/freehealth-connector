@@ -57,9 +57,9 @@ class RecipeTestUtils {
         fun createHealthcareParty(): HealthcareParty {
             return HealthcareParty(
                 firstName = "Antoine",
-                lastName = "Duchâteau",
-                ssin = "74010414733",
-                nihii = "10032669001",
+                lastName = "Baudoux",
+                ssin = "79121430944",
+                nihii = "11478761004",
                 addresses = mutableSetOf(taktik())
             )
         }
@@ -169,7 +169,7 @@ class RecipeTestUtils {
             fun substanceProduct0000000P0(): Medication {
                 val paracetamol = Medication().apply {
                     substanceProduct = Substanceproduct().apply {
-                        intendedcds = listOf(Code("CD-INNCLUSTER", "0000000"))
+                        intendedcds = listOf(Code("CD-INNCLUSTER", "8030496"))
                         intendedname = "bisoprolol (10 mg), orally"
                     }
                 }
