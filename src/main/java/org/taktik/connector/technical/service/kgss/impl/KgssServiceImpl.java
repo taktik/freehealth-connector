@@ -4,7 +4,6 @@ import be.fgov.ehealth.etee.crypto.status.NotificationError;
 import be.fgov.ehealth.etee.crypto.status.NotificationWarning;
 import be.fgov.ehealth.etee.crypto.utils.KeyManager;
 import be.fgov.ehealth.etee.kgss._1_0.protocol.CredentialType;
-import com.sun.xml.internal.ws.client.ClientTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.taktik.connector.technical.config.impl.ConfigurationModuleBootstrap;
@@ -166,8 +165,6 @@ public class KgssServiceImpl implements KgssService, ConfigurationModuleBootstra
          } else {
             throw new IllegalArgumentException("error.kgss.getKey.other", se);
          }
-      } catch (ClientTransportException cte) {
-         throw new IllegalArgumentException("error.connection.kgss", cte);
       } catch (TechnicalConnectorException e) {
          throw new IllegalArgumentException("technical.connector.error.retrieve.key", e);
       }
