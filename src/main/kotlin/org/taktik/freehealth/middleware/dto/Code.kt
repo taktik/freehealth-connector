@@ -25,7 +25,7 @@ import java.util.*
 import kotlin.collections.HashSet
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class Code(var type: String? = null, val code: String? = null, var version: String? = null) {
+class Code(var type: String? = null, var code: String? = null, var version: String? = null) {
     //ex: type ICD (type + version + code combination must be unique) (or from tags -> CD-ITEM), code I06.2 (or from tags -> healthcareelement). Local codes are encoded as LOCAL:SLLOCALFROMMYSOFT, version must be lexicographically sortable
     var regions: Set<String> = HashSet() //ex: be,fr
     var level: Int? = null //ex: 0 = System, not to be modified by user, 1 = optional, created or modified by user

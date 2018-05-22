@@ -363,8 +363,8 @@ class RecipeStories {
             }
             val compoundPrescription = it.compoundPrescriptionV2
             val medicationStringRepresentation = when {
-                it.medicinalProduct != null -> "(product ${it.medicinalProduct?.intendedcds?.joinToString { it.code }})"
-                it.substanceProduct != null -> "(substance ${it.substanceProduct?.intendedcds?.joinToString { it.code }})"
+                it.medicinalProduct != null -> "(product ${it.medicinalProduct?.intendedcds?.joinToString { it.code ?: "N/A" }})"
+                it.substanceProduct != null -> "(substance ${it.substanceProduct?.intendedcds?.joinToString { it.code ?: "N/A" }})"
                 compoundPrescription != null -> when (compoundPrescription) {
                     is CompoundPrescription.Compounds -> compoundPrescription.compounds.joinToString(separator = "", transform = { "(compound ${it.medicinalProduct?.intendedcds?.get(0)?.code ?: it.substanceProduct?.name})" })
                     is CompoundPrescription.MagistralText -> "(text ${compoundPrescription.text})"
