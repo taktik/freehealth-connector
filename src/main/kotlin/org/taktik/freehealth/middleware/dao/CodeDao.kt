@@ -42,7 +42,7 @@ class CodeDao(gson: Gson) {
         null //gson.fromJson(javaClass.getResourceAsStream("/cdInncluster.json").reader(Charsets.UTF_8), CodesMap::class.java)
 
     fun isValid(code: Code): Boolean {
-        return codesMap(code.type)?.let { it.codes[code.code] != null } ?: false
+        return code.type?.let { codesMap(it)?.let { it.codes[code.code] != null } } ?: false
     }
 
     fun codesMap(type: String): CodesMap? {
@@ -62,14 +62,14 @@ class CodeDao(gson: Gson) {
     }
 
     fun ensureValid(code: Code, ofType: String, orDefault: Code?): Code? {
-        return if (code.type != ofType) orDefault else codesMap(code.type)?.let {
+        return if (code.type != ofType) orDefault else code.type?.let { codesMap(it)?.let {
             it.codes[code.code]?.let {
                 Code(
                     ofType,
                     code.code
-                ).apply { this.label.putAll(it) }
+                    ).apply { this.label.putAll(it) }
             }
-        } ?: orDefault
+        } } ?: orDefault
     }
 
     fun findCode(type: String, code: String, version: String): Code? {

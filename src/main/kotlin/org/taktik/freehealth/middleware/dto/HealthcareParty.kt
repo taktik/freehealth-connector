@@ -26,7 +26,7 @@ class HealthcareParty(
     val name: String? = null,
     val lastName: String? = null,
     val firstName: String? = null,
-    val gender: Gender = Gender.undefined,
+    val gender: Gender = Gender.unknown,
     val civility: String? = null,
     val speciality: String? = null,
     val companyName: String? = null,
