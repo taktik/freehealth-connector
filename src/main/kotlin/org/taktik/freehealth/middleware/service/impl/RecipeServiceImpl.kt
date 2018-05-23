@@ -473,7 +473,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                     cd = CDCOUNTRY().apply {
                                         s = CDCOUNTRYschemes.CD_FED_COUNTRY
                                         sv = "1.2"
-                                        value = codeDao.getCodeByLabel(address.country!!, "CD-FED-COUNTRY")?.code ?: address.country.toLowerCase()
+                                        value = address.country?.let { codeDao.getCodeByLabel(it, "CD-FED-COUNTRY")?.code ?: it.toLowerCase() } ?: "be"
                                     }
                                 }
                                 zip = address.postalCode
@@ -782,7 +782,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
 
     @Throws(ConnectorException::class)
     override fun createPrescription(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patient: Patient, hcp: HealthcareParty, feedback: Boolean, medications: List<Medication>, prescriptionType: String?, notification: String?, executorId: String?, deliveryDate: Date?): Prescription {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)

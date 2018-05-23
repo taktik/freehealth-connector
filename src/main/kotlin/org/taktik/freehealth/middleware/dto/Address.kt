@@ -24,14 +24,14 @@ import java.io.Serializable
 import java.util.*
 
 data class Address(
-    val addressType: AddressType = AddressType.home,
-    val street: String? = null,
-    val houseNumber: String? = null,
-    val postboxNumber: String? = null,
-    val postalCode: String? = null,
-    val city: String? = null,
-    val country: String? = null,
-    val telecoms: MutableSet<Telecom> = HashSet()
+    var addressType: AddressType? = AddressType.home,
+    var street: String? = null,
+    var houseNumber: String? = null,
+    var postboxNumber: String? = null,
+    var postalCode: String? = null,
+    var city: String? = null,
+    var country: String? = null,
+    var telecoms: MutableSet<Telecom> = HashSet()
 ) : Serializable {
     fun mergeFrom(other: Address) = Address(
         street = if (this.street == null && other.street != null) other.street else this.street,

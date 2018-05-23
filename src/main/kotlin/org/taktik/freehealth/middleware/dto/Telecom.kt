@@ -22,7 +22,7 @@ package org.taktik.freehealth.middleware.dto
 
 import java.io.Serializable
 
-class Telecom(val telecomType: TelecomType = TelecomType.email, val telecomNumber: String? = null) : Serializable {
+class Telecom(var telecomType: TelecomType = TelecomType.email, var telecomNumber: String? = null) : Serializable {
     fun mergeFrom(other: Telecom): Telecom = Telecom(
         telecomNumber = if (this.telecomNumber == null && other.telecomNumber != null) other.telecomNumber else this.telecomNumber
     )
