@@ -304,12 +304,12 @@ class KmehrHelper(val properties: Properties) {
                         message += " or xpathConfCountWithoutVersion1[$i][$xpathCountWithoutVersion1] is not valide."
                         message += "or xpathConfCountWithoutVersion2[$i][$xpathCountWithoutVersion2] is not valide."
                     }
-                    throw IntegrationModuleException(I18nHelper.getLabel("error.xml.invalid: "+message))
+                    throw IntegrationModuleException("error.xml.invalid: "+message)
                 }
                 i = i + 1
             } while (true)
         } catch (e: XPathExpressionException) {
-            throw IntegrationModuleException(I18nHelper.getLabel("error.xml.invalid"), e)
+            throw IntegrationModuleException("error.xml.invalid", e)
         }
     }
 
