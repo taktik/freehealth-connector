@@ -473,7 +473,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                     cd = CDCOUNTRY().apply {
                                         s = CDCOUNTRYschemes.CD_FED_COUNTRY
                                         sv = "1.2"
-                                        value = codeDao.getCodeByLabel(address.country!!, "CD-FED-COUNTRY")?.code ?: address.country.toLowerCase()
+                                        value = "be"//codeDao.getCodeByLabel(address.country!!, "CD-FED-COUNTRY")?.code ?: address.country.toLowerCase()
                                     }
                                 }
                                 zip = address.postalCode

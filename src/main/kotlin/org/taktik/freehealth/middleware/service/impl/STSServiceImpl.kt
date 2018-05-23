@@ -76,7 +76,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
 
     override fun requestToken(
         keystoreId: UUID,
-        nihiiOrSsin: String,
+        nihiiOrSsin: String, //nihii for medical house and niss for doctor
         passPhrase: String,
         medicalHouse: Boolean,
         extraDesignators: List<Pair<String, String>>
