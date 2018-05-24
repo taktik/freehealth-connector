@@ -140,6 +140,7 @@ import org.taktik.freehealth.middleware.dto.TelecomType.mobile
 import org.taktik.freehealth.middleware.dto.TelecomType.phone
 import org.taktik.freehealth.middleware.service.RecipeService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.utils.FuzzyValues
 import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
 import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionHelper
 import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionHelper.Companion.toTextType
@@ -545,11 +546,8 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                         }
                                     }
                                 }
-                                if (med.beginMoment != null) {
-                                    beginmoment = RecipemomentType().apply { date = makeXMLGregorianCalendarFromFuzzyLong(med.beginMoment) }
-                                } else {
-                                    throw IllegalArgumentException("prescription doesn't have a begin moment for medication($med)")
-                                }
+                                beginmoment = RecipemomentType().apply { date = makeXMLGregorianCalendarFromFuzzyLong(med.beginMoment ?: FuzzyValues.currentFuzzyDate ) }
+
                                 med.endMoment?.let { endmoment = RecipemomentType().apply { date = makeXMLGregorianCalendarFromFuzzyLong(it) } }
                                 val posologyText = med.getPosology(config.prescription.language)
                                 if (!StringUtils.isEmpty(posologyText)) {
