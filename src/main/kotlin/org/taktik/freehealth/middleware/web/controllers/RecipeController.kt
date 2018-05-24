@@ -35,6 +35,7 @@ import org.taktik.freehealth.middleware.domain.PrescriptionFullWithFeedback
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.recipe.PrescriptionRequest
 import org.taktik.freehealth.middleware.service.RecipeService
+import org.taktik.freehealth.utils.FuzzyValues
 import java.util.*
 
 @RestController
@@ -58,7 +59,7 @@ class RecipeController(val recipeService: RecipeService) {
             prescriptionType = prescription.prescriptionType,
             notification = prescription.notification,
             executorId = prescription.executorId,
-            deliveryDate = prescription.deliveryDate
+            deliveryDate = prescription.deliveryDate?.let {FuzzyValues.getLocalDateTime(it)}
         )
 
     @GetMapping("")

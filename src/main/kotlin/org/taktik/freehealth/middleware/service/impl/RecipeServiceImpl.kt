@@ -154,6 +154,9 @@ import java.nio.charset.Charset
 import java.security.KeyStoreException
 import java.security.cert.CertificateExpiredException
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.temporal.ChronoField
 import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.Callable
@@ -349,7 +352,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         return result
     }
 
-    override fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: Date?): Kmehrmessage {
+    override fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?): Kmehrmessage {
         val config = KmehrPrescriptionConfig().apply {
             prescription.apply {
                 inami = hcp.nihii!!.replace("[^0-9]".toRegex(), "")
@@ -377,7 +380,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         return getKmehrPrescription(patient, hcp, medications, deliveryDate, config)
     }
 
-    override fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: Date?, config: KmehrPrescriptionConfig): Kmehrmessage {
+    override fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig): Kmehrmessage {
 
         val language = config.prescription.language
         return Kmehrmessage().apply {
@@ -618,7 +621,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                 med.intakeRoute?.code?.let { c ->
                                     route = ReciperouteType().apply { cd = CDDRUGROUTE().apply { s = "CD-DRUG-ROUTE"; sv = versions["CD-DRUGROUTE"]; value = c } }
                                 }
-                                deliverydate = makeXGC(deliveryDate?.time)
+                                deliverydate = deliveryDate?.let { makeXMLGregorianCalendarFromFuzzyLong(FuzzyValues.getFuzzyDate(it, ChronoUnit.DAYS))}
                                 instructionforpatient = toTextType(language, med.recipeInstructionForPatient)
                                 med.instructionsForReimbursement?.translations?.get(language)?.let {
                                     instructionforreimbursement = toTextType(language, it)
@@ -779,7 +782,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
     }
 
     @Throws(ConnectorException::class)
-    override fun createPrescription(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patient: Patient, hcp: HealthcareParty, feedback: Boolean, medications: List<Medication>, prescriptionType: String?, notification: String?, executorId: String?, deliveryDate: Date?): Prescription {
+    override fun createPrescription(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patient: Patient, hcp: HealthcareParty, feedback: Boolean, medications: List<Medication>, prescriptionType: String?, notification: String?, executorId: String?, deliveryDate: LocalDateTime?): Prescription {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 

@@ -23,6 +23,7 @@ package org.taktik.freehealth.middleware.dto.recipe
 import org.taktik.freehealth.middleware.domain.Medication
 import org.taktik.freehealth.middleware.domain.Patient
 import org.taktik.freehealth.middleware.dto.HealthcareParty
+import java.time.LocalDateTime
 import java.util.*
 
 class PrescriptionRequest(
@@ -33,5 +34,5 @@ class PrescriptionRequest(
     var prescriptionType: String? = null,
     var notification: String? = null,
     var executorId: String? = null,
-    var deliveryDate: Date? = null
+    var deliveryDate: Long? = null //yyyyMMdd
 )
