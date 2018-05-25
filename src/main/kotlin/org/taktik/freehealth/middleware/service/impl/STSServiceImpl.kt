@@ -39,10 +39,13 @@ import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.freehealth.middleware.domain.SamlTokenResult
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Element
+import org.xml.sax.InputSource
 import java.io.StringReader
 import java.io.StringWriter
 import java.security.KeyStore
+import java.time.Instant
 import java.util.*
+import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMResult
 import javax.xml.transform.dom.DOMSource
@@ -50,7 +53,7 @@ import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 
 @Service
-class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, String>) : STSService {
+class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, SamlTokenResult>) : STSService {
     val freehealthStsService: org.taktik.connector.technical.service.sts.STSService =
         org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
     val freehealthKeyDepotService: org.taktik.connector.technical.service.keydepot.KeyDepotService =
@@ -58,14 +61,19 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     val transformer = TransformerFactory.newInstance().newTransformer()
 
     override fun registerToken(tokenId: UUID, token: String) {
-        tokensMap[tokenId] = token
+        val factory = DocumentBuilderFactory.newInstance()
+        val builder = factory.newDocumentBuilder()
+        val document = builder.parse( InputSource( StringReader(token)))
+        val assertion = document.documentElement
+
+        tokensMap[tokenId] = SamlTokenResult(tokenId, token, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
     }
 
     override fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken? {
         return tokensMap[tokenId]?.let {
             val keyStore = getKeyStore(keystoreId, passPhrase)
             val result = DOMResult()
-            transformer.transform(StreamSource(StringReader(it)), result)
+            transformer.transform(StreamSource(StringReader(it.token)), result)
             return SAMLTokenFactory.getInstance()
                 .createSamlToken(
                     result.node.firstChild as Element,
@@ -164,9 +172,15 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val randomUUID = UUID.randomUUID()
         val samlToken = result.writer.toString()
 
-        tokensMap[randomUUID] = samlToken
 
-        return SamlTokenResult(randomUUID, samlToken, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
+        val samlTokenResult =
+            SamlTokenResult(randomUUID, samlToken, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
+        tokensMap[randomUUID] = samlTokenResult
+        return samlTokenResult
+    }
+
+    override fun checkTokenValid(tokenId: UUID): Boolean {
+        return tokensMap.get(tokenId)?.let { (it.validity ?: 0) > Instant.now().toEpochMilli() } ?: false
     }
 
     override fun getHolderOfKeysEtk(credential: KeyStoreCredential): EncryptionToken {
@@ -213,17 +227,8 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         )
     }
 
-    override fun checkIfKeystoreExist(keystoreId: UUID): Boolean?{
-
-        val keystoreData = keystoresMap.get(keystoreId)
-        var check = false
-
-        if(keystoreData != null){
-            check = true
-        }
-
-        return check
-
+    override fun checkIfKeystoreExist(keystoreId: UUID): Boolean{
+        return keystoresMap.get(keystoreId) != null
     }
 
 }

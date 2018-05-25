@@ -51,7 +51,10 @@ class STSController(private val stsService: STSService) {
         stsService.registerToken(tokenId, token)
     }
 
-    @GetMapping("/checkKeystore/{keystoreId}")
+    @GetMapping("/keystore/check/{keystoreId}")
     fun checkKeystoreExist(@PathVariable keystoreId: UUID) = stsService.checkIfKeystoreExist(keystoreId)
+
+    @GetMapping("/token/check/{tokenId}")
+    fun checkTokenValid(@PathVariable tokenId: UUID) = stsService.checkTokenValid(tokenId)
 
 }

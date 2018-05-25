@@ -26,6 +26,7 @@ import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.core.IMap
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.taktik.freehealth.middleware.domain.SamlTokenResult
 import java.util.*
 
 @Configuration
@@ -42,14 +43,14 @@ class HazelcastConfiguration(val hazelcastInstance: HazelcastInstance) {
     }
 
     @Bean
-    fun tokensMap(): IMap<UUID, String> {
+    fun tokensMap(): IMap<UUID, SamlTokenResult> {
         val config = hazelcastInstance.config
         val mapName = "ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.TOKENS"
         config.addMapConfig(MapConfig(mapName). apply{
             timeToLiveSeconds = 12*3600
             maxSizeConfig = MaxSizeConfig(100000, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
         })
-        return hazelcastInstance.getMap<UUID, String>(mapName)
+        return hazelcastInstance.getMap<UUID, SamlTokenResult>(mapName)
     }
 
     @Bean
