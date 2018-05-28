@@ -1731,7 +1731,7 @@ Below you can find the recipe (pharmaceutical prescription) restrictions on the 
         <xsd:simpleType>
           <xsd:restriction base="recipeCD-INNCLUSTERvalues"/>
         </xsd:simpleType>
-        <xsd:attribute name="S" type="xsd:string" use="required" fixed="CD-INNCLUSTER"/>
+        <xsd:attribute name="S" type="CD:CD-INNCLUSTERschemes" use="required"/>
         <xsd:attribute name="SV" type="recipeCD-INNCLUSTER-SVattributeType" use="required"/>
         <xsd:attribute name="DN" type="xsd:string" use="prohibited"/>
         <xsd:attribute name="L" type="xsd:language" use="prohibited"/>

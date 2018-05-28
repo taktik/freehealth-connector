@@ -32,7 +32,12 @@ import java.security.KeyStore
 import org.bouncycastle.cms.CMSException
 
 interface SendMessageBuilder {
-    @Throws(IOException::class, EhboxBusinessConnectorException::class, TechnicalConnectorException::class, CMSException::class)
+    @Throws(
+        IOException::class,
+        EhboxBusinessConnectorException::class,
+        TechnicalConnectorException::class,
+        CMSException::class
+    )
     fun buildMessage(keystore: KeyStore, passPhrase: String, var1: DocumentMessage<Message>): SendMessageRequest
 
     @Throws(IOException::class, EhboxBusinessConnectorException::class, TechnicalConnectorException::class)

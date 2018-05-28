@@ -22,4 +22,4 @@ package org.taktik.freehealth.middleware.domain
 
 import org.taktik.freehealth.middleware.dto.Code
 
-data class Substance(var substance: Code? = null /* CD-SUBSTANCE */, var name : String? = null)
+data class Substance(var substance: Code? = null /* CD-SUBSTANCE */, var name: String? = null)

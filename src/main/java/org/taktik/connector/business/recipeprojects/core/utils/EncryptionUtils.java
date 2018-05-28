@@ -183,10 +183,7 @@ public class EncryptionUtils {
      * @param propertyHandler the property handler
      */
     public EncryptionUtils(PropertyHandler propertyHandler) {
-
-        super();
         this.propertyHandler = propertyHandler;
-        instance = this;
     }
 
     /**
@@ -194,7 +191,10 @@ public class EncryptionUtils {
      *
      * @return single instance of EncryptionUtils
      */
-    public static EncryptionUtils getInstance() {
+    public static EncryptionUtils getInstance(PropertyHandler propertyHandler) {
+        if (instance==null) {
+            instance = new EncryptionUtils(propertyHandler);
+        }
         return instance;
     }
 
@@ -924,15 +924,15 @@ public class EncryptionUtils {
     }
 
     /**
-     * Gets the private key for authentication
+     * Gets the private keyStore for authentication
      *
-     * @param keystore
-     * @return private key
+     * @param keyStore
+     * @return private keyStore
      */
-    private PrivateKey getPrivateKey(KeyStore key, String privateKeyAlias, char[] privateKeyPassword) {
+    private PrivateKey getPrivateKey(KeyStore keyStore, String privateKeyAlias, char[] privateKeyPassword) {
 
         try {
-            PrivateKeyEntry keyAndCerts = KeyManager.getKeyAndCertificates(key, privateKeyAlias, privateKeyPassword);
+            PrivateKeyEntry keyAndCerts = KeyManager.getKeyAndCertificates(keyStore, privateKeyAlias, privateKeyPassword);
             return keyAndCerts.getPrivateKey();
         } catch (UnrecoverableKeyException e) {
             LOG.error("UnrecoverableKeyException", e);
@@ -941,15 +941,15 @@ public class EncryptionUtils {
     }
 
     /**
-     * Gets the public key for authentication.
+     * Gets the public keyStore for authentication.
      *
-     * @param keystore
-     * @return the public key
+     * @param keyStore
+     * @return the public keyStore
      */
-    private PublicKey getPublicKey(KeyStore key, String privateKeyAlias, char[] privateKeyPassword) {
+    private PublicKey getPublicKey(KeyStore keyStore, String privateKeyAlias, char[] privateKeyPassword) {
 
         try {
-            PrivateKeyEntry keyAndCerts = KeyManager.getKeyAndCertificates(key, privateKeyAlias, privateKeyPassword);
+            PrivateKeyEntry keyAndCerts = KeyManager.getKeyAndCertificates(keyStore, privateKeyAlias, privateKeyPassword);
             return keyAndCerts.getCertificate().getPublicKey();
         } catch (UnrecoverableKeyException e) {
             LOG.error("UnrecoverableKeyException", e);

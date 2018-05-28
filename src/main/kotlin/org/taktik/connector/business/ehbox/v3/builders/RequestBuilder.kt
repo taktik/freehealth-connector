@@ -39,9 +39,18 @@ interface RequestBuilder {
 
     fun createDeleteMessageRequest(source: String, vararg messageIds: String): DeleteMessageRequest
 
-    fun createGetAllEhboxesMessagesListRequest(source: String, startIndex: Int?, endIndex: Int?): GetAllEhboxesMessagesListRequest
+    fun createGetAllEhboxesMessagesListRequest(
+        source: String,
+        startIndex: Int?,
+        endIndex: Int?
+    ): GetAllEhboxesMessagesListRequest
 
-    fun createGetMessagesListRequest(source: String, startIndex: Int, endIndex: Int, boxId: BoxIdType): GetMessagesListRequest
+    fun createGetMessagesListRequest(
+        source: String,
+        startIndex: Int,
+        endIndex: Int,
+        boxId: BoxIdType
+    ): GetMessagesListRequest
 
     fun createGetMessagesListRequest(source: String): GetMessagesListRequest
 
@@ -53,7 +62,11 @@ interface RequestBuilder {
 
     fun createAllEhboxesMessagesListRequest(source: String): GetAllEhboxesMessagesListRequest
 
-    fun createAllEhboxesMessagesListRequest(source: String, startIndex: Int?, endIndex: Int?): GetAllEhboxesMessagesListRequest
+    fun createAllEhboxesMessagesListRequest(
+        source: String,
+        startIndex: Int?,
+        endIndex: Int?
+    ): GetAllEhboxesMessagesListRequest
 
     fun createMessageRequestType(messageId: String): MessageRequestType
 
@@ -75,11 +88,21 @@ interface RequestBuilder {
 
     fun createMoveMessageRequest(source: String, destination: String, vararg messageIds: String): MoveMessageRequest
 
-    fun createMoveMessageRequest(source: String, destination: String, boxId: BoxIdType?, vararg messageIds: String): MoveMessageRequest
+    fun createMoveMessageRequest(
+        source: String,
+        destination: String,
+        boxId: BoxIdType?,
+        vararg messageIds: String
+    ): MoveMessageRequest
 
     fun createGetMessageAcknowledgmentsStatusRequest(messageId: String): GetMessageAcknowledgmentsStatusRequest
 
-    fun createGetMessageAcknowledgmentsStatusRequest(messageId: String, startIndex: Int?, endIndex: Int?, boxId: BoxIdType?): GetMessageAcknowledgmentsStatusRequest
+    fun createGetMessageAcknowledgmentsStatusRequest(
+        messageId: String,
+        startIndex: Int?,
+        endIndex: Int?,
+        boxId: BoxIdType?
+    ): GetMessageAcknowledgmentsStatusRequest
 
     fun createDeleteOoORequest(vararg oOoIds: String): DeleteOoORequest
 
@@ -95,7 +118,12 @@ interface RequestBuilder {
 
     fun createInsertOoORequest(startDate: DateTime, endDate: DateTime, vararg substitutes: BoxIdType): InsertOoORequest
 
-    fun createInsertOoORequest(boxId: BoxIdType?, startDate: DateTime, endDate: DateTime, vararg substitutes: BoxIdType): InsertOoORequest
+    fun createInsertOoORequest(
+        boxId: BoxIdType?,
+        startDate: DateTime,
+        endDate: DateTime,
+        vararg substitutes: BoxIdType
+    ): InsertOoORequest
 
     fun createDeleteMessageRequest(source: String, messageIds: List<String>): DeleteMessageRequest
 
@@ -103,9 +131,19 @@ interface RequestBuilder {
 
     fun createMoveMessageRequest(source: String, destination: String, messageIds: List<String>): MoveMessageRequest
 
-    fun createMoveMessageRequest(source: String, destination: String, boxId: BoxIdType, messageIds: List<String>): MoveMessageRequest
+    fun createMoveMessageRequest(
+        source: String,
+        destination: String,
+        boxId: BoxIdType,
+        messageIds: List<String>
+    ): MoveMessageRequest
 
     fun createInsertOoORequest(startDate: DateTime, endDate: DateTime, substitutes: List<BoxIdType>): InsertOoORequest
 
-    fun createInsertOoORequest(boxId: BoxIdType, startDate: DateTime, endDate: DateTime, substitutes: List<BoxIdType>): InsertOoORequest
+    fun createInsertOoORequest(
+        boxId: BoxIdType,
+        startDate: DateTime,
+        endDate: DateTime,
+        substitutes: List<BoxIdType>
+    ): InsertOoORequest
 }

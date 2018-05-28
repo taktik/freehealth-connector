@@ -47,8 +47,7 @@ class Addressee {
         get() = if (this.identifier == null) null else this.identifier!!.getSubType(IdentifierType.EHBOX)
 
     val identifierTypeHelper: IdentifierType
-        @Throws(EhboxBusinessConnectorException::class)
-        get() {
+        @Throws(EhboxBusinessConnectorException::class) get() {
             if (this.identifier == null) {
                 LOG.debug("\t## Identifier is empty : throwing Ehbox business connector exception")
                 throw EhboxBusinessConnectorException(EhboxBusinessConnectorExceptionValues.NO_QUALITY_SET)
@@ -57,14 +56,10 @@ class Addressee {
             }
         }
 
-    constructor(id: String, qualityType: QualityType?) {
-        if (qualityType == null) {
-            throw IllegalArgumentException("when calling the constructor with a  QualityType argument , it cannot be empty!")
-        } else {
-            this.id = id
-            this.quality = qualityType.quality
-            this.identifier = qualityType.identifierType
-        }
+    constructor(id: String, qualityType: QualityType) {
+        this.id = id
+        this.quality = qualityType.quality
+        this.identifier = qualityType.identifierType
     }
 
     constructor(id: String, helperType: IdentifierType) {
@@ -85,7 +80,6 @@ class Addressee {
             this.quality = quality.quality
             this.identifier = quality.identifierType
         }
-
     }
 
     fun setIdenfitierTypeHelper(helper: IdentifierType) {
@@ -102,7 +96,7 @@ class Addressee {
             sb.append(this.organizationName)
         }
 
-        return "Addressee [id=" + this.id + ", identifier=" + this.identifier + ", quality=" + this.quality + ", name=" + sb.toString() + "]"
+        return "Addressee [id=${this.id}, identifier=${this.identifier}, quality=${this.quality}, name=$sb]"
     }
 
     companion object {

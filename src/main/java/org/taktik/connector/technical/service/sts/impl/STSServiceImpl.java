@@ -118,7 +118,7 @@ public class STSServiceImpl extends AbstractSTSService {
             LOG.warn("SAMLResponse was: " + SAMLConverter.toXMLString(stsResponse));
             LOG.warn("The status of the SAMLResponse is " + status + " [" + SAMLHelper.getStatusMessage(stsResponse));
             TechnicalConnectorExceptionValues errorValue = TechnicalConnectorExceptionValues.INVALID_TOKEN;
-            throw new TechnicalConnectorException(errorValue, new Object[]{message});
+            throw new TechnicalConnectorException(errorValue, message);
          } else {
             return SAMLHelper.getAssertion(stsResponse);
          }

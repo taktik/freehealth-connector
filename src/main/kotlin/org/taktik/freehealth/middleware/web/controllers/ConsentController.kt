@@ -36,58 +36,88 @@ import java.util.*
 
 @RestController
 @RequestMapping("/consent")
-class ConsentController(val consentService: ConsentService, val mapper : MapperFacade) {
+class ConsentController(val consentService: ConsentService, val mapper: MapperFacade) {
 
-	@PostMapping("/{patientSsin}")
-	fun registerPatientConsent(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String,
-	                           @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String,
-	                           @PathVariable patientSsin: String, @RequestParam patientFirstName: String, @RequestParam patientLastName: String,
-	                           @RequestParam(required = false) eidCardNumber : String? = null, @RequestParam(required = false) isiCardNumber : String? = null) = consentService.registerPatientConsent(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			patientSsin = patientSsin,
-			patientFirstName = patientFirstName,
-			patientLastName = patientLastName,
-			eidCardNumber = eidCardNumber,
-			isiCardNumber = isiCardNumber
-	).let{ mapper.map(it, ConsentMessageDto::class.java) }
+    @PostMapping("/{patientSsin}")
+    fun registerPatientConsent(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @PathVariable patientSsin: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam(
+                    required = false
+                ) eidCardNumber: String? = null,
+        @RequestParam(required = false) isiCardNumber: String? = null
+    ) = consentService.registerPatientConsent(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpFirstName = hcpFirstName,
+        hcpLastName = hcpLastName,
+        patientSsin = patientSsin,
+        patientFirstName = patientFirstName,
+        patientLastName = patientLastName,
+        eidCardNumber = eidCardNumber,
+        isiCardNumber = isiCardNumber
+    ).let { mapper.map(it, ConsentMessageDto::class.java) }
 
-	@GetMapping("/{patientSsin}")
-	fun getPatientConsent(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String,
-	                           @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String,
-	                           @PathVariable patientSsin: String, @RequestParam patientFirstName: String, @RequestParam patientLastName: String) = consentService.getPatientConsent(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			patientSsin = patientSsin,
-			patientFirstName = patientFirstName,
-			patientLastName = patientLastName
-	).let{ mapper.map(it, ConsentMessageDto::class.java) }
+    @GetMapping("/{patientSsin}")
+    fun getPatientConsent(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @PathVariable patientSsin: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String
+    ) = consentService.getPatientConsent(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpFirstName = hcpFirstName,
+        hcpLastName = hcpLastName,
+        patientSsin = patientSsin,
+        patientFirstName = patientFirstName,
+        patientLastName = patientLastName
+    ).let { mapper.map(it, ConsentMessageDto::class.java) }
 
-	@PostMapping("/revoke/{patientSsin}")
-	fun revokePatientConsent(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String,
-	                         @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String,
-	                         @RequestBody existingConsent : ConsentTypeDto,
-	                         @RequestParam(required = false) eidCardNumber : String? = null, @RequestParam(required = false) isiCardNumber : String? = null) = consentService.revokePatientConsent(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			existingConsent = mapper.map(existingConsent, ConsentType::class.java),
-			eidCardNumber = eidCardNumber,
-			isiCardNumber = isiCardNumber
-	).let{ mapper.map(it, ConsentMessageDto::class.java) }
-
+    @PostMapping("/revoke/{patientSsin}")
+    fun revokePatientConsent(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @RequestBody existingConsent: ConsentTypeDto,
+        @RequestParam(
+                    required = false
+                ) eidCardNumber: String? = null,
+        @RequestParam(required = false) isiCardNumber: String? = null
+    ) = consentService.revokePatientConsent(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpFirstName = hcpFirstName,
+        hcpLastName = hcpLastName,
+        existingConsent = mapper.map(existingConsent, ConsentType::class.java),
+        eidCardNumber = eidCardNumber,
+        isiCardNumber = isiCardNumber
+    ).let { mapper.map(it, ConsentMessageDto::class.java) }
 }

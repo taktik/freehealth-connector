@@ -30,19 +30,19 @@ import java.io.Serializable
  * To change this template use File | Settings | File Templates.
  */
 class InsurabilityInfoDto(
-        val inss: String? = null,
-        val firstName: String? = null,
-        val lastName: String? = null,
-        val dateOfBirth: Long? = null,
-        val deceased: Long? = null,
-        val sex: String? = null,
-        val hospitalizedInfo: HospitalizedInfoDto? = null,
-        val medicalHouseInfo: MedicalHouseInfoDto? = null,
-        val insurabilities: List<InsurabilityItemDto> = listOf(),
-        var faultMessage: String? = null,
-        var faultSource: String? = null,
-        var faultCode: String? = null,
-        val generalSituation: String? = null,
-        val paymentByIo: Boolean = false,
-        val specialSocialCategory: Boolean = false
+    val inss: String? = null,
+    val firstName: String? = null,
+    val lastName: String? = null,
+    val dateOfBirth: Long? = null,
+    val deceased: Long? = null,
+    val sex: String? = null,
+    val hospitalizedInfo: HospitalizedInfoDto? = null,
+    val medicalHouseInfo: MedicalHouseInfoDto? = null,
+    val insurabilities: List<InsurabilityItemDto> = listOf(),
+    var faultMessage: String? = null,
+    var faultSource: String? = null,
+    var faultCode: String? = null,
+    val generalSituation: String? = null,
+    val paymentByIo: Boolean = false,
+    val specialSocialCategory: Boolean = false
 ) : Serializable

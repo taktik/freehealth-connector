@@ -23,6 +23,7 @@ package org.taktik.freehealth.middleware.dao
 import com.google.gson.Gson
 import org.springframework.stereotype.Repository
 import org.taktik.freehealth.middleware.dto.Code
+import org.w3._2000._09.xmldsig.RetrievalMethod
 
 @Repository
 class CodeDao(gson: Gson) {
@@ -34,36 +35,53 @@ class CodeDao(gson: Gson) {
         val codes: Map<String, Map<String, String>> = HashMap()
     }
 
-    val fedCountryMap = null //gson.fromJson(javaClass.getResourceAsStream("/cdFedCountry.json").reader(Charsets.UTF_8), CodesMap::class.java)
-    val administrationunitMap = null // gson.fromJson(javaClass.getResourceAsStream("/cdAdministrationUnit.json").reader(Charsets.UTF_8), CodesMap::class.java)
-    val innclusterMap = null //gson.fromJson(javaClass.getResourceAsStream("/cdInncluster.json").reader(Charsets.UTF_8), CodesMap::class.java)
+    val fedCountryMap =
+        null //gson.fromJson(javaClass.getResourceAsStream("/cdFedCountry.json").reader(Charsets.UTF_8), CodesMap::class.java)
+    val administrationunitMap =
+        null // gson.fromJson(javaClass.getResourceAsStream("/cdAdministrationUnit.json").reader(Charsets.UTF_8), CodesMap::class.java)
+    val innclusterMap =
+        null //gson.fromJson(javaClass.getResourceAsStream("/cdInncluster.json").reader(Charsets.UTF_8), CodesMap::class.java)
 
     fun isValid(code: Code): Boolean {
-        return codesMap(code.type)?.let { it.codes[code.code] != null } ?: false
+        return code.type?.let { codesMap(it)?.let { it.codes[code.code] != null } } ?: false
     }
 
-    fun codesMap(type : String) : CodesMap? {
-       return when(type) {
-           "CD-ADMINISTRATIONUNIT" -> administrationunitMap
-           "CD-FED-COUNTRY" -> fedCountryMap
-           "CD-INNCLUSTER" -> innclusterMap
-           else -> null
-       }
+    fun codesMap(type: String): CodesMap? {
+        return when (type) {
+            "CD-ADMINISTRATIONUNIT" -> administrationunitMap
+            "CD-FED-COUNTRY" -> fedCountryMap
+            "CD-INNCLUSTER" -> innclusterMap
+            else -> null
+        }
     }
 
     fun getCodeByLabel(label: String, type: String): Code? {
-        return codesMap(type)?.let { it.codes.entries.find { it.value.containsValue(label) }?.let { Code(type, it.key).apply { this.label.putAll(it.value) }} }
+        return codesMap(type)?.let {
+            it.codes.entries.find { it.value.containsValue(label) }
+                ?.let { Code(type, it.key).apply { this.label.putAll(it.value) } }
+        }
     }
 
     fun ensureValid(code: Code, ofType: String, orDefault: Code?): Code? {
-        return if (code.type != ofType) orDefault else codesMap(code.type)?.let { it.codes[code.code]?.let { Code(ofType, code.code).apply { this.label.putAll(it) } } } ?: orDefault
+        return if (code.type != ofType) orDefault else code.type?.let { codesMap(it)?.let {
+            it.codes[code.code]?.let {
+                Code(
+                    ofType,
+                    code.code
+                    ).apply { this.label.putAll(it) }
+            }
+        } } ?: orDefault
     }
 
     fun findCode(type: String, code: String, version: String): Code? {
-        return codesMap(type)?.codes?.get(code)?.let { Code(type, code).apply { this.label.putAll(it) }}
+        return codesMap(type)?.codes?.get(code)?.let { Code(type, code).apply { this.label.putAll(it) } }
     }
 
-    fun findCodesByLabel(lang: String, type: String, searchString: String):List<Code> {
-        return codesMap(type)?.let { it.codes.entries.filter { it.value[lang]?.contains(searchString,ignoreCase = true) ?: false }.map { Code(type, it.key).apply { this.label.putAll(it.value) }} } ?: arrayListOf()
+    fun findCodesByLabel(lang: String, type: String, searchString: String): List<Code> {
+        return codesMap(type)?.let {
+            it.codes.entries.filter {
+                it.value[lang]?.contains(searchString, ignoreCase = true) ?: false
+            }.map { Code(type, it.key).apply { this.label.putAll(it.value) } }
+        } ?: arrayListOf()
     }
 }

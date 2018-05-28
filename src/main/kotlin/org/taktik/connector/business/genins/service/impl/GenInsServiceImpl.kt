@@ -44,8 +44,15 @@ class GenInsServiceImpl : GenInsService, ConfigurationModuleBootstrap.ModuleBoot
         private val LOG = LoggerFactory.getLogger(GenInsServiceImpl::class.java)
     }
 
-    @Throws(GenInsBusinessConnectorException::class, TechnicalConnectorException::class, SessionManagementException::class)
-    override fun getInsurability(token: SAMLToken, request: GetInsurabilityAsXmlOrFlatRequestType): GetInsurabilityResponse {
+    @Throws(
+        GenInsBusinessConnectorException::class,
+        TechnicalConnectorException::class,
+        SessionManagementException::class
+    )
+    override fun getInsurability(
+        token: SAMLToken,
+        request: GetInsurabilityAsXmlOrFlatRequestType
+    ): GetInsurabilityResponse {
         val genericReq = GetInsurabilityRequest().apply {
             commonInput = request.commonInput
             recordCommonInput = request.recordCommonInput

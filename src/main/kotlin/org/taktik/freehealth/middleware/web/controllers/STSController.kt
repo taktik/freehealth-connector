@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.IntType
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -42,11 +43,18 @@ class STSController(private val stsService: STSService) {
     fun uploadKeystore(@RequestParam file: MultipartFile) = stsService.uploadKeystore(file).let { UUIDType(it) }
 
     @GetMapping("/token/{keystoreId}")
-    fun requestToken(@RequestParam passPhrase : String, @RequestParam ssin : String, @RequestParam(required = false) isMedicalHouse : Boolean? = null, @PathVariable keystoreId: UUID) = stsService.requestToken(keystoreId, ssin, passPhrase, isMedicalHouse ?: false)
+    fun requestToken(@RequestParam passPhrase: String, @RequestParam ssin: String, @RequestParam(required = false) isMedicalHouse: Boolean? = null, @PathVariable keystoreId: UUID) =
+        stsService.requestToken(keystoreId, ssin, passPhrase, isMedicalHouse ?: false)
 
     @PostMapping("/token/{tokenId}")
     fun registerToken(@RequestBody token: String, @PathVariable tokenId: UUID) {
         stsService.registerToken(tokenId, token)
     }
-}
 
+    @GetMapping("/keystore/check/{keystoreId}")
+    fun checkKeystoreExist(@PathVariable keystoreId: UUID) = stsService.checkIfKeystoreExist(keystoreId)
+
+    @GetMapping("/token/check/{tokenId}")
+    fun checkTokenValid(@PathVariable tokenId: UUID) = stsService.checkTokenValid(tokenId)
+
+}

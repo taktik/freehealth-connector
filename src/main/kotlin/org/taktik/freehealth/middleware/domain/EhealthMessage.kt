@@ -20,7 +20,6 @@
 
 package org.taktik.freehealth.middleware.domain
 
-
 import org.taktik.freehealth.middleware.dto.common.Addressee
 import java.io.Serializable
 

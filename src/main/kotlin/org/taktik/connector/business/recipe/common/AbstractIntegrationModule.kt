@@ -25,49 +25,36 @@ package org.taktik.connector.business.recipe.common
 
 import be.apb.gfddpp.common.utils.JaxContextCentralizer
 import be.fgov.ehealth.etee.crypto.decrypt.DataUnsealer
-import be.fgov.ehealth.etee.crypto.decrypt.UnsealedData
 import be.fgov.ehealth.etee.crypto.encrypt.DataSealer
-import be.fgov.ehealth.etee.crypto.encrypt.EncryptionToken
-import be.fgov.ehealth.etee.crypto.status.CryptoResult
 import be.fgov.ehealth.etee.crypto.status.CryptoResultException
-import be.fgov.ehealth.etee.crypto.status.NotificationError
-import be.fgov.ehealth.etee.crypto.status.NotificationWarning
 import be.fgov.ehealth.etee.kgss._1_0.protocol.GetKeyRequestContent
 import be.fgov.ehealth.etee.kgss._1_0.protocol.GetKeyResponseContent
-import net.sf.ehcache.Cache
-import net.sf.ehcache.CacheManager
-import org.apache.log4j.Logger
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.bouncycastle.util.encoders.Base64
+import org.slf4j.LoggerFactory
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.connector.business.recipeprojects.core.utils.ETKHelper
 import org.taktik.connector.business.recipeprojects.core.utils.EncryptionUtils
 import org.taktik.connector.business.recipeprojects.core.utils.Exceptionutils
 import org.taktik.connector.business.recipeprojects.core.utils.I18nHelper
 import org.taktik.connector.business.recipeprojects.core.utils.IOUtils
-import org.taktik.connector.business.recipeprojects.core.utils.LoggingUtil
 import org.taktik.connector.business.recipeprojects.core.utils.MessageDumper
 import org.taktik.connector.business.recipeprojects.core.utils.PropertyHandler
-import org.taktik.connector.technical.service.kgss.KgssService
+import org.taktik.connector.technical.service.etee.Crypto
+import org.taktik.connector.technical.service.etee.domain.EncryptionToken
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.kgss.impl.KgssServiceImpl
-
-import javax.crypto.spec.SecretKeySpec
+import org.taktik.connector.technical.service.sts.security.SAMLToken
 import java.io.File
-import java.io.InputStream
-import java.net.URL
 import java.security.Key
 import java.security.KeyStore
 import java.security.Security
 import java.util.Arrays
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-abstract class AbstractIntegrationModule @Throws(IntegrationModuleException::class)
-constructor() {
+abstract class AbstractIntegrationModule {
+    private val log = LoggerFactory.getLogger(this.javaClass)
     private val ridPattern = Pattern.compile(RID_PATTERN)
 
-    protected var dataUnsealer: DataUnsealer? = null
     var oldDataSealer: DataSealer? = null
     var oldDataUnsealer: DataUnsealer? = null
 
@@ -76,20 +63,11 @@ constructor() {
     protected var symmKey: Key? = null
         private set
 
-    private var cacheManager: CacheManager? = null
-    private var kgssCache: Cache? = null
-    private var etkCache: Cache? = null
-
     private val kgssService = KgssServiceImpl()
 
-    protected val encryptionUtils: EncryptionUtils
-        get() = EncryptionUtils.getInstance()
-
-    val propertyHandler: PropertyHandler
-        get() = PropertyHandler.getInstance()
-
-    private val jaxContextCentralizer: JaxContextCentralizer
-        get() = JaxContextCentralizer.getInstance()
+    protected val propertyHandler = PropertyHandler.getInstance()
+    protected val encryptionUtils = EncryptionUtils.getInstance(propertyHandler)
+    private val jaxContextCentralizer = JaxContextCentralizer.getInstance()
 
     init {
         init()
@@ -98,91 +76,53 @@ constructor() {
     @Throws(IntegrationModuleException::class)
     protected fun init() {
         try {
-            LOG.info("Init abstractIntegrationModule!")
-            LoggingUtil.initLog4J(propertyHandler)
-
             jaxContextCentralizer.addContext(GetKeyRequestContent::class.java)
             jaxContextCentralizer.addContext(GetKeyResponseContent::class.java)
 
             Security.addProvider(BouncyCastleProvider())
 
             MessageDumper.getInstance().init(propertyHandler)
-
-            // When running in DOTNET, the current context class loader must be overriden to avoid class not found exceptions!!!
-            Thread.currentThread().contextClassLoader = javaClass.classLoader
             System.setProperty("javax.xml.soap.SOAPFactory", "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl")
 
             // Extra debug information
-            if (LOG.isDebugEnabled) {
-                LOG.debug("Curdir : " + File(".").canonicalPath)
-                LOG.debug("Support P12 keystores : " + KeyStore.getInstance("PKCS12"))
+            if (log.isDebugEnabled) {
+                log.debug("Curdir : " + File(".").canonicalPath)
+                log.debug("Support P12 keystores : " + KeyStore.getInstance("PKCS12"))
             }
-
-            //initCaching();
-            //initEncryption();
-            LOG.info("End Init abstractIntegrationModule!")
+            initEncryption();
+            log.info("End Init abstractIntegrationModule!")
         } catch (t: Throwable) {
-            LOG.error("Exception in init abstractIntegrationModule: ", t)
+            log.error("Exception in init abstractIntegrationModule: ", t)
             Exceptionutils.errorHandler(t)
         }
-
     }
 
     private fun initCaching() {
-        LOG.info("INIT CACHE MANAGER")
-        val url = javaClass.getResource("/cache/config/ehcache.xml")
-        cacheManager = CacheManager.newInstance(url)
 
-        LOG.info("DOES KGSS CACHE EXIST?")
-        kgssCache = cacheManager!!.getCache("KGSS")
-        if (kgssCache == null) {
-            LOG.info("NEW KGSS CACHE")
-            kgssCache = Cache("KGSS", 0, false, false, 0, 0)
-            cacheManager!!.addCache(kgssCache)
-        }
-
-        LOG.info("DOES ETK CACHE EXIST?")
-        etkCache = cacheManager!!.getCache("ETK")
-        if (etkCache == null) {
-            LOG.info("NEW ETK CACHE")
-            etkCache = Cache("ETK", 0, false, false, 0, 0)
-            cacheManager!!.addCache(etkCache)
-        }
     }
 
     @Throws(IntegrationModuleException::class)
     private fun initEncryption() {
         try {
-
-            LOG.info("Init the encryption - create symmKey")
+            log.info("Init the encryption - create symmKey")
             symmKey = encryptionUtils.generateSecretKey()
 
             if (encryptionUtils.oldKeyStore != null) {
                 oldDataSealer = encryptionUtils.initOldSealing()
                 oldDataUnsealer = encryptionUtils.initOldUnSealing()
             }
-            LOG.info("Init the encryption - init etkHelper")
-            etkHelper = ETKHelper(propertyHandler, encryptionUtils)
-
-            // if (hasPersonalEtk()) { //only for care providers
-            // LOG.info("Init the encryption - care provider has a personal ETK");
-            // encrUtils.verifyDecryption(etkHelper.getSystemETK().get(0));
-            // }
+            log.info("Init the encryption - init etkHelper")
+            etkHelper = ETKHelper()
         } catch (t: Throwable) {
-            LOG.error("Exception occured when initializing the encryption util: ", t)
+            log.error("Exception occured when initializing the encryption util: ", t)
             Exceptionutils.errorHandler(t, "error.initialization")
         }
-
     }
 
     @Synchronized
     @Throws(IntegrationModuleException::class)
-    protected fun sealRequest(paramEncryptionToken: EncryptionToken, paramArrayOfByte: ByteArray): ByteArray {
-        return seal(paramEncryptionToken, paramArrayOfByte)
-    }
-
-    protected fun seal(paramEncryptionToken: EncryptionToken, paramArrayOfByte: ByteArray): ByteArray {
-        return ByteArray(0)
+    protected fun sealRequest(crypto: Crypto, paramEncryptionToken: EncryptionToken, paramArrayOfByte: ByteArray): ByteArray {
+        return crypto.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, paramEncryptionToken, paramArrayOfByte)
     }
 
     /**
@@ -194,12 +134,8 @@ constructor() {
      */
 
     @Throws(IntegrationModuleException::class)
-    protected fun unsealRequest(message: ByteArray): ByteArray {
-        return unseal(message)
-    }
-
-    protected fun unseal(message: ByteArray): ByteArray {
-        return ByteArray(0)
+    protected fun unsealRequest(crypto: Crypto, message: ByteArray): ByteArray {
+        return crypto.unseal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, message).contentAsByte
     }
 
     /**
@@ -210,8 +146,8 @@ constructor() {
      * @throws IntegrationModuleException the integration module exception
      */
     @Throws(IntegrationModuleException::class)
-    protected fun unsealNotif(message: ByteArray): ByteArray {
-        return unseal(message)
+    protected fun unsealNotif(crypto: Crypto, message: ByteArray): ByteArray {
+        return crypto.unseal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, message).contentAsByte
     }
 
     private fun unsealNotifOld(message: ByteArray): ByteArray? {
@@ -221,13 +157,13 @@ constructor() {
 
             if (result.hasErrors()) { // 3.A.A. There are no errors or failures
                 for (error in result.errors) {
-                    LOG.error(error.name)
+                    log.error(error.name)
                 }
                 for (warning in result.warnings) {
-                    LOG.error(warning.name)
+                    log.error(warning.name)
                 }
                 if (result.fatal != null) {
-                    LOG.error(result.fatal.errorMessage)
+                    log.error(result.fatal.errorMessage)
                 }
             }
 
@@ -240,27 +176,31 @@ constructor() {
     }
 
     @Throws(IntegrationModuleException::class)
-    protected fun unsealNotiffeed(message: ByteArray): ByteArray? {
+    protected fun unsealNotiffeed(crypto: Crypto, message: ByteArray): ByteArray? {
         var unsealedNotification: ByteArray? = null
         var calledUnsealNotifOld = false
         try {
-            LOG.debug("Start unseal notification: " + org.apache.commons.io.IOUtils.toString(message, "UTF-8"))
-            unsealedNotification = unseal(message)
+            log.debug("Start unseal notification: " + org.apache.commons.io.IOUtils.toString(message, "UTF-8"))
+            unsealedNotification = crypto.unseal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, message).contentAsByte
             if (unsealedNotification != null) {
                 return unsealedNotification
             }
             if (oldDataUnsealer != null) {
-                LOG.debug("Unseal notification was null. Start unseal notification with old keystore: " + Arrays.toString(message))
+                log.debug(
+                    "Unseal notification was null. Start unseal notification with old keystore: " + Arrays.toString(
+                        message
+                    )
+                )
                 calledUnsealNotifOld = true
                 unsealedNotification = unsealNotifOld(message)
                 if (unsealedNotification != null) {
                     return unsealNotifOld(message)
                 }
             } else {
-                LOG.debug("OldDataUnsealer is null.")
+                log.debug("OldDataUnsealer is null.")
             }
         } catch (t: Throwable) {
-            LOG.error("Exception occured with unsealing notification: ", t)
+            log.error("Exception occured with unsealing notification: ", t)
             if (calledUnsealNotifOld) {
                 if (t is CryptoResultException && t.message?.contains("There is no data available") == true) {
                     return null
@@ -268,7 +208,11 @@ constructor() {
                 Exceptionutils.errorHandler(t, "error.data.unseal")
             } else {
                 try {
-                    LOG.debug("Exception occured with unsealing notification. Trying to unseal notification with old keystore: " + Arrays.toString(message))
+                    log.debug(
+                        "Exception occured with unsealing notification. Trying to unseal notification with old keystore: " + Arrays.toString(
+                            message
+                        )
+                    )
                     unsealedNotification = unsealNotifOld(message)
                 } catch (te: Throwable) {
                     if (t is CryptoResultException && t.message?.contains("There is no data available") == true) {
@@ -297,41 +241,25 @@ constructor() {
     }
 
     @Throws(IntegrationModuleException::class)
-    protected fun getKeyFromKgss(keyId: String, myEtk: ByteArray): KeyResult? {
-        var keyResult: KeyResult? = null
-        try {
-            // For test, when a sim key is specified in the config
-            if (propertyHandler.hasProperty("test_kgss_key")) {
-                val part1 = propertyHandler.getProperty("test_kgss_key").split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
-                val part2 = propertyHandler.getProperty("test_kgss_key").split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
-                // LOG.info("KGSS key retrieved from configuration. Key Id = part1);
-                val keyResponse = Base64.decode(part2)
-                return KeyResult(SecretKeySpec(keyResponse, "AES"), part1)
-            }
-
-            keyResult = null //TODO kgssService.retrieveKeyFromKgss(keyId.getBytes(), myEtk, etkHelper.getKGSS_ETK().get(0).getEncoded());
-
+    protected fun getKeyFromKgss(keystore: KeyStore, samlToken: SAMLToken, passPhrase: String, keyId: String, myEtk: ByteArray): KeyResult? {
+        return try {
+            kgssService.retrieveKeyFromKgss(keystore, samlToken, passPhrase, keyId.toByteArray(Charsets.UTF_8), myEtk, etkHelper!!.kgsS_ETK[0].encoded);
         } catch (t: Throwable) {
-            LOG.error("Exception in getKeyFromKgss abstractIntegrationModule: ", t)
-            Exceptionutils.errorHandler(t)
+            log.error("Exception in getKeyFromKgss abstractIntegrationModule: ", t)
+            null
         }
-
-        return keyResult
     }
 
     @Throws(IntegrationModuleException::class)
     protected fun validateRid(rid: String) {
         val matcher = ridPattern.matcher(rid)
         if (!matcher.find()) {
-            LOG.error("Invalid RID was provided.")
+            log.error("Invalid RID was provided.")
             throw IntegrationModuleException(I18nHelper.getLabel("error.rid.validation", arrayOf<Any>(rid)))
         }
     }
 
     companion object {
-
-        private val LOG = Logger.getLogger(AbstractIntegrationModule::class.java)
-
         val EHEALTH_SUCCESS_CODE_100 = "100"
         val EHEALTH_SUCCESS_CODE_200 = "200"
         val RID_PATTERN = "BE([PKN])([P0-9])([0-9A-Z]){8}"

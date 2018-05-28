@@ -25,14 +25,11 @@ import org.taktik.connector.business.ehbox.v3.validator.EhboxReplyValidator
 import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
-import be.fgov.ehealth.commons.core.v1.LocalisedString
 import be.fgov.ehealth.commons.protocol.v1.ResponseType
 import be.fgov.ehealth.ehbox.core.v3.BoxIdType
-import be.fgov.ehealth.ehbox.publication.protocol.v3.Recipient
 import be.fgov.ehealth.ehbox.publication.protocol.v3.SendMessageResponse
 import be.fgov.ehealth.ehbox.publication.protocol.v3.Substitute
 import java.util.HashMap
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class EhboxReplyValidatorImpl : EhboxReplyValidator {
@@ -53,7 +50,11 @@ class EhboxReplyValidatorImpl : EhboxReplyValidator {
                             oooInformation.put(receiver, recipient.substitutes)
                         }
                     }
-                    throw OoOPublicationException(TechnicalConnectorExceptionValues.ERROR_WS.message, "826", oooInformation)
+                    throw OoOPublicationException(
+                        TechnicalConnectorExceptionValues.ERROR_WS.message,
+                        "826",
+                        oooInformation
+                    )
                 } else {
                     throw this.generateError(response)
                 }

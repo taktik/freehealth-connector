@@ -21,7 +21,6 @@
 package org.taktik.connector.business.ehbox.api.utils
 
 import org.taktik.connector.technical.utils.IdentifierType
-import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.HashMap
 import kotlin.collections.Map.Entry
@@ -152,7 +151,10 @@ class QualityType private constructor(val quality: String, val identifierType: I
         }
 
         fun valueOf(quality: String, type: String): QualityType {
-            return predefinedQual!![(quality + "_" + type).toUpperCase().replace("INSS".toRegex(), "SSIN")] as QualityType
+            return predefinedQual!![(quality + "_" + type).toUpperCase().replace(
+                "INSS".toRegex(),
+                "SSIN"
+            )] as QualityType
         }
 
         private fun <T, E> getKeyByValue(map: Map<T, E>?, value: E): T? {
@@ -266,16 +268,15 @@ class QualityType private constructor(val quality: String, val identifierType: I
 
             for (`i$` in 0 until `len$`) {
                 val f = fields[`i$`]
-                if (Modifier.isStatic(f.modifiers) && QualityType::class.java.isAssignableFrom(f.type) && !f.isAnnotationPresent(Deprecated::class.java)) {
+                if (Modifier.isStatic(f.modifiers) && QualityType::class.java.isAssignableFrom(f.type) &&
+                    !f.isAnnotationPresent(Deprecated::class.java)) {
                     try {
                         predefinedQual!!.put(f.name, f.get(AMBULANCE_RESCUER_NIHII) as QualityType)
                     } catch (var6: IllegalAccessException) {
                         throw IllegalArgumentException(var6)
                     }
-
                 }
             }
-
         }
     }
 }

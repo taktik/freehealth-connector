@@ -20,13 +20,11 @@
 
 package org.taktik.freehealth.middleware.dto.consent
 
-import be.fgov.ehealth.hubservices.core.v2.ConsentType
-import org.taktik.connector.business.domain.Error
 import org.taktik.freehealth.middleware.dto.common.ErrorDto
 import java.util.ArrayList
 
 class ConsentMessageDto {
-	var complete: Boolean = false
-	var consent: ConsentTypeDto? = null
-	var errors: List<ErrorDto> = ArrayList()
+    var complete: Boolean = false
+    var consent: ConsentTypeDto? = null
+    var errors: List<ErrorDto> = ArrayList()
 }

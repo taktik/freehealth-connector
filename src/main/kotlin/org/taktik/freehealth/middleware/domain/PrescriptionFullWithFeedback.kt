@@ -29,18 +29,18 @@ import java.util.*
  * Time: 15:14
  * To change this template use File | Settings | File Templates.
  */
-class PrescriptionFullWithFeedback(creationDate: Date,
-                                   encryptionKeyId: String,
-                                   rid: String,
-                                   isFeedbackAllowed: Boolean = false,
-                                   patientId: String? = null,
-                                   notificationWasSent: Boolean? = false,
-                                   var nihii: String? = null,
-                                   var patientName: String? = null,
-                                   var medicines: MutableList<String> = ArrayList(),
-                                   var deliverableFrom: Date? = null,
-                                   var deliverableTo: Date? = null,
-                                   var feedbacks: List<Feedback> = emptyList(),
-                                   var fullAuthorName: String? = null) : Prescription(creationDate,encryptionKeyId,rid,isFeedbackAllowed,patientId,notificationWasSent) {
-
-}
+class PrescriptionFullWithFeedback(
+    creationDate: Date,
+    encryptionKeyId: String,
+    rid: String,
+    isFeedbackAllowed: Boolean = false,
+    patientId: String? = null,
+    notificationWasSent: Boolean? = false,
+    var nihii: String? = null,
+    var patientName: String? = null,
+    var medicines: MutableList<String> = ArrayList(),
+    var deliverableFrom: Date? = null,
+    var deliverableTo: Date? = null,
+    var feedbacks: List<Feedback> = emptyList(),
+    var fullAuthorName: String? = null
+) : Prescription(creationDate, encryptionKeyId, rid, isFeedbackAllowed, patientId, notificationWasSent)

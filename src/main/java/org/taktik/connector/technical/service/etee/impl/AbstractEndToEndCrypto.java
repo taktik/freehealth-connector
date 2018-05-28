@@ -23,15 +23,15 @@ public abstract class AbstractEndToEndCrypto extends AbstractCrypto {
    public byte[] seal(EncryptionToken paramEncryptionToken, byte[] paramArrayOfByte) throws TechnicalConnectorException {
       Set<EncryptionToken> etkSet = new HashSet();
       etkSet.add(paramEncryptionToken);
-      return this.seal((Set)etkSet, paramArrayOfByte);
+      return this.seal(etkSet, paramArrayOfByte);
    }
 
    public byte[] seal(Set<EncryptionToken> paramEncryptionTokenSet, byte[] paramArrayOfByte) throws TechnicalConnectorException {
-      return this.seal(paramEncryptionTokenSet, paramArrayOfByte, (SecretKey)null, (String)null);
+      return this.seal(paramEncryptionTokenSet, paramArrayOfByte, null, null);
    }
 
    public byte[] seal(byte[] paramArrayOfByte, SecretKey secretKey, String base64encodedSymKekId) throws TechnicalConnectorException {
-      return this.seal((Set)null, paramArrayOfByte, secretKey, base64encodedSymKekId);
+      return this.seal(null, paramArrayOfByte, secretKey, base64encodedSymKekId);
    }
 
    public byte[] seal(Set<EncryptionToken> paramEncryptionTokenSet, byte[] content, SecretKey secretKey, String base64encodedSymKekId) throws TechnicalConnectorException {
@@ -39,17 +39,17 @@ public abstract class AbstractEndToEndCrypto extends AbstractCrypto {
    }
 
    public byte[] seal(Crypto.SigningPolicySelector type, KeyResult symmKey, byte[] content) throws TechnicalConnectorException {
-      return this.seal(type, (Set)null, symmKey, content);
+      return this.seal(type, null, symmKey, content);
    }
 
    public byte[] seal(Crypto.SigningPolicySelector type, EncryptionToken encryptionToken, byte[] content) throws TechnicalConnectorException {
       Set<EncryptionToken> etkSet = new HashSet();
       etkSet.add(encryptionToken);
-      return this.seal((Crypto.SigningPolicySelector)type, (Set)etkSet, (byte[])content);
+      return this.seal(type, etkSet, content);
    }
 
    public byte[] seal(Crypto.SigningPolicySelector type, Set<EncryptionToken> paramEncryptionTokenSet, byte[] content) throws TechnicalConnectorException {
-      return this.seal(type, paramEncryptionTokenSet, (KeyResult)null, content);
+      return this.seal(type, paramEncryptionTokenSet, null, content);
    }
 
    public byte[] unseal(byte[] protectedMessage) throws UnsealConnectorException, TechnicalConnectorException {

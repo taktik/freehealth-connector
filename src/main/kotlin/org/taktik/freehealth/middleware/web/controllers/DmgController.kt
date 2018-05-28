@@ -16,103 +16,81 @@ import java.util.*
 @RestController
 @RequestMapping("/gmd")
 class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
-	@PostMapping("/register/{oa}")
-	fun registerDoctor(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @PathVariable oa: String, @RequestParam bic: String, @RequestParam iban: String) = dmgService.registerDoctor(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			oa = oa,
-			bic = bic,
-			iban = iban
-	)
+    @PostMapping("/register/{oa}")
+    fun registerDoctor(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @PathVariable oa: String, @RequestParam bic: String, @RequestParam iban: String) =
+        dmgService.registerDoctor(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, oa = oa, bic = bic, iban = iban)
 
-	@GetMapping("")
-	fun consultDmg(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestParam(required = false) patientSsin: String? = null, @RequestParam(required = false) patientGender: String? = null, @RequestParam(required = false) oa: String? = null, @RequestParam(required = false) regNrWithMut: String? = null, @RequestParam(required = false) requestDate: Long? = null) = dmgService.consultDmg(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			patientSsin = patientSsin,
-			patientGender = patientGender,
-			oa = oa,
-			regNrWithMut = regNrWithMut,
-			requestDate = requestDate?.let { Date(requestDate) } ?: Date()
-	).let { mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgConsultation::class.java) }
+    @GetMapping("")
+    fun consultDmg(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam(required = false) patientSsin: String? = null,
+        @RequestParam(required = false) patientGender: String? = null,
+        @RequestParam(required = false) oa: String? = null,
+        @RequestParam(required = false) regNrWithMut: String? = null,
+        @RequestParam(required = false) requestDate: Long? = null
+    ) =
+        dmgService.consultDmg(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, patientSsin = patientSsin, patientGender = patientGender, oa = oa, regNrWithMut = regNrWithMut, requestDate = requestDate?.let { Date(requestDate) }
+            ?: Date()).let {
+            mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgConsultation::class.java)
+        }
 
-	@PostMapping("/notify/{nomenclature}")
-	fun notifyDmg(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestParam(required = false) patientSsin: String?, @RequestParam(required = false) oa: String?, @RequestParam(required = false) regNrWithMut: String?, @RequestParam(required = false) patientFirstName: String, @RequestParam(required = false) patientLastName: String, @RequestParam(required = false) patientGender: String?, @PathVariable nomenclature: String, @RequestParam(required = false) requestDate: Long? = null) = dmgService.notifyDmg(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			patientSsin = patientSsin,
-			patientGender = patientGender,
-			patientFirstName = patientFirstName,
-			patientLastName = patientLastName,
-			oa = oa,
-			regNrWithMut = regNrWithMut,
-			requestDate = requestDate?.let { Date(requestDate) } ?: Date(),
-			nomenclature = nomenclature
-	)
+    @PostMapping("/notify/{nomenclature}")
+    fun notifyDmg(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam(required = false) patientSsin: String?,
+        @RequestParam(required = false) oa: String?,
+        @RequestParam(required = false) regNrWithMut: String?,
+        @RequestParam(required = false) patientFirstName: String,
+        @RequestParam(required = false) patientLastName: String,
+        @RequestParam(required = false) patientGender: String?,
+        @PathVariable nomenclature: String,
+        @RequestParam(required = false) requestDate: Long? = null
+    ) =
+        dmgService.notifyDmg(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, patientSsin = patientSsin, patientGender = patientGender, patientFirstName = patientFirstName, patientLastName = patientLastName, oa = oa, regNrWithMut = regNrWithMut, requestDate = requestDate?.let { Date(requestDate) }
+            ?: Date(), nomenclature = nomenclature)
 
-	@PostMapping("/reqlist")
-	fun postDmgsListRequest(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestParam(required = false) oa: String?, @RequestParam(required = false) requestDate: Long? = null) = dmgService.postDmgsListRequest(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			oa = oa,
-			requestDate = requestDate?.let { Date(requestDate) } ?: Date()
-	)
+    @PostMapping("/reqlist")
+    fun postDmgsListRequest(
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam(required = false) oa: String?,
+        @RequestParam(required = false) requestDate: Long? = null
+    ) =
+        dmgService.postDmgsListRequest(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, oa = oa, requestDate = requestDate?.let { Date(requestDate) }
+            ?: Date())
 
-	@GetMapping("/messages")
-	fun getDmgMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestParam oa: String, @RequestBody messageNames: List<String>?) = dmgService.getDmgMessages(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			oa = oa,
-			messageNames = messageNames
-	).map { mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgMessage::class.java) }
+    @GetMapping("/messages")
+    fun getDmgMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestParam oa: String, @RequestBody messageNames: List<String>?) =
+        dmgService.getDmgMessages(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, oa = oa, messageNames = messageNames).map {
+            mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgMessage::class.java)
+        }
 
-	@PostMapping("/confirm/messages")
-	fun confirmDmgMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestBody dmgMessages: List<DmgMessage>) = dmgService.confirmDmgMessages(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			dmgMessages = dmgMessages.map { mapper.map(it, org.taktik.connector.business.domain.dmg.DmgMessage::class.java) }
-	)
+    @PostMapping("/confirm/messages")
+    fun confirmDmgMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestBody dmgMessages: List<DmgMessage>) =
+        dmgService.confirmDmgMessages(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, dmgMessages = dmgMessages.map {
+            mapper.map(it, org.taktik.connector.business.domain.dmg.DmgMessage::class.java)
+        })
 
-	@PostMapping("/confirm/acks")
-	fun confirmAcks(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestBody dmgTacks: List<DmgAcknowledge>) = dmgService.confirmAcks(
-			keystoreId = keystoreId,
-			tokenId = tokenId,
-			passPhrase = passPhrase,
-			hcpNihii = hcpNihii,
-			hcpSsin = hcpSsin,
-			hcpFirstName = hcpFirstName,
-			hcpLastName = hcpLastName,
-			dmgTacks = dmgTacks.map { mapper.map(it, org.taktik.connector.business.domain.dmg.DmgAcknowledge::class.java) }
-	)
-
+    @PostMapping("/confirm/acks")
+    fun confirmAcks(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestBody dmgTacks: List<DmgAcknowledge>) =
+        dmgService.confirmAcks(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, dmgTacks = dmgTacks.map {
+            mapper.map(it, org.taktik.connector.business.domain.dmg.DmgAcknowledge::class.java)
+        })
 }

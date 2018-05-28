@@ -30,5 +30,4 @@ class DocumentEhealthMessage : EhealthMessage() {
     var freeText: String? = null
     var patientInss: String? = null
     var annex: List<Document>? = null
-
 }

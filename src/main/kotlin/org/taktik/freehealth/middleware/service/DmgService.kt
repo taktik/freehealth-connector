@@ -8,11 +8,95 @@ import org.taktik.connector.business.domain.dmg.DmgRegistration
 import java.util.*
 
 interface DmgService {
-	fun registerDoctor(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, oa: String, bic: String, iban: String): DmgRegistration
-	fun consultDmg(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, patientSsin: String?, patientGender: String?, oa: String?, regNrWithMut: String?, requestDate: Date): DmgConsultation
-	fun notifyDmg(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, patientSsin: String?, oa: String?, regNrWithMut: String?, patientFirstName: String, patientLastName: String, patientGender: String?, nomenclature: String, requestDate: Date): DmgNotification
-	fun postDmgsListRequest(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, oa: String?, requestDate: Date): Boolean
-	fun getDmgMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, oa: String, messageNames: List<String>?): List<DmgMessage>
-	fun confirmDmgMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, dmgMessages: List<DmgMessage>): Boolean
-	fun confirmAcks(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, dmgTacks: List<DmgAcknowledge>): Boolean
+    fun registerDoctor(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        oa: String,
+        bic: String,
+        iban: String
+    ): DmgRegistration
+
+    fun consultDmg(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientSsin: String?,
+        patientGender: String?,
+        oa: String?,
+        regNrWithMut: String?,
+        requestDate: Date
+    ): DmgConsultation
+
+    fun notifyDmg(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientSsin: String?,
+        oa: String?,
+        regNrWithMut: String?,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String?,
+        nomenclature: String,
+        requestDate: Date
+    ): DmgNotification
+
+    fun postDmgsListRequest(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        oa: String?,
+        requestDate: Date
+    ): Boolean
+
+    fun getDmgMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        oa: String,
+        messageNames: List<String>?
+    ): List<DmgMessage>
+
+    fun confirmDmgMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        dmgMessages: List<DmgMessage>
+    ): Boolean
+
+    fun confirmAcks(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        dmgTacks: List<DmgAcknowledge>
+    ): Boolean
 }

@@ -21,14 +21,13 @@
 package org.taktik.freehealth.middleware.dto.consent
 
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONSENT
-import org.joda.time.DateTime
 import org.taktik.freehealth.middleware.dto.common.AuthorWithPatientDto
 import org.taktik.freehealth.middleware.dto.common.KmehrPatientDto
 
 class ConsentTypeDto {
-	var patient: KmehrPatientDto? = null
-	var cds: List<CDCONSENT>? = null
-	var signdate: Long? = null
-	var revokedate: Long? = null
-	var author: AuthorWithPatientDto? = null
+    var patient: KmehrPatientDto? = null
+    var cds: List<CDCONSENT>? = null
+    var signdate: Long? = null
+    var revokedate: Long? = null
+    var author: AuthorWithPatientDto? = null
 }

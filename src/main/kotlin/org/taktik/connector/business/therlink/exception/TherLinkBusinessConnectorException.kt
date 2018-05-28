@@ -5,11 +5,20 @@ import java.text.MessageFormat
 
 class TherLinkBusinessConnectorException : ConnectorException {
 
-	constructor(errorCodeValue: TherLinkBusinessConnectorExceptionValues, vararg params: Any) : super(MessageFormat.format(errorCodeValue.message, *params), errorCodeValue.errorCode) {}
+    constructor(
+        errorCodeValue: TherLinkBusinessConnectorExceptionValues,
+        vararg params: Any
+    ) : super(MessageFormat.format(errorCodeValue.message, *params), errorCodeValue.errorCode) {
+    }
 
-	constructor(errorCodeValue: TherLinkBusinessConnectorExceptionValues, e: Throwable, vararg params: Any) : super(MessageFormat.format(errorCodeValue.message, *params), errorCodeValue.errorCode, e) {}
+    constructor(errorCodeValue: TherLinkBusinessConnectorExceptionValues, e: Throwable, vararg params: Any) : super(
+        MessageFormat.format(errorCodeValue.message, *params),
+        errorCodeValue.errorCode,
+        e
+    ) {
+    }
 
-	companion object {
-		private val serialVersionUID = 1L
-	}
+    companion object {
+        private val serialVersionUID = 1L
+    }
 }

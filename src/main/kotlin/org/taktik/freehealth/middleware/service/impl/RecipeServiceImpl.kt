@@ -25,9 +25,12 @@ package org.taktik.freehealth.middleware.service.impl
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
+import com.sun.org.apache.xerces.internal.impl.xs.XSLoaderImpl
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
+import com.sun.org.apache.xerces.internal.xs.XSLoader
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.logging.LogFactory
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.kmehr.v20161201.Utils.Companion.makeDateTypeFromFuzzyLong
 import org.taktik.connector.business.domain.kmehr.v20161201.Utils.Companion.makeXGC
@@ -38,6 +41,7 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDADMINISTRATIONUNIT
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDCOUNTRY
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDCOUNTRYschemes
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDDAYPERIOD
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDDAYPERIODvalues
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDDRUGROUTE
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
@@ -70,6 +74,7 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENT
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENTschemes.ID_PATIENT
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.AddressType
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.AdministrationunitType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.CountryType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.FrequencyType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
@@ -110,6 +115,7 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.TelecomType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.TimequantityType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.TimeunitType
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.UnitType
 import org.taktik.connector.business.recipe.prescriber.PrescriberIntegrationModule
 import org.taktik.connector.business.recipe.prescriber.PrescriberIntegrationModuleImpl
 import org.taktik.connector.business.recipe.utils.KmehrHelper
@@ -134,6 +140,7 @@ import org.taktik.freehealth.middleware.dto.TelecomType.mobile
 import org.taktik.freehealth.middleware.dto.TelecomType.phone
 import org.taktik.freehealth.middleware.service.RecipeService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.utils.FuzzyValues
 import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
 import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionHelper
 import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionHelper.Companion.toTextType
@@ -147,6 +154,9 @@ import java.nio.charset.Charset
 import java.security.KeyStoreException
 import java.security.cert.CertificateExpiredException
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.temporal.ChronoField
 import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.Callable
@@ -170,11 +180,31 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
     private val icureName = "freehealth-connector"
     private val icureVersion = "1.0.0"
 
-    val log = LogFactory.getLog(this.javaClass)!!
+    val log = LoggerFactory.getLogger(this.javaClass)!!
     private val kmehrHelper = KmehrHelper(Properties().apply { load(RecipeServiceImpl::class.java.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
 
     private val feedbacksCache : Cache<String, SortedSet<Feedback>>
     private val service : PrescriberIntegrationModule
+    private val versions = mapOf("CD-ADDRESS" to "1.1",
+                                 "CD-ADMINISTRATIONUNIT" to "1.2",
+                                 "CD-DAYPERIOD" to "1.1",
+                                 "CD-DRUG-CNK" to "WSSAMv2",
+                                 "CD-DRUG-ROUTE" to "2.0",
+                                 "CD-FED-COUNTRY" to "1.2",
+                                 "CD-GALENICFORM" to "1.0",
+                                 "CD-HCPARTY" to "1.11",
+                                 "CD-HEADING" to "1.2",
+                                 "CD-INNCLUSTER" to "LOCALDB",
+                                 "CD-ITEM" to "1.9",
+                                 "CD-LIFECYCLE" to "1.7",
+                                 "CD-PERIODICITY" to "1.1",
+                                 "CD-SEX" to "1.1",
+                                 "CD-STANDARD" to "1.19",
+                                 "CD-TELECOM" to "1.0",
+                                 "CD-TEMPORALITY" to "1.0",
+                                 "CD-TIMEUNIT" to "2.1",
+                                 "CD-TRANSACTION" to "1.9",
+                                 "CD-UNIT" to "1.7")
 
     init {
         val properties = Properties()
@@ -182,7 +212,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         properties.load(javaClass.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties"))
         PropertyHandler(properties)
         feedbacksCache = CacheBuilder.newBuilder().build<String, SortedSet<Feedback>>()
-        service = PrescriberIntegrationModuleImpl()
+        service = PrescriberIntegrationModuleImpl(stsService)
     }
 
     @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
@@ -191,7 +221,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-        val service = PrescriberIntegrationModuleImpl()
+        val service = PrescriberIntegrationModuleImpl(stsService)
         service.revokePrescription(samlToken, credential, hcpNihii, rid, reason)
     }
 
@@ -201,7 +231,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-        val service = PrescriberIntegrationModuleImpl()
+        val service = PrescriberIntegrationModuleImpl(stsService)
         service.updateFeedbackFlag(samlToken, credential, hcpNihii, rid, feedbackFlag)
 
         ridCache.getIfPresent(rid)?.let {
@@ -215,7 +245,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-        val service = PrescriberIntegrationModuleImpl()
+        val service = PrescriberIntegrationModuleImpl(stsService)
         val os = ByteArrayOutputStream()
         JAXBContext.newInstance(RecipeNotification::class.java).createMarshaller().marshal(RecipeNotification().apply { this.text = text; kmehrmessage = getPrescriptionMessage(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase, rid) }, os)
         val bytes = os.toByteArray()
@@ -224,13 +254,13 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
     }
 
     @Throws(ConnectorException::class, DataFormatException::class)
-    private fun getPrescriptionMessage(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, rid: String): Kmehrmessage? {
+    override fun getPrescriptionMessage(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, rid: String): Kmehrmessage? {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-        val service = PrescriberIntegrationModuleImpl()
-        val p = service.getPrescription(samlToken, credential, hcpNihii, rid)
+        val service = PrescriberIntegrationModuleImpl(stsService)
+        val p = service.getPrescription(samlToken, credential, keystore, passPhrase, hcpNihii, rid)
 
         return p?.prescription?.let { JAXBContext.newInstance(Kmehrmessage::class.java).createUnmarshaller().unmarshal(ByteArrayInputStream(it) as InputStream) as Kmehrmessage }
     }
@@ -251,26 +281,26 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-        val ridList = service!!.listOpenPrescription(samlToken, credential, hcpNihii)
+        val ridList = service.listOpenPrescription(samlToken, credential, hcpNihii)
 
         val es = Executors.newFixedThreadPool(5)
         try {
             val getFeedback = es.submit<List<Feedback>> { listFeedbacks(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase) }
-            val futures = es.invokeAll<GetPrescriptionForPrescriberResult>(ridList.map { rid -> Callable<GetPrescriptionForPrescriberResult> { ridCache[rid, { service!!.getPrescription(samlToken, credential, hcpNihii, rid) }] } })
+            val futures = es.invokeAll<GetPrescriptionForPrescriberResult>(ridList.map { rid -> Callable<GetPrescriptionForPrescriberResult> { ridCache[rid, { service!!.getPrescription(samlToken, credential, keystore, passPhrase, hcpNihii, rid) }] } })
             val result = futures.map { f -> f.get() }.map { r -> Prescription(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId) }
 
             try {
                 for (d in getFeedback.get()) {
-                    feedbacksCache!![d.rid!!, { TreeSet() }].add(d)
+                    feedbacksCache[d.rid!!, { TreeSet() }].add(d)
                 }
             } catch (e: ExecutionException) {
-                log.error(e)
+                log.error("Unexpected error", e)
             }
 
             es.shutdown()
             return result
         } catch (e: InterruptedException) {
-            log.error(e)
+            log.error("Unexpected error", e)
         }
 
         return emptyList()
@@ -278,7 +308,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
 
     @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
     override fun listOpenPrescriptions(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patientId: String): List<Prescription> {
-        val prescritpionsList = listOpenPrescriptions(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase, hcpNihii)
+        val prescritpionsList = listOpenPrescriptions(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase)
         return prescritpionsList.filter { it.patientId == patientId }
     }
 
@@ -322,7 +352,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         return result
     }
 
-    private fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: Date?): Kmehrmessage {
+    override fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?): Kmehrmessage {
         val config = KmehrPrescriptionConfig().apply {
             prescription.apply {
                 inami = hcp.nihii!!.replace("[^0-9]".toRegex(), "")
@@ -350,7 +380,8 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         return getKmehrPrescription(patient, hcp, medications, deliveryDate, config)
     }
 
-    private fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: Date?, config: KmehrPrescriptionConfig): Kmehrmessage {
+    override fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig): Kmehrmessage {
+
         val language = config.prescription.language
         return Kmehrmessage().apply {
             header = RecipeheaderType().apply {
@@ -358,7 +389,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                     cd = CDSTANDARD().apply {
                         s = "CD-STANDARD"
                         value = "20161201"
-                        sv = "1.20"
+                        sv = "1.19"
                     }
                 }
                 date = config.header.date
@@ -380,25 +411,25 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                     hcparties.addAll(listOf(
                             HcpartyType().apply {
                                 ids.add(IDHCPARTY().apply { s = ID_HCPARTY; sv = "1.0"; value = config.prescription.inami })
-                                cds.add(CDHCPARTY().apply { s = CD_HCPARTY; sv = "1.11"; value = "persphysician" })
+                                cds.add(CDHCPARTY().apply { s = CD_HCPARTY; sv = versions["CD-HCPARTY"]; value = "persphysician" })
                                 firstname = hcp.firstName
                                 familyname = hcp.lastName
                             },
                             HcpartyType().apply {
-                                cds.add(CDHCPARTY().apply { s = CD_HCPARTY; sv = "1.11"; value = "application" })
+                                cds.add(CDHCPARTY().apply { s = CD_HCPARTY; sv = versions["CD-HCPARTY"]; value = "application" })
                                 name = config.iCure.prettyName
                                 telecoms.addAll(listOf(
                                         TelecomType().apply {
                                             cds.addAll(listOf(
-                                                    CDTELECOM().apply { s = CD_ADDRESS; sv = "1.1"; value = "work" },
-                                                    CDTELECOM().apply { s = CD_TELECOM; sv = "1.0"; value = "phone" }
+                                                    CDTELECOM().apply { s = CD_ADDRESS; sv = versions["CD-ADDRESS"]; value = "work" },
+                                                    CDTELECOM().apply { s = CD_TELECOM; sv = versions["CD-TELECOM"]; value = "phone" }
                                             ))
                                             telecomnumber = config.iCure.phone
                                         },
                                         TelecomType().apply {
                                             cds.addAll(listOf(
-                                                    CDTELECOM().apply { s = CD_ADDRESS; sv = "1.1"; value = "work" },
-                                                    CDTELECOM().apply { s = CD_TELECOM; sv = "1.0"; value = "email" }
+                                                    CDTELECOM().apply { s = CD_ADDRESS; sv = versions["CD-ADDRESS"]; value = "work" },
+                                                    CDTELECOM().apply { s = CD_TELECOM; sv = versions["CD-TELECOM"]; value = "email" }
                                             ))
                                             telecomnumber = config.iCure.mail
                                         }
@@ -409,7 +440,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                 recipients.add(RecipientType().apply {
                     hcparties.add(HcpartyType().apply {
                         ids.add(IDHCPARTY().apply { s = ID_HCPARTY; sv = "1.0"; value = "RECIPE" })
-                        cds.add(CDHCPARTY().apply { s = CD_HCPARTY; sv = "1.11"; value = "orgpublichealth" })
+                        cds.add(CDHCPARTY().apply { s = CD_HCPARTY; sv = versions["CD-HCPARTY"]; value = "orgpublichealth" })
                         name = "Recip-e"
                     })
                 })
@@ -423,30 +454,30 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                     patient.dateOfBirth?.let { birthdate = makeDateTypeFromFuzzyLong(it.toLong())!! }
                     patient.gender?.name?.let { gender ->
                         sex = SexType().apply {
-                            cd = CDSEX().apply { s = "CD-SEX"; sv = "1.1"; value = CDSEXvalues.fromValue(gender) }
+                            cd = CDSEX().apply { s = "CD-SEX"; sv = versions["CD-SEX"]; value = CDSEXvalues.fromValue(gender) }
                         }
                     }
                 }
                 transaction = RecipetransactionType().apply {
                     id = RecipebasicIDKMEHR().apply { s = ID_KMEHR; sv = "1.0"; value = "1" }
-                    cd = RecipeCDTRANSACTION().apply { s = CDTRANSACTIONschemes.CD_TRANSACTION; sv = "1.10"; value = "pharmaceuticalprescription" }
+                    cd = RecipeCDTRANSACTION().apply { s = CDTRANSACTIONschemes.CD_TRANSACTION; sv = versions["CD-TRANSACTION"]; value = "pharmaceuticalprescription" }
                     date = config.header.date
                     time = config.header.time
                     // expirationDate?.let { expirationdate = makeXGC(expirationDate.time) } // deprecated as of Kmehr 1.18 - 20161201
                     author = RecipeauthorType().apply {
                         hcparties.add(HcpartyType().apply {
                             ids.add(IDHCPARTY().apply { s = ID_HCPARTY; sv = "1.0"; value = config.prescription.inami })
-                            cds.add(CDHCPARTY().apply { s = CD_HCPARTY; sv = "1.11"; value = "persphysician" })
+                            cds.add(CDHCPARTY().apply { s = CD_HCPARTY; sv = versions["CD-HCPARTY"]; value = "persphysician" })
                             firstname = hcp.firstName
                             familyname = hcp.lastName
                             val address = getPreferredAddress(hcp)
                             addresses.add(AddressType().apply {
-                                cds.add(CDADDRESS().apply { s = ADDRESS_CD_ADDRESS; sv = "1.1"; value = "work" })
+                                cds.add(CDADDRESS().apply { s = ADDRESS_CD_ADDRESS; sv = versions["CD-ADDRESS"]; value = "work" })
                                 country = CountryType().apply {
                                     cd = CDCOUNTRY().apply {
                                         s = CDCOUNTRYschemes.CD_FED_COUNTRY
                                         sv = "1.2"
-                                        value = codeDao.getCodeByLabel(address.country!!, "CD-FED-COUNTRY")?.code ?: address.country.toLowerCase()
+                                        value = address.country?.let { codeDao.getCodeByLabel(it, "CD-FED-COUNTRY")?.code ?: it.toLowerCase() } ?: "be"
                                     }
                                 }
                                 zip = address.postalCode
@@ -456,8 +487,8 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                 postboxnumber = address.postboxNumber
                             })
                             telecoms.add(TelecomType().apply {
-                                cds.add(CDTELECOM().apply { s = CD_ADDRESS; sv = "1.1"; value = "work" })
-                                cds.add(CDTELECOM().apply { s = CD_TELECOM; sv = "1.0"; value = "phone" })
+                                cds.add(CDTELECOM().apply { s = CD_ADDRESS; sv = versions["CD-ADDRESS"]; value = "work" })
+                                cds.add(CDTELECOM().apply { s = CD_TELECOM; sv = versions["CD-TELECOM"]; value = "phone" })
                                 telecomnumber = when {
                                     address.telecoms.any { it.telecomType == mobile || it.telecomType == phone } -> address.telecoms.first { it.telecomType == mobile || it.telecomType == phone }.telecomNumber
                                     else -> throw IllegalArgumentException("preferred address (${address.houseNumber} ${address.street}, ${address.city}, ${address.country}) for ${hcp.lastName} (${hcp.nihii}) has no phone contact")
@@ -469,11 +500,11 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                     isIsvalidated = true
                     heading = RecipetransactionheadingType().apply {
                         id = RecipebasicIDKMEHR().apply { s = ID_KMEHR; sv = "1.0"; value = "1" }
-                        cd = RecipeCDHEADING().apply { s = CDHEADINGschemes.CD_HEADING; sv = "1.2"; value = "prescription" }
+                        cd = RecipeCDHEADING().apply { s = CDHEADINGschemes.CD_HEADING; sv = versions["CD-HEADING"]; value = "prescription" }
                         medications.forEachIndexed { idx, med ->
                             items.add(RecipeitemType().apply {
                                 id = RecipebasicIDKMEHR().apply { s = ID_KMEHR; sv = "1.0"; value = (idx + 1).toString() }
-                                cd = RecipeCDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.11"; value = "medication" }
+                                cd = RecipeCDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = versions["CD-ITEM"]; value = "medication" }
                                 med.medicinalProduct?.intendedcds?.let {
                                     it.find { it.type == "CD-DRUG-CNK" }?.let { c ->
                                         content = RecipecontentType().apply {
@@ -518,20 +549,17 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                         }
                                     }
                                 }
-                                if (med.beginMoment != null) {
-                                    beginmoment = RecipemomentType().apply { date = makeXMLGregorianCalendarFromFuzzyLong(med.beginMoment) }
-                                } else {
-                                    throw IllegalArgumentException("prescription doesn't have a begin moment for medication($med)")
-                                }
+                                beginmoment = RecipemomentType().apply { date = makeXMLGregorianCalendarFromFuzzyLong(med.beginMoment ?: FuzzyValues.currentFuzzyDate ) }
+
                                 med.endMoment?.let { endmoment = RecipemomentType().apply { date = makeXMLGregorianCalendarFromFuzzyLong(it) } }
                                 val posologyText = med.getPosology(config.prescription.language)
                                 if (!StringUtils.isEmpty(posologyText)) {
                                     posology = RecipeitemType.Posology().apply { text = TextType().apply { l = language; value = posologyText } }
                                 }
-                                lifecycle = RecipelifecycleType().apply { cd = CDLIFECYCLE().apply { s = "CD-LIFECYCLE"; sv = "1.9"; value = CDLIFECYCLEvalues.PRESCRIBED } }
+                                lifecycle = RecipelifecycleType().apply { cd = CDLIFECYCLE().apply { s = "CD-LIFECYCLE"; sv = versions["CD-LIFECYCLE"]; value = CDLIFECYCLEvalues.PRESCRIBED } }
                                 med.temporality?.let {
                                     temporality = RecipetemporalityType().apply {
-                                        cd = CDTEMPORALITY().apply { s = "CD-TEMPORALITY"; sv = "1.0"; value = CDTEMPORALITYvalues.fromValue(it.code) }
+                                        cd = CDTEMPORALITY().apply { s = "CD-TEMPORALITY"; sv = versions["CD-TEMPORALITY"]; value = CDTEMPORALITYvalues.fromValue(it.code) }
                                     }
                                 }
                                 if (med.substanceProduct?.intendedcds == null || med.substanceProduct!!.intendedcds.map { it.code }.all { it == "000000" }) {
@@ -555,7 +583,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                             intake.weekday?.let { day ->
                                                 daynumbersAndQuantitiesAndDaytimes.add(RecipeitemType.Regimen.Weekday().apply {
                                                     day.weekDay?.let { dayOfWeek ->
-                                                        cd = CDWEEKDAY().apply { s = "CD-WEEKDAY"; sv = "1.0"; value = CDWEEKDAYvalues.fromValue(dayOfWeek.code) }
+                                                        cd = CDWEEKDAY().apply { s = "CD-WEEKDAY"; sv = versions["CD-WEEKDAY"]; value = CDWEEKDAYvalues.fromValue(dayOfWeek.code) }
                                                     }
                                                     day.weekNumber?.let { n -> weeknumber = BigInteger.valueOf(n.toLong()) }
                                                 })
@@ -568,7 +596,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                                 daynumbersAndQuantitiesAndDaytimes.add(RecipeadministrationquantityType().apply {
                                                     decimal = drugQuantity.quantity?.let { BigDecimal(it) }
                                                     drugQuantity.administrationUnit?.let { drugUnit ->
-                                                        unit = RecipeadministrationunitType().apply {
+                                                        unit = AdministrationunitType().apply {
                                                             cd = CDADMINISTRATIONUNIT().apply {
                                                                 s = "CD-ADMINISTRATIONUNIT"
                                                                 sv = "1.2"
@@ -591,9 +619,9 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                     }
                                 }
                                 med.intakeRoute?.code?.let { c ->
-                                    route = ReciperouteType().apply { cd = CDDRUGROUTE().apply { s = "CD-DRUG-ROUTE"; sv = "2.0"; value = c } }
+                                    route = ReciperouteType().apply { cd = CDDRUGROUTE().apply { s = "CD-DRUG-ROUTE"; sv = versions["CD-DRUGROUTE"]; value = c } }
                                 }
-                                deliverydate = makeXGC(deliveryDate?.time)
+                                deliverydate = deliveryDate?.let { makeXMLGregorianCalendarFromFuzzyLong(FuzzyValues.getFuzzyDate(it, ChronoUnit.DAYS))}
                                 instructionforpatient = toTextType(language, med.recipeInstructionForPatient)
                                 med.instructionsForReimbursement?.translations?.get(language)?.let {
                                     instructionforreimbursement = toTextType(language, it)
@@ -607,7 +635,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         }
     }
 
-    private fun toDaytime(intake: RegimenItem): RecipeitemType.Regimen.Daytime {
+    fun toDaytime(intake: RegimenItem): RecipeitemType.Regimen.Daytime {
         return RecipeitemType.Regimen.Daytime().apply {
             if (intake.timeOfDay != null) {
                 time = makeXMLGregorianCalendarFromHHMMSSLong(intake.timeOfDay!!)
@@ -619,14 +647,14 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                     CDDAYPERIODvalues.NIGHT.value() -> time = XMLGregorianCalendarImpl.parse("22:00:00")
                     CDDAYPERIODvalues.AFTERMEAL.value(), CDDAYPERIODvalues.BETWEENMEALS.value() -> throw UnsupportedCodeValueException("$timeOfDay not supported: corresponds to multiple possible moments in a day")
                     else -> dayperiod = RecipedayperiodType().apply {
-                        cd = RecipeCDDAYPERIOD().apply { s = "CD-DAYPERIOD"; sv = "1.1"; value = CDDAYPERIODvalues.fromValue(timeOfDay) }
+                        cd = CDDAYPERIOD().apply { s = "CD-DAYPERIOD"; sv = versions["CD-DAYPERIOD"]; value = CDDAYPERIODvalues.fromValue(timeOfDay) }
                     }
                 }
             }
         }
     }
 
-    private fun mapPeriodToFrequency(period: Period): RecipefrequencyType {
+    protected fun mapPeriodToFrequency(period: Period): RecipefrequencyType {
         val frequency = RecipefrequencyType()
         val periodCode = when (period.toBiggestTimeUnit()) {
         // when body generated with
@@ -691,7 +719,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
             else -> null
         }
         if (periodCode != null) {
-            frequency.periodicity = PeriodicityType().apply { cd = CDPERIODICITY().apply { s = "CD-PERIODICITY"; sv = "1.1"; value = periodCode } }
+            frequency.periodicity = PeriodicityType().apply { cd = CDPERIODICITY().apply { s = "CD-PERIODICITY"; sv = versions["CD-PERIODICITY"]; value = periodCode } }
         } else {
             val timeUnit = toCdTimeUnit(period.unit)
             val actualTimeUnit = timeUnit ?: toCdTimeUnit(ChronoUnit.YEARS)
@@ -701,7 +729,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                     quantity = TimequantityType().apply {
                         decimal = BigDecimal(actualAmount)
                         unit = TimeunitType().apply {
-                            cd = CDTIMEUNIT().apply { s = CDTIMEUNITschemes.CD_TIMEUNIT; sv = "2.1"; value = actualTimeUnit }
+                            cd = CDTIMEUNIT().apply { s = CDTIMEUNITschemes.CD_TIMEUNIT; sv = versions["CD-TIMEUNIT"]; value = actualTimeUnit }
                         }
                     }
                 }
@@ -709,7 +737,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                     quantity = TimequantityType().apply {
                         decimal = BigDecimal.ONE
                         unit = TimeunitType().apply {
-                            cd = CDTIMEUNIT().apply { s = CDTIMEUNITschemes.CD_TIMEUNIT; sv = "2.1"; value = actualTimeUnit }
+                            cd = CDTIMEUNIT().apply { s = CDTIMEUNITschemes.CD_TIMEUNIT; sv = versions["CD-TIMEUNIT"]; value = actualTimeUnit }
                         }
                     }
                 }
@@ -744,7 +772,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         return RecipedurationType().apply {
             decimal = d.value?.let { BigDecimal(it) }
             unit = TimeunitType().apply {
-                cd = CDTIMEUNIT().apply { s = CDTIMEUNITschemes.CD_TIMEUNIT; sv = "2.1"; value = d.unit?.code }
+                cd = CDTIMEUNIT().apply { s = CDTIMEUNITschemes.CD_TIMEUNIT; sv = versions["CD-TIMEUNIT"]; value = d.unit?.code }
             }
         }
     }
@@ -754,8 +782,8 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
     }
 
     @Throws(ConnectorException::class)
-    override fun createPrescription(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patient: Patient, hcp: HealthcareParty, feedback: Boolean, medications: List<Medication>, prescriptionType: String?, notification: String?, executorId: String?, deliveryDate: Date?): Prescription {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+    override fun createPrescription(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patient: Patient, hcp: HealthcareParty, feedback: Boolean, medications: List<Medication>, prescriptionType: String?, notification: String?, executorId: String?, deliveryDate: LocalDateTime?): Prescription {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
@@ -767,7 +795,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(m, os)
         val prescription = os.toByteArray()
 
-        val service = PrescriberIntegrationModuleImpl()
+        val service = PrescriberIntegrationModuleImpl(stsService)
         try {
             kmehrHelper.assertValidKmehrPrescription(ByteArrayInputStream(prescription), selectedType)
             log.debug("prescription $selectedType XML:\n${String(prescription)}")
@@ -776,7 +804,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
             throw e
         }
 
-        val prescriptionId = service.createPrescription(samlToken, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType)
+        val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType)
 
         val result = Prescription(Date(), "", prescriptionId!!)
 
@@ -901,7 +929,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         })
     }
 
-    private fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String {
+    override fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String {
         if (prescriptionType != null) {
             return prescriptionType
         }

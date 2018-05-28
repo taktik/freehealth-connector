@@ -35,7 +35,6 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.UnsealConnectorException
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
-import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorExceptionUtils
 import org.taktik.connector.technical.utils.ConnectorIOUtils
@@ -48,12 +47,10 @@ import be.fgov.ehealth.ehbox.core.v3.MessageInfoType
 import be.fgov.ehealth.ehbox.core.v3.SenderType
 
 import java.security.KeyStore
-import java.security.PrivateKey
 import java.util.ArrayList
 
 import org.apache.commons.lang.ArrayUtils
 import org.apache.commons.lang.StringUtils
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 abstract class AbstractConsultationBuilder<T>() {
@@ -77,7 +74,6 @@ abstract class AbstractConsultationBuilder<T>() {
             message.isHasAnnex = contentInfo.isHasAnnex
             message.isHasFreeInformations = contentInfo.isHasFreeInformations
         }
-
     }
 
     protected fun buildAddressee(sender: SenderType): Addressee {
@@ -115,7 +111,6 @@ abstract class AbstractConsultationBuilder<T>() {
             message.publicationDateTime = response.publicationDate
             message.size = response.size
         }
-
     }
 
     protected fun processContentSpecification(contentspec: ContentSpecificationType?, message: Message<T>) {
@@ -126,11 +121,16 @@ abstract class AbstractConsultationBuilder<T>() {
                 message.sender!!.applicationId = contentspec.applicationName
             }
         }
-
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    protected fun handleAndDecryptIfNeeded(keystore: KeyStore, passPhrase: String, data: ByteArray, encrypted: Boolean, container: AbstractConsultationBuilder.ExceptionContainer<T>): ByteArray? {
+    protected fun handleAndDecryptIfNeeded(
+        keystore: KeyStore,
+        passPhrase: String,
+        data: ByteArray,
+        encrypted: Boolean,
+        container: AbstractConsultationBuilder.ExceptionContainer<T>
+    ): ByteArray? {
         if (ArrayUtils.isEmpty(data)) {
             return data
         } else {
@@ -151,12 +151,11 @@ abstract class AbstractConsultationBuilder<T>() {
                     try {
                         byteVal = ConnectorExceptionUtils.processUnsealConnectorException(unsealConnectorException)
                     } catch (connectorException: UnsealConnectorException) {
-                        LOG.error("unrecoverable unsealException occurred while decrypting ehbox content , returning null as message , error : " + connectorException.message)
+                        LOG.error("unrecoverable unsealException occurred while decrypting ehbox content ," +
+                                      " returning null as message , error : ${connectorException.message}")
                         throw EhboxCryptoException(connectorException, null)
                     }
-
                 }
-
             }
 
             return byteVal
@@ -164,13 +163,22 @@ abstract class AbstractConsultationBuilder<T>() {
     }
 
     @Throws(EhboxBusinessConnectorException::class)
-    protected fun createMessage(content: ContentSpecificationType, responseMsg: T, id: String, publicationId: String?): Message<T> {
+    protected fun createMessage(
+        content: ContentSpecificationType,
+        responseMsg: T,
+        id: String,
+        publicationId: String?
+    ): Message<T> {
         val message: Message<T> = when (content.contentType) {
             "DOCUMENT" -> DocumentMessage()
             "NEWS" -> NewsMessage()
             "ERROR" -> ErrorMessage()
             "ACKNOWLEDGMENT" -> AcknowledgeMessage()
-            else -> throw EhboxBusinessConnectorException(EhboxBusinessConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON, "Unsupported contentType", content.contentType)
+            else -> throw EhboxBusinessConnectorException(
+                EhboxBusinessConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON,
+                "Unsupported contentType",
+                content.contentType
+            )
         }
 
         message.original = responseMsg
