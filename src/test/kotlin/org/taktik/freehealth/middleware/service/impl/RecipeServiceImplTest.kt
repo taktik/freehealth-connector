@@ -85,6 +85,7 @@ import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Companion.t
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications.Companion.compoundPrescriptionP2
 import java.io.ByteArrayOutputStream
 import java.math.BigDecimal
+import java.time.LocalDateTime
 import java.util.Date
 import java.util.Properties
 import java.util.UUID
@@ -133,7 +134,7 @@ class RecipeServiceImplTest {
 	        Patient().apply { firstName = "Antoine"; lastName = "Duchateau"; dateOfBirth = 19740104; ssin = "74010414733" },
 	        HealthcareParty(firstName = "Antoine", lastName = "Baudoux", ssin = "79121430944", nihii = "11478761004", addresses = mutableSetOf(taktik())),
 	        listOf(medication),
-	        Date())
+	        LocalDateTime.now())
 
 	    validator.validatePrescription(kmehrPrescription, listOf(medication))
     }
@@ -156,7 +157,7 @@ class RecipeServiceImplTest {
 			Patient().apply { firstName = "Antoine"; lastName = "Duchateau"; dateOfBirth = 19740104; ssin = "74010414733" },
 			HealthcareParty(firstName = "Antoine", lastName = "Baudoux", ssin = "79121430944", nihii = "11478761004", addresses = mutableSetOf(taktik()) ),
 			medications,
-			Date())
+            LocalDateTime.now())
 
 		val quantities = kmehrPrescription.folder.transaction.heading.items.get(0).regimen.daynumbersAndQuantitiesAndDaytimes
 			.filter { it is RecipeadministrationquantityType }

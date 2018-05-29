@@ -21,6 +21,7 @@ import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications.Companion.substanceProductP0
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications.Companion.substanceProductP1
 import java.io.ByteArrayOutputStream
+import java.time.LocalDateTime
 import java.util.Date
 import java.util.UUID
 import javax.xml.bind.JAXBContext
@@ -97,7 +98,7 @@ class CreatePrescriptionTest {
         //InsurabilityInfo infos = generalInsurabilityLogic.getGeneralInsurabity(niss, null, null, "T@kt1k1Cur3", "/Users/aduchate/ehealth/keystore", "SSIN=79121430944 20121128-151901.acc-p12");
 
         val type = recipeService.inferPrescriptionType(medications, null)
-        val infos = recipeService.createPrescription(keystoreId!!, tokenId!!, "persphysician", hcp.nihii!!, hcp.ssin!!, hcp.lastName!!, passPhrase!!, patient, hcp, true, medications, type, null, null, Date())
+        val infos = recipeService.createPrescription(keystoreId!!, tokenId!!, "persphysician", hcp.nihii!!, hcp.ssin!!, hcp.lastName!!, passPhrase!!, patient, hcp, true, medications, type, null, null, LocalDateTime.now())
         return infos
     }
 
