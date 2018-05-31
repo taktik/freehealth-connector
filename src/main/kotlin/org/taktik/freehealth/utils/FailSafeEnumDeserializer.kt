@@ -28,7 +28,7 @@ import java.io.IOException
 import com.fasterxml.jackson.core.JsonProcessingException
 
 
-open class FailSafeEnumDeserializer<T : Enum<T>>(private val enumClass: Class<T>) : JsonDeserializer<T>() {
+open class FailSafeEnumDeserializer<T : Enum<T>>(private val enumClass: Class<T>, private val defaultValue: T? = null) : JsonDeserializer<T>() {
     @Throws(IOException::class, JsonProcessingException::class)
     override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): T? {
         val value = jp.text
@@ -37,7 +37,7 @@ open class FailSafeEnumDeserializer<T : Enum<T>>(private val enumClass: Class<T>
                 return enumValue
             }
         }
-        return null
+        return defaultValue
     }
 }
 
