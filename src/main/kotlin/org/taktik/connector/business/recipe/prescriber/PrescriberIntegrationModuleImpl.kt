@@ -50,6 +50,7 @@ import org.taktik.connector.technical.service.kgss.impl.KgssServiceImpl
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.middleware.service.impl.RecipeServiceImpl
 import java.io.ByteArrayInputStream
 import java.security.KeyStore
 import java.util.*
@@ -63,7 +64,7 @@ class PrescriberIntegrationModuleImpl(val stsService: STSService) : AbstractInte
     private val prescriptionCache = HashMap<String, String>()
     private val kgssService = KgssServiceImpl()
     private val recipePrescriberService = RecipePrescriberServiceImpl()
-    private val kmehrHelper = KmehrHelper(PropertyHandler.getInstance().properties)
+    private val kmehrHelper = KmehrHelper(Properties().apply { load(RecipeServiceImpl::class.java.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
 
     /**
      * Gets the new key.
@@ -128,8 +129,6 @@ class PrescriberIntegrationModuleImpl(val stsService: STSService) : AbstractInte
         }
 
         try {
-            kmehrHelper.assertValidKmehrPrescription(ByteArrayInputStream(prescription), prescriptionType)
-
             // init helper
             val helper = MarshallerHelper(CreatePrescriptionResult::class.java, CreatePrescriptionParam::class.java)
 
@@ -140,7 +139,7 @@ class PrescriberIntegrationModuleImpl(val stsService: STSService) : AbstractInte
             val key = getNewKey(keystore, samlToken , passPhrase, nihii, patientId, prescriptionType)
             val message = getCrypto(credential).seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, null, KeyResult(key?.secretKey, key?.keyId), IOUtils.compress(prescription))
 
-// create sealed content
+            // create sealed content
             val params = CreatePrescriptionParam()
             params.patientId = patientId
             params.setFeedbackRequested(feedbackRequested)
