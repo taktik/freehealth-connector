@@ -207,10 +207,6 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                  "CD-UNIT" to "1.7")
 
     init {
-        val properties = Properties()
-        properties.load(javaClass.getResourceAsStream("/org/taktik/connector/business/recipe/connector-client.properties"))
-        properties.load(javaClass.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties"))
-        PropertyHandler(properties)
         feedbacksCache = CacheBuilder.newBuilder().build<String, SortedSet<Feedback>>()
         service = PrescriberIntegrationModuleImpl(stsService)
     }

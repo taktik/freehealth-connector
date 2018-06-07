@@ -188,7 +188,7 @@ class RecipePrescriberServiceImpl : RecipePrescriberService {
     }
 
     companion object {
-        private val ENDPOINT_NAME = "endpoint.prescriber"
+        private val ENDPOINT_NAME = "endpoint.recipe.prescriber"
         private val SERVICE_NAME = RecipePrescriberServiceImpl::class.java.name
     }
 }
