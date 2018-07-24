@@ -80,7 +80,11 @@ final class FolderDecryptor {
    private static NodeList getFolders(byte[] decryptedMessage) throws SAXException, IOException {
       Document doc = builder.parse(new InputSource(new ByteArrayInputStream(decryptedMessage)));
 
-      return doc.getElementsByTagName("folder");
+      NodeList folder = doc.getElementsByTagName("folder");
+      if (folder.getLength()==0) {
+         folder = doc.getElementsByTagNameNS("http://www.ehealth.fgov.be/standards/kmehr/schema/v1","folder");
+      }
+      return folder;
    }
 
    static {
