@@ -31,7 +31,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'docker-java'
 
 group = 'org.taktik'
-version = '0.1.7'
+version = '0.1.8'
 
 ext {
 	name = 'freehealth-connector'
@@ -172,7 +172,7 @@ task ktlint(type: JavaExec, group: "verification") {
 	// "--reporter=plain", "--reporter=checkstyle,output=${buildDir}/ktlint.xml"
 	// see https://github.com/shyiko/ktlint#usage for more
 }
-check.dependsOn ktlint
+//check.dependsOn ktlint
 
 task ktlintFormat(type: JavaExec, group: "formatting") {
 	description = "Fix Kotlin code style deviations."

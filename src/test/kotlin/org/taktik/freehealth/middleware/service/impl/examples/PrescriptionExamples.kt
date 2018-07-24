@@ -66,7 +66,7 @@ fun prescriptionExample10() =
     PrescriptionExample(donaldDuckHealthcareParty(), fredFlintstonePatient(), listOf(solatolMylanMedication()))
 
 fun prescriptionExample11() =
-    PrescriptionExample(donaldDuckHealthcareParty(), fredFlintstonePatient(), listOf(adalatOrosMedication(), dermovateCremeMedication11()), Date.from(LocalDate.of(2017, 2, 1).atStartOfDay().toInstant(ZoneOffset.UTC)))
+    PrescriptionExample(donaldDuckHealthcareParty(), fredFlintstonePatient(), listOf(adalatOrosMedication(), dermovateCremeMedication11()), LocalDateTime.of(2017, 2, 1, 10,0,0))
 
 fun prescriptionExample12() =
     PrescriptionExample(donaldDuckHealthcareParty(), fredFlintstonePatient(), listOf(yasminDragMedication()))

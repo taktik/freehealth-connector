@@ -90,7 +90,7 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                 }
             commonInput = CommonInputType().apply {
                 request =
-                    RequestType().apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
+                    RequestType().apply { isIsTest = false /*config.getProperty("endpoint.genins")?.contains("-acpt") ?: false*/ }
                 inputReference = "" + IdGeneratorFactory.getIdGenerator().generateId()
                 origin = OriginType().apply {
                     `package` = PackageType().apply {
