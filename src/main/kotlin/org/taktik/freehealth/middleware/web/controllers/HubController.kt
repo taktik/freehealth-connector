@@ -352,7 +352,7 @@ class HubController(val hubService: HubService) {
         )
     }
 
-    @GetMapping("/ts/{ssin}/{sv}/{sl}/{value}")
+    @GetMapping("/ts/{ssin}/{sv}/{sl}")
     fun getTransactionSet(
         @RequestParam endpoint: String,
         @RequestParam keystoreId: UUID,
@@ -367,7 +367,7 @@ class HubController(val hubService: HubService) {
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
-        @PathVariable value: String
+        @RequestParam id: String
     ): String = hubService.getTransactionSet(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -382,7 +382,7 @@ class HubController(val hubService: HubService) {
         breakTheGlassReason = breakTheGlassReason,
         sv = sv,
         sl = sl,
-        value = value
+        value = id
     )
 
     @PostMapping("/ts/{hubId}/{patientSsin}")
