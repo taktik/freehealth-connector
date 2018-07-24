@@ -115,6 +115,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String
@@ -129,7 +131,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetHCPartyConsentRequest().apply {
-                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
+                    request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, null,false)
                     select = SelectGetHCPartyConsentType().apply {
                         hcparty = HCPartyIdType().apply {
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
@@ -147,6 +149,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
@@ -162,7 +166,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetPatientConsentRequest().apply {
-                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
+                    request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, null,false)
                     select = SelectGetPatientConsentType().apply {
                         patient =
                             PatientIdType().apply {
@@ -191,6 +195,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
@@ -207,7 +213,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 PutPatientConsentRequest().apply {
-                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
+                    request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, null,false)
                     consent = ConsentType().apply {
                         patient = PatientIdType().apply {
                             ids.add(IDPATIENT().apply {
@@ -235,6 +241,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
@@ -251,7 +259,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 PutTherapeuticLinkRequest().apply {
-                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
+                    request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, null,false)
                     therapeuticlink = TherapeuticLinkType().apply {
                         patient = PatientIdType().apply {
                             ids.add(IDPATIENT().apply {
@@ -274,6 +282,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
@@ -292,7 +302,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetTherapeuticLinkRequest().apply {
-                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
+                    request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, null,false)
                     select = SelectGetHCPartyPatientConsentType().apply {
                         therLinkType?.let {
                             cds.add(CDTHERAPEUTICLINK().apply {
@@ -324,6 +334,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
@@ -343,7 +355,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 PutPatientRequest().apply {
-                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
+                    request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, null,true)
                     patient = PersonType().apply {
                         firstnames.add(firstName)
                         familyname = lastName
@@ -385,6 +397,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
@@ -400,7 +414,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetPatientRequest().apply {
-                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
+                    request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, null,true)
                     select = SelectGetPatientType().apply {
                         patient =
                             PatientIdType().apply {
@@ -427,10 +441,13 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
+        breakTheGlassReason: String?,
         sv: String,
         sl: String,
         value: String
@@ -445,7 +462,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetTransactionRequest().apply {
-                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
+                    request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, breakTheGlassReason,true)
                     select = SelectGetTransactionType().apply {
                         patient =
                             PatientIdType().apply {
@@ -477,6 +494,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
@@ -495,7 +514,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             stsService.getKeyStore(keystoreId, passPhrase)!!,
             passPhrase,
             PutTransactionRequest().apply {
-                request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
+                request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, null,true)
                 kmehrmessage =
                     marshallerHelper.toObject(transaction.toByteArray(Charsets.UTF_8))
             })
@@ -506,10 +525,13 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
+        breakTheGlassReason: String?,
         from: Long?,
         to: Long?,
         authorNihii: String?,
@@ -526,7 +548,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetTransactionListRequest().apply {
-                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, false)
+                    request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, breakTheGlassReason,false)
                     select = SelectGetTransactionListType().apply {
                         patient =
                             PatientIdType().apply {
@@ -578,10 +600,13 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
+        breakTheGlassReason: String?,
         sv: String,
         sl: String,
         value: String
@@ -596,7 +621,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetTransactionSetRequest().apply {
-                    request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
+                    request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, breakTheGlassReason,true)
                     select = SelectGetTransactionType().apply {
                         patient =
                             PatientIdType().apply {
@@ -628,6 +653,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
@@ -646,18 +673,22 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             stsService.getKeyStore(keystoreId, passPhrase)!!,
             passPhrase,
             PutTransactionSetRequest().apply {
-                request = createRequestType(hcpNihii, hcpSsin, hcpZip, true)
+                request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, null,true)
                 kmehrmessage =
                     marshallerHelper.toObject(transaction.toByteArray(Charsets.UTF_8))
             })
     }
 
     private fun createRequestType(
+        hcpLastName: String,
+        hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
+        breakTheGlassReason: String?,
         encrypted: Boolean = false
     ): RequestType {
+        require(breakTheGlassReason == null || breakTheGlassReason.length in 10..200) { "Invalid break the glass reason" }
         return RequestType().apply {
             date = DateTime.now()
             time = DateTime.now()
@@ -698,11 +729,12 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 hcparties.add(HcpartyType().apply {
                     ids.add(IDHCPARTY().apply {
                         s = IDHCPARTYschemes.LOCAL; sl = "endusersoftwareinfo"; sv =
-                        "1.0"; value = config.getProperty("package.name") ?: "iCure"
+                        "1.0"; value = config.getProperty("hub.package.id") ?: "ACC_"
                     })
                     cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.1"; value = "application" })
                 })
             }
+            breakTheGlassReason?.let { breaktheglass = it }
         }
     }
 }
