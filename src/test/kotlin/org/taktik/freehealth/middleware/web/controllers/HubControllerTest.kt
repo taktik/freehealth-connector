@@ -70,10 +70,26 @@ class HubControllerTest : EhealthTest() {
     }
 
     @Test
+    fun getTransactionListVitalink() {
+        val endpoint = "https://vitalink-acpt.ehealth.fgov.be/vpmg/vitalink-gateway/IntraHubService"
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val getTransactionsListResult = this.restTemplate.getForObject("http://localhost:$port/hub/list/${"72022102793"}?hcpNihii=$nihii1&hcpFirstName=$firstName1&hcpLastName=$lastName1&hcpSsin=$ssin1&breakTheGlassReason=azertyuiopqsdfghjklm&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        Assertions.assertThat(getTransactionsListResult != null && getTransactionsListResult.length>2 && getTransactionsListResult.startsWith("["))
+    }
+    @Test
     fun getTransaction() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getTransactionResult = this.restTemplate.getForObject("http://localhost:$port/hub/t/${"73032929895"}/1.0/RSWID/762?hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        val getTransactionResult = this.restTemplate.getForObject("http://localhost:$port/hub/t/${"73032929895"}/1.0/RSWID?id=762&hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpFirstName=$firstName1&hcpLastName=$lastName1&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
+        Assertions.assertThat(getTransactionResult != null && getTransactionResult.length>2 && getTransactionResult.startsWith("["))
+    }
+
+    @Test
+    fun getTransactionVitalink() {
+        val endpoint = "https://vitalink-acpt.ehealth.fgov.be/vpmg/vitalink-gateway/IntraHubService"
+        val trValue  = "/subject/72022102793/sumehr/59065/44" //"/subject/82121210976/sumehr/99634/1"
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val getTransactionResult = this.restTemplate.getForObject("http://localhost:$port/hub/t/${"72022102793"}/1.0/vitalinkuri?hcpNihii=${nihii1}&hcpFirstName=$firstName1&hcpLastName=$lastName1&hcpSsin=${ssin1}&breakTheGlassReason=azertyuiopqsdfghjklm&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&id={trValue}", String::class.java, trValue)
         Assertions.assertThat(getTransactionResult != null && getTransactionResult.length>2 && getTransactionResult.startsWith("["))
     }
 
