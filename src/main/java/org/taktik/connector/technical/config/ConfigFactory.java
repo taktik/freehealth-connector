@@ -39,7 +39,7 @@ public final class ConfigFactory {
    }
 
    public static ConfigValidator getConfigValidator(List<String> expectedProps) {
-      Set<String> cacheKey = new TreeSet();
+      Set<String> cacheKey = new TreeSet<>();
       if (expectedProps != null) {
          cacheKey.addAll(expectedProps);
       }
@@ -49,7 +49,7 @@ public final class ConfigFactory {
          CACHE.put(cacheKey, new ConfigValidatorImpl(expectedProps));
       }
 
-      return (ConfigValidator)CACHE.get(cacheKey);
+      return CACHE.get(cacheKey);
    }
 
    public static ConfigValidator getConfigValidatorFor(String... expectedProps) {
@@ -61,13 +61,7 @@ public final class ConfigFactory {
    }
 
    public static void invalidate() {
-      Iterator i$ = CACHE.values().iterator();
-
-      while(i$.hasNext()) {
-         ConfigValidator validator = (ConfigValidator)i$.next();
-         validator.invalidateCache();
-      }
-
+      CACHE.values().forEach(ConfigValidator::invalidateCache);
    }
 
    public static String getConfigLocation() throws TechnicalConnectorException {

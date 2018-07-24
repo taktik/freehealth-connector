@@ -78,7 +78,7 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
     ): InsurabilityInfoDto {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw IllegalArgumentException("Cannot obtain token for Genins operations")
         assert(patientSsin != null || io != null && ioMembership != null)
 
         val packageInfo = McnConfigUtil.retrievePackageInfo("genins")

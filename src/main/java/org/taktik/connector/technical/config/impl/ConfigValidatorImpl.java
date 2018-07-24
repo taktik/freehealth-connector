@@ -45,7 +45,7 @@ public class ConfigValidatorImpl implements ConfigValidator {
 
    public final Configuration getConfig() throws TechnicalConnectorException {
       this.init();
-      if (this.valid.booleanValue()) {
+      if (this.valid) {
          return this.config;
       } else {
          StringBuilder sb = new StringBuilder("Could not find properties. ");
