@@ -713,8 +713,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                             IdentifierType.NIHII.getType(48)
                         })
                     }
-                    firstname = "Antoine"
-                    familyname = "Baudoux"
+                    firstname = hcpFirstName
+                    familyname = hcpLastName
                     addresses.add(AddressType().apply {
                         cds.add(CDADDRESS().apply { s = CDADDRESSschemes.CD_ADDRESS; sv = "1.1"; value = "work" })
                         country =
