@@ -164,10 +164,27 @@ interface HubService {
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
-        transaction: String
+        transaction: ByteArray
     ): PutTransactionResponse
 
     fun getTransaction(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        breakTheGlassReason: String? = null,
+        sv: String,
+        sl: String,
+        value: String
+    ): String
+
+    fun revokeTransaction(
         endpoint: String,
         keystoreId: UUID,
         tokenId: UUID,
