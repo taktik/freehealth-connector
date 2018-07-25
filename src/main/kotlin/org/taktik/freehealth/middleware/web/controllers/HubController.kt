@@ -22,13 +22,7 @@ package org.taktik.freehealth.middleware.web.controllers
 
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionResponse
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
 import org.taktik.freehealth.middleware.domain.Consent
 import org.taktik.freehealth.middleware.domain.TransactionSummary
@@ -300,6 +294,41 @@ class HubController(val hubService: HubService) {
         @RequestParam id: String
     ): String {
         return hubService.getTransaction(
+            endpoint = endpoint,
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpLastName = hcpLastName,
+            hcpFirstName = hcpFirstName,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpZip = hcpZip,
+            ssin = ssin,
+            breakTheGlassReason = breakTheGlassReason,
+            sv = sv,
+            sl = sl,
+            value = id
+        )
+    }
+
+    @DeleteMapping("/t/{ssin}/{sv}/{sl}")
+    fun revokeTransaction(
+        @RequestParam endpoint: String,
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpZip: String,
+        @RequestParam(required = false) breakTheGlassReason: String? = null,
+        @PathVariable ssin: String,
+        @PathVariable sv: String,
+        @PathVariable sl: String,
+        @RequestParam id: String
+    ): String {
+        return hubService.revokeTransaction(
             endpoint = endpoint,
             keystoreId = keystoreId,
             tokenId = tokenId,

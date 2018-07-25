@@ -20,33 +20,7 @@
 
 package org.taktik.freehealth.middleware.service.impl
 
-import be.fgov.ehealth.hubservices.core.v3.ConsentType
-import be.fgov.ehealth.hubservices.core.v3.GetHCPartyConsentRequest
-import be.fgov.ehealth.hubservices.core.v3.GetPatientConsentRequest
-import be.fgov.ehealth.hubservices.core.v3.GetPatientRequest
-import be.fgov.ehealth.hubservices.core.v3.GetTherapeuticLinkRequest
-import be.fgov.ehealth.hubservices.core.v3.GetTransactionListRequest
-import be.fgov.ehealth.hubservices.core.v3.GetTransactionRequest
-import be.fgov.ehealth.hubservices.core.v3.GetTransactionSetRequest
-import be.fgov.ehealth.hubservices.core.v3.HCPartyIdType
-import be.fgov.ehealth.hubservices.core.v3.PatientIdType
-import be.fgov.ehealth.hubservices.core.v3.PutPatientConsentRequest
-import be.fgov.ehealth.hubservices.core.v3.PutPatientRequest
-import be.fgov.ehealth.hubservices.core.v3.PutTherapeuticLinkRequest
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionRequest
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionResponse
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetRequest
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
-import be.fgov.ehealth.hubservices.core.v3.RequestType
-import be.fgov.ehealth.hubservices.core.v3.SelectGetHCPartyConsentType
-import be.fgov.ehealth.hubservices.core.v3.SelectGetHCPartyPatientConsentType
-import be.fgov.ehealth.hubservices.core.v3.SelectGetPatientConsentType
-import be.fgov.ehealth.hubservices.core.v3.SelectGetPatientType
-import be.fgov.ehealth.hubservices.core.v3.SelectGetTransactionListType
-import be.fgov.ehealth.hubservices.core.v3.SelectGetTransactionType
-import be.fgov.ehealth.hubservices.core.v3.TherapeuticLinkType
-import be.fgov.ehealth.hubservices.core.v3.TransactionBaseType
-import be.fgov.ehealth.hubservices.core.v3.TransactionWithPeriodType
+import be.fgov.ehealth.hubservices.core.v3.*
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESSschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONSENT
@@ -485,6 +459,58 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             Kmehrmessage::class.java,
             Kmehrmessage::class.java
         ).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
+    }
+
+    override fun revokeTransaction(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        breakTheGlassReason: String?,
+        sv: String,
+        sl: String,
+        value: String
+    ): String {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val revokeresp =
+            freehealthHubService.revokeTransaction(
+            endpoint,
+            samlToken,
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase,
+            RevokeTransactionRequest().apply {
+                request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, breakTheGlassReason,true)
+                select = SelectRevokeTransactionType().apply {
+                    patient =
+                        PatientIdType().apply {
+                            ids.add(IDPATIENT().apply {
+                                this.s =
+                                    IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin
+                            })
+                        }
+                    transaction = TransactionBaseType().apply {
+                        id =
+                            IDKMEHR().apply {
+                                this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
+                                sl; this.value = value
+                            }
+                    }
+                }
+            }
+
+        )
+        return MarshallerHelper(
+            ResponseType::class.java,
+            ResponseType::class.java
+        ).toXMLByteArray(revokeresp.response).toString(Charsets.UTF_8)
     }
 
     override fun putTransaction(

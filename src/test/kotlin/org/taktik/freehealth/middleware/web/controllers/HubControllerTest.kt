@@ -94,6 +94,15 @@ class HubControllerTest : EhealthTest() {
     }
 
     @Test
+    fun revokeTransactionVitalink() {
+        val endpoint = "https://vitalink-acpt.ehealth.fgov.be/vpmg/vitalink-gateway/IntraHubService"
+        val trValue  = "/subject/72022102793/sumehr/59065/44" //"/subject/82121210976/sumehr/99634/1"
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val getTransactionResult = this.restTemplate.delete("http://localhost:$port/hub/t/${"72022102793"}/1.0/vitalinkuri?hcpNihii=${nihii1}&hcpFirstName=$firstName1&hcpLastName=$lastName1&hcpSsin=${ssin1}&breakTheGlassReason=azertyuiopqsdfghjklm&hcpZip=1000&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&id={trValue}", trValue)
+        Assertions.assertThat(getTransactionResult != null)// && getTransactionResult.length>2 && getTransactionResult.startsWith("["))
+    }
+
+    @Test
     fun putTransaction() {
         val endpoint = "https://vitalink-acpt.ehealth.fgov.be/vpmg/vitalink-gateway/IntraHubService"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
