@@ -33,17 +33,25 @@ class ConsultTarifControllerTest : EhealthTest() {
                                600 to listOf("59072957042", "83091041227", "49061015930", "82413101990"),
                                900 to listOf("59011214562", "73061527277", "90012333497", "78100404390")
                               )
-    private val oas = listOf("100", "300", "500", "600", "900")
     private fun getNisses(idx: Int) = listOf(nisses[100]!![idx], nisses[300]!![idx], nisses[500]!![idx], nisses[600]!![idx], nisses[900]!![idx])
     private val gmdManagers = listOf("17031506487", "88022631093", "87052226861", "63042408660", "37061311820", "87120924439")
 
-    private fun assertResults(scenario: String, results: List<TarificationConsultationResult?>) {
+    private fun assertResults(scenario: String, reimbursement: Double, results: List<TarificationConsultationResult?>) {
         println(scenario + "\n====================")
-
         results.forEachIndexed { index, it ->
-
+            assertThat(it!!.reimbursements).isNotNull.isNotEmpty
+            assertThat(it!!.reimbursements[0].amount).isEqualTo(reimbursement)
         }
     }
+
+    private fun assertErrors(scenario: String, error: String, results: List<TarificationConsultationResult?>) {
+        println(scenario + "\n====================")
+        results.forEachIndexed { index, it ->
+            assertThat(it!!.errors).isNotNull.isNotEmpty
+            assertThat(it!!.errors[0].code).isEqualTo(error)
+        }
+    }
+
 
     @Autowired
     private val restTemplate: TestRestTemplate? = null
@@ -56,12 +64,22 @@ class ConsultTarifControllerTest : EhealthTest() {
     }
 
     @Test
+    fun scenario1() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val now = LocalDateTime.now()
+        val results = listOf(nisses[100]!![0], nisses[300]!![0], nisses[900]!![0]).map {
+            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("101075"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+        }
+        assertErrors("scenario 1", "130",  results)
+    }
+
+    @Test
     fun scenario7() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
-        val results = getNisses(0).map {
+        val results = listOf(nisses[100]!![0], nisses[300]!![0], nisses[900]!![0]).map {
             this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("101032"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
         }
-        assertResults("scenario 1", results)
+        assertResults("scenario 7", 19.59,  results)
     }
 }

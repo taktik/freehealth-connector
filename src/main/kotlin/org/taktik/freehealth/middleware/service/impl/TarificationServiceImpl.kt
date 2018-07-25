@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import be.fgov.ehealth.messageservices.core.v1.PatientType
 import be.fgov.ehealth.messageservices.core.v1.RequestType
 import be.fgov.ehealth.messageservices.core.v1.RetrieveTransactionRequest
 import be.fgov.ehealth.messageservices.core.v1.RetrieveTransactionResponse
@@ -18,6 +19,8 @@ import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes
+import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENT
+import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENTschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
 import be.fgov.ehealth.standards.kmehr.schema.v1.ContentType
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
@@ -65,11 +68,11 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
         try {
             val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
-            val dateTime = DateTime().withMillisOfSecond(0).withZone(null)
-            val kmehrUUID = dateTime.toString("YYYYddhhmmssSS")
+            val now = DateTime().withMillisOfSecond(0).withZone(null)
+            val kmehrUUID = now.toString("YYYYddhhmmssSS")
+            val reqId = "$hcpNihii.$kmehrUUID"
 
-            val now = DateTime.now().withMillisOfSecond(0)
-
+            val csDT = DateTime(consultationDate.year, consultationDate.monthValue, consultationDate.dayOfMonth, 0, 0)
             val req = RetrieveTransactionRequest().apply {
                 val author = AuthorType().apply {
                     hcparties.add(HcpartyType().apply {
@@ -82,20 +85,22 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 }
 
                 this.request = RequestType().apply {
-                    id = IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "$hcpNihii.$kmehrUUID" }
+                    id = IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = reqId }
                     this.author = author
                     date = now; time = now
                 }
                 this.select = SelectRetrieveTransactionType().apply {
+                    patient = PatientType().apply {
+                        ids.add(IDPATIENT().apply { s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value = patientSsin })
+                    }
                     transaction = TransactionType().apply {
                         var h = 1
                         this.author = author
-                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "1"; sv = "1.0" })
                         cds.add(CDTRANSACTION().apply { s=CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET; sv="1.1"; value = "tariff" })
                         headingsAndItemsAndTexts.add(ItemType().apply {
                             ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (h++).toString() })
                             cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv="1.0"; value = "encounterdatetime" })
-                            contents.add(ContentType().apply { date = DateTime(consultationDate.year, consultationDate.monthValue, consultationDate.dayOfMonth, consultationDate.hour, consultationDate.minute) })
+                            contents.add(ContentType().apply { date = csDT })
                         })
                         headingsAndItemsAndTexts.addAll(codes.map { code ->
                             ItemType().apply {
@@ -128,10 +133,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             val kmehrRequestMarshaller =
                 MarshallerHelper(RetrieveTransactionRequest::class.java, RetrieveTransactionRequest::class.java)
             val xmlByteArray = kmehrRequestMarshaller.toXMLByteArray(req)
-            if (xmlByteArray != null && config.getBooleanProperty(
-                    "be.ehealth.businessconnector.dmg.builders.impl.dumpMessages",
-                    false
-                                                                 )) {
+            if (xmlByteArray != null && config.getBooleanProperty("mcn.tarification.dumpMessages", false)) {
                 log.debug("RequestObjectBuilder : created blob content: " + String(xmlByteArray))
             }
 
@@ -140,6 +142,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
             val request = TarificationConsultationRequest().apply {
                 this.commonInput = be.fgov.ehealth.mycarenet.commons.core.v2.CommonInputType().apply {
+                    this.inputReference = kmehrUUID
                     this.request = be.fgov.ehealth.mycarenet.commons.core.v2.RequestType().apply {
                         this.isIsTest = isTest
                     }
@@ -170,11 +173,11 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 }
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
                 this.issueInstant = DateTime()
-                this.routing = SendRequestMapper.mapRouting(Routing(CareReceiverId(patientSsin), DateTime()))
+                this.routing = SendRequestMapper.mapRouting(Routing(CareReceiverId(patientSsin), csDT))
                 this.detail = SendRequestMapper.mapBlobToBlobType(blob)
             }
 
-            val consultTarificationResponse = freehealthTarificationService.consultTarification(samlToken, request)
+            var consultTarificationResponse = freehealthTarificationService.consultTarification(samlToken, request)
             val detail = consultTarificationResponse.getReturn().detail
             val content = BlobBuilderFactory.getBlobBuilder("mcn.tarification").checkAndRetrieveContent(SendRequestMapper.mapBlobTypeToBlob(detail))
 
