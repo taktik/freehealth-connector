@@ -527,7 +527,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         hcpZip: String,
         ssin: String,
         transaction: ByteArray
-    ): PutTransactionResponse {
+    ): TransactionIdType {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
@@ -543,7 +543,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, null,true)
                 kmehrmessage =
                     marshallerHelper.toObject(transaction)
-            })
+            }).transaction
     }
 
     override fun getTransactionsList(
