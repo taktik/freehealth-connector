@@ -76,39 +76,30 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         endDate: Date?,
         type: String?,
         sign: Boolean?
-    ): List<TherapeuticLinkMessage>? = getAllTherapeuticLinksWithQueryLink(keystoreId,
-                                                                           tokenId,
-                                                                           passPhrase,
-                                                                           TherapeuticLink.Builder().withHcParty(
-                                                                               makeHcParty(
-                                                                                   hcpNihii,
-                                                                                   hcpSsin,
-                                                                                   hcpFirstName,
-                                                                                   hcpLastName
-                                                                               )
-                                                                           ).withPatient(
-                                                                               makePatient(
-                                                                                   patientSsin,
-                                                                                   eidCardNumber,
-                                                                                   isiCardNumber,
-                                                                                   patientFirstName,
-                                                                                   patientLastName
-                                                                               )
-                                                                           ).withStartDateTime(startDate?.let {
-                                                                                   DateTime(
-                                                                                       it.time
-                                                                                   )
-                                                                               }).withEndDateTime(endDate?.let {
-                                                                                   DateTime(
-                                                                                       it.time
-                                                                                   )
-                                                                               }).withStatus(
-                                                                                   TherapeuticLinkStatus.ACTIVE
-                                                                               ).withType(
-                                                                                   type ?: "gpconsultation"
-                                                                               ).build(),
-                                                                           sign
-    )
+                                       ): List<TherapeuticLinkMessage>? =
+        getAllTherapeuticLinksWithQueryLink(
+            keystoreId,
+            tokenId,
+            passPhrase,
+            TherapeuticLink.Builder()
+                .withHcParty(makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName))
+                .withPatient(
+                    makePatient(patientSsin, eidCardNumber, isiCardNumber, patientFirstName, patientLastName)
+                            ).withStartDateTime(startDate?.let {
+                    DateTime(
+                        it.time
+                            )
+                }).withEndDateTime(endDate?.let {
+                    DateTime(
+                        it.time
+                            )
+                }).withStatus(
+                    TherapeuticLinkStatus.ACTIVE
+                             ).withType(
+                    type ?: "gpconsultation"
+                                       ).build(),
+            sign
+                                           )
 
     override fun getAllTherapeuticLinksWithQueryLink(
         keystoreId: UUID,
@@ -116,13 +107,14 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         passPhrase: String,
         queryLink: TherapeuticLink,
         sign: Boolean?
-    ): List<TherapeuticLinkMessage>? = getAllTherapeuticLinksWithQueryLink(
-        keystoreId,
-        tokenId,
-        passPhrase,
-        queryLink,
-        makeProof(sign ?: false, queryLink.patient, queryLink.hcParty)
-    )
+                                                    ): List<TherapeuticLinkMessage>? =
+        getAllTherapeuticLinksWithQueryLink(
+            keystoreId,
+            tokenId,
+            passPhrase,
+            queryLink,
+            makeProof(sign ?: false, queryLink.patient, queryLink.hcParty)
+                                           )
 
     private fun getAllTherapeuticLinksWithQueryLink(
         keystoreId: UUID,
@@ -130,7 +122,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         passPhrase: String,
         queryLink: TherapeuticLink,
         proof: Proof?
-    ): List<TherapeuticLinkMessage>? {
+                                                   ): List<TherapeuticLinkMessage>? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -145,18 +137,18 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                                 DateTime.now(),
                                 getNihii(
                                     queryLink.hcParty
-                                )!!,
+                                        )!!,
                                 Author().apply {
                                     hcParties.add(
                                         queryLink.hcParty
-                                    )
+                                                 )
                                 },
                                 queryLink,
                                 100,
                                 proof
-                            )
-                        )
-                    )
+                                                     )
+                                                                        )
+                              )
                 }).asObject(GetTherapeuticLinkResponse::class.java)
 
         return if (response.acknowledge.isIscomplete) {
@@ -174,7 +166,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                                 null,
                                 it.errorDescription,
                                 mapOf()
-                            )
+                                                                      )
                         }
             })
         }
@@ -185,13 +177,13 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         tokenId: UUID,
         passPhrase: String,
         therLink: TherapeuticLink
-    ): TherapeuticLink? = getAllTherapeuticLinksWithQueryLink(
+                              ): TherapeuticLink? = getAllTherapeuticLinksWithQueryLink(
         keystoreId,
         tokenId,
         passPhrase,
         therLink,
         false
-    )?.firstOrNull()?.let { if (it.isComplete) it.therapeuticLink else null }
+                                                                                       )?.firstOrNull()?.let { if (it.isComplete) it.therapeuticLink else null }
 
     override fun registerTherapeuticLink(
         keystoreId: UUID,
@@ -211,7 +203,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         therLinkType: String?,
         comment: String?,
         sign: Boolean?
-    ): TherapeuticLinkMessage {
+                                        ): TherapeuticLinkMessage {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -223,7 +215,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                 start?.let { DateTime(it.time) },
                 end?.let { DateTime(it.time) },
                 comment
-            )
+                               )
 
         doesLinkExist(keystoreId, tokenId, passPhrase, therLink)?.let {
             revokeLink(
@@ -232,7 +224,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                 passPhrase,
                 it,
                 false
-            )
+                      )
         }
 
         val response =
@@ -246,9 +238,9 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                                 makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
                                 therLink,
                                 makeProof(sign ?: false, therLink.patient, therLink.hcParty)
-                            )
-                        )
-                    )
+                                                     )
+                                                                        )
+                              )
                     setSoapAction("urn:be:fgov:ehealth:therlink:protocol:v1:PutTherapeuticLink")
                 }).asObject(PutTherapeuticLinkResponse::class.java)
 
@@ -266,7 +258,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                                 null,
                                 it.errorDescription,
                                 mapOf()
-                            )
+                                                                      )
                         }
             }
         }
@@ -290,7 +282,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         therLinkType: String?,
         comment: String?,
         sign: Boolean?
-    ): TherapeuticLinkMessage? {
+                           ): TherapeuticLinkMessage? {
         return doesLinkExist(
             keystoreId,
             tokenId,
@@ -304,12 +296,12 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                     isiCardNumber,
                     patientFirstName,
                     patientLastName
-                ),
+                           ),
                 start?.let { DateTime(it.time) },
                 end?.let { DateTime(it.time) },
                 comment
-            )
-        )?.let { revokeLink(keystoreId, tokenId, passPhrase, it, sign) }
+                               )
+                            )?.let { revokeLink(keystoreId, tokenId, passPhrase, it, sign) }
     }
 
     override fun revokeLink(
@@ -318,7 +310,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         passPhrase: String,
         therLink: TherapeuticLink,
         sign: Boolean?
-    ): TherapeuticLinkMessage {
+                           ): TherapeuticLinkMessage {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -332,7 +324,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                     getSsin(therLink.hcParty),
                     therLink.hcParty.firstName,
                     therLink.hcParty.familyName
-                ),
+                          ),
                 makeTherapeuticLink(
                     therLink.type,
                     therLink.hcParty,
@@ -340,12 +332,12 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                     therLink.startDate?.toDateTime(LocalTime.MIDNIGHT) ?: DateTime(),
                     therLink.endDate?.toDateTime(LocalTime.MIDNIGHT),
                     therLink.comment
-                ),
+                                   ),
                 makeProof(
                     sign ?: false, therLink.patient, therLink.hcParty
-                )
-            )
-        )
+                         )
+                                        )
+                                                                                                 )
 
         val response =
             org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(getTherLinkPort(samlToken).apply {
@@ -367,7 +359,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                                 null,
                                 it.errorDescription,
                                 mapOf()
-                            )
+                                                                      )
                         }
             }
         }
@@ -403,7 +395,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         startDate: DateTime? = null,
         endDate: DateTime? = null,
         comment: String? = null
-    ): TherapeuticLink = TherapeuticLink(patient, hcParty, therLinkType).apply {
+                                   ): TherapeuticLink = TherapeuticLink(patient, hcParty, therLinkType).apply {
         startDate?.let { this.startDate = LocalDate(it) }
         endDate?.let { this.endDate = LocalDate(it) }
         this.comment = comment
@@ -428,7 +420,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                 patient,
                 hcParty,
                 BeIDCredential.getInstance("Therapeutic Link", "Signature")
-            )
+                                          )
             patient.eidCardNumber != null -> Proof(ProofTypeValues.EIDREADING.value)
             patient.isiCardNumber != null -> Proof(ProofTypeValues.SISREADING.value)
             else -> null
@@ -445,7 +437,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
     private fun makeHcParty(nihii: String?, inss: String?, firstname: String?, lastname: String?) =
         HcParty.Builder().withNihii(nihii).withInss(inss).withType("persphysician").withFirstName(firstname).withFamilyName(
             lastname
-        ).build()
+                                                                                                                           ).build()
 
     val config = ConfigFactory.getConfigValidator(listOf("endpoint.therlink"))
 
@@ -453,10 +445,10 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         GenericRequest().setEndpoint(config.getProperty("endpoint.therlink")).setCredential(
             token,
             TokenType.SAML
-        ).addDefaulHandlerChain().addHandlerChain(
-                HandlerChainUtil.buildChainWithValidator(
-                    "validation.incoming.therlink.message",
-                    "/ehealth-hubservices/XSD/hubservices_protocol-2_2.xsd"
-                )
-            )
+                                                                                           ).addDefaulHandlerChain().addHandlerChain(
+            HandlerChainUtil.buildChainWithValidator(
+                "validation.incoming.therlink.message",
+                "/ehealth-hubservices/XSD/hubservices_protocol-2_2.xsd"
+                                                    )
+                                                                                                                                    )
 }
