@@ -81,7 +81,15 @@ class HubControllerTest : EhealthTest() {
     fun putTransaction() {
         val endpoint = "https://vitalink-acpt.ehealth.fgov.be/vpmg/vitalink-gateway/IntraHubService"
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val putTransactionResult = this.restTemplate.postForObject("http://localhost:$port/hub/t/${"1990001916"}/${"73032929895"}?hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=8300&hubApplication=${"VITALINKGATEWAY"}&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String(MyTestsConfiguration::class.java.getResourceAsStream("sumehr.xml").readBytes(), Charsets.UTF_8), String::class.java)
+        val putTransactionResult = this.restTemplate.postForObject("http://localhost:$port/hub/t/${"1990001916"}/${"73032929895"}?hcpLastName=${lastName1}&hcpFirstName=${firstName1}&hcpNihii=${nihii1}&hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=8300&hubApplication=${"VITALINKGATEWAY"}&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String(MyTestsConfiguration::class.java.getResourceAsStream("sumehr.xml").readBytes(), Charsets.UTF_8), String::class.java)
+        Assertions.assertThat(putTransactionResult != null && putTransactionResult.length>2 && putTransactionResult.startsWith("["))
+    }
+
+    @Test
+    fun putTransactionRsw() {
+        val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val putTransactionResult = this.restTemplate.postForObject("http://localhost:$port/hub/t/${"1990000035"}/${"73032929895"}?hcpLastName=${lastName1}&hcpFirstName=${firstName1}&hcpNihii=${nihii1}&hcpNihii=${nihii1}&hcpSsin=${ssin1}&hcpZip=8300&endpoint=$endpoint&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String(MyTestsConfiguration::class.java.getResourceAsStream("sumehr.xml").readBytes(), Charsets.UTF_8), String::class.java)
         Assertions.assertThat(putTransactionResult != null && putTransactionResult.length>2 && putTransactionResult.startsWith("["))
     }
 
