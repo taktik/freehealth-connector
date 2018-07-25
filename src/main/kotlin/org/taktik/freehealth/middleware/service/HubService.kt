@@ -164,7 +164,7 @@ interface HubService {
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
-        transaction: String
+        transaction: ByteArray
     ): PutTransactionResponse
 
     fun getTransaction(

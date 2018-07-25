@@ -363,7 +363,7 @@ class HubController(val hubService: HubService) {
                     required = false
                 ) hubApplication: String?,
         @PathVariable patientSsin: String,
-        @RequestBody message: String
+        @RequestBody message: ByteArray
     ): PutTransactionResponse {
         return hubService.putTransaction(
             endpoint = endpoint,
