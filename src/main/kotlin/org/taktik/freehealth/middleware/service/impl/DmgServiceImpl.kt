@@ -76,7 +76,6 @@ import org.taktik.connector.business.dmg.builders.ResponseObjectBuilderFactory
 import org.taktik.connector.business.dmg.domain.DMGReferences
 import org.taktik.connector.business.dmg.exception.DmgBusinessConnectorException
 import org.taktik.connector.business.dmg.exception.DmgBusinessConnectorExceptionValues
-import org.taktik.connector.business.dmg.util.DmgConstants
 import org.taktik.connector.business.domain.dmg.DmgAcknowledge
 import org.taktik.connector.business.domain.dmg.DmgClosure
 import org.taktik.connector.business.domain.dmg.DmgConsultation
@@ -100,7 +99,6 @@ import org.taktik.connector.business.mycarenetdomaincommons.util.WsAddressingUti
 import org.taktik.connector.business.registration.builder.RegistrationRequestBuilderFactory
 import org.taktik.connector.business.registration.helper.ResponseHelper
 import org.taktik.connector.technical.config.ConfigFactory
-import org.taktik.connector.technical.config.util.ConfigUtil
 import org.taktik.connector.technical.handler.domain.WsAddressingHeader
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.service.sts.security.Credential
@@ -1049,7 +1047,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             "_" + UUID.randomUUID().toString(),
             "text/xml"
                                                                              ).apply {
-            messageName = DmgConstants.GMD_CONSULT_HCP
+            messageName = "GMD-CONSULT-HCP"
         }
 
         val ci = CommonInput().apply {
@@ -1061,7 +1059,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         }
         // no xades needed for dmg async
         val post =
-            BuilderFactory.getRequestObjectBuilder(DmgConstants.PROJECT_IDENTIFIER)
+            BuilderFactory.getRequestObjectBuilder("dmg")
                 .buildPostRequest(ci, SendRequestMapper.mapBlobToCinBlob(blob), null)
         val postResponse = genAsyncService.postRequest(samlToken, post, postHeader)
         return postResponse.`return`.resultMajor == "urn:nip:tack:result:major:success"
