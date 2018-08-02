@@ -67,19 +67,117 @@ class ConsultTarifControllerTest : EhealthTest() {
     fun scenario1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
-        val results = listOf(nisses[100]!![0], nisses[300]!![0], nisses[900]!![0]).map {
+        val results = listOf( nisses[300]!![0], nisses[900]!![0]).map {
             this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("101075"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
         }
         assertErrors("scenario 1", "130",  results)
     }
 
     @Test
+    fun scenario2() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val now = LocalDateTime.now()
+        val results = listOf(nisses[100]!![0], nisses[300]!![0], nisses[600]!![0], nisses[900]!![0]).map {
+            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("102793"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+        }
+        assertErrors("scenario 2", "172",  results)
+    }
+
+    @Test
+    fun scenario3() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val now = LocalDateTime.now()
+        val results = listOf(nisses[300]!![0], nisses[600]!![0], nisses[900]!![0]).map {
+            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("102034"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+        }
+        assertErrors("scenario 3", "171",  results)
+    }
+
+    @Test
+    fun scenario4() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val date = LocalDateTime.now().minusMonths(3)
+        val results = listOf(nisses[900]!![0]).map {
+            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&encounterdatetime=$date&passPhrase={passPhrase}", listOf("101032"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+        }
+        assertErrors("scenario 4", "166",  results)
+    }
+
+    @Test
+    fun scenario5() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val date = LocalDateTime.now()
+        val competence = nihii1!!.subSequence(8,11)
+        var code = "101032"
+        if(competence=="003" || competence=="002")
+            code = "101010"
+        val results = listOf( nisses[900]!![2]).map {
+            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf(code,"475075"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+        }
+        assertErrors("scenario 5", "169",  results)
+    }
+
+    @Test
+    fun scenario6() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val date = LocalDateTime.now()
+        val competence = nihii1!!.subSequence(8,11)
+        var code = "101032"
+        if(competence=="003" || competence=="002")
+            code = "101010"
+        val results = listOf(nisses[900]!![3]).map {
+            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf(code), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+        }
+        assertErrors("scenario 6", "170",  results)
+    }
+
+    @Test
     fun scenario7() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
-        val results = listOf(nisses[100]!![0], nisses[300]!![0], nisses[900]!![0]).map {
+        val results = listOf(nisses[900]!![0]).map {
             this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("101032"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 7", 19.59,  results)
+    }
+
+    @Test
+    fun scenario8() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val now = LocalDateTime.now()
+        val results = listOf(nisses[900]!![0]).map {
+            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("101032","112210"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+        }
+        assertResults("scenario 8", 19.59,  results)
+    }
+
+    @Test
+    fun scenario9() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val now = LocalDateTime.now()
+        val results = listOf(nisses[900]!![1]).map {
+            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("101032"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+        }
+        assertResults("scenario 9", 15.09,  results)
+    }
+
+    @Test
+    fun scenario10() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val now = LocalDateTime.now()
+        val results = listOf(nisses[900]!![1]).map {
+            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}&justification=2", listOf("101032"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+        }
+        assertResults("scenario 10", 15.09,  results)
+    }
+
+    @Test
+    fun scenario11() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val now = LocalDateTime.now()
+        val results = listOf(nisses[900]!![1]).map {
+            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}&justification=7&gmdmanager=$nihii1", listOf("101032"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+        }
+        assertResults("scenario 11", 15.09,  results)
     }
 }
