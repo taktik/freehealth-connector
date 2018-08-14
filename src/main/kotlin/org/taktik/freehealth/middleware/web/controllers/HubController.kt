@@ -383,7 +383,7 @@ class HubController(val hubService: HubService) {
         )
     }
 
-    @GetMapping("/ts/{ssin}/{sv}/{sl}")
+    @GetMapping("/ts/{ssin}/{sv}/{sl}", produces = [MediaType.APPLICATION_XML_VALUE])
     fun getTransactionSet(
         @RequestParam endpoint: String,
         @RequestParam keystoreId: UUID,
