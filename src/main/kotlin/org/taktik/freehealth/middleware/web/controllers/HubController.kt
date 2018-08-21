@@ -22,6 +22,7 @@ package org.taktik.freehealth.middleware.web.controllers
 
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionResponse
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
+import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
@@ -364,7 +365,7 @@ class HubController(val hubService: HubService) {
                 ) hubApplication: String?,
         @PathVariable patientSsin: String,
         @RequestBody message: ByteArray
-    ): PutTransactionResponse {
+    ): TransactionIdType {
         return hubService.putTransaction(
             endpoint = endpoint,
             hubId = hubId,
@@ -382,7 +383,7 @@ class HubController(val hubService: HubService) {
         )
     }
 
-    @GetMapping("/ts/{ssin}/{sv}/{sl}")
+    @GetMapping("/ts/{ssin}/{sv}/{sl}", produces = [MediaType.APPLICATION_XML_VALUE])
     fun getTransactionSet(
         @RequestParam endpoint: String,
         @RequestParam keystoreId: UUID,

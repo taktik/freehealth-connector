@@ -22,6 +22,7 @@ package org.taktik.freehealth.middleware.service
 
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionResponse
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
+import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
 import org.taktik.freehealth.middleware.domain.Consent
 import org.taktik.freehealth.middleware.dto.common.Gender
@@ -165,7 +166,7 @@ interface HubService {
         hcpZip: String,
         ssin: String,
         transaction: ByteArray
-    ): PutTransactionResponse
+    ): TransactionIdType
 
     fun getTransaction(
         endpoint: String,
