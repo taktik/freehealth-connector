@@ -21,6 +21,19 @@ class HubControllerTest : EhealthTest() {
     @Autowired
     private val restTemplate: TestRestTemplate? = null
 
+    /*
+        PROD
+        Réseau Santé Wallon : 1990000035 : https://hub.reseausantewallon.be/standards/hubservices/production/intrahub/intrahubservice.asmx
+        Réseau Santé Bruxellois : 1990000728 : https://hub.abrumet.be/standards/hubservices/production/intrahub/intrahubservice.asmx
+        Vitalink :  : https://vitalink.ehealth.fgov.be/vpmg/vitalink-gateway/IntraHubService
+
+        ACCEPTANCE
+        Réseau Santé Wallon : 1990000035 : https://hub.reseausantewallon.be/standards/hubservices/intrahub/intrahubservice.asmx
+        Réseau Santé Bruxellois : 1990000728 : https://hub.abrumet.be/standards/hubservices/intrahub/intrahubservice.asmx
+        Vitalink :  : https://vitalink-acpt.ehealth.fgov.be/vpmg/vitalink-gateway/IntraHubService
+
+     */
+
     @Test
     fun getPatient() {
         val endpoint = "https://acchub.reseausantewallon.be/HubServices/IntraHub/V3/IntraHub.asmx"
