@@ -177,7 +177,7 @@ class ConsultTarifControllerTest : EhealthTest() {
             OR CN 101032 for qualification 003, 004, 005, 006
         OUT: Rejet code erreur 170
      */
-    @Test // Problem with NISS 71010908576 (OA 300 NISS 4 Success)
+    @Test
     fun scenario6() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) "101010" else "101032"
@@ -215,7 +215,7 @@ class ConsultTarifControllerTest : EhealthTest() {
             OR {CN 101032 for qualification 003, 004, 005, 006 AND CN 475075}
         OUT: CD-MYCARENETJUSTIFICATION = 3
      */
-    @Test // Problem with NISS 64032764903 (OA 300 NISS 1 justification 0)
+    @Test
     fun scenario8() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) listOf("101010") else listOf("101032","475075")
@@ -234,7 +234,7 @@ class ConsultTarifControllerTest : EhealthTest() {
             OR CN 101032 for qualification 003, 004, 005, 006
         OUT: CD-MYCARENETJUSTIFICATION = 9
      */
-    @Test // Problem with NISS 66021250154 (300 second)
+    @Test
     fun scenario9() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) listOf("101010") else listOf("101032")
@@ -259,7 +259,7 @@ class ConsultTarifControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) listOf("101010") else listOf("101032")
 
-        val results = listOf(nisses[100]!![1], nisses[300]!![1], nisses[900]!![1]).map {
+        val results = getNisses(1).map {
             this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}&justification=2", code, TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 10", 2,  results)
