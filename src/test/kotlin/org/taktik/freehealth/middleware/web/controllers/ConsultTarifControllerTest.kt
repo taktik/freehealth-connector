@@ -1,9 +1,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
-import com.google.gson.Gson
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.joda.time.DateTime
 import org.junit.Before
 import org.junit.Test
 
@@ -14,13 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit4.SpringRunner
-import org.taktik.connector.business.domain.etarif.TarificationConsultationResult
+import org.taktik.freehealth.middleware.dto.etarif.TarificationConsultationResult
 import org.taktik.freehealth.middleware.MyTestsConfiguration
-import org.taktik.freehealth.middleware.dto.eattest.Eattest
-import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
 import java.io.File
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 @RunWith(SpringRunner::class)
@@ -66,7 +60,7 @@ class ConsultTarifControllerTest : EhealthTest() {
         println(scenario + "\n====================")
         results.forEachIndexed { index, it ->
             assertThat(it!!.errors).isNotNull.isNotEmpty
-            assertThat(errors).contains(it!!.errors[0].code)
+            assertThat(errors).contains(it!!.errors[0].uid)
         }
     }
 
@@ -110,7 +104,7 @@ class ConsultTarifControllerTest : EhealthTest() {
         val results = getNisses(0).map {
             this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("102793"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
         }
-        assertErrors("scenario 2", listOf("171","172"),  results)
+        assertErrors("scenario 2", listOf("52","53"),  results)
     }
 
     /*

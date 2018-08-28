@@ -1,6 +1,6 @@
 package org.taktik.freehealth.middleware.dto.etarif
 
-import org.taktik.freehealth.middleware.dto.common.ErrorDto
+import org.taktik.freehealth.middleware.dto.MycarenetError
 import java.io.Serializable
 import java.util.ArrayList
 import java.util.Date
@@ -12,7 +12,7 @@ class TarificationConsultationResult {
     var date: Date? = null
     var deceased: Date? = null
     var codes: MutableList<String> = ArrayList()
-    var errors: List<ErrorDto> = ArrayList()
+    var errors: List<MycarenetError> = ArrayList()
     var fees: MutableList<Payment> = ArrayList<Payment>()
     var financialContracts: MutableList<String> = ArrayList()
     var firstName: String? = null

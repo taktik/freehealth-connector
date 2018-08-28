@@ -274,20 +274,17 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
         val xpath = xPathfactory.newXPath()
         xpath.namespaceContext = object : NamespaceContext {
             override fun getNamespaceURI(prefix: String?) = when (prefix) {
-                "ns1" -> "http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
                 "ns2" -> "http://www.ehealth.fgov.be/messageservices/core/v1"
                 "ns3" -> "http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
                 else -> null
             }
             override fun getPrefix(namespaceURI: String?) = when (namespaceURI) {
-                "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> "ns1"
                 "http://www.ehealth.fgov.be/messageservices/core/v1" -> "ns2"
                 "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> "ns3"
                 else -> null
             }
             override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
                 when (namespaceURI) {
-                    "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> listOf("ns1").iterator()
                     "http://www.ehealth.fgov.be/messageservices/core/v1" -> listOf("ns2").iterator()
                     "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> listOf("ns3").iterator()
                     else -> listOf<String>().iterator()
