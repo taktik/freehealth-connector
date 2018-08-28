@@ -143,7 +143,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             this.javaClass.getResourceAsStream("/be/errors/eAttestErrors.json").reader(Charsets.UTF_8),
             arrayOf<MycarenetError>().javaClass
         ).associateBy({ it.uid }, { it })
-    private val xPathfactory = XPathFactory.newInstance()
+    private val xPathFactory = XPathFactory.newInstance()
 
     fun NodeList.forEach(action: (Node) -> Unit) {
         (0 until this.length).asSequence().map { this.item(it) }.forEach { action(it) }
@@ -742,9 +742,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             factory.isNamespaceAware = true
             val builder = factory.newDocumentBuilder()
 
-            val xPathfactory = XPathFactory.newInstance()
-
-            val xpath = xPathfactory.newXPath()
+            val xpath = xPathFactory.newXPath()
             val expr = xpath.compile(if (url.startsWith("/")) url else "/" + url)
             val result = mutableSetOf<MycarenetError>()
 
@@ -783,7 +781,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
 
     private fun nodeDescr(node: Node): String {
         val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
-        val xpath = xPathfactory.newXPath()
+        val xpath = xPathFactory.newXPath()
         xpath.namespaceContext = object : NamespaceContext {
             override fun getNamespaceURI(prefix: String?) = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
             override fun getPrefix(namespaceURI: String?) = "ns1"
