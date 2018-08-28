@@ -52,7 +52,7 @@ class ConsultTarifControllerTest : EhealthTest() {
         println(scenario + "\n====================")
         results.forEachIndexed { index, it ->
             assertThat(it!!.errors).isNotNull.isNotEmpty
-            assertThat(it!!.errors[0].code).isEqualTo(error)
+            assertThat(it!!.errors[0].uid).isEqualTo(error)
         }
     }
 
@@ -88,7 +88,7 @@ class ConsultTarifControllerTest : EhealthTest() {
         val results = getNisses(0).map {
             this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("101075"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
         }
-        assertErrors("scenario 1", "130",  results)
+        assertErrors("scenario 1", "50",  results)
     }
 
     /*
@@ -121,7 +121,7 @@ class ConsultTarifControllerTest : EhealthTest() {
         val results = getNisses(0).map {
             this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("102034"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
         }
-        assertErrors("scenario 3", "171",  results)
+        assertErrors("scenario 3", "52",  results)
     }
 
     /*
@@ -141,7 +141,7 @@ class ConsultTarifControllerTest : EhealthTest() {
         val results = getNisses(0).map {
             this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}&date=${now.minusMonths(3).format(DateTimeFormatter.ofPattern("yyyyMMdd"))}", listOf(code), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
         }
-        assertErrors("scenario 4", "166",  results)
+        assertErrors("scenario 4", "47",  results)
     }
 
     /*
@@ -160,7 +160,7 @@ class ConsultTarifControllerTest : EhealthTest() {
         val results = getNisses(2).map {
             this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf(code), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
         }
-        assertErrors("scenario 5", "169",  results)
+        assertErrors("scenario 5", "51",  results)
     }
 
     /*
@@ -179,7 +179,7 @@ class ConsultTarifControllerTest : EhealthTest() {
         val results = getNisses(3).map {
             this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf(code), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
         }
-        assertErrors("scenario 6", "170",  results)
+        assertErrors("scenario 6", "22",  results)
     }
 
     /*
