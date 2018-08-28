@@ -19,15 +19,15 @@ class DmgConsultation(complete: Boolean?) : DmgMessage(complete), Serializable {
     var inss: String? = null
     var firstName: String? = null
     var lastName: String? = null
-    var birthday: Instant? = null
-    var deceased: Instant? = null
+    var birthday: Long? = null
+    var deceased: Long? = null
     var sex: String? = null
     var regNrWithMut: String? = null
     var mutuality: String? = null
 
     var hcParty: HcpartyType? = null
-    var from: Instant? = null
-    var to: Instant? = null
+    var from: Long? = null
+    var to: Long? = null
 
     var payment: Boolean? = null
 }
