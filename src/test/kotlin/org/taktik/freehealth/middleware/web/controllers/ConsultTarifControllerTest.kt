@@ -86,7 +86,7 @@ class ConsultTarifControllerTest : EhealthTest() {
         Consultation code nomenclature inexistant
         Tester l’envoi d’une consultation de tarif rejetée par l’OA, et la réception de la réponse.
         IN: CN 101075
-        OUT: Rejet code erreur 130
+        OUT: Reject code erreur 130
     */
     @Test
     fun scenario1() {
