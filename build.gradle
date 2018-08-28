@@ -31,7 +31,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'docker-java'
 
 group = 'org.taktik'
-version = '0.1.9'
+version = '0.1.10'
 
 ext {
 	name = 'freehealth-connector'

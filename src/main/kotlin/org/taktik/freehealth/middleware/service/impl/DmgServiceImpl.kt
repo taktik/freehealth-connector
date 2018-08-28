@@ -149,6 +149,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
 
         val isTest = config.getProperty("endpoint.mcn.registration").contains("-acpt")
 
@@ -220,8 +222,6 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             this.routing = SendRequestMapper.mapRouting(Routing(careReceiver, DateTime()))
             this.detail = SendRequestMapper.mapBlobToBlobType(blob)
 
-            val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-            val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
             this.xades = BlobUtil.generateXades(this.detail, credential, "mcn.registration")
         }
         val registrationsAnswer =

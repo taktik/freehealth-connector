@@ -41,14 +41,10 @@ class GenInsController(val genInsService: GenInsService) {
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpName: String,
-        @RequestParam(
-                    required = false
-                ) hcpQuality: String?,
+        @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) endDate: Long?,
-        @RequestParam(
-                    required = false
-                ) hospitalized: Boolean?
+        @RequestParam(required = false) hospitalized: Boolean?
     ): InsurabilityInfoDto {
         val startDate: Date = date?.let { Date(date) } ?: Date()
         return genInsService.getGeneralInsurabity(keystoreId = keystoreId,
