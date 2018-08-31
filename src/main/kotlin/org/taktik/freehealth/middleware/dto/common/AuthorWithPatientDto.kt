@@ -20,7 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto.common
 
-import org.taktik.freehealth.middleware.domain.PatientId
+import org.taktik.freehealth.middleware.domain.consent.PatientId
 import java.io.Serializable
 
 class AuthorWithPatientDto : Serializable {

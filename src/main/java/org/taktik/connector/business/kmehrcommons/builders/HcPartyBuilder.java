@@ -3,7 +3,6 @@ package org.taktik.connector.business.kmehrcommons.builders;
 import org.taktik.connector.technical.config.impl.ConfigurationModuleBootstrap;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
-import org.taktik.connector.technical.utils.SessionUtil;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESSschemes;
@@ -22,7 +21,7 @@ public class HcPartyBuilder implements ConfigurationModuleBootstrap.ModuleBootst
 
    public HcpartyType build() throws TechnicalConnectorException {
       if (this.hcParty.getCds().size() == 0) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.BUILDER_VALIDATION_EXCEPTION, new Object[]{"HcPartyBuilder", "invalid HcParty object : at least one Cd is needed "});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.BUILDER_VALIDATION_EXCEPTION, "HcPartyBuilder", "invalid HcParty object : at least one Cd is needed ");
       } else {
          return this.hcParty;
       }
@@ -66,22 +65,6 @@ public class HcPartyBuilder implements ConfigurationModuleBootstrap.ModuleBootst
          return this.id(sv, value, IDHCPARTYschemes.LOCAL, sl);
       } else {
          throw new IllegalArgumentException("Local id should have parameters : value and sv filled out");
-      }
-   }
-
-   public HcPartyBuilder idFromSessionNiss(String sv) throws TechnicalConnectorException {
-      if (sv == null) {
-         throw new IllegalArgumentException("Inss id should have parameters : sv filled out");
-      } else {
-         return this.id(sv, SessionUtil.getNiss(), IDHCPARTYschemes.INSS);
-      }
-   }
-
-   public HcPartyBuilder idFromSessionNihii(String sv) throws TechnicalConnectorException {
-      if (sv == null) {
-         throw new IllegalArgumentException("Inss id should have parameters : sv and value filled out");
-      } else {
-         return this.id(sv, SessionUtil.getNihii11(), IDHCPARTYschemes.ID_HCPARTY);
       }
    }
 

@@ -7,14 +7,7 @@ import be.fgov.ehealth.messageservices.core.v1.RetrieveTransactionResponse
 import be.fgov.ehealth.messageservices.core.v1.SelectRetrieveTransactionType
 import be.fgov.ehealth.messageservices.core.v1.TransactionType
 import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationRequest
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEM
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes
+import be.fgov.ehealth.standards.kmehr.cd.v1.*
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
@@ -25,6 +18,7 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
 import be.fgov.ehealth.standards.kmehr.schema.v1.ContentType
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
 import be.fgov.ehealth.standards.kmehr.schema.v1.ItemType
+import com.google.gson.Gson
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
@@ -38,17 +32,32 @@ import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.MarshallerHelper
+import org.taktik.freehealth.middleware.dto.MycarenetError
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.TarificationService
+import org.w3c.dom.Element
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+import java.io.ByteArrayInputStream
 import java.io.UnsupportedEncodingException
 import java.time.LocalDateTime
 import java.util.UUID
+import javax.xml.namespace.NamespaceContext
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.xpath.XPathConstants
+import javax.xml.xpath.XPathFactory
 
 @Service
 class TarificationServiceImpl(private val stsService: STSService) : TarificationService {
     private val config = ConfigFactory.getConfigValidator(listOf())
     private val log = LogFactory.getLog(this.javaClass)
     private val freehealthTarificationService = org.taktik.connector.business.tarification.impl.TarificationServiceImpl()
+    private val ConsultTarifErrors =
+        Gson().fromJson(
+            this.javaClass.getResourceAsStream("/be/errors/ConsultTarifErrors.json").reader(Charsets.UTF_8),
+            arrayOf<MycarenetError>().javaClass
+        ).associateBy({ it.uid }, { it })
+    private val xPathfactory = XPathFactory.newInstance()
 
     override fun consultTarif(keystoreId: UUID,
                               tokenId: UUID,
@@ -187,22 +196,10 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
             val result = TarificationConsultationResult()
 
-            val errorsMyCarenetType = commonInputResponse.acknowledge.errors
-            for (errorMyCarenetType in errorsMyCarenetType) {
-                val error = Error()
-                var errorCodes: StringBuilder? = null
-                for (errorCode in errorMyCarenetType.cds) {
-                    if (errorCodes != null) {
-                        errorCodes.append(" ").append(errorCode.value)
-                    } else {
-                        errorCodes = StringBuilder(errorCode.value)
-                    }
-                }
-                if (errorCodes != null) {
-                    error.code = errorCodes.toString()
-                    error.descr = errorMyCarenetType.description.value
-                    result.errors.add(error)
-                }
+            val errors = commonInputResponse.acknowledge.errors?.flatMap { e ->
+                e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
+                    extractError(xmlByteArray, ec, e.url)
+                } ?: setOf()
             }
 
             val kmehrmessage = commonInputResponse.kmehrmessage
@@ -218,6 +215,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 }
             }
 
+            result.errors = errors
+
             return result
         } catch (e: ConnectorException) {
             throw IllegalStateException(e)
@@ -225,5 +224,81 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             throw IllegalStateException(e)
         }
 
+    }
+
+    private fun extractError(sendTransactionRequest: ByteArray, ec: String, errorUrl: String?): Set<MycarenetError> {
+        return errorUrl?.let { url ->
+            val factory = DocumentBuilderFactory.newInstance()
+            factory.isNamespaceAware = true
+            val builder = factory.newDocumentBuilder()
+
+            val xpath = xPathfactory.newXPath()
+            val expr = xpath.compile(if (url.startsWith("/")) url else "/" + url)
+            val result = mutableSetOf<MycarenetError>()
+
+            (expr.evaluate(
+                builder.parse(ByteArrayInputStream(sendTransactionRequest)),
+                XPathConstants.NODESET
+            ) as NodeList).let { it ->
+                if (it.length > 0) {
+                    var node = it.item(0)
+                    val textContent = node.textContent
+                    var base = "/" + nodeDescr(node)
+                    while (node.parentNode != null && node.parentNode is Element) {
+                        base = "/${nodeDescr(node.parentNode)}$base"
+                        node = node.parentNode
+                    }
+                    val elements =
+                        ConsultTarifErrors.values.filter {
+                            it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+                        }
+                    elements.forEach { it.value = textContent }
+                    result.addAll(elements)
+                } else {
+                    result.add(
+                        MycarenetError(
+                            code = ec,
+                            path = url,
+                            msgFr = "Erreur générique, xpath invalide",
+                            msgNl = "Onbekend foutmelding, xpath ongeldig"
+                        )
+                    )
+                }
+            }
+            result
+        } ?: setOf()
+    }
+
+    private fun nodeDescr(node: Node): String {
+        val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
+        val xpath = xPathfactory.newXPath()
+        xpath.namespaceContext = object : NamespaceContext {
+            override fun getNamespaceURI(prefix: String?) = when (prefix) {
+                "ns2" -> "http://www.ehealth.fgov.be/messageservices/core/v1"
+                "ns3" -> "http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
+                else -> null
+            }
+            override fun getPrefix(namespaceURI: String?) = when (namespaceURI) {
+                "http://www.ehealth.fgov.be/messageservices/core/v1" -> "ns2"
+                "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> "ns3"
+                else -> null
+            }
+            override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
+                when (namespaceURI) {
+                    "http://www.ehealth.fgov.be/messageservices/core/v1" -> listOf("ns2").iterator()
+                    "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> listOf("ns3").iterator()
+                    else -> listOf<String>().iterator()
+                }
+        }
+        if (localName == "transaction") {
+            return "transaction[${xpath.evaluate("ns2:cd[@S=\"CD-TRANSACTION-MYCARENET\"]", node)}]"
+        }
+        if (localName == "item") {
+            return "item[${xpath.evaluate("ns3:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
+        }
+        if (localName == "cd" && node is Element) {
+            return "cd[${node.getAttribute("S") ?: node.getAttribute("SL")}]"
+        }
+        return localName
     }
 }

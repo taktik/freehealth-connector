@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
-import org.taktik.freehealth.middleware.domain.SamlTokenResult
+import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import java.security.KeyStore
 import java.util.*
 

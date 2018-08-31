@@ -19,8 +19,6 @@ import org.w3c.dom.Element;
 public interface KgssService {
    KeyResult getNewKey(GetNewKeyRequestContent var1, byte[] var2) throws TechnicalConnectorException;
 
-   KeyResult getKey(GetKeyRequestContent var1, byte[] var2, SessionItem var3) throws TechnicalConnectorException;
-
    GetNewKeyResponseContent getNewKey(GetNewKeyRequestContent var1, Credential var2, Map<String, PrivateKey> var3, byte[] var4) throws TechnicalConnectorException;
 
    GetKeyResponseContent getKey(GetKeyRequestContent var1, Credential var2, Credential var3, Element var4, Map<String, PrivateKey> var5, byte[] var6) throws TechnicalConnectorException;

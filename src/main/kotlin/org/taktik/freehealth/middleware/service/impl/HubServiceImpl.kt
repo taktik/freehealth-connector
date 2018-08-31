@@ -20,33 +20,7 @@
 
 package org.taktik.freehealth.middleware.service.impl
 
-import be.fgov.ehealth.hubservices.core.v3.ConsentType
-import be.fgov.ehealth.hubservices.core.v3.GetHCPartyConsentRequest
-import be.fgov.ehealth.hubservices.core.v3.GetPatientConsentRequest
-import be.fgov.ehealth.hubservices.core.v3.GetPatientRequest
-import be.fgov.ehealth.hubservices.core.v3.GetTherapeuticLinkRequest
-import be.fgov.ehealth.hubservices.core.v3.GetTransactionListRequest
-import be.fgov.ehealth.hubservices.core.v3.GetTransactionRequest
-import be.fgov.ehealth.hubservices.core.v3.GetTransactionSetRequest
-import be.fgov.ehealth.hubservices.core.v3.HCPartyIdType
-import be.fgov.ehealth.hubservices.core.v3.PatientIdType
-import be.fgov.ehealth.hubservices.core.v3.PutPatientConsentRequest
-import be.fgov.ehealth.hubservices.core.v3.PutPatientRequest
-import be.fgov.ehealth.hubservices.core.v3.PutTherapeuticLinkRequest
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionRequest
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionResponse
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetRequest
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
-import be.fgov.ehealth.hubservices.core.v3.RequestType
-import be.fgov.ehealth.hubservices.core.v3.SelectGetHCPartyConsentType
-import be.fgov.ehealth.hubservices.core.v3.SelectGetHCPartyPatientConsentType
-import be.fgov.ehealth.hubservices.core.v3.SelectGetPatientConsentType
-import be.fgov.ehealth.hubservices.core.v3.SelectGetPatientType
-import be.fgov.ehealth.hubservices.core.v3.SelectGetTransactionListType
-import be.fgov.ehealth.hubservices.core.v3.SelectGetTransactionType
-import be.fgov.ehealth.hubservices.core.v3.TherapeuticLinkType
-import be.fgov.ehealth.hubservices.core.v3.TransactionBaseType
-import be.fgov.ehealth.hubservices.core.v3.TransactionWithPeriodType
+import be.fgov.ehealth.hubservices.core.v3.*
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESSschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONSENT
@@ -83,10 +57,10 @@ import org.taktik.connector.business.therlink.domain.TherapeuticLink
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
-import org.taktik.freehealth.middleware.domain.Consent
-import org.taktik.freehealth.middleware.domain.HcPartyConsent
-import org.taktik.freehealth.middleware.domain.Patient
-import org.taktik.freehealth.middleware.domain.TransactionSummary
+import org.taktik.freehealth.middleware.domain.consent.Consent
+import org.taktik.freehealth.middleware.domain.hub.HcPartyConsent
+import org.taktik.freehealth.middleware.domain.common.Patient
+import org.taktik.freehealth.middleware.domain.hub.TransactionSummary
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.common.AuthorDto
 import org.taktik.freehealth.middleware.dto.common.Gender
@@ -487,6 +461,58 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         ).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
     }
 
+    override fun revokeTransaction(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        breakTheGlassReason: String?,
+        sv: String,
+        sl: String,
+        value: String
+    ): String {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        val revokeresp =
+            freehealthHubService.revokeTransaction(
+            endpoint,
+            samlToken,
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase,
+            RevokeTransactionRequest().apply {
+                request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, breakTheGlassReason,true)
+                select = SelectRevokeTransactionType().apply {
+                    patient =
+                        PatientIdType().apply {
+                            ids.add(IDPATIENT().apply {
+                                this.s =
+                                    IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin
+                            })
+                        }
+                    transaction = TransactionBaseType().apply {
+                        id =
+                            IDKMEHR().apply {
+                                this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
+                                sl; this.value = value
+                            }
+                    }
+                }
+            }
+
+        )
+        return MarshallerHelper(
+            ResponseType::class.java,
+            ResponseType::class.java
+        ).toXMLByteArray(revokeresp.response).toString(Charsets.UTF_8)
+    }
+
     override fun putTransaction(
         endpoint: String,
         hubId: Long,
@@ -500,8 +526,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
-        transaction: String
-    ): PutTransactionResponse {
+        transaction: ByteArray
+    ): TransactionIdType {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
@@ -516,8 +542,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             PutTransactionRequest().apply {
                 request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, null,true)
                 kmehrmessage =
-                    marshallerHelper.toObject(transaction.toByteArray(Charsets.UTF_8))
-            })
+                    marshallerHelper.toObject(transaction)
+            }).transaction
     }
 
     override fun getTransactionsList(
@@ -713,8 +739,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                             IdentifierType.NIHII.getType(48)
                         })
                     }
-                    firstname = "Antoine"
-                    familyname = "Baudoux"
+                    firstname = hcpFirstName
+                    familyname = hcpLastName
                     addresses.add(AddressType().apply {
                         cds.add(CDADDRESS().apply { s = CDADDRESSschemes.CD_ADDRESS; sv = "1.1"; value = "work" })
                         country =

@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.taktik.connector.business.domain.Error;
+import org.taktik.freehealth.middleware.dto.MycarenetError;
 
 /**
  * Created with IntelliJ IDEA.
@@ -36,7 +37,7 @@ public class TarificationConsultationResult implements Serializable {
 	private Date date;
 	private Date deceased;
 	private List<String> codes = new ArrayList<>();
-	private List<Error> errors = new ArrayList<>();
+	private List<MycarenetError> errors = new ArrayList<>();
 	private List<Payment> fees = new ArrayList<>();
 	private List<String> financialContracts = new ArrayList<>();
 	private String firstName;
@@ -175,11 +176,11 @@ public class TarificationConsultationResult implements Serializable {
 		return deceased;
 	}
 
-	public List<Error> getErrors() {
+	public List<MycarenetError> getErrors() {
 		return errors;
 	}
 
-	public void setErrors(List<Error> errors) {
+	public void setErrors(List<MycarenetError> errors) {
 		this.errors = errors;
 	}
 

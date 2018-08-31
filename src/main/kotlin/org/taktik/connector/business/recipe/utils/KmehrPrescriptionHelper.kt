@@ -42,10 +42,10 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.SubstanceType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.UnitType
 import org.taktik.freehealth.middleware.dto.Code
-import org.taktik.freehealth.middleware.domain.CompoundPrescription
-import org.taktik.freehealth.middleware.domain.GalenicForm
-import org.taktik.freehealth.middleware.domain.KmehrQuantity
-import org.taktik.freehealth.middleware.domain.RegimenItem
+import org.taktik.freehealth.middleware.domain.recipe.CompoundPrescription
+import org.taktik.freehealth.middleware.domain.recipe.GalenicForm
+import org.taktik.freehealth.middleware.domain.recipe.KmehrQuantity
+import org.taktik.freehealth.middleware.domain.recipe.RegimenItem
 import org.taktik.freehealth.utils.FuzzyValues
 import java.io.Serializable
 import java.time.temporal.ChronoUnit

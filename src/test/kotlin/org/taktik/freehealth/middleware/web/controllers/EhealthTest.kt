@@ -9,7 +9,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.TestPropertySource
 import org.springframework.util.LinkedMultiValueMap
 import org.taktik.freehealth.middleware.MyTestsConfiguration
-import org.taktik.freehealth.middleware.domain.SamlTokenResult
+import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import org.taktik.freehealth.middleware.dto.UUIDType
 import java.util.*
 

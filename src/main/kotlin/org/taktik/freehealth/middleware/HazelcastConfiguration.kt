@@ -26,7 +26,7 @@ import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.core.IMap
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.taktik.freehealth.middleware.domain.SamlTokenResult
+import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import java.util.*
 
 @Configuration

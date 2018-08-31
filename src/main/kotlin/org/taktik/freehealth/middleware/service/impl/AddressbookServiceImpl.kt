@@ -44,7 +44,6 @@ import java.util.*
 class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
     private val freehealthTokenAddressbookService: org.taktik.connector.business.addressbook.service.AddressbookTokenService =
         org.taktik.connector.business.addressbook.service.impl.AddressbookTokenServiceImpl(
-            SAMLSessionValidator(),
             EhealthReplyValidatorImpl()
         )
 

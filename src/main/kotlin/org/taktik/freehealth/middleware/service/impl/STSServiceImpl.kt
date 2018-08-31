@@ -36,7 +36,7 @@ import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredenti
 import org.taktik.connector.technical.service.sts.utils.SAMLHelper
 import org.taktik.connector.technical.utils.CertificateParser
 import org.taktik.connector.technical.utils.IdentifierType
-import org.taktik.freehealth.middleware.domain.SamlTokenResult
+import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
@@ -66,7 +66,8 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val document = builder.parse( InputSource( StringReader(token)))
         val assertion = document.documentElement
 
-        tokensMap[tokenId] = SamlTokenResult(tokenId, token, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
+        tokensMap[tokenId] =
+            SamlTokenResult(tokenId, token, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
     }
 
     override fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken? {

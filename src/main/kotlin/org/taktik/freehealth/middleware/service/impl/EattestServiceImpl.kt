@@ -136,14 +136,13 @@ import javax.xml.xpath.XPathFactory
 class EattestServiceImpl(private val stsService: STSService) : EattestService {
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val config = ConfigFactory.getConfigValidator(listOf())
-    private val freehealthEattestService: org.taktik.connector.business.eattest.EattestService =
-        org.taktik.connector.business.eattest.impl.EattestServiceImpl()
+    private val freehealthEattestService: org.taktik.connector.business.eattest.EattestService = org.taktik.connector.business.eattest.impl.EattestServiceImpl()
     private val eAttestErrors =
         Gson().fromJson(
             this.javaClass.getResourceAsStream("/be/errors/eAttestErrors.json").reader(Charsets.UTF_8),
             arrayOf<MycarenetError>().javaClass
         ).associateBy({ it.uid }, { it })
-    private val xPathfactory = XPathFactory.newInstance()
+    private val xPathFactory = XPathFactory.newInstance()
 
     fun NodeList.forEach(action: (Node) -> Unit) {
         (0 until this.length).asSequence().map { this.item(it) }.forEach { action(it) }
@@ -708,20 +707,18 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
                     errors = errors ?: listOf()
                 ),
-                                             invoicingNumber = folder.transactions.find { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cga" } }?.let {
-                                                 it.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "invoicingnumber" } }
-                                                     ?.contents?.firstOrNull()?.texts?.firstOrNull()?.value
-                                             },
-                                             attest = Eattest(codes = folder.transactions?.filter { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cgd" } }?.map { t ->
-                                                 Eattest.EattestCode(riziv = t.item.find { it.cds.any { it.s == CD_ITEM && it.value == "claim" } }?.contents?.mapNotNull {
-                                                     it.cds?.find { it.s == CD_NIHDI }
-                                                         ?.value
-                                                 }?.firstOrNull(),
-                                                                     fee = t.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "fee" } }?.cost?.decimal?.toDouble()
-                                                 )
-                                             } ?: listOf()),
-                                             kmehrMessage = encryptedKnownContent.businessContent.value,
-                                             xades = xades)
+                 invoicingNumber = folder.transactions.find { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cga" } }?.let {
+                     it.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "invoicingnumber" } }
+                         ?.contents?.firstOrNull()?.texts?.firstOrNull()?.value
+                 },
+                 attest = Eattest(codes = folder.transactions?.filter { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cgd" } }?.map { t ->
+                     Eattest.EattestCode(
+                         riziv = t.item.find { it.cds.any { it.s == CD_ITEM && it.value == "claim" } }?.contents?.mapNotNull { it.cds?.find { it.s == CD_NIHDI }?.value }?.firstOrNull(),
+                         fee = t.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "fee" } }?.cost?.decimal?.toDouble()
+                     )
+                 } ?: listOf()),
+                 kmehrMessage = encryptedKnownContent.businessContent.value,
+                 xades = xades)
             } ?: SendAttestResultWithResponse(
                 EattestAcknowledgeType(
                     iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
@@ -742,9 +739,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             factory.isNamespaceAware = true
             val builder = factory.newDocumentBuilder()
 
-            val xPathfactory = XPathFactory.newInstance()
-
-            val xpath = xPathfactory.newXPath()
+            val xpath = xPathFactory.newXPath()
             val expr = xpath.compile(if (url.startsWith("/")) url else "/" + url)
             val result = mutableSetOf<MycarenetError>()
 
@@ -783,7 +778,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
 
     private fun nodeDescr(node: Node): String {
         val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
-        val xpath = xPathfactory.newXPath()
+        val xpath = xPathFactory.newXPath()
         xpath.namespaceContext = object : NamespaceContext {
             override fun getNamespaceURI(prefix: String?) = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
             override fun getPrefix(namespaceURI: String?) = "ns1"

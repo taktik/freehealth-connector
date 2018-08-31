@@ -20,14 +20,14 @@
 
 package org.taktik.freehealth.middleware.service
 
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionResponse
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
+import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
-import org.taktik.freehealth.middleware.domain.Consent
+import org.taktik.freehealth.middleware.domain.consent.Consent
 import org.taktik.freehealth.middleware.dto.common.Gender
-import org.taktik.freehealth.middleware.domain.HcPartyConsent
-import org.taktik.freehealth.middleware.domain.Patient
-import org.taktik.freehealth.middleware.domain.TransactionSummary
+import org.taktik.freehealth.middleware.domain.hub.HcPartyConsent
+import org.taktik.freehealth.middleware.domain.common.Patient
+import org.taktik.freehealth.middleware.domain.hub.TransactionSummary
 import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
@@ -164,10 +164,27 @@ interface HubService {
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
-        transaction: String
-    ): PutTransactionResponse
+        transaction: ByteArray
+    ): TransactionIdType
 
     fun getTransaction(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        breakTheGlassReason: String? = null,
+        sv: String,
+        sl: String,
+        value: String
+    ): String
+
+    fun revokeTransaction(
         endpoint: String,
         keystoreId: UUID,
         tokenId: UUID,

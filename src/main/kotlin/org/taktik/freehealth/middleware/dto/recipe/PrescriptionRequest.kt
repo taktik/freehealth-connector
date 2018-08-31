@@ -20,11 +20,9 @@
 
 package org.taktik.freehealth.middleware.dto.recipe
 
-import org.taktik.freehealth.middleware.domain.Medication
-import org.taktik.freehealth.middleware.domain.Patient
+import org.taktik.freehealth.middleware.domain.recipe.Medication
+import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.dto.HealthcareParty
-import java.time.LocalDateTime
-import java.util.*
 
 class PrescriptionRequest(
     var patient: Patient? = null,

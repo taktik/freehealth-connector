@@ -20,22 +20,21 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import org.springframework.web.bind.annotation.GetMapping
+import ma.glasnost.orika.MapperFacade
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
-import org.taktik.freehealth.middleware.service.GenInsService
+import org.taktik.freehealth.middleware.dto.etarif.TarificationConsultationResult
 import org.taktik.freehealth.middleware.service.TarificationService
 import java.time.LocalDateTime
 import java.util.*
 
 @RestController
 @RequestMapping("/tarif")
-class TarificationController(val tarificationService: TarificationService) {
+class TarificationController(val tarificationService: TarificationService, val mapper: MapperFacade) {
     @PostMapping("/{ssin}")
     fun consultTarification(
         @PathVariable ssin: String,
@@ -62,6 +61,5 @@ class TarificationController(val tarificationService: TarificationService) {
         consultationDate = date?.let { LocalDateTime.of((date / 10000).toInt(), ((date / 100).toInt() % 100), (date % 100).toInt(), 0, 0)} ?: LocalDateTime.now(),
         justification = justification,
         gmdNihii = gmdNihii,
-        codes = codes
-                                        )
+        codes = codes).let { mapper.map(it, TarificationConsultationResult::class.java) }
 }

@@ -8,19 +8,14 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.keydepot.KeyDepotManagerFactory;
 import org.taktik.connector.technical.service.kgss.domain.KeyResult;
 import org.taktik.connector.technical.service.kgss.impl.KgssServiceImpl;
-import org.taktik.connector.technical.session.Session;
-import org.taktik.connector.technical.session.SessionItem;
-import org.taktik.connector.technical.session.SessionServiceWithCache;
 import org.taktik.connector.technical.utils.IdentifierType;
 import be.fgov.ehealth.etee.kgss._1_0.protocol.CredentialType;
-import be.fgov.ehealth.etee.kgss._1_0.protocol.GetKeyRequestContent;
 import be.fgov.ehealth.etee.kgss._1_0.protocol.GetNewKeyRequestContent;
 import java.util.List;
-import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class KgssManager implements SessionServiceWithCache {
+public final class KgssManager  {
    public static final String PROP_KGSS_IDENTIFIER_APPLICATIONID = "org.taktik.connector.technical.service.kgss.identifier.applicationid";
    private static final String PROP_KGSS_IDENTIFIER_ID = "org.taktik.connector.technical.service.kgss.identifier.value";
    private static final String PROP_KGSS_IDENTIFIER_SUBTYPE = "org.taktik.connector.technical.service.kgss.identifier.subtype";
@@ -45,19 +40,6 @@ public final class KgssManager implements SessionServiceWithCache {
    private KgssManager(KgssService service) {
       this.cache = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY);
       this.service = service;
-      Session.getInstance().registerSessionService(this);
-   }
-
-   public KeyResult get(String keyId, byte[] myEtk) throws TechnicalConnectorException {
-      if (!this.cache.containsKey(keyId)) {
-         LOG.debug("keyCache does not contain key, getting the key from KGSS Web Service: " + keyId);
-         KeyResult key = this.getKeyFromKgss(keyId, myEtk);
-         this.cache.put(keyId, key);
-         LOG.debug("Added key to cache: " + keyId);
-      }
-
-      LOG.debug("returning key from cache: " + keyId);
-      return (KeyResult)this.cache.get(keyId);
    }
 
    public void add(List<CredentialType> allowedReaders, byte[] myEtk) throws TechnicalConnectorException {
@@ -76,22 +58,13 @@ public final class KgssManager implements SessionServiceWithCache {
 
    public KeyResult remove(String key) {
       LOG.debug("removing key from cache: " + key);
-      KeyResult result = (KeyResult)this.cache.get(key);
+      KeyResult result = this.cache.get(key);
       this.cache.remove(key);
       return result;
    }
 
    public boolean containsKey(String key) {
       return this.cache.containsKey(key);
-   }
-
-   protected KeyResult getKeyFromKgss(String keyId, byte[] myEtk) throws TechnicalConnectorException {
-      LOG.debug("KeyIdentifier : " + keyId);
-      GetKeyRequestContent req = new GetKeyRequestContent();
-      req.setETK(myEtk);
-      req.setKeyIdentifier(Base64.decode(keyId.getBytes()));
-      SessionItem session = Session.getInstance().getSession();
-      return this.service.getKey(req, getETKOfKGSS(), session);
    }
 
    public KeyResult getNewKeyFromKgss(List<CredentialType> allowedReaders, byte[] myEtk) throws TechnicalConnectorException {
@@ -119,20 +92,12 @@ public final class KgssManager implements SessionServiceWithCache {
       this.service = service;
    }
 
-   // $FF: synthetic method
-   KgssManager(KgssService x0, KgssManager.SyntheticClass_1 x1) {
-      this(x0);
-   }
 
    static {
       instance = KgssManager.KgssManagerSingleton.INSTANCE.getKgssManager();
    }
 
-   // $FF: synthetic class
-   static class SyntheticClass_1 {
-   }
-
-   private static enum KgssManagerSingleton {
+   private enum KgssManagerSingleton {
       INSTANCE;
 
       private KgssManager instance = new KgssManager(new KgssServiceImpl());

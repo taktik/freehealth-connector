@@ -71,7 +71,7 @@ public final class KeyDepotManagerImpl implements KeyDepotManager, SessionServic
             this.cache.put(cert, this.getEtkBasedOnX509(cert));
          }
 
-         return (EncryptionToken)this.cache.get(cert);
+         return this.cache.get(cert);
       } else {
          LOG.error(TechnicalConnectorExceptionValues.NO_VALID_SESSION_WITH_ENCRYPTION.getMessage());
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.NO_VALID_SESSION_WITH_ENCRYPTION, new Object[0]);
@@ -102,7 +102,7 @@ public final class KeyDepotManagerImpl implements KeyDepotManager, SessionServic
          LOG.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.getMessage());
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, new Object[0]);
       } else {
-         return (EncryptionToken)etkSet.iterator().next();
+         return etkSet.iterator().next();
       }
    }
 

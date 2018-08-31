@@ -8,7 +8,6 @@ import org.taktik.connector.technical.config.impl.ConfigurationModuleBootstrap;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.service.sts.security.Credential;
-import org.taktik.connector.technical.session.Session;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
 import be.fgov.ehealth.mycarenet.commons.core.v2.BlobType;

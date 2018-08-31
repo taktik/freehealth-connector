@@ -20,18 +20,13 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionResponse
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.*
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
-import org.taktik.freehealth.middleware.domain.Consent
-import org.taktik.freehealth.middleware.domain.TransactionSummary
+import org.taktik.freehealth.middleware.domain.consent.Consent
+import org.taktik.freehealth.middleware.domain.hub.TransactionSummary
 import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.service.HubService
 import org.taktik.freehealth.utils.FuzzyValues
@@ -175,7 +170,7 @@ class HubController(val hubService: HubService) {
         hcpSsin = hcpSsin,
         hcpZip = hcpZip,
         patientSsin = patientSsin
-    )
+                                                                                              )
 
     @PostMapping("/therlink/{hcpNihii}/{patientSsin}")
     fun registerTherapeuticLink(
@@ -282,7 +277,7 @@ class HubController(val hubService: HubService) {
         )
     }
 
-    @GetMapping("/t/{ssin}/{sv}/{sl}/{value}")
+    @GetMapping("/t/{ssin}/{sv}/{sl}", produces = [MediaType.APPLICATION_XML_VALUE])
     fun getTransaction(
         @RequestParam endpoint: String,
         @RequestParam keystoreId: UUID,
@@ -297,7 +292,7 @@ class HubController(val hubService: HubService) {
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
-        @PathVariable value: String
+        @RequestParam id: String
     ): String {
         return hubService.getTransaction(
             endpoint = endpoint,
@@ -313,11 +308,46 @@ class HubController(val hubService: HubService) {
             breakTheGlassReason = breakTheGlassReason,
             sv = sv,
             sl = sl,
-            value = value
+            value = id
         )
     }
 
-    @PostMapping("/t/{hubId}/{patientSsin}")
+    @DeleteMapping("/t/{ssin}/{sv}/{sl}")
+    fun revokeTransaction(
+        @RequestParam endpoint: String,
+        @RequestParam keystoreId: UUID,
+        @RequestParam tokenId: UUID,
+        @RequestParam passPhrase: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpZip: String,
+        @RequestParam(required = false) breakTheGlassReason: String? = null,
+        @PathVariable ssin: String,
+        @PathVariable sv: String,
+        @PathVariable sl: String,
+        @RequestParam id: String
+    ): String {
+        return hubService.revokeTransaction(
+            endpoint = endpoint,
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpLastName = hcpLastName,
+            hcpFirstName = hcpFirstName,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpZip = hcpZip,
+            ssin = ssin,
+            breakTheGlassReason = breakTheGlassReason,
+            sv = sv,
+            sl = sl,
+            value = id
+        )
+    }
+
+    @PostMapping("/t/{hubId}/{patientSsin}", consumes = [MediaType.APPLICATION_XML_VALUE])
     fun putTransaction(
         @RequestParam endpoint: String,
         @RequestParam keystoreId: UUID,
@@ -333,8 +363,8 @@ class HubController(val hubService: HubService) {
                     required = false
                 ) hubApplication: String?,
         @PathVariable patientSsin: String,
-        @RequestBody message: String
-    ): PutTransactionResponse {
+        @RequestBody message: ByteArray
+    ): TransactionIdType {
         return hubService.putTransaction(
             endpoint = endpoint,
             hubId = hubId,
@@ -352,7 +382,7 @@ class HubController(val hubService: HubService) {
         )
     }
 
-    @GetMapping("/ts/{ssin}/{sv}/{sl}/{value}")
+    @GetMapping("/ts/{ssin}/{sv}/{sl}", produces = [MediaType.APPLICATION_XML_VALUE])
     fun getTransactionSet(
         @RequestParam endpoint: String,
         @RequestParam keystoreId: UUID,
@@ -367,7 +397,7 @@ class HubController(val hubService: HubService) {
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
-        @PathVariable value: String
+        @RequestParam id: String
     ): String = hubService.getTransactionSet(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -382,7 +412,7 @@ class HubController(val hubService: HubService) {
         breakTheGlassReason = breakTheGlassReason,
         sv = sv,
         sl = sl,
-        value = value
+        value = id
     )
 
     @PostMapping("/ts/{hubId}/{patientSsin}")

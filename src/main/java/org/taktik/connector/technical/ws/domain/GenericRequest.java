@@ -284,10 +284,7 @@ public final class GenericRequest {
    }
 
    private GenericRequest processAsSAML(Credential cred) throws TechnicalConnectorException {
-      if (cred == null) {
-         LOG.debug("Using HolderOfKey Credential with lazy init");
-         this.securityHandler.add(new SAMLHolderOfKeyHandler());
-      } else if (cred instanceof SAMLHolderOfKeyToken) {
+      if (cred instanceof SAMLHolderOfKeyToken) {
          LOG.debug("Using HolderOfKey Credential");
          this.securityHandler.add(new SAMLHolderOfKeyHandler((SAMLToken)cred));
       } else {

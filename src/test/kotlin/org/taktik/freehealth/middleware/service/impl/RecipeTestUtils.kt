@@ -1,11 +1,11 @@
 package org.taktik.icure.be.ehealth.logic.recipe.impl
 
-import org.taktik.freehealth.middleware.domain.CompoundPrescription
-import org.taktik.freehealth.middleware.domain.Medication
-import org.taktik.freehealth.middleware.domain.Medicinalproduct
-import org.taktik.freehealth.middleware.domain.Patient
-import org.taktik.freehealth.middleware.domain.RegimenItem
-import org.taktik.freehealth.middleware.domain.Substanceproduct
+import org.taktik.freehealth.middleware.domain.recipe.CompoundPrescription
+import org.taktik.freehealth.middleware.domain.recipe.Medication
+import org.taktik.freehealth.middleware.domain.recipe.Medicinalproduct
+import org.taktik.freehealth.middleware.domain.common.Patient
+import org.taktik.freehealth.middleware.domain.recipe.RegimenItem
+import org.taktik.freehealth.middleware.domain.recipe.Substanceproduct
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.AddressType
 import org.taktik.freehealth.middleware.dto.Code
@@ -14,9 +14,7 @@ import org.taktik.freehealth.middleware.dto.Telecom
 import org.taktik.freehealth.middleware.dto.TelecomType
 import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.utils.FuzzyValues
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.Period
 
 /**
  * @author Bernard Paulus on 3/04/17.
