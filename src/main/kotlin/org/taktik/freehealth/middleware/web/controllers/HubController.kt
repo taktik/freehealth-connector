@@ -20,14 +20,13 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionResponse
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
 import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
-import org.taktik.freehealth.middleware.domain.Consent
-import org.taktik.freehealth.middleware.domain.TransactionSummary
+import org.taktik.freehealth.middleware.domain.consent.Consent
+import org.taktik.freehealth.middleware.domain.hub.TransactionSummary
 import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.service.HubService
 import org.taktik.freehealth.utils.FuzzyValues
@@ -171,7 +170,7 @@ class HubController(val hubService: HubService) {
         hcpSsin = hcpSsin,
         hcpZip = hcpZip,
         patientSsin = patientSsin
-    )
+                                                                                              )
 
     @PostMapping("/therlink/{hcpNihii}/{patientSsin}")
     fun registerTherapeuticLink(

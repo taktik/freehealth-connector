@@ -1,6 +1,6 @@
 package org.taktik.connector.business.domain.common;
 
-import org.taktik.freehealth.middleware.domain.SigningValue;
+import org.taktik.freehealth.middleware.domain.common.SigningValue;
 
 import java.io.Serializable;
 

@@ -61,14 +61,6 @@ public class KgssServiceImpl implements KgssService, ConfigurationModuleBootstra
       return new KeyResult(new SecretKeySpec(keyResponse, "AES"), keyId);
    }
 
-   public KeyResult getKey(GetKeyRequestContent request, byte[] kgssETK, SessionItem session) throws TechnicalConnectorException {
-      Credential encryptionCredential = session.getEncryptionCredential();
-      Map<String, PrivateKey> decryptionKeys = session.getEncryptionPrivateKeys();
-      GetKeyResponseContent response = this.getKey(request, encryptionCredential, session.getSAMLToken(), session.getSAMLToken().getAssertion(), decryptionKeys, kgssETK);
-      String keyId = new String(request.getKeyIdentifier());
-      return new KeyResult(new SecretKeySpec(response.getKey(), "AES"), keyId);
-   }
-
    public GetNewKeyResponseContent getNewKey(GetNewKeyRequestContent request, Credential encryption, Map<String, PrivateKey> decryptionKeys, byte[] etkKGSS) throws TechnicalConnectorException {
       KgssMessageBuilder builder = new KgssMessageBuilderImpl(etkKGSS, encryption, decryptionKeys);
       GetNewKeyRequest sealedRequest = builder.sealGetNewKeyRequest(request);

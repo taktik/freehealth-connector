@@ -11,9 +11,7 @@ import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Query
-import be.cin.nip.sync.reg.v1.RegistrationAnswerType
 import be.cin.nip.sync.reg.v1.RegistrationStatus
-import be.cin.nip.sync.reg.v1.RegistrationsAnswer
 import be.fgov.ehealth.globalmedicalfile.core.v1.BlobType
 import be.fgov.ehealth.globalmedicalfile.core.v1.CareReceiverIdType
 import be.fgov.ehealth.globalmedicalfile.core.v1.CommonInputType
@@ -108,7 +106,7 @@ import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.connector.technical.ws.domain.GenericRequest
 import org.taktik.connector.technical.ws.domain.TokenType
-import org.taktik.freehealth.middleware.domain.BusinessError
+import org.taktik.freehealth.middleware.domain.common.BusinessError
 import org.taktik.freehealth.middleware.service.DmgService
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3._2005._05.xmlmime.Base64Binary

@@ -25,9 +25,9 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.recipe.utils.KmehrValidator
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.freehealth.middleware.MyTestsConfiguration
-import org.taktik.freehealth.middleware.domain.CompoundPrescription
-import org.taktik.freehealth.middleware.domain.Feedback
-import org.taktik.freehealth.middleware.domain.Prescription
+import org.taktik.freehealth.middleware.domain.recipe.CompoundPrescription
+import org.taktik.freehealth.middleware.domain.recipe.Feedback
+import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.dto.HealthcareParty
 import org.taktik.freehealth.middleware.service.RecipeService
 import org.taktik.freehealth.middleware.service.STSService

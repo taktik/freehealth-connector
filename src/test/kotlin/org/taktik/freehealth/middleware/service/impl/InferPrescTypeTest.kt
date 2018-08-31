@@ -13,15 +13,11 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.connector.business.recipe.utils.KmehrValidator
 import org.taktik.freehealth.middleware.MyTestsConfiguration
-import org.taktik.freehealth.middleware.domain.Content
-import org.taktik.freehealth.middleware.domain.Medication
-import org.taktik.freehealth.middleware.domain.Prescription
+import org.taktik.freehealth.middleware.domain.recipe.Content
+import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.dto.HealthcareParty
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils
-import java.io.ByteArrayOutputStream
-import java.util.Date
 import java.util.UUID
-import javax.xml.bind.JAXBContext
 
 /**
  * @author Bernard Paulus on 3/04/17.

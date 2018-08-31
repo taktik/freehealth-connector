@@ -10,10 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit4.SpringRunner
-import org.taktik.connector.technical.service.sts.STSService
 import org.taktik.freehealth.middleware.MyTestsConfiguration
-import org.taktik.freehealth.middleware.domain.SamlTokenResult
-import org.taktik.freehealth.middleware.service.impl.STSServiceImpl
+import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)

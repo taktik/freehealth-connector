@@ -29,9 +29,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.taktik.freehealth.middleware.domain.Feedback
-import org.taktik.freehealth.middleware.domain.Prescription
-import org.taktik.freehealth.middleware.domain.PrescriptionFullWithFeedback
+import org.taktik.freehealth.middleware.domain.recipe.Feedback
+import org.taktik.freehealth.middleware.domain.recipe.Prescription
+import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.recipe.PrescriptionRequest
 import org.taktik.freehealth.middleware.service.RecipeService

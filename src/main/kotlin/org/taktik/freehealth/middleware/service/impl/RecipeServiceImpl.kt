@@ -25,11 +25,8 @@ package org.taktik.freehealth.middleware.service.impl
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
-import com.sun.org.apache.xerces.internal.impl.xs.XSLoaderImpl
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
-import com.sun.org.apache.xerces.internal.xs.XSLoader
 import org.apache.commons.lang.StringUtils
-import org.apache.commons.logging.LogFactory
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.kmehr.v20161201.Utils.Companion.makeDateTypeFromFuzzyLong
@@ -80,14 +77,12 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.PeriodicityType
-import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDDAYPERIOD
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDDAYPERIODvalues
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDHEADING
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDINNCLUSTER
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDITEM
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDTRANSACTION
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeadministrationquantityType
-import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeadministrationunitType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeauthorType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipebasicIDKMEHR
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipecompoundprescriptionType
@@ -115,22 +110,20 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.TelecomType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.TimequantityType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.TimeunitType
-import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.UnitType
 import org.taktik.connector.business.recipe.prescriber.PrescriberIntegrationModule
 import org.taktik.connector.business.recipe.prescriber.PrescriberIntegrationModuleImpl
 import org.taktik.connector.business.recipe.utils.KmehrHelper
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
-import org.taktik.connector.business.recipeprojects.core.utils.PropertyHandler
 import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.freehealth.middleware.dao.CodeDao
-import org.taktik.freehealth.middleware.domain.Duration
-import org.taktik.freehealth.middleware.domain.Feedback
-import org.taktik.freehealth.middleware.domain.Medication
-import org.taktik.freehealth.middleware.domain.Patient
-import org.taktik.freehealth.middleware.domain.Prescription
-import org.taktik.freehealth.middleware.domain.PrescriptionFullWithFeedback
-import org.taktik.freehealth.middleware.domain.RegimenItem
+import org.taktik.freehealth.middleware.domain.recipe.Duration
+import org.taktik.freehealth.middleware.domain.recipe.Feedback
+import org.taktik.freehealth.middleware.domain.recipe.Medication
+import org.taktik.freehealth.middleware.domain.common.Patient
+import org.taktik.freehealth.middleware.domain.recipe.Prescription
+import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
+import org.taktik.freehealth.middleware.domain.recipe.RegimenItem
 import org.taktik.freehealth.middleware.drugs.dto.MppId
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
 import org.taktik.freehealth.middleware.dto.Address
@@ -148,6 +141,7 @@ import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionHelper.Per
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import java.lang.Long
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.nio.charset.Charset
@@ -155,8 +149,6 @@ import java.security.KeyStoreException
 import java.security.cert.CertificateExpiredException
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.temporal.ChronoField
 import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.Callable
@@ -268,7 +260,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
         val feedbackItemList = service!!.listFeedback(samlToken, credential, hcpNihii, true)
-        return feedbackItemList.map { Feedback(it.rid, java.lang.Long.parseLong(it.sentBy), it.sentDate?.time, it.content?.toString(Charset.forName("UTF-8"))) }
+        return feedbackItemList.map { Feedback(it.rid, Long.parseLong(it.sentBy), it.sentDate?.time, it.content?.toString(Charset.forName("UTF-8"))) }
     }
 
     @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
@@ -312,7 +304,8 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
     override fun getPrescription(rid: String): PrescriptionFullWithFeedback? {
         val r = ridCache.getIfPresent(rid) ?: return null
         val fd = feedbacksCache!!.getIfPresent(rid)
-        val result = PrescriptionFullWithFeedback(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId)
+        val result =
+            PrescriptionFullWithFeedback(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId)
         fd?.let { result.feedbacks = ArrayList(fd) }
 
         val jaxbContext = JAXBContext.newInstance(Kmehrmessage::class.java)

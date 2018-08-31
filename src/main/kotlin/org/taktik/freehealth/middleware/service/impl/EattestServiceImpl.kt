@@ -136,8 +136,7 @@ import javax.xml.xpath.XPathFactory
 class EattestServiceImpl(private val stsService: STSService) : EattestService {
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val config = ConfigFactory.getConfigValidator(listOf())
-    private val freehealthEattestService: org.taktik.connector.business.eattest.EattestService =
-        org.taktik.connector.business.eattest.impl.EattestServiceImpl()
+    private val freehealthEattestService: org.taktik.connector.business.eattest.EattestService = org.taktik.connector.business.eattest.impl.EattestServiceImpl()
     private val eAttestErrors =
         Gson().fromJson(
             this.javaClass.getResourceAsStream("/be/errors/eAttestErrors.json").reader(Charsets.UTF_8),
@@ -708,20 +707,18 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
                     errors = errors ?: listOf()
                 ),
-                                             invoicingNumber = folder.transactions.find { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cga" } }?.let {
-                                                 it.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "invoicingnumber" } }
-                                                     ?.contents?.firstOrNull()?.texts?.firstOrNull()?.value
-                                             },
-                                             attest = Eattest(codes = folder.transactions?.filter { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cgd" } }?.map { t ->
-                                                 Eattest.EattestCode(riziv = t.item.find { it.cds.any { it.s == CD_ITEM && it.value == "claim" } }?.contents?.mapNotNull {
-                                                     it.cds?.find { it.s == CD_NIHDI }
-                                                         ?.value
-                                                 }?.firstOrNull(),
-                                                                     fee = t.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "fee" } }?.cost?.decimal?.toDouble()
-                                                 )
-                                             } ?: listOf()),
-                                             kmehrMessage = encryptedKnownContent.businessContent.value,
-                                             xades = xades)
+                 invoicingNumber = folder.transactions.find { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cga" } }?.let {
+                     it.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "invoicingnumber" } }
+                         ?.contents?.firstOrNull()?.texts?.firstOrNull()?.value
+                 },
+                 attest = Eattest(codes = folder.transactions?.filter { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cgd" } }?.map { t ->
+                     Eattest.EattestCode(
+                         riziv = t.item.find { it.cds.any { it.s == CD_ITEM && it.value == "claim" } }?.contents?.mapNotNull { it.cds?.find { it.s == CD_NIHDI }?.value }?.firstOrNull(),
+                         fee = t.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "fee" } }?.cost?.decimal?.toDouble()
+                     )
+                 } ?: listOf()),
+                 kmehrMessage = encryptedKnownContent.businessContent.value,
+                 xades = xades)
             } ?: SendAttestResultWithResponse(
                 EattestAcknowledgeType(
                     iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,

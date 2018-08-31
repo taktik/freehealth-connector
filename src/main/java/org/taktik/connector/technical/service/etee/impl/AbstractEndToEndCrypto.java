@@ -20,44 +20,59 @@ public abstract class AbstractEndToEndCrypto extends AbstractCrypto {
    public static final String PROP_DUMP_MESSAGES = "org.taktik.connector.technical.service.etee.cryptoimpl.dump_messages";
    public static final String PROP_DUMP_FIRST_CHARS = "org.taktik.connector.technical.service.etee.cryptoimpl.dump_first_chars";
 
+   @Override
+   @Deprecated
    public byte[] seal(EncryptionToken paramEncryptionToken, byte[] paramArrayOfByte) throws TechnicalConnectorException {
       Set<EncryptionToken> etkSet = new HashSet();
       etkSet.add(paramEncryptionToken);
       return this.seal(etkSet, paramArrayOfByte);
    }
 
+   @Override
+   @Deprecated
    public byte[] seal(Set<EncryptionToken> paramEncryptionTokenSet, byte[] paramArrayOfByte) throws TechnicalConnectorException {
       return this.seal(paramEncryptionTokenSet, paramArrayOfByte, null, null);
    }
 
+   @Override
+   @Deprecated
    public byte[] seal(byte[] paramArrayOfByte, SecretKey secretKey, String base64encodedSymKekId) throws TechnicalConnectorException {
       return this.seal(null, paramArrayOfByte, secretKey, base64encodedSymKekId);
    }
 
+   @Override
+   @Deprecated
    public byte[] seal(Set<EncryptionToken> paramEncryptionTokenSet, byte[] content, SecretKey secretKey, String base64encodedSymKekId) throws TechnicalConnectorException {
       return this.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, paramEncryptionTokenSet, new KeyResult(secretKey, base64encodedSymKekId), content);
    }
 
+   @Override
    public byte[] seal(Crypto.SigningPolicySelector type, KeyResult symmKey, byte[] content) throws TechnicalConnectorException {
       return this.seal(type, null, symmKey, content);
    }
 
+   @Override
    public byte[] seal(Crypto.SigningPolicySelector type, EncryptionToken encryptionToken, byte[] content) throws TechnicalConnectorException {
       Set<EncryptionToken> etkSet = new HashSet();
       etkSet.add(encryptionToken);
       return this.seal(type, etkSet, content);
    }
 
+   @Override
    public byte[] seal(Crypto.SigningPolicySelector type, Set<EncryptionToken> paramEncryptionTokenSet, byte[] content) throws TechnicalConnectorException {
       return this.seal(type, paramEncryptionTokenSet, null, content);
    }
 
+   @Override
+   @Deprecated
    public byte[] unseal(byte[] protectedMessage) throws UnsealConnectorException, TechnicalConnectorException {
       byte[] result = this.unseal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, protectedMessage).getContentAsByte();
       this.dumpMessage(result, "Message unsealed");
       return result;
    }
 
+   @Override
+   @Deprecated
    public byte[] unsealForUnknown(SecretKey key, byte[] protectedMessage) throws TechnicalConnectorException {
       byte[] result = this.unseal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, new KeyResult(key, "dummy"), protectedMessage).getContentAsByte();
       this.dumpMessage(result, "Message unsealed");

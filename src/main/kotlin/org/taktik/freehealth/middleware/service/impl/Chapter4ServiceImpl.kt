@@ -1,0 +1,1173 @@
+package org.taktik.freehealth.middleware.service.impl
+
+import be.fgov.ehealth.chap4.core.v1.CareReceiverIdType
+import be.fgov.ehealth.chap4.core.v1.CommonInputType
+import be.fgov.ehealth.chap4.core.v1.OriginType
+import be.fgov.ehealth.chap4.core.v1.RecordCommonInputType
+import be.fgov.ehealth.chap4.core.v1.SecuredContentType
+import be.fgov.ehealth.chap4.protocol.v1.AbstractChap4MedicalAdvisorAgreementResponseType
+import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementResponse
+import be.fgov.ehealth.chap4.protocol.v1.ConsultChap4MedicalAdvisorAgreementResponse
+import be.fgov.ehealth.etee.crypto.utils.KeyManager
+import be.fgov.ehealth.medicalagreement.core.v1.Kmehrrequest
+import be.fgov.ehealth.standards.kmehr.cd.v1.CDERROR
+import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+import org.apache.commons.collections4.CollectionUtils
+import org.apache.commons.logging.LogFactory
+import org.joda.time.DateTime
+import org.springframework.stereotype.Service
+import org.taktik.connector.business.chapterIV.builders.impl.ResponseBuilderImpl
+import org.taktik.connector.business.chapterIV.domain.ChapterIVBuilderResponse
+import org.taktik.connector.business.chapterIV.domain.ChapterIVReferences
+import org.taktik.connector.business.chapterIV.exception.ChapterIVBusinessConnectorException
+import org.taktik.connector.business.chapterIV.exception.ChapterIVBusinessConnectorExceptionValues
+import org.taktik.connector.business.chapterIV.utils.ACLUtils
+import org.taktik.connector.business.chapterIV.utils.FolderTypeUtils
+import org.taktik.connector.business.chapterIV.utils.KeyDepotHelper
+import org.taktik.connector.business.chapterIV.validators.Chapter4XmlValidator
+import org.taktik.connector.business.chapterIV.validators.impl.Chapter4XmlValidatorImpl
+import org.taktik.connector.business.chapterIV.wrapper.Chap4MedicalAdvisorAgreementRequestWrapper
+import org.taktik.connector.business.chapterIV.wrapper.SealedRequestWrapper
+import org.taktik.connector.business.chapterIV.wrapper.UnsealedRequestWrapper
+import org.taktik.connector.business.chapterIV.wrapper.factory.XmlObjectFactory
+import org.taktik.connector.business.chapterIV.wrapper.factory.impl.AskXmlObjectFactory
+import org.taktik.connector.business.chapterIV.wrapper.factory.impl.ConsultationXmlObjectFactory
+import org.taktik.connector.business.chapterIV.wrapper.impl.WrappedObjectMarshallerHelper
+import org.taktik.connector.business.domain.chapter4.AgreementResponse
+import org.taktik.connector.business.domain.chapter4.AgreementTransaction
+import org.taktik.connector.business.domain.chapter4.Appendix
+import org.taktik.connector.business.domain.chapter4.Problem
+import org.taktik.connector.business.domain.chapter4.RequestType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.CD_CHAPTER_4_DOCUMENTSEQAPPENDIX
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.CD_CHAPTER_4_PARAGRAPH
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.CD_CHAPTER_4_VERSESEQAPPENDIX
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEM
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.AGREEMENTENDDATE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.AGREEMENTSTARTDATE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.AGREEMENTTYPE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.CAREPROVIDERREFERENCE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.CHAPTER_4_ANNEXREFERENCE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.CHAPTER_4_REFERENCE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.CONSULTATIONENDDATE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.CONSULTATIONSTARTDATE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.DECISIONREFERENCE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.IOREQUESTREFERENCE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.REQUESTTYPE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.RESPONSETYPE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.UNITNUMBER
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MAA
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDLNKvalues.ISANAPPENDIXOF
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDLNKvalues.MULTIMEDIA
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDMAARESPONSETYPEvalues.AGREEMENT
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDMAARESPONSETYPEvalues.INTREATMENT
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDMEDIATYPEvalues
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDSTANDARD
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes.CD_TRANSACTION
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes.CD_TRANSACTION_MAA
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.LnkType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.dt.v1.TextType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes.ID_HCPARTY
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes.ID_KMEHR
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENT
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENTschemes.ID_PATIENT
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.ContentType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.FolderType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.HeaderType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.ItemType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.PersonType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.RecipientType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.SenderType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.StandardType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.TransactionType
+import org.taktik.connector.business.domain.kmehr.v20161201.Utils.Companion.makeXGC
+import org.taktik.connector.technical.config.ConfigFactory
+import org.taktik.connector.technical.exception.SoaErrorException
+import org.taktik.connector.technical.exception.TechnicalConnectorException
+import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
+import org.taktik.connector.technical.service.etee.Crypto
+import org.taktik.connector.technical.service.etee.CryptoFactory
+import org.taktik.connector.technical.service.keydepot.KeyDepotManager.EncryptionTokenType
+import org.taktik.connector.technical.service.keydepot.KeyDepotManagerFactory
+import org.taktik.connector.technical.service.kgss.KgssManager
+import org.taktik.connector.technical.service.kgss.domain.KeyResult
+import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
+import org.taktik.connector.technical.utils.MarshallerHelper
+import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
+import org.taktik.freehealth.middleware.domain.common.messages.AbstractMessage
+import org.taktik.freehealth.middleware.domain.common.messages.WarningMessage
+import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
+import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
+import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
+import org.taktik.freehealth.middleware.service.Chapter4Service
+import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.utils.FuzzyValues
+import org.w3c.dom.Element
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.Serializable
+import java.io.UnsupportedEncodingException
+import java.math.BigDecimal
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
+import java.util.Arrays
+import java.util.Date
+import java.util.UUID
+import javax.xml.bind.JAXBContext
+
+@Service
+class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic) : Chapter4Service {
+    private val freehealthChapter4Service: org.taktik.connector.business.chapterIV.service.ChapterIVService =
+        org.taktik.connector.business.chapterIV.service.impl.ChapterIVServiceImpl(EhealthReplyValidatorImpl())
+
+    private val kgssManager = KgssManager.getInstance()
+    private var demandMessages: List<AbstractMessage> = ArrayList()
+    private var consultMessages: List<AbstractMessage> = ArrayList()
+    private val chapter4XmlValidator: Chapter4XmlValidator = Chapter4XmlValidatorImpl()
+    private val config = ConfigFactory.getConfigValidator(emptyList())
+
+    private val log = LogFactory.getLog(this::class.java)
+
+    override fun findParagraphs(searchString: String, language: String): List<ParagraphPreview> {
+        return drugsLogic.findParagraphs(searchString, language)
+    }
+
+    override fun findParagraphsWithCnk(cnk: Long?, language: String): List<ParagraphPreview> {
+        return drugsLogic.findParagraphsWithCnk(cnk, language)
+    }
+
+    override fun getAddedDocuments(chapterName: String, paragraphName: String): List<AddedDocumentPreview> {
+        return drugsLogic.getAddedDocuments(chapterName, paragraphName)
+    }
+
+    private fun buildOriginType(nihii: String, ssin: String, firstName: String, lastName: String): OriginType =
+        OriginType().apply {
+            `package` = be.fgov.ehealth.chap4.core.v1.PackageType().apply {
+                name =
+                    be.fgov.ehealth.chap4.core.v1.ValueRefString()
+                        .apply { value = config.getProperty("genericasync.invoicing.package.name") }
+                license = be.fgov.ehealth.chap4.core.v1.LicenseType().apply {
+                    username = config.getProperty("mycarenet.license.username")
+                    password = config.getProperty("mycarenet.license.password")
+                }
+            }
+            careProvider = be.fgov.ehealth.chap4.core.v1.CareProviderType().apply {
+                this.nihii = be.fgov.ehealth.chap4.core.v1.NihiiType().apply {
+                    quality = "doctor"
+                    value = be.fgov.ehealth.chap4.core.v1.ValueRefString().apply { value = nihii }
+                }
+                physicalPerson = be.fgov.ehealth.chap4.core.v1.IdType().apply {
+                    this.ssin = be.fgov.ehealth.chap4.core.v1.ValueRefString().apply { value = ssin }
+                    this.name = be.fgov.ehealth.chap4.core.v1.ValueRefString().apply { value = "$firstName $lastName" }
+                }
+            }
+        }
+
+    private fun createCommonInput(isTest: Boolean, commonReference: String,
+                                  hcpNihii: String, hcpSsin: String,
+                                  hcpFirstName: String, hcpLastName: String) = CommonInputType().apply {
+        request = be.fgov.ehealth.chap4.core.v1.RequestType().apply {
+            isIsTest = isTest
+        }
+        origin = buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+        this.inputReference = commonReference
+    }
+
+    private fun getUnknownKey(subTypeName: String): KeyResult {
+        val acl = ACLUtils.createAclChapterIV(subTypeName)
+        if (KeyDepotManagerFactory.getKeyDepotManager().getETK(EncryptionTokenType.ENCRYPTION) == null) {
+            throw IllegalArgumentException("EncryptionETK is undefined")
+        } else {
+            val systemETK =
+                KeyDepotManagerFactory.getKeyDepotManager().getETK(EncryptionTokenType.ENCRYPTION).etk.encoded
+            return kgssManager.getNewKeyFromKgss(acl, systemETK)
+        }
+    }
+
+    private fun createAndValidateSealedRequest(crypto: Crypto, message: Kmehrmessage,
+                                               careReceiver: CareReceiverIdType,
+                                               xmlObjectFactory: XmlObjectFactory,
+                                               agreementStartDate: DateTime): SealedRequestWrapper<*> {
+        try {
+            val e = this.getUnknownKey(xmlObjectFactory.getSubtypeNameToRetrieveCredentialTypeProperties())
+            val request = xmlObjectFactory.createSealedRequest()
+            request.agreementStartDate = agreementStartDate
+            request.careReceiver = this.mapToCinCareReceiverIdType(careReceiver)
+            request.sealedContent = this.getSealedContent(crypto, message, e, xmlObjectFactory)
+            request.unsealKeyId = e.keyId
+            this.chapter4XmlValidator.validate(request.xmlObject)
+
+            return request
+        } catch (var7: UnsupportedEncodingException) {
+            log.debug("\t## The Character Encoding is not supported : throwing technical connector exception")
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.CHARACTER_ENCODING_NOTSUPPORTED, var7)
+        }
+
+    }
+
+    private fun mapToCinCareReceiverIdType(careReceiver: CareReceiverIdType): be.cin.types.v1.CareReceiverIdType {
+        val mappedCareReceiver = be.cin.types.v1.CareReceiverIdType()
+        mappedCareReceiver.mutuality = careReceiver.mutuality
+        mappedCareReceiver.regNrWithMut = careReceiver.regNrWithMut
+        mappedCareReceiver.ssin = careReceiver.ssin
+        return mappedCareReceiver
+    }
+
+    private fun getSealedContent(crypto: Crypto,
+                                 message: Kmehrmessage,
+                                 unknownKey: KeyResult,
+                                 xmlObjectFactory: XmlObjectFactory): ByteArray {
+        val request = this.createAndValidateUnsealedRequest(message, xmlObjectFactory)
+        return crypto.seal(WrappedObjectMarshallerHelper.toXMLByteArray(request), unknownKey.secretKey, unknownKey.keyId)
+    }
+
+    private fun createAndValidateUnsealedRequest(message: Kmehrmessage,
+                                                 xmlObjectFactory: XmlObjectFactory): UnsealedRequestWrapper<*> {
+        val request = xmlObjectFactory.createUnsealedRequest()
+        request.etkHcp = KeyDepotManagerFactory.getKeyDepotManager().getETK(EncryptionTokenType.ENCRYPTION).etk.encoded
+        request.kmehrRequest = this.createAndValidateKmehrRequestXmlByteArray(message)
+        this.chapter4XmlValidator.validate(request.xmlObject)
+        return request
+    }
+
+    private fun createAndValidateKmehrRequestXmlByteArray(message: Kmehrmessage): ByteArray {
+        val kmehrrequest = Kmehrrequest().apply { this.kmehrmessage = message }
+        this.chapter4XmlValidator.validate(kmehrrequest)
+        val kmehrMarshallHelper = MarshallerHelper(Kmehrrequest::class.java, Kmehrrequest::class.java)
+        return kmehrMarshallHelper.toXMLByteArray(kmehrrequest)
+    }
+
+    private fun marshallAndEncryptSealedRequest(crypto: Crypto, request: SealedRequestWrapper<*>): SecuredContentType {
+        val marshalledContent = WrappedObjectMarshallerHelper.toXMLByteArray(request)
+        log.debug("securedContent : $marshalledContent")
+        val sealedKnown = crypto.seal(KeyDepotHelper.chapterIVEncryptionToken, marshalledContent)
+        val securedContent = SecuredContentType()
+        securedContent.securedContent = sealedKnown
+        return securedContent
+    }
+
+    private fun buildAndValidateAgreementRequest(crypto: Crypto, xmlObjectFactory: XmlObjectFactory,
+                                                 careReceiver: CareReceiverIdType,
+                                                 recordCommonInput: RecordCommonInputType,
+                                                 commonInput: CommonInputType,
+                                                 sealedRequest: SealedRequestWrapper<*>): Chap4MedicalAdvisorAgreementRequestWrapper<*> {
+        val agreementRequest = xmlObjectFactory.createChap4MedicalAdvisorAgreementRequest()
+        agreementRequest.careReceiver = careReceiver
+        agreementRequest.recordCommonInput = recordCommonInput
+        agreementRequest.commonInput = commonInput
+        agreementRequest.request = this.marshallAndEncryptSealedRequest(crypto, sealedRequest)
+        this.chapter4XmlValidator.validate(agreementRequest.xmlObject)
+        return agreementRequest
+    }
+
+    private fun createAgreementRequest(crypto: Crypto,
+                                       hcpNihii: String,
+                                       hcpSsin: String,
+                                       hcpFirstName: String,
+                                       hcpLastName: String,
+                                       message: be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage,
+                                       isTest: Boolean,
+                                       references: ChapterIVReferences,
+                                       xmlObjectFactory: XmlObjectFactory,
+                                       agreementStartDate: DateTime?): ChapterIVBuilderResponse {
+        if (agreementStartDate == null) {
+            throw ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.INPUT_PARAM_NULL, "input parameter agreementStartDate was null")
+        } else {
+            val folder = message.folders[0]
+            val careReceiver = CareReceiverIdType().apply {
+                ssin =
+                    folder.patient.ids.filter { it.s == be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENTschemes.ID_PATIENT && it.value != null }
+                        .firstOrNull()
+                        ?.value
+                mutuality = folder.patient.insurancymembership?.id?.value
+                regNrWithMut =
+                    folder.patient.insurancymembership?.membership?.let { if (it is Element) it.textContent else null }
+            }
+
+            val recordCommonInput =
+                RecordCommonInputType().apply { inputReference = BigDecimal(references.recordCommonInputId) }
+            val commonInput =
+                createCommonInput(isTest, references.commonReference!!, hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+            val sealedRequest =
+                this.createAndValidateSealedRequest(crypto, message, careReceiver, xmlObjectFactory, agreementStartDate)
+            val resultWrapper =
+                this.buildAndValidateAgreementRequest(crypto, xmlObjectFactory, careReceiver, recordCommonInput, commonInput, sealedRequest)
+            val result = hashMapOf(
+                "references" to references,
+                "folder" to folder,
+                "kmehrmessage" to message,
+                "carereceiver" to careReceiver,
+                "recordcommoninput" to recordCommonInput,
+                "commoninput" to (commonInput as Serializable),
+                "sealedrequest" to sealedRequest,
+                "result" to resultWrapper)
+            return ChapterIVBuilderResponse(result)
+        }
+    }
+
+    override fun requestAgreement(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        passPhrase: String,
+        patientSsin: String,
+        requestType: RequestType,
+        civicsVersion: String,
+        paragraph: String,
+        appendices: List<Appendix>,
+        verses: List<String>?,
+        incomplete: Boolean,
+        start: Long,
+        end: Long?,
+        decisionReference: String?,
+        ioRequestReference: String?): AgreementResponse {
+
+        val isTest = config.getProperty("endpoint.ch4.admission.v1").contains("-acpt")
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
+
+        val ref = "" + System.currentTimeMillis()
+        val references = ChapterIVReferences(true)
+
+        val demandMessage =
+            getDemandKmehrMessage(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, requestType, references.commonReference!!, civicsVersion, start, end, verses, appendices, ref, decisionReference, ioRequestReference, paragraph)
+
+        val bos = ByteArrayOutputStream()
+        JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
+            .createMarshaller().marshal(demandMessage, bos)
+        val msg = bos.toByteArray()
+        val v1Message =
+            JAXBContext.newInstance(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createUnmarshaller().unmarshal(ByteArrayInputStream(msg)) as be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+
+        val responseBuilder = ResponseBuilderImpl(crypto, chapter4XmlValidator)
+
+        val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
+        val request =
+            createAgreementRequest(crypto, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
+                ?: DateTime()).askChap4MedicalAdvisorAgreementRequest
+        val response = try {
+            request?.let { freehealthChapter4Service.askChap4MedicalAdvisorAgreement(samlToken, it) }
+                ?: AskChap4MedicalAdvisorAgreementResponse()
+        } catch (e: SoaErrorException) {
+            AskChap4MedicalAdvisorAgreementResponse()
+            //TODO add SOA Error
+        }
+        val kmehrResponse =
+            responseBuilder.validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(response).kmehrresponse
+
+        val aggResponse = AgreementResponse()
+        aggResponse.isAcknowledged = kmehrResponse.acknowledge != null && kmehrResponse.acknowledge.isIscomplete
+        kmehrResponse.acknowledge?.let {
+            aggResponse.warnings = it.warnings?.map { errType -> errType?.let { Problem(it.cds, getWarningDescription(it, demandMessages), it.url) } }?.filterNotNull() ?:
+                ArrayList()
+            aggResponse.errors = it.errors?.map { errorType -> errorType?.let { Problem(it.cds, getWarningDescription(it, demandMessages), it.url) } }?.filterNotNull() ?:
+                ArrayList()
+        }
+
+        if (kmehrResponse.kmehrmessage != null) {
+            val mh =
+                MarshallerHelper(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java, be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
+            aggResponse.content = mh.toXMLByteArray(kmehrResponse.kmehrmessage)
+        }
+
+        if (aggResponse.content != null) {
+            kmehrResponse.kmehrmessage.apply {
+                includeMessageInResponse(aggResponse, this)
+            }
+        }
+        if (aggResponse.isAcknowledged) {
+            aggResponse.content = msg
+        }
+
+        return aggResponse
+    }
+
+    override fun agreementRequestsConsultation(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        passPhrase: String,
+        patientSsin: String,
+        civicsVersion: String,
+        paragraph: String?,
+        start: Long,
+        end: Long?,
+        reference: String?): AgreementResponse {
+        val isTest = config.getProperty("endpoint.ch4.admission.v1").contains("-acpt")
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
+
+        val ref = reference ?: ""+System.currentTimeMillis()
+        val references = ChapterIVReferences(true)
+
+        val consultationMessage =
+            getConsultationTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, references.commonReference!!, start, end, civicsVersion,
+                                       paragraph, ref)
+
+        val bos = ByteArrayOutputStream()
+        JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
+            .createMarshaller().marshal(consultationMessage, bos)
+        val msg = bos.toByteArray()
+        val v1Message =
+            JAXBContext.newInstance(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createUnmarshaller().unmarshal(ByteArrayInputStream(msg)) as be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+
+        val responseBuilder = ResponseBuilderImpl(crypto, chapter4XmlValidator)
+
+        val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
+        val request =
+            createAgreementRequest(crypto, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, ConsultationXmlObjectFactory(), agreementStartDate
+                ?: DateTime()).consultChap4MedicalAdvisorAgreementRequest
+
+        val response =
+            request?.let { freehealthChapter4Service.consultChap4MedicalAdvisorAgreement(samlToken, it) }
+                ?: ConsultChap4MedicalAdvisorAgreementResponse()
+
+        val retrievedKmehrResponse =
+            responseBuilder.validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(response)
+
+        val agreementResponse = AgreementResponse()
+        val ack = retrievedKmehrResponse.kmehrresponse.acknowledge
+        agreementResponse.isAcknowledged = ack.isIscomplete
+        agreementResponse.warnings =
+            ack.warnings.map { errorType -> Problem(errorType.cds, getWarningDescription(errorType, consultMessages), errorType.url) }
+        agreementResponse.errors =
+            ack.errors.map { errorType -> Problem(errorType.cds, getErrorDescription(errorType, consultMessages), errorType.url) }
+
+        if (retrievedKmehrResponse.kmehrresponse.kmehrmessage != null) {
+            val mh =
+                MarshallerHelper(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java, be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
+            agreementResponse.content = mh.toXMLByteArray(retrievedKmehrResponse.kmehrresponse.kmehrmessage)
+        }
+
+        if (agreementResponse.content != null) {
+            retrievedKmehrResponse.kmehrresponse.kmehrmessage.apply {
+                includeMessageInResponse(agreementResponse, this)
+            }
+        }
+        return agreementResponse
+    }
+
+    override fun cancelAgreement(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        passPhrase: String,
+        patientSsin: String,
+        decisionReference: String?,
+        iorequestReference: String?): AgreementResponse {
+        val folderType: FolderType
+        try {
+            folderType =
+                getCancelTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, decisionReference, iorequestReference)
+        } catch (e: IOException) {
+            return generateError(ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.UNKNOWN_ERROR, e))
+        }
+
+        return agreementModification(keystoreId, tokenId, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, passPhrase, folderType)
+    }
+
+
+    override fun closeAgreement(keystoreId: UUID,
+                                tokenId: UUID,
+                                hcpNihii: String,
+                                hcpSsin: String,
+                                hcpFirstName: String,
+                                hcpLastName: String,
+                                passPhrase: String,
+                                patientSsin: String,
+                                decisionReference: String): AgreementResponse {
+        val folderType: FolderType
+        try {
+            folderType = getCloseTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, decisionReference, null)
+        } catch (e: IOException) {
+            return generateError(ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.UNKNOWN_ERROR, e))
+        }
+
+        return agreementModification(keystoreId, tokenId, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, passPhrase, folderType)
+    }
+
+    private fun agreementModification(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        passPhrase: String,
+        folder: FolderType): AgreementResponse {
+        val isTest = config.getProperty("endpoint.ch4.admission.v1").contains("-acpt")
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
+
+        val references = ChapterIVReferences(true)
+
+        val demandMessage =
+            getKmehrMessage(references.commonReference!!, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, folder)
+
+        val bos = ByteArrayOutputStream()
+        JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
+            .createMarshaller().marshal(demandMessage, bos)
+        val msg = bos.toByteArray()
+        val v1Message =
+            JAXBContext.newInstance(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createUnmarshaller().unmarshal(ByteArrayInputStream(msg)) as be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+
+        val responseBuilder = ResponseBuilderImpl(crypto, chapter4XmlValidator)
+
+        val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
+        val request =
+            createAgreementRequest(crypto, hcpNihii,
+                                   hcpSsin,
+                                   hcpFirstName,
+                                   hcpLastName,
+                                   v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
+                                       ?: DateTime()).askChap4MedicalAdvisorAgreementRequest
+
+        val response = freehealthChapter4Service.askChap4MedicalAdvisorAgreement(samlToken, request!!)
+        val retrievedKmehrResponse =
+            responseBuilder.validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(response)
+
+        val agreementResponse = AgreementResponse()
+        agreementResponse.isAcknowledged = retrievedKmehrResponse.kmehrresponse.acknowledge.isIscomplete
+        agreementResponse.warnings =
+            CollectionUtils.collect(retrievedKmehrResponse.kmehrresponse.acknowledge.warnings) { errorType -> Problem(errorType.cds, getWarningDescription(errorType, demandMessages), errorType.url) }
+        agreementResponse.errors =
+            CollectionUtils.collect(retrievedKmehrResponse.kmehrresponse.acknowledge.errors) { errorType -> Problem(errorType.cds, getErrorDescription(errorType, demandMessages), errorType.url) }
+
+        if (retrievedKmehrResponse.kmehrresponse.kmehrmessage != null) {
+            val mh =
+                MarshallerHelper(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java, be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
+            agreementResponse.content = mh.toXMLByteArray(retrievedKmehrResponse.kmehrresponse.kmehrmessage)
+        }
+
+        //Parse response
+        if (agreementResponse.content != null) {
+            retrievedKmehrResponse.kmehrresponse.kmehrmessage.apply {
+                includeMessageInResponse(agreementResponse, this)
+            }
+        }
+        return agreementResponse
+
+    }
+
+    private fun getErrorDescription(errorType: be.fgov.ehealth.standards.kmehr.schema.v1.ErrorType,
+                                    messages: List<AbstractMessage>): String {
+        val result = StringBuilder(errorType.description.value).append("\n")
+
+        var flag = false
+        if (errorType.url != null) {
+            for (cd in errorType.cds) {
+                if (cd.value != null) {
+                    for (m in messages) {
+                        m.pattern?.let { pattern ->
+                            if (pattern.isNotEmpty() && cd.value == m.code && errorType.url.contains(pattern)) {
+                                result.append(m.message["fr"]).append(" in zone ").append(m.zone).append("\n")
+                                flag = true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!flag) {
+            for (cd in errorType.cds) {
+                if (cd.value != null) {
+                    for (m in messages) {
+                        if (cd.value == m.code) {
+                            result.append(m.message["fr"]).append(" in zone ").append(m.zone).append(" ?\n")
+                        }
+                    }
+                }
+            }
+        }
+
+        return result.toString()
+    }
+
+    private fun getWarningDescription(errorType: be.fgov.ehealth.standards.kmehr.schema.v1.ErrorType,
+                                      messages: List<AbstractMessage>): String {
+        val result = StringBuilder(errorType.description?.value ?: "")
+
+        for (cd in errorType.cds ?: ArrayList<CDERROR>()) {
+            if (cd.value != null) {
+                for (m in messages) {
+                    if (m is WarningMessage) {
+                        if (cd.value == m.code) {
+                            result.append(m.message["fr"]).append("\n")
+                        }
+                    }
+                }
+            }
+        }
+
+        return result.toString()
+    }
+
+    private fun includeMessageInResponse(agreementResponse: AgreementResponse, kmsg: Kmehrmessage) {
+        val v1LOCAL = be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes.LOCAL
+        val v1CDITEMMAA = be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MAA
+        val v1CDMAARESPONSETYPE = be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.CD_MAA_RESPONSETYPE
+        val v1CDCHAPTER4PARAGRAPH = be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.CD_CHAPTER_4_PARAGRAPH
+
+        kmsg.folders.forEach { f ->
+            f.transactions?.forEach { t ->
+                val at = agreementResponse.addTransaction(AgreementTransaction())
+                val its = t?.item
+                its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == RESPONSETYPE.value() } }
+                    ?.contents?.map { it.cds?.find { it.s == v1CDMAARESPONSETYPE }?.value }?.find { it != null }?.let {
+                    at.isAccepted = it == AGREEMENT.value()
+                    at.isInTreatment = it == INTREATMENT.value()
+                }
+                at.careProviderReference =
+                    its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == CAREPROVIDERREFERENCE.value() } }
+                        ?.contents?.map { it.texts?.firstOrNull()?.value }?.firstOrNull()
+                at.decisionReference =
+                    its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == DECISIONREFERENCE.value() } }
+                        ?.contents?.map { it.ids?.find { it.s == v1LOCAL }?.value }?.find { it != null }
+                at.ioRequestReference =
+                    its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == IOREQUESTREFERENCE.value() } }
+                        ?.contents?.map { it.ids?.find { it.s == v1LOCAL }?.value }?.find { it != null }
+                at.start =
+                    its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == AGREEMENTSTARTDATE.value() } }
+                        ?.contents?.map { it.date }?.find { it != null }?.toGregorianCalendar()?.time
+                at.end =
+                    its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == AGREEMENTENDDATE.value() } }
+                        ?.contents?.map { it.date }?.find { it != null }?.toGregorianCalendar()?.time
+                at.unitNumber =
+                    its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == UNITNUMBER.value() } }
+                        ?.contents?.map { it.decimal }?.find { it != null }?.toDouble()
+                //TODO at.strength = its.find { it.cds.any { it.s == be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MAA && it.value == UNITNUMBER.value() } }?.contents?.map { it.decimal }?.find {it != null}?.toDouble()
+                at.responseType =
+                    its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == RESPONSETYPE.value() } }
+                        ?.contents?.map { it.cds?.find { it.s == v1CDMAARESPONSETYPE }?.value }?.find { it != null }
+                at.paragraph =
+                    its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == CHAPTER_4_REFERENCE.value() } }
+                        ?.contents?.map { it.cds?.find { it.s == v1CDCHAPTER4PARAGRAPH }?.value }?.find { it != null }
+                val bos = ByteArrayOutputStream()
+                JAXBContext.newInstance(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
+                    .createMarshaller()
+                    .marshal(Kmehrmessage().apply { folders.add(be.fgov.ehealth.standards.kmehr.schema.v1.FolderType().apply { transactions.add(t) }) }, bos)
+                at.content = bos.toByteArray()
+            }
+        }
+    }
+
+    private fun generateError(e: ChapterIVBusinessConnectorException): AgreementResponse {
+        val error = AgreementResponse()
+        error.isAcknowledged = false
+        val ec = be.fgov.ehealth.standards.kmehr.cd.v1.CDERROR()
+        ec.s = be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORschemes.CD_ERROR
+        ec.value = e.errorCode + ":" + e.message
+
+        error.errors = Arrays.asList(Problem(arrayListOf(ec), e.message, null))
+        return error
+    }
+
+    private fun generateError(e: SoaErrorException): AgreementResponse {
+        val error = AgreementResponse()
+        error.isAcknowledged = false
+
+        val rt = e.responseType as AbstractChap4MedicalAdvisorAgreementResponseType
+
+        val ec = be.fgov.ehealth.standards.kmehr.cd.v1.CDERROR()
+        ec.s = be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORschemes.CD_ERROR
+        ec.value = rt.returnInfo.faultCode + ":" + rt.returnInfo.faultSource
+        error.errors = Arrays.asList(Problem(Arrays.asList(ec), rt.returnInfo.message.value, null))
+        return error
+    }
+
+    private fun getDemandKmehrMessage(hcpNihii: String,
+                                      hcpSsin: String,
+                                      hcpFirstName: String,
+                                      hcpLastName: String,
+                                      patientSsin: String,
+                                      requestType: RequestType,
+                                      commonInput: String,
+                                      civicsVersion: String,
+                                      start: Long?,
+                                      end: Long?,
+                                      verses: List<String>?,
+                                      appendices: List<Appendix>?,
+                                      reference: String?,
+                                      decisionReference: String?,
+                                      ioRequestReference: String?,
+                                      paragraph: String?): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
+        val startDate =
+            start?.let { FuzzyValues.getLocalDateTime(it) } ?: LocalDateTime.now().minus(12, ChronoUnit.MONTHS)
+        val endDate = end?.let { FuzzyValues.getLocalDateTime(it) }
+
+        return getKmehrMessage(
+            commonInput,
+            hcpNihii,
+            hcpSsin,
+            hcpFirstName,
+            hcpLastName,
+            FolderType().apply {
+                ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "1" })
+                this.patient = PersonType().apply {
+                    ids.add(IDPATIENT().apply { s = ID_PATIENT; sv = "1.0"; value = patientSsin })
+                }
+
+                transactions.add(TransactionType().apply {
+                    initialiseTransactionTypeWithSender(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, "agreementrequest", requestType, kmehrId = "1")
+
+                    if (requestType != RequestType.complimentaryannex) {
+                        headingsAndItemsAndTexts.add(ItemType().apply {
+                            ids.add(IDKMEHR().apply {
+                                s = ID_KMEHR; value =
+                                (headingsAndItemsAndTexts.size + 1).toString()
+                            })
+                            cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = AGREEMENTSTARTDATE.value() })
+                            contents.add(ContentType().apply {
+                                date = makeXGC(startDate.toInstant(ZoneOffset.UTC).toEpochMilli())
+                            })
+                        })
+
+                        endDate?.let {
+                            headingsAndItemsAndTexts.add(ItemType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = ID_KMEHR; value =
+                                    (headingsAndItemsAndTexts.size + 1).toString()
+                                })
+                                cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = AGREEMENTENDDATE.value() })
+                                contents.add(ContentType().apply {
+                                    date = makeXGC(endDate.toInstant(ZoneOffset.UTC).toEpochMilli())
+                                })
+                            })
+                        }
+                    }
+
+                    reference?.let {
+                        headingsAndItemsAndTexts.add(ItemType().apply {
+                            ids.add(IDKMEHR().apply {
+                                s = ID_KMEHR; value =
+                                (headingsAndItemsAndTexts.size + 1).toString()
+                            })
+                            cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = CAREPROVIDERREFERENCE.value() })
+                            contents.add(ContentType().apply {
+                                texts.add(TextType().apply { l = "FR"; value = reference })
+                            })
+                        })
+                    }
+
+                    decisionReference?.let {
+                        headingsAndItemsAndTexts.add(ItemType().apply {
+                            ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "3" })
+                            cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = DECISIONREFERENCE.value() })
+                            contents.add(ContentType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.LOCAL; sl = "OAreferencesystemname"; value =
+                                    decisionReference
+                                })
+                            })
+                        })
+                    } ?: ioRequestReference?.let {
+                        headingsAndItemsAndTexts.add(ItemType().apply {
+                            ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "3" })
+                            cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = IOREQUESTREFERENCE.value() })
+                            contents.add(ContentType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.LOCAL; sl = "OAreferencesystemname"; value =
+                                    ioRequestReference
+                                })
+                            })
+                        })
+                    }
+
+                    if (requestType != RequestType.complimentaryannex) {
+                        paragraph?.let {
+                            headingsAndItemsAndTexts.add(ItemType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = ID_KMEHR; value =
+                                    (headingsAndItemsAndTexts.size + 1).toString()
+                                })
+                                cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = CHAPTER_4_REFERENCE.value() })
+                                contents.add(ContentType().apply {
+                                    cds.add(CDCONTENT().apply {
+                                        s = CD_CHAPTER_4_PARAGRAPH; sv = civicsVersion; value =
+                                        paragraph
+                                    })
+                                })
+                                if (verses?.isNotEmpty() == true) {
+                                    contents.add(ContentType().apply {
+                                        verses?.forEach {
+                                            cds.add(CDCONTENT().apply {
+                                                s = CDCONTENTschemes.CD_CHAPTER_4_VERSE
+                                                sv = civicsVersion; value = it
+                                            })
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    }
+                })
+                appendices?.forEach { app ->
+                    if (app.data != null && app.mimeType != null) {
+                        transactions.add(TransactionType().apply {
+                            initialiseTransactionTypeWithSender(hcpNihii,
+                                                                hcpSsin,
+                                                                hcpFirstName,
+                                                                hcpLastName,
+                                                                app.verseSeq?.let { "reglementaryappendix" }
+                                                                    ?: "freeappendix", kmehrId = (transactions.size + 1).toString())
+
+                            headingsAndItemsAndTexts.add(ItemType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = ID_KMEHR; value =
+                                    (headingsAndItemsAndTexts.size + 1).toString()
+                                })
+                                cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = CHAPTER_4_ANNEXREFERENCE.value() })
+                                contents.add(ContentType().apply {
+                                    cds.add(CDCONTENT().apply {
+                                        s = CD_CHAPTER_4_PARAGRAPH; sv = civicsVersion; value =
+                                        paragraph
+                                    })
+                                    app.verseSeq?.let {
+                                        cds.add(CDCONTENT().apply {
+                                            s = CD_CHAPTER_4_VERSESEQAPPENDIX; sv =
+                                            civicsVersion; value = it.toString()
+                                        })
+                                    }
+                                    app.documentSeq?.let {
+                                        cds.add(CDCONTENT().apply {
+                                            s =
+                                                CD_CHAPTER_4_DOCUMENTSEQAPPENDIX; sv = civicsVersion; value =
+                                            it.toString()
+                                        })
+                                    }
+                                })
+                            })
+
+                            lnks.add(LnkType().apply {
+                                type = MULTIMEDIA;
+                                try {
+                                    mediatype = CDMEDIATYPEvalues.fromValue(app.mimeType)
+                                } catch (e: Exception) {
+                                    mediatype = CDMEDIATYPEvalues.TEXT_XML
+                                }
+                                value = app.data
+                            })
+                            lnks.add(LnkType().apply { type = ISANAPPENDIXOF; url = "//folder[position()=1]" })
+                        })
+                    }
+                }
+            })
+    }
+
+    @Throws(IOException::class)
+    private fun getConsultationTransaction(
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientSsin: String,
+        commonInput: String,
+        start: Long?,
+        end: Long?,
+        civicsVersion: String,
+        paragraph: String?,
+        reference: String?): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
+        val startDate =
+            start?.let { FuzzyValues.getLocalDateTime(it) } ?: LocalDateTime.now().minus(12, ChronoUnit.MONTHS)
+        val endDate = end?.let { FuzzyValues.getLocalDateTime(it) } ?: startDate.plus(23, ChronoUnit.MONTHS)
+
+        return getKmehrMessage(
+            commonInput,
+            hcpNihii,
+            hcpSsin,
+            hcpFirstName,
+            hcpLastName,
+            FolderType().apply {
+                ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "1" })
+                this.patient = PersonType().apply {
+                    ids.add(IDPATIENT().apply { s = ID_PATIENT; sv = "1.0"; value = patientSsin })
+                }
+
+
+                transactions.add(TransactionType().apply {
+                    initialiseTransactionTypeWithSender(hcpNihii,
+                                                        hcpSsin,
+                                                        hcpFirstName,
+                                                        hcpLastName,
+                                                        "consultationrequest")
+                    headingsAndItemsAndTexts.add(ItemType().apply {
+                        ids.add(IDKMEHR().apply {
+                            s = ID_KMEHR; value =
+                            (headingsAndItemsAndTexts.size + 1).toString()
+                        })
+                        cds.add(CDITEM().apply {
+                            s = CD_ITEM_MAA; value =
+                            CONSULTATIONSTARTDATE.value()
+                        })
+                        contents.add(ContentType().apply {
+                            date = makeXGC(startDate.toInstant(ZoneOffset.UTC).toEpochMilli())
+                        })
+                    })
+
+                    headingsAndItemsAndTexts.add(ItemType().apply {
+                        ids.add(IDKMEHR().apply {
+                            s = ID_KMEHR; value =
+                            (headingsAndItemsAndTexts.size + 1).toString()
+                        })
+                        cds.add(CDITEM().apply {
+                            s = CD_ITEM_MAA; value =
+                            CONSULTATIONENDDATE.value()
+                        })
+                        contents.add(ContentType().apply {
+                            date = makeXGC(endDate.toInstant(ZoneOffset.UTC).toEpochMilli())
+                        })
+                    })
+
+                    reference?.let {
+                        headingsAndItemsAndTexts.add(ItemType().apply {
+                            ids.add(IDKMEHR().apply {
+                                s = ID_KMEHR; value =
+                                (headingsAndItemsAndTexts.size + 1).toString()
+                            })
+                            cds.add(CDITEM().apply {
+                                s = CD_ITEM_MAA; value =
+                                CAREPROVIDERREFERENCE.value()
+                            })
+                            contents.add(ContentType().apply {
+                                texts.add(TextType().apply { l = "FR"; value = reference })
+                            })
+                        })
+                    }
+
+                    paragraph?.let { p ->
+                        headingsAndItemsAndTexts.add(ItemType().apply {
+                            ids.add(IDKMEHR().apply {
+                                s = ID_KMEHR; value =
+                                (headingsAndItemsAndTexts.size + 1).toString()
+                            })
+                            cds.add(CDITEM().apply {
+                                s = CD_ITEM_MAA; value =
+                                CHAPTER_4_REFERENCE.value()
+                            })
+                            contents.add(ContentType().apply {
+                                cds.add(CDCONTENT().apply {
+                                    s = CD_CHAPTER_4_PARAGRAPH; sv =
+                                    civicsVersion; value = p
+                                })
+                            })
+                        })
+                    }
+                })
+            })
+    }
+
+    private fun getKmehrMessage(commonInput: String,
+                                hcpNihii: String,
+                                hcpSsin: String,
+                                hcpFirstName: String,
+                                hcpLastName: String,
+                                folderType: FolderType): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
+        return org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage()
+            .apply {
+                val inami = hcpNihii.replace("[^0-9]".toRegex(), "")
+                header = HeaderType().apply {
+                    standard = StandardType().apply { cd = CDSTANDARD().apply { value = "20121001" } }
+                    makeXGC(Instant.now().toEpochMilli()).let {
+                        date = it
+                        time = it
+                    }
+                    ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "$inami.$commonInput" })
+                    this.sender = SenderType().apply {
+                        hcparties.add(HcpartyType().apply {
+                            ids.add(IDHCPARTY().apply { s = ID_HCPARTY; value = inami })
+                            ids.add(IDHCPARTY().apply {
+                                s = IDHCPARTYschemes.INSS; value =
+                                hcpSsin
+                            })
+                            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; value = "persphysician" })
+                            name = "$hcpFirstName $hcpLastName "
+                        })
+                    }
+                    recipients.add(RecipientType().apply {
+                        hcparties.add(HcpartyType().apply {
+                            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; value = "application" })
+                            name = "mycarenet"
+                        })
+                    })
+                }
+                folders.add(folderType)
+            }
+    }
+
+    private fun getCancelTransaction(
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientSsin: String,
+        decisionReference: String?,
+        ioRequestReference: String?,
+        date: Date? = null): FolderType {
+        return FolderType().apply {
+            ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "1" })
+            this.patient = PersonType().apply {
+                ids.add(IDPATIENT().apply { s = ID_PATIENT; sv = "1.0"; value = patientSsin })
+            }
+
+            transactions.add(TransactionType().apply {
+                initialiseTransactionTypeWithSender(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, "agreementrequest", RequestType.cancellation, date)
+
+                decisionReference?.let {
+                    headingsAndItemsAndTexts.add(ItemType().apply {
+                        ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "3" })
+                        val scheme = CD_ITEM_MAA
+                        cds.add(CDITEM().apply { s = scheme; value = DECISIONREFERENCE.value() })
+                        contents.add(ContentType().apply {
+                            ids.add(IDKMEHR().apply {
+                                s = IDKMEHRschemes.LOCAL; sl = "OAreferencesystemname"; value =
+                                decisionReference
+                            })
+                        })
+                    })
+                } ?: ioRequestReference?.let {
+                    headingsAndItemsAndTexts.add(ItemType().apply {
+                        ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "3" })
+                        cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = IOREQUESTREFERENCE.value() })
+                        contents.add(ContentType().apply {
+                            ids.add(IDKMEHR().apply {
+                                s = IDKMEHRschemes.LOCAL; sl = "OAreferencesystemname"; value =
+                                ioRequestReference
+                            })
+                        })
+                    })
+                } ?: throw IllegalArgumentException("Any of decisionReference or iorequestReference should be included")
+            })
+        }
+    }
+
+    private fun getCloseTransaction(hcpNihii: String,
+                                    hcpSsin: String,
+                                    hcpFirstName: String,
+                                    hcpLastName: String,
+                                    patientSsin: String,
+                                    decisionReference: String,
+                                    date: Date?): FolderType {
+        return FolderType().apply {
+            ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "1" })
+            this.patient = PersonType().apply {
+                ids.add(IDPATIENT().apply { s = ID_PATIENT; sv = "1.0"; value = patientSsin })
+            }
+
+            transactions.add(TransactionType().apply {
+                initialiseTransactionTypeWithSender(hcpNihii,
+                                                    hcpSsin,
+                                                    hcpFirstName,
+                                                    hcpLastName,
+                                                    "agreementrequest", RequestType.closure, date)
+
+                headingsAndItemsAndTexts.add(ItemType().apply {
+                    ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "3" })
+                    cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = DECISIONREFERENCE.value() })
+                    contents.add(ContentType().apply {
+                        ids.add(IDKMEHR().apply {
+                            s = IDKMEHRschemes.LOCAL; sl = "OAreferencesystemname"; value =
+                            decisionReference
+                        })
+                    })
+                })
+
+            })
+        }
+    }
+
+    private fun TransactionType.initialiseTransactionTypeWithSender(hcpNihii: String,
+                                                                    hcpSsin: String,
+                                                                    hcpFirstName: String,
+                                                                    hcpLastName: String,
+                                                                    maa: String,
+                                                                    requestType: RequestType? = null,
+                                                                    date: Date? = null,
+                                                                    kmehrId: String = "1") {
+        ids.add(IDKMEHR().apply { s = ID_KMEHR; value = kmehrId })
+        cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION; value = "medicaladvisoragreement" })
+        cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MAA; value = maa })
+        author = AuthorType().apply { hcparties.add(createParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)) }
+        recorddatetime = makeXGC(java.time.Instant.now().toEpochMilli())
+        makeXGC(date?.time ?: java.time.Instant.now().toEpochMilli()).let {
+            this.date = it
+            this.time = it
+        }
+        isIscomplete = true
+        isIsvalidated = true
+
+        headingsAndItemsAndTexts.add(ItemType().apply {
+            ids.add(IDKMEHR().apply { s = ID_KMEHR; value = kmehrId })
+            cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = AGREEMENTTYPE.value() })
+            contents.add(ContentType().apply {
+                cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_MAA_TYPE; value = "chapter4" })
+            })
+        })
+        requestType?.let {
+            headingsAndItemsAndTexts.add(ItemType().apply {
+                ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "2" })
+                cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = REQUESTTYPE.value() })
+                contents.add(ContentType().apply {
+                    cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_MAA_REQUESTTYPE; value = requestType.name })
+                })
+            })
+        }
+    }
+
+    fun createParty(hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String): HcpartyType {
+        return HcpartyType().apply {
+            ids.add(IDHCPARTY().apply { s = ID_HCPARTY; sv = "1.0"; value = hcpNihii })
+            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+
+            this.cds.addAll(listOf(CDHCPARTY().apply {
+                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.0"; value =
+                "persphysician"
+            }))
+
+            firstname = hcpFirstName
+            familyname = hcpLastName
+        }
+    }
+
+
+}

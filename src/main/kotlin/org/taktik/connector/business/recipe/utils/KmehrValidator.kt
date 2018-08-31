@@ -3,7 +3,7 @@ package org.taktik.connector.business.recipe.utils
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.slf4j.LoggerFactory
 import org.taktik.connector.technical.validator.impl.handler.ErrorCollectorHandler
-import org.taktik.freehealth.middleware.domain.Medication
+import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.service.RecipeService
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream

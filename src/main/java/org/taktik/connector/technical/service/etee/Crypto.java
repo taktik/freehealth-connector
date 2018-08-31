@@ -17,47 +17,40 @@ public interface Crypto extends ConfigurableImplementation {
    String SIGNING_OPTIONMAP = "cryptolib.signing.optionmap";
    String OCSP_POLICY = "cryptolib.ocsp.policy";
 
-   /** @deprecated */
+
    @Deprecated
-   byte[] seal(EncryptionToken var1, byte[] var2) throws TechnicalConnectorException;
+   byte[] seal(EncryptionToken paramEncryptionToken, byte[] paramArrayOfByte) throws TechnicalConnectorException;
 
-   /** @deprecated */
    @Deprecated
-   byte[] seal(Set<EncryptionToken> var1, byte[] var2) throws TechnicalConnectorException;
+   byte[] seal(Set<EncryptionToken> paramEncryptionTokenSet, byte[] paramArrayOfByte) throws TechnicalConnectorException;
 
-   /** @deprecated */
    @Deprecated
-   byte[] seal(byte[] var1, SecretKey var2, String var3) throws TechnicalConnectorException;
+   byte[] seal(byte[] paramArrayOfByte, SecretKey secretKey, String base64encodedSymKekId) throws TechnicalConnectorException;
 
-   /** @deprecated */
    @Deprecated
-   byte[] seal(Set<EncryptionToken> var1, byte[] var2, SecretKey var3, String var4) throws TechnicalConnectorException;
+   byte[] seal(Set<EncryptionToken> paramEncryptionTokenSet, byte[] content, SecretKey secretKey, String base64encodedSymKekId) throws TechnicalConnectorException;
 
-   byte[] seal(Crypto.SigningPolicySelector var1, EncryptionToken var2, byte[] var3) throws TechnicalConnectorException;
+   byte[] seal(SigningPolicySelector type, KeyResult symmKey, byte[] content) throws TechnicalConnectorException;
 
-   byte[] seal(Crypto.SigningPolicySelector var1, Set<EncryptionToken> var2, byte[] var3) throws TechnicalConnectorException;
+   byte[] seal(SigningPolicySelector type, EncryptionToken encryptionToken, byte[] content) throws TechnicalConnectorException;
 
-   byte[] seal(Crypto.SigningPolicySelector var1, KeyResult var2, byte[] var3) throws TechnicalConnectorException;
+   byte[] seal(SigningPolicySelector type, Set<EncryptionToken> paramEncryptionTokenSet, byte[] content) throws TechnicalConnectorException;
 
-   byte[] seal(Crypto.SigningPolicySelector var1, Set<EncryptionToken> var2, KeyResult var3, byte[] var4) throws TechnicalConnectorException;
+   byte[] seal(SigningPolicySelector type, Set<EncryptionToken> paramEncryptionTokenSet, KeyResult symmKey, byte[] content) throws TechnicalConnectorException;
 
-   /** @deprecated */
    @Deprecated
-   byte[] unseal(byte[] var1) throws UnsealConnectorException, TechnicalConnectorException;
+   byte[] unseal(byte[] protectedMessage) throws UnsealConnectorException, TechnicalConnectorException;
 
-   /** @deprecated */
    @Deprecated
-   byte[] unsealForUnknown(SecretKey var1, byte[] var2) throws TechnicalConnectorException;
+   byte[] unsealForUnknown(SecretKey key, byte[] protectedMessage) throws TechnicalConnectorException;
 
-   UnsealedData unseal(Crypto.SigningPolicySelector var1, byte[] var2) throws TechnicalConnectorException;
+   UnsealedData unseal(Crypto.SigningPolicySelector type, byte[] protectedMessage) throws TechnicalConnectorException;
 
-   UnsealedData unseal(Crypto.SigningPolicySelector var1, KeyResult var2, byte[] var3) throws TechnicalConnectorException;
+   UnsealedData unseal(Crypto.SigningPolicySelector type, KeyResult symmKey, byte[] protectedMessage) throws TechnicalConnectorException;
 
-   /** @deprecated */
    @Deprecated
    Key generateSecretKey() throws TechnicalConnectorException;
 
-   /** @deprecated */
    @Deprecated
    Key getSymmKey();
 

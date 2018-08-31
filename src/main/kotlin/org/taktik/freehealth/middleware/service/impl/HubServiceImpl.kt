@@ -57,10 +57,10 @@ import org.taktik.connector.business.therlink.domain.TherapeuticLink
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
-import org.taktik.freehealth.middleware.domain.Consent
-import org.taktik.freehealth.middleware.domain.HcPartyConsent
-import org.taktik.freehealth.middleware.domain.Patient
-import org.taktik.freehealth.middleware.domain.TransactionSummary
+import org.taktik.freehealth.middleware.domain.consent.Consent
+import org.taktik.freehealth.middleware.domain.hub.HcPartyConsent
+import org.taktik.freehealth.middleware.domain.common.Patient
+import org.taktik.freehealth.middleware.domain.hub.TransactionSummary
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.common.AuthorDto
 import org.taktik.freehealth.middleware.dto.common.Gender

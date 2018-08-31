@@ -74,10 +74,10 @@ import org.taktik.connector.business.recipe.utils.KmehrHelper
 import org.taktik.connector.business.recipe.utils.KmehrValidator
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.freehealth.middleware.MyTestsConfiguration
-import org.taktik.freehealth.middleware.domain.CompoundPrescription
-import org.taktik.freehealth.middleware.domain.Medication
-import org.taktik.freehealth.middleware.domain.Patient
-import org.taktik.freehealth.middleware.domain.RegimenItem
+import org.taktik.freehealth.middleware.domain.recipe.CompoundPrescription
+import org.taktik.freehealth.middleware.domain.recipe.Medication
+import org.taktik.freehealth.middleware.domain.common.Patient
+import org.taktik.freehealth.middleware.domain.recipe.RegimenItem
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils
@@ -86,7 +86,6 @@ import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications
 import java.io.ByteArrayOutputStream
 import java.math.BigDecimal
 import java.time.LocalDateTime
-import java.util.Date
 import java.util.Properties
 import java.util.UUID
 import javax.xml.bind.JAXBContext
@@ -131,10 +130,10 @@ class RecipeServiceImplTest {
     fun validatePrescription() {
         val medication = compoundPrescriptionP2()
         val kmehrPrescription = recipeService.getKmehrPrescription(
-	        Patient().apply { firstName = "Antoine"; lastName = "Duchateau"; dateOfBirth = 19740104; ssin = "74010414733" },
-	        HealthcareParty(firstName = "Antoine", lastName = "Baudoux", ssin = "79121430944", nihii = "11478761004", addresses = mutableSetOf(taktik())),
-	        listOf(medication),
-	        LocalDateTime.now())
+            Patient().apply { firstName = "Antoine"; lastName = "Duchateau"; dateOfBirth = 19740104; ssin = "74010414733" },
+            HealthcareParty(firstName = "Antoine", lastName = "Baudoux", ssin = "79121430944", nihii = "11478761004", addresses = mutableSetOf(taktik())),
+            listOf(medication),
+            LocalDateTime.now())
 
 	    validator.validatePrescription(kmehrPrescription, listOf(medication))
     }
@@ -154,10 +153,10 @@ class RecipeServiceImplTest {
 			})
 		})
 		val kmehrPrescription = recipeService.getKmehrPrescription(
-			Patient().apply { firstName = "Antoine"; lastName = "Duchateau"; dateOfBirth = 19740104; ssin = "74010414733" },
-			HealthcareParty(firstName = "Antoine", lastName = "Baudoux", ssin = "79121430944", nihii = "11478761004", addresses = mutableSetOf(taktik()) ),
-			medications,
-			LocalDateTime.now())
+            Patient().apply { firstName = "Antoine"; lastName = "Duchateau"; dateOfBirth = 19740104; ssin = "74010414733" },
+            HealthcareParty(firstName = "Antoine", lastName = "Baudoux", ssin = "79121430944", nihii = "11478761004", addresses = mutableSetOf(taktik()) ),
+            medications,
+            LocalDateTime.now())
 
 		val quantities = kmehrPrescription.folder.transaction.heading.items.get(0).regimen.daynumbersAndQuantitiesAndDaytimes
 			.filter { it is RecipeadministrationquantityType }

@@ -18,8 +18,8 @@
 
 package org.taktik.freehealth.middleware.format.efact
 
-import org.taktik.freehealth.middleware.domain.InsuranceParameter
-import org.taktik.freehealth.middleware.domain.Patient
+import org.taktik.freehealth.middleware.domain.common.InsuranceParameter
+import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.dto.efact.InvoiceItem
 import org.taktik.freehealth.middleware.dto.efact.InvoiceSender

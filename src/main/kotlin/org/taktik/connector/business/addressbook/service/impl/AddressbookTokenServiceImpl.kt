@@ -42,7 +42,6 @@ import java.util.HashMap
 import javax.xml.soap.SOAPException
 
 class AddressbookTokenServiceImpl @Throws(TechnicalConnectorException::class) constructor(
-    private val sessionValidator: SessionValidator,
     private val ehealthReplyValidator: EhealthReplyValidator
 ) : AddressbookTokenService {
 
@@ -81,7 +80,6 @@ class AddressbookTokenServiceImpl @Throws(TechnicalConnectorException::class) co
     @Throws(TechnicalConnectorException::class)
     private operator fun <T : StatusResponseType> invoke(token: SAMLToken, request: RequestType, clazz: Class<T>): T {
         try {
-            this.sessionValidator.validateToken(token)
             val service = TokenServiceFactory.getService(token).apply {
                 setPayload(request)
                 setSoapAction(soapActions[clazz])

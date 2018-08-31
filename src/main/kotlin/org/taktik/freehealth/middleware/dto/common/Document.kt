@@ -20,7 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto.common
 
-import org.taktik.freehealth.middleware.domain.SigningValue
+import org.taktik.freehealth.middleware.domain.common.SigningValue
 import java.io.Serializable
 
 /**

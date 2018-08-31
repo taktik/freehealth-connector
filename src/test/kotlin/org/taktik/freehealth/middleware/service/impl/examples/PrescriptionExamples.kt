@@ -1,17 +1,17 @@
 package org.taktik.icure.be.ehealth.logic.recipe.impl.examples
 
-import org.taktik.freehealth.middleware.domain.Compound
-import org.taktik.freehealth.middleware.domain.CompoundPrescription
-import org.taktik.freehealth.middleware.domain.Duration
-import org.taktik.freehealth.middleware.domain.KmehrQuantity
-import org.taktik.freehealth.middleware.domain.Medication
-import org.taktik.freehealth.middleware.domain.MedicationRenewal
-import org.taktik.freehealth.middleware.domain.Medicinalproduct
-import org.taktik.freehealth.middleware.domain.Patient
-import org.taktik.freehealth.middleware.domain.RegimenItem
-import org.taktik.freehealth.middleware.domain.ReimbursementInstructions
-import org.taktik.freehealth.middleware.domain.Substance
-import org.taktik.freehealth.middleware.domain.Substanceproduct
+import org.taktik.freehealth.middleware.domain.recipe.Compound
+import org.taktik.freehealth.middleware.domain.recipe.CompoundPrescription
+import org.taktik.freehealth.middleware.domain.recipe.Duration
+import org.taktik.freehealth.middleware.domain.recipe.KmehrQuantity
+import org.taktik.freehealth.middleware.domain.recipe.Medication
+import org.taktik.freehealth.middleware.domain.recipe.MedicationRenewal
+import org.taktik.freehealth.middleware.domain.recipe.Medicinalproduct
+import org.taktik.freehealth.middleware.domain.common.Patient
+import org.taktik.freehealth.middleware.domain.recipe.RegimenItem
+import org.taktik.freehealth.middleware.domain.recipe.ReimbursementInstructions
+import org.taktik.freehealth.middleware.domain.recipe.Substance
+import org.taktik.freehealth.middleware.domain.recipe.Substanceproduct
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.AddressType
 import org.taktik.freehealth.middleware.dto.Code
@@ -22,10 +22,7 @@ import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.service.impl.examples.PrescriptionExample
 import org.taktik.freehealth.utils.FuzzyValues
 import java.math.BigDecimal
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.util.Date
 
 /**
  * prescription examples
@@ -368,7 +365,8 @@ fun erythromycineFormularyCompoundMedication(): Medication {
                 code = "0589028").apply {
                 label = mutableMapOf("nl" to erythromycine, "fr" to erythromycine)
             }
-            quantity = KmehrQuantity(BigDecimal(300), Code("CD-UNIT", "ml"))
+            quantity =
+                KmehrQuantity(BigDecimal(300), Code("CD-UNIT", "ml"))
         }
         beginMoment = FuzzyValues.getFuzzyDate(LocalDateTime.now().plusDays(1))
         instructionForPatient = "één - tot tweemaal per dag aanbrengen"
@@ -384,7 +382,8 @@ fun betnelanCetomacrCremeCompoundMedication(): Medication {
                     intendedcds = listOf(Code("CD-DRUG-CNK", "0103861"))
                     intendedname = "BETNELAN V CREME 1 X 30 G  0,1%"
                 }
-                quantity = KmehrQuantity(BigDecimal(30), Code("CD-UNIT", "gm"))
+                quantity =
+                    KmehrQuantity(BigDecimal(30), Code("CD-UNIT", "gm"))
             })
             compounds.add(Compound().apply {
                 substanceProduct = Substance().apply {
@@ -392,7 +391,8 @@ fun betnelanCetomacrCremeCompoundMedication(): Medication {
                         label = mutableMapOf("nl" to cetomacr, "fr" to cetomacr)
                     }
                 }
-                quantity = KmehrQuantity(BigDecimal(30), Code("CD-UNIT", "gm"))
+                quantity =
+                    KmehrQuantity(BigDecimal(30), Code("CD-UNIT", "gm"))
             })
         }
 
@@ -404,7 +404,8 @@ fun betnelanCetomacrCremeCompoundMedication(): Medication {
 fun aceclofenac10daysSubstanceVMPGROUP(): Medication {
     return aceclofenacSubstanceVMPGROUP().apply {
         substanceProduct!!.intendedname = "aceclofenac oraal 100 mg"
-        duration = Duration().apply { value = 10.0; unit = Code("CD-TIMEUNIT", "d") }
+        duration = Duration()
+            .apply { value = 10.0; unit = Code("CD-TIMEUNIT", "d") }
         instructionForPatient = "1 tablet bij ontbijt, 1 tablet bij avondmaal gedurende 10 dagen"
     }
 }

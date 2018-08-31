@@ -18,7 +18,7 @@
 
 package org.taktik.freehealth.middleware.dto.efact
 
-import org.taktik.freehealth.middleware.domain.Patient
+import org.taktik.freehealth.middleware.domain.common.Patient
 import java.util.LinkedList
 
 class Invoice {

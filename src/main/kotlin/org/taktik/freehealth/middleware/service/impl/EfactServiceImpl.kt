@@ -45,9 +45,7 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
     private val genAsyncService = GenAsyncServiceImpl("invoicing")
 
     override fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch): EfactSendResponse {
-        val samlToken =
-            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
 
@@ -55,8 +53,7 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
 
         requireNotNull(keystoreId) { "Keystore id cannot be null" }
         requireNotNull(tokenId) { "Token id cannot be null" }
-        require(batch.numericalRef?.let { it <= 9999999999L }
-                    ?: false) { "numericalRef is too long (10 positions max)" }
+        require(batch.numericalRef?.let { it <= 9999999999L } ?: false) { "numericalRef is too long (10 positions max)" }
         requireNotNull(batch.sender) { "Sender cannot be null" }
         requireNotNull(batch.batchRef) { "BatchRef cannot be null" }
         requireNotNull(batch.uniqueSendNumber) { "UniqueSendNumber cannot be null" }
