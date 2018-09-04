@@ -11,6 +11,7 @@ import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.GetResponse
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.genericasync.builders.BuilderFactory
 import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
@@ -22,6 +23,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.handler.domain.WsAddressingHeader
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorIOUtils
+import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.efact.EfactMessage
 import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
 import org.taktik.freehealth.middleware.dto.efact.InvoicesBatch
@@ -310,11 +312,13 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
 
     private fun buildOriginType(nihii: String, ssin: String, firstName: String, lastName: String): OrigineType =
         OrigineType().apply {
+            val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+
             `package` = PackageType().apply {
                 name = ValueRefString().apply { value = config.getProperty("genericasync.invoicing.package.name") }
                 license = LicenseType().apply {
-                    username = config.getProperty("mycarenet.license.username")
-                    password = config.getProperty("mycarenet.license.password")
+                    this.username = principal?.mcnLicense ?: config.getProperty("mycarenet.license.username")
+                    this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
                 }
             }
             careProvider = CareProviderType().apply {

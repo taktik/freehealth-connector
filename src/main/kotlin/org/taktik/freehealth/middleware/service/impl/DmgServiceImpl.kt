@@ -68,6 +68,7 @@ import com.google.gson.reflect.TypeToken
 import org.apache.commons.lang.ArrayUtils
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
+import org.springframework.security.core.context.SecurityContextHolder
 import org.taktik.connector.business.common.domain.Patient
 import org.taktik.connector.business.common.util.HandlerChainUtil
 import org.taktik.connector.business.dmg.builders.ResponseObjectBuilderFactory
@@ -106,6 +107,7 @@ import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.connector.technical.ws.domain.GenericRequest
 import org.taktik.connector.technical.ws.domain.TokenType
+import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.common.BusinessError
 import org.taktik.freehealth.middleware.service.DmgService
 import org.taktik.freehealth.middleware.service.STSService
@@ -185,6 +187,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         val careReceiver = CareReceiverId(null).apply { mutuality = oa }
 
+        val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+
         val mcRequest = RegisterToMycarenetServiceRequest().apply {
             this.commonInput = be.fgov.ehealth.mycarenet.commons.core.v2.CommonInputType().apply {
                 this.request = be.fgov.ehealth.mycarenet.commons.core.v2.RequestType().apply {
@@ -196,8 +200,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                             be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
                                 .apply { this.value = config.getProperty("mcn.registration.package.name") }
                         this.license = be.fgov.ehealth.mycarenet.commons.core.v2.LicenseType().apply {
-                            this.username = config.getProperty("mycarenet.license.username")
-                            this.password = config.getProperty("mycarenet.license.password")
+                            this.username = principal?.mcnLicense ?: config.getProperty("mycarenet.license.username")
+                            this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
                         }
                     }
                     this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
@@ -300,13 +304,15 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 this.isIsTest = isTest
             }
             this.origin = OriginType().apply {
+                val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+
                 this.`package` = be.fgov.ehealth.globalmedicalfile.core.v1.PackageType().apply {
                     this.name =
                         be.fgov.ehealth.globalmedicalfile.core.v1.ValueRefString()
                             .apply { this.value = config.getProperty("genericasync.dmg.package.name") }
                     this.license = be.fgov.ehealth.globalmedicalfile.core.v1.LicenseType().apply {
-                        this.username = config.getProperty("mycarenet.license.username")
-                        this.password = config.getProperty("mycarenet.license.password")
+                        this.username = principal?.mcnLicense ?: config.getProperty("mycarenet.license.username")
+                        this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
                     }
                 }
                 this.careProvider = be.fgov.ehealth.globalmedicalfile.core.v1.CareProviderType().apply {

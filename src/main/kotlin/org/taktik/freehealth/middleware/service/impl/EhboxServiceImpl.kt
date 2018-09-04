@@ -71,7 +71,7 @@ class EhboxServiceImpl(val stsService: STSService) : EhboxService {
         tokenId: UUID,
         passPhrase: String,
         boxId: String,
-        messageId: String
+        messageId: String, alternateKeystoreId: UUID?, alternatePassphrase: String?
     ): Message {
         val samlToken = getSamlToken(tokenId, keystoreId, passPhrase)
         val messageRequest = MessageRequestType().apply {
@@ -80,8 +80,8 @@ class EhboxServiceImpl(val stsService: STSService) : EhboxService {
         }
         val fullMessage = freehealthEhboxService.getFullMessage(samlToken, messageRequest)
         return consultationMessageBuilder.buildFullMessage(
-            stsService.getKeyStore(keystoreId, passPhrase)!!,
-            passPhrase,
+            stsService.getKeyStore(alternateKeystoreId ?: keystoreId, alternatePassphrase ?: passPhrase)!!,
+            alternatePassphrase ?: passPhrase,
             fullMessage
         ).toMessageDto() ?: ErrorMessage(title = "Unknown error")
     }
@@ -116,7 +116,9 @@ class EhboxServiceImpl(val stsService: STSService) : EhboxService {
         tokenId: UUID,
         passPhrase: String,
         boxId: String,
-        limit: Int?
+        limit: Int?,
+        alternateKeystoreId: UUID?,
+        alternatePassphrase: String?
     ): List<Message> {
         val samlToken = getSamlToken(tokenId, keystoreId, passPhrase)
         val messagesListRequest = GetMessagesListRequest()
@@ -130,10 +132,8 @@ class EhboxServiceImpl(val stsService: STSService) : EhboxService {
             val response = freehealthEhboxService.getMessageList(samlToken, messagesListRequest)
             result.addAll(response.messages.mapNotNull {
                 consultationMessageBuilder.buildMessage(
-                    stsService.getKeyStore(
-                        keystoreId,
-                        passPhrase
-                    )!!, passPhrase, it
+                    stsService.getKeyStore(alternateKeystoreId ?: keystoreId, alternatePassphrase ?: passPhrase)!!,
+                    alternatePassphrase ?: passPhrase, it
                 ).toMessageDto()
             })
             if (response.messages.size < 100 || (limit != null && result.size >= limit)) {
