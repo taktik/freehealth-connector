@@ -15,6 +15,7 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.chapterIV.builders.impl.ResponseBuilderImpl
 import org.taktik.connector.business.chapterIV.domain.ChapterIVBuilderResponse
@@ -104,6 +105,7 @@ import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
+import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.common.messages.AbstractMessage
 import org.taktik.freehealth.middleware.domain.common.messages.WarningMessage
 import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
@@ -155,13 +157,15 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
 
     private fun buildOriginType(nihii: String, ssin: String, firstName: String, lastName: String): OriginType =
         OriginType().apply {
+            val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+
             `package` = be.fgov.ehealth.chap4.core.v1.PackageType().apply {
                 name =
                     be.fgov.ehealth.chap4.core.v1.ValueRefString()
                         .apply { value = config.getProperty("genericasync.invoicing.package.name") }
                 license = be.fgov.ehealth.chap4.core.v1.LicenseType().apply {
-                    username = config.getProperty("mycarenet.license.username")
-                    password = config.getProperty("mycarenet.license.password")
+                    username = principal?.mcnLicense ?: config.getProperty("mycarenet.license.username")
+                    password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
                 }
             }
             careProvider = be.fgov.ehealth.chap4.core.v1.CareProviderType().apply {

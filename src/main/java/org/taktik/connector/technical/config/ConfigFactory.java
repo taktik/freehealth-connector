@@ -24,8 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ConfigFactory {
-   public static final String SYSTEM_PROP_CONFIG_LOCATION = "org.taktik.connector.technical.config.location";
-   public static final String DEFAULT_CONFIG = "/acpt/org.taktik.connector.technical.properties";
    private static final Logger LOG = LoggerFactory.getLogger(ConfigFactory.class);
    private static final Map<Set<String>, ConfigValidator> CACHE = new HashMap();
    private static String configLocation = "/acpt/org.taktik.connector.technical.properties";

@@ -41,12 +41,12 @@ class EhboxController(val ehboxService: EhboxService) {
         ehboxService.getInfos(keystoreId, tokenId, passPhrase)
 
     @GetMapping("/{boxId}")
-    fun loadMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable boxId: String, @RequestParam limit: Int?): List<Message> =
-        ehboxService.loadMessages(keystoreId, tokenId, passPhrase, boxId, limit)
+    fun loadMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable boxId: String, @RequestParam limit: Int?, @RequestParam alternateKeystoreId: UUID? = null, @RequestParam alternateKeystorePassPhrase: String? = null): List<Message> =
+        ehboxService.loadMessages(keystoreId, tokenId, passPhrase, boxId, limit, alternateKeystoreId, alternateKeystorePassPhrase)
 
     @GetMapping("/{boxId}/{messageId}")
-    fun getFullMessage(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable boxId: String, @PathVariable messageId: String): Message =
-        ehboxService.getFullMessage(keystoreId, tokenId, passPhrase, boxId, messageId)
+    fun getFullMessage(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @PathVariable boxId: String, @PathVariable messageId: String, @RequestParam alternateKeystoreId: UUID? = null, @RequestParam alternateKeystorePassPhrase: String? = null): Message =
+        ehboxService.getFullMessage(keystoreId, tokenId, passPhrase, boxId, messageId, alternateKeystoreId, alternateKeystorePassPhrase)
 
     @PostMapping("")
     fun sendMessage(

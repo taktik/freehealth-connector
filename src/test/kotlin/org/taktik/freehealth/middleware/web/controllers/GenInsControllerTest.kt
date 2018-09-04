@@ -10,6 +10,8 @@ import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import java.io.File
@@ -35,7 +37,8 @@ class GenInsControllerTest : EhealthTest() {
     @Test
     fun getGeneralInsurability() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val genIns = this.restTemplate.getForObject("http://localhost:$port/genins/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}&passPhrase={passPhrase}", String::class.java, passPhrase)
+        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}&passPhrase={passPhrase}",
+                                                HttpMethod.GET, HttpEntity<Void>(createHeaders("0c381380-88fa-76da-24b7-0f99250031d6", "T@kt1k1Cur3")), String::class.java, passPhrase)
         assertThat(genIns != null)
     }
 }
