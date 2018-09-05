@@ -76,10 +76,10 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @RequestParam hcpLastName: String,
         @PathVariable patientSsin: String,
         @PathVariable civicsVersion: String,
-        @RequestParam paragraph: String?,
-        @RequestParam start: Long?,
-        @RequestParam end: Long?,
-        @RequestParam reference: String?) = chapter4Service.agreementRequestsConsultation(
+        @RequestParam(required = false) paragraph: String? = null,
+        @RequestParam(required = false) start: Long? = null,
+        @RequestParam(required = false) end: Long? = null,
+        @RequestParam(required = false) reference: String? = null) = chapter4Service.agreementRequestsConsultation(
         keystoreId = keystoreId,
         tokenId = tokenId,
         passPhrase = passPhrase,
