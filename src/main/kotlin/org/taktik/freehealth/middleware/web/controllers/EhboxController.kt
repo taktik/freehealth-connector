@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.taktik.freehealth.middleware.dto.common.GenericResult
 import org.taktik.freehealth.middleware.dto.ehbox.BoxInfo
 import org.taktik.freehealth.middleware.dto.ehbox.DocumentMessage
 import org.taktik.freehealth.middleware.dto.ehbox.Message
@@ -68,10 +69,10 @@ class EhboxController(val ehboxService: EhboxService) {
     )
 
     @PostMapping("/move/from/{source}/to/{destination}")
-    fun moveMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestBody messageIds: List<String>, @PathVariable source: String, @PathVariable destination: String): Boolean =
-        ehboxService.moveMessages(keystoreId, tokenId, passPhrase, messageIds, source, destination)
+    fun moveMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestBody messageIds: List<String>, @PathVariable source: String, @PathVariable destination: String): GenericResult =
+        ehboxService.moveMessages(keystoreId, tokenId, passPhrase, messageIds, source, destination).let { GenericResult(it) }
 
     @PostMapping("/move/from/{source}")
-    fun deleteMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestBody messageIds: List<String>, @PathVariable source: String): Boolean =
-        ehboxService.deleteMessages(keystoreId, tokenId, passPhrase, messageIds, source)
+    fun deleteMessages(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestBody messageIds: List<String>, @PathVariable source: String): GenericResult =
+        ehboxService.deleteMessages(keystoreId, tokenId, passPhrase, messageIds, source).let { GenericResult(it) }
 }

@@ -158,7 +158,8 @@ class EhboxServiceImpl(val stsService: STSService) : EhboxService {
         mmr.source = source
         mmr.destination = destination
         mmr.messageIds.addAll(messageIds)
-        return freehealthEhboxService.moveMessage(samlToken, mmr).status?.code == "100"
+        val moveMessageResult = freehealthEhboxService.moveMessage(samlToken, mmr)
+        return moveMessageResult.status?.code == "100"
     }
 
     override fun deleteMessages(
