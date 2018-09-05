@@ -60,4 +60,16 @@ open class EhealthTest {
         val tokenId = res.tokenId
         return Triple(keystoreId, tokenId.toString(), passPhrase)
     }
+
+    protected fun createHeaders(username: String, password: String): HttpHeaders {
+        return object : HttpHeaders() {
+            init {
+                val auth = "$username:$password"
+                val encodedAuth = Base64.getEncoder().encode(
+                    auth.toByteArray(Charsets.US_ASCII))
+                val authHeader = "Basic " + String(encodedAuth)
+                set("Authorization", authHeader)
+            }
+        }
+    }
 }

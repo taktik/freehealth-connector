@@ -85,6 +85,7 @@ import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.mycarenet.attest.domain.AttestBuilderResponse
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
@@ -107,6 +108,7 @@ import org.taktik.connector.technical.utils.CertificateParser
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
+import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.MycarenetError
 import org.taktik.freehealth.middleware.dto.eattest.EattestAcknowledgeType
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
@@ -624,7 +626,9 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                             )
                     blob.messageName = "E-ATTEST"
 
-                    val packageInfo = McnConfigUtil.retrievePackageInfo("attest")
+                    val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+                    val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword)
+
                     this.commonInput = CommonInputType().apply {
                         request =
                             be.fgov.ehealth.mycarenet.commons.core.v3.RequestType()

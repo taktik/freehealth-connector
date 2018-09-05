@@ -41,12 +41,15 @@ import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsXmlOrFla
 import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.MarshallerHelper
+import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import org.taktik.freehealth.middleware.mapper.toInsurabilityInfoDto
 import org.taktik.freehealth.middleware.service.GenInsService
@@ -81,7 +84,9 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                 ?: throw IllegalArgumentException("Cannot obtain token for Genins operations")
         assert(patientSsin != null || io != null && ioMembership != null)
 
-        val packageInfo = McnConfigUtil.retrievePackageInfo("genins")
+        val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+
+        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword)
         val request = GetInsurabilityAsXmlOrFlatRequestType().apply {
             recordCommonInput =
                 RecordCommonInputType().apply {

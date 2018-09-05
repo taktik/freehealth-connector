@@ -27,7 +27,15 @@ import java.util.*
 
 interface EhboxService {
     fun getInfos(keystoreId: UUID, tokenId: UUID, passPhrase: String): BoxInfo
-    fun getFullMessage(keystoreId: UUID, tokenId: UUID, passPhrase: String, boxId: String, messageId: String): Message
+    fun getFullMessage(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        boxId: String,
+        messageId: String,
+        alternateKeystoreId: UUID? = null,
+        alternatePassphrase : String? = null
+                      ): Message
     fun sendMessage(
         keystoreId: UUID,
         tokenId: UUID,
@@ -38,7 +46,15 @@ interface EhboxService {
         readReceipt: Boolean
     ): Boolean
 
-    fun loadMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, boxId: String, limit: Int?): List<Message>
+    fun loadMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        boxId: String,
+        limit: Int?,
+        alternateKeystoreId: UUID? = null,
+        alternatePassphrase : String? = null
+                    ): List<Message>
     fun moveMessages(
         keystoreId: UUID,
         tokenId: UUID,
