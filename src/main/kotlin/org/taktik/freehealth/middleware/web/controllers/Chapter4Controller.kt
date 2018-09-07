@@ -45,18 +45,24 @@ import java.util.*
 @RestController
 @RequestMapping("/chap4")
 class Chapter4Controller(private val chapter4Service: Chapter4Service) {
-    val log = LoggerFactory.getLogger(this.javaClass)
+    val log = LoggerFactory.getLogger(this .javaClass)
 
     @GetMapping("/sam/docpreviews/{chapterName}/{paragraphName}")
-    fun getAddedDocuments(chapterName: String, paragraphName: String): List<AddedDocumentPreview> =
+    fun getAddedDocuments(
+        @PathVariable chapterName: String,
+        @PathVariable paragraphName: String): List<AddedDocumentPreview> =
         chapter4Service.getAddedDocuments(chapterName, paragraphName)
 
     @GetMapping("/sam/search/{searchString}/{language}")
-    fun findParagraphs(searchString: String, language: String): List<ParagraphPreview> =
+    fun findParagraphs(
+        @PathVariable searchString: String,
+        @PathVariable language: String): List<ParagraphPreview> =
         chapter4Service.findParagraphs(searchString, language)
 
     @GetMapping("/sam/bycnk/{cnk}/{language}")
-    fun findParagraphsWithCnk(cnk: Long, language: String): List<ParagraphPreview> =
+    fun findParagraphsWithCnk(
+        @PathVariable cnk: Long,
+        @PathVariable language: String): List<ParagraphPreview> =
         chapter4Service.findParagraphsWithCnk(cnk, language)
 
     @GetMapping("/consult/{patientSsin}/{civicsVersion}")
@@ -70,10 +76,10 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @RequestParam hcpLastName: String,
         @PathVariable patientSsin: String,
         @PathVariable civicsVersion: String,
-        @RequestParam paragraph: String?,
-        @RequestParam start: Long?,
-        @RequestParam end: Long?,
-        @RequestParam reference: String?) = chapter4Service.agreementRequestsConsultation(
+        @RequestParam(required = false) paragraph: String? = null,
+        @RequestParam(required = false) start: Long? = null,
+        @RequestParam(required = false) end: Long? = null,
+        @RequestParam(required = false) reference: String? = null) = chapter4Service.agreementRequestsConsultation(
         keystoreId = keystoreId,
         tokenId = tokenId,
         passPhrase = passPhrase,

@@ -11,10 +11,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
-import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
 import java.io.File
 import java.time.LocalDateTime
 import org.taktik.connector.business.domain.chapter4.AgreementResponse
+import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
+import java.time.Instant
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
@@ -22,6 +23,9 @@ import org.taktik.connector.business.domain.chapter4.AgreementResponse
 class Chapter4ControllerTest : EhealthTest() {
     @LocalServerPort
     private val port: Int = 0
+    private val nihii : String = "18785633004"
+    private val firstName : String = "Maxime"
+    private val lastName : String = "Mennechet"
 
     private val nisses = mapOf(100 to listOf("73052005540", "84101727579", "39091706120", "29041433972", "97061960828", "09031001094"),
         300 to listOf("17031506487", "88022631093", "87052226861", "63042408660", "37061311820", "87120924439"),
@@ -50,10 +54,11 @@ class Chapter4ControllerTest : EhealthTest() {
     @Test
     fun scenario01() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val now = LocalDateTime.now()
+        val now = Instant.now().toEpochMilli()
 
         val results = getNisses(4).map {
-            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/${"3"}?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName=$firstName1&hcpLastName=$lastName1&paragraph=${"5090000"}$&start$now&end=$now&reference=${"5090000"}",AgreementResponse::class.java)
+            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/3?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=$nihii" +
+                "&hcpSsin=$ssin1&hcpFirstName=$firstName&hcpLastName=$lastName&paragraph=5090000$&start=$now&end=$now&reference=null",AgreementResponse::class.java)
         }
 
         println("scenario 01 \n====================")
@@ -61,6 +66,7 @@ class Chapter4ControllerTest : EhealthTest() {
             Assertions.assertThat(it.errors).isNotEmpty
             Assertions.assertThat(it.errors).isEqualTo("180")
         }
+
     }
 
     /*
@@ -74,18 +80,24 @@ class Chapter4ControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
 
-        val paragraph = this.restTemplate!!.getForObject("http://localhost:$port/sam/search/5090000/fr", Array<ParagraphPreview>::class.java)
-        val civic = paragraph[0].paragraphVersion
-        val titre = paragraph[0].paragraphName
-
+        val civic = "3"
         val results = getNisses(4).map {
-            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName=$firstName1&hcpLastName=$lastName1&patientSsin=$it&civicsVersion=$civic&paragraph=$titre$&start$now&end=$now&reference=${""}",AgreementResponse::class.java)
+            this.restTemplate.getForObject("http://localhost:$port/chap4/$it/$civic?keystoreId=$keystoreId" +
+                "&tokenId=$tokenId" +
+                "&passPhrase=$passPhrase" +
+                "&hcpNihii=$nihii" +
+                "&hcpSsin=$ssin1" +
+                "&hcpFirstName=$firstName" +
+                "&hcpLastName=$lastName" +
+                "&paragraph=null" +
+                "&start=${now.minusYears(1)}" +
+                "&end=$now" +
+                "&reference=null",AgreementResponse::class.java)
         }
 
         println("scenario 02 \n====================")
-        results.forEachIndexed { index, it ->
 
-        }
+
     }
 
     /*
@@ -99,17 +111,88 @@ class Chapter4ControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
 
-        val paragraph = this.restTemplate!!.getForObject("http://localhost:$port/sam/search/5090000/fr", Array<ParagraphPreview>::class.java)
-        val civic = paragraph[0].paragraphVersion
-        val titre = paragraph[0].paragraphName
+        val paragraphDesc = this.restTemplate!!.getForObject("http://localhost:$port/chap4/sam/search/${"2280100"}/${"fr"}", Array<ParagraphPreview>::class.java)
+        val civic = paragraphDesc.first().paragraphVersion
+        val paragraph = paragraphDesc.first().paragraphName
 
         val results = getNisses(4).map {
-            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName=$firstName1&hcpLastName=$$lastName1&patientSsin=$it&civicsVersion=$civic&paragraph=$titre$&start$now&end=$now&reference=${""}",AgreementResponse::class.java)
+            this.restTemplate.getForObject("http://localhost:$port/chap4/$it/$civic?keystoreId=$keystoreId" +
+                "&tokenId=$tokenId" +
+                "&passPhrase=$passPhrase" +
+                "&hcpNihii=$nihii" +
+                "&hcpSsin=$ssin1" +
+                "&hcpFirstName=$firstName" +
+                "&hcpLastName=$lastName" +
+                "&paragraph=$paragraph" +
+                "&start=${LocalDateTime.of(2016, 5, 1, 0, 0, 0)}" +
+                "&end=${LocalDateTime.of(2016, 7, 31, 0, 0, 0)}" +
+                "&reference=null",AgreementResponse::class.java)
         }
+
+
 
         println("scenario 03 \n====================")
-        results.forEachIndexed { index, it ->
 
+    }
+
+    /*
+        Scénario 4 – – NISS 4 : Consultation pour un patient qui a plusieurs accords.
+        Objectif : Tester l’envoi d’une consultation d’accord pour un patient qui a plusieurs accords pour la
+        période consultée, et la réception de la réponse.
+        Réponse avec plusieurs accords trouvés.
+     */
+    @Test
+    fun scenario04(){
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val now = LocalDateTime.now()
+
+        val civic = "3"
+        val results = getNisses(4).map {
+            this.restTemplate.getForObject("http://localhost:$port/chap4/$it/$civic?keystoreId=$keystoreId" +
+                "&tokenId=$tokenId" +
+                "&passPhrase=$passPhrase" +
+                "&hcpNihii=$nihii" +
+                "&hcpSsin=$ssin1" +
+                "&hcpFirstName=$firstName" +
+                "&hcpLastName=$lastName" +
+                "&paragraph=null" +
+                "&start=${now.minusYears(1)}"+
+                "&end=$now" +
+                "&reference=null",AgreementResponse::class.java)
         }
+
+
+
+        println("scenario 04 \n====================")
+
+    }
+
+    /*
+        Scénario 5 1 – NISS 1 : Consultation rejetée
+        Objectif : Tester l’envoi d’une consultation d’accord rejetée par l’OA, et la réception de la réponse
+        Reponse : code erreur 181
+     */
+    @Test
+    fun scenario05(){
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val now = LocalDateTime.now()
+
+        val civic = "3"
+        val results = getNisses(4).map {
+            this.restTemplate.getForObject("http://localhost:$port/chap4/$it/$civic?keystoreId=$keystoreId" +
+                "&tokenId=$tokenId" +
+                "&passPhrase=$passPhrase" +
+                "&hcpNihii=$nihii" +
+                "&hcpSsin=$ssin1" +
+                "&hcpFirstName=$firstName" +
+                "&hcpLastName=$lastName" +
+                "&paragraph=null" +
+                "&start=${now.minusYears(1)}"+
+                "&end=$now" +
+                "&reference=null",AgreementResponse::class.java)
+        }
+
+        println("scenario 05 \n====================")
+
     }
 }

@@ -23,7 +23,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 
 @Component
-@ConfigurationProperties("icure.couchdb")
+@ConfigurationProperties("org.taktik.connector.couchdb")
 class CouchDbProperties {
 	var prefix = ""
 	var url = "http://127.0.0.1:5984"
