@@ -52,12 +52,8 @@ class Chapter4ControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
 
-        val paragraph = this.restTemplate!!.getForObject("http://localhost:$port/sam/search/5090000/fr", Array<ParagraphPreview>::class.java)
-        val civic = paragraph[0].paragraphVersion
-        val titre = paragraph[0].paragraphName
-
         val results = getNisses(4).map {
-            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=11478761004&hcpSsin=$ssin1&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientSsin=$it&civicsVersion=$civic&paragraph=$titre$&start$now&end=$now&reference=${"5090000"}",AgreementResponse::class.java)
+            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/${"3"}?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName=$firstName1&hcpLastName=$lastName1&paragraph=${"5090000"}$&start$now&end=$now&reference=${"5090000"}",AgreementResponse::class.java)
         }
 
         println("scenario 01 \n====================")
@@ -83,7 +79,7 @@ class Chapter4ControllerTest : EhealthTest() {
         val titre = paragraph[0].paragraphName
 
         val results = getNisses(4).map {
-            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=11478761004&hcpSsin=$ssin1&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientSsin=$it&civicsVersion=$civic&paragraph=$titre$&start$now&end=$now&reference=${""}",AgreementResponse::class.java)
+            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName=$firstName1&hcpLastName=$lastName1&patientSsin=$it&civicsVersion=$civic&paragraph=$titre$&start$now&end=$now&reference=${""}",AgreementResponse::class.java)
         }
 
         println("scenario 02 \n====================")
@@ -108,7 +104,7 @@ class Chapter4ControllerTest : EhealthTest() {
         val titre = paragraph[0].paragraphName
 
         val results = getNisses(4).map {
-            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=11478761004&hcpSsin=$ssin1&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientSsin=$it&civicsVersion=$civic&paragraph=$titre$&start$now&end=$now&reference=${""}",AgreementResponse::class.java)
+            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName=$firstName1&hcpLastName=$$lastName1&patientSsin=$it&civicsVersion=$civic&paragraph=$titre$&start$now&end=$now&reference=${""}",AgreementResponse::class.java)
         }
 
         println("scenario 03 \n====================")
