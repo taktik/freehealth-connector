@@ -23,9 +23,6 @@ import java.time.Instant
 class Chapter4ControllerTest : EhealthTest() {
     @LocalServerPort
     private val port: Int = 0
-    private val nihii : String = "18785633004"
-    private val firstName : String = "Maxime"
-    private val lastName : String = "Mennechet"
 
     private val nisses = mapOf(100 to listOf("73052005540", "84101727579", "39091706120", "29041433972", "97061960828", "09031001094"),
         300 to listOf("17031506487", "88022631093", "87052226861", "63042408660", "37061311820", "87120924439"),
@@ -57,8 +54,8 @@ class Chapter4ControllerTest : EhealthTest() {
         val now = Instant.now().toEpochMilli()
 
         val results = getNisses(4).map {
-            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/3?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=$nihii" +
-                "&hcpSsin=$ssin1&hcpFirstName=$firstName&hcpLastName=$lastName&paragraph=5090000$&start=$now&end=$now&reference=null",AgreementResponse::class.java)
+            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/3?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=$nihii1" +
+                "&hcpSsin=$ssin1&hcpFirstName=$firstName1&hcpLastName=$lastName1&paragraph=5090000$&start=$now&end=$now&reference=null",AgreementResponse::class.java)
         }
 
         println("scenario 01 \n====================")
@@ -85,10 +82,10 @@ class Chapter4ControllerTest : EhealthTest() {
             this.restTemplate.getForObject("http://localhost:$port/chap4/$it/$civic?keystoreId=$keystoreId" +
                 "&tokenId=$tokenId" +
                 "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii" +
+                "&hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
-                "&hcpFirstName=$firstName" +
-                "&hcpLastName=$lastName" +
+                "&hcpFirstName=$firstName1" +
+                "&hcpLastName=$lastName1" +
                 "&paragraph=null" +
                 "&start=${now.minusYears(1)}" +
                 "&end=$now" +
@@ -119,10 +116,10 @@ class Chapter4ControllerTest : EhealthTest() {
             this.restTemplate.getForObject("http://localhost:$port/chap4/$it/$civic?keystoreId=$keystoreId" +
                 "&tokenId=$tokenId" +
                 "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii" +
+                "&hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
-                "&hcpFirstName=$firstName" +
-                "&hcpLastName=$lastName" +
+                "&hcpFirstName=$firstName1" +
+                "&hcpLastName=$lastName1" +
                 "&paragraph=$paragraph" +
                 "&start=${LocalDateTime.of(2016, 5, 1, 0, 0, 0)}" +
                 "&end=${LocalDateTime.of(2016, 7, 31, 0, 0, 0)}" +
@@ -151,10 +148,10 @@ class Chapter4ControllerTest : EhealthTest() {
             this.restTemplate.getForObject("http://localhost:$port/chap4/$it/$civic?keystoreId=$keystoreId" +
                 "&tokenId=$tokenId" +
                 "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii" +
+                "&hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
-                "&hcpFirstName=$firstName" +
-                "&hcpLastName=$lastName" +
+                "&hcpFirstName=$firstName1" +
+                "&hcpLastName=$lastName1" +
                 "&paragraph=null" +
                 "&start=${now.minusYears(1)}"+
                 "&end=$now" +
@@ -182,10 +179,10 @@ class Chapter4ControllerTest : EhealthTest() {
             this.restTemplate.getForObject("http://localhost:$port/chap4/$it/$civic?keystoreId=$keystoreId" +
                 "&tokenId=$tokenId" +
                 "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii" +
+                "&hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
-                "&hcpFirstName=$firstName" +
-                "&hcpLastName=$lastName" +
+                "&hcpFirstName=$firstName1" +
+                "&hcpLastName=$lastName1" +
                 "&paragraph=null" +
                 "&start=${now.minusYears(1)}"+
                 "&end=$now" +

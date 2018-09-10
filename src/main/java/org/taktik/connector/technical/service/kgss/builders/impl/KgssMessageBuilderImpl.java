@@ -39,9 +39,9 @@ public class KgssMessageBuilderImpl implements KgssMessageBuilder, Configuration
    private static MarshallerHelper<GetNewKeyResponseContent, GetNewKeyRequestContent> newKeyHelper = new MarshallerHelper(GetNewKeyResponseContent.class, GetNewKeyRequestContent.class);
    private static MarshallerHelper<GetKeyResponseContent, GetKeyRequestContent> getKeyHelper = new MarshallerHelper(GetKeyResponseContent.class, GetKeyRequestContent.class);
 
-   public KgssMessageBuilderImpl(byte[] etkKgss, Credential encryptionCredential, Map<String, PrivateKey> decryptionKeys) throws TechnicalConnectorException {
+   public KgssMessageBuilderImpl(byte[] etkKgss, Crypto crypto, Credential encryptionCredential, Map<String, PrivateKey> decryptionKeys) throws TechnicalConnectorException {
+      this.crypto = crypto;
       this.encryptionToken = this.toEncryptionToken(etkKgss);
-      this.crypto = CryptoFactory.getCrypto(encryptionCredential, decryptionKeys);
    }
 
    public GetNewKeyRequest sealGetNewKeyRequest(GetNewKeyRequestContent requestContent) throws TechnicalConnectorException {

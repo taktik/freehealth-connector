@@ -61,6 +61,7 @@ import javax.activation.DataHandler
 import org.bouncycastle.cms.CMSException
 import org.bouncycastle.util.encoders.Base64
 import org.slf4j.LoggerFactory
+import org.taktik.connector.technical.service.sts.security.Credential
 
 class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : SendMessageBuilder {
 
@@ -89,7 +90,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
         val sendMessageRequest = SendMessageRequest()
         sendMessageRequest.publicationId = document.publicationId
         this.processSender(sendMessageRequest, document.sender)
-        this.processDestinations(document, sendMessageRequest, destinationEtkSet)
+        this.processDestinations(keystore, passPhrase, document, sendMessageRequest, destinationEtkSet)
         this.processContent(keystore, passPhrase, document, isDocumentEncrypted, sendMessageRequest, destinationEtkSet)
         return sendMessageRequest
     }
@@ -401,6 +402,8 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processDestinations(
+        keystore: KeyStore,
+        passPhrase: String,
         document: org.taktik.connector.business.ehbox.api.domain.Message<Message>,
         sendMessageRequest: SendMessageRequest,
         destinationEtkSet: MutableSet<EncryptionToken>
@@ -410,8 +413,10 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
             val destination = this.buildDestination(addressee)
             sendMessageRequest.destinationContexts.add(destination)
             if (document.isEncrypted) {
+                val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+
                 destinationEtkSet.addAll(this.getETKForAddressee(addressee))
-                destinationEtkSet.add(this.keydepotManager.getETK(KeyDepotManager.EncryptionTokenType.ENCRYPTION))
+                destinationEtkSet.add(this.keydepotManager.getETK(credential))
             }
         }
     }

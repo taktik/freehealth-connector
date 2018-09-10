@@ -28,4 +28,5 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class CacheConfiguration {
     @Bean fun cacheManager() = ConcurrentMapCacheManager().apply {  }
+    @Bean fun kgssKeyCache() = cacheManager().getCache("KGSS")
 }
