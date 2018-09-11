@@ -1,6 +1,7 @@
 package org.taktik.connector.technical.service.kgss;
 
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
+import org.taktik.connector.technical.service.etee.Crypto;
 import org.taktik.connector.technical.service.kgss.domain.KeyResult;
 import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
@@ -17,11 +18,12 @@ import java.util.Map;
 import org.w3c.dom.Element;
 
 public interface KgssService {
-   KeyResult getNewKey(GetNewKeyRequestContent var1, byte[] var2) throws TechnicalConnectorException;
 
-   GetNewKeyResponseContent getNewKey(GetNewKeyRequestContent var1, Credential var2, Map<String, PrivateKey> var3, byte[] var4) throws TechnicalConnectorException;
+   KeyResult getNewKey(GetNewKeyRequestContent request, KeyStore keystore, String passPhrase, byte[] kgssETK) throws TechnicalConnectorException;
 
-   GetKeyResponseContent getKey(GetKeyRequestContent var1, Credential var2, Credential var3, Element var4, Map<String, PrivateKey> var5, byte[] var6) throws TechnicalConnectorException;
+   GetNewKeyResponseContent getNewKey(GetNewKeyRequestContent request, Crypto crypto, Credential encryption, Map<String, PrivateKey> decryptionKeys, byte[] etkKGSS) throws TechnicalConnectorException;
+
+   GetKeyResponseContent getKey(GetKeyRequestContent request, SAMLToken samlToken, KeyStore keystore, String passPhrase, Element samlAssertion, Map<String, PrivateKey> decryptionKeys, byte[] etkKGSS) throws TechnicalConnectorException;
 
    KeyResult retrieveKeyFromKgss(KeyStore keystore, SAMLToken samlToken, String passPhrase, byte[] keyId, byte[] myEtk, byte[] kgssEtk) throws TechnicalConnectorException;
 

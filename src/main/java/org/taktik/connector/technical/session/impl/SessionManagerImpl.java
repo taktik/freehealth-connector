@@ -276,20 +276,7 @@ public final class SessionManagerImpl implements SessionManager {
    }
 
    private static void fetchEtk(KeyDepotManager.EncryptionTokenType type, Map<String, PrivateKey> privateKeys, Configuration config) throws TechnicalConnectorException {
-      if (config.getBooleanProperty("sessionmanager.fetch.etk", Boolean.TRUE).booleanValue()) {
-         EncryptionToken etk = null;
-
-         try {
-            etk = KeyDepotManagerFactory.getKeyDepotManager().getETK(type);
-         } catch (Exception var5) {
-            LOG.warn("Unable to prefetch ETK", var5);
-         }
-
-         if (etk != null && !privateKeys.containsKey(etk.getCertificate().getSerialNumber().toString(10))) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"The certificate from the ETK don't match with the one in the encryption keystore"});
-         }
-      }
-
+      throw new IllegalStateException("Session use is not alowed");
    }
 
    public void loadEncryptionKeys(String encryptionPwd) throws TechnicalConnectorException {

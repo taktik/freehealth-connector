@@ -98,10 +98,9 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
-import org.taktik.connector.technical.service.keydepot.KeyDepotManager.EncryptionTokenType
 import org.taktik.connector.technical.service.keydepot.KeyDepotManagerFactory
-import org.taktik.connector.technical.service.kgss.KgssManager
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
+import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
@@ -113,7 +112,6 @@ import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
 import org.taktik.freehealth.middleware.service.Chapter4Service
 import org.taktik.freehealth.middleware.service.STSService
-import org.taktik.freehealth.utils.FuzzyValues
 import org.w3c.dom.Element
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -121,8 +119,10 @@ import java.io.IOException
 import java.io.Serializable
 import java.io.UnsupportedEncodingException
 import java.math.BigDecimal
+import java.security.KeyStore
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.Arrays
@@ -131,11 +131,10 @@ import java.util.UUID
 import javax.xml.bind.JAXBContext
 
 @Service
-class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic) : Chapter4Service {
+class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic, val kgssService : KgssServiceImpl) : Chapter4Service {
     private val freehealthChapter4Service: org.taktik.connector.business.chapterIV.service.ChapterIVService =
         org.taktik.connector.business.chapterIV.service.impl.ChapterIVServiceImpl(EhealthReplyValidatorImpl())
 
-    private val kgssManager = KgssManager.getInstance()
     private var demandMessages: List<AbstractMessage> = ArrayList()
     private var consultMessages: List<AbstractMessage> = ArrayList()
     private val chapter4XmlValidator: Chapter4XmlValidator = Chapter4XmlValidatorImpl()
@@ -190,29 +189,37 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         this.inputReference = commonReference
     }
 
-    private fun getUnknownKey(subTypeName: String): KeyResult {
+    private fun getUnknownKey(keystoreId: String,
+                              keyStore: KeyStore,
+                              passPhrase: String,
+                              subTypeName: String,
+                              credential: Credential): KeyResult {
         val acl = ACLUtils.createAclChapterIV(subTypeName)
-        if (KeyDepotManagerFactory.getKeyDepotManager().getETK(EncryptionTokenType.ENCRYPTION) == null) {
+        val etk = KeyDepotManagerFactory.getKeyDepotManager().getETK(credential)
+        if (etk == null) {
             throw IllegalArgumentException("EncryptionETK is undefined")
         } else {
             val systemETK =
-                KeyDepotManagerFactory.getKeyDepotManager().getETK(EncryptionTokenType.ENCRYPTION).etk.encoded
-            return kgssManager.getNewKeyFromKgss(acl, systemETK)
+                etk.etk.encoded
+            return kgssService.getNewKey(keystoreId, keyStore, passPhrase, acl, systemETK)
         }
     }
 
-    private fun createAndValidateSealedRequest(crypto: Crypto, message: Kmehrmessage,
+    private fun createAndValidateSealedRequest(keystoreId: String,
+                                               keyStore: KeyStore,
+                                               passPhrase: String,
+                                               crypto: Crypto, credential: Credential, message: Kmehrmessage,
                                                careReceiver: CareReceiverIdType,
                                                xmlObjectFactory: XmlObjectFactory,
                                                agreementStartDate: DateTime): SealedRequestWrapper<*> {
         try {
-            val e = this.getUnknownKey(xmlObjectFactory.getSubtypeNameToRetrieveCredentialTypeProperties())
+            val e = this.getUnknownKey(keystoreId, keyStore, passPhrase, xmlObjectFactory.getSubtypeNameToRetrieveCredentialTypeProperties(), credential)
             val request = xmlObjectFactory.createSealedRequest()
             request.agreementStartDate = agreementStartDate
             request.careReceiver = this.mapToCinCareReceiverIdType(careReceiver)
-            request.sealedContent = this.getSealedContent(crypto, message, e, xmlObjectFactory)
+            request.sealedContent = this.getSealedContent(crypto, credential, message, e, xmlObjectFactory)
             request.unsealKeyId = e.keyId
-            this.chapter4XmlValidator.validate(request.xmlObject)
+//            this.chapter4XmlValidator.validate(request.xmlObject)
 
             return request
         } catch (var7: UnsupportedEncodingException) {
@@ -231,25 +238,27 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun getSealedContent(crypto: Crypto,
+                                 credential: Credential,
                                  message: Kmehrmessage,
                                  unknownKey: KeyResult,
                                  xmlObjectFactory: XmlObjectFactory): ByteArray {
-        val request = this.createAndValidateUnsealedRequest(message, xmlObjectFactory)
+        val request = this.createAndValidateUnsealedRequest(credential, message, xmlObjectFactory)
         return crypto.seal(WrappedObjectMarshallerHelper.toXMLByteArray(request), unknownKey.secretKey, unknownKey.keyId)
     }
 
-    private fun createAndValidateUnsealedRequest(message: Kmehrmessage,
+    private fun createAndValidateUnsealedRequest(credential: Credential,
+                                                 message: Kmehrmessage,
                                                  xmlObjectFactory: XmlObjectFactory): UnsealedRequestWrapper<*> {
         val request = xmlObjectFactory.createUnsealedRequest()
-        request.etkHcp = KeyDepotManagerFactory.getKeyDepotManager().getETK(EncryptionTokenType.ENCRYPTION).etk.encoded
+        request.etkHcp = KeyDepotManagerFactory.getKeyDepotManager().getETK(credential).etk.encoded
         request.kmehrRequest = this.createAndValidateKmehrRequestXmlByteArray(message)
-        this.chapter4XmlValidator.validate(request.xmlObject)
+        //this.chapter4XmlValidator.validate(request.xmlObject)
         return request
     }
 
     private fun createAndValidateKmehrRequestXmlByteArray(message: Kmehrmessage): ByteArray {
         val kmehrrequest = Kmehrrequest().apply { this.kmehrmessage = message }
-        this.chapter4XmlValidator.validate(kmehrrequest)
+        //this.chapter4XmlValidator.validate(kmehrrequest)
         val kmehrMarshallHelper = MarshallerHelper(Kmehrrequest::class.java, Kmehrrequest::class.java)
         return kmehrMarshallHelper.toXMLByteArray(kmehrrequest)
     }
@@ -273,11 +282,15 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         agreementRequest.recordCommonInput = recordCommonInput
         agreementRequest.commonInput = commonInput
         agreementRequest.request = this.marshallAndEncryptSealedRequest(crypto, sealedRequest)
-        this.chapter4XmlValidator.validate(agreementRequest.xmlObject)
+        //this.chapter4XmlValidator.validate(agreementRequest.xmlObject)
         return agreementRequest
     }
 
-    private fun createAgreementRequest(crypto: Crypto,
+    private fun createAgreementRequest(keystoreId: String,
+                                       keyStore: KeyStore,
+                                       passPhrase: String,
+                                       crypto: Crypto,
+                                       credential: Credential,
                                        hcpNihii: String,
                                        hcpSsin: String,
                                        hcpFirstName: String,
@@ -306,7 +319,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             val commonInput =
                 createCommonInput(isTest, references.commonReference!!, hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
             val sealedRequest =
-                this.createAndValidateSealedRequest(crypto, message, careReceiver, xmlObjectFactory, agreementStartDate)
+                this.createAndValidateSealedRequest(keystoreId, keyStore, passPhrase, crypto, credential, message, careReceiver, xmlObjectFactory, agreementStartDate)
             val resultWrapper =
                 this.buildAndValidateAgreementRequest(crypto, xmlObjectFactory, careReceiver, recordCommonInput, commonInput, sealedRequest)
             val result = hashMapOf(
@@ -365,11 +378,11 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val v1Message =
             JAXBContext.newInstance(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createUnmarshaller().unmarshal(ByteArrayInputStream(msg)) as be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 
-        val responseBuilder = ResponseBuilderImpl(crypto, chapter4XmlValidator)
+        val responseBuilder = ResponseBuilderImpl(crypto, credential, chapter4XmlValidator)
 
         val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
         val request =
-            createAgreementRequest(crypto, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
+            createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
                 ?: DateTime()).askChap4MedicalAdvisorAgreementRequest
         val response = try {
             request?.let { freehealthChapter4Service.askChap4MedicalAdvisorAgreement(samlToken, it) }
@@ -446,11 +459,11 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val v1Message =
             JAXBContext.newInstance(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createUnmarshaller().unmarshal(ByteArrayInputStream(msg)) as be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 
-        val responseBuilder = ResponseBuilderImpl(crypto, chapter4XmlValidator)
+        val responseBuilder = ResponseBuilderImpl(crypto, credential, chapter4XmlValidator)
 
         val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
         val request =
-            createAgreementRequest(crypto, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, ConsultationXmlObjectFactory(), agreementStartDate
+            createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, ConsultationXmlObjectFactory(), agreementStartDate
                 ?: DateTime()).consultChap4MedicalAdvisorAgreementRequest
 
         val response =
@@ -516,7 +529,8 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                 decisionReference: String): AgreementResponse {
         val folderType: FolderType
         try {
-            folderType = getCloseTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, decisionReference, null)
+            folderType =
+                getCloseTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, decisionReference, null)
         } catch (e: IOException) {
             return generateError(ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.UNKNOWN_ERROR, e))
         }
@@ -555,11 +569,11 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val v1Message =
             JAXBContext.newInstance(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createUnmarshaller().unmarshal(ByteArrayInputStream(msg)) as be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 
-        val responseBuilder = ResponseBuilderImpl(crypto, chapter4XmlValidator)
+        val responseBuilder = ResponseBuilderImpl(crypto, credential, chapter4XmlValidator)
 
         val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
         val request =
-            createAgreementRequest(crypto, hcpNihii,
+            createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii,
                                    hcpSsin,
                                    hcpFirstName,
                                    hcpLastName,
@@ -737,8 +751,8 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                       ioRequestReference: String?,
                                       paragraph: String?): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
         val startDate =
-            start?.let { FuzzyValues.getLocalDateTime(it) } ?: LocalDateTime.now().minus(12, ChronoUnit.MONTHS)
-        val endDate = end?.let { FuzzyValues.getLocalDateTime(it) }
+            start?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) } ?: LocalDateTime.now().minus(12, ChronoUnit.MONTHS)
+        val endDate = end?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) }
 
         return getKmehrMessage(
             commonInput,
@@ -912,9 +926,8 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         civicsVersion: String,
         paragraph: String?,
         reference: String?): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
-        val startDate =
-            start?.let { FuzzyValues.getLocalDateTime(it) } ?: LocalDateTime.now().minus(12, ChronoUnit.MONTHS)
-        val endDate = end?.let { FuzzyValues.getLocalDateTime(it) } ?: startDate.plus(23, ChronoUnit.MONTHS)
+        val startDate = start?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) } ?: LocalDateTime.now().minus(12, ChronoUnit.MONTHS)
+        val endDate = end?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) } ?: startDate.plus(23, ChronoUnit.MONTHS)
 
         return getKmehrMessage(
             commonInput,

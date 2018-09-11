@@ -37,8 +37,9 @@ import org.bouncycastle.tsp.TSPException
 import org.bouncycastle.tsp.TimeStampRequest
 import org.bouncycastle.tsp.TimeStampRequestGenerator
 import org.bouncycastle.tsp.TimeStampResponse
+import org.taktik.connector.technical.service.sts.security.Credential
 
-class ResponseBuilderImpl(private val crypto: Crypto,
+class ResponseBuilderImpl(private val crypto: Crypto, private val credential: Credential,
                           private val validator: Chapter4XmlValidator) : ResponseBuilder, ConfigurationModuleBootstrap.ModuleBootstrapHook {
     override fun bootstrap() {}
 
@@ -97,7 +98,7 @@ class ResponseBuilderImpl(private val crypto: Crypto,
         log.debug("unsealedSecuredContent : " + String(unsealedSecuredContent!!))
         val unsealedResponse = this.getUnsealedResponse(unsealedSecuredContent, responseType)
         if (this.isValidationNeeded(responseType)) {
-            this.validator!!.validate(unsealedResponse.xmlObject)
+            //this.validator!!.validate(unsealedResponse.xmlObject)
         }
 
         val tsRequest = this.generateTimeStampRequest(unsealedResponse.kmehrResponseBytes)
@@ -105,7 +106,7 @@ class ResponseBuilderImpl(private val crypto: Crypto,
         this.validateTimeStamp(tsRequest, timeStampResponse)
         val kmehrResponse = this.convertToKmehrResKmehrresponse(unsealedResponse.kmehrResponseBytes)
         if (kmehrResponse != null && this.isValidationNeeded(responseType)) {
-            this.validator!!.validate(kmehrResponse)
+            //this.validator!!.validate(kmehrResponse)
         }
 
         return ChapterIVKmehrResponseWithTimeStampInfo(unsealedResponse.kmehrResponseBytes)
