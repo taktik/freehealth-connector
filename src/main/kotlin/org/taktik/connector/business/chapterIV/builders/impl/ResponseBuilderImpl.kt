@@ -18,11 +18,9 @@ import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValue
 import org.taktik.connector.technical.exception.UnsealConnectorException
 import org.taktik.connector.technical.exception.UnsealConnectorExceptionValues
 import org.taktik.connector.technical.service.etee.Crypto
-import org.taktik.connector.technical.session.Session
 import org.taktik.connector.technical.utils.ConnectorCryptoUtils
 import org.taktik.connector.technical.utils.ConnectorExceptionUtils
 import org.taktik.connector.technical.utils.MarshallerHelper
-import org.taktik.connector.technical.utils.SessionUtil
 import org.taktik.connector.technical.validator.impl.TimeStampValidatorFactory
 import be.fgov.ehealth.chap4.core.v1.FaultType
 import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementResponse
@@ -170,11 +168,10 @@ class ResponseBuilderImpl(private val crypto: Crypto, private val credential: Cr
     protected fun unsealSecuredContent(agreementResponse: Chap4MedicalAdvisorAgreementResponseWrapper<*>,
                                        ignoreWarnings: Boolean): ByteArray? {
         val securedContent = this.getSecuredContent(agreementResponse)
-        this.validateSessionForHolderOfKeyCrypto()
 
         try {
             val unsealedData =
-                SessionUtil.getHolderOfKeyCrypto()
+                this.crypto
                     .unseal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, securedContent)
             return unsealedData?.contentAsByte
         } catch (var5: UnsealConnectorException) {
@@ -183,16 +180,6 @@ class ResponseBuilderImpl(private val crypto: Crypto, private val credential: Cr
             } else {
                 throw var5
             }
-        }
-    }
-
-    @Throws(TechnicalConnectorException::class)
-    private fun validateSessionForHolderOfKeyCrypto() {
-        val session = Session.getInstance().session
-        if (session == null) {
-            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CRYPTO, *arrayOf<Any>("there was no active session found"))
-        } else if (session.holderOfKeyCrypto == null) {
-            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CRYPTO, *arrayOf<Any>("there was no holder of key crypto found in the session"))
         }
     }
 
