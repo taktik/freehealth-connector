@@ -66,10 +66,13 @@ import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDMAARESPONSETYPEvalues.AGREEMENT
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDMAARESPONSETYPEvalues.INTREATMENT
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDMEDIATYPEvalues
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDSEX
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDSEXvalues
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDSTANDARD
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes.CD_TRANSACTION
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes.CD_TRANSACTION_MAA
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONvalues
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.LnkType
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.dt.v1.TextType
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
@@ -82,6 +85,7 @@ import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENTschemes.ID_PATIENT
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.ContentType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.DateType
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.FolderType
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.HeaderType
@@ -89,6 +93,7 @@ import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.PersonType
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.RecipientType
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.SenderType
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.SexType
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.StandardType
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.TransactionType
 import org.taktik.connector.business.domain.kmehr.v20161201.Utils.Companion.makeXGC
@@ -112,6 +117,7 @@ import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
 import org.taktik.freehealth.middleware.service.Chapter4Service
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.utils.FuzzyValues
 import org.w3c.dom.Element
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -173,6 +179,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                     value = be.fgov.ehealth.chap4.core.v1.ValueRefString().apply { value = nihii }
                 }
                 physicalPerson = be.fgov.ehealth.chap4.core.v1.IdType().apply {
+                    this.nihii = be.fgov.ehealth.chap4.core.v1.NihiiType().apply {
+                        quality = "doctor"
+                        value = be.fgov.ehealth.chap4.core.v1.ValueRefString().apply { value = nihii }
+                    }
                     this.ssin = be.fgov.ehealth.chap4.core.v1.ValueRefString().apply { value = ssin }
                     this.name = be.fgov.ehealth.chap4.core.v1.ValueRefString().apply { value = "$firstName $lastName" }
                 }
@@ -430,6 +440,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         hcpLastName: String,
         passPhrase: String,
         patientSsin: String,
+        patientDateOfBirth: Long,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
         civicsVersion: String,
         paragraph: String?,
         start: Long,
@@ -449,7 +463,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val references = ChapterIVReferences(true)
 
         val consultationMessage =
-            getConsultationTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, references.commonReference!!, start, end, civicsVersion,
+            getConsultationTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, patientDateOfBirth, patientFirstName, patientLastName, patientGender, references.commonReference!!, start, end, civicsVersion,
                                        paragraph, ref)
 
         val bos = ByteArrayOutputStream()
@@ -920,6 +934,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         hcpFirstName: String,
         hcpLastName: String,
         patientSsin: String,
+        patientDateOfBirth: Long,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
         commonInput: String,
         start: Long?,
         end: Long?,
@@ -939,6 +957,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                 ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "1" })
                 this.patient = PersonType().apply {
                     ids.add(IDPATIENT().apply { s = ID_PATIENT; sv = "1.0"; value = patientSsin })
+                    firstnames.add(patientFirstName)
+                    familyname = patientLastName
+                    birthdate = DateType().apply { date = FuzzyValues.getXMLGregorianCalendarFromFuzzyLong(patientDateOfBirth) }
+                    sex = SexType().apply {
+                        cd = CDSEX().apply { s = "CD-SEX"; sv = "1.0"; value = CDSEXvalues.fromValue(patientGender) }
+                    }
                 }
 
 
@@ -1142,7 +1166,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                                                     date: Date? = null,
                                                                     kmehrId: String = "1") {
         ids.add(IDKMEHR().apply { s = ID_KMEHR; value = kmehrId })
-        cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION; value = "medicaladvisoragreement" })
+        cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION; sv = "1.4"; value = CDTRANSACTIONvalues.MEDICALADVISORAGREEMENT.value() })
         cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MAA; value = maa })
         author = AuthorType().apply { hcparties.add(createParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)) }
         recorddatetime = makeXGC(java.time.Instant.now().toEpochMilli())

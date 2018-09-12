@@ -80,7 +80,7 @@ public class DrugsDAOImpl implements DrugsDAO {
 
     private Map<String, Analyzer> analyzers;
 
-    private String dbMainFile = "drugs.h2.db";
+    private String dbMainFile = "drugs.h2.mv";
     private File dbDir;
 
     public DrugsDAOImpl() {

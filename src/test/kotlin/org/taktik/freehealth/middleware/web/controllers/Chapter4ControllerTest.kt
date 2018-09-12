@@ -26,7 +26,7 @@ class Chapter4ControllerTest : EhealthTest() {
 
     private val nisses = mapOf(100 to listOf("73052005540", "84101727579", "39091706120", "29041433972", "97061960828", "09031001094"),
         300 to listOf("17031506487", "88022631093", "87052226861", "63042408660", "37061311820", "87120924439"),
-        500 to listOf("13070421120", "12070321327", "69070608470", "58031245635", "46111636603", "09041004003"),
+        500 to listOf("13070421120", "12070321327", "69070608470", "74010414733","58031245635", "46111636603", "09041004003"),
         600 to listOf("70021546287", "03051303986", "69021902691", "10090820056", "53081411750", "60042560332"),
         900 to listOf("72062724415", "80011446526", "60122945519", "80010512554", "32011328801", "N/A")
     )
@@ -53,16 +53,17 @@ class Chapter4ControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = Instant.now().toEpochMilli()
 
-        val results = getNisses(0).map {
+
+        val results = getNisses(3)[2].let {
             this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/3?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=$nihii1" +
-                "&hcpSsin=$ssin1&hcpFirstName=$firstName1&hcpLastName=$lastName1&paragraph=5090000$&start=$now&end=$now&reference=null",AgreementResponse::class.java)
+                "&hcpSsin=$ssin1&hcpFirstName=$firstName1&hcpLastName=$lastName1&patientDateOfBirth=${"19"+it.substring(0,6)}&patientFirstName=ANTOINE&patientLastName=DUCHATEAU&patientGender=male&paragraph=5090000&start=$now&end=$now",AgreementResponse::class.java)
         }
 
         println("scenario 01 \n====================")
-        results.forEachIndexed { index, it ->
+        /*results.forEachIndexed { index, it ->
             Assertions.assertThat(it.errors).isNotEmpty
             Assertions.assertThat(it.errors).isEqualTo("180")
-        }
+        }*/
 
     }
 
