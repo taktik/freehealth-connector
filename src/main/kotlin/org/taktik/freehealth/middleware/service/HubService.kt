@@ -42,7 +42,8 @@ interface HubService {
         hcpFirstName: String,
         hcpNihii: String,
         hcpSsin: String,
-        hcpZip: String
+        hcpZip: String,
+        hubPackageId: String?
     ): HcPartyConsent?
 
     fun putPatient(
@@ -59,7 +60,8 @@ interface HubService {
         firstName: String,
         lastName: String,
         gender: Gender,
-        dateOfBirth: LocalDateTime
+        dateOfBirth: LocalDateTime,
+        hubPackageId: String?
     ): Patient?
 
     fun getPatient(
@@ -72,7 +74,8 @@ interface HubService {
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
-        patientSsin: String
+        patientSsin: String,
+        hubPackageId: String?
     ): Patient?
 
     fun registerPatientConsent(
@@ -86,7 +89,8 @@ interface HubService {
         hcpSsin: String,
         hcpZip: String,
         patientSsin: String,
-        patientEidCardNumber: String?
+        patientEidCardNumber: String?,
+        hubPackageId: String?
     )
 
     fun getPatientConsent(
@@ -99,7 +103,8 @@ interface HubService {
         hcpNihii: String,
         hcpSsin: String,
         hcpZip: String,
-        patientSsin: String
+        patientSsin: String,
+        hubPackageId: String?
     ): Consent?
 
     fun registerTherapeuticLink(
@@ -113,7 +118,8 @@ interface HubService {
         hcpSsin: String,
         hcpZip: String,
         patientSsin: String,
-        patientEidCardNumber: String?
+        patientEidCardNumber: String?,
+        hubPackageId: String?
     )
 
     fun getTherapeuticLinks(
@@ -129,7 +135,8 @@ interface HubService {
         patientSsin: String,
         therLinkType: String?,
         from: Instant?,
-        to: Instant?
+        to: Instant?,
+        hubPackageId: String?
     ): List<TherapeuticLink>
 
     fun getTransactionsList(
@@ -143,6 +150,7 @@ interface HubService {
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
+        hubPackageId: String?,
         breakTheGlassReason: String? = null,
         from: Long?,
         to: Long?,
@@ -164,7 +172,8 @@ interface HubService {
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
-        transaction: ByteArray
+        transaction: ByteArray,
+        hubPackageId: String?
     ): TransactionIdType
 
     fun getTransaction(
@@ -178,6 +187,7 @@ interface HubService {
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
+        hubPackageId: String?,
         breakTheGlassReason: String? = null,
         sv: String,
         sl: String,
@@ -195,6 +205,7 @@ interface HubService {
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
+        hubPackageId: String?,
         breakTheGlassReason: String? = null,
         sv: String,
         sl: String,
@@ -214,7 +225,8 @@ interface HubService {
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
-        transaction: String
+        transaction: String,
+        hubPackageId: String?
     ): PutTransactionSetResponse
 
     fun getTransactionSet(
@@ -228,6 +240,7 @@ interface HubService {
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
+        hubPackageId: String?,
         breakTheGlassReason: String? = null,
         sv: String,
         sl: String,

@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.utils
 
+import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import org.apache.commons.lang3.math.NumberUtils
 import org.joda.time.DateTime
 import java.time.Instant
@@ -29,6 +30,7 @@ import java.time.Period
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalUnit
+import javax.xml.datatype.DatatypeConstants
 
 /**
  * This utility class provides methods to detect the type of value submitted to it (dates, ssin,...) and handle the
@@ -169,6 +171,31 @@ object FuzzyValues {
             }
         }
     }
+
+    fun getXMLGregorianCalendarFromFuzzyLong(date : Long?) : XMLGregorianCalendarImpl? {
+        return date?.let {
+            if (it%10000000000 == 0L) it/10000000000 else if (it%100000000 == 0L) it/100000000 else if (it<99991231 && it%10000 == 0L) it/10000 else if (it<99991231 && it%100 == 0L) it/100 else it /*normalize*/
+        }?.let { d ->
+            XMLGregorianCalendarImpl().apply {
+                millisecond = DatatypeConstants.FIELD_UNDEFINED
+                timezone = DatatypeConstants.FIELD_UNDEFINED
+                when (d) {
+                    in 0..9999 -> {  year = d.toInt(); month = DatatypeConstants.FIELD_UNDEFINED; day =
+                        DatatypeConstants.FIELD_UNDEFINED
+                    }
+                    in 0..999912 -> { year = (d / 100).toInt(); month = (d % 100).toInt(); day =
+                        DatatypeConstants.FIELD_UNDEFINED
+                    }
+                    in 0..99991231 -> { year = (d / 10000).toInt(); month = ((d / 100) % 100).toInt(); day = (d % 100).toInt() }
+                    else -> {
+                        year = (d / 10000000000).toInt(); month = ((d / 100000000) % 100).toInt(); day = ((d / 1000000) % 100).toInt()
+                        hour = ((d / 10000) % 100).toInt(); minute = ((d / 100) % 100).toInt(); second = (d % 100).toInt()
+                    }
+                }
+            }
+        }
+    }
+
 
     fun getFuzzyDate(instant: Instant, zoneId: ZoneId = ZoneId.systemDefault(), precision: TemporalUnit = ChronoUnit.DAYS): Long {
         return getFuzzyDate(LocalDateTime.ofInstant(instant, zoneId), precision)

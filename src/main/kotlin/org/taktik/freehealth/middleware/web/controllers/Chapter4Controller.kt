@@ -29,14 +29,10 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.multipart.MultipartFile
-import org.taktik.connector.business.domain.chapter4.AgreementResponse
 import org.taktik.connector.business.domain.chapter4.Appendix
 import org.taktik.connector.business.domain.chapter4.RequestType
-import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
 import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
-import org.taktik.freehealth.middleware.dto.UUIDType
 import org.taktik.freehealth.middleware.service.Chapter4Service
 import java.time.LocalDate
 import java.time.ZoneId
@@ -76,6 +72,10 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @RequestParam hcpLastName: String,
         @PathVariable patientSsin: String,
         @PathVariable civicsVersion: String,
+        @RequestParam patientDateOfBirth: Long,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientGender: String,
         @RequestParam(required = false) paragraph: String? = null,
         @RequestParam(required = false) start: Long? = null,
         @RequestParam(required = false) end: Long? = null,
@@ -88,6 +88,10 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         hcpFirstName = hcpFirstName,
         hcpLastName = hcpLastName,
         patientSsin = patientSsin,
+        patientDateOfBirth = patientDateOfBirth,
+        patientFirstName = patientFirstName,
+        patientLastName = patientLastName,
+        patientGender = patientGender,
         civicsVersion = civicsVersion,
         paragraph = paragraph,
         start = start ?: LocalDate.now().minusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
