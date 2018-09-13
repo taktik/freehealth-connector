@@ -60,11 +60,8 @@ class Chapter4ControllerTest : EhealthTest() {
         }
 
         println("scenario 01 \n====================")
-        /*results.forEachIndexed { index, it ->
-            Assertions.assertThat(it.errors).isNotEmpty
-            Assertions.assertThat(it.errors).isEqualTo("180")
-        }*/
-
+        Assertions.assertThat(results!!.errors).isNotNull.isNotEmpty
+        Assertions.assertThat(results!!.errors!!.first().cds[0].value).isEqualTo("180")
     }
 
     /*
@@ -80,7 +77,7 @@ class Chapter4ControllerTest : EhealthTest() {
         val lastYear = Instant.now().minus(365,ChronoUnit.DAYS).toEpochMilli()//DateTime.now().minusYears(1).toInstant()
 
         val civic = "3"
-        val results = getNisses(1).map {
+        val results = getNisses(3)[2].let {
             this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic?keystoreId=$keystoreId" +
                 "&tokenId=$tokenId" +
                 "&passPhrase=$passPhrase" +
@@ -88,13 +85,18 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
-                "&paragraph=null" +
                 "&start=$lastYear" +
                 "&end=$now" +
-                "&reference=null",AgreementResponse::class.java)
+                "&patientDateOfBirth=${"19"+it.substring(0,6)}"+
+                "&patientFirstName=ANTOINE"+
+                "&patientLastName=DUCHATEAU"+
+                "&patientGender=male"
+                ,AgreementResponse::class.java)
         }
 
         println("scenario 02 \n====================")
+        Assertions.assertThat(results!!.errors).isNull()
+        Assertions.assertThat(results!!.content).isNotNull()
 
 
     }
@@ -112,11 +114,11 @@ class Chapter4ControllerTest : EhealthTest() {
         val dateEnd = Instant.parse("2016-07-31T00:00:00.00Z").toEpochMilli()
 
 
-        val paragraphDesc = this.restTemplate!!.getForObject("http://localhost:$port/chap4/sam/search/${"2280100"}/${"fr"}", Array<ParagraphPreview>::class.java)
-        val civic = paragraphDesc.first().paragraphVersion
-        val paragraph = paragraphDesc.first().paragraphName
+        //val paragraphDesc = this.restTemplate!!.getForObject("http://localhost:$port/chap4/sam/search/${"2280100"}/${"fr"}", Array<ParagraphPreview>::class.java)
+        val civic = "14"//paragraphDesc.first().paragraphVersion
+        val paragraph = "2280100"//paragraphDesc.first().paragraphName
 
-        val results = getNisses(2).map {
+        val results = getNisses(3)[2].let {
             this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic?keystoreId=$keystoreId" +
                 "&tokenId=$tokenId" +
                 "&passPhrase=$passPhrase" +
@@ -124,15 +126,21 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
+                "&patientDateOfBirth=${"19"+it.substring(0,6)}"+
+                "&patientFirstName=ANTOINE"+
+                "&patientLastName=DUCHATEAU"+
+                "&patientGender=male" +
                 "&paragraph=$paragraph" +
                 "&start=$dateStart" +
-                "&end=$dateEnd" +
-                "&reference=null",AgreementResponse::class.java)
+                "&end=$dateEnd"
+                ,AgreementResponse::class.java)
         }
 
 
 
         println("scenario 03 \n====================")
+        Assertions.assertThat(results!!.content).isNull()
+        Assertions.assertThat(results!!.warnings!!.first().cds[0].value).isEqualTo("601")
 
     }
 
@@ -148,8 +156,8 @@ class Chapter4ControllerTest : EhealthTest() {
         val now = Instant.now().toEpochMilli()
         val lastYear = Instant.now().minus(365,ChronoUnit.DAYS).toEpochMilli()
 
-        val civic = "3"
-        val results = getNisses(3).map {
+        val civic = "14"
+        val results = getNisses(3)[2].let {
             this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic?keystoreId=$keystoreId" +
                 "&tokenId=$tokenId" +
                 "&passPhrase=$passPhrase" +
@@ -157,15 +165,19 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
-                "&paragraph=null" +
                 "&start=$lastYear"+
                 "&end=$now" +
-                "&reference=null",AgreementResponse::class.java)
+                "&patientDateOfBirth=${"19"+it.substring(0,6)}"+
+                "&patientFirstName=ANTOINE"+
+                "&patientLastName=DUCHATEAU"+
+                "&patientGender=male",AgreementResponse::class.java)
         }
 
 
 
         println("scenario 04 \n====================")
+        Assertions.assertThat(results!!.errors).isNull()
+        Assertions.assertThat(results!!.content).isNotNull()
 
     }
 
@@ -184,7 +196,7 @@ class Chapter4ControllerTest : EhealthTest() {
         val civic = paragraphDesc.first().paragraphVersion
         val paragraph = paragraphDesc.first().paragraphName
 
-        val results = getNisses(0).map {
+        val results = getNisses(3)[2].let {
             this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic?keystoreId=$keystoreId" +
                 "&tokenId=$tokenId" +
                 "&passPhrase=$passPhrase" +
@@ -194,11 +206,16 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&hcpLastName=$lastName1" +
                 "&paragraph=null" +
                 "&start=$lastYear"+
-                "&end=$now" +
-                "&reference=null",AgreementResponse::class.java)
+                "&end=$now"  +
+                "&patientDateOfBirth=${"19"+it.substring(0,6)}"+
+                "&patientFirstName=ANTOINE"+
+                "&patientLastName=DUCHATEAU"+
+                "&patientGender=male",AgreementResponse::class.java)
         }
 
         println("scenario 05 \n====================")
+        Assertions.assertThat(results!!.errors).isNotNull.isNotEmpty
+        Assertions.assertThat(results!!.errors!!.first().cds[0].value).isEqualTo("181")
 
     }
 
@@ -217,7 +234,7 @@ class Chapter4ControllerTest : EhealthTest() {
         val civic = paragraphDesc.first().paragraphVersion
         val paragraph = paragraphDesc.first().paragraphName
 
-        val results = getNisses(1).map {
+        val results = getNisses(3)[2].let {
             this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic?keystoreId=$keystoreId" +
                 "&tokenId=$tokenId" +
                 "&passPhrase=$passPhrase" +
@@ -227,12 +244,15 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&hcpLastName=$lastName1" +
                 "&paragraph=$paragraph" +
                 "&start=$now"+
-                "&end=null" +
-                "&reference=null",AgreementResponse::class.java)
+                "&patientDateOfBirth=${"19"+it.substring(0,6)}"+
+                "&patientFirstName=ANTOINE"+
+                "&patientLastName=DUCHATEAU"+
+                "&patientGender=male",AgreementResponse::class.java)
         }
 
         println("scenario 06 \n====================")
-
+        Assertions.assertThat(results!!.errors).isNull()
+        Assertions.assertThat(results!!.content).isNotNull()
     }
 
     /*
@@ -250,7 +270,7 @@ class Chapter4ControllerTest : EhealthTest() {
         val civic = paragraphDesc.first().paragraphVersion
         val paragraph = paragraphDesc.first().paragraphName
 
-        val results = getNisses(1).map {
+        val results = getNisses(3)[2].let {
             this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic?keystoreId=$keystoreId" +
                 "&tokenId=$tokenId" +
                 "&passPhrase=$passPhrase" +
@@ -260,12 +280,15 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&hcpLastName=$lastName1" +
                 "&paragraph=$paragraph" +
                 "&start=$now"+
-                "&end=null" +
-                "&reference=null",AgreementResponse::class.java)
+                "&patientDateOfBirth=${"19"+it.substring(0,6)}"+
+                "&patientFirstName=ANTOINE"+
+                "&patientLastName=DUCHATEAU"+
+                "&patientGender=male",AgreementResponse::class.java)
         }
 
         println("scenario 07 \n====================")
-
+        Assertions.assertThat(results!!.errors).isNull()
+        Assertions.assertThat(results!!.content).isNotNull()
     }
 
     /*
@@ -283,7 +306,7 @@ class Chapter4ControllerTest : EhealthTest() {
         val civic = paragraphDesc.first().paragraphVersion
         val paragraph = paragraphDesc.first().paragraphName
 
-        val results = getNisses(1).map {
+        val results = getNisses(3)[2].let {
             this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/$civic?keystoreId=$keystoreId" +
                 "&tokenId=$tokenId" +
                 "&passPhrase=$passPhrase" +
@@ -293,12 +316,15 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&hcpLastName=$lastName1" +
                 "&paragraph=$paragraph" +
                 "&start=$now"+
-                "&end=null" +
-                "&reference=null",AgreementResponse::class.java)
+                "&patientDateOfBirth=${"19"+it.substring(0,6)}"+
+                "&patientFirstName=ANTOINE"+
+                "&patientLastName=DUCHATEAU"+
+                "&patientGender=male",AgreementResponse::class.java)
         }
 
         println("scenario 08 \n====================")
-
+        Assertions.assertThat(results!!.errors).isNull()
+        Assertions.assertThat(results!!.content).isNotNull()
     }
 
     /*
