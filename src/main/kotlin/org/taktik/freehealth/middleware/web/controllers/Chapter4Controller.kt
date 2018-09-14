@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.taktik.connector.business.domain.chapter4.Appendix
 import org.taktik.connector.business.domain.chapter4.RequestType
 import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
+import org.taktik.freehealth.middleware.drugs.civics.ParagraphInfos
 import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
 import org.taktik.freehealth.middleware.service.Chapter4Service
 import java.time.LocalDate
@@ -61,7 +62,13 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @PathVariable language: String): List<ParagraphPreview> =
         chapter4Service.findParagraphsWithCnk(cnk, language)
 
-    @GetMapping("/consult/{patientSsin}/{civicsVersion}")
+    @GetMapping("/sam/info/{chapterName}/{paragraphName}")
+    fun getParagraphInfos(
+        @PathVariable chapterName: String,
+        @PathVariable paragraphName: String) : ParagraphInfos? =
+        chapter4Service.getParagraphInfos(chapterName, paragraphName)
+
+    @GetMapping("/consult/{patientSsin}")
     fun agreementRequestsConsultation(
         @RequestParam keystoreId: UUID,
         @RequestParam tokenId: UUID,
@@ -71,11 +78,11 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @PathVariable patientSsin: String,
-        @PathVariable civicsVersion: String,
         @RequestParam patientDateOfBirth: Long,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
+        @RequestParam(required = false) civicsVersion: String,
         @RequestParam(required = false) paragraph: String? = null,
         @RequestParam(required = false) start: Long? = null,
         @RequestParam(required = false) end: Long? = null,

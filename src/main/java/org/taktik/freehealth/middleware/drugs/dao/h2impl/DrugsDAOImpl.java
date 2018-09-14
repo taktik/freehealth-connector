@@ -60,12 +60,14 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -80,53 +82,78 @@ public class DrugsDAOImpl implements DrugsDAO {
 
     private Map<String, Analyzer> analyzers;
 
-    private String dbMainFile = "drugs.h2.mv";
+    private String dbMainFile = "drugs.mv.db";
     private File dbDir;
 
     public DrugsDAOImpl() {
         buildAnalyzerMap();
     }
 
-    private File getDbDir() throws IOException {
-        if (dbDir == null) {
-            File tempDir = Files.createTempDirectory("freehealth").toFile();
-            File drugsDir = new File(tempDir, "drugs");
-            if (drugsDir.exists() && drugsDir.isDirectory()) {
-                dbDir = drugsDir;
-            } else {
-                if (!drugsDir.exists() && !drugsDir.mkdirs()) { throw new IOException("Cannot create temp dir for holding drugs db"); }
-                if (drugsDir.exists() && drugsDir.isDirectory()) {
-                    InputStream stream = this.getClass().getClassLoader().getResourceAsStream("be/drugs.zip");
-                    ZipInputStream zis = new ZipInputStream(stream);
-                    ZipEntry ze;
-                    byte[] buffer = new byte[10 * 1024];
-                    // while there are entries I process them
-                    try {
-                        while ((ze = zis.getNextEntry()) != null) {
-                            String fileName = ze.getName();
-                            File newFile = new File(drugsDir, fileName);
-                            new File(newFile.getParent()).mkdirs();
-                            FileOutputStream fos = new FileOutputStream(newFile);
-                            int len;
-                            while ((len = zis.read(buffer)) > 0) {
-                                fos.write(buffer, 0, len);
-                            }
-                            fos.close();
-                        }
-                        dbDir = drugsDir;
-                    } catch (Exception ignored) {
-                    } finally {
-                        try {
-                            zis.close();
-                            stream.close();
-                        } catch (IOException ignored) {
-                        }
-                    }
-                }
-            }
-        }
-        return dbDir;
-    }
+	public File getDbDir() throws IOException {
+		synchronized(this) {
+			if (dbDir == null) {
+				File tempDir = Files.createTempDirectory("freehealth").toFile();
+				File drugsDir = new File(tempDir, "drugs");
+				File dbFile = new File(drugsDir, dbMainFile);
+
+				if (drugsDir.exists() && drugsDir.isDirectory() && dbFile.exists()) {
+					//Should Check validity
+					InputStream stream = this.getClass().getClassLoader().getResourceAsStream("be/drugs/drugs.zip");
+					ZipInputStream zis = new ZipInputStream(stream);
+					ZipEntry ze;
+					try {
+						while ((ze = zis.getNextEntry()) != null) {
+							if (dbMainFile.equals(ze.getName())) {
+								if (ze.getSize() == dbFile.length()) {
+									dbDir = drugsDir;
+									return dbDir;
+								}
+							}
+						}
+					} catch (Exception ignored) {
+					}
+				}
+
+				if (drugsDir.isFile()) {
+					drugsDir.delete();
+				}
+
+				boolean mkdirs = drugsDir.mkdirs();
+				if (!mkdirs) {
+					Optional.ofNullable(drugsDir.listFiles()).ifPresent(files-> Arrays.asList(files).forEach(File::delete));
+				}
+				if (drugsDir.exists() && drugsDir.isDirectory()) {
+					InputStream stream = this.getClass().getClassLoader().getResourceAsStream("be/drugs/drugs.zip");
+					ZipInputStream zis = new ZipInputStream(stream);
+					ZipEntry ze;
+					byte[] buffer = new byte[10 * 1024];
+					// while there are entries I process them
+					try {
+						while ((ze = zis.getNextEntry()) != null) {
+							String fileName = ze.getName();
+							File newFile = new File(drugsDir, fileName);
+							new File(newFile.getParent()).mkdirs();
+							FileOutputStream fos = new FileOutputStream(newFile);
+							int len;
+							while ((len = zis.read(buffer)) > 0) {
+								fos.write(buffer, 0, len);
+							}
+							fos.close();
+						}
+						dbDir = drugsDir;
+					} catch (Exception ignored) {
+					} finally {
+						try {
+							zis.close();
+							stream.close();
+						} catch (IOException ignored) {
+						}
+					}
+				}
+			}
+			return dbDir;
+		}
+	}
 
     public void setDbDir(File dbDir) {
         this.dbDir = dbDir;

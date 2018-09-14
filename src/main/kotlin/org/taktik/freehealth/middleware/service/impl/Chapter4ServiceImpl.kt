@@ -156,6 +156,8 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         return drugsLogic.findParagraphsWithCnk(cnk, language)
     }
 
+    override fun getParagraphInfos(chapterName: String, paragraphName: String) = drugsLogic.getParagraphInfos(chapterName, paragraphName)
+
     override fun getAddedDocuments(chapterName: String, paragraphName: String): List<AddedDocumentPreview> {
         return drugsLogic.getAddedDocuments(chapterName, paragraphName)
     }
@@ -444,7 +446,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
-        civicsVersion: String,
+        civicsVersion: String?,
         paragraph: String?,
         start: Long,
         end: Long?,
@@ -941,7 +943,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         commonInput: String,
         start: Long?,
         end: Long?,
-        civicsVersion: String,
+        civicsVersion: String?,
         paragraph: String?,
         reference: String?): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
         val startDate = start?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) } ?: LocalDateTime.now().minus(12, ChronoUnit.MONTHS)
@@ -1029,7 +1031,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                             contents.add(ContentType().apply {
                                 cds.add(CDCONTENT().apply {
                                     s = CD_CHAPTER_4_PARAGRAPH; sv =
-                                    civicsVersion; value = p
+                                    civicsVersion ?: "1"; value = p
                                 })
                             })
                         })
