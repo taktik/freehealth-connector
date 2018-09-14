@@ -1,5 +1,7 @@
 package org.taktik.connector.technical.ws.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.taktik.connector.technical.exception.RetryNextEndpointException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
@@ -10,11 +12,14 @@ import org.taktik.connector.technical.ws.domain.GenericResponse;
 import org.taktik.connector.technical.ws.impl.strategy.InvokeStrategy;
 import org.taktik.connector.technical.ws.impl.strategy.NoRetryInvokeStrategy;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointDistributor;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,20 +37,18 @@ import javax.xml.soap.SOAPPart;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractWsSender {
    public static final String MESSAGECONTEXT_ENDPOINT_ADDRESS = "javax.xml.ws.service.endpoint.address";
    public static final String PROP_RETRY_STRATEGY = "org.taktik.connector.technical.ws.genericsender.invokestrategy";
-   private static final Logger LOG = LoggerFactory.getLogger(AbstractWsSender.class);
+   private static final Log log = LogFactory.getLog(AbstractWsSender.class);
    private static MessageFactory mf;
    private static SOAPConnectionFactory scf;
    private static ConfigurableFactoryHelper<InvokeStrategy> invokeStrategyHelper = new ConfigurableFactoryHelper("org.taktik.connector.technical.ws.genericsender.invokestrategy", NoRetryInvokeStrategy.class.getName());
 
    public GenericResponse send(GenericRequest genericRequest) throws TechnicalConnectorException {
       InvokeStrategy strategy = (InvokeStrategy)invokeStrategyHelper.getImplementation();
-      LOG.debug("Using invoke strategy [" + strategy.getClass() + "]");
+      log.debug("Using invoke strategy [" + strategy.getClass() + "]");
       return strategy.invoke(genericRequest);
    }
 
@@ -61,6 +64,17 @@ public abstract class AbstractWsSender {
          URL endpoint = generateEndpoint(request);
          executeHandlers(chain, request);
          SOAPMessage msgToSend = request.getMessage();
+
+         if (log.isDebugEnabled()) {
+            log.debug("Sending SOAP message: " + msgToSend);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            try {
+               msgToSend.writeTo(bos);
+               log.debug("SOAP message details " + new String(bos.toByteArray(), StandardCharsets.UTF_8));
+            } catch (IOException e) {
+               log.debug("Error while logging message", e);
+            }
+         }
          conn = scf.createConnection();
          reply = createSOAPMessageCtx(conn.call(msgToSend, endpoint));
       } catch (UnsupportedOperationException var13) {
@@ -87,7 +101,7 @@ public abstract class AbstractWsSender {
          return new RetryNextEndpointException(e);
       } else {
          Throwable reason = ExceptionUtils.getRootCause(e);
-         LOG.error("Cannot send SOAP message. Reason [" + reason + "]", e);
+         log.error("Cannot send SOAP message. Reason [" + reason + "]", e);
          return new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, e, new Object[]{reason});
       }
    }
@@ -100,7 +114,7 @@ public abstract class AbstractWsSender {
          Handler handler = arr$[i$];
          if (!handler.handleMessage(ctx)) {
             TechnicalConnectorExceptionValues errorValue = TechnicalConnectorExceptionValues.ERROR_WS;
-            LOG.error(MessageFormat.format(errorValue.getMessage(), "Error while executing handler " + handler.getClass()));
+            log.error(MessageFormat.format(errorValue.getMessage(), "Error while executing handler " + handler.getClass()));
             throw new TechnicalConnectorException(errorValue, new Object[]{"Error while executing handler."});
          }
       }
