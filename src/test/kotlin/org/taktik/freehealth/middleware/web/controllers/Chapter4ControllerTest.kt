@@ -55,7 +55,7 @@ class Chapter4ControllerTest : EhealthTest() {
 
 
         val results = getNisses(3)[2].let {
-            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it/3?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=$nihii1" +
+            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase&hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1&hcpFirstName=$firstName1&hcpLastName=$lastName1&patientDateOfBirth=${"19"+it.substring(0,6)}&patientFirstName=ANTOINE&patientLastName=DUCHATEAU&patientGender=male&paragraph=5090000&start=$now&end=$now",AgreementResponse::class.java)
         }
 
@@ -114,7 +114,7 @@ class Chapter4ControllerTest : EhealthTest() {
         val dateEnd = Instant.parse("2016-07-31T00:00:00.00Z").toEpochMilli()
 
 
-        //val paragraphDesc = this.restTemplate!!.getForObject("http://localhost:$port/chap4/sam/search/${"2280100"}/${"fr"}", Array<ParagraphPreview>::class.java)
+        val paragraphDesc = this.restTemplate.getForObject("http://localhost:$port/chap4/sam/search/${"4740000"}/${"fr"}", Array<ParagraphPreview>::class.java)
         val civic = "14"//paragraphDesc.first().paragraphVersion
         val paragraph = "2280100"//paragraphDesc.first().paragraphName
 

@@ -27,9 +27,11 @@ import be.fgov.ehealth.ehbox.consultation.protocol.v3.MoveMessageRequest
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.ehbox.v3.builders.impl.ConsultationMessageBuilderImpl
 import org.taktik.connector.business.ehbox.v3.builders.impl.SendMessageBuilderImpl
+import org.taktik.connector.business.ehbox.v3.exception.EhboxCryptoException
 import org.taktik.connector.business.ehbox.v3.validator.impl.EhboxReplyValidatorImpl
 import org.taktik.connector.technical.service.keydepot.KeyDepotManagerFactory
 import org.taktik.connector.technical.service.sts.security.SAMLToken
+import org.taktik.freehealth.middleware.dto.ehbox.AltKeystore
 import org.taktik.freehealth.middleware.dto.ehbox.BoxInfo
 import org.taktik.freehealth.middleware.dto.ehbox.DocumentMessage
 import org.taktik.freehealth.middleware.dto.ehbox.ErrorMessage
@@ -42,10 +44,21 @@ import java.util.*
 
 @Service
 class EhboxServiceImpl(val stsService: STSService) : EhboxService {
+
     private val freehealthEhboxService: org.taktik.connector.business.ehbox.service.EhboxService =
         org.taktik.connector.business.ehbox.service.impl.EhboxServiceImpl(EhboxReplyValidatorImpl())
     private val consultationMessageBuilder = ConsultationMessageBuilderImpl()
     private val sendMessageBuilder = SendMessageBuilderImpl(KeyDepotManagerFactory.getKeyDepotManager())
+
+
+    /**
+     * Returns a list containing the results of applying the given [transform] function
+     * to each element in the original collection.
+     */
+    private inline fun <T, R> Iterable<T>.mapFirstNotNull(transform: (T) -> R): R? {
+        for (item in this) transform(item)?.let { return it }
+        return null
+    }
 
     private fun getSamlToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken {
         return stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -66,24 +79,25 @@ class EhboxServiceImpl(val stsService: STSService) : EhboxService {
         )
     }
 
-    override fun getFullMessage(
-        keystoreId: UUID,
-        tokenId: UUID,
-        passPhrase: String,
-        boxId: String,
-        messageId: String, alternateKeystoreId: UUID?, alternatePassphrase: String?
-    ): Message {
+    override fun getFullMessage(keystoreId: UUID,
+                                tokenId: UUID,
+                                passPhrase: String,
+                                boxId: String,
+                                messageId: String,
+                                alternateKeystores: List<AltKeystore>?): Message {
         val samlToken = getSamlToken(tokenId, keystoreId, passPhrase)
         val messageRequest = MessageRequestType().apply {
             this.messageId = messageId
             this.source = boxId
         }
-        val fullMessage = freehealthEhboxService.getFullMessage(samlToken, messageRequest)
-        return consultationMessageBuilder.buildFullMessage(
-            stsService.getKeyStore(alternateKeystoreId ?: keystoreId, alternatePassphrase ?: passPhrase)!!,
-            alternatePassphrase ?: passPhrase,
-            fullMessage
-        ).toMessageDto() ?: ErrorMessage(title = "Unknown error")
+        val msg = freehealthEhboxService.getFullMessage(samlToken, messageRequest)
+        return try { consultationMessageBuilder.buildFullMessage(
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase, msg).toMessageDto() ?: ErrorMessage(title = "Unknown error") } catch (e:EhboxCryptoException) {
+            alternateKeystores?.mapFirstNotNull {
+                try { it.uuid?.let { uuid -> it.passPhrase?.let { pass -> consultationMessageBuilder.buildFullMessage(stsService.getKeyStore(uuid, pass)!!, pass, msg).toMessageDto() }}} catch(_: EhboxCryptoException) { null }
+            } ?: ErrorMessage(title = "Impossible to decrypt message using provided Keystores")
+        }
     }
 
     override fun sendMessage(
@@ -117,8 +131,7 @@ class EhboxServiceImpl(val stsService: STSService) : EhboxService {
         passPhrase: String,
         boxId: String,
         limit: Int?,
-        alternateKeystoreId: UUID?,
-        alternatePassphrase: String?
+        alternateKeystores: List<AltKeystore>?
     ): List<Message> {
         val samlToken = getSamlToken(tokenId, keystoreId, passPhrase)
         val messagesListRequest = GetMessagesListRequest()
@@ -130,11 +143,15 @@ class EhboxServiceImpl(val stsService: STSService) : EhboxService {
         val result = mutableListOf<Message>()
         while (true) {
             val response = freehealthEhboxService.getMessageList(samlToken, messagesListRequest)
-            result.addAll(response.messages.mapNotNull {
-                consultationMessageBuilder.buildMessage(
-                    stsService.getKeyStore(alternateKeystoreId ?: keystoreId, alternatePassphrase ?: passPhrase)!!,
-                    alternatePassphrase ?: passPhrase, it
-                ).toMessageDto()
+            result.addAll(response.messages.mapNotNull { msg ->
+                try { consultationMessageBuilder.buildMessage(
+                    stsService.getKeyStore(keystoreId, passPhrase)!!,
+                    passPhrase, msg
+                ).toMessageDto() } catch (e:EhboxCryptoException) {
+                    alternateKeystores?.mapFirstNotNull {
+                        try { it.uuid?.let { uuid -> it.passPhrase?.let { pass -> consultationMessageBuilder.buildMessage(stsService.getKeyStore(uuid, pass)!!, pass, msg).toMessageDto() }}} catch(_: EhboxCryptoException) { null }
+                    } ?: ErrorMessage(title = "Impossible to decrypt message using provided Keystores")
+                }
             })
             if (response.messages.size < 100 || (limit != null && result.size >= limit)) {
                 break

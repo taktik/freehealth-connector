@@ -53,8 +53,26 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             batch = batch
                               )
 
-    @GetMapping("/{nihii}/{language}")
+    @PostMapping("/flat")
     fun sendBatch(
+        @RequestBody batch: InvoicesBatch
+                 ) =
+        efactService.makeFlatFile(
+            batch = batch,
+            isTest = false
+                              )
+
+    @PostMapping("/flat/test")
+    fun sendBatchTest(
+        @RequestBody batch: InvoicesBatch
+                 ) =
+        efactService.makeFlatFile(
+            batch = batch,
+            isTest = true
+                                 )
+
+    @GetMapping("/{nihii}/{language}")
+    fun loadMessages(
         @PathVariable nihii: String,
         @PathVariable language: String,
         @RequestParam keystoreId: UUID,
