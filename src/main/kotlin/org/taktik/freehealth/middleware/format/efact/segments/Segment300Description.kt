@@ -34,4 +34,7 @@ object Segment300Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "310", "reserve", "N", pos, 20)
     }
 
+    override fun toString(): String {
+        return "300"
+    }
 }

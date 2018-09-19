@@ -283,6 +283,7 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
                     try {
                         detail =
                             String(ConnectorIOUtils.decompress(IOUtils.toByteArray(r.detail.value.inputStream)), Charsets.UTF_8) //This starts with 92...
+
                         message = BelgianInsuranceInvoicingFormatReader(language).read(this.detail!!)
                         xades = Base64.encodeBase64String(r.xadesT.value)
                     } catch (e: IOException) {}
