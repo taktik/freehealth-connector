@@ -43,6 +43,7 @@ object Record52Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "12,13", "Heure de lecture document identite electronique (1 et 2)", "N", pos, 4)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "14", "reserve", "N", pos, 12)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "15", "Numero INAMI", "N", pos, 12)
-        register(ZONE_DESCRIPTIONS_BY_ZONE, "16", "reserve", "N", pos, 269)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "16", "reserve", "N", pos, 269)
+              register(ZONE_DESCRIPTIONS_BY_ZONE, "99", "Chiffres de controle de l'enregistrement", "N", pos, 2, null, true)
     }
 }

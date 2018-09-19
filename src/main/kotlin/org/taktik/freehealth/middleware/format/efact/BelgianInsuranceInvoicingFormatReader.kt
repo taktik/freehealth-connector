@@ -31,9 +31,13 @@ import org.taktik.freehealth.middleware.format.efact.segments.RecordOrSegmentDes
 import org.taktik.freehealth.middleware.format.efact.segments.Segment200Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment300Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment300ErrorDescription
+import org.taktik.freehealth.middleware.format.efact.segments.Segment400Record95Description
+import org.taktik.freehealth.middleware.format.efact.segments.Segment500Record96Description
 import org.taktik.freehealth.middleware.serialize.UTF8Control
+import java.io.EOFException
 
 import java.io.IOException
+import java.io.Reader
 import java.io.StringReader
 import java.util.Locale
 import java.util.ResourceBundle
@@ -66,7 +70,46 @@ class BelgianInsuranceInvoicingFormatReader(private val language: String) {
         } catch (e: Exception) {
             return message
         }
+    }
 
+    @Throws(IOException::class)
+    fun parse(reader: Reader): List<Record<*>>? {
+        val session = ReaderSession(reader)
+        return mutableListOf<Record<*>>().apply {
+            loop@ while(true) {
+                try {
+                    val messageType = session.messageType
+                    when (messageType.substring(0, 2)) {
+                        "92" -> {
+                            this.add(Record(Segment200Description, Segment200Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                            if (messageType.substring(2, 6) == "0000") {
+                                this.add(Record(Segment300Description, Segment300Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                            } else {
+                                this.add(Record(Segment300ErrorDescription, Segment300ErrorDescription.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                            }
+
+                        }
+                        "93" -> {
+                            this.add(Record(Segment200Description, Segment200Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                            this.add(Record(Segment300Description, Segment300Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                        }
+                        "10" -> this.add(Record(Record10Description, Record10Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                        "20" -> this.add(Record(Record20Description, Record20Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                        "30" -> this.add(Record(Record30Description, Record30Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                        "50" -> this.add(Record(Record50Description, Record50Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                        "51" -> this.add(Record(Record51Description, Record51Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                        "52" -> this.add(Record(Record52Description, Record52Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                        "80" -> this.add(Record(Record80Description, Record80Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                        "90" -> this.add(Record(Record90Description, Record90Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                        "95" -> this.add(Record(Segment400Record95Description, Segment400Record95Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                        "96" -> this.add(Record(Segment500Record96Description, Segment500Record96Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                        else -> break@loop
+                    }
+                } catch (e: EOFException) {
+                    break
+                }
+            }
+        }
     }
 
     @Throws(IOException::class)

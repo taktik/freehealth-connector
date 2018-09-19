@@ -54,7 +54,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
                               )
 
     @PostMapping("/flat")
-    fun sendBatch(
+    fun makeFlatFile(
         @RequestBody batch: InvoicesBatch
                  ) =
         efactService.makeFlatFile(
@@ -63,7 +63,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
                               )
 
     @PostMapping("/flat/test")
-    fun sendBatchTest(
+    fun makeFlatFileTest(
         @RequestBody batch: InvoicesBatch
                  ) =
         efactService.makeFlatFile(

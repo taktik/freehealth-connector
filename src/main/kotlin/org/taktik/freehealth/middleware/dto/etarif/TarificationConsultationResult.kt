@@ -13,7 +13,7 @@ class TarificationConsultationResult {
     var deceased: Date? = null
     var codes: MutableList<String> = ArrayList()
     var errors: List<MycarenetError> = ArrayList()
-    var fees: MutableList<Payment> = ArrayList<Payment>()
+    var fees: MutableList<Payment> = ArrayList()
     var financialContracts: MutableList<String> = ArrayList()
     var firstName: String? = null
     var insurancePeriodEnd: Date? = null
@@ -21,9 +21,9 @@ class TarificationConsultationResult {
     var justification: Int = 0
     var lastName: String? = null
     var niss: String? = null
-    var patientFees: MutableList<Payment> = ArrayList<Payment>()
+    var patientFees: MutableList<Payment> = ArrayList()
     var sex: Sex? = null
-    var reimbursements: MutableList<Payment> = ArrayList<Payment>()
+    var reimbursements: MutableList<Payment> = ArrayList()
 
     enum class Sex : Serializable {
         MALE, FEMALE

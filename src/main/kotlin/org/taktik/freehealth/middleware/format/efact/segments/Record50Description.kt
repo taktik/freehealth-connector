@@ -78,7 +78,8 @@ object Record50Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "54b", "Reserve", "N", pos, 5)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "55,56", "CodeNotificationImplantPartie1et2", "N", pos, 12)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "57,58,59", "code d'enregistrement Qermid (partie 1, 2 et 3)", "N", pos, 14)
-        register(ZONE_DESCRIPTIONS_BY_ZONE, "98", "reserve", "N", pos, 2)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "98", "reserve", "N", pos, 2)
+              register(ZONE_DESCRIPTIONS_BY_ZONE, "99", "Chiffres de controle de l'enregistrement", "N", pos, 2, null, true)
     }
 
 }
