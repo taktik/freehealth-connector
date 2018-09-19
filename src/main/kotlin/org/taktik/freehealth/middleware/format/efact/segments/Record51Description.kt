@@ -71,7 +71,7 @@ object Record51Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "39", "reserve", "N", pos, 10)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "40", "reserve", "N", pos, 2)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "41", "reserve", "N", pos, 6)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "42,43a,43b,44,45", "donnees de reference reseau", "N", pos, 48)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "42,43a,43b,44,45", "donnees de reference reseau", "A", pos, 48)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "46", "reserve", "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "47", "reserve", "N", pos, 8)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "48", "reserve", "N", pos, 1)

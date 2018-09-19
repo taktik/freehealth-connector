@@ -38,6 +38,7 @@ import java.net.URISyntaxException
 import java.text.DecimalFormat
 import java.util.ArrayList
 import java.util.HashMap
+import java.util.LinkedList
 import java.util.UUID
 import javax.xml.ws.soap.SOAPFaultException
 
@@ -46,25 +47,21 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
     private val config = ConfigFactory.getConfigValidator(listOf())
     private val genAsyncService = GenAsyncServiceImpl("invoicing")
 
-    override fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch): EfactSendResponse {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
-        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-
-        val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
-
-        requireNotNull(keystoreId) { "Keystore id cannot be null" }
-        requireNotNull(tokenId) { "Token id cannot be null" }
-        require(batch.numericalRef?.let { it <= 9999999999L } ?: false) { "numericalRef is too long (10 positions max)" }
+    override fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean): String {
+        require(batch.numericalRef?.let { it <= 9999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (10 positions max)" } ?: "numericalRef is missing" }
         requireNotNull(batch.sender) { "Sender cannot be null" }
         requireNotNull(batch.batchRef) { "BatchRef cannot be null" }
         requireNotNull(batch.uniqueSendNumber) { "UniqueSendNumber cannot be null" }
-        val fed = batch.ioFederationCode
 
+        batch.invoices.forEach {
+            requireNotNull(it.invoiceNumber) { "One of the invoices has an empty invoice number" }
+            requireNotNull(it.invoiceRef) { "One of the invoices has an empty invoice ref" }
+            requireNotNull(it.ioCode) { "One of the invoices has an empty io code" }
+            requireNotNull(it.patient) { "One of the invoices has an empty patient" }
+        }
 
         val stringWriter = StringWriter()
         val iv = BelgianInsuranceInvoicingFormatWriter(stringWriter)
-        val inputReference = "" + DecimalFormat("00000000000000").format(batch.numericalRef ?: 0)
 
         try {
             iv.write200and300(batch.sender!!, batch.numericalRef
@@ -88,19 +85,9 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
                 if (invoice.items.isNotEmpty()) {
                     val destCode = iv.getDestCode(invoice.ioCode!!, batch.sender!!)
 
-                    val codesPerOA: MutableList<Long>? = codesPerOAMap[destCode]
-                    val amountPerOA: Array<Long>? = amountPerOAMap[destCode]
-                    val recordsCountPerOA: Array<Long>? = recordsCountPerOAMap[destCode]
-
-                    if (codesPerOA == null) {
-                        codesPerOAMap[destCode] = ArrayList()
-                    }
-                    if (amountPerOA == null) {
-                        amountPerOAMap[destCode] = arrayOf(0L)
-                    }
-                    if (recordsCountPerOA == null) {
-                        recordsCountPerOAMap[destCode] = arrayOf(0L)
-                    }
+                    val codesPerOA: MutableList<Long> = codesPerOAMap.getOrPut(destCode) { LinkedList() }
+                    val amountPerOA: Array<Long> = amountPerOAMap.getOrPut(destCode) { arrayOf(0L) }  //An array to pass it by reference
+                    val recordsCountPerOA: Array<Long> = recordsCountPerOAMap.getOrPut(destCode) { arrayOf(0L) }  //An array to pass it by reference
 
                     val recordCodes = ArrayList<Long>()
                     var recordAmount = 0L
@@ -108,7 +95,7 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
                     var recordSup = 0L
                     rn =
                         iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, false)
-                    recordsCountPerOA!![0]++
+                    recordsCountPerOA[0]++
                     recordsCount++
                     for (it in invoice.items) {
                         rn =
@@ -162,7 +149,21 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
         }
 
 
-        val content = stringWriter.toString()
+        return stringWriter.toString()
+    }
+
+    override fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch): EfactSendResponse {
+        requireNotNull(keystoreId) { "Keystore id cannot be null" }
+        requireNotNull(tokenId) { "Token id cannot be null" }
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+
+        val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
+
+        val fed = batch.ioFederationCode
+        val inputReference = "" + DecimalFormat("00000000000000").format(batch.numericalRef ?: 0)
+        val content = makeFlatFile(batch, isTest)
 
         val requestObjectBuilder = try {
             BuilderFactory.getRequestObjectBuilder("invoicing")

@@ -24,7 +24,7 @@ import java.util.LinkedList
 class Invoice {
     var patient: Patient? = null
     var ioCode: String? = null
-    var items: List<InvoiceItem> = LinkedList()
+    var items: MutableList<InvoiceItem> = LinkedList()
     var reason: InvoicingTreatmentReasonCode? = null
     var invoiceRef: String? = null
     var invoiceNumber: Long? = null

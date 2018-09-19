@@ -40,18 +40,20 @@ import org.taktik.freehealth.middleware.format.efact.segments.Segment200Descript
 import org.taktik.freehealth.middleware.format.efact.segments.Segment300Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment400Record95Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment500Record96Description
+import org.taktik.freehealth.utils.FuzzyValues
 import java.io.IOException
 import java.io.Writer
 import java.math.BigInteger
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Arrays
 import java.util.Calendar
-import java.util.Date
 import java.util.GregorianCalendar
 
 class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
-    private val df = SimpleDateFormat("yyyyMMdd")
+    private val dtf = DateTimeFormatter.ofPattern("yyyyMMdd")
 
     private fun getInsurabilityParameters(patient: Patient, parameter: InsuranceParameter): String? {
         patient.insurabilities
@@ -84,8 +86,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                        isTest: Boolean) {
         val ws200 = WriterSession(writer, Segment200Description)
 
-        val creationDate = Date()
-        val formattedCreationDate = df.format(creationDate)
+        val creationDate = LocalDateTime.now()
+        val formattedCreationDate = creationDate.format(dtf)
 
         assert(formattedCreationDate.length == 8)
 
@@ -136,8 +138,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
     fun write400(oa: String, numericalRef: Long?, recordsCount: Long, codesNomenclature: List<Long>, amount: Long) {
         val ws = WriterSession(writer, Segment400Record95Description)
 
-        val creationDate = Date()
-        val formattedCreationDate = df.format(creationDate)
+        val creationDate = LocalDateTime.now()
+        val formattedCreationDate = creationDate.format(dtf)
         assert(formattedCreationDate.length == 8)
 
         var cs = BigInteger.ZERO
@@ -175,8 +177,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
     fun write960000(oa: String, recordsCount: Long, codesNomenclature: List<Long>, amount: Long) {
         val ws = WriterSession(writer, Segment500Record96Description)
 
-        val creationDate = Date()
-        val formattedCreationDate = df.format(creationDate)
+        val creationDate = LocalDateTime.now()
+        val formattedCreationDate = creationDate.format(dtf)
         assert(formattedCreationDate.length == 8)
 
         var cs = BigInteger.ZERO
@@ -221,8 +223,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         val ws = WriterSession(writer, Record10Description)
 
-        val creationDate = Date()
-        val formattedCreationDate = df.format(creationDate)
+        val creationDate = LocalDateTime.now()
+        val formattedCreationDate = creationDate.format(dtf)
         assert(formattedCreationDate.length == 8)
 
         ws.write("2", recordNumber)
@@ -255,8 +257,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         val ws = WriterSession(writer, Record20Description)
 
-        val creationDate = Date()
-        val formattedCreationDate = df.format(creationDate)
+        val creationDate = LocalDateTime.now()
+        val formattedCreationDate = creationDate.format(dtf)
 
         assert(formattedCreationDate.length == 8)
 
@@ -308,8 +310,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                            icd: InvoiceItem): Int {
         val ws = WriterSession(writer, Record50Description)
 
-        val creationDate = Date()
-        val formattedCreationDate = df.format(creationDate)
+        val creationDate = LocalDateTime.now()
+        val formattedCreationDate = creationDate.format(dtf)
 
         assert(formattedCreationDate.length == 8)
 
@@ -330,8 +332,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("2", recordNumber)
         ws.write("3", (icd.percentNorm?: InvoicingPercentNorm.None).code)
         ws.write("4", icd.codeNomenclature)
-        ws.write("5", df.format(icd.dateCode))
-        ws.write("6a", df.format(icd.dateCode))
+        ws.write("5", FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
+        ws.write("6a", FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
         ws.write("7", insuranceCode)
         ws.write("8a", noSIS)
         ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
@@ -365,8 +367,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                                       icd: InvoiceItem): Int {
         val ws = WriterSession(writer, Record51Description)
 
-        val creationDate = Date()
-        val formattedCreationDate = df.format(creationDate)
+        val creationDate = LocalDateTime.now()
+        val formattedCreationDate = creationDate.format(dtf)
 
         assert(formattedCreationDate.length == 8)
 
@@ -391,13 +393,13 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("2", recordNumber)
         ws.write("3", 0)
         ws.write("4", icd.codeNomenclature)
-        ws.write("5", df.format(icd.dateCode))
+        ws.write("5", FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
         ws.write("8a", noSIS)
         ws.write("15", icd.doctorIdentificationNumber)
         ws.write("19", (if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
         ws.write("27", "0000" + nf3.format(ct1) + nf3.format(ct2))
         ws.write("42", icd.insuranceRef)
-        ws.write("55", df.format(icd.insuranceRefDate))
+        ws.write("55", FuzzyValues.getLocalDateTime(icd.insuranceRefDate!!)!!.format(dtf))
 
         ws.writeFieldsWithCheckSum()
         return recordNumber+1
@@ -420,8 +422,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("2", recordNumber)
         ws.write("3", 0)
         ws.write("4", icd.codeNomenclature)
-        ws.write("5", df.format(icd.dateCode))
-        ws.write("6a", df.format(eidItem.readDate))
+        ws.write("5", FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
+        ws.write("6a", FuzzyValues.getLocalDateTime(eidItem.readDate!!)!!.format(dtf))
         ws.write("7", 0)
         ws.write("8a", noSIS)
         ws.write("9", 0)
@@ -450,8 +452,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                           sup: Long): Int {
         val ws = WriterSession(writer, Record80Description)
 
-        val creationDate = Date()
-        val formattedCreationDate = df.format(creationDate)
+        val creationDate = LocalDateTime.now()
+        val formattedCreationDate = creationDate.format(dtf)
         assert(formattedCreationDate.length == 8)
 
         var noSIS: String? = if (patient.ssin != null) patient.ssin else ""
@@ -504,8 +506,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                         amount: Long?): Int {
         val ws = WriterSession(writer, Record90Description)
 
-        val creationDate = Date()
-        val formattedCreationDate = df.format(creationDate)
+        val creationDate = LocalDateTime.now()
+        val formattedCreationDate = creationDate.format(dtf)
 
         assert(formattedCreationDate.length == 8)
         val nf = DecimalFormat("00000000000")

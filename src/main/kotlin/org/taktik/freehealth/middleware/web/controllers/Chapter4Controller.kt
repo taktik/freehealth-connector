@@ -82,7 +82,7 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam(required = false) civicsVersion: String,
+        @RequestParam(required = false) civicsVersion: String? = null,
         @RequestParam(required = false) paragraph: String? = null,
         @RequestParam(required = false) start: Long? = null,
         @RequestParam(required = false) end: Long? = null,

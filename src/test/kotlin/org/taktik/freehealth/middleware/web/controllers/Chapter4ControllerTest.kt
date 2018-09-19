@@ -59,7 +59,6 @@ class Chapter4ControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = Instant.now().toEpochMilli()
 
-
         val results = getNisses(0)[1].let {
             this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it?keystoreId=$keystoreId"+
                 "&tokenId=$tokenId"+
@@ -133,10 +132,11 @@ class Chapter4ControllerTest : EhealthTest() {
         val dateStart = Instant.parse("2016-05-01T00:00:00.00Z").toEpochMilli()
         val dateEnd = Instant.parse("2016-07-31T00:00:00.00Z").toEpochMilli()
 
-
+        //4740000 marhce avec ce numero
         val paragraphDesc = this.restTemplate!!.getForObject("http://localhost:$port/chap4/sam/search/${"2280100"}/${"fr"}", Array<ParagraphPreview>::class.java)
         val civic = paragraphDesc.first().paragraphVersion
         val paragraph = paragraphDesc.first().paragraphName
+
 
         val results = getNisses(2)[2].let {
             this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it?keystoreId=$keystoreId" +

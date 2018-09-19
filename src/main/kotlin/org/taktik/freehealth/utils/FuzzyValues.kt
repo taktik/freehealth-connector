@@ -90,6 +90,9 @@ object FuzzyValues {
         var plusOne = false
 
         if (dateTime > 99991231L) {
+            if (dateTime < 18000101000000L) {
+                return Instant.ofEpochMilli(dateTime).atZone(ZoneId.systemDefault()).toLocalDateTime()
+            }
             //Full date time format
             val time = dateTime % 1000000L
             date = dateTime / 1000000L
