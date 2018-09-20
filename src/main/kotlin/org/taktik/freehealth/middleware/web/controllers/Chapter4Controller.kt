@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.connector.business.domain.chapter4.Appendix
 import org.taktik.connector.business.domain.chapter4.RequestType
@@ -70,9 +71,9 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
 
     @GetMapping("/consult/{patientSsin}")
     fun agreementRequestsConsultation(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
@@ -106,13 +107,13 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         reference = reference)
 
     @PostMapping("/new/{patientSsin}/{civicsVersion}/{requestType}/{paragraph}")
-    fun requestAgreement(@RequestParam keystoreId: UUID,
-                         @RequestParam tokenId: UUID,
+    fun requestAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+                         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
                          @RequestParam hcpNihii: String,
                          @RequestParam hcpSsin: String,
                          @RequestParam hcpFirstName: String,
                          @RequestParam hcpLastName: String,
-                         @RequestParam passPhrase: String,
+                         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
                          @PathVariable patientSsin: String,
                          @PathVariable requestType: String,
                          @PathVariable civicsVersion: String,
@@ -147,13 +148,13 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
             appendices = appendices)
 
     @DeleteMapping("/cancel/{patientSsin}")
-    fun cancelAgreement(@RequestParam keystoreId: UUID,
-                        @RequestParam tokenId: UUID,
+    fun cancelAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+                        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
                         @RequestParam hcpNihii: String,
                         @RequestParam hcpSsin: String,
                         @RequestParam hcpFirstName: String,
                         @RequestParam hcpLastName: String,
-                        @RequestParam passPhrase: String,
+                        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
                         @PathVariable patientSsin: String,
                         @RequestParam decisionReference: String?,
                         @RequestParam iorequestReference: String?) =
@@ -171,13 +172,13 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
                                        )
 
     @DeleteMapping("/close/{patientSsin}")
-    fun closeAgreement(@RequestParam keystoreId: UUID,
-                       @RequestParam tokenId: UUID,
+    fun closeAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+                       @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
                        @RequestParam hcpNihii: String,
                        @RequestParam hcpSsin: String,
                        @RequestParam hcpFirstName: String,
                        @RequestParam hcpLastName: String,
-                       @RequestParam passPhrase: String,
+                       @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
                        @PathVariable patientSsin: String,
                        @RequestParam decisionReference: String) =
         chapter4Service.closeAgreement(

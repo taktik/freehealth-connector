@@ -36,7 +36,7 @@ object Record80Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "5", "DateDadmission", "N", pos, 8)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "6a,6b", "DateDeSortiePartie1et2", "N", pos, 8)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "7", "NumeroMutualiteDaffiliation", "N", pos, 3)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "8a,8b", "IdentificationBeneficiairePartie1", "N", pos, 13)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "8a,8b", "IdentificationBeneficiairePartie1", "N", pos, 13)  //Forced to N so that it is padded with 0s
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "9", "SexeBeneficiaire", "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "10", "TypeFacture", "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "11", "Reserve", "N", pos, 1)

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -41,9 +42,9 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
 
     @PostMapping("/batch")
     fun sendBatch(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestBody batch: InvoicesBatch
                  ) =
         efactService.sendBatch(
@@ -75,9 +76,9 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
     fun loadMessages(
         @PathVariable nihii: String,
         @PathVariable language: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam ssin: String,
         @RequestParam firstName: String,
         @RequestParam lastName: String
