@@ -37,7 +37,7 @@ object Record51Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "6a", "reserve", "N", pos, 4)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "6b", "reserve", "N", pos, 4)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "7", "reserve", "N", pos, 3)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "8a,8b", "identification beneficiaire", "A", pos, 13)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "8a,8b", "identification beneficiaire", "N", pos, 13)  //Forced to N so that it is padded with 0s
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "9", "reserve", "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "10", "reserve", "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "11", "reserve", "N", pos, 1)
@@ -71,7 +71,7 @@ object Record51Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "39", "reserve", "N", pos, 10)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "40", "reserve", "N", pos, 2)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "41", "reserve", "N", pos, 6)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "42,43a,43b,44,45", "donnees de reference reseau", "N", pos, 48)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "42,43a,43b,44,45", "donnees de reference reseau", "A", pos, 48)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "46", "reserve", "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "47", "reserve", "N", pos, 8)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "48", "reserve", "N", pos, 1)
@@ -88,5 +88,6 @@ object Record51Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "58", "reserve", "N", pos, 4)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "59", "reserve", "N", pos, 6)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "98", "reserve", "N", pos, 2)
+              register(ZONE_DESCRIPTIONS_BY_ZONE, "99", "Chiffres de controle de l'enregistrement", "N", pos, 2, null, true)
     }
 }

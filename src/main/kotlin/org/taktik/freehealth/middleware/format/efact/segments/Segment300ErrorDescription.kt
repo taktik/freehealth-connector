@@ -38,4 +38,8 @@ object Segment300ErrorDescription : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "312", "reserve", "N", pos, 459)
     }
 
+    override fun toString(): String {
+        return "300"
+    }
+
 }

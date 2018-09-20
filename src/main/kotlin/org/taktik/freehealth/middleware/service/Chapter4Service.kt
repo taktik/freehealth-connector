@@ -2,8 +2,8 @@ package org.taktik.freehealth.middleware.service
 
 import org.taktik.connector.business.domain.chapter4.AgreementResponse
 import org.taktik.connector.business.domain.chapter4.Appendix
-import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
+import org.taktik.freehealth.middleware.drugs.civics.ParagraphInfos
 import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
 import java.util.UUID
 
@@ -19,7 +19,11 @@ interface Chapter4Service {
                                       hcpLastName: String,
                                       passPhrase: String,
                                       patientSsin: String,
-                                      civicsVersion: String,
+                                      patientDateOfBirth: Long,
+                                      patientFirstName: String,
+                                      patientLastName: String,
+                                      patientGender: String,
+                                      civicsVersion: String?,
                                       paragraph: String?,
                                       start: Long,
                                       end: Long?,
@@ -61,4 +65,6 @@ interface Chapter4Service {
                        passPhrase: String,
                        patientSsin: String,
                        decisionReference: String): AgreementResponse
+
+    fun getParagraphInfos(chapterName: String, paragraphName: String): ParagraphInfos?
 }

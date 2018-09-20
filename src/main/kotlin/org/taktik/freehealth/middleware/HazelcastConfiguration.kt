@@ -78,15 +78,4 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
         })
         return hazelcastInstance.getMap<UUID, String>(mapName)
     }
-
-    @Bean
-    fun kgssCache(hazelcastInstance: HazelcastInstance): IMap<UUID, String> {
-        val config = hazelcastInstance.config
-        val mapName = "ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KGSS"
-        config.addMapConfig(MapConfig(mapName). apply{
-            timeToLiveSeconds = 12*3600
-            maxSizeConfig = MaxSizeConfig(100000, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
-        })
-        return hazelcastInstance.getMap<UUID, String>(mapName)
-    }
 }

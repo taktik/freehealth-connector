@@ -41,7 +41,7 @@ class WriterSession(private val writer: Writer, private val format: RecordOrSegm
     @Throws(IOException::class)
     fun writeFieldsWithCheckSum() {
         var bi = BigInteger.ZERO
-        for (z in format.zoneDescriptions) {
+        for (z in format.zoneDescriptions.filter { !it.cs }) {
             val content = (fields[z.position] ?: Zone(z, z.value)).write(writer)
             bi = bi.add(BigInteger.valueOf(checksum(content)))
         }
@@ -67,7 +67,7 @@ class WriterSession(private val writer: Writer, private val format: RecordOrSegm
 
     @Throws(IOException::class)
     fun writeFieldsWithoutCheckSum() {
-        for (z in format.zoneDescriptions) {
+        for (z in format.zoneDescriptions.filter { !it.cs }) {
             (fields[z.position] ?: Zone(z, z.value)).write(writer)
         }
     }

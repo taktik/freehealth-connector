@@ -79,5 +79,6 @@ object Record10Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "58", "Reserve", "N", pos, 4)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "59", "Reserve", "N", pos, 6)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "98", "Reserve", "N", pos, 2)
+              register(ZONE_DESCRIPTIONS_BY_ZONE, "99", "Chiffres de controle de l'enregistrement", "N", pos, 2, null, true)
     }
 }

@@ -16,4 +16,6 @@ interface EfactService {
                      hcpFirstName: String,
                      hcpLastName: String,
                      language: String): List<EfactMessage>
+
+    fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean): String
 }

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -43,7 +44,7 @@ import java.util.*
 class RecipeController(val recipeService: RecipeService) {
 
     @PostMapping("")
-    fun createPrescription(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam passPhrase: String, @RequestBody prescription: PrescriptionRequest): Prescription =
+    fun createPrescription(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody prescription: PrescriptionRequest): Prescription =
         recipeService.createPrescription(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -63,7 +64,7 @@ class RecipeController(val recipeService: RecipeService) {
         )
 
     @GetMapping("")
-    fun listOpenPrescriptions(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam passPhrase: String): List<Prescription> =
+    fun listOpenPrescriptions(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Prescription> =
         recipeService.listOpenPrescriptions(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -76,13 +77,13 @@ class RecipeController(val recipeService: RecipeService) {
 
     @PostMapping("/notify/{rid}")
     fun sendNotification(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestParam hcpQuality: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpName: String,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         patientId: String,
         executorId: String,
         @PathVariable rid: String,
@@ -102,7 +103,7 @@ class RecipeController(val recipeService: RecipeService) {
     )
 
     @DeleteMapping("/{rid}")
-    fun revokePrescription(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam passPhrase: String, @PathVariable rid: String, @RequestParam reason: String) =
+    fun revokePrescription(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @PathVariable rid: String, @RequestParam reason: String) =
         recipeService.revokePrescription(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -116,7 +117,7 @@ class RecipeController(val recipeService: RecipeService) {
         )
 
     @PutMapping("/{rid}/feedback/{feedbackFlag}")
-    fun updateFeedbackFlag(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam passPhrase: String, @PathVariable rid: String, @PathVariable feedbackFlag: Boolean) =
+    fun updateFeedbackFlag(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @PathVariable rid: String, @PathVariable feedbackFlag: Boolean) =
         recipeService.updateFeedbackFlag(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -130,7 +131,7 @@ class RecipeController(val recipeService: RecipeService) {
         )
 
     @GetMapping("/all/feedbacks")
-    fun listFeedbacks(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam passPhrase: String): List<Feedback> =
+    fun listFeedbacks(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Feedback> =
         recipeService.listFeedbacks(
             keystoreId = keystoreId,
             tokenId = tokenId,

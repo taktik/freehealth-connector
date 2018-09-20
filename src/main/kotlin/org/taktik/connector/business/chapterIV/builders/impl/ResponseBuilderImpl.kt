@@ -18,11 +18,9 @@ import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValue
 import org.taktik.connector.technical.exception.UnsealConnectorException
 import org.taktik.connector.technical.exception.UnsealConnectorExceptionValues
 import org.taktik.connector.technical.service.etee.Crypto
-import org.taktik.connector.technical.session.Session
 import org.taktik.connector.technical.utils.ConnectorCryptoUtils
 import org.taktik.connector.technical.utils.ConnectorExceptionUtils
 import org.taktik.connector.technical.utils.MarshallerHelper
-import org.taktik.connector.technical.utils.SessionUtil
 import org.taktik.connector.technical.validator.impl.TimeStampValidatorFactory
 import be.fgov.ehealth.chap4.core.v1.FaultType
 import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementResponse
@@ -37,8 +35,9 @@ import org.bouncycastle.tsp.TSPException
 import org.bouncycastle.tsp.TimeStampRequest
 import org.bouncycastle.tsp.TimeStampRequestGenerator
 import org.bouncycastle.tsp.TimeStampResponse
+import org.taktik.connector.technical.service.sts.security.Credential
 
-class ResponseBuilderImpl(private val crypto: Crypto,
+class ResponseBuilderImpl(private val crypto: Crypto, private val credential: Credential,
                           private val validator: Chapter4XmlValidator) : ResponseBuilder, ConfigurationModuleBootstrap.ModuleBootstrapHook {
     override fun bootstrap() {}
 
@@ -97,7 +96,7 @@ class ResponseBuilderImpl(private val crypto: Crypto,
         log.debug("unsealedSecuredContent : " + String(unsealedSecuredContent!!))
         val unsealedResponse = this.getUnsealedResponse(unsealedSecuredContent, responseType)
         if (this.isValidationNeeded(responseType)) {
-            this.validator!!.validate(unsealedResponse.xmlObject)
+            //this.validator!!.validate(unsealedResponse.xmlObject)
         }
 
         val tsRequest = this.generateTimeStampRequest(unsealedResponse.kmehrResponseBytes)
@@ -105,7 +104,7 @@ class ResponseBuilderImpl(private val crypto: Crypto,
         this.validateTimeStamp(tsRequest, timeStampResponse)
         val kmehrResponse = this.convertToKmehrResKmehrresponse(unsealedResponse.kmehrResponseBytes)
         if (kmehrResponse != null && this.isValidationNeeded(responseType)) {
-            this.validator!!.validate(kmehrResponse)
+            //this.validator!!.validate(kmehrResponse)
         }
 
         return ChapterIVKmehrResponseWithTimeStampInfo(unsealedResponse.kmehrResponseBytes)
@@ -169,11 +168,10 @@ class ResponseBuilderImpl(private val crypto: Crypto,
     protected fun unsealSecuredContent(agreementResponse: Chap4MedicalAdvisorAgreementResponseWrapper<*>,
                                        ignoreWarnings: Boolean): ByteArray? {
         val securedContent = this.getSecuredContent(agreementResponse)
-        this.validateSessionForHolderOfKeyCrypto()
 
         try {
             val unsealedData =
-                SessionUtil.getHolderOfKeyCrypto()
+                this.crypto
                     .unseal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, securedContent)
             return unsealedData?.contentAsByte
         } catch (var5: UnsealConnectorException) {
@@ -182,16 +180,6 @@ class ResponseBuilderImpl(private val crypto: Crypto,
             } else {
                 throw var5
             }
-        }
-    }
-
-    @Throws(TechnicalConnectorException::class)
-    private fun validateSessionForHolderOfKeyCrypto() {
-        val session = Session.getInstance().session
-        if (session == null) {
-            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CRYPTO, *arrayOf<Any>("there was no active session found"))
-        } else if (session.holderOfKeyCrypto == null) {
-            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CRYPTO, *arrayOf<Any>("there was no holder of key crypto found in the session"))
         }
     }
 

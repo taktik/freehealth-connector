@@ -11,17 +11,15 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.exception.UnsealConnectorException;
 import org.taktik.connector.technical.service.etee.Crypto;
+import org.taktik.connector.technical.service.etee.CryptoFactory;
 import org.taktik.connector.technical.service.kgss.KgssService;
 import org.taktik.connector.technical.service.kgss.builders.KgssMessageBuilder;
 import org.taktik.connector.technical.service.kgss.builders.impl.KgssMessageBuilderImpl;
 import org.taktik.connector.technical.service.kgss.domain.KeyResult;
-import org.taktik.connector.technical.service.sts.SAMLTokenFactory;
 import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential;
 import org.taktik.connector.technical.service.ws.ServiceFactory;
-import org.taktik.connector.technical.session.Session;
-import org.taktik.connector.technical.session.SessionItem;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import be.fgov.ehealth.commons._1_0.core.LocalisedString;
@@ -52,17 +50,21 @@ import org.w3c.dom.Element;
 public class KgssServiceImpl implements KgssService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
    private Logger log = LoggerFactory.getLogger(this.getClass());
 
-   public KeyResult getNewKey(GetNewKeyRequestContent request, byte[] kgssETK) throws TechnicalConnectorException {
-      Credential encryptionCredential = Session.getInstance().getSession().getEncryptionCredential();
-      Map<String, PrivateKey> decryptionKeys = Session.getInstance().getSession().getEncryptionPrivateKeys();
-      GetNewKeyResponseContent response = this.getNewKey(request, encryptionCredential, decryptionKeys, kgssETK);
+   @Override
+   public KeyResult getNewKey(GetNewKeyRequestContent request, KeyStore keystore, String passPhrase, byte[] kgssETK) throws TechnicalConnectorException {
+      Credential credential = new KeyStoreCredential(keystore, "authentication", passPhrase);
+      Map<String, PrivateKey> hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray());
+      Crypto crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys);
+
+      GetNewKeyResponseContent response = this.getNewKey(request, crypto, credential, hokPrivateKeys, kgssETK);
       byte[] keyResponse = response.getNewKey();
       String keyId = new String(Base64.encode(response.getNewKeyIdentifier()));
       return new KeyResult(new SecretKeySpec(keyResponse, "AES"), keyId);
    }
 
-   public GetNewKeyResponseContent getNewKey(GetNewKeyRequestContent request, Credential encryption, Map<String, PrivateKey> decryptionKeys, byte[] etkKGSS) throws TechnicalConnectorException {
-      KgssMessageBuilder builder = new KgssMessageBuilderImpl(etkKGSS, encryption, decryptionKeys);
+   @Override
+   public GetNewKeyResponseContent getNewKey(GetNewKeyRequestContent request, Crypto crypto, Credential encryption, Map<String, PrivateKey> decryptionKeys, byte[] etkKGSS) throws TechnicalConnectorException {
+      KgssMessageBuilder builder = new KgssMessageBuilderImpl(etkKGSS, crypto, encryption, decryptionKeys);
       GetNewKeyRequest sealedRequest = builder.sealGetNewKeyRequest(request);
       GenericRequest genericRequest = ServiceFactory.getKGSSService();
       genericRequest.setPayload(sealedRequest);
@@ -94,11 +96,16 @@ public class KgssServiceImpl implements KgssService, ConfigurationModuleBootstra
       }
    }
 
-   public GetKeyResponseContent getKey(GetKeyRequestContent request, Credential encryption, Credential service, Element samlAssertion, Map<String, PrivateKey> decryptionKeys, byte[] etkKGSS) throws TechnicalConnectorException {
-      SAMLToken token = SAMLTokenFactory.getInstance().createSamlToken(samlAssertion, service);
-      KgssMessageBuilder builder = new KgssMessageBuilderImpl(etkKGSS, encryption, decryptionKeys);
+   @Override
+   public GetKeyResponseContent getKey(GetKeyRequestContent request, SAMLToken samlToken, KeyStore keystore, String passPhrase, Element samlAssertion, Map<String, PrivateKey> decryptionKeys, byte[] etkKGSS) throws TechnicalConnectorException {
+      Credential credential = new KeyStoreCredential(keystore, "authentication", passPhrase);
+      Map<String, PrivateKey> hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray());
+      Crypto crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys);
+
+      KgssMessageBuilder builder = new KgssMessageBuilderImpl(etkKGSS, crypto, credential, hokPrivateKeys);
       GetKeyRequest sealedRequest = builder.sealGetKeyRequest(request);
-      GenericRequest genericRequest = ServiceFactory.getKGSSServiceSecured(token);
+      GenericRequest genericRequest = ServiceFactory.getKGSSServiceSecured(samlToken);
+
       genericRequest.setPayload(sealedRequest);
 
       try {
@@ -127,7 +134,6 @@ public class KgssServiceImpl implements KgssService, ConfigurationModuleBootstra
       KeyStoreCredential credential = new KeyStoreCredential(keystore, "authentication", passPhrase);
       Map<String, PrivateKey> hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray());
 
-
       if (myEtk != null) {
          // Mode1 : using ETK
          getKeyRequestContent.setETK(myEtk);
@@ -149,7 +155,7 @@ public class KgssServiceImpl implements KgssService, ConfigurationModuleBootstra
       KeyResult keyResultToReturn;
 
       try {
-         GetKeyResponseContent getKeyResponseContent = this.getKey(getKeyRequestContent, credential, credential, samlToken.getAssertion(), hokPrivateKeys, kgssEtk);
+         GetKeyResponseContent getKeyResponseContent = this.getKey(getKeyRequestContent, samlToken, keystore, passPhrase, samlToken.getAssertion(), hokPrivateKeys, kgssEtk);
          keyResultToReturn = new KeyResult(new SecretKeySpec(getKeyResponseContent.getKey(), "AES"), new String(keyId));
       } catch (SOAPFaultException se) {
          if (se.getFault() != null && se.getFault().getFaultCode() != null && se.getFault().getFaultCode().contains("InvalidSecurity")) {
@@ -177,6 +183,7 @@ public class KgssServiceImpl implements KgssService, ConfigurationModuleBootstra
 
       KeyStoreCredential credential = new KeyStoreCredential(keystore, "authentication", passPhrase);
       Map<String, PrivateKey> hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray());
+      Crypto crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys);
 
       for (String credentialTypeStr : credentialTypes) {
          String[] atrs = credentialTypeStr.split(",");
@@ -204,7 +211,7 @@ public class KgssServiceImpl implements KgssService, ConfigurationModuleBootstra
 
       try {
 
-         GetNewKeyResponseContent getNewKeyResponseContent = getNewKey(req, credential, hokPrivateKeys, etkKgss);
+         GetNewKeyResponseContent getNewKeyResponseContent = getNewKey(req, crypto, credential, hokPrivateKeys, etkKgss);
          byte[] keyResponse = getNewKeyResponseContent.getNewKey();
          byte[] keyId = getNewKeyResponseContent.getNewKeyIdentifier();
 

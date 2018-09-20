@@ -39,12 +39,17 @@ abstract class RecordOrSegmentDescription {
                            typeSymbol: String,
                            position: Int,
                            length: Int,
-                           value: String? = null): Int {
-        val zoneDescription = ZoneDescription.build(zones, label, typeSymbol, position, length, value)
+                           value: String? = null,
+                           cs: Boolean = false): Int {
+        val zoneDescription = ZoneDescription.build(zones, label, typeSymbol, position, length, value, cs)
         for (zone in zones.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
             zoneDescriptionsByZone[zone.trim { it <= ' ' }] = zoneDescription
         }
         return position + length
+    }
+
+    override fun toString(): String {
+        return zoneDescriptions.firstOrNull()?.let { it.value } ?: super.toString()
     }
 
 }

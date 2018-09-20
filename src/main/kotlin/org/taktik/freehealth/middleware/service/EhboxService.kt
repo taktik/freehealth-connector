@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.service
 
+import org.taktik.freehealth.middleware.dto.ehbox.AltKeystore
 import org.taktik.freehealth.middleware.dto.ehbox.BoxInfo
 import org.taktik.freehealth.middleware.dto.ehbox.DocumentMessage
 import org.taktik.freehealth.middleware.dto.ehbox.Message
@@ -33,8 +34,7 @@ interface EhboxService {
         passPhrase: String,
         boxId: String,
         messageId: String,
-        alternateKeystoreId: UUID? = null,
-        alternatePassphrase : String? = null
+        alternateKeystores: List<AltKeystore>? = null
                       ): Message
     fun sendMessage(
         keystoreId: UUID,
@@ -52,8 +52,7 @@ interface EhboxService {
         passPhrase: String,
         boxId: String,
         limit: Int?,
-        alternateKeystoreId: UUID? = null,
-        alternatePassphrase : String? = null
+        alternateKeystores: List<AltKeystore>? = null
                     ): List<Message>
     fun moveMessages(
         keystoreId: UUID,

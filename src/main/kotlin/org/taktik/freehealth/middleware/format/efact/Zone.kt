@@ -22,6 +22,7 @@ import org.taktik.freehealth.middleware.format.StringUtils
 import org.taktik.freehealth.middleware.format.efact.segments.ZoneDescription
 import java.io.IOException
 import java.io.Writer
+import java.lang.NumberFormatException
 import java.text.DecimalFormat
 
 class Zone(private val zoneDescription:ZoneDescription, val value: Any?) {
@@ -37,15 +38,19 @@ class Zone(private val zoneDescription:ZoneDescription, val value: Any?) {
             val nf = DecimalFormat(ZEROS.substring(0, zoneDescription.length))
             var longValue: Long = 0
 
-            if (value is Number) {
-                longValue = value.toLong()
-            } else if (value is String) {
-                longValue = if (value.length > 0) java.lang.Long.valueOf((value as String?)!!) else 0L
+            try {
+                if (value is Number) {
+                    longValue = value.toLong()
+                } else if (value is String) {
+                    longValue = if (value.length > 0) java.lang.Long.valueOf((value as String?)!!) else 0L
+                }
+            } catch (e:NumberFormatException) {
+                throw IllegalArgumentException("Zone: ${zoneDescription.zone} [${zoneDescription.label}] of length ${zoneDescription.length}: invalid input value: $value", e)
             }
 
             val stringValue = nf.format(if (value != null) longValue else 0L)
             if (stringValue.length != zoneDescription.length) {
-                throw IllegalStateException("${zoneDescription.label} value is too long")
+                throw IllegalStateException("Zone: ${zoneDescription.zone} [${zoneDescription.label}] of length ${zoneDescription.length}: value is too long: $value")
             }
             w.write(stringValue)
             return stringValue
@@ -62,6 +67,11 @@ class Zone(private val zoneDescription:ZoneDescription, val value: Any?) {
             throw IllegalStateException("Illegal type ${zoneDescription.type} for ${zoneDescription.label}")
         }
     }
+
+    override fun toString(): String {
+        return "${padBlanks(zoneDescription.zone, 4)}[${padBlanks(zoneDescription.position.toString(), 3)}]:\t$value"
+    }
+
 
     companion object {
         private val ZEROS =

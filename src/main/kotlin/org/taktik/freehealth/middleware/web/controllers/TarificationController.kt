@@ -24,6 +24,7 @@ import ma.glasnost.orika.MapperFacade
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -38,9 +39,9 @@ class TarificationController(val tarificationService: TarificationService, val m
     @PostMapping("/{ssin}")
     fun consultTarification(
         @PathVariable ssin: String,
-        @RequestParam tokenId: UUID,
-        @RequestParam keystoreId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpNihii: String,

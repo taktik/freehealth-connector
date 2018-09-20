@@ -30,12 +30,13 @@ import java.util.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 class Insurability : Serializable {
     //Key from InsuranceParameter
-    var parameters: Map<InsuranceParameter, String> = HashMap()
+    var parameters: MutableMap<InsuranceParameter, String> = HashMap()
     var hospitalisation: Boolean? = null
     var ambulatory: Boolean? = null
     var dental: Boolean? = null
     var identificationNumber: String? = null // N° in form (number for the insurance's identification)
     var insuranceId: String? = null // UUID to identify Partena, etc. (link to Insurance object's document ID)
+    var insuranceCode: String? = null // Code to identify Partena, etc.
     var startDate: Long? = null
     var endDate: Long? = null
     var titularyId: String? = null //UUID of the contact person who is the titulary of the insurance

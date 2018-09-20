@@ -22,6 +22,7 @@ package org.taktik.freehealth.middleware.web.controllers
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -35,9 +36,9 @@ class GenInsController(val genInsService: GenInsService) {
     @GetMapping("/{ssin}")
     fun getGeneralInsurability(
         @PathVariable ssin: String,
-        @RequestParam tokenId: UUID,
-        @RequestParam keystoreId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpName: String,
@@ -66,9 +67,9 @@ class GenInsController(val genInsService: GenInsService) {
     fun getGeneralInsurabilityByMembership(
         @PathVariable io: String,
         @PathVariable ioMembership: String,
-        @RequestParam tokenId: UUID,
-        @RequestParam keystoreId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpName: String,
