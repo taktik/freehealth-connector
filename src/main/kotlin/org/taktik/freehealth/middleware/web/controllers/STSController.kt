@@ -44,11 +44,11 @@ class STSController(private val stsService: STSService) {
     fun uploadKeystore(@RequestParam file: MultipartFile) = stsService.uploadKeystore(file).let { UUIDType(it) }
 
     @GetMapping("/token")
-    fun requestToken(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestParam(required = false) isMedicalHouse: Boolean? = null) =
+    fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestParam(required = false) isMedicalHouse: Boolean? = null) =
         stsService.requestToken(keystoreId, ssin, passPhrase, isMedicalHouse ?: false)
 
     @PostMapping("/token")
-    fun registerToken(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestBody token: String) {
+    fun registerToken(@RequestBody token: String, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID) {
         stsService.registerToken(tokenId, token)
     }
 
