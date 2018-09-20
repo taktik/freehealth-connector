@@ -132,7 +132,7 @@ object FuzzyValues {
     }
 
     fun getCurrentFuzzyDateTime(precision: TemporalUnit): Long {
-        return getFuzzyDate(LocalDateTime.now(), precision)
+        return getFuzzyDateTime(LocalDateTime.now(), precision)
     }
 
     fun getFuzzyDateTime(dateTime: LocalDateTime, precision: TemporalUnit): Long {
