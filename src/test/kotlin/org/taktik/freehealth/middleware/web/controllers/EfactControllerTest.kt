@@ -711,9 +711,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "01")) continue
-            val invBatch =
-                prepareScenario01(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario01(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -727,9 +725,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "02")) continue
-            val invBatch =
-                prepareScenario02NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario02NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -743,9 +739,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "03")) continue
-            val invBatch =
-                prepareScenario03NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario03NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -759,9 +753,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "04")) continue
-            val invBatch =
-                prepareScenario04NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario04NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -775,9 +767,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "05")) continue
-            val invBatch =
-                prepareScenario05NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario05NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -791,9 +781,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "06")) continue
-            val invBatch =
-                prepareScenario06NISS3(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario06NISS3(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -807,9 +795,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "07")) continue
-            val invBatch =
-                prepareScenario07NISS4(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario07NISS4(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -823,9 +809,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "08")) continue
-            val invBatch =
-                prepareScenario08NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario08NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -839,9 +823,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "09")) continue
-            val invBatch =
-                prepareScenario09NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario09NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -855,9 +837,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "10")) continue
-            val invBatch =
-                prepareScenario10NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario10NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -871,9 +851,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "11")) continue
-            val invBatch =
-                prepareScenario11NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario11NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -887,9 +865,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "12")) continue
-            val invBatch =
-                prepareScenario12NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario12NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -903,9 +879,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "13")) continue
-            val invBatch =
-                prepareScenario13NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario13NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -919,9 +893,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "14")) continue
-            val invBatch =
-                prepareScenario14NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario14NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -935,9 +907,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "15")) continue
-            val invBatch =
-                prepareScenario15NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario15NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -951,9 +921,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "16")) continue
-            val invBatch =
-                prepareScenario16NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario16NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -967,9 +935,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "17")) continue
-            val invBatch =
-                prepareScenario17NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario17NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -983,9 +949,7 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "18")) continue
-            val invBatch =
-                prepareScenario18NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
+            val invBatch = prepareScenario18NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
             this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
                 ?.let {
                     assert(it.success ?: false)
@@ -1019,21 +983,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat01() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario01(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.01.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.01.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario01(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.01"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1042,21 +995,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat02NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario02NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.02.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.02.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario02NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.02"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1065,21 +1007,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat03NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario03NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.03.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.03.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario03NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.03"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1088,21 +1019,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat04NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario04NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.04.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.04.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario04NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.04"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1111,21 +1031,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat05NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario05NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.05.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.05.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario05NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.05"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1134,21 +1043,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat06NISS3() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario06NISS3(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.06.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.06.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario06NISS3(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.06"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1157,21 +1055,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat07NISS4() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario07NISS4(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.07.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.07.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario07NISS4(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.07"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1180,21 +1067,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat08NISS2() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario08NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.08.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.08.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario08NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.08"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1203,21 +1079,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat09NISS2() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario09NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.09.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.09.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario09NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.09"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1226,21 +1091,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat10NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario10NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.10.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.10.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario10NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.10"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1249,21 +1103,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat11NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario11NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.11.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.11.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario11NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.11"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1272,21 +1115,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat12NISS2() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario12NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.12.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.12.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario12NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.12"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1295,21 +1127,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat13NISS2() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario13NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.13.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.13.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario13NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.13"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1318,21 +1139,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat14NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario14NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.14.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.14.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario14NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.14"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1341,21 +1151,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat15NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario15NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.15.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.15.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario15NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.15"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1364,21 +1163,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat16NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario16NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.16.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.16.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario16NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.16"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1387,21 +1175,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat17NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario17NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.17.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.17.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario17NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.17"
+            writeFiles(fileName, mutualityCode, raw)
         }
     }
 
@@ -1410,21 +1187,23 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat18NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch =
-                prepareScenario18NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
-                    ?: continue
-            val raw =
-                this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
-            File("FHC.ACC.18.$mutualityCode.txt").bufferedWriter().let {
-                it.write(raw)
-                it.flush()
-                it.close()
-            }
-            File("FHC.ACC.18.$mutualityCode.yml").bufferedWriter().let {
-                it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-                it.flush()
-                it.close()
-            }
+            val invBatch = prepareScenario18NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "FHC.ACC.18"
+            writeFiles(fileName, mutualityCode, raw)
+        }
+    }
+
+    private fun writeFiles(fileName: String, mutualityCode: String, raw: String) {
+        File("$fileName.$mutualityCode.txt").bufferedWriter().let {
+            it.write(raw)
+            it.flush()
+            it.close()
+        }
+        File("$fileName.$mutualityCode.yml").bufferedWriter().let {
+            it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
+            it.flush()
+            it.close()
         }
     }
 
