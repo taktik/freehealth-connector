@@ -44,5 +44,6 @@ class InsurabilityInfoDto(
     var faultCode: String? = null,
     val generalSituation: String? = null,
     val paymentByIo: Boolean = false,
-    val specialSocialCategory: Boolean = false
-) : Serializable
+    val specialSocialCategory: Boolean = false,
+    val transfers: List<TransferDto>
+                         ) : Serializable
