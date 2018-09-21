@@ -37,7 +37,7 @@ object Record50Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "5", "DatePremierePrestationEffectuee", "N", pos, 8)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "6a,6b", "DateDernierePrestationEffectueePartie1et2", "N", pos, 8)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "7", "NumeroMutualiteDaffiliation", "N", pos, 3)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "8a,8b", "IdentificationBeneficiairePartie1et2", "A", pos, 13)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "8a,8b", "IdentificationBeneficiairePartie1et2", "N", pos, 13)  //Forced to N so that it is padded with 0s
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "9", "SexeBeneficiaire", "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "10", "Accouchement", "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "11", "ReferenceNumeroDeCompteFinancier", "N", pos, 1)
@@ -74,7 +74,7 @@ object Record50Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "50", "Reserve", "N", pos, 4)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "51", "SiteHospitalier", "N", pos, 6)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "52", "IdentificationAssociationBassinDeSoins", "N", pos, 12)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "53,54a", "numero de course (partie 1 et 2)", "A", pos, 11)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "53,54a", "numero de course (partie 1 et 2)", "N", pos, 11)   //Forced to N so that it is padded with 0s
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "54b", "Reserve", "N", pos, 5)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "55,56", "CodeNotificationImplantPartie1et2", "N", pos, 12)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "57,58,59", "code d'enregistrement Qermid (partie 1, 2 et 3)", "N", pos, 14)

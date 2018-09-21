@@ -22,6 +22,7 @@ package org.taktik.freehealth.middleware.web.controllers
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -34,9 +35,9 @@ import java.util.*
 class AddressbookController(val addressbookService: AddressbookService) {
     @GetMapping("/search/hcp/{lastName}")
     fun searchHcp(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable lastName: String,
         @RequestParam(
                     required = false
@@ -48,9 +49,9 @@ class AddressbookController(val addressbookService: AddressbookService) {
 
     @GetMapping("/search/org/{name}")
     fun searchOrg(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable name: String,
         @RequestParam(
                     required = false
@@ -61,9 +62,9 @@ class AddressbookController(val addressbookService: AddressbookService) {
 
     @GetMapping("/hcp/nihii/{nihii}")
     fun getHcpByNihii(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable nihii: String,
         @RequestParam(
                     required = false
@@ -74,9 +75,9 @@ class AddressbookController(val addressbookService: AddressbookService) {
 
     @GetMapping("/hcp/ssin/{ssin}")
     fun getHcpBySsin(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable ssin: String,
         @RequestParam(
                     required = false
@@ -87,9 +88,9 @@ class AddressbookController(val addressbookService: AddressbookService) {
 
     @GetMapping("/org/nihii/{nihii}")
     fun getOrgByNihii(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable nihii: String,
         @RequestParam(
                     required = false
@@ -100,9 +101,9 @@ class AddressbookController(val addressbookService: AddressbookService) {
 
     @GetMapping("/org/cbe/{cbe}")
     fun getOrgByCbe(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable cbe: String?,
         @RequestParam(
                     required = false
@@ -113,9 +114,9 @@ class AddressbookController(val addressbookService: AddressbookService) {
 
     @GetMapping("/org/ehp/{ehp}")
     fun getOrgByEhp(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable ehp: String?,
         @RequestParam(
                     required = false

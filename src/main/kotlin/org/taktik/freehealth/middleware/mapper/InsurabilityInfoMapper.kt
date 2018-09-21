@@ -30,6 +30,7 @@ import org.taktik.freehealth.middleware.dto.genins.MedicalHouseInfoDto
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityItemDto
 import org.taktik.freehealth.middleware.dto.genins.PeriodDto
+import org.taktik.freehealth.middleware.dto.genins.TransferDto
 import org.taktik.freehealth.utils.FuzzyValues
 
 fun GetInsurabilityResponse.toInsurabilityInfoDto(): InsurabilityInfoDto =
@@ -41,8 +42,8 @@ fun GetInsurabilityResponse.toInsurabilityInfoDto(): InsurabilityInfoDto =
                         sex = response.careReceiverDetail?.sex?.value(),
                         hospitalizedInfo = response?.insurabilityResponseDetail?.hospitalized?.toHospitalizedInfoDto(),
                         medicalHouseInfo = response?.insurabilityResponseDetail?.medicalHouse?.toMedicalHouseInfoDto(),
-                        insurabilities = response?.insurabilityResponseDetail?.insurabilityList?.insurabilityItems?.map { it.toInsurabilityInfoDto() }
-                            ?: listOf(),
+                        transfers = response?.insurabilityResponseDetail?.generalSituation?.transfers?.map { TransferDto().apply { direction = it.direction?.value(); io = it.insuranceOrg; date = FuzzyValues.getFuzzyDate(it.transferDate) }} ?: listOf(),
+                        insurabilities = response?.insurabilityResponseDetail?.insurabilityList?.insurabilityItems?.map { it.toInsurabilityInfoDto() } ?: listOf(),
                         generalSituation = response?.insurabilityResponseDetail?.generalSituation?.event?.value(),
                         faultMessage = response.messageFault?.details?.details?.joinToString("\n"),
                         faultSource = response.messageFault?.faultSource,

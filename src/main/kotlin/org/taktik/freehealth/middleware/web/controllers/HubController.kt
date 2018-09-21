@@ -40,9 +40,9 @@ class HubController(val hubService: HubService) {
     @PostMapping("/patient/{lastName}/{patientSsin}")
     fun putPatient(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
@@ -75,9 +75,9 @@ class HubController(val hubService: HubService) {
     @GetMapping("/patient/{patientSsin}")
     fun getPatient(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
@@ -102,9 +102,9 @@ class HubController(val hubService: HubService) {
     @GetMapping("/hcpconsent/{hcpNihii}")
     fun getHcpConsent(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable hcpNihii: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
@@ -127,9 +127,9 @@ class HubController(val hubService: HubService) {
     @PostMapping("/consent/{patientSsin}")
     fun registerPatientConsent(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
@@ -158,9 +158,9 @@ class HubController(val hubService: HubService) {
     @GetMapping("/consent/{patientSsin}")
     fun getPatientConsent(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
@@ -185,9 +185,9 @@ class HubController(val hubService: HubService) {
     @PostMapping("/therlink/{hcpNihii}/{patientSsin}")
     fun registerTherapeuticLink(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
         @PathVariable hcpNihii: String,
@@ -216,9 +216,9 @@ class HubController(val hubService: HubService) {
     @GetMapping("/therlink/{hcpNihii}/{patientSsin}")
     fun getTherapeuticLinks(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
         @PathVariable hcpNihii: String,
@@ -251,9 +251,9 @@ class HubController(val hubService: HubService) {
     @GetMapping("/list/{patientSsin}")
     fun getTransactionsList(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
@@ -296,9 +296,9 @@ class HubController(val hubService: HubService) {
     @GetMapping("/t/{ssin}/{sv}/{sl}", produces = [MediaType.APPLICATION_XML_VALUE])
     fun getTransaction(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
@@ -333,9 +333,9 @@ class HubController(val hubService: HubService) {
     @DeleteMapping("/t/{ssin}/{sv}/{sl}")
     fun revokeTransaction(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
@@ -370,9 +370,9 @@ class HubController(val hubService: HubService) {
     @PostMapping("/t/{hubId}/{patientSsin}", consumes = [MediaType.APPLICATION_XML_VALUE])
     fun putTransaction(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
@@ -407,9 +407,9 @@ class HubController(val hubService: HubService) {
     @GetMapping("/ts/{ssin}/{sv}/{sl}", produces = [MediaType.APPLICATION_XML_VALUE])
     fun getTransactionSet(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
@@ -442,9 +442,9 @@ class HubController(val hubService: HubService) {
     @PostMapping("/ts/{hubId}/{patientSsin}")
     fun putTransactionSet(
         @RequestParam endpoint: String,
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,

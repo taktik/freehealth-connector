@@ -42,7 +42,6 @@ import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
@@ -167,10 +166,11 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
             freehealthGenInsService.getInsurability(samlToken, request).toInsurabilityInfoDto()
         } catch (e: javax.xml.ws.soap.SOAPFaultException) {
             InsurabilityInfoDto(
-                faultCode = e.fault?.faultCode,
+                faultMessage = e.fault.faultString,
                 faultSource = e.message,
-                faultMessage = e.fault.faultString
-            )
+                faultCode = e.fault?.faultCode,
+                transfers = listOf()
+                               )
         }
     }
 }

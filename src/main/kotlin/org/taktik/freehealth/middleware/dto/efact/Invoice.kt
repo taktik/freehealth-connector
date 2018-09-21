@@ -28,4 +28,5 @@ class Invoice {
     var reason: InvoicingTreatmentReasonCode? = null
     var invoiceRef: String? = null
     var invoiceNumber: Long? = null
+    var hospitalisedPatient: Boolean = false
 }

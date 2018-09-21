@@ -153,7 +153,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("4001", 0)
         ws.write("401", oa)
         ws.write("4011", 0)
-        ws.write("402", numericalRef!! * 100 + java.lang.Long.valueOf(oa.substring(0, 1) + oa.substring(oa.length - 1)))
+        ws.write("402", numericalRef!! * 100 + java.lang.Long.valueOf(oa.substring(1, 3)))
         ws.write("4021", 0)
         ws.write("403", if (amount >= 0) "+" else "-")
         ws.write("404", Math.abs(amount))
@@ -253,7 +253,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                           invoiceRef: String,
                           patient: Patient,
                           insuranceCode: String,
-                          ignorePrescriptionDate: Boolean): Int {
+                          ignorePrescriptionDate: Boolean,
+                          hospitalisedPatient: Boolean): Int {
 
         val ws = WriterSession(writer, Record20Description)
 
@@ -281,6 +282,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("7", affCode)
         ws.write("8a", noSIS)
         ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
+        ws.write("10", if (hospitalisedPatient) 1 else 3)
         ws.write("14", sender.nihii)
         ws.write("16", if (ignorePrescriptionDate) 1 else 0)
         ws.write("17", treatmentReason.code)

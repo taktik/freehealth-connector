@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -39,9 +40,9 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
 
     @GetMapping("/{patientSsin}/{hcpNihii}")
     fun getAllTherapeuticLinks(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
@@ -82,9 +83,9 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
 
     @PostMapping("/query")
     fun getAllTherapeuticLinksWithQueryLink(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestBody queryLink: TherapeuticLinkDto,
         @RequestParam(
                     required = false
@@ -98,7 +99,7 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
     )?.map { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
     @PostMapping("/check")
-    fun doesLinkExist(@RequestParam keystoreId: UUID, @RequestParam tokenId: UUID, @RequestParam passPhrase: String, @RequestBody therLink: TherapeuticLinkDto) =
+    fun doesLinkExist(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody therLink: TherapeuticLinkDto) =
         therLinkService.doesLinkExist(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -108,9 +109,9 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
 
     @PostMapping("/register")
     fun registerTherapeuticLink(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
@@ -153,9 +154,9 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
 
     @PostMapping("/revoke/{patientSsin}/{hcpNihii}")
     fun revokeLink(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
@@ -198,9 +199,9 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
 
     @PostMapping("/revoke")
     fun revokeLink(
-        @RequestParam keystoreId: UUID,
-        @RequestParam tokenId: UUID,
-        @RequestParam passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestBody therLink: TherapeuticLinkDto,
         @RequestParam(
                     required = false
