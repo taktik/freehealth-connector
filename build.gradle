@@ -7,7 +7,7 @@ configurations {
 }
 
 group = 'org.taktik'
-version = '0.1.22'
+version = '0.1.25'
 
 
 buildscript {
@@ -60,11 +60,6 @@ repositories {
 	flatDir {
 		dirs 'libs'
 	}
-}
-
-task parseEfact(type:JavaExec) {
-	main = org.taktik.scripts.EfactUtilsKt
-	classpath = sourceSets.main.runtimeClasspath
 }
 
 // tag::wsdl[]
