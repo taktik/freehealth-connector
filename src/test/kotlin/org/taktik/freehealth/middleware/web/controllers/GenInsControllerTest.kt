@@ -88,7 +88,7 @@ class GenInsControllerTest : EhealthTest() {
     }
 
     @Test
-    fun OneDayScenario02(){//ok sauf 300 600
+    fun OneDayScenario02(){//ok sauf 600
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
 
 
@@ -112,7 +112,7 @@ class GenInsControllerTest : EhealthTest() {
     }
 
     @Test
-    fun OneDayScenario03(){//ok sauf
+    fun OneDayScenario03(){//ok
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
 
 
@@ -136,7 +136,7 @@ class GenInsControllerTest : EhealthTest() {
     }
 
     @Test
-    fun OneDayScenario04(){
+    fun OneDayScenario04(){//ok
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
 
 
@@ -160,7 +160,7 @@ class GenInsControllerTest : EhealthTest() {
     }
 
     @Test
-    fun OneDayScenario05(){
+    fun OneDayScenario05(){//ok
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
 
         val io = listOf<String>("126","305","526","615","910")
@@ -186,7 +186,7 @@ class GenInsControllerTest : EhealthTest() {
     }
 
     @Test
-    fun OneDayScenario06(){
+    fun OneDayScenario06(){//ok
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
 
 
@@ -204,13 +204,13 @@ class GenInsControllerTest : EhealthTest() {
 
 
         genIns.map{
-            Assertions.assertThat(it)
+            Assertions.assertThat(it.insurabilities[0].period!!.periodStart).isEqualTo(20170115)
         }
 
     }
 
     @Test
-    fun OneDayScenario07(){
+    fun OneDayScenario07(){//ok sauf 300
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
 
 
@@ -233,8 +233,7 @@ class GenInsControllerTest : EhealthTest() {
 
     }
 
-    //il faut un autre keystore et une autre licence mmh
-    //pas un docteur mais avec une maison medicale
+    //test with medicale house
 
     @Test
     fun PeriodScenario01(){//ok pour tous sauf le 600
