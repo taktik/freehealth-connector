@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.taktik.freehealth.middleware.dto.MycarenetError
 import org.taktik.freehealth.middleware.dto.etarif.TarificationConsultationResult
 import org.taktik.freehealth.middleware.service.TarificationService
 import java.time.LocalDateTime
@@ -50,7 +51,7 @@ class TarificationController(val tarificationService: TarificationService, val m
         @RequestParam(required = false) gmdNihii: String? = null,
         @RequestParam(required = false) justification: String? = null,
         @RequestBody codes: List<String>
-    ) = tarificationService.consultTarif(
+    ) = try { tarificationService.consultTarif(
         keystoreId = keystoreId,
         tokenId = tokenId,
         hcpFirstName = hcpFirstName,
@@ -62,5 +63,13 @@ class TarificationController(val tarificationService: TarificationService, val m
         consultationDate = date?.let { LocalDateTime.of((date / 10000).toInt(), ((date / 100).toInt() % 100), (date % 100).toInt(), 0, 0)} ?: LocalDateTime.now(),
         justification = justification,
         gmdNihii = gmdNihii,
-        codes = codes).let { mapper.map(it, TarificationConsultationResult::class.java) }
+        codes = codes).let { mapper.map(it, TarificationConsultationResult::class.java) } } catch (e : Exception) {
+        TarificationConsultationResult().apply { errors.add(MycarenetError(
+            code = "999999",
+            msgFr = e.message,
+            msgNl = e.message,
+            locFr = e.stackTrace?.toList()?.map { it.toString() }?.joinToString(";"),
+            locNl = e.stackTrace?.toList()?.map { it.toString() }?.joinToString(";")))
+        }
+    }
 }
