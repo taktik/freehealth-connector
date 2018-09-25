@@ -12,7 +12,7 @@ class TarificationConsultationResult {
     var date: Date? = null
     var deceased: Date? = null
     var codes: MutableList<String> = ArrayList()
-    var errors: List<MycarenetError> = ArrayList()
+    var errors: MutableList<MycarenetError> = ArrayList()
     var fees: MutableList<Payment> = ArrayList()
     var financialContracts: MutableList<String> = ArrayList()
     var firstName: String? = null
