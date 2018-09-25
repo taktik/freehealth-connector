@@ -154,7 +154,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         val isTest = config.getProperty("endpoint.mcn.registration").contains("-acpt")
 
-        val mapper = RegistrationRequestBuilderFactory.getRequestObjectBuilder()
+        //val mapper = RegistrationRequestBuilderFactory.getRequestObjectBuilder()
 
         val request =
             ("<reg:registrations xmlns:p=\"urn:be:cin:mycarenet:esb:common:v2\"\n" +
