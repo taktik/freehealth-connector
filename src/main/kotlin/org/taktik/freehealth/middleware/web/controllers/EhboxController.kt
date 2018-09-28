@@ -63,7 +63,7 @@ class EhboxController(val ehboxService: EhboxService) {
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
-        message: DocumentMessage,
+        @RequestBody message: DocumentMessage,
         @RequestParam publicationReceipt: Boolean?,
         @RequestParam receptionReceipt: Boolean?,
         @RequestParam readReceipt: Boolean?
