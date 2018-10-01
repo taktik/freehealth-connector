@@ -1,8 +1,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
@@ -52,8 +50,8 @@ class GenInsControllerTest : EhealthTest() {
     @Test
     fun getGeneralInsurability() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}&passPhrase={passPhrase}",
-                                                HttpMethod.GET, HttpEntity<Void>(createHeaders("0c381380-88fa-76da-24b7-0f99250031d6", "T@kt1k1Cur3")), String::class.java, passPhrase)
+        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+                                                HttpMethod.GET, HttpEntity<Void>(createHeaders("0c381380-88fa-76da-24b7-0f99250031d6", "T@kt1k1Cur3", keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
         Assertions.assertThat(genIns != null)
     }
 
