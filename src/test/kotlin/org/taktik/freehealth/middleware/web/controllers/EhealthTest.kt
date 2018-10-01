@@ -5,6 +5,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.test.context.TestPropertySource
 import org.springframework.util.LinkedMultiValueMap
@@ -66,26 +67,32 @@ open class EhealthTest {
 
     protected fun register(restTemplate: TestRestTemplate, port: Int, ssin: String, passPhrase: String): Triple<UUID?, String, String> {
         val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("$ssin.acc-p12").path, port, restTemplate)
-        val res = restTemplate.getForObject("http://localhost:$port/sts/token/$keystoreId?passPhrase={passPhrase}&ssin=$ssin", SamlTokenResult::class.java, passPhrase)
-        val tokenId = res.tokenId
+        val res = restTemplate.exchange("http://localhost:$port/sts/token?ssin=$ssin", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, null, passPhrase)), SamlTokenResult::class.java, passPhrase)
+        val tokenId = res.body?.let { it.tokenId }
         return Triple(keystoreId, tokenId.toString(), passPhrase)
     }
 
     protected fun registerMmH(restTemplate: TestRestTemplate, port: Int, nihii: String, passPhrase: String): Triple<UUID?, String, String> {
         val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("$nihii.acc-p12").path, port, restTemplate)
-        val res = restTemplate.getForObject("http://localhost:$port/sts/token/$keystoreId?passPhrase={passPhrase}&isMedicalHouse=true&ssin=$nihii", SamlTokenResult::class.java, passPhrase)
-        val tokenId = res.tokenId
+        val res = restTemplate.exchange("http://localhost:$port/sts/token?isMedicalHouse=true&ssin=$nihii", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, null, passPhrase)), SamlTokenResult::class.java, passPhrase)
+        val tokenId = res.body?.let { it.tokenId }
         return Triple(keystoreId, tokenId.toString(), passPhrase)
     }
 
-    protected fun createHeaders(username: String, password: String): HttpHeaders {
+    protected fun createHeaders(username: String?, password: String?, keystoreId: UUID? = null, tokenId: String? = null, passPhrase: String? = null): HttpHeaders {
         return object : HttpHeaders() {
             init {
-                val auth = "$username:$password"
-                val encodedAuth = Base64.getEncoder().encode(
-                    auth.toByteArray(Charsets.US_ASCII))
-                val authHeader = "Basic " + String(encodedAuth)
-                set("Authorization", authHeader)
+                username?.let {
+                    val auth = "$it:$password"
+                    val encodedAuth = Base64.getEncoder().encode(
+                        auth.toByteArray(Charsets.US_ASCII))
+                    val authHeader = "Basic " + String(encodedAuth)
+
+                    set("Authorization", authHeader)
+                }
+                keystoreId?.let { set("X-FHC-keystoreId", it.toString()) }
+                tokenId?.let { set("X-FHC-tokenId", it) }
+                passPhrase?.let { set("X-FHC-passPhrase", it) }
             }
         }
     }

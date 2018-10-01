@@ -10,8 +10,9 @@ import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
-import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.dto.dmg.DmgConsultation
 import org.taktik.freehealth.middleware.dto.dmg.DmgRegistration
@@ -54,8 +55,9 @@ class DmgControllerTest : EhealthTest() {
         val now = LocalDateTime.now()
 
         val results = getNisses(0).map {
-            val str = this.restTemplate.getForObject("http://localhost:$port/gmd?hcpNihii=11478761004&hcpSsin=$ssin1&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientSsin=$it&requestDate=${now.minusMonths(25).toInstant(ZoneOffset.UTC).toEpochMilli()}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", String::class.java, passPhrase)
-            val dmgc = gson.fromJson(str, DmgConsultation::class.java)
+            val res = this.restTemplate.exchange("http://localhost:$port/gmd?hcpNihii=11478761004&hcpSsin=$ssin1&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientSsin=$it&requestDate=${now.minusMonths(25).toInstant(ZoneOffset.UTC).toEpochMilli()}",
+                                                 HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
+            val dmgc = gson.fromJson(res.body, DmgConsultation::class.java)
 
             dmgc
         }
@@ -72,8 +74,9 @@ class DmgControllerTest : EhealthTest() {
         val now = LocalDateTime.now()
 
         val results = getNisses(1).map {
-            val str = this.restTemplate.getForObject("http://localhost:$port/gmd?hcpNihii=11478761004&hcpSsin=$ssin1&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientSsin=$it&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase=$passPhrase", String::class.java)
-            val dmgc = gson.fromJson(str, DmgConsultation::class.java)
+            val res = this.restTemplate.exchange("http://localhost:$port/gmd?hcpNihii=11478761004&hcpSsin=$ssin1&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientSsin=$it",
+                                                 HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
+            val dmgc = gson.fromJson(res.body, DmgConsultation::class.java)
 
             dmgc
         }
@@ -88,8 +91,9 @@ class DmgControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
         val results = regOa.map {
-            val str = this.restTemplate.postForObject("http://localhost:$port/gmd/register/$it?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName1}&hcpLastName={lastName1}&bic=$BIC1&iban=$IBAN1", null, String::class.java, passPhrase, firstName1, lastName1)
-            val dmgr = gson.fromJson(str, DmgRegistration::class.java)
+            val str = this.restTemplate.exchange("http://localhost:$port/gmd/register/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName1}&hcpLastName={lastName1}&bic=$BIC1&iban=$IBAN1",
+                                                 HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
+            val dmgr = gson.fromJson(str.body, DmgRegistration::class.java)
 
             dmgr
         }
