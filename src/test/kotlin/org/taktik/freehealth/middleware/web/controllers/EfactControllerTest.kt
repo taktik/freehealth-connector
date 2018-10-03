@@ -145,13 +145,13 @@ abstract class EfactAbstractTest : EhealthTest() {
             numericalRef = (FuzzyValues.getCurrentFuzzyDateTime(ChronoUnit.MINUTES) / 100) % 10_000_000_000
 
             sender = InvoiceSender().apply {
-                nihii = nihiiSender
-                ssin = ssinSender
-                bce = cbeSender
+                nihii = nihii1?.toLong() //nihiiSender
+                ssin = ssin1 //ssinSender
+                bce = cbe1?.toLong()
                 bic = bicSender
                 iban = ibanSender
-                firstName = firstNameSender
-                lastName = lastNameSender
+                firstName = firstName1
+                lastName = lastName1
                 phoneNumber = phoneSender.toLong()
             }
 
