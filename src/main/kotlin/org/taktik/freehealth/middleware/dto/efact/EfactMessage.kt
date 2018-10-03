@@ -11,4 +11,6 @@ class EfactMessage {
     var message: Message? = null
     var xades : String? = null
     var tAck: TAck? = null
+
+    var hashValue: String? = null
 }
