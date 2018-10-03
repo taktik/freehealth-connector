@@ -39,6 +39,7 @@ import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Date
 import java.util.HashMap
+import java.util.UUID
 import kotlin.math.roundToInt
 
 
@@ -199,9 +200,9 @@ abstract class EfactAbstractTest : EhealthTest() {
                              justification: Int?,
                              codes: List<String>,
                              nihiiGmdOwner: String? = null): TarificationConsultationResult =
-        restTemplate.postForObject("http://localhost:$port/tarif/$niss?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}&date=${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))}" + (justification?.let { "&justification=$justification" }
+        restTemplate.exchange("http://localhost:$port/tarif/$niss?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&date=${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))}" + (justification?.let { "&justification=$justification" }
             ?: "") + (nihiiGmdOwner?.let { "&gmdNihii=$nihiiGmdOwner" }
-            ?: ""), codes, TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase).apply {
+            ?: ""), HttpMethod.POST, HttpEntity(codes, createHeaders(null, null, UUID.fromString(keystoreId), tokenId, passPhrase)), TarificationConsultationResult::class.java, firstName1, lastName1).body.apply {
             if (this.codes.size == 0) {
                 throw IllegalStateException("No code was returned")
             }
@@ -213,7 +214,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                            keystoreId: String,
                            tokenId: String,
                            passPhrase: String) =
-        restTemplate.getForObject("http://localhost:$port/genins/$niss?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)?.let {
+        restTemplate.exchange("http://localhost:$port/genins/$niss?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, UUID.fromString(keystoreId), tokenId, passPhrase)), InsurabilityInfoDto::class.java)?.body?.let {
             Patient().apply {
                 lastName = it.lastName
                 firstName = it.firstName
