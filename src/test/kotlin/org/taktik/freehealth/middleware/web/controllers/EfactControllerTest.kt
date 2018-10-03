@@ -959,7 +959,18 @@ class EfactControllerTest : EfactAbstractTest() {
                 }
         }
     }
+
+
+
+    @Test
+    fun testLoadMessage(){
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        this.restTemplate.exchange("http://localhost:$port/efact/$nihii1/fr?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)?.apply {
+            println(this)
+        }
+    }
 }
+
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
