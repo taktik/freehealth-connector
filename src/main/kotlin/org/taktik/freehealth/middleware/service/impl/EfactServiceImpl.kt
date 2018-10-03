@@ -336,10 +336,40 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
 
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
         val confirm =
-            BuilderFactory.getRequestObjectBuilder("dmg")
+            BuilderFactory.getRequestObjectBuilder("invoicing")
                 .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
                                                listOf(),
                                                valueHashes.map { valueHash -> java.util.Base64.getDecoder().decode(valueHash) })
+
+        genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
+
+        return true
+    }
+
+    override fun confirmMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        valueHashes: List<String>
+    ): Boolean {
+        if (valueHashes.isEmpty()) {
+            return true
+        }
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
+
+        val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
+        val confirm =
+            BuilderFactory.getRequestObjectBuilder("invoicing")
+                .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
+                    valueHashes.map { valueHash -> java.util.Base64.getDecoder().decode(valueHash) },
+                    listOf()
+                    )
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
 

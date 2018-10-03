@@ -26,7 +26,18 @@ interface EfactService {
         hcpFirstName: String,
         hcpLastName: String,
         valueHashes: List<String>
-                            ): Boolean
+    ): Boolean
+
+    fun confirmMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        valueHashes: List<String>
+    ): Boolean
 
     fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean): String
 }

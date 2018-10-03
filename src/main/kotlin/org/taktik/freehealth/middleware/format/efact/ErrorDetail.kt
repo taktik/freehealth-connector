@@ -19,8 +19,9 @@
 package org.taktik.freehealth.middleware.format.efact
 
 import org.taktik.freehealth.middleware.format.efact.segments.RecordOrSegmentDescription
+import java.io.Serializable
 
-class ErrorDetail {
+class ErrorDetail : Serializable {
     var creationDate: Int = 0
     var errorCodeComment: String? = null
     var index: Int = 0
@@ -42,6 +43,8 @@ class ErrorDetail {
     var rejectionZoneDescr3: String? = null
     var reserve: String? = null
     var sendingId: Int = 0
+
+    constructor()
 
     constructor(record: Record<RecordOrSegmentDescription>) {
         this.record = record

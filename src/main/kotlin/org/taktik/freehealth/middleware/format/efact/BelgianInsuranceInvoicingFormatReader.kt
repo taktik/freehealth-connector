@@ -276,19 +276,19 @@ class BelgianInsuranceInvoicingFormatReader(private val language: String) {
 
             errorDetail.rejectionCode1?.let {if (it != "000000" && "BREFS".contains(errorDetail.rejectionLetter1!!)) {
                 errorDetail.rejectionDescr1 = getErrorCodeDescription(errorDetail.rejectionLetter1 + errorDetail.rejectionCode1, null)
-                val zoneDescription= record!!.description.zoneDescriptionsByZone.get(it.substring(2, 4))
+                val zoneDescription= record!!.description!!.zoneDescriptionsByZone.get(it.substring(2, 4))
                 errorDetail.rejectionZoneDescr1 = zoneDescription?.label ?: ""
             }}
 
             errorDetail.rejectionCode2?.let {if (it != "000000" && "BREFS".contains(errorDetail.rejectionLetter2!!)) {
                 errorDetail.rejectionDescr2 = getErrorCodeDescription(errorDetail.rejectionLetter2 + errorDetail.rejectionCode2, null)
-                val zoneDescription= record!!.description.zoneDescriptionsByZone.get(it.substring(2, 4))
+                val zoneDescription= record!!.description!!.zoneDescriptionsByZone.get(it.substring(2, 4))
                 errorDetail.rejectionZoneDescr2 = zoneDescription?.label ?: ""
             }}
 
             errorDetail.rejectionCode3?.let {if (it != "000000" && "BREFS".contains(errorDetail.rejectionLetter3!!)) {
                 errorDetail.rejectionDescr3 = getErrorCodeDescription(errorDetail.rejectionLetter3 + errorDetail.rejectionCode3, null)
-                val zoneDescription= record!!.description.zoneDescriptionsByZone.get(it.substring(2, 4))
+                val zoneDescription= record!!.description!!.zoneDescriptionsByZone.get(it.substring(2, 4))
                 errorDetail.rejectionZoneDescr3 = zoneDescription?.label ?: ""
             }}
 

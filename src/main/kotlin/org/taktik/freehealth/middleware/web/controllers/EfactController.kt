@@ -95,10 +95,9 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             language = language
                                  )
 
-    @PutMapping("/confirm")
-    fun confirm(
+    @PutMapping("/confirm/acks/{nihii}")
+    fun confirmAcks(
         @PathVariable nihii: String,
-        @PathVariable language: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
@@ -117,4 +116,26 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             hcpLastName = lastName,
             valueHashes = valueHashes
                                 )
+
+    @PutMapping("/confirm/msgs/{nihii}")
+    fun confirmMessages(
+        @PathVariable nihii: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam ssin: String,
+        @RequestParam firstName: String,
+        @RequestParam lastName: String,
+        @RequestBody valueHashes: List<String>
+    ) =
+        efactService.confirmMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = nihii,
+            hcpSsin = ssin,
+            hcpFirstName = firstName,
+            hcpLastName = lastName,
+            valueHashes = valueHashes
+        )
 }
