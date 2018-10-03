@@ -9,6 +9,8 @@ import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.common.Insurability
@@ -713,9 +715,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "01")) continue
             val invBatch = prepareScenario01(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -727,9 +729,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "02")) continue
             val invBatch = prepareScenario02NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -741,9 +743,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "03")) continue
             val invBatch = prepareScenario03NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -755,9 +757,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "04")) continue
             val invBatch = prepareScenario04NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -769,9 +771,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "05")) continue
             val invBatch = prepareScenario05NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -783,9 +785,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "06")) continue
             val invBatch = prepareScenario06NISS3(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -797,9 +799,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "07")) continue
             val invBatch = prepareScenario07NISS4(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -811,9 +813,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "08")) continue
             val invBatch = prepareScenario08NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -825,9 +827,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "09")) continue
             val invBatch = prepareScenario09NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -839,9 +841,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "10")) continue
             val invBatch = prepareScenario10NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -853,9 +855,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "11")) continue
             val invBatch = prepareScenario11NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -867,9 +869,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "12")) continue
             val invBatch = prepareScenario12NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -881,9 +883,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "13")) continue
             val invBatch = prepareScenario13NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -895,9 +897,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "14")) continue
             val invBatch = prepareScenario14NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -909,9 +911,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "15")) continue
             val invBatch = prepareScenario15NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -923,9 +925,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "16")) continue
             val invBatch = prepareScenario16NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -937,9 +939,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "17")) continue
             val invBatch = prepareScenario17NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
@@ -951,9 +953,9 @@ class EfactControllerTest : EfactAbstractTest() {
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "18")) continue
             val invBatch = prepareScenario18NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
-            this.restTemplate.postForObject("http://localhost:$port/efact/batch?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", invBatch, EfactSendResponse::class.java, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
-                    assert(it.success ?: false)
+                    assert(it.body.success ?: false)
                 }
         }
     }
