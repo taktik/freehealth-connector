@@ -20,24 +20,12 @@
 
 package org.taktik.freehealth.middleware.service.impl
 
-import be.fgov.ehealth.genericinsurability.core.v1.CareProviderType
-import be.fgov.ehealth.genericinsurability.core.v1.CareReceiverIdType
-import be.fgov.ehealth.genericinsurability.core.v1.CommonInputType
-import be.fgov.ehealth.genericinsurability.core.v1.IdType
+import be.fgov.ehealth.genericinsurability.core.v1.*
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityContactTypeType.AMBULATORY_CARE
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityContactTypeType.HOSPITALIZED_ELSEWHERE
-import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityRequestDetailType
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityRequestTypeType.INFORMATION
-import be.fgov.ehealth.genericinsurability.core.v1.LicenseType
-import be.fgov.ehealth.genericinsurability.core.v1.NihiiType
-import be.fgov.ehealth.genericinsurability.core.v1.OriginType
-import be.fgov.ehealth.genericinsurability.core.v1.PackageType
-import be.fgov.ehealth.genericinsurability.core.v1.PeriodType
-import be.fgov.ehealth.genericinsurability.core.v1.RecordCommonInputType
-import be.fgov.ehealth.genericinsurability.core.v1.RequestType
-import be.fgov.ehealth.genericinsurability.core.v1.SingleInsurabilityRequestType
-import be.fgov.ehealth.genericinsurability.core.v1.ValueRefString
 import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsXmlOrFlatRequestType
+import com.google.gson.Gson
 import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
@@ -49,18 +37,26 @@ import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.dto.MycarenetError
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import org.taktik.freehealth.middleware.mapper.toInsurabilityInfoDto
 import org.taktik.freehealth.middleware.service.GenInsService
 import org.taktik.freehealth.middleware.service.STSService
 import java.math.BigDecimal
 import java.util.*
+import javax.xml.xpath.XPathFactory
 
 @Service
 class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : GenInsService {
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val freehealthGenInsService: org.taktik.connector.business.genins.service.GenInsService =
         org.taktik.connector.business.genins.service.impl.GenInsServiceImpl()
+    private val GenInsErrors =
+        Gson().fromJson(
+            this.javaClass.getResourceAsStream("/be/errors/GenInsErrors.json").reader(Charsets.UTF_8),
+            arrayOf<MycarenetError>().javaClass
+        ).associateBy({ it.uid }, { it })
+    private val xPathfactory = XPathFactory.newInstance()
     private val config = ConfigFactory.getConfigValidator(listOf())
 
     override fun getGeneralInsurabity(
@@ -163,7 +159,14 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                 log.debug("Genins request: {}", xmlString)
             }
 
-            freehealthGenInsService.getInsurability(samlToken, request).toInsurabilityInfoDto()
+            var genInsResponse = freehealthGenInsService.getInsurability(samlToken, request)
+            var genInsResponseDTO = genInsResponse.toInsurabilityInfoDto()
+
+            val details = genInsResponse.response.messageFault?.details?.details
+            if(details != null) genInsResponseDTO.errors = extractError(details).toList()
+
+            return genInsResponseDTO
+
         } catch (e: javax.xml.ws.soap.SOAPFaultException) {
             InsurabilityInfoDto(
                 faultMessage = e.fault.faultString,
@@ -173,4 +176,13 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                                )
         }
     }
+    private fun extractError(details: List<DetailType>): Set<MycarenetError> {
+
+        return GenInsErrors.values.filter {
+            details.map{ x:DetailType -> x.location}.contains(it.path) &&
+                details.map{ x:DetailType -> x.detailCode}.contains(it.code)
+        }.toSet()
+
+    }
+
 }

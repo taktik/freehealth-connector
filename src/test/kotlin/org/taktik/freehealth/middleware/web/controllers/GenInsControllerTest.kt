@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 
@@ -38,6 +39,21 @@ class GenInsControllerTest : EhealthTest() {
     )
     private fun getNisses(idx: Int) = listOf(nisses[100]!![idx], nisses[300]!![idx], nisses[500]!![idx], nisses[600]!![idx], nisses[900]!![idx])
 
+    private fun assertErrors(scenario: String, error: String, results: List<InsurabilityInfoDto?>) {
+        println(scenario + "\n====================")
+        results.forEachIndexed { index, it ->
+            assertThat(it!!.errors).isNotNull.isNotEmpty
+            assertThat(it!!.errors[0].uid).isEqualTo(error)
+        }
+    }
+
+    private fun assertErrors(scenario: String, errors: List<String>, results: List<InsurabilityInfoDto?>) {
+        println(scenario + "\n====================")
+        results.forEachIndexed { index, it ->
+            assertThat(it!!.errors).isNotNull.isNotEmpty
+            assertThat(errors).contains(it!!.errors[0].uid)
+        }
+    }
 
     @Before
     fun setUp() {

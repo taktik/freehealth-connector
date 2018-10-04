@@ -20,7 +20,9 @@
 
 package org.taktik.freehealth.middleware.dto.genins
 
+import org.taktik.freehealth.middleware.dto.MycarenetError
 import java.io.Serializable
+import java.util.ArrayList
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,11 +41,12 @@ class InsurabilityInfoDto(
     val hospitalizedInfo: HospitalizedInfoDto? = null,
     val medicalHouseInfo: MedicalHouseInfoDto? = null,
     val insurabilities: List<InsurabilityItemDto> = listOf(),
+    var errors: List<MycarenetError> = ArrayList(),
     var faultMessage: String? = null,
     var faultSource: String? = null,
     var faultCode: String? = null,
     val generalSituation: String? = null,
     val paymentByIo: Boolean = false,
     val specialSocialCategory: Boolean = false,
-    val transfers: List<TransferDto>
+    val transfers: List<TransferDto> = listOf()
                          ) : Serializable
