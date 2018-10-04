@@ -24,6 +24,7 @@ import ma.glasnost.orika.MapperFacade
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
@@ -57,16 +58,16 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
     @PostMapping("/flat")
     fun makeFlatFile(
         @RequestBody batch: InvoicesBatch
-                 ) =
+                    ) =
         efactService.makeFlatFile(
             batch = batch,
             isTest = false
-                              )
+                                 )
 
     @PostMapping("/flat/test")
     fun makeFlatFileTest(
         @RequestBody batch: InvoicesBatch
-                 ) =
+                        ) =
         efactService.makeFlatFile(
             batch = batch,
             isTest = true
@@ -82,7 +83,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestParam ssin: String,
         @RequestParam firstName: String,
         @RequestParam lastName: String
-                 ) =
+                    ) =
         efactService.loadMessages(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -94,4 +95,26 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             language = language
                                  )
 
+    @PutMapping("/confirm")
+    fun confirm(
+        @PathVariable nihii: String,
+        @PathVariable language: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam ssin: String,
+        @RequestParam firstName: String,
+        @RequestParam lastName: String,
+        @RequestBody valueHashes: List<String>
+               ) =
+        efactService.confirmAcks(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = nihii,
+            hcpSsin = ssin,
+            hcpFirstName = firstName,
+            hcpLastName = lastName,
+            valueHashes = valueHashes
+                                )
 }

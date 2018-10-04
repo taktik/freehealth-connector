@@ -13,11 +13,13 @@ import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import org.taktik.connector.business.domain.dmg.DmgAcknowledge
 import org.taktik.connector.business.genericasync.builders.BuilderFactory
 import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
 import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
 import org.taktik.connector.business.mycarenetcommons.mapper.SendRequestMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.RequestBuilderFactory
+import org.taktik.connector.business.mycarenetdomaincommons.util.WsAddressingUtil
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.handler.domain.WsAddressingHeader
@@ -155,7 +157,7 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
     override fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch): EfactSendResponse {
         requireNotNull(keystoreId) { "Keystore id cannot be null" }
         requireNotNull(tokenId) { "Token id cannot be null" }
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
 
@@ -207,6 +209,7 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
         return EfactSendResponse(success, inputReference, tack)
     }
 
+
     override fun loadMessages(
         keystoreId: UUID,
         tokenId: UUID,
@@ -216,10 +219,10 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
         hcpFirstName: String,
         hcpLastName: String,
         language: String
-                    ): List<EfactMessage> {
+                             ): List<EfactMessage> {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
 
         val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
 
@@ -286,6 +289,7 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
 
                         message = BelgianInsuranceInvoicingFormatReader(language).read(this.detail!!)
                         xades = Base64.encodeBase64String(r.xadesT.value)
+                        hashValue = Base64.encodeBase64String(r.detail.hashValue)
                     } catch (e: IOException) {}
                 }
             } + getResponse.getReturn().tAckResponses.map { r ->
@@ -295,6 +299,7 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
                     try {
                         tAck = r.tAck
                         xades = Base64.encodeBase64String(r.xadesT.value)
+                        hashValue = Base64.encodeBase64String(r.tAck.value)
                     } catch (e: IOException) {}
                 }
             }
@@ -311,6 +316,36 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
         }
         return eFactMessages
     }
+
+    override fun confirmAcks(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        valueHashes: List<String>
+                            ): Boolean {
+        if (valueHashes.isEmpty()) {
+            return true
+        }
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
+
+        val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
+        val confirm =
+            BuilderFactory.getRequestObjectBuilder("dmg")
+                .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
+                                               listOf(),
+                                               valueHashes.map { valueHash -> java.util.Base64.getDecoder().decode(valueHash) })
+
+        genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
+
+        return true
+    }
+
 
     private fun buildOriginType(nihii: String, ssin: String, firstName: String, lastName: String): OrigineType =
         OrigineType().apply {
