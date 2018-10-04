@@ -46,7 +46,7 @@ import kotlin.math.roundToInt
 @Suppress("PrivatePropertyName", "PropertyName")
 abstract class EfactAbstractTest : EhealthTest() {
     // Add the scenario number to this to get a unique ID, then you can run all the tests without having to manually change the unique send number
-    private var sendNumber = 0
+    private var sendNumber = 100
 
     val ssinSender = "62110906574"
     val nihiiSender = 19234011004L
