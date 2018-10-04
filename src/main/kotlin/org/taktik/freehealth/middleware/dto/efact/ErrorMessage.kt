@@ -18,17 +18,17 @@
 
 package org.taktik.freehealth.middleware.dto.efact
 
-import org.taktik.freehealth.middleware.format.efact.Acknowledgment
-import org.taktik.freehealth.middleware.format.efact.ErrorDetail
-import org.taktik.freehealth.middleware.format.efact.Receipt95
-import org.taktik.freehealth.middleware.format.efact.segments.Segment200Description
-import org.taktik.freehealth.middleware.format.efact.segments.Segment300Description
-import org.taktik.freehealth.middleware.format.efact.segments.Segment300ErrorDescription
+import org.taktik.freehealth.middleware.dto.efact.Acknowledgment
+import org.taktik.freehealth.middleware.dto.efact.ErrorDetail
+import org.taktik.freehealth.middleware.dto.efact.Receipt95
+import org.taktik.freehealth.middleware.dto.efact.segments.Segment200Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Segment300Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Segment300ErrorDescription
 import java.io.Serializable
 import java.util.ArrayList
 
 class ErrorMessage : Serializable {
     var acknowledgment: Acknowledgment? = null
     var receipts95: MutableList<Receipt95> = ArrayList()
-    //var errorDetails: MutableList<ErrorDetail> = ArrayList()
+    var errorDetails: MutableList<ErrorDetail> = ArrayList()
 }

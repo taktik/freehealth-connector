@@ -29,7 +29,8 @@ import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.efact.EfactMessage
 import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
 import org.taktik.freehealth.middleware.dto.efact.InvoicesBatch
-import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatReader
+import org.taktik.freehealth.middleware.dto.efact.BelgianInsuranceInvoicingFormatReader
+//import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatReader
 import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatWriter
 import org.taktik.freehealth.middleware.service.EfactService
 import org.taktik.freehealth.middleware.service.STSService
@@ -254,7 +255,7 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
             throw IllegalStateException(e)
         }
 
-        var batchSize = 16
+        var batchSize = 256
 
         val eFactMessages = ArrayList<EfactMessage>()
 
@@ -304,15 +305,7 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
                 }
             }
 
-            if (getResponse.getReturn().msgCount < batchSize && getResponse.getReturn().tAckCount < batchSize) {
-                break
-            } else {
-                try {
-                    Thread.sleep(7000)
-                } catch (ignored: InterruptedException) {
-                }
-
-            }
+            break
         }
         return eFactMessages
     }
@@ -335,6 +328,7 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
                 ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
 
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
+
         val confirm =
             BuilderFactory.getRequestObjectBuilder("invoicing")
                 .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
@@ -394,6 +388,7 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
                     value = ValueRefString().apply { value = nihii }
                 }
                 physicalPerson = IdType().apply {
+                    this.nihii = NihiiType().apply { value = ValueRefString().apply { value = nihii } }
                     this.ssin = ValueRefString().apply { value = ssin }
                     this.name = ValueRefString().apply { value = "$firstName $lastName" }
                 }

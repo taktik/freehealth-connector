@@ -18,32 +18,7 @@
 
 package org.taktik.freehealth.middleware.dto.efact
 
-import java.util.Calendar
-import java.util.Date
-
-class EIDItem {
-    var deviceType: String? = null
-    var readDate: Long? = null
-    var readHour: Int = 0
-    var readType: String? = null
-    var readvalue: String? = null
-
-    constructor() {
-        deviceType = "1"
-        readType = "1"
-        readDate = Date().time
-
-        var cal = Calendar.getInstance()
-
-        readHour = cal.get(Calendar.HOUR_OF_DAY) * 100 + cal.get(Calendar.MINUTE)
-    }
-
-    constructor(readDate: Long?, readHour: Int?, readvalue: String) {
-        deviceType = "1"
-        readType = "1"
-
-        this.readvalue = readvalue
-        this.readDate = readDate
-        this.readHour = readHour!!
-    }
+class Acknowledgment {
+    var messageName: String? = null
+    var reserve: String? = null
 }
