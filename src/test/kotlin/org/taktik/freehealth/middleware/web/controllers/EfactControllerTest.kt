@@ -1239,8 +1239,10 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
         @Test
         fun testLoadMessage(){
             val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-            this.restTemplate.exchange("http://localhost:$port/efact/$nihii1/fr?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<EfactErrorMessage>>() {}, firstName1, lastName1)?.apply {
-                println(this)
+            this.restTemplate.exchange("http://localhost:$port/efact/$nihii1/fr?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<EfactMessage>>() {}, firstName1, lastName1)?.let {
+                it.body.forEach {
+
+                }
             }
         }
 
@@ -1249,7 +1251,7 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
             val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
             this.restTemplate.exchange("http://localhost:$port/efact/$nihii1/fr?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<EfactErrorMessage>>() {}, firstName1, lastName1)?.let {
                 this.restTemplate.exchange("http://localhost:$port/efact/confirm/acks/$nihii1?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck != null }.map { it.hashValue }.filterNotNull(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
-                this.restTemplate.exchange("http://localhost:$port/efact/confirm/msgs/$nihii1?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.message != null }.map { it.hashValue }.filterNotNull(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
+                this.restTemplate.exchange("http://localhost:$port/efact/confirm/msgs/$nihii1?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck == null }.map { it.hashValue }.filterNotNull(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
             }
         }
     }

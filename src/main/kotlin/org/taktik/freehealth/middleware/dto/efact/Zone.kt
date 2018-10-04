@@ -22,7 +22,7 @@ import org.taktik.freehealth.middleware.dto.efact.segments.ZoneDescription
 
 class Zone(private var zoneDescription:ZoneDescription? = null, var value: Any? = null) {
     override fun toString(): String {
-        return "${padBlanks(zoneDescription!!.zone, 4)}[${padBlanks(zoneDescription!!.position.toString(), 3)}]:\t$value"
+        return "${padBlanks(zoneDescription?.zones?.first() ?: "", 4)}[${padBlanks(zoneDescription!!.position.toString(), 3)}]:\t$value"
     }
 
     companion object {
