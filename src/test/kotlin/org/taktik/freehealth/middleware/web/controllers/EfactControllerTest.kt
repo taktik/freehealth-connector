@@ -149,7 +149,7 @@ abstract class EfactAbstractTest : EhealthTest() {
             this.batchRef = batchRef
             uniqueSendNumber = uniq.toLong()
             ioFederationCode = oa
-            numericalRef = ((LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd")).toLong())*1000000) + (ioFederationCode!!.toLong() * 10000) + invoiceNumber
+            numericalRef = ((LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd")).toLong())*1000000) + (ioFederationCode!!.toLong() * 1000) + invoiceNumber
             sender = InvoiceSender().apply {
                 nihii = nihii1?.toLong() //nihiiSender
                 ssin = ssin1 //ssinSender
