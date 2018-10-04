@@ -46,7 +46,16 @@ class ReaderSession(reader: Reader) {
     }
 
     @Throws(IOException::class)
-    fun peekInt(label: String, length: Int) = readInt(label, length).apply { reader.unread(length) }
+    fun peekInt(label: String, length: Int) =
+        read(label, length).let {
+            reader.unread(it.toCharArray())
+            try {
+                Integer.parseInt(it)
+            } catch (e: NumberFormatException) {
+                log.error("Could not convert segment '$this' into an integer, for the field '$label'")
+                0
+            }
+        }
 
     @Throws(IOException::class)
     fun readInt(label: String, length: Int): Int {

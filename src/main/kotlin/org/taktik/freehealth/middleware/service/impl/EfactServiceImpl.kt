@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.service.impl
 
+//import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatReader
 import be.cin.mycarenet.esb.common.v2.CareProviderType
 import be.cin.mycarenet.esb.common.v2.CommonInput
 import be.cin.mycarenet.esb.common.v2.IdType
@@ -9,11 +10,11 @@ import be.cin.mycarenet.esb.common.v2.OrigineType
 import be.cin.mycarenet.esb.common.v2.PackageType
 import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.GetResponse
+import ma.glasnost.orika.MapperFacade
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.taktik.connector.business.domain.dmg.DmgAcknowledge
 import org.taktik.connector.business.genericasync.builders.BuilderFactory
 import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
 import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
@@ -29,12 +30,13 @@ import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.efact.EfactMessage
 import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
 import org.taktik.freehealth.middleware.dto.efact.InvoicesBatch
-import org.taktik.freehealth.middleware.dto.efact.BelgianInsuranceInvoicingFormatReader
-//import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatReader
+import org.taktik.freehealth.middleware.dto.efact.Record
+import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatReader
 import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatWriter
 import org.taktik.freehealth.middleware.service.EfactService
 import org.taktik.freehealth.middleware.service.STSService
 import java.io.IOException
+import java.io.StringReader
 import java.io.StringWriter
 import java.net.URI
 import java.net.URISyntaxException
@@ -44,9 +46,10 @@ import java.util.HashMap
 import java.util.LinkedList
 import java.util.UUID
 import javax.xml.ws.soap.SOAPFaultException
+import kotlin.Comparator
 
 @Service
-class EfactServiceImpl(private val stsService: STSService) : EfactService {
+class EfactServiceImpl(private val stsService: STSService, private val mapper: MapperFacade) : EfactService {
     private val config = ConfigFactory.getConfigValidator(listOf())
     private val genAsyncService = GenAsyncServiceImpl("invoicing")
 
@@ -288,7 +291,9 @@ class EfactServiceImpl(private val stsService: STSService) : EfactService {
                         detail =
                             String(ConnectorIOUtils.decompress(IOUtils.toByteArray(r.detail.value.inputStream)), Charsets.UTF_8) //This starts with 92...
 
-                        message = BelgianInsuranceInvoicingFormatReader(language).read(this.detail!!)
+                        message = BelgianInsuranceInvoicingFormatReader(language).parse(StringReader(this.detail!!))?.map {
+                            mapper.map(it, Record::class.java)
+                        }
                         xades = Base64.encodeBase64String(r.xadesT.value)
                         hashValue = Base64.encodeBase64String(r.detail.hashValue)
                     } catch (e: IOException) {}

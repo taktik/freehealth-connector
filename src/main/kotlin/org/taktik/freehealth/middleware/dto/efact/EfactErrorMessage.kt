@@ -7,7 +7,6 @@ class EfactErrorMessage {
     var id: String? = null
     var name: String? = null
 
-    var message: ErrorMessage? = null
     var xades : String? = null
     var tAck: TAck? = null
 

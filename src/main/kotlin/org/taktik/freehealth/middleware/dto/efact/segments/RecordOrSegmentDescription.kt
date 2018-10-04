@@ -18,38 +18,9 @@
 
 package org.taktik.freehealth.middleware.dto.efact.segments
 
-import java.util.ArrayList
-import java.util.HashSet
-
-abstract class RecordOrSegmentDescription {
-    abstract val zoneDescriptionsByZone: Map<String, ZoneDescription>
-
-    val zoneDescriptions: List<ZoneDescription>
-        get() {
-            return ArrayList(HashSet(zoneDescriptionsByZone.values)).sortedWith(Comparator { zd1, zd2 -> zd1.position.compareTo(zd2.position) })
-        }
-
-    operator fun contains(zone: String): Boolean {
-        return zoneDescriptionsByZone.containsKey(zone)
-    }
-
-    protected fun register(zoneDescriptionsByZone: MutableMap<String, ZoneDescription>,
-                           zones: String,
-                           label: String,
-                           typeSymbol: String,
-                           position: Int,
-                           length: Int,
-                           value: String? = null,
-                           cs: Boolean = false): Int {
-        val zoneDescription = ZoneDescription.build(zones, label, typeSymbol, position, length, value, cs)
-        for (zone in zones.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
-            zoneDescriptionsByZone[zone.trim { it <= ' ' }] = zoneDescription
-        }
-        return position + length
-    }
-
+class RecordOrSegmentDescription {
+    var zoneDescriptions: List<ZoneDescription>? = null
     override fun toString(): String {
-        return zoneDescriptions.firstOrNull()?.let { it.value } ?: super.toString()
+        return zoneDescriptions?.firstOrNull()?.let { it.value } ?: "-"
     }
-
 }

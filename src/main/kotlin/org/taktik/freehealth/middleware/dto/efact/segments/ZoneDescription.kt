@@ -21,46 +21,15 @@ package org.taktik.freehealth.middleware.dto.efact.segments
 import org.apache.commons.lang.StringUtils
 import java.lang.IllegalArgumentException
 
-class ZoneDescription private constructor(val label: String,
-                                          val position: Int,
-                                          val length: Int,
-                                          val type: ZoneType,
-                                          val zones: List<String>,
-                                          val value: String? = null,
-                                          val cs: Boolean = false) {
-    var zonesList: String? = null
-        get() = field ?: StringUtils.join(zones, ",")
-
-    val zone: String
-        get() = zones[0]
-
-    init {
-        this.zonesList = StringUtils.join(zones, ",")
-    }
-
-    enum class ZoneType private constructor(val symbol: String) {
+class ZoneDescription(var label: String? = null,
+                                          var position: Int? = null,
+                                          var length: Int? = null,
+                                          var type: ZoneType? = null,
+                                          var zones: List<String>? = null,
+                                          var value: String? = null,
+                                          var cs: Boolean = false) {
+    enum class ZoneType constructor(val symbol: String) {
         ALPHANUMERICAL("A"),
         NUMERICAL("N");
-
-        companion object {
-            fun fromSymbol(symbol: String): ZoneType? {
-                return values().find { it.symbol === symbol }
-            }
-        }
-    }
-
-    companion object {
-        fun build(commaSeparatedZones: String,
-                  label: String,
-                  typeSymbol: String,
-                  position: Int,
-                  length: Int,
-                  value: String? = null,
-                  cs: Boolean = false): ZoneDescription {
-            val type = ZoneType.fromSymbol(typeSymbol) ?: throw IllegalArgumentException("Invalid type $typeSymbol")
-            val splitZones = commaSeparatedZones.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            val zones = splitZones.map { it.trim { it <= ' ' } }
-            return ZoneDescription(label, position, length, type, zones, value, cs)
-        }
     }
 }
