@@ -16,23 +16,23 @@
  * along with iCureBackend.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.taktik.freehealth.middleware.format.efact
+package org.taktik.freehealth.middleware.dto.efact
 
 import org.taktik.freehealth.middleware.format.ReaderSession
-import org.taktik.freehealth.middleware.format.efact.segments.Record10Description
-import org.taktik.freehealth.middleware.format.efact.segments.Record20Description
-import org.taktik.freehealth.middleware.format.efact.segments.Record30Description
-import org.taktik.freehealth.middleware.format.efact.segments.Record50Description
-import org.taktik.freehealth.middleware.format.efact.segments.Record51Description
-import org.taktik.freehealth.middleware.format.efact.segments.Record52Description
-import org.taktik.freehealth.middleware.format.efact.segments.Record80Description
-import org.taktik.freehealth.middleware.format.efact.segments.Record90Description
-import org.taktik.freehealth.middleware.format.efact.segments.RecordOrSegmentDescription
-import org.taktik.freehealth.middleware.format.efact.segments.Segment200Description
-import org.taktik.freehealth.middleware.format.efact.segments.Segment300Description
-import org.taktik.freehealth.middleware.format.efact.segments.Segment300ErrorDescription
-import org.taktik.freehealth.middleware.format.efact.segments.Segment400Record95Description
-import org.taktik.freehealth.middleware.format.efact.segments.Segment500Record96Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Record10Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Record20Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Record30Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Record50Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Record51Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Record52Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Record80Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Record90Description
+import org.taktik.freehealth.middleware.dto.efact.segments.RecordOrSegmentDescription
+import org.taktik.freehealth.middleware.dto.efact.segments.Segment200Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Segment300Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Segment300ErrorDescription
+import org.taktik.freehealth.middleware.dto.efact.segments.Segment400Record95Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Segment500Record96Description
 import org.taktik.freehealth.middleware.serialize.UTF8Control
 import java.io.EOFException
 
@@ -141,7 +141,13 @@ class BelgianInsuranceInvoicingFormatReader(private val language: String) {
 
     @Throws(IOException::class)
     fun read920099(message: String): Message {
-        return read92Generic(message)
+        val reader = ReaderSession(StringReader(message))
+
+        return Message().apply {
+            segment200 = Record(Segment200Description, Segment200Description.zoneDescriptions.map { zd -> Zone(zd, reader.read(zd.label, zd.length)) })
+            segment300Error = Record(Segment300ErrorDescription, Segment300ErrorDescription.zoneDescriptions.map { zd -> Zone(zd, reader.read(zd.label, zd.length)) })
+            readErrorDetails(reader, this)
+        }
     }
 
     @Throws(IOException::class)
@@ -155,6 +161,8 @@ class BelgianInsuranceInvoicingFormatReader(private val language: String) {
 
         return Message().apply {
             segment200 = Record(Segment200Description, Segment200Description.zoneDescriptions.map { zd -> Zone(zd, reader.read(zd.label, zd.length)) })
+            segment300 = Record(Segment300Description, Segment300Description.zoneDescriptions.map { zd -> Zone(zd, reader.read(zd.label, zd.length)) })
+            readErrorDetails(reader, this)
             readInvoiceReceipt(reader, this)
 
             var receipt95HasBeenRead = readReceipt95(reader, this)

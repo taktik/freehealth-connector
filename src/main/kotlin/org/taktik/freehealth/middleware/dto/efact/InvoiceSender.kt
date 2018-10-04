@@ -30,6 +30,6 @@ class InvoiceSender {
     var phoneNumber: Long? = null
     var conventionCode: Int? = null
 
-    val isSpecialist: Boolean
+    var isSpecialist: Boolean = false
         get() = nihii!! % 1000L >= 10
 }

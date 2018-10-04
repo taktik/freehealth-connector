@@ -18,32 +18,17 @@
 
 package org.taktik.freehealth.middleware.dto.efact
 
-import java.util.Calendar
-import java.util.Date
+import org.taktik.freehealth.middleware.dto.efact.Acknowledgment
+import org.taktik.freehealth.middleware.dto.efact.ErrorDetail
+import org.taktik.freehealth.middleware.dto.efact.Receipt95
+import org.taktik.freehealth.middleware.dto.efact.segments.Segment200Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Segment300Description
+import org.taktik.freehealth.middleware.dto.efact.segments.Segment300ErrorDescription
+import java.io.Serializable
+import java.util.ArrayList
 
-class EIDItem {
-    var deviceType: String? = null
-    var readDate: Long? = null
-    var readHour: Int = 0
-    var readType: String? = null
-    var readvalue: String? = null
-
-    constructor() {
-        deviceType = "1"
-        readType = "1"
-        readDate = Date().time
-
-        var cal = Calendar.getInstance()
-
-        readHour = cal.get(Calendar.HOUR_OF_DAY) * 100 + cal.get(Calendar.MINUTE)
-    }
-
-    constructor(readDate: Long?, readHour: Int?, readvalue: String) {
-        deviceType = "1"
-        readType = "1"
-
-        this.readvalue = readvalue
-        this.readDate = readDate
-        this.readHour = readHour!!
-    }
+class ErrorMessage : Serializable {
+    var acknowledgment: Acknowledgment? = null
+    var receipts95: MutableList<Receipt95> = ArrayList()
+    var errorDetails: MutableList<ErrorDetail> = ArrayList()
 }

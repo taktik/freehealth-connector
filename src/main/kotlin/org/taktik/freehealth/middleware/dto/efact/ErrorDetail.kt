@@ -16,9 +16,9 @@
  * along with iCureBackend.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.taktik.freehealth.middleware.format.efact
+package org.taktik.freehealth.middleware.dto.efact
 
-import org.taktik.freehealth.middleware.format.efact.segments.RecordOrSegmentDescription
+import org.taktik.freehealth.middleware.dto.efact.segments.RecordOrSegmentDescription
 import java.io.Serializable
 
 class ErrorDetail : Serializable {
