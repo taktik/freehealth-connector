@@ -36,7 +36,10 @@ import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFo
 import org.taktik.freehealth.utils.FuzzyValues
 import java.io.File
 import java.io.StringReader
+import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Calendar
@@ -140,13 +143,13 @@ abstract class EfactAbstractTest : EhealthTest() {
                             patientWithInss: org.taktik.freehealth.middleware.domain.common.Patient,
                             uniq: Int): InvoicesBatch =
         InvoicesBatch().apply {
+
             invoicingYear = 2018
             invoicingMonth = 9
             this.batchRef = batchRef
             uniqueSendNumber = uniq.toLong()
             ioFederationCode = oa
-            numericalRef = (FuzzyValues.getCurrentFuzzyDateTime(ChronoUnit.MINUTES) / 100) % 10_000_000_000
-
+            numericalRef = ((LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd")).toLong())*1000000) + (ioFederationCode!!.toLong() * 10000) + invoiceNumber
             sender = InvoiceSender().apply {
                 nihii = nihii1?.toLong() //nihiiSender
                 ssin = ssin1 //ssinSender
