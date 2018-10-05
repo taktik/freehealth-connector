@@ -39,11 +39,17 @@ class GenInsControllerTest : EhealthTest() {
     )
     private fun getNisses(idx: Int) = listOf(nisses[100]!![idx], nisses[300]!![idx], nisses[500]!![idx], nisses[600]!![idx], nisses[900]!![idx])
 
+    private fun assertErrors(scenario: String, error: String, results: InsurabilityInfoDto?) {
+        println(scenario + "\n====================")
+        assertThat(results!!.errors).isNotNull.isNotEmpty
+        assertThat(results!!.errors.map{e-> e.uid}).contains(error)
+    }
+
     private fun assertErrors(scenario: String, error: String, results: List<InsurabilityInfoDto?>) {
         println(scenario + "\n====================")
         results.forEachIndexed { index, it ->
             assertThat(it!!.errors).isNotNull.isNotEmpty
-            assertThat(it!!.errors[0].uid).isEqualTo(error)
+            assertThat(it!!.errors.map{e-> e.uid}).contains(error)
         }
     }
 
@@ -51,7 +57,7 @@ class GenInsControllerTest : EhealthTest() {
         println(scenario + "\n====================")
         results.forEachIndexed { index, it ->
             assertThat(it!!.errors).isNotNull.isNotEmpty
-            assertThat(errors).contains(it!!.errors[0].uid)
+            assertThat(it.errors.map{e-> e.uid}).containsAll(errors)
         }
     }
 
@@ -83,8 +89,173 @@ class GenInsControllerTest : EhealthTest() {
     fun getGeneralInsurabilityError1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414734"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
-                                                HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        Assertions.assertThat(genIns != null)
+            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+        assertErrors("Error with digit check","1",genIns.body)
+    }
+
+//    @Test
+//    fun getGeneralInsurabilityError2() { // the fhc don't accept incorrect ssin
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("Invalid format","2",genIns.body)
+//    }
+
+//    @Test
+//    fun getGeneralInsurabilityError3() { // I don't know how to test
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"00000000097"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("OA unknown","3",genIns.body)
+//    }
+
+//    @Test
+//    fun getGeneralInsurabilityError4() { // I don't know how to test
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("Invalid format","4",genIns.body)
+//    }
+
+//    @Test
+//    fun getGeneralInsurabilityError5() { // the fhc don't accept empty ssin
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${""}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("INSS Not present","5",genIns.body)
+//    }
+
+//    @Test
+//    fun getGeneralInsurabilityError6() { // I don't know how to test
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("OA not present","6",genIns.body)
+//    }
+
+//    @Test
+//    fun getGeneralInsurabilityError7() { // I don't know how to test
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("regNrWithMut not present","7",genIns.body)
+//    }
+
+//    @Test
+//    fun getGeneralInsurabilityError8() { // is managed by the fhc server
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("The RequestType is empty","8",genIns.body)
+//    }
+
+//    @Test
+//    fun getGeneralInsurabilityError9() { // is managed by the fhc server
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("This RequestType is not allowed","9",genIns.body)
+//    }
+
+//    @Test
+//    fun getGeneralInsurabilityError10() { // is managed by the fhc server
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}&date=",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("The StartDate is empty","10",genIns.body)
+//    }
+
+    @Test
+    fun getGeneralInsurabilityError11() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}&date=" + Instant.parse("2099-01-15T00:00:00.00Z").toEpochMilli(),
+            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+        assertErrors("The StartDate is after now","11",genIns.body)
+    }
+
+//    @Test
+//    fun getGeneralInsurabilityError12() { // is managed by the fhc server
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("The EndDate is empty","12",genIns.body)
+//    }
+
+    @Test
+    fun getGeneralInsurabilityError13() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}" +
+            "&date=" + Instant.parse("2017-01-16T00:00:00.00Z").toEpochMilli() +
+            "&endDate=" + Instant.parse("2017-01-15T00:00:00.00Z").toEpochMilli(),
+            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+        assertErrors("The EndDate before startDate","13",genIns.body)
+    }
+
+    @Test
+    fun getGeneralInsurabilityError14() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}" +
+            "&date=" + Instant.parse("2017-01-16T00:00:00.00Z").toEpochMilli() +
+            "&endDate=" + Instant.parse("9999-01-15T00:00:00.00Z").toEpochMilli(),
+            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+        assertErrors("The request for a period is not allowed","14",genIns.body)
+    }
+
+//    @Test
+//    fun getGeneralInsurabilityError15() { // is managed by the fhc server
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("The ContactType of the request is empty","15",genIns.body)
+//    }
+
+//    @Test
+//    fun getGeneralInsurabilityError16() { // is managed by the fhc server
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("The ContactType of the request is not alllowed","16",genIns.body)
+//    }
+
+    @Test
+    fun getGeneralInsurabilityError17() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"00000000097"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+        assertErrors("Inss not found on Routing algorithm","17",genIns.body)
+    }
+
+//    @Test
+//    fun getGeneralInsurabilityError18() { // I don't know how to test
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("Invalid Period","18",genIns.body)
+//    }
+
+//    @Test
+//    fun getGeneralInsurabilityError19() { // I don't know how to test
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("No IO Found","19",genIns.body)
+//    }
+
+//    @Test
+//    fun getGeneralInsurabilityError20() { // I don't know how to test
+//        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+//        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+//            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+//        assertErrors("Multi IO Found","20",genIns.body)
+//    }
+
+    @Test
+    fun getGeneralInsurabilityError21() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}" +
+            "&date=" + Instant.parse("1000-01-15T00:00:00.00Z").toEpochMilli(),
+            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+        assertErrors("Invalid Period","21",genIns.body)
     }
 
     @Test
