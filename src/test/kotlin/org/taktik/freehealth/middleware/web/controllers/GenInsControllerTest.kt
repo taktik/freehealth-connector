@@ -67,14 +67,23 @@ class GenInsControllerTest : EhealthTest() {
     fun getGeneralInsurability() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
-                                                HttpMethod.GET, HttpEntity<Void>(createHeaders("0c381380-88fa-76da-24b7-0f99250031d6", "T@kt1k1Cur3", keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
+                                                HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
         Assertions.assertThat(genIns != null)
     }
 
     @Test
     fun getGeneralInsurability2() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val genIns = this.restTemplate.getForObject("http://localhost:$port/genins/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}&passPhrase={passPhrase}", String::class.java, passPhrase)
+        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+                                                HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
+        Assertions.assertThat(genIns != null)
+    }
+
+    @Test
+    fun getGeneralInsurabilityError1() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414734"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
+                                                HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
         Assertions.assertThat(genIns != null)
     }
 
