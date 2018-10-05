@@ -42,8 +42,16 @@ import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import org.taktik.freehealth.middleware.mapper.toInsurabilityInfoDto
 import org.taktik.freehealth.middleware.service.GenInsService
 import org.taktik.freehealth.middleware.service.STSService
+import org.w3c.dom.Element
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+import java.io.ByteArrayInputStream
 import java.math.BigDecimal
 import java.util.*
+import javax.xml.namespace.NamespaceContext
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.xpath.XPath
+import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
 @Service
@@ -149,21 +157,21 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
         }
 
         return try {
+            val kmehrRequestMarshaller =
+                MarshallerHelper(
+                    GetInsurabilityAsXmlOrFlatRequestType::class.java,
+                    GetInsurabilityAsXmlOrFlatRequestType::class.java
+                                )
+            val xmlData = kmehrRequestMarshaller.toXMLByteArray(request)
+
             if (log.isDebugEnabled) {
-                val kmehrRequestMarshaller =
-                    MarshallerHelper(
-                        GetInsurabilityAsXmlOrFlatRequestType::class.java,
-                        GetInsurabilityAsXmlOrFlatRequestType::class.java
-                    )
-                val xmlString = kmehrRequestMarshaller.toXMLByteArray(request).toString(Charsets.UTF_8)
-                log.debug("Genins request: {}", xmlString)
+                log.debug("Genins request: {}", xmlData.toString(Charsets.UTF_8))
             }
 
-            var genInsResponse = freehealthGenInsService.getInsurability(samlToken, request)
-            var genInsResponseDTO = genInsResponse.toInsurabilityInfoDto()
+            val genInsResponse = freehealthGenInsService.getInsurability(samlToken, request)
+            val genInsResponseDTO = genInsResponse.toInsurabilityInfoDto()
 
-            val details = genInsResponse.response.messageFault?.details?.details
-            if(details != null) genInsResponseDTO.errors = extractError(details).toList()
+            genInsResponseDTO.errors = genInsResponse.response.messageFault?.details?.details?.flatMap { extractError(xmlData, it.detailCode, it.location).toList() } ?: listOf()
 
             return genInsResponseDTO
 
@@ -176,13 +184,78 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                                )
         }
     }
-    private fun extractError(details: List<DetailType>): Set<MycarenetError> {
 
-        return GenInsErrors.values.filter {
-            details.map{ x:DetailType -> x.location}.contains(it.path) &&
-                details.map{ x:DetailType -> x.detailCode}.contains(it.code)
-        }.toSet()
+    private fun extractError(sendTransactionRequest: ByteArray, ec: String, errorUrl: String?): Set<MycarenetError> {
+        //For some reason... The path starts with ../../../../ which corrsponds to the request
+        return errorUrl?.let { url ->
+            val factory = DocumentBuilderFactory.newInstance()
+            factory.isNamespaceAware = true
+            val builder = factory.newDocumentBuilder()
 
+            val xpath = xPathFactory()
+            val expr = xpath.compile(url.replace(Regex("^\\.\\./\\.\\./\\.\\./\\.\\./"),"/gip:GetInsurabilityAsXmlOrFlatRequestType/gip:Request/")
+                                         .replace(Regex("/(CareReceiverId|Inss|RegNrWithMut|Mutuality|InsurabilityRequestDetail|InsurabilityRequestType|Period|PeriodStart|PeriodEnd|InsurabilityContactType|InsurabilityReference)"),"/gic:$1"))
+            val result = mutableSetOf<MycarenetError>()
+
+            (expr.evaluate(
+                builder.parse(ByteArrayInputStream(sendTransactionRequest)),
+                XPathConstants.NODESET
+                          ) as NodeList).let { it ->
+                if (it.length > 0) {
+                    var node = it.item(0)
+                    val textContent = node.textContent
+                    var base = "/" + nodeDescr(node)
+                    while (node.parentNode != null && node.parentNode is Element) {
+                        base = "/${nodeDescr(node.parentNode)}$base"
+                        node = node.parentNode
+                    }
+                    val elements =
+                        GenInsErrors.values.filter {(it.path == null || it.path == base) && it.code == ec }
+                    elements.forEach { it.value = textContent }
+                    result.addAll(elements)
+                } else {
+                    result.add(
+                        MycarenetError(
+                            code = ec,
+                            path = url,
+                            msgFr = "Erreur générique, xpath invalide",
+                            msgNl = "Onbekend foutmelding, xpath ongeldig"
+                                      )
+                              )
+                }
+            }
+            result
+        } ?: setOf()
     }
 
+    private fun nodeDescr(node: Node): String {
+        val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
+
+        return localName
+    }
+
+    private fun xPathFactory(): XPath {
+        val xpath = xPathfactory.newXPath()
+        xpath.namespaceContext = object : NamespaceContext {
+            override fun getNamespaceURI(prefix: String?) = when (prefix) {
+                "gic" -> "urn:be:fgov:ehealth:genericinsurability:core:v1"
+                "gip" -> "urn:be:fgov:ehealth:genericinsurability:protocol:v1"
+                else -> null
+            }
+
+            override fun getPrefix(namespaceURI: String?) = when (namespaceURI) {
+                "urn:be:fgov:ehealth:genericinsurability:core:v1" -> "gic"
+                "urn:be:fgov:ehealth:genericinsurability:protocol:v1" -> "gip"
+                else -> null
+            }
+
+            override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
+                when (namespaceURI) {
+                    "urn:be:fgov:ehealth:genericinsurability:core:v1" -> listOf("gic").iterator()
+                    "urn:be:fgov:ehealth:genericinsurability:protocol:v1" -> listOf("gip").iterator()
+                    else -> listOf<String>().iterator()
+                }
+        }
+        return xpath
+    }
 }

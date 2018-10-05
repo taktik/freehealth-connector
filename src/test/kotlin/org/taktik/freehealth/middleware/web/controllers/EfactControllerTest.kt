@@ -36,7 +36,10 @@ import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFo
 import org.taktik.freehealth.utils.FuzzyValues
 import java.io.File
 import java.io.StringReader
+import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Calendar
@@ -49,7 +52,7 @@ import kotlin.math.roundToInt
 @Suppress("PrivatePropertyName", "PropertyName")
 abstract class EfactAbstractTest : EhealthTest() {
     // Add the scenario number to this to get a unique ID, then you can run all the tests without having to manually change the unique send number
-    private var sendNumber = 100
+    private var sendNumber = 300
 
     val ssinSender = "62110906574"
     val nihiiSender = 19234011004L
@@ -140,13 +143,13 @@ abstract class EfactAbstractTest : EhealthTest() {
                             patientWithInss: org.taktik.freehealth.middleware.domain.common.Patient,
                             uniq: Int): InvoicesBatch =
         InvoicesBatch().apply {
+
             invoicingYear = 2018
             invoicingMonth = 9
             this.batchRef = batchRef
             uniqueSendNumber = uniq.toLong()
             ioFederationCode = oa
-            numericalRef = (FuzzyValues.getCurrentFuzzyDateTime(ChronoUnit.MINUTES) / 100) % 10_000_000_000
-
+            numericalRef = ((LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd")).toLong()) * 1_000_000) + (ioFederationCode!!.toLong() * 1_000) + uniq
             sender = InvoiceSender().apply {
                 nihii = nihii1?.toLong() //nihiiSender
                 ssin = ssin1 //ssinSender
@@ -251,7 +254,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 patientFees.add(TarificationConsultationResult.Payment().apply { amount = 2.00 })
             }
         }
-        return createBatch(mutualityCode.toLong() * 100 + 1, "FHCA01.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 1).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 1, "FHCA01.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 1).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
@@ -269,7 +272,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         val niss = NISSES_BY_MUTUALITY[mutualityCode]!![NISS1]!!
         println("***** Scenario 2 - Mutuality $mutualityCode - NISS: $niss *****")
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
-        return createBatch(mutualityCode.toLong() * 100 + 2, "FHCA01.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 2).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 2, "FHCA01.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 2).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(102793, 1920, 200, 0, null, Date()))
         }
     }
@@ -284,7 +287,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         println("***** Scenario 3 - Mutuality $mutualityCode - NISS: $niss *****")
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
 
-        return createBatch(mutualityCode.toLong() * 100 + 3, "FHCA02.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 3).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 3, "FHCA02.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 3).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(101075L, 1920, 200, 0, null, Date()))
         }
     }
@@ -298,7 +301,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         val niss = NISSES_BY_MUTUALITY[mutualityCode]!![NISS1]!!
         println("***** Scenario 4 - Mutuality $mutualityCode - NISS: $niss *****")
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
-        return createBatch(mutualityCode.toLong() * 100 + 4, "FHCA03.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 4).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 4, "FHCA03.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 4).apply {
             invoices.firstOrNull()
                 ?.items?.add(createInvoiceItem(101032, 1920, 200, 0, null, DateTime().minusYears(2).toDate()))
         }
@@ -322,7 +325,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 patientFees.add(TarificationConsultationResult.Payment().apply { amount = 2.00 })
             }
         }
-        return createBatch(mutualityCode.toLong() * 100 + 5, "FHCA04.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 5).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 5, "FHCA04.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 5).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
@@ -341,7 +344,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         println("***** Scenario 6 - Mutuality $mutualityCode - NISS: $niss *****")
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
 
-        return createBatch(mutualityCode.toLong() * 100 + 6, "FHCA05.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 6).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 6, "FHCA05.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 6).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(101032, 1920, 200, 0, null, DateTime().toDate()))
         }
     }
@@ -355,7 +358,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         val niss = NISSES_BY_MUTUALITY[mutualityCode]!![NISS4]!!
         println("***** Scenario 7 - Mutuality $mutualityCode - NISS: $niss *****")
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
-        return createBatch(mutualityCode.toLong() * 100 + 7, "FHCA06.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 7).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 7, "FHCA06.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 7).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(101032, 1920, 200, 0, null, DateTime().toDate()))
         }
     }
@@ -378,7 +381,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 patientFees.add(TarificationConsultationResult.Payment().apply { amount = 2.00 })
             }
         }
-        return createBatch(mutualityCode.toLong() * 100 + 8, "FHCA07.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 8).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 8, "FHCA07.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 8).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
@@ -397,7 +400,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         println("***** Scenario 9 - Mutuality $mutualityCode - NISS: $niss *****")
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
 
-        return createBatch(mutualityCode.toLong() * 100 + 9, "FHCA08.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 9).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 9, "FHCA08.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 9).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(101032, 1820, 200, 0, null, DateTime().toDate()))
         }
     }
@@ -420,7 +423,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 patientFees.add(TarificationConsultationResult.Payment().apply { amount = 2.00 })
             }
         }
-        return createBatch(mutualityCode.toLong() * 100 + 10, "FHCA09.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 10).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 10, "FHCA09.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 10).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
@@ -449,7 +452,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 patientFees.add(TarificationConsultationResult.Payment().apply { amount = 2.00 })
             }
         }
-        return createBatch(mutualityCode.toLong() * 100 + 11, "FHCA10.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 11).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 11, "FHCA10.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 11).apply {
             invoices.firstOrNull()?.items?.addAll(listOf(
                 createInvoiceItem(
                     java.lang.Long.valueOf(consult.codes[0]),
@@ -485,7 +488,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 patientFees.add(TarificationConsultationResult.Payment().apply { amount = 2.00 })
             }
         }
-        return createBatch(mutualityCode.toLong() * 100 + 12, "FHCA11.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 12).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 12, "FHCA11.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 12).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
@@ -512,7 +515,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 patientFees.add(TarificationConsultationResult.Payment().apply { amount = 2.00 })
             }
         }
-        return createBatch(mutualityCode.toLong() * 100 + 13, "FHCA12.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 13).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 13, "FHCA12.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 13).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
@@ -539,7 +542,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 patientFees.add(TarificationConsultationResult.Payment().apply { amount = 2.00 })
             }
         }
-        return createBatch(mutualityCode.toLong() * 100 + 14, "FHCA13.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 14).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 14, "FHCA13.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 14).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
@@ -571,7 +574,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 patientFees.add(TarificationConsultationResult.Payment().apply { amount = 2.00 })
             }
         }
-        return createBatch(mutualityCode.toLong() * 100 + 15, "FHCA14.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 15).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 15, "FHCA14.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 15).apply {
             invoices.firstOrNull()?.items?.addAll(listOf(
                 createInvoiceItem(
                     java.lang.Long.valueOf(consult.codes[0]),
@@ -582,7 +585,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 },
                 createInvoiceItem(java.lang.Long.valueOf(consult.codes[1]), ((consult.reimbursements.firstOrNull()?.amount
                     ?: .0) * 100).roundToInt(), ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
-                                  0, consult.financialContracts.firstOrNull(), DateTime().toDate()).apply {
+                    0, consult.financialContracts.firstOrNull(), DateTime().toDate()).apply {
                     insuranceRef = null
                     relatedCode = 767071L
                 }))
@@ -609,7 +612,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 patientFees.add(TarificationConsultationResult.Payment().apply { amount = 2.00 })
             }
         }
-        return createBatch(mutualityCode.toLong() * 100 + 16, "FHCA15.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 16).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 16, "FHCA15.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 16).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
@@ -640,7 +643,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 patientFees.add(TarificationConsultationResult.Payment().apply { amount = 2.00 })
             }
         }
-        return createBatch(mutualityCode.toLong() * 100 + 17, "FHCA16.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 17).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 17, "FHCA16.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 17).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
@@ -667,7 +670,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 codes.addAll(listOf("475075", "101032"))
             }
         }
-        return createBatch(mutualityCode.toLong() * 100 + 18, "FHCA17.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 18).apply {
+        return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 18, "FHCA17.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 18).apply {
             invoices.firstOrNull()?.items?.addAll(listOf(
                 createInvoiceItem(
                     java.lang.Long.valueOf(consult.codes[0]),
@@ -683,6 +686,19 @@ abstract class EfactAbstractTest : EhealthTest() {
                     0, consult.financialContracts.firstOrNull(), DateTime().toDate()).apply {
                     relatedCode = 475075L
                 }))
+        }
+    }
+
+    protected fun writeFiles(fileName: String, mutualityCode: String, raw: String) {
+        File("$fileName.$mutualityCode.txt").bufferedWriter().let {
+            it.write(raw)
+            it.flush()
+            it.close()
+        }
+        File("$fileName.$mutualityCode.yml").bufferedWriter().let {
+            it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
+            it.flush()
+            it.close()
         }
     }
 }
@@ -718,10 +734,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "01")) continue
-            val invBatch = prepareScenario01(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario01(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.01"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -732,10 +751,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "02")) continue
-            val invBatch = prepareScenario02NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario02NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.02"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -746,10 +768,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "03")) continue
-            val invBatch = prepareScenario03NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario03NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.03"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -760,10 +785,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "04")) continue
-            val invBatch = prepareScenario04NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario04NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.04"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -774,10 +802,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "05")) continue
-            val invBatch = prepareScenario05NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario05NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.05"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -788,10 +819,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "06")) continue
-            val invBatch = prepareScenario06NISS3(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario06NISS3(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.06"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -802,10 +836,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "07")) continue
-            val invBatch = prepareScenario07NISS4(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario07NISS4(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.07"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -816,10 +853,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "08")) continue
-            val invBatch = prepareScenario08NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario08NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.08"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -830,10 +870,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "09")) continue
-            val invBatch = prepareScenario09NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario09NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.09"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -844,10 +887,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "10")) continue
-            val invBatch = prepareScenario10NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario10NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.10"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -858,10 +904,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "11")) continue
-            val invBatch = prepareScenario11NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario11NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.11"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -872,10 +921,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "12")) continue
-            val invBatch = prepareScenario12NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario12NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.12"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -886,10 +938,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "13")) continue
-            val invBatch = prepareScenario13NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario13NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.13"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -900,10 +955,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "14")) continue
-            val invBatch = prepareScenario14NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario14NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.14"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -914,10 +972,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "15")) continue
-            val invBatch = prepareScenario15NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario15NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.15"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -928,10 +989,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "16")) continue
-            val invBatch = prepareScenario16NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario16NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.16"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -942,10 +1006,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "17")) continue
-            val invBatch = prepareScenario17NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario17NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.17"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -956,10 +1023,13 @@ class EfactControllerTest : EfactAbstractTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
             if (alreadyDone(mutualityCode, "18")) continue
-            val invBatch = prepareScenario18NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario18NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             this.restTemplate.exchange("http://localhost:$port/efact/batch", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
                 ?.let {
                     assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.18"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
                 }
         }
     }
@@ -992,7 +1062,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat01() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario01(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario01(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.01"
             writeFiles(fileName, mutualityCode, raw)
@@ -1004,7 +1075,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat02NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario02NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario02NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.02"
             writeFiles(fileName, mutualityCode, raw)
@@ -1016,7 +1088,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat03NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario03NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario03NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.03"
             writeFiles(fileName, mutualityCode, raw)
@@ -1028,7 +1101,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat04NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario04NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario04NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.04"
             writeFiles(fileName, mutualityCode, raw)
@@ -1040,7 +1114,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat05NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario05NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario05NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.05"
             writeFiles(fileName, mutualityCode, raw)
@@ -1052,7 +1127,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat06NISS3() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario06NISS3(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario06NISS3(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.06"
             writeFiles(fileName, mutualityCode, raw)
@@ -1064,7 +1140,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat07NISS4() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario07NISS4(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario07NISS4(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.07"
             writeFiles(fileName, mutualityCode, raw)
@@ -1076,7 +1153,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat08NISS2() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario08NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario08NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.08"
             writeFiles(fileName, mutualityCode, raw)
@@ -1088,7 +1166,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat09NISS2() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario09NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario09NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.09"
             writeFiles(fileName, mutualityCode, raw)
@@ -1100,7 +1179,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat10NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario10NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario10NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.10"
             writeFiles(fileName, mutualityCode, raw)
@@ -1112,7 +1192,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat11NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario11NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario11NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.11"
             writeFiles(fileName, mutualityCode, raw)
@@ -1124,7 +1205,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat12NISS2() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario12NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario12NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.12"
             writeFiles(fileName, mutualityCode, raw)
@@ -1136,7 +1218,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat13NISS2() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario13NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario13NISS2(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.13"
             writeFiles(fileName, mutualityCode, raw)
@@ -1148,7 +1231,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat14NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario14NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario14NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.14"
             writeFiles(fileName, mutualityCode, raw)
@@ -1160,7 +1244,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat15NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario15NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario15NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.15"
             writeFiles(fileName, mutualityCode, raw)
@@ -1172,7 +1257,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat16NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario16NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario16NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.16"
             writeFiles(fileName, mutualityCode, raw)
@@ -1184,7 +1270,8 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat17NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario17NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario17NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.17"
             writeFiles(fileName, mutualityCode, raw)
@@ -1196,25 +1283,14 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     fun testFlat18NISS1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
-            val invBatch = prepareScenario18NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase) ?: continue
+            val invBatch = prepareScenario18NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
             val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
             val fileName = "FHC.ACC.18"
             writeFiles(fileName, mutualityCode, raw)
         }
     }
 
-    private fun writeFiles(fileName: String, mutualityCode: String, raw: String) {
-        File("$fileName.$mutualityCode.txt").bufferedWriter().let {
-            it.write(raw)
-            it.flush()
-            it.close()
-        }
-        File("$fileName.$mutualityCode.yml").bufferedWriter().let {
-            it.write(BelgianInsuranceInvoicingFormatReader("fr").parse(StringReader(raw))!!.map { it.toString() }.joinToString("\n"))
-            it.flush()
-            it.close()
-        }
-    }
 }
 
 @RunWith(SpringRunner::class)
@@ -1244,6 +1320,47 @@ class EfactMessagesLoadTest : EhealthTest() {
             ?.let {
                 it.body.forEach {
 
+                    if (!it.name.equals("tAck")) {
+                        println("================= Message =================")
+                        println("Name: " + it.name)
+                        println("Message type: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("200") })
+                        println("Message reference: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("204") })
+                        println("Message Oa reference: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("205") })
+
+                        it.message!!.forEach {
+                            if (it.errorDetail != null) {
+
+                                if (it.errorDetail!!.rejectionCode1 != "000000" && it.errorDetail!!.rejectionCode2 != "000000" && it.errorDetail!!.rejectionCode3 != "000000") {
+                                    println("------- Reccord: " + it.zones.find { it.zoneDescription!!.zones!!.contains("1") } + "--------")
+                                }
+
+                                if (it.errorDetail!!.rejectionCode1 != "000000") {
+                                    println("Rejection Code 1: " + it.errorDetail!!.rejectionCode1)
+                                    println("Rejection descr 1: " + it.errorDetail!!.rejectionDescr1)
+                                }
+
+                                if (it.errorDetail!!.rejectionCode2 != "000000") {
+                                    println("Rejection Code 2: " + it.errorDetail!!.rejectionCode2)
+                                    println("Rejection descr 2: " + it.errorDetail!!.rejectionDescr2)
+                                }
+
+                                if (it.errorDetail!!.rejectionCode3 != "000000") {
+                                    println("Rejection Code 3: " + it.errorDetail!!.rejectionCode3)
+                                    println("Rejection descr 3: " + it.errorDetail!!.rejectionDescr3)
+                                }
+                            }
+                        }
+
+                    } else {
+                        println("================= Tack =================")
+                        println("Id: " + it.id)
+                        println("Issuer" + it.tAck!!.issuer)
+                        println("AppliesTo: " + it.tAck!!.appliesTo)
+                        println("ResultMajor: " + it.tAck!!.resultMajor)
+                        println("Tack id: " + it.tAck!!.id)
+                        println("xades: " + it.xades)
+                        println("hashValue: " + it.hashValue)
+                    }
                 }
             }
     }

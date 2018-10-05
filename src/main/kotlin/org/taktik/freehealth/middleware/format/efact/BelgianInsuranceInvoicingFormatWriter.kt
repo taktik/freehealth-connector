@@ -153,7 +153,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("4001", 0)
         ws.write("401", oa)
         ws.write("4011", 0)
-        ws.write("402", numericalRef!! * 100 + java.lang.Long.valueOf(oa.substring(1, 3)))
+        ws.write("402", numericalRef!!)
         ws.write("4021", 0)
         ws.write("403", if (amount >= 0) "+" else "-")
         ws.write("404", Math.abs(amount))
