@@ -29,8 +29,12 @@ import org.taktik.connector.technical.utils.ConnectorIOUtils
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.efact.EfactMessage
 import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
+import org.taktik.freehealth.middleware.dto.efact.ErrorDetail
 import org.taktik.freehealth.middleware.dto.efact.InvoicesBatch
 import org.taktik.freehealth.middleware.dto.efact.Record
+import org.taktik.freehealth.middleware.dto.efact.Zone
+import org.taktik.freehealth.middleware.dto.efact.segments.RecordOrSegmentDescription
+import org.taktik.freehealth.middleware.dto.efact.segments.ZoneDescription
 import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatReader
 import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatWriter
 import org.taktik.freehealth.middleware.service.EfactService
@@ -54,7 +58,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
     private val genAsyncService = GenAsyncServiceImpl("invoicing")
 
     override fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean): String {
-        require(batch.numericalRef?.let { it <= 9999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (10 positions max)" } ?: "numericalRef is missing" }
+        require(batch.numericalRef?.let { it <= 999999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (12 positions max)" } ?: "numericalRef is missing" }
         requireNotNull(batch.sender) { "Sender cannot be null" }
         requireNotNull(batch.batchRef) { "BatchRef cannot be null" }
         requireNotNull(batch.uniqueSendNumber) { "UniqueSendNumber cannot be null" }
@@ -210,7 +214,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val tack = postResponse.getReturn()
         val success = tack.resultMajor != null && tack.resultMajor == "urn:nip:tack:result:major:success"
 
-        return EfactSendResponse(success, inputReference, tack)
+        return EfactSendResponse(success, inputReference, tack, content)
     }
 
 
@@ -292,7 +296,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                             String(ConnectorIOUtils.decompress(IOUtils.toByteArray(r.detail.value.inputStream)), Charsets.UTF_8) //This starts with 92...
 
                         message = BelgianInsuranceInvoicingFormatReader(language).parse(StringReader(this.detail!!))?.map {
-                            mapper.map(it, Record::class.java)
+                            Record(mapper.map(it.description, RecordOrSegmentDescription::class.java), it.zones.map { z -> Zone(mapper.map(z.zoneDescription, ZoneDescription::class.java), z.value)}, mapper.map(it.errorDetail, ErrorDetail::class.java))
                         }
                         xades = Base64.encodeBase64String(r.xadesT.value)
                         hashValue = Base64.encodeBase64String(r.detail.hashValue)
