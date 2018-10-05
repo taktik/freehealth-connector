@@ -27,7 +27,7 @@ import java.text.DecimalFormat
 
 class Zone(private val zoneDescription:ZoneDescription, val value: Any?) {
     init {
-        if (zoneDescription.length > 280) {
+        if (zoneDescription.length > 500) {
             throw IllegalArgumentException("${zoneDescription.label} too large")
         }
     }

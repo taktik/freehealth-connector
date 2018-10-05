@@ -9,6 +9,7 @@ import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
@@ -18,6 +19,8 @@ import org.taktik.freehealth.middleware.domain.common.InsuranceParameter
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.dto.efact.EIDItem
+import org.taktik.freehealth.middleware.dto.efact.EfactErrorMessage
+import org.taktik.freehealth.middleware.dto.efact.EfactMessage
 import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
 import org.taktik.freehealth.middleware.dto.efact.Invoice
 import org.taktik.freehealth.middleware.dto.efact.InvoiceItem
@@ -46,7 +49,7 @@ import kotlin.math.roundToInt
 @Suppress("PrivatePropertyName", "PropertyName")
 abstract class EfactAbstractTest : EhealthTest() {
     // Add the scenario number to this to get a unique ID, then you can run all the tests without having to manually change the unique send number
-    private var sendNumber = 0
+    private var sendNumber = 100
 
     val ssinSender = "62110906574"
     val nihiiSender = 19234011004L
@@ -145,13 +148,13 @@ abstract class EfactAbstractTest : EhealthTest() {
             numericalRef = (FuzzyValues.getCurrentFuzzyDateTime(ChronoUnit.MINUTES) / 100) % 10_000_000_000
 
             sender = InvoiceSender().apply {
-                nihii = nihiiSender
-                ssin = ssinSender
-                bce = cbeSender
+                nihii = nihii1?.toLong() //nihiiSender
+                ssin = ssin1 //ssinSender
+                bce = cbe1?.toLong()
                 bic = bicSender
                 iban = ibanSender
-                firstName = firstNameSender
-                lastName = lastNameSender
+                firstName = firstName1
+                lastName = lastName1
                 phoneNumber = phoneSender.toLong()
             }
 
@@ -267,7 +270,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         println("***** Scenario 2 - Mutuality $mutualityCode - NISS: $niss *****")
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
         return createBatch(mutualityCode.toLong() * 100 + 2, "FHCA01.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 2).apply {
-            invoices.firstOrNull()?.items?.add(createInvoiceItem(102793L, 1920, 200, 0, null, Date()))
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(102793, 1920, 200, 0, null, Date()))
         }
     }
 
@@ -297,7 +300,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
         return createBatch(mutualityCode.toLong() * 100 + 4, "FHCA03.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 4).apply {
             invoices.firstOrNull()
-                ?.items?.add(createInvoiceItem(101032, 1920, 200, 0, null, DateTime().minusYears(3).toDate()))
+                ?.items?.add(createInvoiceItem(101032, 1920, 200, 0, null, DateTime().minusYears(2).toDate()))
         }
     }
 
@@ -324,7 +327,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 java.lang.Long.valueOf(consult.codes[0]),
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
-                0, consult.financialContracts.firstOrNull(), DateTime().plusMonths(3).toDate()))
+                0, consult.financialContracts.firstOrNull(), DateTime().plusMonths(2).toDate()))
         }
     }
 
@@ -642,7 +645,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 java.lang.Long.valueOf(consult.codes[0]),
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
-                0, consult.financialContracts.firstOrNull(), DateTime().plusYears(-3).toDate()).apply {
+                0, consult.financialContracts.firstOrNull(), DateTime().plusYears(-2).toDate()).apply {
                 insuranceRef = null
             })
         }
@@ -658,10 +661,10 @@ abstract class EfactAbstractTest : EhealthTest() {
         println("***** Scenario 18 - Mutuality $mutualityCode - NISS: $niss *****")
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
         val consult = try {
-            consultTarif(restTemplate, port, niss, keystoreId, tokenId, passPhrase, null, listOf("475075", "590030"))
+            consultTarif(restTemplate, port, niss, keystoreId, tokenId, passPhrase, null, listOf("475075", "101032"))
         } catch (e: Exception) {
             TarificationConsultationResult().apply {
-                codes.addAll(listOf("475075", "590030"))
+                codes.addAll(listOf("475075", "101032"))
             }
         }
         return createBatch(mutualityCode.toLong() * 100 + 18, "FHCA17.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 18).apply {
@@ -960,7 +963,9 @@ class EfactControllerTest : EfactAbstractTest() {
                 }
         }
     }
+
 }
+
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
@@ -1210,6 +1215,47 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
             it.close()
         }
     }
-
-
 }
+
+@RunWith(SpringRunner::class)
+@Import(MyTestsConfiguration::class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class EfactMessagesLoadTest : EhealthTest() {
+    @LocalServerPort
+    private val port: Int = 0
+
+    @Autowired
+    private val restTemplate: TestRestTemplate? = null
+
+
+    @Before
+    fun setUp() {
+        try {
+            System.setProperty("mycarenet.license.password", this.javaClass.getResourceAsStream("/org/taktik/freehealth/middleware/mycarenet.license").reader(Charsets.UTF_8).readText())
+        } catch (e: NullPointerException) {
+            System.setProperty("mycarenet.license.password", File("src/test/resources/org/taktik/freehealth/middleware/mycarenet.license").reader(Charsets.UTF_8).readText())
+        }
+    }
+
+    @Test
+    fun testLoadMessage() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        this.restTemplate.exchange("http://localhost:$port/efact/$nihii1/fr?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<EfactMessage>>() {}, firstName1, lastName1)
+            ?.let {
+                it.body.forEach {
+
+                }
+            }
+    }
+
+    @Test
+    fun testLoadAndConfirmMessage() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        this.restTemplate.exchange("http://localhost:$port/efact/$nihii1/fr?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<EfactErrorMessage>>() {}, firstName1, lastName1)
+            ?.let {
+                this.restTemplate.exchange("http://localhost:$port/efact/confirm/acks/$nihii1?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck != null }.map { it.hashValue }.filterNotNull(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
+                this.restTemplate.exchange("http://localhost:$port/efact/confirm/msgs/$nihii1?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck == null }.map { it.hashValue }.filterNotNull(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
+            }
+    }
+}
+

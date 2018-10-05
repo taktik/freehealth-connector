@@ -3,4 +3,5 @@
 	<include resource="org/springframework/boot/logging/logback/base.xml"/>
 	<logger name="org.taktik.freehealth.middleware.service.impl" level="TRACE" />
 	<logger name="org.taktik.connector.technical.ws" level="TRACE" />
+	<logger name="org.taktik.connector.technical.ws.impl" level="TRACE" />
 </configuration>

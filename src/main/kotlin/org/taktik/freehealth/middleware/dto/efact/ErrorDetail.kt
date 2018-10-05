@@ -16,7 +16,7 @@
  * along with iCureBackend.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.taktik.freehealth.middleware.format.efact
+package org.taktik.freehealth.middleware.dto.efact
 
 import java.io.Serializable
 
@@ -41,4 +41,5 @@ class ErrorDetail : Serializable {
     var rejectionZoneDescr3: String? = null
     var reserve: String? = null
     var sendingId: Int = 0
+
 }

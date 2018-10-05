@@ -16,20 +16,11 @@
  * along with iCureBackend.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.taktik.freehealth.middleware.dto.efact
+package org.taktik.freehealth.middleware.dto.efact.segments
 
-class InvoiceSender {
-    var nihii: Long? = null
-    var bic: String? = null
-    var iban: String? = null
-    var bce: Long? = 999999922L
-
-    var ssin: String? = null
-    var lastName: String? = null
-    var firstName: String? = null
-    var phoneNumber: Long? = null
-    var conventionCode: Int? = null
-
-    var isSpecialist: Boolean = false
-        get() = nihii!! % 1000L >= 10
+class RecordOrSegmentDescription {
+    var zoneDescriptions: List<ZoneDescription>? = null
+    override fun toString(): String {
+        return zoneDescriptions?.firstOrNull()?.let { it.value } ?: "-"
+    }
 }
