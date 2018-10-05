@@ -19,5 +19,6 @@
   {"uid":"18","path":"/GetInsurabilityAsXmlOrFlatRequestType/Request/InsurabilityRequestDetail/Period/PeriodStart/#text","code":"30","locFr":"Période","locNl":"Periode","msgFr":"Période invalide","msgNl":"Foutieve periode"},
   {"uid":"19","path":"/GetInsurabilityAsXmlOrFlatRequestType/Request/InsurabilityRequestDetail/Period/PeriodStart/#text","code":"43","locFr":"Date de début","locNl":"Startdatum","msgFr":"Aucun IO trouvé","msgNl":"Geen VI gevonden"},
   {"uid":"20","path":"/GetInsurabilityAsXmlOrFlatRequestType/Request/InsurabilityRequestDetail/Period/PeriodStart/#text","code":"44","locFr":"Date de début","locNl":"Startdatum","msgFr":"Multi IO Trouvé","msgNl":"Meerdere VI gevonden"},
-  {"uid":"21","path":null,"code":"40","locFr":"Période","locNl":"Periode","msgFr":"Période invalide","msgNl":"Geen gegevens voor deze periode in het verleden"}
+  {"uid":"21","path":null,"code":"40","locFr":"Période","locNl":"Periode","msgFr":"Période invalide","msgNl":"Geen gegevens voor deze periode in het verleden"},
+  {"uid":"22","path":"/GetInsurabilityAsXmlOrFlatRequestType/Request/InsurabilityRequestDetail/InsurabilityContactType/#text","code":"42","locFr":"Type de contact","locNl":"ConctactType","msgFr":"Le patient n'est pas hospitalisé","msgNl":"De patiënt is niet gehospitaliseerd"}
 ]
