@@ -35,7 +35,7 @@ enum class Gender constructor(val code: String) : Serializable {
 
     companion object {
         fun fromCode(code: String?): Gender? =
-            if (code == null) null else Gender.values().firstOrNull { it.code == code }
+            if (code == null) null else Gender.values().firstOrNull { it.code == code.substring(0,1).toUpperCase() }
     }
 }
 

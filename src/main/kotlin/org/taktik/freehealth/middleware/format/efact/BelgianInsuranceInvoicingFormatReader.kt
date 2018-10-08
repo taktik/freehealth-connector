@@ -54,7 +54,7 @@ class BelgianInsuranceInvoicingFormatReader(private val language: String) {
     }
 
     @Throws(IOException::class)
-    fun parse(reader: Reader): List<Record<*>>? {
+    fun parse(reader: Reader, parseErrors: Boolean = true): List<Record<*>>? {
         val session = ReaderSession(reader)
         return mutableListOf<Record<*>>().apply {
             loop@ while(true) {
@@ -74,14 +74,14 @@ class BelgianInsuranceInvoicingFormatReader(private val language: String) {
                             this.add(Record(Segment200Description, Segment200Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
                             this.add(Record(Segment300Description, Segment300Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
                         }
-                        "10" -> this.add(Record(Record10Description, Record10Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { this.errorDetail = readErrorDetails(session, this) })
-                        "20" -> this.add(Record(Record20Description, Record20Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { this.errorDetail = readErrorDetails(session, this) })
-                        "30" -> this.add(Record(Record30Description, Record30Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { this.errorDetail = readErrorDetails(session, this) })
-                        "50" -> this.add(Record(Record50Description, Record50Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { this.errorDetail = readErrorDetails(session, this) })
-                        "51" -> this.add(Record(Record51Description, Record51Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { this.errorDetail = readErrorDetails(session, this) })
-                        "52" -> this.add(Record(Record52Description, Record52Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { this.errorDetail = readErrorDetails(session, this) })
-                        "80" -> this.add(Record(Record80Description, Record80Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { this.errorDetail = readErrorDetails(session, this) })
-                        "90" -> this.add(Record(Record90Description, Record90Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { this.errorDetail = readErrorDetails(session, this) })
+                        "10" -> this.add(Record(Record10Description, Record10Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
+                        "20" -> this.add(Record(Record20Description, Record20Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
+                        "30" -> this.add(Record(Record30Description, Record30Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
+                        "50" -> this.add(Record(Record50Description, Record50Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
+                        "51" -> this.add(Record(Record51Description, Record51Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
+                        "52" -> this.add(Record(Record52Description, Record52Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
+                        "80" -> this.add(Record(Record80Description, Record80Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
+                        "90" -> this.add(Record(Record90Description, Record90Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
 
                         "95" -> this.add(Record(Segment400Record95Description, Segment400Record95Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
                         "96" -> this.add(Record(Segment500Record96Description, Segment500Record96Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))

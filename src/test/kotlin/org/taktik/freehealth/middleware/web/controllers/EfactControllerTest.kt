@@ -35,6 +35,8 @@ import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatReader
 import org.taktik.freehealth.utils.FuzzyValues
 import java.io.File
+import java.io.FileReader
+import java.io.FileWriter
 import java.io.StringReader
 import java.time.Instant
 import java.time.LocalDate
@@ -52,7 +54,7 @@ import kotlin.math.roundToInt
 @Suppress("PrivatePropertyName", "PropertyName")
 abstract class EfactAbstractTest : EhealthTest() {
     // Add the scenario number to this to get a unique ID, then you can run all the tests without having to manually change the unique send number
-    private var sendNumber = 300
+    private var sendNumber = 380
 
     val ssinSender = "62110906574"
     val nihiiSender = 19234011004L
@@ -117,24 +119,24 @@ abstract class EfactAbstractTest : EhealthTest() {
         results["900"] = HashMap()
 
         //Complete this matrix below with all tests that have been validated by the IOs
-        results["100"]?.put("01", false); results["300"]?.put("01", false); results["500"]?.put("01", false); results["600"]?.put("01", false); results["900"]?.put("01", false)
-        results["100"]?.put("02", false); results["300"]?.put("02", false); results["500"]?.put("02", false); results["600"]?.put("02", false); results["900"]?.put("02", false)
-        results["100"]?.put("03", false); results["300"]?.put("03", false); results["500"]?.put("03", false); results["600"]?.put("03", false); results["900"]?.put("03", false)
-        results["100"]?.put("04", false); results["300"]?.put("04", false); results["500"]?.put("04", false); results["600"]?.put("04", false); results["900"]?.put("04", false)
-        results["100"]?.put("05", false); results["300"]?.put("05", false); results["500"]?.put("05", false); results["600"]?.put("05", false); results["900"]?.put("05", false)
-        results["100"]?.put("06", false); results["300"]?.put("06", false); results["500"]?.put("06", false); results["600"]?.put("06", false); results["900"]?.put("06", false)
-        results["100"]?.put("07", false); results["300"]?.put("07", false); results["500"]?.put("07", false); results["600"]?.put("07", false); results["900"]?.put("07", false)
-        results["100"]?.put("08", false); results["300"]?.put("08", false); results["500"]?.put("08", false); results["600"]?.put("08", false); results["900"]?.put("08", false)
-        results["100"]?.put("09", false); results["300"]?.put("09", false); results["500"]?.put("09", false); results["600"]?.put("09", false); results["900"]?.put("09", false)
-        results["100"]?.put("10", false); results["300"]?.put("10", false); results["500"]?.put("10", false); results["600"]?.put("10", false); results["900"]?.put("10", false)
-        results["100"]?.put("11", false); results["300"]?.put("11", false); results["500"]?.put("11", false); results["600"]?.put("11", false); results["900"]?.put("11", false)
-        results["100"]?.put("12", false); results["300"]?.put("12", false); results["500"]?.put("12", false); results["600"]?.put("12", false); results["900"]?.put("12", false)
-        results["100"]?.put("13", false); results["300"]?.put("13", false); results["500"]?.put("13", false); results["600"]?.put("13", false); results["900"]?.put("13", false)
-        results["100"]?.put("14", false); results["300"]?.put("14", false); results["500"]?.put("14", false); results["600"]?.put("14", false); results["900"]?.put("14", false)
-        results["100"]?.put("15", false); results["300"]?.put("15", false); results["500"]?.put("15", false); results["600"]?.put("15", false); results["900"]?.put("15", false)
-        results["100"]?.put("16", false); results["300"]?.put("16", false); results["500"]?.put("16", false); results["600"]?.put("16", false); results["900"]?.put("16", false)
-        results["100"]?.put("17", false); results["300"]?.put("17", false); results["500"]?.put("17", false); results["600"]?.put("17", false); results["900"]?.put("17", false)
-        results["100"]?.put("18", false); results["300"]?.put("18", false); results["500"]?.put("18", false); results["600"]?.put("18", false); results["900"]?.put("18", false)
+        results["100"]?.put("01", true); results["300"]?.put("01", true); results["500"]?.put("01", true); results["600"]?.put("01", true); results["900"]?.put("01", true)
+        results["100"]?.put("02", true); results["300"]?.put("02", true); results["500"]?.put("02", true); results["600"]?.put("02", true); results["900"]?.put("02", false)
+        results["100"]?.put("03", true); results["300"]?.put("03", true); results["500"]?.put("03", true); results["600"]?.put("03", true); results["900"]?.put("03", false)
+        results["100"]?.put("04", true); results["300"]?.put("04", true); results["500"]?.put("04", true); results["600"]?.put("04", true); results["900"]?.put("04", false)
+        results["100"]?.put("05", true); results["300"]?.put("05", true); results["500"]?.put("05", true); results["600"]?.put("05", true); results["900"]?.put("05", false)
+        results["100"]?.put("06", true); results["300"]?.put("06", true); results["500"]?.put("06", true); results["600"]?.put("06", true); results["900"]?.put("06", false)
+        results["100"]?.put("07", true); results["300"]?.put("07", true); results["500"]?.put("07", true); results["600"]?.put("07", true); results["900"]?.put("07", true)
+        results["100"]?.put("08", true); results["300"]?.put("08", true); results["500"]?.put("08", true); results["600"]?.put("08", true); results["900"]?.put("08", false)
+        results["100"]?.put("09", true); results["300"]?.put("09", true); results["500"]?.put("09", true); results["600"]?.put("09", true); results["900"]?.put("09", false)
+        results["100"]?.put("10", true); results["300"]?.put("10", true); results["500"]?.put("10", true); results["600"]?.put("10", true); results["900"]?.put("10", false)
+        results["100"]?.put("11", true); results["300"]?.put("11", true); results["500"]?.put("11", true); results["600"]?.put("11", true); results["900"]?.put("11", false)
+        results["100"]?.put("12", true); results["300"]?.put("12", true); results["500"]?.put("12", true); results["600"]?.put("12", true); results["900"]?.put("12", false)
+        results["100"]?.put("13", true); results["300"]?.put("13", true); results["500"]?.put("13", true); results["600"]?.put("13", true); results["900"]?.put("13", false)
+        results["100"]?.put("14", true); results["300"]?.put("14", true); results["500"]?.put("14", true); results["600"]?.put("14", true); results["900"]?.put("14", false)
+        results["100"]?.put("15", true); results["300"]?.put("15", true); results["500"]?.put("15", true); results["600"]?.put("15", true); results["900"]?.put("15", false)
+        results["100"]?.put("16", true); results["300"]?.put("16", true); results["500"]?.put("16", true); results["600"]?.put("16", true); results["900"]?.put("16", false)
+        results["100"]?.put("17", true); results["300"]?.put("17", true); results["500"]?.put("17", true); results["600"]?.put("17", true); results["900"]?.put("17", false)
+        results["100"]?.put("18", true); results["300"]?.put("18", true); results["500"]?.put("18", true); results["600"]?.put("18", true); results["900"]?.put("18", false)
     }
 
     private fun createBatch(invoiceNumber: Long,
@@ -171,6 +173,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         }
 
     private fun createInvoiceItem(codeNomenclature: Long,
+                                  override3rdPayerCode: Int,
                                   reimbursedAmount: Int,
                                   patientFee: Int,
                                   doctorSupplement: Int,
@@ -180,7 +183,6 @@ abstract class EfactAbstractTest : EhealthTest() {
 
         invoiceItem.insuranceRef = contract
         invoiceItem.insuranceRefDate = contract?.let { date.time }
-
         invoiceItem.reimbursedAmount = reimbursedAmount.toLong()
         invoiceItem.dateCode = date.time
         invoiceItem.codeNomenclature = codeNomenclature
@@ -190,7 +192,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         invoiceItem.prescriberNorm = InvoicingPrescriberCode.None
         invoiceItem.personalInterventionCoveredByThirdPartyCode = 0
         invoiceItem.sideCode = InvoicingSideCode.None
-        invoiceItem.override3rdPayerCode = 0
+        invoiceItem.override3rdPayerCode = override3rdPayerCode
         invoiceItem.timeOfDay = InvoicingTimeOfDay.Other
         invoiceItem.units = 1
 
@@ -257,6 +259,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 1, "FHCA01.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 1).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
+                consult.justification,
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 0, consult.financialContracts.firstOrNull(), Date()))
@@ -273,7 +276,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         println("***** Scenario 2 - Mutuality $mutualityCode - NISS: $niss *****")
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 2, "FHCA01.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 2).apply {
-            invoices.firstOrNull()?.items?.add(createInvoiceItem(102793, 1920, 200, 0, null, Date()))
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(102793, 0,1920, 200, 0, null, Date()))
         }
     }
 
@@ -288,7 +291,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
 
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 3, "FHCA02.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 3).apply {
-            invoices.firstOrNull()?.items?.add(createInvoiceItem(101075L, 1920, 200, 0, null, Date()))
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(101075L, 0, 1920, 200, 0, null, Date()))
         }
     }
 
@@ -303,7 +306,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 4, "FHCA03.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 4).apply {
             invoices.firstOrNull()
-                ?.items?.add(createInvoiceItem(101032, 1920, 200, 0, null, DateTime().minusYears(2).toDate()))
+                ?.items?.add(createInvoiceItem(101032, 0, 1920, 200, 0, null, DateTime().minusYears(2).toDate()))
         }
     }
 
@@ -328,6 +331,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 5, "FHCA04.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 5).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
+                consult.justification,
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 0, consult.financialContracts.firstOrNull(), DateTime().plusMonths(2).toDate()))
@@ -345,7 +349,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
 
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 6, "FHCA05.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 6).apply {
-            invoices.firstOrNull()?.items?.add(createInvoiceItem(101032, 1920, 200, 0, null, DateTime().toDate()))
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(101032,0,  1920, 200, 0, null, DateTime().toDate()))
         }
     }
 
@@ -359,7 +363,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         println("***** Scenario 7 - Mutuality $mutualityCode - NISS: $niss *****")
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 7, "FHCA06.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 7).apply {
-            invoices.firstOrNull()?.items?.add(createInvoiceItem(101032, 1920, 200, 0, null, DateTime().toDate()))
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(101032,0,  1920, 200, 0, null, DateTime().toDate()))
         }
     }
 
@@ -384,6 +388,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 8, "FHCA07.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 8).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
+                consult.justification,
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 0, consult.financialContracts.firstOrNull(), DateTime().toDate()))
@@ -401,7 +406,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
 
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 9, "FHCA08.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 9).apply {
-            invoices.firstOrNull()?.items?.add(createInvoiceItem(101032, 1820, 200, 0, null, DateTime().toDate()))
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(101032, 0, 1820, 200, 0, null, DateTime().toDate()))
         }
     }
 
@@ -426,9 +431,11 @@ abstract class EfactAbstractTest : EhealthTest() {
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 10, "FHCA09.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 10).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
+                consult.justification,
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
-                0, consult.financialContracts.firstOrNull(), DateTime().toDate()))
+                0, consult.financialContracts.firstOrNull(),
+                DateTime().toDate()))
         }
     }
 
@@ -456,14 +463,20 @@ abstract class EfactAbstractTest : EhealthTest() {
             invoices.firstOrNull()?.items?.addAll(listOf(
                 createInvoiceItem(
                     java.lang.Long.valueOf(consult.codes[0]),
+                    consult.justification,
                     ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                     ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
-                    0, consult.financialContracts.firstOrNull(), DateTime().toDate()),
+                    0,
+                    consult.financialContracts.firstOrNull(),
+                    DateTime().toDate()),
                 createInvoiceItem(
                     java.lang.Long.valueOf(consult.codes[1]),
+                    consult.justification,
                     ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                     ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
-                    0, consult.financialContracts.firstOrNull(), DateTime().toDate()).apply {
+                    0,
+                    consult.financialContracts.firstOrNull(),
+                    DateTime().toDate()).apply {
                     relatedCode = 767071L
                 }))
         }
@@ -491,6 +504,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 12, "FHCA11.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 12).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
+                consult.justification,
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 0, consult.financialContracts.firstOrNull(), DateTime().toDate()))
@@ -518,6 +532,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 13, "FHCA12.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 13).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
+                consult.justification,
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 0, consult.financialContracts.firstOrNull(), DateTime().toDate()))
@@ -545,6 +560,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 14, "FHCA13.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 14).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
+                consult.justification,
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 0, consult.financialContracts.firstOrNull(), DateTime().toDate()).apply {
@@ -578,14 +594,19 @@ abstract class EfactAbstractTest : EhealthTest() {
             invoices.firstOrNull()?.items?.addAll(listOf(
                 createInvoiceItem(
                     java.lang.Long.valueOf(consult.codes[0]),
+                    consult.justification,
                     ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                     ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                     0, consult.financialContracts.firstOrNull(), DateTime().toDate()).apply {
                     insuranceRef = null
                 },
-                createInvoiceItem(java.lang.Long.valueOf(consult.codes[1]), ((consult.reimbursements.firstOrNull()?.amount
-                    ?: .0) * 100).roundToInt(), ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
-                    0, consult.financialContracts.firstOrNull(), DateTime().toDate()).apply {
+                createInvoiceItem(
+                    java.lang.Long.valueOf(consult.codes[1]),
+                    consult.justification,
+                    ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
+                    ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
+                    0, consult.financialContracts.firstOrNull(),
+                    DateTime().toDate()).apply {
                     insuranceRef = null
                     relatedCode = 767071L
                 }))
@@ -615,6 +636,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 16, "FHCA15.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 16).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
+                consult.justification,
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 0, consult.financialContracts.firstOrNull(), DateTime().toDate()).apply {
@@ -646,6 +668,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 17, "FHCA16.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 17).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codes[0]),
+                consult.justification,
                 ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                 0, consult.financialContracts.firstOrNull(), DateTime().plusYears(-2).toDate()).apply {
@@ -674,6 +697,7 @@ abstract class EfactAbstractTest : EhealthTest() {
             invoices.firstOrNull()?.items?.addAll(listOf(
                 createInvoiceItem(
                     java.lang.Long.valueOf(consult.codes[0]),
+                    consult.justification,
                     ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                     ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                     0, consult.financialContracts.firstOrNull(), DateTime().toDate()).apply {
@@ -681,6 +705,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 },
                 createInvoiceItem(
                     java.lang.Long.valueOf(consult.codes[1]),
+                    consult.justification,
                     ((consult.reimbursements.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                     ((consult.patientFees.firstOrNull()?.amount ?: .0) * 100).roundToInt(),
                     0, consult.financialContracts.firstOrNull(), DateTime().toDate()).apply {
@@ -1318,35 +1343,58 @@ class EfactMessagesLoadTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         this.restTemplate.exchange("http://localhost:$port/efact/$nihii1/fr?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<EfactMessage>>() {}, firstName1, lastName1)
             ?.let {
+                var file = ""
+                println("Number of messages: "+it.body)
+                file += "Number of messages: "+it.body.size+"\n\n\n"
                 it.body.forEach {
-
                     if (!it.name.equals("tAck")) {
+                        var ref = it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("204") }
                         println("================= Message =================")
                         println("Name: " + it.name)
+                        println("OA: "+ref!!.value.toString().substring(8,11))
+                        println("SendNumber: "+ref!!.value.toString().substring(11,14))
                         println("Message type: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("200") })
                         println("Message reference: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("204") })
                         println("Message Oa reference: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("205") })
+
+                        file += "================= Message =================\n"
+                        file += "Name: " + it.name+"\n"
+                        file += "OA: "+ref!!.value.toString().substring(8,11)+"\n"
+                        file += "SendNumber: "+ref!!.value.toString().substring(11,14)+"\n"
+                        file += "Message type: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("200") }+"\n"
+                        file += "Message reference: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("204") }+"\n"
+                        file += "Message Oa reference: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("205") }+"\n"
 
                         it.message!!.forEach {
                             if (it.errorDetail != null) {
 
                                 if (it.errorDetail!!.rejectionCode1 != "000000" && it.errorDetail!!.rejectionCode2 != "000000" && it.errorDetail!!.rejectionCode3 != "000000") {
                                     println("------- Reccord: " + it.zones.find { it.zoneDescription!!.zones!!.contains("1") } + "--------")
+                                    file += "------- Reccord: " + it.zones.find { it.zoneDescription!!.zones!!.contains("1") } + "--------\n"
                                 }
 
                                 if (it.errorDetail!!.rejectionCode1 != "000000") {
                                     println("Rejection Code 1: " + it.errorDetail!!.rejectionCode1)
                                     println("Rejection descr 1: " + it.errorDetail!!.rejectionDescr1)
+
+                                    file += "Rejection Code 1: " + it.errorDetail!!.rejectionCode1+"\n"
+                                    file += "Rejection descr 1: " + it.errorDetail!!.rejectionDescr1+"\n"
                                 }
 
                                 if (it.errorDetail!!.rejectionCode2 != "000000") {
                                     println("Rejection Code 2: " + it.errorDetail!!.rejectionCode2)
                                     println("Rejection descr 2: " + it.errorDetail!!.rejectionDescr2)
+
+                                    file += "Rejection Code 2: " + it.errorDetail!!.rejectionCode2+"\n"
+                                    file += "Rejection descr 2: " + it.errorDetail!!.rejectionDescr2+"\n"
                                 }
 
                                 if (it.errorDetail!!.rejectionCode3 != "000000") {
                                     println("Rejection Code 3: " + it.errorDetail!!.rejectionCode3)
                                     println("Rejection descr 3: " + it.errorDetail!!.rejectionDescr3)
+
+                                    file += "Rejection Code 3: " + it.errorDetail!!.rejectionCode3+"\n"
+                                    file += "Rejection descr 3: " + it.errorDetail!!.rejectionDescr3+"\n"
                                 }
                             }
                         }
@@ -1360,8 +1408,19 @@ class EfactMessagesLoadTest : EhealthTest() {
                         println("Tack id: " + it.tAck!!.id)
                         println("xades: " + it.xades)
                         println("hashValue: " + it.hashValue)
+
+                        file += "================= Tack ================="
+                        file += "Id: " + it.id+"\n"
+                        file += "Issuer" + it.tAck!!.issuer+"\n"
+                        file += "AppliesTo: " + it.tAck!!.appliesTo+"\n"
+                        file += "ResultMajor: " + it.tAck!!.resultMajor+"\n"
+                        file += "Tack id: " + it.tAck!!.id+"\n"
+                        file += "xades: " + it.xades+"\n"
+                        file += "hashValue: " + it.hashValue+"\n"
                     }
                 }
+                val fileName = "LoadMessage_"+(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd")).toLong())
+                File(fileName).writeText(file)
             }
     }
 
@@ -1373,6 +1432,17 @@ class EfactMessagesLoadTest : EhealthTest() {
                 this.restTemplate.exchange("http://localhost:$port/efact/confirm/acks/$nihii1?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck != null }.map { it.hashValue }.filterNotNull(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
                 this.restTemplate.exchange("http://localhost:$port/efact/confirm/msgs/$nihii1?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck == null }.map { it.hashValue }.filterNotNull(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
             }
+    }
+
+    @Test
+    fun testReParseInDir() {
+        val root = File(".")
+        root.listFiles { f:File  -> f.extension == "txt" }.forEach { f ->
+            val w = FileWriter(File(f.parent, "${f.nameWithoutExtension}.yml"))
+            w.write(BelgianInsuranceInvoicingFormatReader("fr").parse(FileReader(f), false)!!.map { it.toString() }.joinToString("\n"))
+            w.flush()
+            w.close()
+        }
     }
 }
 
