@@ -18,6 +18,9 @@
 
 package org.taktik.freehealth.middleware.format.efact
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import org.taktik.freehealth.middleware.domain.EfactError
 import org.taktik.freehealth.middleware.format.ReaderSession
 import org.taktik.freehealth.middleware.format.efact.segments.Record10Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record20Description
@@ -27,49 +30,27 @@ import org.taktik.freehealth.middleware.format.efact.segments.Record51Descriptio
 import org.taktik.freehealth.middleware.format.efact.segments.Record52Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record80Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record90Description
-import org.taktik.freehealth.middleware.format.efact.segments.RecordOrSegmentDescription
 import org.taktik.freehealth.middleware.format.efact.segments.Segment200Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment300Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment300ErrorDescription
 import org.taktik.freehealth.middleware.format.efact.segments.Segment400Record95Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment500Record96Description
-import org.taktik.freehealth.middleware.serialize.UTF8Control
 import java.io.EOFException
 
 import java.io.IOException
 import java.io.Reader
-import java.io.StringReader
-import java.util.Locale
-import java.util.ResourceBundle
+import java.util.ArrayList
+
 
 class BelgianInsuranceInvoicingFormatReader(private val language: String) {
 
-    private var errorCodesBundle: ResourceBundle? = null
-    private var messagesBundle: ResourceBundle? = null
-
-    fun getMessageDescription(errorCode: String, message: String?): String? {
-        try {
-            if (messagesBundle == null) {
-                messagesBundle =
-                    ResourceBundle.getBundle(this.javaClass.getPackage().name + ".messages", Locale(language), UTF8Control())
-            }
-            return messagesBundle!!.getString(errorCode)
-        } catch (e: Exception) {
-            return message
-        }
-
-    }
+    private var errorCodes: List<EfactError>? = null
 
     fun getErrorCodeDescription(errorCode: String, message: String?): String? {
-        try {
-            if (errorCodesBundle == null) {
-                errorCodesBundle =
-                    ResourceBundle.getBundle(this.javaClass.getPackage().name + "efacterrorcodes", Locale(language), UTF8Control())
-            }
-            return errorCodesBundle!!.getString(errorCode)
-        } catch (e: Exception) {
-            return message
+        if (this.errorCodes == null) {
+            this.errorCodes = Gson().fromJson<List<EfactError>>(this.javaClass.getResourceAsStream("/be/errors/EfactErrors.json").reader(Charsets.UTF_8), object : TypeToken<ArrayList<EfactError>>() {}.type)
         }
+        return errorCodes?.find { it.code == errorCode }?.let { c -> c.label[language]?.let { "${c.type}:$it${message?.let { "[$it]" }}" } } ?: message
     }
 
     @Throws(IOException::class)
@@ -138,24 +119,24 @@ class BelgianInsuranceInvoicingFormatReader(private val language: String) {
 
         this.rejectionCode1?.let {
             if (it != "000000" && "BREFS".contains(this.rejectionLetter1!!)) {
-                this.rejectionDescr1 = getErrorCodeDescription(this.rejectionLetter1 + this.rejectionCode1, null)
-                val zoneDescription = record.description!!.zoneDescriptionsByZone[it.substring(2, 4)]
+                this.rejectionDescr1 = getErrorCodeDescription(it, null)
+                val zoneDescription = record.description!!.zoneDescriptionsByZone[it.substring(2, 4)] ?: record.description!!.zoneDescriptionsByZone[it.substring(2, 4)+"a"]
                 this.rejectionZoneDescr1 = zoneDescription?.label ?: ""
             }
         }
 
         this.rejectionCode2?.let {
             if (it != "000000" && "BREFS".contains(this.rejectionLetter2!!)) {
-                this.rejectionDescr2 = getErrorCodeDescription(this.rejectionLetter2 + this.rejectionCode2, null)
-                val zoneDescription = record.description!!.zoneDescriptionsByZone[it.substring(2, 4)]
+                this.rejectionDescr2 = getErrorCodeDescription(it, null)
+                val zoneDescription = record.description!!.zoneDescriptionsByZone[it.substring(2, 4)] ?: record.description!!.zoneDescriptionsByZone[it.substring(2, 4)+"a"]
                 this.rejectionZoneDescr2 = zoneDescription?.label ?: ""
             }
         }
 
         this.rejectionCode3?.let {
             if (it != "000000" && "BREFS".contains(this.rejectionLetter3!!)) {
-                this.rejectionDescr3 = getErrorCodeDescription(this.rejectionLetter3 + this.rejectionCode3, null)
-                val zoneDescription = record.description!!.zoneDescriptionsByZone[it.substring(2, 4)]
+                this.rejectionDescr3 = getErrorCodeDescription(it, null)
+                val zoneDescription = record.description!!.zoneDescriptionsByZone[it.substring(2, 4)] ?: record.description!!.zoneDescriptionsByZone[it.substring(2, 4)+"a"]
                 this.rejectionZoneDescr3 = zoneDescription?.label ?: ""
             }
         }
