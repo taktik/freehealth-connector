@@ -89,6 +89,20 @@ public abstract class AbstractWsSender {
 
       reply.put("javax.xml.ws.handler.message.outbound", false);
       executeHandlers(chain, reply);
+
+      if (log.isDebugEnabled()) {
+         log.debug("Received SOAP message: " + reply.getMessage());
+         ByteArrayOutputStream bos = new ByteArrayOutputStream();
+         try {
+            reply.getMessage().writeTo(bos);
+            log.debug("SOAP message details " + new String(bos.toByteArray(), StandardCharsets.UTF_8));
+         } catch (IOException e) {
+            log.debug("Error while logging message", e);
+         } catch(SOAPException e){
+            log.debug("Error while logging message",e);
+         }
+      }
+
       return new GenericResponse(reply.getMessage());
    }
 
