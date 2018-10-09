@@ -25,5 +25,10 @@ class SendAttestResultWithResponse(
     invoicingNumber: String? = null,
     attest: Eattest? = null,
     var kmehrMessage: ByteArray?,
-    var xades: ByteArray?
+    var xades: ByteArray?,
+    var xmlRequest: String? = null,
+    var xmlResponse: String? = null,
+    val SoapRequest: String? = null,
+    val SoapResponse: String? = null
+
 ) : SendAttestResult(acknowledge, invoicingNumber, attest)

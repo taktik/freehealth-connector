@@ -24,7 +24,9 @@ import be.fgov.ehealth.genericinsurability.core.v1.*
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityContactTypeType.AMBULATORY_CARE
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityContactTypeType.HOSPITALIZED_ELSEWHERE
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityRequestTypeType.INFORMATION
+import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsFlatResponse
 import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsXmlOrFlatRequestType
+import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityResponse
 import com.google.gson.Gson
 import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
@@ -172,6 +174,16 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
             val genInsResponseDTO = genInsResponse.toInsurabilityInfoDto()
 
             genInsResponseDTO.errors = genInsResponse.response.messageFault?.details?.details?.flatMap { extractError(xmlData, it.detailCode, it.location).toList() } ?: listOf()
+
+
+            genInsResponseDTO.xmlRequest = xmlData.toString(Charsets.UTF_8);
+            val kmehrRequestMarshaller2 =
+                MarshallerHelper(
+                    GetInsurabilityResponse::class.java,
+                    GetInsurabilityResponse::class.java
+                )
+            val xmlData2 = kmehrRequestMarshaller2.toXMLByteArray(genInsResponse)
+            genInsResponseDTO.xmlResponse = xmlData2.toString(Charsets.UTF_8);
 
             return genInsResponseDTO
 

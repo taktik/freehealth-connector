@@ -48,5 +48,9 @@ class InsurabilityInfoDto(
     val generalSituation: String? = null,
     val paymentByIo: Boolean = false,
     val specialSocialCategory: Boolean = false,
-    val transfers: List<TransferDto>? = null
+    val transfers: List<TransferDto>? = null,
+    var xmlRequest: String? = null,
+    var xmlResponse: String? = null,
+    val SoapRequest: String? = null,
+    val SoapResponse: String? = null
                          ) : Serializable

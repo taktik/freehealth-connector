@@ -49,6 +49,8 @@ public class TarificationConsultationResult implements Serializable {
 	private List<Payment> patientFees = new ArrayList<>();
 	private Sex sex;
 	private List<Payment> reimbursements = new ArrayList<>();
+	private String retrieveTransactionRequest;
+	private String commonInputResponse;
 
 	public void fill(PersonType patient) {
 		this.setLastName(patient.getFamilyname());
@@ -278,6 +280,22 @@ public class TarificationConsultationResult implements Serializable {
 
 	public void setCodes(List<String> codes) {
 		this.codes = codes;
+	}
+
+	public String getRetrieveTransactionRequest(){
+		return this.retrieveTransactionRequest;
+	}
+
+	public void setRetrieveTransactionRequest(String retrieveTransactionRequest){
+		this.retrieveTransactionRequest = retrieveTransactionRequest;
+	}
+
+	public String getCommonInputResponse(){
+		return this.commonInputResponse;
+	}
+
+	public void setCommonInputResponse(String commonInputResponse){
+		this.commonInputResponse = commonInputResponse;
 	}
 
 	private Date asDate(DateTime date) {
