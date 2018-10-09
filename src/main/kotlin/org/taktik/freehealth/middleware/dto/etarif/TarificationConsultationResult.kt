@@ -24,6 +24,8 @@ class TarificationConsultationResult {
     var patientFees: MutableList<Payment> = ArrayList()
     var sex: Sex? = null
     var reimbursements: MutableList<Payment> = ArrayList()
+    var retrieveTransactionRequest:String? = null
+    var commonInputResponse:String? = null
 
     enum class Sex : Serializable {
         MALE, FEMALE
