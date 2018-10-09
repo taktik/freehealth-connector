@@ -33,7 +33,9 @@ import org.taktik.freehealth.middleware.format.efact.segments.Record90Descriptio
 import org.taktik.freehealth.middleware.format.efact.segments.Segment200Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment300Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment300ErrorDescription
+import org.taktik.freehealth.middleware.format.efact.segments.Segment400Record91Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment400Record95Description
+import org.taktik.freehealth.middleware.format.efact.segments.Segment500Record92Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment500Record96Description
 import java.io.EOFException
 
@@ -57,11 +59,14 @@ class BelgianInsuranceInvoicingFormatReader(private val language: String) {
     fun parse(reader: Reader, parseErrors: Boolean = true): List<Record<*>>? {
         val session = ReaderSession(reader)
         return mutableListOf<Record<*>>().apply {
+            var i = 0
             loop@ while(true) {
+                i++
                 try {
                     val messageType = session.messageType
-                    when (messageType.substring(0, 2)) {
-                        "92" -> {
+                    val recordId = if (i == 1) "00" else messageType.substring(0, 2)
+                    when (recordId) {
+                        "00" -> {
                             this.add(Record(Segment200Description, Segment200Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
                             if (messageType.substring(2, 6) == "0000") {
                                 this.add(Record(Segment300Description, Segment300Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
@@ -82,6 +87,9 @@ class BelgianInsuranceInvoicingFormatReader(private val language: String) {
                         "52" -> this.add(Record(Record52Description, Record52Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
                         "80" -> this.add(Record(Record80Description, Record80Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
                         "90" -> this.add(Record(Record90Description, Record90Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
+
+                        "91" -> this.add(Record(Segment400Record91Description, Segment400Record91Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                        "92" -> this.add(Record(Segment500Record92Description, Segment500Record92Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
 
                         "95" -> this.add(Record(Segment400Record95Description, Segment400Record95Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
                         "96" -> this.add(Record(Segment500Record96Description, Segment500Record96Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))

@@ -10,6 +10,7 @@ import be.cin.mycarenet.esb.common.v2.OrigineType
 import be.cin.mycarenet.esb.common.v2.PackageType
 import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.GetResponse
+import com.google.gson.Gson
 import ma.glasnost.orika.MapperFacade
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
