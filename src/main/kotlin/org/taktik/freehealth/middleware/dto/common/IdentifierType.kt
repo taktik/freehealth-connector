@@ -28,4 +28,4 @@ import java.io.Serializable
  * Date: 02/12/13
  * Time: 15:07
  */
-class IdentifierType(val type: String) : Serializable
+class IdentifierType(var type: String? = null) : Serializable
