@@ -26,13 +26,11 @@ import org.taktik.connector.business.intrahubcommons.helper.ServiceHelper
 import org.taktik.connector.business.intrahubcommons.security.IntrahubEncryptionUtil
 import org.taktik.connector.business.hubv3.service.HubTokenService
 import org.taktik.connector.business.hubv3.service.ServiceFactory
-import org.taktik.connector.business.hubv3.util.RequestTypeBuilder
 import org.taktik.connector.technical.config.impl.ConfigurationModuleBootstrap
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.utils.MarshallerHelper
-import org.taktik.connector.technical.utils.SessionUtil
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory
 import be.fgov.ehealth.hubservices.core.v3.DeclareTransactionRequest
 import be.fgov.ehealth.hubservices.core.v3.DeclareTransactionResponse
@@ -76,7 +74,6 @@ import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetRequest
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
 import be.fgov.ehealth.hubservices.core.v3.RequestPublicationRequest
 import be.fgov.ehealth.hubservices.core.v3.RequestPublicationResponse
-import be.fgov.ehealth.hubservices.core.v3.RequestType
 import be.fgov.ehealth.hubservices.core.v3.RevokeAccessRightRequest
 import be.fgov.ehealth.hubservices.core.v3.RevokeAccessRightResponse
 import be.fgov.ehealth.hubservices.core.v3.RevokeHCPartyConsentRequest
@@ -98,151 +95,538 @@ import java.security.KeyStore
 class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
 
     @Throws(TechnicalConnectorException::class)
-    override fun declareTransaction(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: DeclareTransactionRequest): DeclareTransactionResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:DeclareTransaction", request, DeclareTransactionResponse::class.java)
+    override fun declareTransaction(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: DeclareTransactionRequest
+    ): DeclareTransactionResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:DeclareTransaction",
+            request,
+            DeclareTransactionResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class, IntraHubBusinessConnectorException::class)
-    override fun putTransaction(endpoint: String, hubId : Long, hubApplication : String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutTransactionRequest): PutTransactionResponse {
+    override fun putTransaction(
+        endpoint: String,
+        hubId: Long,
+        hubApplication: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutTransactionRequest
+    ): PutTransactionResponse {
         val helper = MarshallerHelper(PutTransactionRequest::class.java, PutTransactionRequest::class.java)
         LOG.debug("PutTransactionRequest unsigned request :" + helper.toString(request))
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:PutTransaction", IntrahubEncryptionUtil.encryptFolder(request, getCrypto(keystore, passPhrase), hubId, hubApplication), PutTransactionResponse::class.java)
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:PutTransaction",
+            IntrahubEncryptionUtil.encryptFolder(
+                request,
+                getCrypto(keystore, passPhrase),
+                hubId,
+                hubApplication
+            ),
+            PutTransactionResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun revokeTransaction(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: RevokeTransactionRequest): RevokeTransactionResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokeTransaction", request, RevokeTransactionResponse::class.java)
+    override fun revokeTransaction(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: RevokeTransactionRequest
+    ): RevokeTransactionResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokeTransaction",
+            request,
+            RevokeTransactionResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getTransactionList(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetTransactionListRequest): GetTransactionListResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:GetTransactionList", request, GetTransactionListResponse::class.java)
+    override fun getTransactionList(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetTransactionListRequest
+    ): GetTransactionListResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:GetTransactionList",
+            request,
+            GetTransactionListResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class, IntraHubBusinessConnectorException::class)
-    override fun getTransaction(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetTransactionRequest): GetTransactionResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:GetTransaction", request, GetTransactionResponse::class.java)
+    override fun getTransaction(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetTransactionRequest
+    ): GetTransactionResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:GetTransaction",
+            request,
+            GetTransactionResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun requestPublication(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: RequestPublicationRequest): RequestPublicationResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:RequestPublication", request, RequestPublicationResponse::class.java)
+    override fun requestPublication(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: RequestPublicationRequest
+    ): RequestPublicationResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:RequestPublication",
+            request,
+            RequestPublicationResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun putHCParty(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutHCPartyRequest): PutHCPartyResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:PutHCParty", request, PutHCPartyResponse::class.java)
+    override fun putHCParty(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutHCPartyRequest
+    ): PutHCPartyResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:PutHCParty",
+            request,
+            PutHCPartyResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getHCParty(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetHCPartyRequest): GetHCPartyResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:GetHCParty", request, GetHCPartyResponse::class.java)
+    override fun getHCParty(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetHCPartyRequest
+    ): GetHCPartyResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:GetHCParty",
+            request,
+            GetHCPartyResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun putPatient(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutPatientRequest): PutPatientResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:PutPatient", request, PutPatientResponse::class.java)
+    override fun putPatient(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutPatientRequest
+    ): PutPatientResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:PutPatient",
+            request,
+            PutPatientResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getPatient(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetPatientRequest): GetPatientResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:GetPatient", request, GetPatientResponse::class.java)
+    override fun getPatient(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetPatientRequest
+    ): GetPatientResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:GetPatient",
+            request,
+            GetPatientResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun putHCPartyConsent(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutHCPartyConsentRequest): PutHCPartyConsentResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:PutHCPartyConsent", request, PutHCPartyConsentResponse::class.java)
+    override fun putHCPartyConsent(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutHCPartyConsentRequest
+    ): PutHCPartyConsentResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:PutHCPartyConsent",
+            request,
+            PutHCPartyConsentResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getHCPartyConsent(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetHCPartyConsentRequest): GetHCPartyConsentResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:GetHCPartyConsent", request, GetHCPartyConsentResponse::class.java)
+    override fun getHCPartyConsent(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetHCPartyConsentRequest
+    ): GetHCPartyConsentResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:GetHCPartyConsent",
+            request,
+            GetHCPartyConsentResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun revokeHCPartyConsent(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: RevokeHCPartyConsentRequest): RevokeHCPartyConsentResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokeHCPartyConsent", request, RevokeHCPartyConsentResponse::class.java)
+    override fun revokeHCPartyConsent(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: RevokeHCPartyConsentRequest
+    ): RevokeHCPartyConsentResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokeHCPartyConsent",
+            request,
+            RevokeHCPartyConsentResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun putPatientConsent(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutPatientConsentRequest): PutPatientConsentResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:PutPatientConsent", request, PutPatientConsentResponse::class.java)
+    override fun putPatientConsent(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutPatientConsentRequest
+    ): PutPatientConsentResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:PutPatientConsent",
+            request,
+            PutPatientConsentResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getPatientConsent(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetPatientConsentRequest): GetPatientConsentResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:GetPatientConsent", request, GetPatientConsentResponse::class.java)
+    override fun getPatientConsent(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetPatientConsentRequest
+    ): GetPatientConsentResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:GetPatientConsent",
+            request,
+            GetPatientConsentResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun revokePatientConsent(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: RevokePatientConsentRequest): RevokePatientConsentResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokePatientConsent", request, RevokePatientConsentResponse::class.java)
+    override fun revokePatientConsent(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: RevokePatientConsentRequest
+    ): RevokePatientConsentResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokePatientConsent",
+            request,
+            RevokePatientConsentResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun putTherapeuticLink(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutTherapeuticLinkRequest): PutTherapeuticLinkResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:PutTherapeuticLink", request, PutTherapeuticLinkResponse::class.java)
+    override fun putTherapeuticLink(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutTherapeuticLinkRequest
+    ): PutTherapeuticLinkResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:PutTherapeuticLink",
+            request,
+            PutTherapeuticLinkResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getTherapeuticLink(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetTherapeuticLinkRequest): GetTherapeuticLinkResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:GetTherapeuticLink", request, GetTherapeuticLinkResponse::class.java)
+    override fun getTherapeuticLink(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetTherapeuticLinkRequest
+    ): GetTherapeuticLinkResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:GetTherapeuticLink",
+            request,
+            GetTherapeuticLinkResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun revokeTherapeuticLink(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: RevokeTherapeuticLinkRequest): RevokeTherapeuticLinkResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokeTherapeuticLink", request, RevokeTherapeuticLinkResponse::class.java)
+    override fun revokeTherapeuticLink(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: RevokeTherapeuticLinkRequest
+    ): RevokeTherapeuticLinkResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokeTherapeuticLink",
+            request,
+            RevokeTherapeuticLinkResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun putAccessRight(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutAccessRightRequest): PutAccessRightResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:PutAccessRight", request, PutAccessRightResponse::class.java)
+    override fun putAccessRight(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutAccessRightRequest
+    ): PutAccessRightResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:PutAccessRight",
+            request,
+            PutAccessRightResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getAccessRight(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetAccessRightRequest): GetAccessRightResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:GetAccessRight", request, GetAccessRightResponse::class.java)
+    override fun getAccessRight(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetAccessRightRequest
+    ): GetAccessRightResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:GetAccessRight",
+            request,
+            GetAccessRightResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun revokeAccessRight(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: RevokeAccessRightRequest): RevokeAccessRightResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokeAccessRight", request, RevokeAccessRightResponse::class.java)
+    override fun revokeAccessRight(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: RevokeAccessRightRequest
+    ): RevokeAccessRightResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokeAccessRight",
+            request,
+            RevokeAccessRightResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getPatientAuditTrail(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetPatientAuditTrailRequest): GetPatientAuditTrailResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:GetPatientAuditTrail", request, GetPatientAuditTrailResponse::class.java)
+    override fun getPatientAuditTrail(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetPatientAuditTrailRequest
+    ): GetPatientAuditTrailResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:GetPatientAuditTrail",
+            request,
+            GetPatientAuditTrailResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class, IntraHubBusinessConnectorException::class)
-    override fun putTransactionSet(endpoint: String, hubId : Long, hubApplication : String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: PutTransactionSetRequest): PutTransactionSetResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:PutTransactionSet", IntrahubEncryptionUtil.encryptFolder(request, getCrypto(keystore, passPhrase), hubId, hubApplication), PutTransactionSetResponse::class.java)
+    override fun putTransactionSet(
+        endpoint: String,
+        hubId: Long,
+        hubApplication: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: PutTransactionSetRequest
+    ): PutTransactionSetResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:PutTransactionSet",
+            IntrahubEncryptionUtil.encryptFolder(
+                request,
+                getCrypto(keystore, passPhrase),
+                hubId,
+                hubApplication
+            ),
+            PutTransactionSetResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getTransactionSet(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetTransactionSetRequest): GetTransactionSetResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:GetTransactionSet", request, GetTransactionSetResponse::class.java)
+    override fun getTransactionSet(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetTransactionSetRequest
+    ): GetTransactionSetResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:GetTransactionSet",
+            request,
+            GetTransactionSetResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getLatestUpdate(endpoint: String, token: SAMLToken, keystore: KeyStore, passPhrase: String, request: GetLatestUpdateRequest): GetLatestUpdateResponse {
-        return this.executeOperation(token, endpoint, keystore, passPhrase, "urn:be:fgov:ehealth:intrahub:protocol:v3:GetLatestUpdate", request, GetLatestUpdateResponse::class.java)
+    override fun getLatestUpdate(
+        endpoint: String,
+        token: SAMLToken,
+        keystore: KeyStore,
+        passPhrase: String,
+        request: GetLatestUpdateRequest
+    ): GetLatestUpdateResponse {
+        return this.executeOperation(
+            token,
+            endpoint,
+            keystore,
+            passPhrase,
+            "urn:be:fgov:ehealth:intrahub:protocol:v3:GetLatestUpdate",
+            request,
+            GetLatestUpdateResponse::class.java
+        )
     }
 
     @Throws(TechnicalConnectorException::class)
-    private fun <T> executeOperation(token: SAMLToken, endpoint: String, keystore: KeyStore, passPhrase: String, operation: String, request: Any, clazz: Class<T>): T {
+    private fun <T> executeOperation(
+        token: SAMLToken,
+        endpoint: String,
+        keystore: KeyStore,
+        passPhrase: String,
+        operation: String,
+        request: Any,
+        clazz: Class<T>
+    ): T {
         try {
-            val service = ServiceFactory.getIntraHubPort(endpoint, token, keystore, passPhrase, operation).setPayload(request)
-            return org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service).asObject(clazz)
+            val service =
+                ServiceFactory.getIntraHubPort(endpoint, token, keystore, passPhrase, operation).setPayload(request)
+            val genericResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            return genericResponse.asObject(clazz)
         } catch (ex: SOAPException) {
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
         } catch (ex: WebServiceException) {
             throw ServiceHelper.handleWebServiceException(ex)
         }
-
     }
 
-    private fun getCrypto(keystore: KeyStore, passPhrase: String) : Crypto {
+    private fun getCrypto(keystore: KeyStore, passPhrase: String): Crypto {
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         return CryptoFactory.getCrypto(credential, hokPrivateKeys)

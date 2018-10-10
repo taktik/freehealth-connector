@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-import org.slf4j.Logger;
+import org.apache.commons.logging.Log;
 
 public abstract class AbstractWsSecurityHandler extends AbstractSOAPHandler {
    public static final String PROP_WSSECHEADER_GENERATOR = "org.taktik.connector.technical.handler.wssecurity";
@@ -33,7 +33,7 @@ public abstract class AbstractWsSecurityHandler extends AbstractSOAPHandler {
 
    protected abstract void addWSSecurity(SOAPMessageContext var1) throws TechnicalConnectorException;
 
-   protected abstract Logger getLogger();
+   protected abstract Log getLogger();
 
    public interface WSSecHeaderGeneratorStep4 {
       void sign(AbstractWsSecurityHandler.SignedParts... var1) throws TechnicalConnectorException;

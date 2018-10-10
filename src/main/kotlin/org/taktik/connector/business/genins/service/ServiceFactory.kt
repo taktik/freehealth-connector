@@ -22,9 +22,7 @@ package org.taktik.connector.business.genins.service
 
 import org.taktik.connector.business.common.util.HandlerChainUtil
 import org.taktik.connector.business.genins.exception.GenInsBusinessConnectorException
-import org.taktik.connector.business.genins.service.impl.GenInsServiceImpl
 import org.taktik.connector.technical.config.ConfigFactory
-import org.taktik.connector.technical.config.Configuration
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.ws.domain.GenericRequest
@@ -41,13 +39,27 @@ class ServiceFactory private constructor() {
         private val config = ConfigFactory.getConfigValidator()
         val GENINS_XSD = arrayOf("/ehealth-mycarenet-genins/XSD/ehealth-genins-protocol-1_1.xsd")
 
-        @Throws(MalformedURLException::class, TechnicalConnectorException::class, GenInsBusinessConnectorException::class)
+        @Throws(
+            MalformedURLException::class,
+            TechnicalConnectorException::class,
+            GenInsBusinessConnectorException::class
+        )
         fun getGeninsPort(token: SAMLToken): GenericRequest {
             val genReq = GenericRequest()
-            genReq.setEndpoint(config.getProperty(PROP_ENDPOINT_GENINS_V1, "\$uddi{uddi:ehealth-fgov-be:business:genericinsurability:v1}"))
+            genReq.setEndpoint(
+                config.getProperty(
+                    PROP_ENDPOINT_GENINS_V1,
+                    "\$uddi{uddi:ehealth-fgov-be:business:genericinsurability:v1}"
+                )
+            )
             genReq.setCredential(token, TokenType.SAML)
             genReq.setDefaultHandlerChain()
-            genReq.setHandlerChain(HandlerChainUtil.buildChainWithValidator("validation.incoming.genins.message", *GENINS_XSD))
+            genReq.setHandlerChain(
+                HandlerChainUtil.buildChainWithValidator(
+                    "validation.incoming.genins.message",
+                    *GENINS_XSD
+                )
+            )
             return genReq
         }
     }

@@ -48,119 +48,218 @@ import org.taktik.freehealth.middleware.service.STSService
 import java.util.*
 
 @Service
-class ConsentServiceImpl(val stsService : STSService) : ConsentService {
+class ConsentServiceImpl(val stsService: STSService) : ConsentService {
 
-	override fun registerPatientConsent(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, patientSsin: String, patientFirstName: String, patientLastName: String, eidCardNumber: String?, isiCardNumber: String?): ConsentMessage {
-		val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-				?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+    override fun registerPatientConsent(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientSsin: String,
+        patientFirstName: String,
+        patientLastName: String,
+        eidCardNumber: String?,
+        isiCardNumber: String?
+    ): ConsentMessage {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
 
-		val consentList = ArrayList<CDCONSENT>().apply {
-			this.add(CDConsentBuilderUtil.createCDConsent("1.0", CDCONSENTvalues.RETROSPECTIVE))
-		}
+        val consentList = ArrayList<CDCONSENT>().apply {
+            this.add(CDConsentBuilderUtil.createCDConsent("1.0", CDCONSENTvalues.RETROSPECTIVE))
+        }
 
-		val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
-		val consentType = RequestObjectBuilderFactory.consentBuilder.createNewConsent(makePatient(patientSsin, patientFirstName, patientLastName, eidCardNumber, isiCardNumber), consentList, DateTime(), author)
-		val consentRequest = RequestObjectBuilderFactory.requestObjectBuilder.createPutRequest(author, consentType)
-		val response = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(getPort(samlToken).apply {
-			setPayload(consentRequest as Any)
-			setSoapAction("urn:be:fgov:ehealth:consent:protocol:v1:PutPatientConsent")
-		}).asObject(PutPatientConsentResponse::class.java) as PutPatientConsentResponse
+        val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+        val consentType =
+            RequestObjectBuilderFactory.consentBuilder.createNewConsent(
+                makePatient(
+                    patientSsin,
+                    patientFirstName,
+                    patientLastName,
+                    eidCardNumber,
+                    isiCardNumber
+                ), consentList, DateTime(), author
+            )
+        val consentRequest = RequestObjectBuilderFactory.requestObjectBuilder.createPutRequest(author, consentType)
+        val response =
+            org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(getPort(samlToken).apply {
+                setPayload(consentRequest as Any)
+                setSoapAction("urn:be:fgov:ehealth:consent:protocol:v1:PutPatientConsent")
+            }).asObject(PutPatientConsentResponse::class.java) as PutPatientConsentResponse
 
-		return ConsentMessage().apply {
-			if (!response.acknowledge.isIscomplete) {
-				isComplete = false
-				errors.addAll(response.acknowledge.errors.map { e -> org.taktik.connector.business.domain.Error(StringUtils.join(e.cds.map { it.value }, ","), e.url, e.description.value, HashMap()) })
-			} else {
-				isComplete = true
-				consent = consentType
-			}
-		}
-	}
+        return ConsentMessage().apply {
+            if (!response.acknowledge.isIscomplete) {
+                isComplete = false
+                errors.addAll(response.acknowledge.errors.map { e ->
+                    org.taktik.connector.business.domain.Error(
+                        StringUtils.join(e.cds.map { it.value }, ","),
+                        e.url,
+                        e.description.value,
+                        HashMap()
+                    )
+                })
+            } else {
+                isComplete = true
+                consent = consentType
+            }
+        }
+    }
 
-	override fun getPatientConsent(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, patientSsin: String, patientFirstName: String, patientLastName: String): ConsentMessage {
-		val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-				?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+    override fun getPatientConsent(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientSsin: String,
+        patientFirstName: String,
+        patientLastName: String
+    ): ConsentMessage {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
 
-		val consentList = ArrayList<CDCONSENT>().apply {
-			this.add(CDConsentBuilderUtil.createCDConsent("1.0", CDCONSENTvalues.RETROSPECTIVE))
-		}
+        val consentList = ArrayList<CDCONSENT>().apply {
+            this.add(CDConsentBuilderUtil.createCDConsent("1.0", CDCONSENTvalues.RETROSPECTIVE))
+        }
 
-		val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
-		val consentType = RequestObjectBuilderFactory.consentBuilder.createSelectGetPatientConsent(makePatient(patientSsin, patientFirstName, patientLastName), consentList)
-		val consentRequest = RequestObjectBuilderFactory.requestObjectBuilder.createGetRequest(author, consentType)
+        val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+        val consentType =
+            RequestObjectBuilderFactory.consentBuilder.createSelectGetPatientConsent(
+                makePatient(
+                    patientSsin,
+                    patientFirstName,
+                    patientLastName
+                ), consentList
+            )
+        val consentRequest = RequestObjectBuilderFactory.requestObjectBuilder.createGetRequest(author, consentType)
 
-		val response = ServiceFactory.getGenericWsSender().send(getPort(samlToken).apply {
-			setPayload(consentRequest as Any)
-			setSoapAction("urn:be:fgov:ehealth:consent:protocol:v1:GetPatientConsent")
-		}).asObject(GetPatientConsentResponse::class.java) as GetPatientConsentResponse
+        val response = ServiceFactory.getGenericWsSender().send(getPort(samlToken).apply {
+            setPayload(consentRequest as Any)
+            setSoapAction("urn:be:fgov:ehealth:consent:protocol:v1:GetPatientConsent")
+        }).asObject(GetPatientConsentResponse::class.java) as GetPatientConsentResponse
 
-		return ConsentMessage().apply {
-			if (!response.acknowledge.isIscomplete) {
-				isComplete = false
-				errors.addAll(response.acknowledge.errors.map { e -> org.taktik.connector.business.domain.Error(StringUtils.join(e.cds.map { it.value }, ","), e.url, e.description.value, HashMap()) })
-			} else {
-				isComplete = true
-				consent = response.consent
-			}
-		}
-	}
+        return ConsentMessage().apply {
+            if (!response.acknowledge.isIscomplete) {
+                isComplete = false
+                errors.addAll(response.acknowledge.errors.map { e ->
+                    org.taktik.connector.business.domain.Error(
+                        StringUtils.join(e.cds.map { it.value }, ","),
+                        e.url,
+                        e.description.value,
+                        HashMap()
+                    )
+                })
+            } else {
+                isComplete = true
+                consent = response.consent
+            }
+        }
+    }
 
-	override fun revokePatientConsent(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String, existingConsent: ConsentType, eidCardNumber: String?, isiCardNumber: String?): ConsentMessage {
-		val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-				?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+    override fun revokePatientConsent(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        existingConsent: ConsentType,
+        eidCardNumber: String?,
+        isiCardNumber: String?
+    ): ConsentMessage {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
 
-		val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+        val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
 
-		existingConsent.patient.ids.removeIf { id -> IDPATIENTschemes.EID_CARDNO == id.s }
-		existingConsent.patient.ids.removeIf { id -> IDPATIENTschemes.ISI_CARDNO == id.s }
-		eidCardNumber?.let {existingConsent.patient.ids.add(IDPATIENT().apply { s = IDPATIENTschemes.EID_CARDNO; sv = "1.0"; value = it })}
-		isiCardNumber?.let {existingConsent.patient.ids.add(IDPATIENT().apply { s = IDPATIENTschemes.ISI_CARDNO; sv = "1.0"; value = it })}
-		existingConsent.revokedate = DateTime()
+        existingConsent.patient.ids.removeIf { id -> IDPATIENTschemes.EID_CARDNO == id.s }
+        existingConsent.patient.ids.removeIf { id -> IDPATIENTschemes.ISI_CARDNO == id.s }
+        eidCardNumber?.let {
+            existingConsent.patient.ids.add(IDPATIENT().apply {
+                s = IDPATIENTschemes.EID_CARDNO; sv =
+                "1.0"; value = it
+            })
+        }
+        isiCardNumber?.let {
+            existingConsent.patient.ids.add(IDPATIENT().apply {
+                s = IDPATIENTschemes.ISI_CARDNO; sv =
+                "1.0"; value = it
+            })
+        }
+        existingConsent.revokedate = DateTime()
 
-		val consentRequest = RequestObjectBuilderFactory.requestObjectBuilder.createRevokeRequest(author, existingConsent)
+        val consentRequest =
+            RequestObjectBuilderFactory.requestObjectBuilder.createRevokeRequest(author, existingConsent)
 
-		// Service
-		val response = ServiceFactory.getGenericWsSender().send(getPort(samlToken).apply {
-			setPayload(consentRequest as Any)
-			setSoapAction("urn:be:fgov:ehealth:consent:protocol:v1:RevokePatientConsent")
-		}).asObject(RevokePatientConsentResponse::class.java) as RevokePatientConsentResponse
+        // Service
+        val response = ServiceFactory.getGenericWsSender().send(getPort(samlToken).apply {
+            setPayload(consentRequest as Any)
+            setSoapAction("urn:be:fgov:ehealth:consent:protocol:v1:RevokePatientConsent")
+        }).asObject(RevokePatientConsentResponse::class.java) as RevokePatientConsentResponse
 
-		return ConsentMessage().apply {
-			if (!response.acknowledge.isIscomplete) {
-				isComplete = false
-				errors.addAll(response.acknowledge.errors.map { e -> org.taktik.connector.business.domain.Error(StringUtils.join(e.cds.map { it.value }, ","), e.url, e.description.value, HashMap()) })
-			} else {
-				isComplete = true
-			}
-		}
-	}
+        return ConsentMessage().apply {
+            if (!response.acknowledge.isIscomplete) {
+                isComplete = false
+                errors.addAll(response.acknowledge.errors.map { e ->
+                    org.taktik.connector.business.domain.Error(
+                        StringUtils.join(e.cds.map { it.value }, ","),
+                        e.url,
+                        e.description.value,
+                        HashMap()
+                    )
+                })
+            } else {
+                isComplete = true
+            }
+        }
+    }
 
-	fun makePatient(ssin: String, firstName: String?, lastName: String?, eid: String? = null, isi: String? = null) =
-			PatientIdType().apply {
-				familyname = lastName
-				firstname = firstName
-				ids.add(IDPATIENT().apply {
-					s = IDPATIENTschemes.INSS
-					sv = "1.0"
-					value = ssin
-				})
-				eid?.let {ids.add(IDPATIENT().apply { s = IDPATIENTschemes.EID_CARDNO; sv = "1.0"; value = it })}
-				isi?.let {ids.add(IDPATIENT().apply { s = IDPATIENTschemes.ISI_CARDNO; sv = "1.0"; value = it })}
-			}
+    fun makePatient(ssin: String, firstName: String?, lastName: String?, eid: String? = null, isi: String? = null) =
+        PatientIdType().apply {
+            familyname = lastName
+            firstname = firstName
+            ids.add(IDPATIENT().apply {
+                s = IDPATIENTschemes.INSS
+                sv = "1.0"
+                value = ssin
+            })
+            eid?.let { ids.add(IDPATIENT().apply { s = IDPATIENTschemes.EID_CARDNO; sv = "1.0"; value = it }) }
+            isi?.let { ids.add(IDPATIENT().apply { s = IDPATIENTschemes.ISI_CARDNO; sv = "1.0"; value = it }) }
+        }
 
-	private fun makeAuthor(nihii: String?, inss: String?, firstname: String?, lastname: String?): AuthorWithPatientAndPersonType =
-			AuthorWithPatientAndPersonType().apply {
-				hcparties.add(HcPartyBuilder().idHcPartyId(nihii, "1.0").inssId(inss, "1.0").cdHcPartyCd("persphysician", "1.0").firstname(firstname).lastname(lastname).build())
-			}
+    private fun makeAuthor(
+        nihii: String?,
+        inss: String?,
+        firstname: String?,
+        lastname: String?
+    ): AuthorWithPatientAndPersonType = AuthorWithPatientAndPersonType().apply {
+        hcparties.add(
+            HcPartyBuilder().idHcPartyId(nihii, "1.0").inssId(inss, "1.0").cdHcPartyCd(
+                "persphysician",
+                "1.0"
+            ).firstname(firstname).lastname(lastname).build()
+        )
+    }
 
-	val config = ConfigFactory.getConfigValidator(listOf<String>())
+    val config = ConfigFactory.getConfigValidator(listOf<String>())
 
-	protected fun getPort(token: SAMLToken): GenericRequest = GenericRequest().apply {
-		setCredential(token, TokenType.SAML)
-		setEndpoint(config.getProperty("endpoint.wsconsent", "\$uddi{uddi:ehealth-fgov-be:business:consent:v1}"))
-		addHandlerChain(HandlerChainUtil.buildChainWithValidator("validation.incoming.wsconsent.message", "/ehealth-hubservices/XSD/hubservices_protocol-2_2.xsd"))
-		addDefaulHandlerChain()
-	}
-
-
+    protected fun getPort(token: SAMLToken): GenericRequest = GenericRequest().apply {
+        setCredential(token, TokenType.SAML)
+        setEndpoint(config.getProperty("endpoint.wsconsent", "\$uddi{uddi:ehealth-fgov-be:business:consent:v1}"))
+        addHandlerChain(
+            HandlerChainUtil.buildChainWithValidator(
+                "validation.incoming.wsconsent.message",
+                "/ehealth-hubservices/XSD/hubservices_protocol-2_2.xsd"
+            )
+        )
+        addDefaulHandlerChain()
+    }
 }

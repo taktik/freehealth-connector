@@ -203,7 +203,5 @@ public interface DrugsLogic {
 
     List<AddedDocumentPreview> getAddedDocuments(String chapterName, String paragraphName);
 
-    List<MppPreview> getInnClusters(String region, String searchString, String lang, List<String> types, int first, int count);
-
     List<ParagraphPreview> findParagraphsWithCnk(Long cnk, String language);
 }

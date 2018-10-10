@@ -116,7 +116,7 @@ public interface DrugsDAO {
 	 * Is there any drug database available?
 	 * @return
 	 */
-	boolean isDataBasePresent();
+	boolean isDatabasePresent();
 
 	/**
 	 * Initializes the drugs database systems

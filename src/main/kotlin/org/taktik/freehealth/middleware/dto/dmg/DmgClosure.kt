@@ -13,9 +13,9 @@ import java.util.Date
  * To change this template use File | Settings | File Templates.
  */
 class DmgClosure : DmgMessageWithPatient(), Serializable {
-	var previousHcParty: HcpartyType? = null
-	var newHcParty: HcpartyType? = null
-	var endOfPreviousDmg: Date? = null
-	var beginOfNewDmg: Date? = null
-	var newHcPartyId: String? = null
+    var previousHcParty: HcpartyType? = null
+    var newHcParty: HcpartyType? = null
+    var endOfPreviousDmg: Date? = null
+    var beginOfNewDmg: Date? = null
+    var newHcPartyId: String? = null
 }

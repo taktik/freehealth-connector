@@ -183,10 +183,7 @@ public class EncryptionUtils {
      * @param propertyHandler the property handler
      */
     public EncryptionUtils(PropertyHandler propertyHandler) {
-
-        super();
         this.propertyHandler = propertyHandler;
-        instance = this;
     }
 
     /**
@@ -194,7 +191,10 @@ public class EncryptionUtils {
      *
      * @return single instance of EncryptionUtils
      */
-    public static EncryptionUtils getInstance() {
+    public static EncryptionUtils getInstance(PropertyHandler propertyHandler) {
+        if (instance==null) {
+            instance = new EncryptionUtils(propertyHandler);
+        }
         return instance;
     }
 
@@ -924,15 +924,15 @@ public class EncryptionUtils {
     }
 
     /**
-     * Gets the private key for authentication
+     * Gets the private keyStore for authentication
      *
-     * @param keystore
-     * @return private key
+     * @param keyStore
+     * @return private keyStore
      */
-    private PrivateKey getPrivateKey(KeyStore key, String privateKeyAlias, char[] privateKeyPassword) {
+    private PrivateKey getPrivateKey(KeyStore keyStore, String privateKeyAlias, char[] privateKeyPassword) {
 
         try {
-            PrivateKeyEntry keyAndCerts = KeyManager.getKeyAndCertificates(key, privateKeyAlias, privateKeyPassword);
+            PrivateKeyEntry keyAndCerts = KeyManager.getKeyAndCertificates(keyStore, privateKeyAlias, privateKeyPassword);
             return keyAndCerts.getPrivateKey();
         } catch (UnrecoverableKeyException e) {
             LOG.error("UnrecoverableKeyException", e);
@@ -941,15 +941,15 @@ public class EncryptionUtils {
     }
 
     /**
-     * Gets the public key for authentication.
+     * Gets the public keyStore for authentication.
      *
-     * @param keystore
-     * @return the public key
+     * @param keyStore
+     * @return the public keyStore
      */
-    private PublicKey getPublicKey(KeyStore key, String privateKeyAlias, char[] privateKeyPassword) {
+    private PublicKey getPublicKey(KeyStore keyStore, String privateKeyAlias, char[] privateKeyPassword) {
 
         try {
-            PrivateKeyEntry keyAndCerts = KeyManager.getKeyAndCertificates(key, privateKeyAlias, privateKeyPassword);
+            PrivateKeyEntry keyAndCerts = KeyManager.getKeyAndCertificates(keyStore, privateKeyAlias, privateKeyPassword);
             return keyAndCerts.getCertificate().getPublicKey();
         } catch (UnrecoverableKeyException e) {
             LOG.error("UnrecoverableKeyException", e);
@@ -1208,15 +1208,6 @@ public class EncryptionUtils {
         }
     }
 
-    /**
-     * @param systemKeystorePassword the systemKeystorePassword to set
-     */
-    public void setSystemKeystorePassword(String systemKeystorePassword) {
-        if (StringUtils.isNotBlank(systemKeystorePassword)) {
-            propertyHandler.getProperties().put(PROP_KEYSTORE_PASSWORD, systemKeystorePassword);
-        }
-    }
-
     public String getSystemKeystorePassword() throws IntegrationModuleException {
 
         if (propertyHandler.hasProperty(PROP_KEYSTORE_PASSWORD)) {
@@ -1226,177 +1217,9 @@ public class EncryptionUtils {
     }
 
 
-    /**
-     * @param systemKeystorePath the systemKeystorePath to set
-     */
-    public void setSystemKeystorePath(String systemKeystorePath) {
-        if (StringUtils.isNotBlank(systemKeystorePath)) {
-            this.systemKeystorePath = systemKeystorePath;
-        }
-    }
-
-
-    /**
-     * @param systemKeystoreDirectory the systemKeystoreDirectory to set
-     */
-    public void setSystemKeystoreDirectory(String systemKeystoreDirectory) {
-        if (StringUtils.isNotBlank(systemKeystoreDirectory)) {
-            propertyHandler.getProperties().put(PROP_KEYSTORE_P12_FOLDER, systemKeystoreDirectory);
-        }
-    }
-
-    /**
-     * @param systemKeystoreRiziv the systemKeystoreRiziv to set
-     */
-    public void setSystemKeystoreRiziv(String systemKeystoreRiziv) {
-        if (StringUtils.isNotBlank(systemKeystoreRiziv)) {
-            propertyHandler.getProperties().put(PROP_KEYSTORE_RIZIV_KBO, systemKeystoreRiziv);
-        }
-    }
-
-    /**
-     * @param oldSystemKeystorePath the oldSystemKeystorePath to set
-     */
-    public void setOldSystemKeystorePath(String oldSystemKeystorePath) {
-        if(StringUtils.isNotBlank(oldSystemKeystorePath)) {
-            this.oldSystemKeystorePath = oldSystemKeystorePath;
-        }
-    }
-
-
-    /**
-     * @param oldSystemKeystorePassword the oldSystemKeystorePassword to set
-     */
-    public void setOldSystemKeystorePassword(String oldSystemKeystorePassword) {
-        if (StringUtils.isNotBlank(oldSystemKeystorePassword)) {
-            propertyHandler.setProperty(PROP_OLD_KEYSTORE_PASSWORD, oldSystemKeystorePassword);
-        }
-    }
-
     public String getOldSystemKeystorePassword() {
         return propertyHandler.getProperty(PROP_OLD_KEYSTORE_PASSWORD);
     }
 
-    /**
-     * @param oldSystemKeystoreDirectory the oldSystemKeystoreDirectory to set
-     */
-    public void setOldSystemKeystoreDirectory(String oldSystemKeystoreDirectory) {
-        if (StringUtils.isNotBlank(oldSystemKeystoreDirectory)) {
-            propertyHandler.getProperties().put(PROP_KEYSTORE_OLD_P12_FOLDER, oldSystemKeystoreDirectory);
-        }
-    }
-
-    /**
-     * @return the oldSystemKeystoreDirectory
-     */
-    public String getOldSystemKeystoreDirectory() {
-        return propertyHandler.getProperty(PROP_KEYSTORE_OLD_P12_FOLDER);
-    }
-
-    /**
-     * @param oldSystemKeystoreRiziv the oldSystemKeystoreRiziv to set
-     */
-    public void setOldSystemKeystoreRiziv(String oldSystemKeystoreRiziv) {
-        if (StringUtils.isNotBlank(oldSystemKeystoreRiziv)) {
-            propertyHandler.getProperties().put(PROP_OLD_KEYSTORE_RIZIV_KBO, oldSystemKeystoreRiziv);
-        }
-    }
-
-    /**
-     * @return the oldSystemKeystoreRiziv
-     */
-    public String getOldSystemKeystoreRiziv() {
-        return propertyHandler.getProperty(PROP_OLD_KEYSTORE_RIZIV_KBO);
-    }
-
-    /**
-     * queueEncrypt / queueDecryt works only for marshaled object.
-     *
-     * @param data
-     * @param publicKey
-     * @return
-     * @throws IntegrationModuleException
-     */
-    public byte[] queueEncrypt(byte[] data, PublicKey publicKey) throws IntegrationModuleException {
-
-        String s = new String(data);
-        s += encryptionSignature;
-        data = s.getBytes();
-        try {
-            String key = publicKey.toString().substring(0, 16);
-            final SecretKeySpec symKey = new SecretKeySpec(key.getBytes(), "AES");
-
-            Cipher cipher = Cipher.getInstance("AES");
-
-            int rest = 0;
-            int length = 0;
-            byte[] newbuf = null;
-
-            if (cipher.getBlockSize() > 0) {
-                rest = data.length % cipher.getBlockSize();
-                length = data.length + (cipher.getBlockSize() - rest);
-
-                newbuf = new byte[length];
-                System.arraycopy(data, 0, newbuf, 0, data.length);
-            } else {
-                newbuf = new byte[data.length];
-                System.arraycopy(data, 0, newbuf, 0, data.length);
-            }
-
-            cipher.init(Cipher.ENCRYPT_MODE, symKey);
-            byte[] cipherData = cipher.doFinal(newbuf);
-
-            return Base64.encode(cipherData);
-        } catch (Throwable t) {
-            Exceptionutils.errorHandler(t);
-        }
-        return null;
-    }
-
-    /**
-     * queueEncrypt / queueDecryt works only for marshaled object.
-     *
-     * @param data
-     * @param publicKey
-     * @return
-     * @throws IntegrationModuleException
-     */
-    public String queueDecrypt(byte[] data, PublicKey publicKey) throws IntegrationModuleException {
-
-        try {
-            LOG.debug("**************** SIZE BYTES ********** " + data.length);
-
-            byte[] decodeData = Base64.decode(data);
-
-            String key = publicKey.toString().substring(0, 16);
-            final SecretKeySpec symKey = new SecretKeySpec(key.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance("AES");
-
-            cipher.init(Cipher.DECRYPT_MODE, symKey);
-            byte[] cipherData = cipher.doFinal(decodeData);
-            LOG.debug("************** cipherData ************* " + Arrays.toString(cipherData));
-
-            String s = new String(cipherData);// , "UTF-8");
-            LOG.debug("******************** GOING OUT: " + s + " **********************");
-
-            // int c = s.indexOf(">") +1;
-            //
-            // s = s.replace(s.substring(0, c),"");
-            // System.out.println("******************** GOING OUT SUBSTRING: " +
-            // s + " **********************");
-            //
-            int i = s.lastIndexOf(encryptionSignature);
-            // int i = s.lastIndexOf(">") + 1;
-            s = s.substring(0, i);
-
-            LOG.debug("******************** GOING OUT SUBSTRING2: " + s + " **********************");
-
-            return s;
-
-        } catch (Throwable t) {
-            Exceptionutils.errorHandler(t);
-        }
-        return null;
-    }
 
 }

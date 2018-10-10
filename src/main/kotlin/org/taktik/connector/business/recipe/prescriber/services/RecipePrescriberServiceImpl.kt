@@ -44,47 +44,134 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 
-
 class RecipePrescriberServiceImpl : RecipePrescriberService {
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    override fun aliveCheck(samlToken: SAMLToken, credential: Credential, paramAliveCheckRequest: AliveCheckRequest): AliveCheckResponse {
-        return GenericWebserviceCaller.callGenericWebservice(samlToken, credential, createDefaultGenericWebserviceRequest(paramAliveCheckRequest), AliveCheckResponse::class.java)
+    override fun aliveCheck(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramAliveCheckRequest: AliveCheckRequest
+    ): AliveCheckResponse {
+        return GenericWebserviceCaller.callGenericWebservice(
+            samlToken,
+            credential,
+            createDefaultGenericWebserviceRequest(
+                paramAliveCheckRequest
+            ),
+            AliveCheckResponse::class.java
+        )
     }
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    override fun createPrescription(samlToken: SAMLToken, credential: Credential, paramCreatePrescriptionRequest: CreatePrescriptionRequest): CreatePrescriptionResponse {
-        return GenericWebserviceCaller.callGenericWebservice(samlToken, credential, createDefaultGenericWebserviceRequest(paramCreatePrescriptionRequest), CreatePrescriptionResponse::class.java)
+    override fun createPrescription(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramCreatePrescriptionRequest: CreatePrescriptionRequest
+    ): CreatePrescriptionResponse {
+        return GenericWebserviceCaller.callGenericWebservice(
+            samlToken,
+            credential,
+            createDefaultGenericWebserviceRequest(
+                paramCreatePrescriptionRequest
+            ),
+            CreatePrescriptionResponse::class.java
+        )
     }
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    override fun revokePrescription(samlToken: SAMLToken, credential: Credential, paramRevokePrescriptionRequest: RevokePrescriptionRequest): RevokePrescriptionResponse {
-        return GenericWebserviceCaller.callGenericWebservice(samlToken, credential, createDefaultGenericWebserviceRequest(paramRevokePrescriptionRequest), RevokePrescriptionResponse::class.java)
+    override fun revokePrescription(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramRevokePrescriptionRequest: RevokePrescriptionRequest
+    ): RevokePrescriptionResponse {
+        return GenericWebserviceCaller.callGenericWebservice(
+            samlToken,
+            credential,
+            createDefaultGenericWebserviceRequest(
+                paramRevokePrescriptionRequest
+            ),
+            RevokePrescriptionResponse::class.java
+        )
     }
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    override fun getPrescriptionForPrescriber(samlToken: SAMLToken, credential: Credential, paramGetPrescriptionForPrescriberRequest: GetPrescriptionForPrescriberRequest): GetPrescriptionForPrescriberResponse {
-        return GenericWebserviceCaller.callGenericWebservice(samlToken, credential, createDefaultGenericWebserviceRequest(paramGetPrescriptionForPrescriberRequest), GetPrescriptionForPrescriberResponse::class.java)
+    override fun getPrescriptionForPrescriber(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramGetPrescriptionForPrescriberRequest: GetPrescriptionForPrescriberRequest
+    ): GetPrescriptionForPrescriberResponse {
+        return GenericWebserviceCaller.callGenericWebservice(
+            samlToken,
+            credential,
+            createDefaultGenericWebserviceRequest(
+                paramGetPrescriptionForPrescriberRequest
+            ),
+            GetPrescriptionForPrescriberResponse::class.java
+        )
     }
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    override fun listOpenPrescriptions(samlToken: SAMLToken, credential: Credential, paramListOpenPrescriptionsRequest: ListOpenPrescriptionsRequest): ListOpenPrescriptionsResponse {
-        return GenericWebserviceCaller.callGenericWebservice(samlToken, credential, createDefaultGenericWebserviceRequest(paramListOpenPrescriptionsRequest), ListOpenPrescriptionsResponse::class.java)
+    override fun listOpenPrescriptions(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramListOpenPrescriptionsRequest: ListOpenPrescriptionsRequest
+    ): ListOpenPrescriptionsResponse {
+        return GenericWebserviceCaller.callGenericWebservice(
+            samlToken,
+            credential,
+            createDefaultGenericWebserviceRequest(
+                paramListOpenPrescriptionsRequest
+            ),
+            ListOpenPrescriptionsResponse::class.java
+        )
     }
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    override fun sendNotification(samlToken: SAMLToken, credential: Credential, paramSendNotificationRequest: SendNotificationRequest): SendNotificationResponse {
-        return GenericWebserviceCaller.callGenericWebservice(samlToken, credential, createDefaultGenericWebserviceRequest(paramSendNotificationRequest), SendNotificationResponse::class.java)
+    override fun sendNotification(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramSendNotificationRequest: SendNotificationRequest
+    ): SendNotificationResponse {
+        return GenericWebserviceCaller.callGenericWebservice(
+            samlToken,
+            credential,
+            createDefaultGenericWebserviceRequest(
+                paramSendNotificationRequest
+            ),
+            SendNotificationResponse::class.java
+        )
     }
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    override fun updateFeedbackFlag(samlToken: SAMLToken, credential: Credential, paramUpdateFeedbackFlagRequest: UpdateFeedbackFlagRequest): UpdateFeedbackFlagResponse {
-        return GenericWebserviceCaller.callGenericWebservice(samlToken, credential, createDefaultGenericWebserviceRequest(paramUpdateFeedbackFlagRequest), UpdateFeedbackFlagResponse::class.java)
+    override fun updateFeedbackFlag(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramUpdateFeedbackFlagRequest: UpdateFeedbackFlagRequest
+    ): UpdateFeedbackFlagResponse {
+        return GenericWebserviceCaller.callGenericWebservice(
+            samlToken,
+            credential,
+            createDefaultGenericWebserviceRequest(
+                paramUpdateFeedbackFlagRequest
+            ),
+            UpdateFeedbackFlagResponse::class.java
+        )
     }
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    override fun listFeedbacks(samlToken: SAMLToken, credential: Credential, paramListFeedbacksRequest: ListFeedbacksRequest): ListFeedbacksResponse {
-        return GenericWebserviceCaller.callGenericWebservice(samlToken, credential, createDefaultGenericWebserviceRequest(paramListFeedbacksRequest), ListFeedbacksResponse::class.java)
+    override fun listFeedbacks(
+        samlToken: SAMLToken,
+        credential: Credential,
+        paramListFeedbacksRequest: ListFeedbacksRequest
+    ): ListFeedbacksResponse {
+        return GenericWebserviceCaller.callGenericWebservice(
+            samlToken,
+            credential,
+            createDefaultGenericWebserviceRequest(
+                paramListFeedbacksRequest
+            ),
+            ListFeedbacksResponse::class.java
+        )
     }
 
     @Throws(IntegrationModuleException::class)
@@ -101,7 +188,7 @@ class RecipePrescriberServiceImpl : RecipePrescriberService {
     }
 
     companion object {
-        private val ENDPOINT_NAME = "endpoint.prescriber"
+        private val ENDPOINT_NAME = "endpoint.recipe.prescriber"
         private val SERVICE_NAME = RecipePrescriberServiceImpl::class.java.name
     }
 }

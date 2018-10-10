@@ -39,13 +39,9 @@ public class KgssMessageBuilderImpl implements KgssMessageBuilder, Configuration
    private static MarshallerHelper<GetNewKeyResponseContent, GetNewKeyRequestContent> newKeyHelper = new MarshallerHelper(GetNewKeyResponseContent.class, GetNewKeyRequestContent.class);
    private static MarshallerHelper<GetKeyResponseContent, GetKeyRequestContent> getKeyHelper = new MarshallerHelper(GetKeyResponseContent.class, GetKeyRequestContent.class);
 
-   public KgssMessageBuilderImpl() {
-      LOG.debug("KgssMessageBuilderImpl default consturctor. Only for bootstrap purspose");
-   }
-
-   public KgssMessageBuilderImpl(byte[] etkKgss, Credential encryptionCredential, Map<String, PrivateKey> decryptionKeys) throws TechnicalConnectorException {
+   public KgssMessageBuilderImpl(byte[] etkKgss, Crypto crypto, Credential encryptionCredential, Map<String, PrivateKey> decryptionKeys) throws TechnicalConnectorException {
+      this.crypto = crypto;
       this.encryptionToken = this.toEncryptionToken(etkKgss);
-      this.crypto = CryptoFactory.getCrypto(encryptionCredential, decryptionKeys);
    }
 
    public GetNewKeyRequest sealGetNewKeyRequest(GetNewKeyRequestContent requestContent) throws TechnicalConnectorException {
@@ -64,7 +60,7 @@ public class KgssMessageBuilderImpl implements KgssMessageBuilder, Configuration
    public GetNewKeyResponseContent unsealGetNewKeyResponse(GetNewKeyResponse response) throws TechnicalConnectorException {
       SealedContentType sealedResponse = response.getSealedNewKeyResponse();
       byte[] decrypted = this.crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, sealedResponse.getSealedContent()).getContentAsByte();
-      return (GetNewKeyResponseContent)newKeyHelper.toObject(decrypted);
+      return newKeyHelper.toObject(decrypted);
    }
 
    public GetKeyRequest sealGetKeyRequest(GetKeyRequestContent requestContent) throws TechnicalConnectorException {
@@ -83,14 +79,14 @@ public class KgssMessageBuilderImpl implements KgssMessageBuilder, Configuration
 
    public GetKeyResponseContent unsealGetKeyResponse(GetKeyResponse response) throws TechnicalConnectorException {
       SealedContentType sealedResponse = response.getSealedKeyResponse();
-      UnsealedData decrypted = null;
+      UnsealedData decrypted;
       if (this.key == null) {
          decrypted = this.crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, sealedResponse.getSealedContent());
       } else {
          decrypted = this.crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, new KeyResult(this.key, "dummy"), sealedResponse.getSealedContent());
       }
 
-      return (GetKeyResponseContent)getKeyHelper.toObject(decrypted.getContentAsByte());
+      return getKeyHelper.toObject(decrypted.getContentAsByte());
    }
 
    private EncryptionToken toEncryptionToken(byte[] etk) throws TechnicalConnectorException {

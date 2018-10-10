@@ -20,23 +20,230 @@
 
 package org.taktik.freehealth.middleware.service
 
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionResponse
-import org.taktik.freehealth.middleware.domain.Consent
+import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
+import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
+import org.taktik.connector.business.therlink.domain.TherapeuticLink
+import org.taktik.freehealth.middleware.domain.consent.Consent
 import org.taktik.freehealth.middleware.dto.common.Gender
-import org.taktik.freehealth.middleware.domain.HcPartyConsent
-import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkDto
-import org.taktik.freehealth.middleware.domain.TransactionSummary
+import org.taktik.freehealth.middleware.domain.hub.HcPartyConsent
+import org.taktik.freehealth.middleware.domain.common.Patient
+import org.taktik.freehealth.middleware.domain.hub.TransactionSummary
+import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
 
 interface HubService {
-    fun checkHcPartyConsent(token: String, inss: String, nihii: String): HcPartyConsent
-    fun getPatientConsent(token: String, nissPatient: String): Consent
-    fun registerPatientConsent(token: String, dateOfBirth: LocalDateTime, niss: String, firstName: String, lastName: String, gender: Gender)
-    fun registerTherapeuticLink(token: String, ssin: String, start: Date, comment: String)
-    fun getTherapeuticLinks(token: String, nissPatient: String, inamiDoctor: String, nissDoctor: String): List<TherapeuticLinkDto>
-    fun putPatient(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, niss: String, firstName: String, lastName: String, gender: Gender, dateOfBirth: LocalDateTime)
-    fun putTransaction(endpoint: String, hubId: Long, hubApplication: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpZip: String, ssin: String, transaction: String): PutTransactionResponse
-    fun getTransaction(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpZip: String, ssin: String, sv: String, sl: String, value: String): String
-    fun getTransactionsList(endpoint: String, keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpZip: String, ssin: String, from: Long?, to: Long?, authorNihii: String?, authorSsin: String?, isGlobal: Boolean): List<TransactionSummary>
+    fun getHcPartyConsent(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        hubPackageId: String?
+    ): HcPartyConsent?
+
+    fun putPatient(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        firstName: String,
+        lastName: String,
+        gender: Gender,
+        dateOfBirth: LocalDateTime,
+        hubPackageId: String?
+    ): Patient?
+
+    fun getPatient(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        hubPackageId: String?
+    ): Patient?
+
+    fun registerPatientConsent(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        patientEidCardNumber: String?,
+        hubPackageId: String?
+    )
+
+    fun getPatientConsent(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        hubPackageId: String?
+    ): Consent?
+
+    fun registerTherapeuticLink(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        patientEidCardNumber: String?,
+        hubPackageId: String?
+    )
+
+    fun getTherapeuticLinks(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        therLinkType: String?,
+        from: Instant?,
+        to: Instant?,
+        hubPackageId: String?
+    ): List<TherapeuticLink>
+
+    fun getTransactionsList(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        hubPackageId: String?,
+        breakTheGlassReason: String? = null,
+        from: Long?,
+        to: Long?,
+        authorNihii: String?,
+        authorSsin: String?,
+        isGlobal: Boolean
+    ): List<TransactionSummary>
+
+    fun putTransaction(
+        endpoint: String,
+        hubId: Long,
+        hubApplication: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        transaction: ByteArray,
+        hubPackageId: String?
+    ): TransactionIdType
+
+    fun getTransaction(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        hubPackageId: String?,
+        breakTheGlassReason: String? = null,
+        sv: String,
+        sl: String,
+        value: String
+    ): String
+
+    fun revokeTransaction(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        hubPackageId: String?,
+        breakTheGlassReason: String? = null,
+        sv: String,
+        sl: String,
+        value: String
+    ): String
+
+    fun putTransactionSet(
+        endpoint: String,
+        hubId: Long,
+        hubApplication: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        transaction: String,
+        hubPackageId: String?
+    ): PutTransactionSetResponse
+
+    fun getTransactionSet(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String,
+        hubPackageId: String?,
+        breakTheGlassReason: String? = null,
+        sv: String,
+        sl: String,
+        value: String
+    ): String
 }

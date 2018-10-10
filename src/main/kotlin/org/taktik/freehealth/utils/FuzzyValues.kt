@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.utils
 
+import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import org.apache.commons.lang3.math.NumberUtils
 import org.joda.time.DateTime
 import java.time.Instant
@@ -29,6 +30,7 @@ import java.time.Period
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalUnit
+import javax.xml.datatype.DatatypeConstants
 
 /**
  * This utility class provides methods to detect the type of value submitted to it (dates, ssin,...) and handle the
@@ -88,6 +90,9 @@ object FuzzyValues {
         var plusOne = false
 
         if (dateTime > 99991231L) {
+            if (dateTime < 18000101000000L) {
+                return Instant.ofEpochMilli(dateTime).atZone(ZoneId.systemDefault()).toLocalDateTime()
+            }
             //Full date time format
             val time = dateTime % 1000000L
             date = dateTime / 1000000L
@@ -127,7 +132,7 @@ object FuzzyValues {
     }
 
     fun getCurrentFuzzyDateTime(precision: TemporalUnit): Long {
-        return getFuzzyDate(LocalDateTime.now(), precision)
+        return getFuzzyDateTime(LocalDateTime.now(), precision)
     }
 
     fun getFuzzyDateTime(dateTime: LocalDateTime, precision: TemporalUnit): Long {
@@ -151,31 +156,58 @@ object FuzzyValues {
         }
 
 
-        return getFuzzyDate(dateTime, precision) * 1000000L + if (precision === ChronoUnit.DAYS)
-            0
-        else
-            hours * 10000L + if (precision === ChronoUnit.HOURS)
-                0
-            else
-                minutes * 100L + if (precision === ChronoUnit.MINUTES) 0 else seconds
+        return getFuzzyDate(dateTime, precision) * 1000000L + when {
+            precision === ChronoUnit.DAYS -> 0
+            else -> hours * 10000L + when {
+                precision === ChronoUnit.HOURS -> 0
+                else -> minutes * 100L + if (precision === ChronoUnit.MINUTES) 0 else seconds
+            }
+        }
     }
 
     fun getFuzzyDate(dateTime: LocalDateTime, precision: TemporalUnit = ChronoUnit.DAYS): Long {
-        return dateTime.year * 10000L + if (precision === ChronoUnit.YEARS)
-            0
-        else
-            dateTime.monthValue * 100L + if (precision === ChronoUnit.MONTHS)
-                0
-            else
-                dateTime.dayOfMonth
+        return dateTime.year * 10000L + when {
+            precision === ChronoUnit.YEARS -> 0
+            else -> dateTime.monthValue * 100L + when {
+                precision === ChronoUnit.MONTHS -> 0
+                else -> dateTime.dayOfMonth
+            }
+        }
     }
+
+    fun getXMLGregorianCalendarFromFuzzyLong(date : Long?) : XMLGregorianCalendarImpl? {
+        return date?.let {
+            if (it%10000000000 == 0L) it/10000000000 else if (it%100000000 == 0L) it/100000000 else if (it<99991231 && it%10000 == 0L) it/10000 else if (it<99991231 && it%100 == 0L) it/100 else it /*normalize*/
+        }?.let { d ->
+            XMLGregorianCalendarImpl().apply {
+                millisecond = DatatypeConstants.FIELD_UNDEFINED
+                timezone = DatatypeConstants.FIELD_UNDEFINED
+                when (d) {
+                    in 0..9999 -> {  year = d.toInt(); month = DatatypeConstants.FIELD_UNDEFINED; day =
+                        DatatypeConstants.FIELD_UNDEFINED
+                    }
+                    in 0..999912 -> { year = (d / 100).toInt(); month = (d % 100).toInt(); day =
+                        DatatypeConstants.FIELD_UNDEFINED
+                    }
+                    in 0..99991231 -> { year = (d / 10000).toInt(); month = ((d / 100) % 100).toInt(); day = (d % 100).toInt() }
+                    else -> {
+                        year = (d / 10000000000).toInt(); month = ((d / 100000000) % 100).toInt(); day = ((d / 1000000) % 100).toInt()
+                        hour = ((d / 10000) % 100).toInt(); minute = ((d / 100) % 100).toInt(); second = (d % 100).toInt()
+                    }
+                }
+            }
+        }
+    }
+
 
     fun getFuzzyDate(instant: Instant, zoneId: ZoneId = ZoneId.systemDefault(), precision: TemporalUnit = ChronoUnit.DAYS): Long {
         return getFuzzyDate(LocalDateTime.ofInstant(instant, zoneId), precision)
     }
 
     fun getFuzzyDate(dateTime: DateTime, precision: TemporalUnit = ChronoUnit.DAYS): Long {
-        return getFuzzyDate(LocalDateTime.of(dateTime.year, dateTime.monthOfYear, dateTime.dayOfMonth, dateTime.hourOfDay, dateTime.minuteOfHour, dateTime.secondOfMinute, dateTime.millisOfSecond*1_000_000), precision)
+        return getFuzzyDate(LocalDateTime.of(dateTime.year, dateTime.monthOfYear, dateTime.dayOfMonth,
+                                             dateTime.hourOfDay, dateTime.minuteOfHour, dateTime.secondOfMinute,
+                                             dateTime.millisOfSecond*1_000_000), precision)
     }
 
 
@@ -227,36 +259,37 @@ object FuzzyValues {
         var month = "00"
         val year: String
 
-        if (fields.size == 3) {
-            day = if (fields[0].isEmpty()) "00" else String.format("%1$02d", Integer.parseInt(fields[0]))
-            month = if (fields[1].isEmpty()) "00" else String.format("%1$02d", Integer.parseInt(fields[1]))
-            year = if (fields[2].isEmpty()) "0000" else String.format("%1$04d", Integer.parseInt(fields[2]))
-
-            result = year + month + day
-
-        } else if (fields.size == 2) {
-            month = if (fields[0].isEmpty()) "00" else String.format("%1$02d", Integer.parseInt(fields[0]))
-            year = if (fields[1].isEmpty()) "0000" else String.format("%1$04d", Integer.parseInt(fields[1]))
-
-            result = year + month + day
-
-        } else {
-            if (isPartiallyFormedYYYYMMDD(text)) {
-                if (text.length <= 4) {
-                    year = String.format("%1$04d", Integer.parseInt(text.substring(0, 4)))
-                } else if (text.length <= 6) {
-                    month = String.format("%1$02d", Integer.parseInt(text.substring(4)))
-                    year = String.format("%1$04d", Integer.parseInt(text.substring(0, 4)))
-                } else {
-                    day = String.format("%1$02d", Integer.parseInt(text.substring(6, 8)))
-                    month = String.format("%1$02d", Integer.parseInt(text.substring(4, 6)))
-                    year = String.format("%1$04d", Integer.parseInt(text.substring(0, 4)))
-                }
+        when {
+            fields.size == 3 -> {
+                day = if (fields[0].isEmpty()) "00" else String.format("%1$02d", Integer.parseInt(fields[0]))
+                month = if (fields[1].isEmpty()) "00" else String.format("%1$02d", Integer.parseInt(fields[1]))
+                year = if (fields[2].isEmpty()) "0000" else String.format("%1$04d", Integer.parseInt(fields[2]))
 
                 result = year + month + day
+            }
+            fields.size == 2 -> {
+                month = if (fields[0].isEmpty()) "00" else String.format("%1$02d", Integer.parseInt(fields[0]))
+                year = if (fields[1].isEmpty()) "0000" else String.format("%1$04d", Integer.parseInt(fields[1]))
 
-            } else {
-                result = text
+                result = year + month + day
+            }
+            else -> when {
+                isPartiallyFormedYYYYMMDD(text) -> {
+                    when {
+                        text.length <= 4 -> year = String.format("%1$04d", Integer.parseInt(text.substring(0, 4)))
+                        text.length <= 6 -> {
+                            month = String.format("%1$02d", Integer.parseInt(text.substring(4)))
+                            year = String.format("%1$04d", Integer.parseInt(text.substring(0, 4)))
+                        }
+                        else -> {
+                            day = String.format("%1$02d", Integer.parseInt(text.substring(6, 8)))
+                            month = String.format("%1$02d", Integer.parseInt(text.substring(4, 6)))
+                            year = String.format("%1$04d", Integer.parseInt(text.substring(0, 4)))
+                        }
+                    }
+                    result = year + month + day
+                }
+                else -> result = text
             }
         }
 

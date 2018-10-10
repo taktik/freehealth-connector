@@ -93,7 +93,7 @@ public class RecursiveProperties extends Properties {
    }
 
    public String getProperty(String key) {
-      return this.getProperty(key, (List)(new ArrayList()));
+      return this.getProperty(key, new ArrayList());
    }
 
    private String getProperty(String key, List<String> lookupKeys) {

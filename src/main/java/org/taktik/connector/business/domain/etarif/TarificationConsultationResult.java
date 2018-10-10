@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.taktik.connector.business.domain.Error;
+import org.taktik.freehealth.middleware.dto.MycarenetError;
 
 /**
  * Created with IntelliJ IDEA.
@@ -36,18 +37,20 @@ public class TarificationConsultationResult implements Serializable {
 	private Date date;
 	private Date deceased;
 	private List<String> codes = new ArrayList<>();
-	private List<Error> errors = new ArrayList<>();
+	private List<MycarenetError> errors = new ArrayList<>();
 	private List<Payment> fees = new ArrayList<>();
-	private List<String> financialContracts = new ArrayList<String>();
+	private List<String> financialContracts = new ArrayList<>();
 	private String firstName;
 	private Date insurancePeriodEnd;
 	private Date insurancePeriodStart;
 	private int justification;
 	private String lastName;
 	private String niss;
-	private List<Payment> patientFees = new ArrayList<Payment>();
+	private List<Payment> patientFees = new ArrayList<>();
 	private Sex sex;
-	private List<Payment> reimbursements = new ArrayList<Payment>();
+	private List<Payment> reimbursements = new ArrayList<>();
+	private String retrieveTransactionRequest;
+	private String commonInputResponse;
 
 	public void fill(PersonType patient) {
 		this.setLastName(patient.getFamilyname());
@@ -175,11 +178,11 @@ public class TarificationConsultationResult implements Serializable {
 		return deceased;
 	}
 
-	public List<Error> getErrors() {
+	public List<MycarenetError> getErrors() {
 		return errors;
 	}
 
-	public void setErrors(List<Error> errors) {
+	public void setErrors(List<MycarenetError> errors) {
 		this.errors = errors;
 	}
 
@@ -277,6 +280,22 @@ public class TarificationConsultationResult implements Serializable {
 
 	public void setCodes(List<String> codes) {
 		this.codes = codes;
+	}
+
+	public String getRetrieveTransactionRequest(){
+		return this.retrieveTransactionRequest;
+	}
+
+	public void setRetrieveTransactionRequest(String retrieveTransactionRequest){
+		this.retrieveTransactionRequest = retrieveTransactionRequest;
+	}
+
+	public String getCommonInputResponse(){
+		return this.commonInputResponse;
+	}
+
+	public void setCommonInputResponse(String commonInputResponse){
+		this.commonInputResponse = commonInputResponse;
 	}
 
 	private Date asDate(DateTime date) {

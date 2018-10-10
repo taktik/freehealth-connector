@@ -12,7 +12,7 @@ import java.util.Date
  * To change this template use File | Settings | File Templates.
  */
 class DmgsList : DmgMessage(), Serializable {
-	var oa: String? = null
-	var inscriptions: List<DmgInscription> = ArrayList()
-	var date: Date? = null
+    var oa: String? = null
+    var inscriptions: MutableList<DmgInscription> = ArrayList()
+    var date: Date? = null
 }

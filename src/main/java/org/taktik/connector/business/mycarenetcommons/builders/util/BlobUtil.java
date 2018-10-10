@@ -7,7 +7,7 @@ import org.taktik.connector.technical.config.ConfigValidator;
 import org.taktik.connector.technical.config.impl.ConfigurationModuleBootstrap;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
-import org.taktik.connector.technical.session.Session;
+import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
 import be.fgov.ehealth.mycarenet.commons.core.v2.BlobType;
@@ -21,51 +21,47 @@ import org.apache.commons.lang.ArrayUtils;
 import org.w3._2005._05.xmlmime.Base64Binary;
 
 public class BlobUtil implements ConfigurationModuleBootstrap.ModuleBootstrapHook {
-   private static final String MYCARENET = "mycarenet.";
-   private static final String NEEDXADES = ".request.needxades";
-   private static final String XADESTYPE = ".request.xadestype";
-
-   public static Base64Binary generateXades(BlobType inValue, byte[] furnishedXades, String projectName) throws TechnicalConnectorException {
+   public static Base64Binary generateXades(BlobType inValue, Credential credential, byte[] furnishedXades, String projectName) throws TechnicalConnectorException {
       if (projectName == null) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL, new Object[]{"project name"});
       } else {
          ConfigValidator props = ConfigFactory.getConfigValidator();
          Boolean defaultValue = props.getBooleanProperty("${mycarenet.default.request.needxades}", false);
-         if (props.getBooleanProperty("mycarenet." + projectName + ".request.needxades", defaultValue).booleanValue()) {
-            return ArrayUtils.isEmpty(furnishedXades) ? generateXades(inValue, projectName) : convertXadesToBinary(furnishedXades);
+         if (props.getBooleanProperty("mycarenet." + projectName + ".request.needxades", defaultValue)) {
+            return ArrayUtils.isEmpty(furnishedXades) ? generateXades(inValue, credential, projectName) : convertXadesToBinary(furnishedXades);
          } else {
             return null;
          }
       }
    }
 
-   public static Base64Binary generateXadesForBlob(Blob blob, byte[] furnishedXades, String projectName) throws TechnicalConnectorException {
+   public static Base64Binary generateXadesForBlob(Blob blob, Credential credential, byte[] furnishedXades, String projectName) throws TechnicalConnectorException {
       BlobType blobForXades = SendRequestMapper.mapBlobToBlobType(blob);
-      return generateXades(blobForXades, furnishedXades, projectName);
+      return generateXades(blobForXades, credential, furnishedXades, projectName);
    }
 
-   public static Base64Binary generateXades(BlobType inValue) throws TechnicalConnectorException {
-      return generateXades(inValue, "default");
+   public static Base64Binary generateXades(BlobType inValue, Credential credential) throws TechnicalConnectorException {
+      return generateXades(inValue, credential,"default");
    }
 
-   public static Base64Binary generateXadesForBlob(Blob inValue) throws TechnicalConnectorException {
-      return generateXadesForBlob(inValue, "default");
+   public static Base64Binary generateXadesForBlob(Blob inValue, Credential credential) throws TechnicalConnectorException {
+      return generateXadesForBlob(inValue, credential, "default");
    }
 
-   public static Base64Binary generateXadesForBlob(Blob blob, String projectName) throws TechnicalConnectorException {
+   public static Base64Binary generateXadesForBlob(Blob blob, Credential credential, String projectName) throws TechnicalConnectorException {
       BlobType blobForXades = SendRequestMapper.mapBlobToBlobType(blob);
-      return generateXades(blobForXades, projectName);
+      return generateXades(blobForXades, credential, projectName);
    }
 
-   public static Base64Binary generateXades(BlobType inValue, String projectName) throws TechnicalConnectorException {
+   public static Base64Binary generateXades(BlobType inValue, Credential credential, String projectName) throws TechnicalConnectorException {
       ConfigValidator props = ConfigFactory.getConfigValidator();
       String propValue = props.getProperty("mycarenet." + projectName + ".request.xadestype", "${mycarenet.default.request.xadestype}");
       if (!"xades".equals(propValue) && !"xadest".equals(propValue)) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"Property mycarenet." + projectName + ".request.xadestype" + " with value " + propValue + " is not a supported value"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, "Property mycarenet." + projectName + ".request.xadestype" + " with value " + propValue + " is not a supported value");
       } else {
-         Map<String, Object> options = new HashMap();
+         Map<String, Object> options = new HashMap<>();
          options.put("baseURI", inValue.getId());
-         List<String> transformList = new ArrayList();
+         List<String> transformList = new ArrayList<>();
          transformList.add("http://www.w3.org/2000/09/xmldsig#base64");
          if ("deflate".equals(inValue.getContentEncoding())) {
             transformList.add("urn:nippin:xml:sig:transform:optional-deflate");
@@ -83,7 +79,7 @@ public class BlobUtil implements ConfigurationModuleBootstrap.ModuleBootstrapHoo
             xadesType = AdvancedElectronicSignatureEnumeration.XAdES;
          }
 
-         byte[] xadesValue = SignatureBuilderFactory.getSignatureBuilder(xadesType).sign(Session.getInstance().getSession().getEncryptionCredential(), ConnectorXmlUtils.toByteArray((Object)inValue), options);
+         byte[] xadesValue = SignatureBuilderFactory.getSignatureBuilder(xadesType).sign(credential, ConnectorXmlUtils.toByteArray(inValue), options);
          return convertXadesToBinary(xadesValue);
       }
    }

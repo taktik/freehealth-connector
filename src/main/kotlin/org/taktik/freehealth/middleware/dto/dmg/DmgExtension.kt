@@ -13,8 +13,7 @@ import java.util.Date
  * To change this template use File | Settings | File Templates.
  */
 class DmgExtension : DmgMessageWithPatient(), Serializable {
-	var hcParty: HcpartyType? = null
-	var claim: String? = null
-	var encounterDate: Date? = null
-
+    var hcParty: HcpartyType? = null
+    var claim: String? = null
+    var encounterDate: Date? = null
 }

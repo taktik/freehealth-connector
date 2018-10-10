@@ -32,10 +32,13 @@ class ValidatorFactory private constructor() {
 
     companion object {
         private val PROP_EHBOX_VALIDATOR = "org.taktik.connector.business.ehbox.v3.validator"
-        private val factory = ConfigurableFactoryHelper<EhboxReplyValidatorImpl>(PROP_EHBOX_VALIDATOR, EhboxReplyValidatorImpl::class.java.name)
+        private val factory =
+            ConfigurableFactoryHelper<EhboxReplyValidatorImpl>(
+                PROP_EHBOX_VALIDATOR,
+                EhboxReplyValidatorImpl::class.java.name
+            )
 
         val validator: EhboxReplyValidator
-            @Throws(TechnicalConnectorException::class)
-            get() = factory.implementation
+            @Throws(TechnicalConnectorException::class) get() = factory.implementation
     }
 }

@@ -12,6 +12,10 @@ public class EncryptionToken implements Serializable {
    private static final long serialVersionUID = 1L;
    private be.fgov.ehealth.etee.crypto.encrypt.EncryptionToken etk;
 
+   public EncryptionToken(be.fgov.ehealth.etee.crypto.encrypt.EncryptionToken etk) {
+      this.etk = etk;
+   }
+
    public EncryptionToken(byte[] etkBytes) throws GeneralSecurityException {
       this.etk = EncryptionTokenFactory.getInstance().create(etkBytes);
    }

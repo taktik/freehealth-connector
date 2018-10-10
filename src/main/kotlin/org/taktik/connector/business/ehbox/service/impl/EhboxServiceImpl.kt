@@ -57,7 +57,12 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 
 class EhboxServiceImpl(val replyValidator: EhboxReplyValidator) : EhboxService {
     @Throws(ConnectorException::class)
-    private fun <T : ResponseType> callConsultationService(token: SAMLToken, request: Any, soapAction: String, clazz: Class<T>): T {
+    private fun <T : ResponseType> callConsultationService(
+        token: SAMLToken,
+        request: Any,
+        soapAction: String,
+        clazz: Class<T>
+    ): T {
         try {
             val service = ServiceFactory.getConsultationService(token)
             service.setPayload(request)
@@ -70,37 +75,61 @@ class EhboxServiceImpl(val replyValidator: EhboxReplyValidator) : EhboxService {
             if (exception is TechnicalConnectorException) {
                 throw exception
             } else {
-                throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, exception, exception.message)
+                throw TechnicalConnectorException(
+                    TechnicalConnectorExceptionValues.ERROR_WS,
+                    exception,
+                    exception.message
+                )
             }
         }
-
     }
 
     @Throws(ConnectorException::class)
     override fun getBoxInfo(token: SAMLToken, getBoxInfoRequest: GetBoxInfoRequest): GetBoxInfoResponse {
-        return this.callConsultationService(token, getBoxInfoRequest, "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getBoxInfo", GetBoxInfoResponse::class.java)
+        return this.callConsultationService(
+            token,
+            getBoxInfoRequest,
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getBoxInfo",
+            GetBoxInfoResponse::class.java
+        )
     }
 
     @Throws(ConnectorException::class)
     override fun getFullMessage(token: SAMLToken, request: GetFullMessageRequest): GetFullMessageResponse {
-        return this.callConsultationService(token, request, "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getFullMessage", GetFullMessageResponse::class.java)
+        return this.callConsultationService(
+            token,
+            request,
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getFullMessage",
+            GetFullMessageResponse::class.java
+        )
     }
-
 
     @Deprecated("")
     @Throws(ConnectorException::class)
     override fun getFullMessage(token: SAMLToken, request: MessageRequestType): GetFullMessageResponse {
-        return this.callConsultationService(token, this.mapToCorrectType(request, GetFullMessageRequest()), "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getFullMessage", GetFullMessageResponse::class.java)
+        return this.callConsultationService(
+            token,
+            this.mapToCorrectType(request, GetFullMessageRequest()),
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getFullMessage",
+            GetFullMessageResponse::class.java
+        )
     }
-
 
     @Deprecated("")
     @Throws(ConnectorException::class)
     override fun getMessageHistory(token: SAMLToken, request: MessageRequestType): GetHistoryResponse {
-        return this.callConsultationService(token, this.mapToCorrectType(request, GetHistoryRequest()), "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getMessageHistory", GetHistoryResponse::class.java)
+        return this.callConsultationService(
+            token,
+            this.mapToCorrectType(request, GetHistoryRequest()),
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getMessageHistory",
+            GetHistoryResponse::class.java
+        )
     }
 
-    private fun <T : MessageRequestType> mapToCorrectType(originalRequest: MessageRequestType, newInstanceOfCorrectType: T): T {
+    private fun <T : MessageRequestType> mapToCorrectType(
+        originalRequest: MessageRequestType,
+        newInstanceOfCorrectType: T
+    ): T {
         newInstanceOfCorrectType.boxId = originalRequest.boxId
         newInstanceOfCorrectType.messageId = originalRequest.messageId
         newInstanceOfCorrectType.source = originalRequest.source
@@ -109,47 +138,98 @@ class EhboxServiceImpl(val replyValidator: EhboxReplyValidator) : EhboxService {
 
     @Throws(ConnectorException::class)
     override fun getMessageHistory(token: SAMLToken, request: GetHistoryRequest): GetHistoryResponse {
-        return this.callConsultationService(token, request, "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getMessageHistory", GetHistoryResponse::class.java)
+        return this.callConsultationService(
+            token,
+            request,
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getMessageHistory",
+            GetHistoryResponse::class.java
+        )
     }
 
     @Throws(ConnectorException::class)
     override fun getMessageList(token: SAMLToken, request: GetMessagesListRequest): GetMessagesListResponse {
-        return this.callConsultationService(token, request, "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getMessagesList", GetMessagesListResponse::class.java)
+        return this.callConsultationService(
+            token,
+            request,
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getMessagesList",
+            GetMessagesListResponse::class.java
+        )
     }
 
     @Throws(ConnectorException::class)
-    override fun getMessageAcknowledgmentsStatusResponse(token: SAMLToken, request: GetMessageAcknowledgmentsStatusRequest): GetMessageAcknowledgmentsStatusResponse {
-        return this.callConsultationService(token, request, "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getMessageAcknowledgmentsStatus", GetMessageAcknowledgmentsStatusResponse::class.java)
+    override fun getMessageAcknowledgmentsStatusResponse(
+        token: SAMLToken,
+        request: GetMessageAcknowledgmentsStatusRequest
+    ): GetMessageAcknowledgmentsStatusResponse {
+        return this.callConsultationService(
+            token,
+            request,
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getMessageAcknowledgmentsStatus",
+            GetMessageAcknowledgmentsStatusResponse::class.java
+        )
     }
 
     @Throws(ConnectorException::class)
     override fun deleteMessage(token: SAMLToken, request: DeleteMessageRequest): DeleteMessageResponse {
-        return this.callConsultationService(token, request, "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:deleteMessage", DeleteMessageResponse::class.java)
+        return this.callConsultationService(
+            token,
+            request,
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:deleteMessage",
+            DeleteMessageResponse::class.java
+        )
     }
 
     @Throws(ConnectorException::class)
     override fun moveMessage(token: SAMLToken, request: MoveMessageRequest): MoveMessageResponse {
-        return this.callConsultationService(token, request, "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:moveMessage", MoveMessageResponse::class.java)
+        return this.callConsultationService(
+            token,
+            request,
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:moveMessage",
+            MoveMessageResponse::class.java
+        )
     }
 
     @Throws(ConnectorException::class)
     override fun insertOoO(token: SAMLToken, request: InsertOoORequest): InsertOoOResponse {
-        return this.callConsultationService(token, request, "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:insertOoO", InsertOoOResponse::class.java)
+        return this.callConsultationService(
+            token,
+            request,
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:insertOoO",
+            InsertOoOResponse::class.java
+        )
     }
 
     @Throws(ConnectorException::class)
     override fun deleteOoO(token: SAMLToken, request: DeleteOoORequest): DeleteOoOResponse {
-        return this.callConsultationService(token, request, "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:deleteOoO", DeleteOoOResponse::class.java)
+        return this.callConsultationService(
+            token,
+            request,
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:deleteOoO",
+            DeleteOoOResponse::class.java
+        )
     }
 
     @Throws(ConnectorException::class)
     override fun getOoOList(token: SAMLToken, request: GetOoOListRequest): GetOoOListResponse {
-        return this.callConsultationService(token, request, "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getOoOList", GetOoOListResponse::class.java)
+        return this.callConsultationService(
+            token,
+            request,
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getOoOList",
+            GetOoOListResponse::class.java
+        )
     }
 
     @Throws(ConnectorException::class)
-    override fun getAllEhboxesMessagesList(token: SAMLToken, request: GetAllEhboxesMessagesListRequest): GetAllEhboxesMessagesListResponse {
-        return this.callConsultationService(token, request, "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getAllEhboxesMessagesList", GetAllEhboxesMessagesListResponse::class.java)
+    override fun getAllEhboxesMessagesList(
+        token: SAMLToken,
+        request: GetAllEhboxesMessagesListRequest
+    ): GetAllEhboxesMessagesListResponse {
+        return this.callConsultationService(
+            token,
+            request,
+            "urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:getAllEhboxesMessagesList",
+            GetAllEhboxesMessagesListResponse::class.java
+        )
     }
 
     @Throws(ConnectorException::class)
@@ -169,7 +249,5 @@ class EhboxServiceImpl(val replyValidator: EhboxReplyValidator) : EhboxService {
                 throw ex as ConnectorException
             }
         }
-
     }
-
 }

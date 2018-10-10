@@ -22,6 +22,7 @@ package org.taktik.freehealth.middleware.web.controllers
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -33,42 +34,67 @@ import java.util.*
 @RequestMapping("/genins")
 class GenInsController(val genInsService: GenInsService) {
     @GetMapping("/{ssin}")
-    fun getGeneralInsurability(@PathVariable ssin: String, @RequestParam tokenId: UUID, @RequestParam keystoreId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam(required = false) hcpQuality: String = "doctor", @RequestParam(required = false) date: Long?, @RequestParam(required = false) endDate: Long?, @RequestParam(required = false) hospitalized: Boolean?): InsurabilityInfoDto {
+    fun getGeneralInsurability(
+        @PathVariable ssin: String,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpName: String,
+        @RequestParam(required = false) hcpQuality: String?,
+        @RequestParam(required = false) date: Long?,
+        @RequestParam(required = false) endDate: Long?,
+        @RequestParam(required = false) hospitalized: Boolean?
+    ): InsurabilityInfoDto {
         val startDate: Date = date?.let { Date(date) } ?: Date()
-        return genInsService.getGeneralInsurabity(
-                keystoreId = keystoreId,
-                tokenId = tokenId,
-                hcpQuality = hcpQuality,
-                hcpNihii = hcpNihii,
-                hcpSsin = hcpSsin,
-                hcpName = hcpName,
-                passPhrase = passPhrase,
-                patientSsin = ssin,
-                io = null,
-                ioMembership = null,
-                startDate = startDate,
-                endDate = endDate?.let { Date(it) } ?: startDate,
-                hospitalized = hospitalized ?: false
-        )
+        return genInsService.getGeneralInsurabity(keystoreId = keystoreId,
+                                                  tokenId = tokenId,
+                                                  hcpQuality = hcpQuality ?: "doctor",
+                                                  hcpNihii = hcpNihii,
+                                                  hcpSsin = hcpSsin,
+                                                  hcpName = hcpName,
+                                                  passPhrase = passPhrase,
+                                                  patientSsin = ssin,
+                                                  io = null,
+                                                  ioMembership = null,
+                                                  startDate = startDate,
+                                                  endDate = endDate?.let { Date(it) } ?: startDate,
+                                                  hospitalized = hospitalized ?: false)
     }
 
     @GetMapping("/{io}/{ioMembership}")
-    fun getGeneralInsurabilityByMembership(@PathVariable io: String, @PathVariable ioMembership: String, @RequestParam tokenId: UUID, @RequestParam keystoreId: UUID, @RequestParam passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam(required = false) hcpQuality: String = "doctor", @RequestParam(required = false) date: Long?, @RequestParam(required = false) endDate: Long?, @RequestParam(required = false) hospitalized: Boolean?): InsurabilityInfoDto {
+    fun getGeneralInsurabilityByMembership(
+        @PathVariable io: String,
+        @PathVariable ioMembership: String,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpName: String,
+        @RequestParam(
+                    required = false
+                ) hcpQuality: String?,
+        @RequestParam(required = false) date: Long?,
+        @RequestParam(required = false) endDate: Long?,
+        @RequestParam(
+                    required = false
+                ) hospitalized: Boolean?
+    ): InsurabilityInfoDto {
         val startDate: Date = date?.let { Date(date) } ?: Date()
-        return genInsService.getGeneralInsurabity(
-                keystoreId = keystoreId,
-                tokenId = tokenId,
-                hcpQuality = hcpQuality,
-                hcpNihii = hcpNihii,
-                hcpSsin = hcpSsin,
-                hcpName = hcpName,
-                passPhrase = passPhrase,
-                patientSsin = null,
-                io = io,
-                ioMembership = ioMembership,
-                startDate = startDate,
-                endDate = endDate?.let { Date(it) } ?: startDate,
-                hospitalized = hospitalized ?: false
-        )
+        return genInsService.getGeneralInsurabity(keystoreId = keystoreId,
+                                                  tokenId = tokenId,
+                                                  hcpQuality = hcpQuality ?: "doctor",
+                                                  hcpNihii = hcpNihii,
+                                                  hcpSsin = hcpSsin,
+                                                  hcpName = hcpName,
+                                                  passPhrase = passPhrase,
+                                                  patientSsin = null,
+                                                  io = io,
+                                                  ioMembership = ioMembership,
+                                                  startDate = startDate,
+                                                  endDate = endDate?.let { Date(it) } ?: startDate,
+                                                  hospitalized = hospitalized ?: false)
     }
 }

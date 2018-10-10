@@ -22,7 +22,6 @@ package org.taktik.connector.business.addressbook.service
 
 import org.taktik.connector.business.common.util.HandlerChainUtil
 import org.taktik.connector.technical.config.ConfigFactory
-import org.taktik.connector.technical.config.Configuration
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.ws.domain.GenericRequest
@@ -31,7 +30,8 @@ import org.taktik.connector.technical.ws.domain.TokenType
 class TokenServiceFactory private constructor() {
 
     init {
-        throw UnsupportedOperationException("This factory should never be instantiated, only its static methods should be used")
+        throw UnsupportedOperationException(
+            "This factory should never be instantiated, only its static methods should be used")
     }
 
     companion object {
@@ -40,10 +40,20 @@ class TokenServiceFactory private constructor() {
         @Throws(TechnicalConnectorException::class)
         fun getService(token: SAMLToken): GenericRequest {
             val genReq = GenericRequest()
-            genReq.setEndpoint(config.getProperty("endpoint.addressbook", "\$uddi{uddi:ehealth-fgov-be:business:addressbook:v1}"))
+            genReq.setEndpoint(
+                config.getProperty(
+                    "endpoint.addressbook",
+                    "\$uddi{uddi:ehealth-fgov-be:business:addressbook:v1}"
+                )
+            )
             genReq.setCredential(token, TokenType.SAML)
-            genReq.setDefaultHandlerChain()
-            genReq.setHandlerChain(HandlerChainUtil.buildChainWithValidator("validation.incoming.message.addressbook", "/XSD/ehealth-addressbook/XSD/ehealth-addressbook-protocol-1_1.xsd"))
+            genReq.addDefaulHandlerChain()
+            genReq.addHandlerChain(
+                HandlerChainUtil.buildChainWithValidator(
+                    "validation.incoming.message.addressbook",
+                    "/XSD/ehealth-addressbook/XSD/ehealth-addressbook-protocol-1_1.xsd"
+                )
+            )
             return genReq
         }
     }

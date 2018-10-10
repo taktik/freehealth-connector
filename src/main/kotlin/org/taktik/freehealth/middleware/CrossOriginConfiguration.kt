@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.cors.CorsConfiguration
@@ -31,7 +32,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 @Configuration
 class CrossOriginConfiguration {
-
     @Bean
     fun corsFilter(): CorsFilter {
         val source = UrlBasedCorsConfigurationSource()
@@ -39,7 +39,6 @@ class CrossOriginConfiguration {
         config.allowCredentials = true
         config.addAllowedOrigin("*")
         config.addAllowedHeader("*")
-        config.addAllowedMethod("OPTIONS")
         config.addAllowedMethod("HEAD")
         config.addAllowedMethod("GET")
         config.addAllowedMethod("PUT")
@@ -51,16 +50,9 @@ class CrossOriginConfiguration {
     }
 
     @Bean
-    fun corsConfigurer(): WebMvcConfigurer {
-        return object : WebMvcConfigurerAdapter() {
-            override fun addCorsMappings(registry: CorsRegistry) {
-                registry
-                        .addMapping("/**")
-                        .allowCredentials(true)
-                        .allowedOrigins("*")
-                        .allowedMethods("*")
-            }
-        }
+    fun registerCorsFilter(filter: CorsFilter): FilterRegistrationBean {
+        val reg = FilterRegistrationBean(filter)
+        reg.order = 4
+        return reg
     }
-
 }

@@ -4,11 +4,16 @@ import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.Configuration;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
+import org.taktik.connector.technical.exception.UnsealConnectorException;
 import org.taktik.connector.technical.service.etee.Crypto;
+import org.taktik.connector.technical.service.etee.domain.EncryptionToken;
+import org.taktik.connector.technical.service.kgss.domain.KeyResult;
 import org.taktik.connector.technical.utils.ConnectorCryptoUtils;
 import java.security.Key;
 import java.text.MessageFormat;
+import java.util.Set;
 import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 import org.bouncycastle.util.encoders.Base64;
@@ -27,6 +32,7 @@ public abstract class AbstractCrypto implements Crypto {
       return ConnectorCryptoUtils.decrypt(symmKey, "DESede", objectToUnseal);
    }
 
+   @Deprecated
    public Key generateSecretKey() throws TechnicalConnectorException {
       TechnicalConnectorExceptionValues errorValue = TechnicalConnectorExceptionValues.ERROR_CRYPTO;
       String param = "Could not generate secret key (SymmKey)";
@@ -47,6 +53,7 @@ public abstract class AbstractCrypto implements Crypto {
       }
    }
 
+   @Deprecated
    public Key getSymmKey() {
       if (this.symmKey == null) {
          try {
@@ -59,4 +66,5 @@ public abstract class AbstractCrypto implements Crypto {
 
       return this.symmKey;
    }
+
 }

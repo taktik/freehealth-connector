@@ -44,24 +44,9 @@ public final class KeyDepotManagerImpl implements KeyDepotManager, SessionServic
       return KeyDepotManagerImpl.KeyDepotManagerImplSingleton.INSTANCE.getKeyDepotManager();
    }
 
-   public EncryptionToken getHolderOfKeyETK() throws TechnicalConnectorException {
-      return this.getETK(KeyDepotManager.EncryptionTokenType.HOLDER_OF_KEY);
-   }
-
-   public EncryptionToken getEncryptionETK() throws TechnicalConnectorException {
-      return this.getETK(KeyDepotManager.EncryptionTokenType.ENCRYPTION);
-   }
-
-   public EncryptionToken getETK(KeyDepotManager.EncryptionTokenType type) throws TechnicalConnectorException {
-      SessionItem session = Session.getInstance().getSession();
-      switch(type) {
-      case ENCRYPTION:
-         return this.getEncryptionToken(session.getEncryptionCredential());
-      case HOLDER_OF_KEY:
-         return this.getEncryptionToken(session.getHolderOfKeyCredential());
-      default:
-         throw new IllegalArgumentException("Unsupported EncryptionTokenType.");
-      }
+   @Override
+   public EncryptionToken getETK(Credential cred) throws TechnicalConnectorException {
+      return this.getEncryptionToken(cred);
    }
 
    private EncryptionToken getEncryptionToken(Credential cred) throws TechnicalConnectorException {
@@ -71,10 +56,10 @@ public final class KeyDepotManagerImpl implements KeyDepotManager, SessionServic
             this.cache.put(cert, this.getEtkBasedOnX509(cert));
          }
 
-         return (EncryptionToken)this.cache.get(cert);
+         return this.cache.get(cert);
       } else {
          LOG.error(TechnicalConnectorExceptionValues.NO_VALID_SESSION_WITH_ENCRYPTION.getMessage());
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.NO_VALID_SESSION_WITH_ENCRYPTION, new Object[0]);
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.NO_VALID_SESSION_WITH_ENCRYPTION);
       }
    }
 
@@ -102,7 +87,7 @@ public final class KeyDepotManagerImpl implements KeyDepotManager, SessionServic
          LOG.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.getMessage());
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, new Object[0]);
       } else {
-         return (EncryptionToken)etkSet.iterator().next();
+         return etkSet.iterator().next();
       }
    }
 
@@ -125,11 +110,6 @@ public final class KeyDepotManagerImpl implements KeyDepotManager, SessionServic
       }
 
       return result;
-   }
-
-   public void setKeyDepotService(KeyDepotService service) {
-      this.service = service;
-      this.flushCache();
    }
 
    public void flushCache() {

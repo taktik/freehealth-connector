@@ -20,18 +20,17 @@
 
 package org.taktik.freehealth.middleware.dto.common
 
-import org.taktik.freehealth.middleware.domain.SigningValue
+import org.taktik.freehealth.middleware.domain.common.SigningValue
 import java.io.Serializable
 
 /**
  * Created by aduchate on 8/11/13, 15:53
  */
 class Document(
-        val title: String? = null,
-        val content: ByteArray? = null,
-        val textContent: String? = null,
-        val filename: String? = null,
-        val mimeType: String? = null,
-        val signing: SigningValue? = null
-) : Serializable {
-}
+    val title: String? = null,
+    val content: ByteArray? = null,
+    val textContent: String? = null,
+    val filename: String? = null,
+    val mimeType: String? = null,
+    val signing: SigningValue? = null
+) : Serializable

@@ -12,8 +12,10 @@ import java.util.Date
  * Time: 07:55
  * To change this template use File | Settings | File Templates.
  */
-class DmgNotification(complete: Boolean) : DmgMessage(complete = complete), Serializable {
-	var hcParty: HcpartyType? = null
-	var payment: Boolean? = null
-	var from: Date? = null
+class DmgNotification(complete: Boolean?) : DmgMessage(complete = complete), Serializable {
+    constructor() : this(null)
+
+    var hcParty: HcpartyType? = null
+    var payment: Boolean? = null
+    var from: Date? = null
 }

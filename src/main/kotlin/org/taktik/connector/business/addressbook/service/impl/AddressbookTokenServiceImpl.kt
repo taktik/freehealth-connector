@@ -28,7 +28,6 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.validator.EhealthReplyValidator
 import org.taktik.connector.technical.validator.SessionValidator
 import org.taktik.connector.technical.ws.ServiceFactory
-import org.taktik.connector.technical.ws.domain.GenericRequest
 import be.fgov.ehealth.addressbook.protocol.v1.GetOrganizationContactInfoRequest
 import be.fgov.ehealth.addressbook.protocol.v1.GetOrganizationContactInfoResponse
 import be.fgov.ehealth.addressbook.protocol.v1.GetProfessionalContactInfoRequest
@@ -42,33 +41,45 @@ import be.fgov.ehealth.commons.protocol.v2.StatusResponseType
 import java.util.HashMap
 import javax.xml.soap.SOAPException
 
-class AddressbookTokenServiceImpl @Throws(TechnicalConnectorException::class)
-constructor(private val sessionValidator: SessionValidator, private val ehealthReplyValidator: EhealthReplyValidator) : AddressbookTokenService {
+class AddressbookTokenServiceImpl @Throws(TechnicalConnectorException::class) constructor(
+    private val ehealthReplyValidator: EhealthReplyValidator
+) : AddressbookTokenService {
 
     @Throws(TechnicalConnectorException::class)
-    override fun getOrganizationContactInfo(token: SAMLToken, request: GetOrganizationContactInfoRequest): GetOrganizationContactInfoResponse {
+    override fun getOrganizationContactInfo(
+        token: SAMLToken,
+        request: GetOrganizationContactInfoRequest
+    ): GetOrganizationContactInfoResponse {
         return this.invoke(token, request, GetOrganizationContactInfoResponse::class.java)
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getProfessionalContactInfo(token: SAMLToken, request: GetProfessionalContactInfoRequest): GetProfessionalContactInfoResponse {
+    override fun getProfessionalContactInfo(
+        token: SAMLToken,
+        request: GetProfessionalContactInfoRequest
+    ): GetProfessionalContactInfoResponse {
         return this.invoke(token, request, GetProfessionalContactInfoResponse::class.java)
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun searchOrganizations(token: SAMLToken, request: SearchOrganizationsRequest): SearchOrganizationsResponse {
+    override fun searchOrganizations(
+        token: SAMLToken,
+        request: SearchOrganizationsRequest
+    ): SearchOrganizationsResponse {
         return this.invoke(token, request, SearchOrganizationsResponse::class.java)
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun searchProfessionals(token: SAMLToken, request: SearchProfessionalsRequest): SearchProfessionalsResponse {
+    override fun searchProfessionals(
+        token: SAMLToken,
+        request: SearchProfessionalsRequest
+    ): SearchProfessionalsResponse {
         return this.invoke(token, request, SearchProfessionalsResponse::class.java)
     }
 
     @Throws(TechnicalConnectorException::class)
     private operator fun <T : StatusResponseType> invoke(token: SAMLToken, request: RequestType, clazz: Class<T>): T {
         try {
-            this.sessionValidator.validateToken(token)
             val service = TokenServiceFactory.getService(token).apply {
                 setPayload(request)
                 setSoapAction(soapActions[clazz])
@@ -79,17 +90,28 @@ constructor(private val sessionValidator: SessionValidator, private val ehealthR
         } catch (ex: SOAPException) {
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
         }
-
     }
 
     companion object {
         private val soapActions = HashMap<Class<out StatusResponseType>, String>()
 
         init {
-            soapActions.put(GetProfessionalContactInfoResponse::class.java, "urn:be:fgov:ehealth:addressbook:protocol:v1:getProfessionalContactInfo")
-            soapActions.put(GetOrganizationContactInfoResponse::class.java, "urn:be:fgov:ehealth:addressbook:protocol:v1:getOrganizationContactInfo")
-            soapActions.put(SearchProfessionalsResponse::class.java, "urn:be:fgov:ehealth:addressbook:protocol:v1:searchProfessionals")
-            soapActions.put(SearchOrganizationsResponse::class.java, "urn:be:fgov:ehealth:addressbook:protocol:v1:searchOrganizations")
+            soapActions.put(
+                GetProfessionalContactInfoResponse::class.java,
+                "urn:be:fgov:ehealth:addressbook:protocol:v1:getProfessionalContactInfo"
+            )
+            soapActions.put(
+                GetOrganizationContactInfoResponse::class.java,
+                "urn:be:fgov:ehealth:addressbook:protocol:v1:getOrganizationContactInfo"
+            )
+            soapActions.put(
+                SearchProfessionalsResponse::class.java,
+                "urn:be:fgov:ehealth:addressbook:protocol:v1:searchProfessionals"
+            )
+            soapActions.put(
+                SearchOrganizationsResponse::class.java,
+                "urn:be:fgov:ehealth:addressbook:protocol:v1:searchOrganizations"
+            )
         }
     }
 }

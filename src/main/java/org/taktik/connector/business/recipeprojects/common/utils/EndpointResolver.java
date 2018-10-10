@@ -16,7 +16,7 @@ public class EndpointResolver {
 
 	}
 
-	public static String getEndpointUrlString(String endpointName) throws IntegrationModuleException {
+	public static String  getEndpointUrlString(String endpointName) throws IntegrationModuleException {
 		if (StringUtils.equals(TipSystemServiceImpl.ENDPOINT_NAME, endpointName)) {
 			String endpoint = null;
 			if (PropertyHandler.getInstance().hasProperty("tipsystem.id")) {

@@ -20,18 +20,17 @@
 
 package org.taktik.freehealth.middleware.dto.recipe
 
-import org.taktik.freehealth.middleware.domain.Medication
-import org.taktik.freehealth.middleware.domain.Patient
+import org.taktik.freehealth.middleware.domain.recipe.Medication
+import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.dto.HealthcareParty
-import java.util.*
 
 class PrescriptionRequest(
-        var patient: Patient? = null,
-        var hcp: HealthcareParty? = null,
-        var feedback: Boolean? = null,
-        var medications: List<Medication>? = null,
-        var prescriptionType: String? = null,
-        var notification: String? = null,
-        var executorId: String? = null,
-        var deliveryDate: Date? = null
+    var patient: Patient? = null,
+    var hcp: HealthcareParty? = null,
+    var feedback: Boolean? = null,
+    var medications: List<Medication>? = null,
+    var prescriptionType: String? = null,
+    var notification: String? = null,
+    var executorId: String? = null,
+    var deliveryDate: Long? = null //yyyyMMdd
 )

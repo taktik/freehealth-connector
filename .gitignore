@@ -2,4 +2,11 @@ src/test/resources/org/taktik/freehealth/middleware/mycarenet.license
 *.acc-p12
 test.properties
 .gradle
+.idea
+*.iml
 build
+org.taktik.connector.technical.properties
+out/production/classes/be/apb/gfddpp/assuralia/package-info.class
+out/production/classes/be/apb/gfddpp/assuralia/ObjectFactory.class
+out/production/classes/be/apb/gfddpp/assuralia/AssuraliaRequestParameters.class
+out/

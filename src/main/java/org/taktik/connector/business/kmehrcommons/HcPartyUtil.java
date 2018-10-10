@@ -175,24 +175,6 @@ public final class HcPartyUtil {
       }
    }
 
-   public static String createKmehrIdString(String projectName, String kmehrIdSuffix) throws TechnicalConnectorException {
-      String tempKmehrIdSuffix = kmehrIdSuffix;
-      if (kmehrIdSuffix == null) {
-         tempKmehrIdSuffix = createKmehrIdSuffix();
-      }
-
-      return retrieveMainAuthorId(projectName) + "." + tempKmehrIdSuffix;
-   }
-
-   public static String createKmehrIdString(String projectName) throws TechnicalConnectorException {
-      return createKmehrIdString(projectName, (String)null);
-   }
-
-   public static String retrieveMainAuthorId(String projectName) throws TechnicalConnectorException {
-      String finalProjectName = determineProjectNameToUse(projectName);
-      String mainAuthorIdProperty = "kmehr." + finalProjectName + ".identifier.id.idhcparty.value";
-      return ConfigFactory.getConfigValidatorFor(mainAuthorIdProperty).getProperty(mainAuthorIdProperty);
-   }
 
    /** @deprecated */
    @Deprecated
@@ -203,15 +185,7 @@ public final class HcPartyUtil {
    public static String createKmehrIdSuffix() throws TechnicalConnectorException {
       return IdGeneratorFactory.getIdGenerator("kmehr").generateId();
    }
-
-   public static IDKMEHR createKmehrId(String projectName, String kmehrIdSuffix) throws TechnicalConnectorException {
-      IDKMEHR id = new IDKMEHR();
-      id.setS(IDKMEHRschemes.ID_KMEHR);
-      id.setSV("1.0");
-      id.setValue(createKmehrIdString(projectName, kmehrIdSuffix));
-      return id;
-   }
-
+   
    public static IDHCPARTY createInssId(String insz) {
       return buildId("1.0", insz, IDHCPARTYschemes.INSS);
    }
@@ -270,68 +244,10 @@ public final class HcPartyUtil {
       return cd;
    }
 
-   public static CDHCPARTY buildCd(String sv, String value, CDHCPARTYschemes scheme, String sl, String dn, String l) {
-      CDHCPARTY cd = new CDHCPARTY();
-      cd.setS(scheme);
-      cd.setSV(sv);
-      cd.setSL(sl);
-      cd.setValue(value);
-      cd.setDN(dn);
-      cd.setL(l);
-      return cd;
-   }
-
    public static List<HcpartyType> createAuthorHcParties(String projectName) throws TechnicalConnectorException {
       String finalProjectName = determineProjectNameToUse(projectName);
       return buildHcpartiesFromConfig("kmehr." + finalProjectName + ".");
    }
-
-   public static AuthorType createAuthor(String projectName) throws TechnicalConnectorException {
-      AuthorType authorType = new AuthorType();
-      authorType.getHcparties().addAll(createAuthorHcParties(projectName));
-      return authorType;
-   }
-
-	public static void addSecurityTags(AuthorType author) throws TechnicalConnectorException {
-
-		for (HcpartyType party : author.getHcparties()) {
-			boolean found = false;
-
-			for (CDHCPARTY partyType : party.getCds()) {
-				if (partyType.getValue().equalsIgnoreCase(getAuthorKmehrQuality())) {
-					found = true;
-				}
-			}
-
-			if (found) {
-				addEncryptionActorForNihiiOrNiss(party);
-			}
-		}
-	}
-
-	private static void addEncryptionActorForNihiiOrNiss(HcpartyType hcParty) throws TechnicalConnectorException {
-		Id idBuilder = (new Id()).s(IDHCPARTYschemes.ID_ENCRYPTION_ACTOR).sv("1.0");
-		Cd cdBuilder = (new Cd()).s(CDHCPARTYschemes.CD_ENCRYPTION_ACTOR).sv("1.0");
-		if (getNihiiFromSession() == null) {
-			idBuilder.value(SessionUtil.getNiss());
-			cdBuilder.value(IdentifierType.SSIN.getType(48));
-		} else {
-			idBuilder.value(getNihiiFromSession());
-			cdBuilder.value(IdentifierType.NIHII.getType(48));
-		}
-
-		hcParty.getIds().add(idBuilder.build());
-		hcParty.getCds().add(cdBuilder.build());
-	}
-
-	private static String getNihiiFromSession() {
-		try {
-			return SessionUtil.getNihii();
-		} catch (TechnicalConnectorException var1) {
-			LOG.debug("Unable to obtain nihii. Reason: " + var1.getMessage(), var1);
-			return null;
-		}
-	}
 
 	private static String determineProjectNameToUse(String projectName) throws TechnicalConnectorException {
       Configuration config = ConfigFactory.getConfigValidator().getConfig();

@@ -23,4 +23,4 @@ package org.taktik.freehealth.middleware.dto
 import java.io.Serializable
 import java.util.UUID
 
-class UUIDType(val uuid:UUID? = null) : Serializable
+class UUIDType(val uuid: UUID? = null) : Serializable
