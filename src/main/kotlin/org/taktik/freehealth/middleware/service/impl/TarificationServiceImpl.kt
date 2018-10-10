@@ -1,11 +1,6 @@
 package org.taktik.freehealth.middleware.service.impl
 
-import be.fgov.ehealth.messageservices.core.v1.PatientType
-import be.fgov.ehealth.messageservices.core.v1.RequestType
-import be.fgov.ehealth.messageservices.core.v1.RetrieveTransactionRequest
-import be.fgov.ehealth.messageservices.core.v1.RetrieveTransactionResponse
-import be.fgov.ehealth.messageservices.core.v1.SelectRetrieveTransactionType
-import be.fgov.ehealth.messageservices.core.v1.TransactionType
+import be.fgov.ehealth.messageservices.core.v1.*
 import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationRequest
 import be.fgov.ehealth.standards.kmehr.cd.v1.*
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
@@ -144,6 +139,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             val kmehrRequestMarshaller =
                 MarshallerHelper(RetrieveTransactionRequest::class.java, RetrieveTransactionRequest::class.java)
             val xmlByteArray = kmehrRequestMarshaller.toXMLByteArray(req)
+
             if (xmlByteArray != null && config.getBooleanProperty("mcn.tarification.dumpMessages", false)) {
                 log.debug("RequestObjectBuilder : created blob content: " + String(xmlByteArray))
             }
@@ -220,6 +216,13 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             }
 
             result.errors = errors
+
+            result.retrieveTransactionRequest = xmlByteArray.toString(Charsets.UTF_8);
+
+            val kmehrRequestMarshaller2 =
+                MarshallerHelper(RetrieveTransactionResponse::class.java, RetrieveTransactionResponse::class.java)
+            val xmlByteArray2 = kmehrRequestMarshaller2.toXMLByteArray(commonInputResponse)
+            result.commonInputResponse = xmlByteArray2.toString(Charsets.UTF_8);
 
             return result
         } catch (e: ConnectorException) {
