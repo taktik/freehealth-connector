@@ -36,21 +36,17 @@ public class TarificationConsultationResult implements Serializable {
 	private String CT2;
 	private Date date;
 	private Date deceased;
-	private List<String> codes = new ArrayList<>();
-	private List<MycarenetError> errors = new ArrayList<>();
-	private List<Payment> fees = new ArrayList<>();
-	private List<String> financialContracts = new ArrayList<>();
 	private String firstName;
 	private Date insurancePeriodEnd;
 	private Date insurancePeriodStart;
-	private int justification;
 	private String lastName;
 	private String niss;
-	private List<Payment> patientFees = new ArrayList<>();
 	private Sex sex;
-	private List<Payment> reimbursements = new ArrayList<>();
-	private String retrieveTransactionRequest;
-	private String commonInputResponse;
+
+	private List<MycarenetError> errors = new ArrayList<>();
+	private List<CodeResult> codeResults = new ArrayList<>();
+    private String retrieveTransactionRequest;
+    private String commonInputResponse;
 
 	public void fill(PersonType patient) {
 		this.setLastName(patient.getFamilyname());
@@ -67,6 +63,8 @@ public class TarificationConsultationResult implements Serializable {
 
 	public void fill(List<TransactionType> transactions) {
 		for (TransactionType transaction : transactions) {
+			CodeResult codeResult = new CodeResult();
+			codeResults.add(codeResult);
 			List<ItemType> items = transaction.getItem();
 
 			for (ItemType item : items) {
@@ -76,21 +74,21 @@ public class TarificationConsultationResult implements Serializable {
 					CostType cost = item.getCost();
 					// Fee
 					if (cd.getValue().equals("fee") && cost != null) {
-						fees.add(getPayment(cost));
+						codeResult.setFee(getPayment(cost));
 					}
 					// Reimbursements
 					if (cd.getValue().equals("reimbursement") && cost != null) {
-						reimbursements.add(getPayment(cost));
+						codeResult.setReimbursement(getPayment(cost));
 					}
 					// Patient fees
 					if (cd.getValue().equals("patientfee") && cost != null) {
-						patientFees.add(getPayment(cost));
+						codeResult.setPatientFee(getPayment(cost));
 					}
 					// Financial contracts
 					if (cd.getValue().equals("financialcontract")) {
 						for (ContentType content : item.getContents()) {
 							for (IDKMEHR id : content.getIds()) {
-								financialContracts.add(id.getValue());
+								codeResult.setContract(id.getValue());
 							}
 						}
 					}
@@ -98,7 +96,7 @@ public class TarificationConsultationResult implements Serializable {
 					if (cd.getValue().equals("claim")) {
 						for (ContentType content : item.getContents()) {
 							for (CDCONTENT cdc : content.getCds()) {
-								if (cdc.getS().equals(CDCONTENTschemes.CD_NIHDI)) { codes.add(cdc.getValue()); }
+								if (cdc.getS().equals(CDCONTENTschemes.CD_NIHDI)) { codeResult.setCode(cdc.getValue()); }
 							}
 						}
 					}
@@ -106,7 +104,7 @@ public class TarificationConsultationResult implements Serializable {
 					if (cd.getValue().equals("justification") && item.getContents().size() > 0) {
 						List<CDCONTENT> contentsCds = item.getContents().get(0).getCds();
 						if (contentsCds != null && contentsCds.size() > 0) {
-							if (contentsCds.get(0).getValue().length()>0 && contentsCds.get(0).getValue().matches("[0-9]+")) { justification = Integer.parseInt(contentsCds.get(0).getValue()); }
+							if (contentsCds.get(0).getValue().length()>0 && contentsCds.get(0).getValue().matches("[0-9]+")) { codeResult.setJustification(Integer.parseInt(contentsCds.get(0).getValue())); }
 						}
 					}
 				}
@@ -234,52 +232,12 @@ public class TarificationConsultationResult implements Serializable {
 		return date;
 	}
 
-	public List<Payment> getReimbursements() {
-		return reimbursements;
+	public List<CodeResult> getCodeResults() {
+		return codeResults;
 	}
 
-	public void setReimbursements(List<Payment> reimbursements) {
-		this.reimbursements = reimbursements;
-	}
-
-	public List<Payment> getPatientFees() {
-		return patientFees;
-	}
-
-	public void setPatientFees(List<Payment> patientFees) {
-		this.patientFees = patientFees;
-	}
-
-	public List<String> getFinancialContracts() {
-		return financialContracts;
-	}
-
-	public void setFinancialContracts(List<String> financialContracts) {
-		this.financialContracts = financialContracts;
-	}
-
-	public int getJustification() {
-		return justification;
-	}
-
-	public void setJustification(int justification) {
-		this.justification = justification;
-	}
-
-	public List<Payment> getFees() {
-		return fees;
-	}
-
-	public void setFees(List<Payment> fees) {
-		this.fees = fees;
-	}
-
-	public List<String> getCodes() {
-		return codes;
-	}
-
-	public void setCodes(List<String> codes) {
-		this.codes = codes;
+	public void setCodeResults(List<CodeResult> codeResults) {
+		this.codeResults = codeResults;
 	}
 
 	public String getRetrieveTransactionRequest(){
@@ -319,6 +277,63 @@ public class TarificationConsultationResult implements Serializable {
 			return sex.getCd().getValue().equals(CDSEXvalues.FEMALE) ? Sex.FEMALE : Sex.MALE;
 		} else {
 			return null;
+		}
+	}
+
+	public static class CodeResult implements Serializable {
+		private String code;
+		private Payment fee;
+		private Payment reimbursement;
+		private Payment patientFee;
+		private String contract;
+		private int justification;
+
+		public String getCode() {
+			return code;
+		}
+
+		public void setCode(String code) {
+			this.code = code;
+		}
+
+		public Payment getFee() {
+			return fee;
+		}
+
+		public void setFee(Payment fee) {
+			this.fee = fee;
+		}
+
+		public Payment getReimbursement() {
+			return reimbursement;
+		}
+
+		public void setReimbursement(Payment reimbursement) {
+			this.reimbursement = reimbursement;
+		}
+
+		public Payment getPatientFee() {
+			return patientFee;
+		}
+
+		public void setPatientFee(Payment patientFee) {
+			this.patientFee = patientFee;
+		}
+
+		public String getContract() {
+			return contract;
+		}
+
+		public void setContract(String contract) {
+			this.contract = contract;
+		}
+
+		public int getJustification() {
+			return justification;
+		}
+
+		public void setJustification(int justification) {
+			this.justification = justification;
 		}
 	}
 
