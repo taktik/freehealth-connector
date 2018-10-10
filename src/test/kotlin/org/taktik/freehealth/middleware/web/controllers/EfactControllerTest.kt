@@ -54,7 +54,7 @@ import kotlin.math.roundToInt
 @Suppress("PrivatePropertyName", "PropertyName")
 abstract class EfactAbstractTest : EhealthTest() {
     // Add the scenario number to this to get a unique ID, then you can run all the tests without having to manually change the unique send number
-    private var sendNumber = 380
+    private var sendNumber = 400
 
     val ssinSender = "62110906574"
     val nihiiSender = 19234011004L
@@ -119,24 +119,24 @@ abstract class EfactAbstractTest : EhealthTest() {
         results["900"] = HashMap()
 
         //Complete this matrix below with all tests that have been validated by the IOs
-        results["100"]?.put("01", true); results["300"]?.put("01", true); results["500"]?.put("01", true); results["600"]?.put("01", true); results["900"]?.put("01", true)
-        results["100"]?.put("02", true); results["300"]?.put("02", true); results["500"]?.put("02", true); results["600"]?.put("02", true); results["900"]?.put("02", false)
-        results["100"]?.put("03", true); results["300"]?.put("03", true); results["500"]?.put("03", true); results["600"]?.put("03", true); results["900"]?.put("03", false)
-        results["100"]?.put("04", true); results["300"]?.put("04", true); results["500"]?.put("04", true); results["600"]?.put("04", true); results["900"]?.put("04", false)
-        results["100"]?.put("05", true); results["300"]?.put("05", true); results["500"]?.put("05", true); results["600"]?.put("05", true); results["900"]?.put("05", false)
-        results["100"]?.put("06", true); results["300"]?.put("06", true); results["500"]?.put("06", true); results["600"]?.put("06", true); results["900"]?.put("06", false)
-        results["100"]?.put("07", true); results["300"]?.put("07", true); results["500"]?.put("07", true); results["600"]?.put("07", true); results["900"]?.put("07", true)
-        results["100"]?.put("08", true); results["300"]?.put("08", true); results["500"]?.put("08", true); results["600"]?.put("08", true); results["900"]?.put("08", false)
-        results["100"]?.put("09", true); results["300"]?.put("09", true); results["500"]?.put("09", true); results["600"]?.put("09", true); results["900"]?.put("09", false)
-        results["100"]?.put("10", true); results["300"]?.put("10", true); results["500"]?.put("10", true); results["600"]?.put("10", true); results["900"]?.put("10", false)
-        results["100"]?.put("11", true); results["300"]?.put("11", true); results["500"]?.put("11", true); results["600"]?.put("11", true); results["900"]?.put("11", false)
-        results["100"]?.put("12", true); results["300"]?.put("12", true); results["500"]?.put("12", true); results["600"]?.put("12", true); results["900"]?.put("12", false)
-        results["100"]?.put("13", true); results["300"]?.put("13", true); results["500"]?.put("13", true); results["600"]?.put("13", true); results["900"]?.put("13", false)
-        results["100"]?.put("14", true); results["300"]?.put("14", true); results["500"]?.put("14", true); results["600"]?.put("14", true); results["900"]?.put("14", false)
-        results["100"]?.put("15", true); results["300"]?.put("15", true); results["500"]?.put("15", true); results["600"]?.put("15", true); results["900"]?.put("15", false)
-        results["100"]?.put("16", true); results["300"]?.put("16", true); results["500"]?.put("16", true); results["600"]?.put("16", true); results["900"]?.put("16", false)
-        results["100"]?.put("17", true); results["300"]?.put("17", true); results["500"]?.put("17", true); results["600"]?.put("17", true); results["900"]?.put("17", false)
-        results["100"]?.put("18", true); results["300"]?.put("18", true); results["500"]?.put("18", true); results["600"]?.put("18", true); results["900"]?.put("18", false)
+        results["100"]?.put("01", false); results["300"]?.put("01", false); results["500"]?.put("01", false); results["600"]?.put("01", false); results["900"]?.put("01", true)
+        results["100"]?.put("02", false); results["300"]?.put("02", false); results["500"]?.put("02", false); results["600"]?.put("02", false); results["900"]?.put("02", false)
+        results["100"]?.put("03", false); results["300"]?.put("03", false); results["500"]?.put("03", false); results["600"]?.put("03", false); results["900"]?.put("03", false)
+        results["100"]?.put("04", false); results["300"]?.put("04", false); results["500"]?.put("04", false); results["600"]?.put("04", false); results["900"]?.put("04", false)
+        results["100"]?.put("05", false); results["300"]?.put("05", false); results["500"]?.put("05", false); results["600"]?.put("05", false); results["900"]?.put("05", false)
+        results["100"]?.put("06", false); results["300"]?.put("06", false); results["500"]?.put("06", false); results["600"]?.put("06", false); results["900"]?.put("06", false)
+        results["100"]?.put("07", false); results["300"]?.put("07", false); results["500"]?.put("07", false); results["600"]?.put("07", false); results["900"]?.put("07", true)
+        results["100"]?.put("08", false); results["300"]?.put("08", false); results["500"]?.put("08", false); results["600"]?.put("08", false); results["900"]?.put("08", false)
+        results["100"]?.put("09", false); results["300"]?.put("09", false); results["500"]?.put("09", false); results["600"]?.put("09", false); results["900"]?.put("09", false)
+        results["100"]?.put("10", false); results["300"]?.put("10", false); results["500"]?.put("10", false); results["600"]?.put("10", false); results["900"]?.put("10", false)
+        results["100"]?.put("11", false); results["300"]?.put("11", false); results["500"]?.put("11", false); results["600"]?.put("11", false); results["900"]?.put("11", false)
+        results["100"]?.put("12", false); results["300"]?.put("12", false); results["500"]?.put("12", false); results["600"]?.put("12", false); results["900"]?.put("12", false)
+        results["100"]?.put("13", false); results["300"]?.put("13", false); results["500"]?.put("13", false); results["600"]?.put("13", false); results["900"]?.put("13", false)
+        results["100"]?.put("14", false); results["300"]?.put("14", false); results["500"]?.put("14", false); results["600"]?.put("14", false); results["900"]?.put("14", false)
+        results["100"]?.put("15", false); results["300"]?.put("15", false); results["500"]?.put("15", false); results["600"]?.put("15", false); results["900"]?.put("15", false)
+        results["100"]?.put("16", false); results["300"]?.put("16", false); results["500"]?.put("16", false); results["600"]?.put("16", false); results["900"]?.put("16", false)
+        results["100"]?.put("17", false); results["300"]?.put("17", false); results["500"]?.put("17", false); results["600"]?.put("17", false); results["900"]?.put("17", false)
+        results["100"]?.put("18", false); results["300"]?.put("18", false); results["500"]?.put("18", false); results["600"]?.put("18", false); results["900"]?.put("18", false)
     }
 
     private fun createBatch(invoiceNumber: Long,
@@ -642,6 +642,7 @@ abstract class EfactAbstractTest : EhealthTest() {
                 0, consult.financialContracts.firstOrNull(), DateTime().toDate()).apply {
                 eidItem = EIDItem().apply {
                     readHour = cal.get(Calendar.HOUR_OF_DAY) * 100 + cal.get(Calendar.MINUTE)
+                    //readDate = DateTime().toDate()
                 }
             })
         }
@@ -1348,6 +1349,7 @@ class EfactMessagesLoadTest : EhealthTest() {
                 file += "Number of messages: "+it.body.size+"\n\n\n"
                 it.body.forEach {
                     if (!it.name.equals("tAck")) {
+
                         var ref = it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("204") }
                         println("================= Message =================")
                         println("Name: " + it.name)
@@ -1366,6 +1368,7 @@ class EfactMessagesLoadTest : EhealthTest() {
                         file += "Message Oa reference: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("205") }+"\n"
 
                         it.message!!.forEach {
+
                             if (it.errorDetail != null) {
 
                                 if (it.errorDetail!!.rejectionCode1 != "000000" && it.errorDetail!!.rejectionCode2 != "000000" && it.errorDetail!!.rejectionCode3 != "000000") {
@@ -1376,27 +1379,58 @@ class EfactMessagesLoadTest : EhealthTest() {
                                 if (it.errorDetail!!.rejectionCode1 != "000000") {
                                     println("Rejection Code 1: " + it.errorDetail!!.rejectionCode1)
                                     println("Rejection descr 1: " + it.errorDetail!!.rejectionDescr1)
+                                    println("Rejection zone descr 1: " + it.errorDetail!!.rejectionZoneDescr3)
 
                                     file += "Rejection Code 1: " + it.errorDetail!!.rejectionCode1+"\n"
                                     file += "Rejection descr 1: " + it.errorDetail!!.rejectionDescr1+"\n"
+                                    file += "Rejection zone descr 1: " + it.errorDetail!!.rejectionZoneDescr1+"\n"
+
                                 }
 
                                 if (it.errorDetail!!.rejectionCode2 != "000000") {
                                     println("Rejection Code 2: " + it.errorDetail!!.rejectionCode2)
                                     println("Rejection descr 2: " + it.errorDetail!!.rejectionDescr2)
+                                    println("Rejection zone descr 2: " + it.errorDetail!!.rejectionZoneDescr2)
 
                                     file += "Rejection Code 2: " + it.errorDetail!!.rejectionCode2+"\n"
                                     file += "Rejection descr 2: " + it.errorDetail!!.rejectionDescr2+"\n"
+                                    file += "Rejection zone descr 2: " + it.errorDetail!!.rejectionZoneDescr2+"\n"
                                 }
 
                                 if (it.errorDetail!!.rejectionCode3 != "000000") {
                                     println("Rejection Code 3: " + it.errorDetail!!.rejectionCode3)
                                     println("Rejection descr 3: " + it.errorDetail!!.rejectionDescr3)
+                                    println("Rejection zone  descr 3: " + it.errorDetail!!.rejectionZoneDescr3)
 
                                     file += "Rejection Code 3: " + it.errorDetail!!.rejectionCode3+"\n"
                                     file += "Rejection descr 3: " + it.errorDetail!!.rejectionDescr3+"\n"
+                                    file += "Rejection zone descr 3: " + it.errorDetail!!.rejectionZoneDescr3+"\n"
                                 }
                             }
+
+                            if(it.zones.find{it.zoneDescription!!.zones!!.contains("403")} !== null){
+                                file += "------- 400 ------- "+"\n"
+                                file += "Signe montant demandé compte A: " + it.zones.find{it.zoneDescription!!.zones!!.contains("403")}+"\n"
+                                file += "montant demandé compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("404")}+"\n"
+
+                                file += "Signe montant accepté compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("411")}+"\n"
+                                file += "montant accepté compte A: " + it.zones.find{it.zoneDescription!!.zones!!.contains("412")}+"\n"
+                                file += "Signe montant refusé compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("413")}+"\n"
+                                file += "montant refusé compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("414")}+"\n"
+                                file += "Référence paiement compte A OA ou mutualité: " +it.zones.find{it.zoneDescription!!.zones!!.contains("423")}+"\n"
+
+                            }
+
+                            if(it.zones.find{it.zoneDescription!!.zones!!.contains("503")} !== null){
+                                file += "------- 500 ------- "+"\n"
+                                file += "Signe total montants demandés compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("503")}+"\n"
+                                file += "Total montants demandés compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("504")}+"\n"
+                                file += "Signe total montants acceptés compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("511")}+"\n"
+                                file += "Total montants acceptés compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("512")}+"\n"
+                                file += "Signe total montants refusés compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("513")}+"\n"
+                                file += "Total montants refusés compte A: " + it.zones.find{it.zoneDescription!!.zones!!.contains("514")}+"\n"
+                            }
+
                         }
 
                     } else {
