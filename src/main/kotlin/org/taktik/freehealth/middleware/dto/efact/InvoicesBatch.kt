@@ -30,7 +30,8 @@ import java.util.LinkedList
 class InvoicesBatch {
     var invoicingYear: Int = 0
     var invoicingMonth: Int = 0
-    var batchRef: String? = null //13 alphanumeric internal reference. Typically, we use a base32 representation of the 16 first hex of the UUID id of the Message
+    var fileRef: String? = null //13 alphanumeric internal reference. Typically, we use a base36 representation of the 16 first hex of the UUID id of the Message
+    var batchRef: String? = null //25 alphanumeric internal reference. Typically, we use a base36 representation of the UUID id of the Message
     var ioFederationCode: String? = null //3 digits code of the IO federation
     var uniqueSendNumber : Long? = null //3 digits number for batch (typically the number of the day * 2 + 1 if 306)
     var sender:  InvoiceSender? = null
