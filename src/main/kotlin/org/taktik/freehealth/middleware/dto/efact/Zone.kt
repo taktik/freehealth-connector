@@ -19,8 +19,13 @@
 package org.taktik.freehealth.middleware.dto.efact
 
 import org.taktik.freehealth.middleware.dto.efact.segments.ZoneDescription
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
+@JsonIgnoreProperties("zoneDescription")
 class Zone(var zoneDescription:ZoneDescription? = null, var value: Any? = null) {
+
+    val description: String? = this.zoneDescription?.label;
+
     override fun toString(): String {
         return "${padBlanks(zoneDescription?.zones?.first() ?: "", 4)}[${padBlanks(zoneDescription!!.position.toString(), 3)}]:\t$value"
     }
