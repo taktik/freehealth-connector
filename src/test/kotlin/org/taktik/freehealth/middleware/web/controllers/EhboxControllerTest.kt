@@ -123,7 +123,7 @@ class EhboxControllerTest : EhealthTest(){
     "identifierType": {
       "type": "NIHII"
     },
-    "id": "11478761",
+    "id": "${nihii1!!.substring(0, 8)}",
     "quality": "DOCTOR",
     "applicationId": null,
     "lastName": null,
