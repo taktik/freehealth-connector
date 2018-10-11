@@ -84,7 +84,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                     hcparties.add(HcpartyType().apply {
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = "persphysician" })
+                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
                         firstname = hcpFirstName
                         familyname = hcpLastName
                     })
@@ -127,7 +127,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                 cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv="1.0"; value = "gmdmanager" })
                                 contents.add(ContentType().apply { hcparty = HcpartyType().apply {
                                     ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = g })
-                                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = "persphysician" })
+                                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
                                 }})
                             })
                         }
