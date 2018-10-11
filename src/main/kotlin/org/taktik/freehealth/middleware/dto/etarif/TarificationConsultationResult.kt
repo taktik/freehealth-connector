@@ -11,21 +11,18 @@ class TarificationConsultationResult {
     var CT2: String? = null
     var date: Date? = null
     var deceased: Date? = null
-    var codes: MutableList<String> = ArrayList()
     var errors: MutableList<MycarenetError> = ArrayList()
     var fees: MutableList<Payment> = ArrayList()
-    var financialContracts: MutableList<String> = ArrayList()
     var firstName: String? = null
     var insurancePeriodEnd: Date? = null
     var insurancePeriodStart: Date? = null
-    var justification: Int = 0
     var lastName: String? = null
     var niss: String? = null
-    var patientFees: MutableList<Payment> = ArrayList()
     var sex: Sex? = null
     var reimbursements: MutableList<Payment> = ArrayList()
     var retrieveTransactionRequest:String? = null
     var commonInputResponse:String? = null
+    var codeResults: MutableList<CodeResult> = ArrayList()
 
     enum class Sex : Serializable {
         MALE, FEMALE
@@ -36,4 +33,12 @@ class TarificationConsultationResult {
         var currencyUnit: String? = null
     }
 
+    class CodeResult : Serializable {
+        var code: String? = null
+        var fee: Payment? = null
+        var reimbursement: Payment? = null
+        var patientFee: Payment? = null
+        var contract: String? = null
+        var justification: Int = 0
+    }
 }
