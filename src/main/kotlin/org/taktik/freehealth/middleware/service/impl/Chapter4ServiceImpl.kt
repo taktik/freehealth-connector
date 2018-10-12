@@ -387,6 +387,9 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
             .createMarshaller().marshal(demandMessage, bos)
         val msg = bos.toByteArray()
+
+        log.debug("Agreement request kmehr message:"+msg.toString(Charsets.UTF_8))
+
         val v1Message =
             JAXBContext.newInstance(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createUnmarshaller().unmarshal(ByteArrayInputStream(msg)) as be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 
