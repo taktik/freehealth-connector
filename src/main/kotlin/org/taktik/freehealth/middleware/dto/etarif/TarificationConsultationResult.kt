@@ -12,14 +12,12 @@ class TarificationConsultationResult {
     var date: Date? = null
     var deceased: Date? = null
     var errors: MutableList<MycarenetError> = ArrayList()
-    var fees: MutableList<Payment> = ArrayList()
     var firstName: String? = null
     var insurancePeriodEnd: Date? = null
     var insurancePeriodStart: Date? = null
     var lastName: String? = null
     var niss: String? = null
     var sex: Sex? = null
-    var reimbursements: MutableList<Payment> = ArrayList()
     var retrieveTransactionRequest:String? = null
     var commonInputResponse:String? = null
     var codeResults: MutableList<CodeResult> = ArrayList()
