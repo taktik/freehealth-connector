@@ -76,7 +76,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
         try {
             iv.write200and300(batch.sender!!, batch.numericalRef
-                ?: 0, batch.batchRef!!, if (isTest) 92 else 12, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, isTest)
+                ?: 0, batch.fileRef!!, if (isTest) 92 else 12, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, isTest)
 
             val codes = ArrayList<Long>()
             var amount = 0L

@@ -78,7 +78,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
     @Throws(IOException::class)
     fun write200and300(sender: InvoiceSender,
                        numericalRef: Long,
-                       batchRef: String,
+                       fileRef: String,
                        fileVersion: Int,
                        sendingNumber: Long,
                        invoicingYear: Int,
@@ -115,7 +115,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws300.write("3011", 0)
         ws300.write("302", formattedCreationDate)
         ws300.write("3021", 0)
-        ws300.write("303", batchRef)
+        ws300.write("303", fileRef)
         ws300.write("3031", 0)
         ws300.write("304", if (isTest) 9991999 else 1999)
         ws300.write("3041", 0)
