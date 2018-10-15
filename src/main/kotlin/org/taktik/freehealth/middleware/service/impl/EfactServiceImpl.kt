@@ -110,7 +110,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     recordsCount++
                     for (it in invoice.items) {
                         rn =
-                            iv.writeRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, it)
+                            iv.writeRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, invoice.ioCode!!, it)
 
                         recordsCountPerOA[0]++
                         recordsCount++
@@ -215,7 +215,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val tack = postResponse.getReturn()
         val success = tack.resultMajor != null && tack.resultMajor == "urn:nip:tack:result:major:success"
 
-        return EfactSendResponse(success, inputReference, tack, content)
+        return EfactSendResponse(success, inputReference, tack, content, BelgianInsuranceInvoicingFormatReader("unused").parse(content.reader(), false)!!.map { mapper.map(it, Record::class.java) })
     }
 
 
