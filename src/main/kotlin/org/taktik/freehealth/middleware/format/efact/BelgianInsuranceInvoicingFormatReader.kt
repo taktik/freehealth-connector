@@ -33,6 +33,7 @@ import org.taktik.freehealth.middleware.format.efact.segments.Record90Descriptio
 import org.taktik.freehealth.middleware.format.efact.segments.Segment200Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment300Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment300ErrorDescription
+import org.taktik.freehealth.middleware.format.efact.segments.Segment300StubDescription
 import org.taktik.freehealth.middleware.format.efact.segments.Segment400Record91Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment400Record95Description
 import org.taktik.freehealth.middleware.format.efact.segments.Segment500Record92Description
@@ -68,16 +69,14 @@ class BelgianInsuranceInvoicingFormatReader(private val language: String) {
                     when (recordId) {
                         "00" -> {
                             this.add(Record(Segment200Description, Segment200Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
-                            if (messageType.substring(2, 6) == "0000") {
+                            if (messageType.substring(2, 6) == "0999" || messageType.substring(2, 6) == "0000") {
                                 this.add(Record(Segment300Description, Segment300Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
+                            } else if (messageType.substring(2, 6) == "1000") {
+                                this.add(Record(Segment300StubDescription, Segment300StubDescription.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
                             } else {
                                 this.add(Record(Segment300ErrorDescription, Segment300ErrorDescription.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
                             }
 
-                        }
-                        "93" -> {
-                            this.add(Record(Segment200Description, Segment200Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
-                            this.add(Record(Segment300Description, Segment300Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }))
                         }
                         "10" -> this.add(Record(Record10Description, Record10Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
                         "20" -> this.add(Record(Record20Description, Record20Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (parseErrors) this.errorDetail = readErrorDetails(session, this) })
