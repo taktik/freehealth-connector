@@ -7,6 +7,8 @@ class EfactMessage {
     var id: String? = null
     var name: String? = null
 
+    var commonOutput: CommonOutput? = null
+
     var message: List<Record>? = null
     var xades : String? = null
     var tAck: TAck? = null
