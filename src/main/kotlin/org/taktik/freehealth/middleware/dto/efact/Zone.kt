@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 class Zone(var zoneDescription:ZoneDescription? = null, var value: Any? = null) {
 
     val description: String? = this.zoneDescription?.label;
+    val zone: String? = this.zoneDescription?.zones?.firstOrNull();
 
     override fun toString(): String {
         return "${padBlanks(zoneDescription?.zones?.first() ?: "", 4)}[${padBlanks(zoneDescription!!.position.toString(), 3)}]:\t$value"
