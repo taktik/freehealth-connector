@@ -20,6 +20,7 @@ class TarificationConsultationResult {
     var sex: Sex? = null
     var retrieveTransactionRequest:String? = null
     var commonInputResponse:String? = null
+    var tarificationConsultationResponse:String? = null
     var codeResults: MutableList<CodeResult> = ArrayList()
 
     enum class Sex : Serializable {

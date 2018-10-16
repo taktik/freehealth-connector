@@ -5,6 +5,7 @@ import be.fgov.ehealth.mycarenet.commons.core.v2.IdType
 import be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType
 import be.fgov.ehealth.mycarenet.commons.core.v2.PartyType
 import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationRequest
+import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationResponse
 import be.fgov.ehealth.standards.kmehr.cd.v1.*
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
@@ -243,10 +244,16 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
             result.retrieveTransactionRequest = xmlByteArray.toString(Charsets.UTF_8);
 
-            val kmehrRequestMarshaller2 =
+            val kmehrRequestMarshallerResp =
                 MarshallerHelper(RetrieveTransactionResponse::class.java, RetrieveTransactionResponse::class.java)
-            val xmlByteArray2 = kmehrRequestMarshaller2.toXMLByteArray(commonInputResponse)
-            result.commonInputResponse = xmlByteArray2.toString(Charsets.UTF_8);
+            val xmlByteArrayResp = kmehrRequestMarshallerResp.toXMLByteArray(commonInputResponse)
+            result.commonInputResponse = xmlByteArrayResp.toString(Charsets.UTF_8);
+
+
+            val kmehrRequestMarshallerNIPP =
+                MarshallerHelper(TarificationConsultationResponse::class.java, TarificationConsultationResponse::class.java)
+            val xmlByteArrayNIPP = kmehrRequestMarshallerNIPP.toXMLByteArray(consultTarificationResponse)
+            result.tarificationConsultationResponse = xmlByteArrayNIPP.toString(Charsets.UTF_8);
 
             return result
         } catch (e: ConnectorException) {
