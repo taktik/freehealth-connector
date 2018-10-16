@@ -1,6 +1,8 @@
 package org.taktik.freehealth.middleware.web.controllers
 
+import com.google.gson.Gson
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -9,6 +11,8 @@ import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import java.io.File
@@ -17,6 +21,9 @@ import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import java.util.Calendar
+
+
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
@@ -25,14 +32,20 @@ class Chapter4ControllerTest : EhealthTest() {
     @LocalServerPort
     private val port: Int = 0
 
+    //100 to listOf("60060414864", "60091251857", "89031129009", "60060414864","60060414864","60091251857","60060414864","60060414864"),
+    //300 to listOf("29041126344", "61030223636", "71052406859", "04051321132","93070556427","93070556427","59010619595","59010619595"),
+    //500 to listOf("82091938752", "61011059307", "53091222311", "84062204633","82091938752","82091938752","65082928176","85070555661"),
+    //600 to listOf("62081044135", "86021952150", "78082429203", "29100639804","62062557123","62062557123","34022519970","42000143727"),
+    //900 to listOf("00032212244", "62052926409", "93080715592", "57010116341","00032212244","62052926409","34110509660","57010116341")
     private val nisses = mapOf(
-        100 to listOf("60060414864", "60091251857", "89031129009", "60060414864","60060414864","60091251857","60060414864","60060414864"),
-        300 to listOf("29041126344", "61030223636", "71052406859", "04051321132","93070556427","93070556427","59010619595","59010619595"),
-        500 to listOf("82091938752", "61011059307", "53091222311", "84062204633","82091938752","82091938752","65082928176","85070555661"),
-        600 to listOf("62081044135", "86021952150", "78082429203", "29100639804","62062557123","62062557123","34022519970","42000143727"),
-        900 to listOf("00032212244", "62052926409", "93080715592", "57010116341","00032212244","62052926409","34110509660","57010116341")
+        100 to listOf("80010505329", "57072844360", "89031129009", "68021229115","60060414864","60091251857","60060414864","60060414864"),
+        //300 to listOf("29041126344", "61030223636", "71052406859", "04051321132","93070556427","93070556427","59010619595","59010619595"),
+        500 to listOf("92013131713", "92013120231", "92033110545", "92013119835","82091938752","82091938752","65082928176","85070555661")//,
+        //600 to listOf("62081044135", "86021952150", "78082429203", "29100639804","62062557123","62062557123","34022519970","42000143727"),
+        //900 to listOf("00032212244", "62052926409", "93080715592", "57010116341","00032212244","62052926409","34110509660","57010116341")
     )
-    private fun getNisses(idx: Int) = listOf(nisses[100]!![idx], nisses[300]!![idx], nisses[500]!![idx], nisses[600]!![idx], nisses[900]!![idx])
+    private fun getNisses(idx: Int) = listOf(nisses[100]!![idx], nisses[500]!![idx])
+    //private fun getNisses(idx: Int) = listOf(nisses[100]!![idx], nisses[300]!![idx], nisses[500]!![idx], nisses[600]!![idx], nisses[900]!![idx])
 
     @Autowired
     private val restTemplate: TestRestTemplate? = null
@@ -59,11 +72,21 @@ class Chapter4ControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = Instant.now().toEpochMilli()
 
-        val results = getNisses(0)[1].let {
-            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&passPhrase=$passPhrase"+
-                "&hcpNihii=$nihii1" +
+//        val year = Calendar.getInstance().get(Calendar.YEAR) - 1
+//        val cal = Calendar.getInstance()
+//        cal.set(Calendar.YEAR, year)
+//        cal.set(Calendar.DAY_OF_YEAR, 1)
+//        val start = cal.time.toInstant().toEpochMilli()
+//
+//        cal.set(Calendar.YEAR, year)
+//        cal.set(Calendar.MONTH, 11) // 11 = december
+//        cal.set(Calendar.DAY_OF_MONTH, 31) // new years eve
+
+//        val end = cal.time.toInstant().toEpochMilli()
+
+
+        val results = getNisses(0).map {
+            this.restTemplate.exchange("http://localhost:$port/chap4/consult/$it?hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1"+
                 "&hcpFirstName=$firstName1"+
                 "&hcpLastName=$lastName1"+
@@ -74,12 +97,17 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&CivicsVersion=3"+
                 "&paragraph=5090000"+
                 "&start=$now"+
-                "&end=$now",AgreementResponse::class.java)
+                "&end=$now",
+                HttpMethod.GET,
+                HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),
+                AgreementResponse::class.java)
         }
 
         println("scenario 01 \n====================")
-        Assertions.assertThat(results!!.errors).isNotNull.isNotEmpty
-        Assertions.assertThat(results!!.errors!!.first().cds[0].value).isEqualTo("180")
+
+        results.forEach {
+            assertThat(it!!.body!!.errors!!.size > 0 && it!!.body!!.errors!!.first().cds[0].value == "180")
+        }
     }
 
     /*
@@ -90,16 +118,15 @@ class Chapter4ControllerTest : EhealthTest() {
      */
     @Test
     fun scenario02(){
-        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+
         val now = Instant.now().toEpochMilli()
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+
         val lastYear = Instant.now().minus(365,ChronoUnit.DAYS).toEpochMilli()//DateTime.now().minusYears(1).toInstant()
 
         val civic = "3"
-        val results = getNisses(1)[2].let {
-            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+        val results = getNisses(1).map {
+            this.restTemplate.exchange("http://localhost:$port/chap4/consult/$it?hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -109,15 +136,17 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&patientFirstName=ANTOINE"+
                 "&CivicsVersion=$civic"+
                 "&patientLastName=DUCHATEAU"+
-                "&patientGender=male"
-                ,AgreementResponse::class.java)
+                "&patientGender=male",
+                HttpMethod.GET,
+                HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),
+                AgreementResponse::class.java)
         }
 
         println("scenario 02 \n====================")
-        Assertions.assertThat(results!!.errors).isNull()
-        Assertions.assertThat(results!!.content!!.size).isEqualTo(0)
 
-
+        results.forEach {
+            assertThat(it!!.body!!.errors!!.size == 0 && it!!.body!!.transactions!!.size == 0)
+        }
     }
 
     /*
@@ -129,20 +158,17 @@ class Chapter4ControllerTest : EhealthTest() {
     @Test
     fun scenario03(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val dateStart = Instant.parse("2016-05-01T00:00:00.00Z").toEpochMilli()
-        val dateEnd = Instant.parse("2016-07-31T00:00:00.00Z").toEpochMilli()
+        val dateStart = Instant.parse("2016-03-01T00:00:00.00Z").toEpochMilli()
+        val dateEnd = Instant.parse("2016-06-30T00:00:00.00Z").toEpochMilli()
 
         //4740000 marhce avec ce numero
-        val paragraphDesc = this.restTemplate!!.getForObject("http://localhost:$port/chap4/sam/search/${"2280100"}/${"fr"}", Array<ParagraphPreview>::class.java)
-        val civic = paragraphDesc.first().paragraphVersion
-        val paragraph = paragraphDesc.first().paragraphName
+        //val paragraphDesc = this.restTemplate!!.getForObject("http://localhost:$port/chap4/sam/search/${"2280100"}/${"fr"}", Array<ParagraphPreview>::class.java)
+        //val civic = paragraphDesc.first().paragraphVersion
+        //val paragraph = paragraphDesc.first().paragraphName
 
 
-        val results = getNisses(2)[2].let {
-            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+        val results = getNisses(2).map {
+            this.restTemplate.exchange("http://localhost:$port/chap4/consult/$it?hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -150,18 +176,25 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&patientFirstName=ANTOINE"+
                 "&patientLastName=DUCHATEAU"+
                 "&patientGender=male" +
-                "&paragraph=$paragraph" +
+                //"&paragraph=$paragraph" +
                 "&start=$dateStart" +
-                "&end=$dateEnd"+
-                "&civicsVersion=$civic"
-                ,AgreementResponse::class.java)
+                "&end=$dateEnd"
+                //+ "&civicsVersion=$civic"
+                ,
+                HttpMethod.GET,
+                HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),
+                AgreementResponse::class.java)
         }
 
 
 
         println("scenario 03 \n====================")
-        Assertions.assertThat(results!!.content!!.size).isEqualTo(1)
-        Assertions.assertThat(results!!.warnings!!.first().cds[0].value).isEqualTo("601")
+        results.forEach {
+            assertThat(it!!.body!!.content!!.size == 1 && it!!.body!!.warnings!!.size >= 1 && it!!.body!!.warnings!!.first().cds[0].value == "601")
+        }
+
+        //Assertions.assertThat(results!!.content!!.size).isEqualTo(1)
+        //Assertions.assertThat(results!!.warnings!!.first().cds[0].value).isEqualTo("601")
 
     }
 
@@ -178,11 +211,8 @@ class Chapter4ControllerTest : EhealthTest() {
         val lastYear = Instant.now().minus(365,ChronoUnit.DAYS).toEpochMilli()
 
         val civic = "14"
-        val results = getNisses(3)[2].let {
-            this.restTemplate.getForObject("http://localhost:$port/chap4/consult/$it?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+        val results = getNisses(3).map {
+            this.restTemplate.exchange("http://localhost:$port/chap4/consult/$it?hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -192,14 +222,20 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&patientFirstName=ANTOINE"+
                 "&patientLastName=DUCHATEAU"+
                 "&patientGender=male"+
-                "&civicsVersion=$civic",AgreementResponse::class.java)
+                "&civicsVersion=$civic",
+                HttpMethod.GET,
+                HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),
+                AgreementResponse::class.java)
         }
 
 
 
         println("scenario 04 \n====================")
-        Assertions.assertThat(results!!.errors).isNull()
-        Assertions.assertThat(results!!.content!!.size).isGreaterThan(1)
+        results.forEach {
+            assertThat(it!!.body!!.transactions!!.size > 1)
+        }
+        //        Assertions.assertThat(results!!.errors).isNull()
+//        Assertions.assertThat(results!!.content!!.size).isGreaterThan(1)
 
     }
 
