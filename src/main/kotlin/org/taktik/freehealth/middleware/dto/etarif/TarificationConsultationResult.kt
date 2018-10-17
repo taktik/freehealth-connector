@@ -23,6 +23,7 @@ class TarificationConsultationResult {
     var tarificationConsultationResponse:String? = null
     var tarificationConsultationResponseJSON:String? = null
     var codeResults: MutableList<CodeResult> = ArrayList()
+    var outputReferences: OutputReferences? = null
 
     enum class Sex : Serializable {
         MALE, FEMALE
@@ -40,5 +41,11 @@ class TarificationConsultationResult {
         var patientFee: Payment? = null
         var contract: String? = null
         var justification: Int = 0
+    }
+
+    class OutputReferences : Serializable {
+        var inputReference: String? = null
+        var outputReference: String? = null
+        var nipReference: String? = null
     }
 }

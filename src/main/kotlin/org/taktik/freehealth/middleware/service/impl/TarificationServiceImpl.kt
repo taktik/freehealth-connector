@@ -273,10 +273,23 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 MarshallerHelper(TarificationConsultationResponse::class.java, TarificationConsultationResponse::class.java)
             val xmlByteArrayNIPP = kmehrRequestMarshallerNIPP.toXMLByteArray(consultTarificationResponse);
             result.tarificationConsultationResponse = xmlByteArrayNIPP.toString(Charsets.UTF_8);
-
             val xmlJSONObj = XML.toJSONObject(result.tarificationConsultationResponse);
             val jsonPrettyPrintString = xmlJSONObj.toString(4);
             result.tarificationConsultationResponseJSON = jsonPrettyPrintString;
+
+            // ================================================
+            //  Get the Output references as a JsonObject
+            //  TODO: blind the various get against undefined keys or null etc
+            val references = XML.toJSONObject(result.tarificationConsultationResponse).getJSONObject("ns4:TarificationConsultationResponse").getJSONObject("ns2:Return").getJSONObject("ns2:CommonOutput");
+
+            //  Instantiate a new OutputReferences object
+            val outputReferences = TarificationConsultationResult.OutputReferences()
+            outputReferences.inputReference = references.get("InputReference").toString()
+            outputReferences.outputReference = references.get("OutputReference").toString()
+            outputReferences.nipReference = references.get("NIPReference").toString()
+
+            result.setOutputReferences(outputReferences)
+            // ================================================
 
             return result
         } catch (e: ConnectorException) {

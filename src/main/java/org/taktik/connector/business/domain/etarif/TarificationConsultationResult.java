@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.taktik.connector.business.domain.Error;
 import org.taktik.freehealth.middleware.dto.MycarenetError;
+import springfox.documentation.spring.web.json.Json;
 
 /**
  * Created with IntelliJ IDEA.
@@ -49,6 +50,7 @@ public class TarificationConsultationResult implements Serializable {
     private String commonInputResponse;
     private String tarificationConsultationResponse;
     private String tarificationConsultationResponseJSON;
+    private OutputReferences outputReferences;
 
 	public void fill(PersonType patient) {
 		this.setLastName(patient.getFamilyname());
@@ -274,6 +276,14 @@ public class TarificationConsultationResult implements Serializable {
 		this.tarificationConsultationResponseJSON = tarificationConsultationResponseJSON;
 	}
 
+	public void setOutputReferences(OutputReferences references) {
+		this.outputReferences = references;
+	}
+
+	public OutputReferences getOutputReferences() {
+		return this.outputReferences;
+	}
+
 	private Date asDate(DateTime date) {
 		if (date != null) {
 			return new Date(date.getMillis());
@@ -372,6 +382,11 @@ public class TarificationConsultationResult implements Serializable {
 		}
 	}
 
+	public static class OutputReferences implements Serializable {
+		public String inputReference;
+		public String outputReference;
+		public String nipReference;
+	}
 
 	public enum Sex implements Serializable {
 		MALE, FEMALE
