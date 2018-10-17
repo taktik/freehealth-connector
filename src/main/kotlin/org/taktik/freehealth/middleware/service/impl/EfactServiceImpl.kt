@@ -215,7 +215,8 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val tack = postResponse.getReturn()
         val success = tack.resultMajor != null && tack.resultMajor == "urn:nip:tack:result:major:success"
 
-        return EfactSendResponse(success, inputReference, tack, content, BelgianInsuranceInvoicingFormatReader("unused").parse(content.reader(), false)!!.map { mapper.map(it, Record::class.java) })
+        val records = BelgianInsuranceInvoicingFormatReader("unused").parse(content.reader(), false)!!.map { mapper.map(it, Record::class.java) }
+        return EfactSendResponse(success, inputReference, tack, content, records)
     }
 
 
