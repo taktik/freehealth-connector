@@ -29,6 +29,8 @@ public class DmgConsultation extends DmgMessage implements Serializable {
 
     private Boolean payment;
 
+
+
     public DmgConsultation(boolean complete) {
         super(complete);
     }

@@ -17,6 +17,9 @@ class AgreementResponse : Serializable {
     var errors: Collection<Problem>? = null
     var content: ByteArray? = null
 
+    var requestXML: String? = null
+    var responseXML: String? = null
+
     internal var transactions: MutableList<AgreementTransaction> = ArrayList()
 
     fun addTransaction(t: AgreementTransaction): AgreementTransaction {
