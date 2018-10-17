@@ -71,6 +71,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                               gmdNihii: String?,
                               traineeSupervisorSsin: String?,
                               traineeSupervisorNihii: String?,
+                              traineeSupervisorFirstName: String?,
+                              traineeSupervisorLastName: String?,
                               codes: List<String>): TarificationConsultationResult {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -82,6 +84,16 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             val kmehrUUID = now.toString("YYYYddhhmmssSS")
             val reqId = "$hcpNihii.$kmehrUUID"
 
+            var careProviderFirstName =  hcpFirstName;
+            var careProviderLastName =  hcpLastName;
+
+            traineeSupervisorFirstName?.let {
+                careProviderFirstName =  it;
+            }
+            traineeSupervisorLastName?.let {
+                careProviderLastName =  it;
+            }
+
             val csDT = DateTime(consultationDate.year, consultationDate.monthValue, consultationDate.dayOfMonth, 0, 0)
             val req = RetrieveTransactionRequest().apply {
                 val author = AuthorType().apply {
@@ -89,8 +101,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
                         cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
-                        firstname = hcpFirstName
-                        familyname = hcpLastName
+                        firstname = careProviderFirstName
+                        familyname = careProviderLastName
                     })
                 }
 
@@ -182,7 +194,6 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                         traineeSupervisorNihii?.let {
                             careProviderNihii =  it;
                         }
-
 
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
