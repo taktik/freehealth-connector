@@ -359,6 +359,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         hcpLastName: String,
         passPhrase: String,
         patientSsin: String,
+        patientDateOfBirth: Long,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
         requestType: RequestType,
         civicsVersion: String,
         paragraph: String,
@@ -384,7 +388,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val references = ChapterIVReferences(true)
 
         val demandMessage =
-            getDemandKmehrMessage(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, requestType, references.commonReference!!, civicsVersion, start, end, verses, appendices, ref, decisionReference, ioRequestReference, paragraph)
+            getDemandKmehrMessage(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, patientDateOfBirth, patientFirstName, patientLastName, patientGender, requestType, references.commonReference!!, civicsVersion, start, end, verses, appendices, ref, decisionReference, ioRequestReference, paragraph)
 
         val bos = ByteArrayOutputStream()
         JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
@@ -776,6 +780,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                       hcpFirstName: String,
                                       hcpLastName: String,
                                       patientSsin: String,
+                                      patientDateOfBirth: Long,
+                                      patientFirstName: String,
+                                      patientLastName: String,
+                                      patientGender: String,
                                       requestType: RequestType,
                                       commonInput: String,
                                       civicsVersion: String,
@@ -801,6 +809,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                 ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "1" })
                 this.patient = PersonType().apply {
                     ids.add(IDPATIENT().apply { s = ID_PATIENT; sv = "1.0"; value = patientSsin })
+                    firstnames.add(patientFirstName)
+                    familyname = patientLastName
+                    birthdate = DateType().apply { date = FuzzyValues.getXMLGregorianCalendarFromFuzzyLong(patientDateOfBirth) }
+                    sex = SexType().apply {
+                        cd = CDSEX().apply { s = "CD-SEX"; sv = "1.0"; value = CDSEXvalues.fromValue(patientGender) }
+                    }
                 }
 
                 transactions.add(TransactionType().apply {

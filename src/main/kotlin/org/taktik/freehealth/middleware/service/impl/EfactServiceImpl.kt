@@ -10,7 +10,6 @@ import be.cin.mycarenet.esb.common.v2.OrigineType
 import be.cin.mycarenet.esb.common.v2.PackageType
 import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.GetResponse
-import com.google.gson.Gson
 import ma.glasnost.orika.MapperFacade
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
@@ -28,6 +27,7 @@ import org.taktik.connector.technical.handler.domain.WsAddressingHeader
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorIOUtils
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.dto.efact.CommonOutput
 import org.taktik.freehealth.middleware.dto.efact.EfactMessage
 import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
 import org.taktik.freehealth.middleware.dto.efact.ErrorDetail
@@ -292,6 +292,12 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                 EfactMessage().apply {
                     id = r.detail.id
                     name = r.detail.messageName
+
+                    commonOutput = CommonOutput().apply {
+                        this.inputReference = r.commonOutput.inputReference
+                        this.nipReference = r.commonOutput.nipReference
+                        this.outputReference = r.commonOutput.outputReference
+                    }
                     try {
                         detail =
                             String(ConnectorIOUtils.decompress(IOUtils.toByteArray(r.detail.value.inputStream)), Charsets.UTF_8) //This starts with 92...
