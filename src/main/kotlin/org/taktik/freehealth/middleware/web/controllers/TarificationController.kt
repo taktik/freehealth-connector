@@ -50,8 +50,8 @@ class TarificationController(val tarificationService: TarificationService, val m
         @RequestParam(required = false) date: Long? = null,
         @RequestParam(required = false) gmdNihii: String? = null,
         @RequestParam(required = false) justification: String? = null,
-        @RequestParam(required = false) traineeSsin: String? = null,
-        @RequestParam(required = false) traineeNihii: String? = null,
+        @RequestParam(required = false) traineeSupervisorSsin: String? = null,
+        @RequestParam(required = false) traineeSupervisorNihii: String? = null,
         @RequestBody codes: List<String>
     ) = try { tarificationService.consultTarif(
         keystoreId = keystoreId,
@@ -65,8 +65,8 @@ class TarificationController(val tarificationService: TarificationService, val m
         consultationDate = date?.let { LocalDateTime.of((date / 10000).toInt(), ((date / 100).toInt() % 100), (date % 100).toInt(), 0, 0)} ?: LocalDateTime.now(),
         justification = justification,
         gmdNihii = gmdNihii,
-        traineeSsin = traineeSsin,
-        traineeNihii = traineeNihii,
+        traineeSupervisorSsin = traineeSupervisorSsin,
+        traineeSupervisorNihii = traineeSupervisorNihii,
         codes = codes).let { mapper.map(it, TarificationConsultationResult::class.java) } } catch (e : Exception) {
         TarificationConsultationResult().apply { errors.add(MycarenetError(
             code = "999999",

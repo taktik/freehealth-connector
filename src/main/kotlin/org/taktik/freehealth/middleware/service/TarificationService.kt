@@ -16,7 +16,7 @@ interface TarificationService {
                      consultationDate: LocalDateTime,
                      justification: String?,
                      gmdNihii: String?,
-                     traineeSsin: String?,
-                     traineeNihii: String?,
+                     traineeSupervisorSsin: String?,
+                     traineeSupervisorNihii: String?,
                      codes: List<String>): TarificationConsultationResult
 }

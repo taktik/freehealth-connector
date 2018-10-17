@@ -69,8 +69,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                               consultationDate: LocalDateTime,
                               justification: String?,
                               gmdNihii: String?,
-                              traineeSsin: String?,
-                              traineeNihii: String?,
+                              traineeSupervisorSsin: String?,
+                              traineeSupervisorNihii: String?,
                               codes: List<String>): TarificationConsultationResult {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -172,31 +172,43 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                 this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
                             }
                         }
+
+                        var careProviderSsin =  hcpSsin;
+                        var careProviderNihii =  hcpNihii;
+
+                        traineeSupervisorSsin?.let {
+                            careProviderSsin =  it;
+                        }
+                        traineeSupervisorNihii?.let {
+                            careProviderNihii =  it;
+                        }
+
+
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
                                 this.quality = "doctor"
                                 this.value =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                        .apply { this.value = hcpNihii }
+                                        .apply { this.value = careProviderNihii }
                             }
                             this.physicalPerson = be.fgov.ehealth.mycarenet.commons.core.v2.IdType().apply {
                                 this.ssin =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                        .apply { this.value = hcpSsin }
+                                        .apply { this.value = careProviderSsin }
                             }
                         }
-                        traineeSsin?.let {
+                        traineeSupervisorSsin?.let {
                             this.sender = PartyType().apply {
                                 physicalPerson = IdType().apply {
                                     this.ssin =
-                                        be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString().apply { this.value = it }
-                                    traineeNihii?.let {
+                                        be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString().apply { this.value = hcpSsin }
+                                    careProviderNihii?.let {
                                         this.nihii =
                                             NihiiType().apply {
                                                 this.quality = "doctor"
                                                 this.value =
                                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                                        .apply { this.value = it }
+                                                        .apply { this.value = hcpNihii }
                                             }
                                     }
                                 }
