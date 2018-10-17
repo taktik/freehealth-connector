@@ -1,66 +1,30 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import be.cin.mycarenet.esb.common.v2.*
 import be.cin.mycarenet.esb.common.v2.CareProviderType
-import be.cin.mycarenet.esb.common.v2.CommonInput
 import be.cin.mycarenet.esb.common.v2.IdType
 import be.cin.mycarenet.esb.common.v2.LicenseType
 import be.cin.mycarenet.esb.common.v2.NihiiType
-import be.cin.mycarenet.esb.common.v2.OrigineType
 import be.cin.mycarenet.esb.common.v2.PackageType
 import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Query
 import be.cin.nip.sync.reg.v1.RegistrationStatus
-import be.fgov.ehealth.globalmedicalfile.core.v1.BlobType
-import be.fgov.ehealth.globalmedicalfile.core.v1.CareReceiverIdType
-import be.fgov.ehealth.globalmedicalfile.core.v1.CommonInputType
-import be.fgov.ehealth.globalmedicalfile.core.v1.OriginType
+import be.fgov.ehealth.globalmedicalfile.core.v1.*
 import be.fgov.ehealth.globalmedicalfile.core.v1.RoutingType
 import be.fgov.ehealth.globalmedicalfile.protocol.v1.ConsultGlobalMedicalFileRequest
 import be.fgov.ehealth.globalmedicalfile.protocol.v1.NotifyGlobalMedicalFileRequest
 import be.fgov.ehealth.globalmedicalfile.protocol.v1.NotifyGlobalMedicalFileResponse
 import be.fgov.ehealth.globalmedicalfile.protocol.v1.SendRequestType
-import be.fgov.ehealth.messageservices.core.v1.PatientType
+import be.fgov.ehealth.messageservices.core.v1.*
 import be.fgov.ehealth.messageservices.core.v1.RequestType
-import be.fgov.ehealth.messageservices.core.v1.RetrieveTransactionRequest
-import be.fgov.ehealth.messageservices.core.v1.SelectRetrieveTransaction
-import be.fgov.ehealth.messageservices.core.v1.SelectRetrieveTransactionType
-import be.fgov.ehealth.messageservices.core.v1.SendTransactionRequest
 import be.fgov.ehealth.messageservices.core.v1.TransactionType
 import be.fgov.ehealth.mycarenet.registration.protocol.v1.RegisterToMycarenetServiceRequest
 import be.fgov.ehealth.mycarenet.registration.protocol.v1.RegisterToMycarenetServiceResponse
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEM
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEX
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEXvalues
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDSTANDARD
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes
-import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
-import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.id.v1.IDINSURANCE
-import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
-import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes
-import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENT
-import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENTschemes
-import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
-import be.fgov.ehealth.standards.kmehr.schema.v1.ContentType
-import be.fgov.ehealth.standards.kmehr.schema.v1.FolderType
-import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
-import be.fgov.ehealth.standards.kmehr.schema.v1.HeaderType
-import be.fgov.ehealth.standards.kmehr.schema.v1.ItemType
-import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
-import be.fgov.ehealth.standards.kmehr.schema.v1.MemberinsuranceType
-import be.fgov.ehealth.standards.kmehr.schema.v1.PersonType
-import be.fgov.ehealth.standards.kmehr.schema.v1.RecipientType
-import be.fgov.ehealth.standards.kmehr.schema.v1.SenderType
-import be.fgov.ehealth.standards.kmehr.schema.v1.SexType
-import be.fgov.ehealth.standards.kmehr.schema.v1.StandardType
+import be.fgov.ehealth.standards.kmehr.cd.v1.*
+import be.fgov.ehealth.standards.kmehr.id.v1.*
+import be.fgov.ehealth.standards.kmehr.schema.v1.*
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import com.google.gson.Gson
@@ -73,18 +37,10 @@ import org.taktik.connector.business.common.domain.Patient
 import org.taktik.connector.business.common.util.HandlerChainUtil
 import org.taktik.connector.business.dmg.builders.ResponseObjectBuilderFactory
 import org.taktik.connector.business.dmg.domain.DMGReferences
+import org.taktik.connector.business.dmg.domain.DmgBuilderResponse
 import org.taktik.connector.business.dmg.exception.DmgBusinessConnectorException
 import org.taktik.connector.business.dmg.exception.DmgBusinessConnectorExceptionValues
-import org.taktik.connector.business.domain.dmg.DmgAcknowledge
-import org.taktik.connector.business.domain.dmg.DmgClosure
-import org.taktik.connector.business.domain.dmg.DmgConsultation
-import org.taktik.connector.business.domain.dmg.DmgExtension
-import org.taktik.connector.business.domain.dmg.DmgInscription
-import org.taktik.connector.business.domain.dmg.DmgMessage
-import org.taktik.connector.business.domain.dmg.DmgMessageWithPatient
-import org.taktik.connector.business.domain.dmg.DmgNotification
-import org.taktik.connector.business.domain.dmg.DmgRegistration
-import org.taktik.connector.business.domain.dmg.DmgsList
+import org.taktik.connector.business.domain.dmg.*
 import org.taktik.connector.business.genericasync.builders.BuilderFactory
 import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
 import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
@@ -95,7 +51,6 @@ import org.taktik.connector.business.mycarenetdomaincommons.domain.Blob
 import org.taktik.connector.business.mycarenetdomaincommons.domain.CareReceiverId
 import org.taktik.connector.business.mycarenetdomaincommons.domain.Routing
 import org.taktik.connector.business.mycarenetdomaincommons.util.WsAddressingUtil
-import org.taktik.connector.business.registration.builder.RegistrationRequestBuilderFactory
 import org.taktik.connector.business.registration.helper.ResponseHelper
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.handler.domain.WsAddressingHeader
@@ -615,7 +570,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             throw RuntimeException("Wrong status code" + response.ehealthStatus)
         }
 
-        return DmgNotification(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
+        val dmg = DmgNotification(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
             this.errors.addAll(response.sendTransactionResponse.acknowledge.errors?.filterNotNull()?.flatMap { et ->
                 et.cds.map { cd ->
                     org.taktik.connector.business.domain.Error(
@@ -642,6 +597,23 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 }
             }
         }
+
+//        val requestMarshaller =
+//            MarshallerHelper(SelectRetrieveTransaction::class.java, SelectRetrieveTransaction::class.java)
+//        val requestXmlByteArray = requestMarshaller.toXMLByteArray(request);
+//        dmg.requestXML = requestXmlByteArray.toString(Charsets.UTF_8);
+
+        val consultRequestMarshaller =
+            MarshallerHelper(NotifyGlobalMedicalFileRequest::class.java, NotifyGlobalMedicalFileRequest::class.java)
+        val consultRequestXmlByteArray = consultRequestMarshaller.toXMLByteArray(gmdRequest);
+        dmg.gmdRequestXML = consultRequestXmlByteArray.toString(Charsets.UTF_8);
+
+        val responseMarshaller =
+            MarshallerHelper(DmgBuilderResponse::class.java, DmgBuilderResponse::class.java)
+        val responseXmlByteArray = responseMarshaller.toXMLByteArray(response);
+        dmg.responseXML = responseXmlByteArray.toString(Charsets.UTF_8);
+
+        return dmg;
     }
 
     override fun consultDmg(
@@ -723,7 +695,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 pI,
                 dateReference,
                 request
-                                        )
+            )
 
         val response =
             ResponseObjectBuilderFactory.getResponseObjectBuilder()
@@ -733,29 +705,30 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                             config.getProperty(
                                 "endpoint.dmg.consultation.v1",
                                 "\$uddi{uddi:ehealth-fgov-be:business:globalmedicalfileconsultation:v1}"
-                                              )
-                                   )
+                            )
+                        )
                         setCredential(samlToken, TokenType.SAML)
                         addDefaulHandlerChain()
                         addHandlerChain(
                             HandlerChainUtil.buildChainWithValidator(
                                 "validation.incoming.message.dmg.consultation.v1",
                                 "/ehealth-gmf/XSD/gmf_services_protocol-1_1.xsd"
-                                                                    )
-                                       )
+                            )
+                        )
                         setPayload(consultRequest)
                         setSoapAction("urn:be:fgov:ehealth:globalmedicalfile:protocol:v1:ConsultGlobalMedicalFile")
                     }).asObject(NotifyGlobalMedicalFileResponse::class.java).apply {
                         replyValidator.validateReplyStatus(
                             this
-                                                          )
+                        )
                     })
 
         if (!response.ehealthStatus.equals("200")) {
             throw RuntimeException("Wrong status code" + response.ehealthStatus)
         }
 
-        return DmgConsultation(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
+
+        val dmg = DmgConsultation(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
             this.errors.addAll(response.sendTransactionResponse.acknowledge.errors?.filterNotNull()?.flatMap { et ->
                 et.cds.map { cd ->
                     org.taktik.connector.business.domain.Error(
@@ -763,7 +736,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                         et.url,
                         et.description?.value,
                         errorMessages.find { it.code == cd.value && it.context == "CINNIC" && it.subcontext == "DMG-NOTIF" }?.message
-                                                              )
+                    )
                 }
             } ?: listOf())
             response.sendTransactionResponse.kmehrmessage?.let {
@@ -797,6 +770,23 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 }
             }
         }
+
+        val requestMarshaller =
+            MarshallerHelper(SelectRetrieveTransaction::class.java, SelectRetrieveTransaction::class.java)
+        val requestXmlByteArray = requestMarshaller.toXMLByteArray(request);
+        dmg.requestXML = requestXmlByteArray.toString(Charsets.UTF_8);
+
+        val consultRequestMarshaller =
+            MarshallerHelper(ConsultGlobalMedicalFileRequest::class.java, ConsultGlobalMedicalFileRequest::class.java)
+        val consultRequestXmlByteArray = consultRequestMarshaller.toXMLByteArray(consultRequest);
+        dmg.consultRequestXML = consultRequestXmlByteArray.toString(Charsets.UTF_8);
+
+        val responseMarshaller =
+            MarshallerHelper(DmgBuilderResponse::class.java, DmgBuilderResponse::class.java)
+        val responseXmlByteArray = responseMarshaller.toXMLByteArray(response);
+        dmg.responseXML = responseXmlByteArray.toString(Charsets.UTF_8);
+
+        return dmg;
     }
 
     override fun confirmDmgMessages(

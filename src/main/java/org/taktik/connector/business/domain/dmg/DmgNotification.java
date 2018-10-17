@@ -17,6 +17,10 @@ public class DmgNotification extends DmgMessage implements Serializable {
     private Boolean payment;
     private Date from;
 
+    private String requestXML;
+    private String gmdRequestXML;
+    private String responseXML;
+
     public DmgNotification() {
     }
 
@@ -46,5 +50,29 @@ public class DmgNotification extends DmgMessage implements Serializable {
 
     public Date getFrom() {
         return from;
+    }
+
+    public String getRequestXML() {
+        return requestXML;
+    }
+
+    public void setRequestXML(String requestXML) {
+        this.requestXML = requestXML;
+    }
+
+    public String getGmdRequestXML() {
+        return gmdRequestXML;
+    }
+
+    public void setGmdRequestXML(String gmdRequestXML) {
+        this.gmdRequestXML = gmdRequestXML;
+    }
+
+    public String getResponseXML() {
+        return responseXML;
+    }
+
+    public void setResponseXML(String responseXML) {
+        this.responseXML = responseXML;
     }
 }
