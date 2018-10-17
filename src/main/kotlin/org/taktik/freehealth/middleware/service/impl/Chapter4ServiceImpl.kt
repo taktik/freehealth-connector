@@ -5,9 +5,7 @@ import be.fgov.ehealth.chap4.core.v1.CommonInputType
 import be.fgov.ehealth.chap4.core.v1.OriginType
 import be.fgov.ehealth.chap4.core.v1.RecordCommonInputType
 import be.fgov.ehealth.chap4.core.v1.SecuredContentType
-import be.fgov.ehealth.chap4.protocol.v1.AbstractChap4MedicalAdvisorAgreementResponseType
-import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementResponse
-import be.fgov.ehealth.chap4.protocol.v1.ConsultChap4MedicalAdvisorAgreementResponse
+import be.fgov.ehealth.chap4.protocol.v1.*
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import be.fgov.ehealth.medicalagreement.core.v1.Kmehrrequest
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDERROR
@@ -437,6 +435,16 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             aggResponse.content = msg
         }
 
+        val requestMarshaller =
+            MarshallerHelper(AskChap4MedicalAdvisorAgreementRequest::class.java, AskChap4MedicalAdvisorAgreementRequest::class.java)
+        val requestXmlByteArray = requestMarshaller.toXMLByteArray(request);
+        aggResponse.requestXML = requestXmlByteArray.toString(Charsets.UTF_8);
+
+        val responseMarshaller =
+            MarshallerHelper(AskChap4MedicalAdvisorAgreementResponse::class.java, AskChap4MedicalAdvisorAgreementResponse::class.java)
+        val responseXmlByteArray = responseMarshaller.toXMLByteArray(response);
+        aggResponse.responseXML = responseXmlByteArray.toString(Charsets.UTF_8);
+
         return aggResponse
     }
 
@@ -515,6 +523,17 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                 includeMessageInResponse(agreementResponse, this)
             }
         }
+
+        val requestMarshaller =
+            MarshallerHelper(ConsultChap4MedicalAdvisorAgreementRequest::class.java, ConsultChap4MedicalAdvisorAgreementRequest::class.java)
+        val requestXmlByteArray = requestMarshaller.toXMLByteArray(request);
+        agreementResponse.requestXML = requestXmlByteArray.toString(Charsets.UTF_8);
+
+        val responseMarshaller =
+            MarshallerHelper(ConsultChap4MedicalAdvisorAgreementResponse::class.java, ConsultChap4MedicalAdvisorAgreementResponse::class.java)
+        val responseXmlByteArray = responseMarshaller.toXMLByteArray(response);
+        agreementResponse.responseXML = responseXmlByteArray.toString(Charsets.UTF_8);
+
         return agreementResponse
     }
 
@@ -626,6 +645,17 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                 includeMessageInResponse(agreementResponse, this)
             }
         }
+
+        val requestMarshaller =
+            MarshallerHelper(AskChap4MedicalAdvisorAgreementRequest::class.java, AskChap4MedicalAdvisorAgreementRequest::class.java)
+        val requestXmlByteArray = requestMarshaller.toXMLByteArray(request);
+        agreementResponse.requestXML = requestXmlByteArray.toString(Charsets.UTF_8);
+
+        val responseMarshaller =
+            MarshallerHelper(AskChap4MedicalAdvisorAgreementResponse::class.java, AskChap4MedicalAdvisorAgreementResponse::class.java)
+        val responseXmlByteArray = responseMarshaller.toXMLByteArray(response);
+        agreementResponse.responseXML = responseXmlByteArray.toString(Charsets.UTF_8);
+
         return agreementResponse
 
     }

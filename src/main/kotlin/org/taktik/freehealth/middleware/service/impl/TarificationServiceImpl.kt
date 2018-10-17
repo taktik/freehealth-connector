@@ -7,12 +7,7 @@ import be.fgov.ehealth.mycarenet.commons.core.v2.PartyType
 import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationRequest
 import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationResponse
 import be.fgov.ehealth.standards.kmehr.cd.v1.*
-import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
-import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
-import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes
-import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENT
-import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENTschemes
+import be.fgov.ehealth.standards.kmehr.id.v1.*
 import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
 import be.fgov.ehealth.standards.kmehr.schema.v1.ContentType
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
@@ -20,6 +15,7 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.ItemType
 import com.google.gson.Gson
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
+import org.json.XML
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.etarif.TarificationConsultationResult
@@ -41,7 +37,7 @@ import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
 import java.io.UnsupportedEncodingException
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
@@ -275,8 +271,12 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
             val kmehrRequestMarshallerNIPP =
                 MarshallerHelper(TarificationConsultationResponse::class.java, TarificationConsultationResponse::class.java)
-            val xmlByteArrayNIPP = kmehrRequestMarshallerNIPP.toXMLByteArray(consultTarificationResponse)
+            val xmlByteArrayNIPP = kmehrRequestMarshallerNIPP.toXMLByteArray(consultTarificationResponse);
             result.tarificationConsultationResponse = xmlByteArrayNIPP.toString(Charsets.UTF_8);
+
+            val xmlJSONObj = XML.toJSONObject(result.tarificationConsultationResponse);
+            val jsonPrettyPrintString = xmlJSONObj.toString(4);
+            result.tarificationConsultationResponseJSON = jsonPrettyPrintString;
 
             return result
         } catch (e: ConnectorException) {

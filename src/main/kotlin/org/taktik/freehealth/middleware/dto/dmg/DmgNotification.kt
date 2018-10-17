@@ -18,4 +18,8 @@ class DmgNotification(complete: Boolean?) : DmgMessage(complete = complete), Ser
     var hcParty: HcpartyType? = null
     var payment: Boolean? = null
     var from: Date? = null
+
+    var requestXML: String? = null
+    var gmdRequestXML: String? = null
+    var responseXML: String? = null
 }

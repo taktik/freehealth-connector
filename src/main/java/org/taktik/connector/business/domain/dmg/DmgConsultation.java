@@ -29,6 +29,10 @@ public class DmgConsultation extends DmgMessage implements Serializable {
 
     private Boolean payment;
 
+    private String requestXML;
+    private String consultRequestXML;
+    private String responseXML;
+
     public DmgConsultation(boolean complete) {
         super(complete);
     }
@@ -127,5 +131,29 @@ public class DmgConsultation extends DmgMessage implements Serializable {
 
     public void setMutuality(String mutuality) {
         this.mutuality = mutuality;
+    }
+
+    public String getRequestXML() {
+        return requestXML;
+    }
+
+    public void setRequestXML(String requestXML) {
+        this.requestXML = requestXML;
+    }
+
+    public String getConsultRequestXML() {
+        return consultRequestXML;
+    }
+
+    public void setConsultRequestXML(String consultRequestXML) {
+        this.consultRequestXML = consultRequestXML;
+    }
+
+    public String getResponseXML() {
+        return responseXML;
+    }
+
+    public void setResponseXML(String responseXML) {
+        this.responseXML = responseXML;
     }
 }

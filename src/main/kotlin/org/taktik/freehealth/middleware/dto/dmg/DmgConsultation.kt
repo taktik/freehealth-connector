@@ -30,4 +30,8 @@ class DmgConsultation(complete: Boolean?) : DmgMessage(complete), Serializable {
     var to: Long? = null
 
     var payment: Boolean? = null
+
+    var requestXML: String? = null
+    var consultRequestXML: String? = null
+    var responseXML: String? = null
 }
