@@ -29,14 +29,14 @@ import org.apache.commons.lang.StringUtils.isEmpty
  * Created by aduchate on 8/11/13, 16:16
  */
 class Addressee(
-    val identifierType: IdentifierType,
-    val id: String? = null,
-    val quality: String? = null,
-    val applicationId: String? = null,
-    val lastName: String? = null,
-    val firstName: String? = null,
-    val organizationName: String? = null,
-    val personInOrganisation: String? = null
+    var identifierType: IdentifierType? = null,
+    var id: String? = null,
+    var quality: String? = null,
+    var applicationId: String? = null,
+    var lastName: String? = null,
+    var firstName: String? = null,
+    var organizationName: String? = null,
+    var personInOrganisation: String? = null
 ) : Serializable {
     override fun toString(): String {
         return if (isEmpty(organizationName)) String.format(

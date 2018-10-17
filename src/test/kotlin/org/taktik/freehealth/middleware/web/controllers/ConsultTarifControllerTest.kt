@@ -10,6 +10,9 @@ import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpMethod
+import org.springframework.http.HttpEntity
+import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.dto.etarif.TarificationConsultationResult
 import org.taktik.freehealth.middleware.MyTestsConfiguration
@@ -25,26 +28,36 @@ class ConsultTarifControllerTest : EhealthTest() {
     private val port: Int = 0
 
     private val nisses = mapOf(100 to listOf("36121015396", "86103130262", "14032816518", "91031030962"),
-                               300 to listOf("64032764903", "66021250154", "74042566174", "71010908576"),
-                               500 to listOf("49020508235", "83092618070", "76103012361", "62091405715"),
-                               600 to listOf("59072957042", "83091041227", "49061015930", "82413101990"),
-                               900 to listOf("59011214562", "73061527277", "90012333497", "78100404390")
-                              )
+        300 to listOf("64032764903", "66021250154", "74042566174", "71010908576"),
+        500 to listOf("49020508235", "83092618070", "76103012361", "62091405715"),
+        600 to listOf("59072957042", "83091041227", "49061015930", "82413101990"),
+        900 to listOf("59011214562", "73061527277", "90012333497", "78100404390")
+    )
     private fun getNisses(idx: Int) = listOf(nisses[100]!![idx], nisses[300]!![idx], nisses[500]!![idx], nisses[600]!![idx], nisses[900]!![idx])
     private val gmdManagers = listOf("17031506487", "10065828004", "16582446000", "14372133004", "15554246004")
 
-    private fun assertResults(scenario: String, reimbursement: Double, results: List<TarificationConsultationResult?>) {
+    private fun assertResults(scenario: String, reimbursement: Double, results: List<TarificationConsultationResult?>, expectedLength: Int = 0) {
         println(scenario + "\n====================")
         results.forEachIndexed { index, it ->
-            assertThat(it!!.reimbursements).isNotNull.isNotEmpty
-            assertThat(it!!.reimbursements[0].amount).isEqualTo(reimbursement)
+            assertThat(it?.codeResults).hasSize(expectedLength);
+
+            var reimbursementTotal = 0.0;
+
+            it?.codeResults?.forEach { codeRes ->
+                reimbursementTotal += codeRes.reimbursement!!.amount
+            }
+
+            assertThat(reimbursementTotal).isEqualTo(reimbursement)
         }
     }
 
-    private fun assertResults(scenario: String, justification: Int, results: List<TarificationConsultationResult?>) {
+    private fun assertResults(scenario: String, justification: Int, results: List<TarificationConsultationResult?>, expectedLength: Int = 0) {
         println(scenario + "\n====================")
         results.forEachIndexed { index, it ->
-            assertThat(it!!.justification).isEqualTo(justification)
+            assertThat(it!!.codeResults).hasSize(expectedLength);
+            it!!.codeResults.forEach {
+                assertThat(it!!.justification).isEqualTo(justification);
+            }
         }
     }
 
@@ -87,9 +100,9 @@ class ConsultTarifControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
         val results = listOf( nisses[300]!![0], nisses[900]!![0]).map {
-            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("101075"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}", HttpMethod.POST, HttpEntity<List<String>>(listOf("101075"), createHeaders(null, null, keystoreId, tokenId, passPhrase)), TarificationConsultationResult::class.java, firstName1, lastName1)
         }
-        assertErrors("scenario 1", "50",  results)
+        assertErrors("scenario 1", "50",  results.map { it.body })
     }
 
     /*
@@ -103,9 +116,9 @@ class ConsultTarifControllerTest : EhealthTest() {
     fun scenario2() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("102793"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}", HttpMethod.POST, HttpEntity<List<String>>(listOf("102793"), createHeaders(null, null, keystoreId, tokenId, passPhrase)), TarificationConsultationResult::class.java, firstName1, lastName1)
         }
-        assertErrors("scenario 2", listOf("52","53"),  results)
+        assertErrors("scenario 2", listOf("52","53"),  results.map { it.body })
     }
 
     /*
@@ -120,9 +133,9 @@ class ConsultTarifControllerTest : EhealthTest() {
     fun scenario3() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf("102034"), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}", HttpMethod.POST, HttpEntity<List<String>>(listOf("102034"), createHeaders(null, null, keystoreId, tokenId, passPhrase)), TarificationConsultationResult::class.java, firstName1, lastName1)
         }
-        assertErrors("scenario 3", "52",  results)
+        assertErrors("scenario 3", "52",  results.map { it.body })
     }
 
     /*
@@ -137,12 +150,12 @@ class ConsultTarifControllerTest : EhealthTest() {
     fun scenario4() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
-        val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) "101010" else "101032"
+        val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) listOf("101010") else listOf("101032")
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}&date=${now.minusMonths(3).format(DateTimeFormatter.ofPattern("yyyyMMdd"))}", listOf(code), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&date=${now.minusMonths(3).format(DateTimeFormatter.ofPattern("yyyyMMdd"))}", HttpMethod.POST, HttpEntity<List<String>>(code, createHeaders(null, null, keystoreId, tokenId, passPhrase)), TarificationConsultationResult::class.java, firstName1, lastName1)
         }
-        assertErrors("scenario 4", "47",  results)
+        assertErrors("scenario 4", "47",  results.map { it.body })
     }
 
     /*
@@ -156,12 +169,12 @@ class ConsultTarifControllerTest : EhealthTest() {
     @Test
     fun scenario5() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) "101010" else "101032"
+        val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) listOf("101010") else listOf("101032")
 
         val results = getNisses(2).map {
-            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf(code), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}", HttpMethod.POST, HttpEntity<List<String>>(code, createHeaders(null, null, keystoreId, tokenId, passPhrase)), TarificationConsultationResult::class.java, firstName1, lastName1)
         }
-        assertErrors("scenario 5", "51",  results)
+        assertErrors("scenario 5", "51",  results.map { it.body })
     }
 
     /*
@@ -175,12 +188,12 @@ class ConsultTarifControllerTest : EhealthTest() {
     @Test
     fun scenario6() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) "101010" else "101032"
+        val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) listOf("101010") else listOf("101032")
 
         val results = getNisses(3).map {
-            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf(code), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}", HttpMethod.POST, HttpEntity<List<String>>(code, createHeaders(null, null, keystoreId, tokenId, passPhrase)), TarificationConsultationResult::class.java, firstName1, lastName1)
         }
-        assertErrors("scenario 6", "22",  results)
+        assertErrors("scenario 6", "22",  results.map { it.body })
     }
 
     /*
@@ -194,12 +207,13 @@ class ConsultTarifControllerTest : EhealthTest() {
     @Test
     fun scenario7() { //Probleme with NISS 59072957042 (600 first) code 170 patient doesn't conform to regulation
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) "101010" else "101032"
+        val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) listOf("101010") else listOf("101032")
+        val codes = listOf(code)
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", listOf(code), TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}", HttpMethod.POST, HttpEntity<List<String>>(code, createHeaders(null, null, keystoreId, tokenId, passPhrase)), TarificationConsultationResult::class.java, firstName1, lastName1)
         }
-        assertResults("scenario 7", 19.59,  results)
+        assertResults("scenario 7", 19.59,  results.map { it.body }, codes.size)
     }
 
     /*
@@ -216,9 +230,9 @@ class ConsultTarifControllerTest : EhealthTest() {
         val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) listOf("101010") else listOf("101032","475075")
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", code, TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}", HttpMethod.POST, HttpEntity<List<String>>(code, createHeaders(null, null, keystoreId, tokenId, passPhrase)), TarificationConsultationResult::class.java, firstName1, lastName1)
         }
-        assertResults("scenario 8", 3,  results)
+        assertResults("scenario 8", 3,  results.map { it.body }, code.size)
     }
 
     /*
@@ -235,9 +249,9 @@ class ConsultTarifControllerTest : EhealthTest() {
         val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) listOf("101010") else listOf("101032")
 
         val results = getNisses(1).map {
-            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", code, TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}", HttpMethod.POST, HttpEntity<List<String>>(code, createHeaders(null, null, keystoreId, tokenId, passPhrase)), TarificationConsultationResult::class.java, firstName1, lastName1)
         }
-        assertResults("scenario 9", 9,  results)
+        assertResults("scenario 9", 9,  results.map { it.body }, code.size)
     }
 
     /*
@@ -255,9 +269,9 @@ class ConsultTarifControllerTest : EhealthTest() {
         val code = if(nihii1!!.endsWith("001") || nihii1!!.endsWith("002")) listOf("101010") else listOf("101032")
 
         val results = getNisses(1).map {
-            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}&justification=2", code, TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&justification=2", HttpMethod.POST, HttpEntity<List<String>>(code, createHeaders(null, null, keystoreId, tokenId, passPhrase)), TarificationConsultationResult::class.java, firstName1, lastName1)
         }
-        assertResults("scenario 10", 2,  results)
+        assertResults("scenario 10", 2,  results.map { it.body }, 1)
     }
 
     /*
@@ -277,8 +291,8 @@ class ConsultTarifControllerTest : EhealthTest() {
 
         val results = getNisses(1).map {
             val gmdNihii = gmdManagers[getNisses(1).indexOf(it)]
-            this.restTemplate.postForObject("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}&justification=7&gmdNihii=$gmdNihii", code, TarificationConsultationResult::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.exchange("http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&justification=7&gmdNihii=$gmdNihii", HttpMethod.POST, HttpEntity<List<String>>(code, createHeaders(null, null, keystoreId, tokenId, passPhrase)), TarificationConsultationResult::class.java, firstName1, lastName1)
         }
-        assertResults("scenario 11", 7,  results)
+        assertResults("scenario 11", 7,  results.map { it.body }, 1)
     }
 }

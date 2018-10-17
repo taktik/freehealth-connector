@@ -187,7 +187,7 @@ fun org.taktik.freehealth.middleware.dto.ehbox.DocumentMessage.toDocumentMessage
     }
 
 fun org.taktik.freehealth.middleware.dto.common.Addressee.toAddressee(): Addressee =
-    Addressee(org.taktik.connector.technical.utils.IdentifierType.valueOf(identifierType.type)).apply {
+    Addressee(identifierType?.type?.let { org.taktik.connector.technical.utils.IdentifierType.valueOf(it) }).apply {
         val that = this@toAddressee
         id = that.id
         quality = that.quality

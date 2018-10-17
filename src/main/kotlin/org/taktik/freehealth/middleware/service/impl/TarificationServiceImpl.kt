@@ -1,6 +1,9 @@
 package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.messageservices.core.v1.*
+import be.fgov.ehealth.mycarenet.commons.core.v2.IdType
+import be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType
+import be.fgov.ehealth.mycarenet.commons.core.v2.PartyType
 import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationRequest
 import be.fgov.ehealth.standards.kmehr.cd.v1.*
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
@@ -18,7 +21,6 @@ import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.taktik.connector.business.domain.Error
 import org.taktik.connector.business.domain.etarif.TarificationConsultationResult
 import org.taktik.connector.business.mycarenetcommons.mapper.SendRequestMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
@@ -53,7 +55,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
         Gson().fromJson(
             this.javaClass.getResourceAsStream("/be/errors/ConsultTarifErrors.json").reader(Charsets.UTF_8),
             arrayOf<MycarenetError>().javaClass
-        ).associateBy({ it.uid }, { it })
+                       ).associateBy({ it.uid }, { it })
     private val xPathfactory = XPathFactory.newInstance()
 
     override fun consultTarif(keystoreId: UUID,
@@ -67,6 +69,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                               consultationDate: LocalDateTime,
                               justification: String?,
                               gmdNihii: String?,
+                              traineeSupervisorSsin: String?,
+                              traineeSupervisorNihii: String?,
                               codes: List<String>): TarificationConsultationResult {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -84,7 +88,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                     hcparties.add(HcpartyType().apply {
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = "persphysician" })
+                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
                         firstname = hcpFirstName
                         familyname = hcpLastName
                     })
@@ -102,33 +106,36 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                     transaction = TransactionType().apply {
                         var h = 1
                         this.author = author
-                        cds.add(CDTRANSACTION().apply { s=CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET; sv="1.1"; value = "tariff" })
+                        cds.add(CDTRANSACTION().apply { s = CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET; sv = "1.1"; value = "tariff" })
                         headingsAndItemsAndTexts.add(ItemType().apply {
                             ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (h++).toString() })
-                            cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv="1.0"; value = "encounterdatetime" })
+                            cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "encounterdatetime" })
                             contents.add(ContentType().apply { date = csDT })
                         })
                         headingsAndItemsAndTexts.addAll(codes.map { code ->
                             ItemType().apply {
                                 ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (h++).toString() })
-                                cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv="1.0"; value = "claim" })
+                                cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "claim" })
                                 contents.add(ContentType().apply { cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI; sv = "1.0"; value = code }) })
-                        }})
+                            }
+                        })
                         justification?.let { j ->
                             headingsAndItemsAndTexts.add(ItemType().apply {
                                 ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (h++).toString() })
-                                cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv="1.0"; value = "justification" })
+                                cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "justification" })
                                 contents.add(ContentType().apply { cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_MYCARENET_JUSTIFICATION; sv = "1.0"; value = j }) })
                             })
                         }
                         gmdNihii?.let { g ->
                             headingsAndItemsAndTexts.add(ItemType().apply {
                                 ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (h++).toString() })
-                                cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv="1.0"; value = "gmdmanager" })
-                                contents.add(ContentType().apply { hcparty = HcpartyType().apply {
-                                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = g })
-                                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value = "persphysician" })
-                                }})
+                                cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "gmdmanager" })
+                                contents.add(ContentType().apply {
+                                    hcparty = HcpartyType().apply {
+                                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = g })
+                                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
+                                    }
+                                })
                             })
                         }
                     }
@@ -165,17 +172,46 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                 this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
                             }
                         }
+
+                        var careProviderSsin =  hcpSsin;
+                        var careProviderNihii =  hcpNihii;
+
+                        traineeSupervisorSsin?.let {
+                            careProviderSsin =  it;
+                        }
+                        traineeSupervisorNihii?.let {
+                            careProviderNihii =  it;
+                        }
+
+
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
                                 this.quality = "doctor"
                                 this.value =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                        .apply { this.value = hcpNihii }
+                                        .apply { this.value = careProviderNihii }
                             }
                             this.physicalPerson = be.fgov.ehealth.mycarenet.commons.core.v2.IdType().apply {
                                 this.ssin =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                        .apply { this.value = hcpSsin }
+                                        .apply { this.value = careProviderSsin }
+                            }
+                        }
+                        traineeSupervisorSsin?.let {
+                            this.sender = PartyType().apply {
+                                physicalPerson = IdType().apply {
+                                    this.ssin =
+                                        be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString().apply { this.value = hcpSsin }
+                                    careProviderNihii?.let {
+                                        this.nihii =
+                                            NihiiType().apply {
+                                                this.quality = "doctor"
+                                                this.value =
+                                                    be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
+                                                        .apply { this.value = hcpNihii }
+                                            }
+                                    }
+                                }
                             }
                         }
                     }
@@ -246,7 +282,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             (expr.evaluate(
                 builder.parse(ByteArrayInputStream(sendTransactionRequest)),
                 XPathConstants.NODESET
-            ) as NodeList).let { it ->
+                          ) as NodeList).let { it ->
                 if (it.length > 0) {
                     var node = it.item(0)
                     val textContent = node.textContent
@@ -268,8 +304,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                        )
-                    )
+                                      )
+                              )
                 }
             }
             result
@@ -285,11 +321,13 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 "ns3" -> "http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
                 else -> null
             }
+
             override fun getPrefix(namespaceURI: String?) = when (namespaceURI) {
                 "http://www.ehealth.fgov.be/messageservices/core/v1" -> "ns2"
                 "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> "ns3"
                 else -> null
             }
+
             override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
                 when (namespaceURI) {
                     "http://www.ehealth.fgov.be/messageservices/core/v1" -> listOf("ns2").iterator()

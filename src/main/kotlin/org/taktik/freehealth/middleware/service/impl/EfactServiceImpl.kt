@@ -10,7 +10,6 @@ import be.cin.mycarenet.esb.common.v2.OrigineType
 import be.cin.mycarenet.esb.common.v2.PackageType
 import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.GetResponse
-import com.google.gson.Gson
 import ma.glasnost.orika.MapperFacade
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
@@ -28,6 +27,7 @@ import org.taktik.connector.technical.handler.domain.WsAddressingHeader
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorIOUtils
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.dto.efact.CommonOutput
 import org.taktik.freehealth.middleware.dto.efact.EfactMessage
 import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
 import org.taktik.freehealth.middleware.dto.efact.ErrorDetail
@@ -76,7 +76,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
         try {
             iv.write200and300(batch.sender!!, batch.numericalRef
-                ?: 0, batch.batchRef!!, if (isTest) 92 else 12, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, isTest)
+                ?: 0, batch.fileRef!!, if (isTest) 92 else 12, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, isTest)
 
             val codes = ArrayList<Long>()
             var amount = 0L
@@ -110,7 +110,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     recordsCount++
                     for (it in invoice.items) {
                         rn =
-                            iv.writeRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, it)
+                            iv.writeRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, invoice.ioCode!!, it)
 
                         recordsCountPerOA[0]++
                         recordsCount++
@@ -215,7 +215,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val tack = postResponse.getReturn()
         val success = tack.resultMajor != null && tack.resultMajor == "urn:nip:tack:result:major:success"
 
-        return EfactSendResponse(success, inputReference, tack, content)
+        return EfactSendResponse(success, inputReference, tack, content, BelgianInsuranceInvoicingFormatReader("unused").parse(content.reader(), false)!!.map { mapper.map(it, Record::class.java) })
     }
 
 
@@ -292,6 +292,12 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                 EfactMessage().apply {
                     id = r.detail.id
                     name = r.detail.messageName
+
+                    commonOutput = CommonOutput().apply {
+                        this.inputReference = r.commonOutput.inputReference
+                        this.nipReference = r.commonOutput.nipReference
+                        this.outputReference = r.commonOutput.outputReference
+                    }
                     try {
                         detail =
                             String(ConnectorIOUtils.decompress(IOUtils.toByteArray(r.detail.value.inputStream)), Charsets.UTF_8) //This starts with 92...
