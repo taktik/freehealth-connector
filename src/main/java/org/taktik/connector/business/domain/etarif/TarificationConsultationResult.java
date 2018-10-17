@@ -48,6 +48,7 @@ public class TarificationConsultationResult implements Serializable {
     private String retrieveTransactionRequest;
     private String commonInputResponse;
     private String tarificationConsultationResponse;
+    private String tarificationConsultationResponseJSON;
 
 	public void fill(PersonType patient) {
 		this.setLastName(patient.getFamilyname());
@@ -263,6 +264,14 @@ public class TarificationConsultationResult implements Serializable {
 
 	public void setTarificationConsultationResponse(String tarificationConsultationResponse){
 		this.tarificationConsultationResponse = tarificationConsultationResponse;
+	}
+
+	public String getTarificationConsultationResponseJSON(){
+		return this.tarificationConsultationResponseJSON;
+	}
+
+	public void setTarificationConsultationResponseJSON(String tarificationConsultationResponseJSON){
+		this.tarificationConsultationResponseJSON = tarificationConsultationResponseJSON;
 	}
 
 	private Date asDate(DateTime date) {

@@ -276,7 +276,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
             val xmlJSONObj = XML.toJSONObject(result.tarificationConsultationResponse);
             val jsonPrettyPrintString = xmlJSONObj.toString(4);
-            result.tarificationConsultationResponse = jsonPrettyPrintString;
+            result.tarificationConsultationResponseJSON = jsonPrettyPrintString;
 
             return result
         } catch (e: ConnectorException) {
