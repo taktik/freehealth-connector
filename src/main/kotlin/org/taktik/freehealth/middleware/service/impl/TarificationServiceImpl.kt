@@ -28,9 +28,12 @@ import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto
+import org.taktik.freehealth.middleware.dto.InfoRequest.IntermediateRequest
 import org.taktik.freehealth.middleware.dto.MycarenetError
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.TarificationService
+import org.taktik.freehealth.utils.InfoRequestUtils
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -42,6 +45,7 @@ import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
+import kotlin.collections.ArrayList
 
 @Service
 class TarificationServiceImpl(private val stsService: STSService) : TarificationService {
@@ -261,35 +265,36 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
             result.errors = errors
 
-            result.retrieveTransactionRequest = xmlByteArray.toString(Charsets.UTF_8);
+            var infoRequestDto = InfoRequestDto()
+            var intermediateRequestL:MutableList<IntermediateRequest> = mutableListOf()
+
+            val requestMarshaller =
+                MarshallerHelper(TarificationConsultationRequest::class.java, TarificationConsultationRequest::class.java)
+            val xmlByteArrayRequest = requestMarshaller.toXMLByteArray(request)
+            infoRequestDto.xmlRequest = xmlByteArrayRequest.toString(Charsets.UTF_8)
+
+            val responseMarshaller =
+                MarshallerHelper(TarificationConsultationResponse::class.java, TarificationConsultationResponse::class.java)
+            val xmlByteArrayresponse = responseMarshaller.toXMLByteArray(consultTarificationResponse);
+            infoRequestDto.xmlResponse = xmlByteArrayresponse.toString(Charsets.UTF_8)
+
 
             val kmehrRequestMarshallerResp =
                 MarshallerHelper(RetrieveTransactionResponse::class.java, RetrieveTransactionResponse::class.java)
             val xmlByteArrayResp = kmehrRequestMarshallerResp.toXMLByteArray(commonInputResponse)
-            result.commonInputResponse = xmlByteArrayResp.toString(Charsets.UTF_8);
 
+            val intermediateRequest = IntermediateRequest()
+            intermediateRequest.xmlResponse = xmlByteArrayResp.toString(Charsets.UTF_8)
 
-            val kmehrRequestMarshallerNIPP =
-                MarshallerHelper(TarificationConsultationResponse::class.java, TarificationConsultationResponse::class.java)
-            val xmlByteArrayNIPP = kmehrRequestMarshallerNIPP.toXMLByteArray(consultTarificationResponse);
-            result.tarificationConsultationResponse = xmlByteArrayNIPP.toString(Charsets.UTF_8);
-            val xmlJSONObj = XML.toJSONObject(result.tarificationConsultationResponse);
-            val jsonPrettyPrintString = xmlJSONObj.toString(4);
-            result.tarificationConsultationResponseJSON = jsonPrettyPrintString;
+            intermediateRequestL.add(intermediateRequest)
 
-            // ================================================
-            //  Get the Output references as a JsonObject
-            //  TODO: blind the various get against undefined keys or null etc
-            val references = XML.toJSONObject(result.tarificationConsultationResponse).getJSONObject("ns4:TarificationConsultationResponse").getJSONObject("ns2:Return").getJSONObject("ns2:CommonOutput");
+            infoRequestDto.intermediateRequest = intermediateRequestL;
 
-            //  Instantiate a new OutputReferences object
-            val outputReferences = TarificationConsultationResult.OutputReferences()
-            outputReferences.inputReference = references.get("InputReference").toString()
-            outputReferences.outputReference = references.get("OutputReference").toString()
-            outputReferences.nipReference = references.get("NIPReference").toString()
+            val infoRequestUtils = InfoRequestUtils();
 
-            result.setOutputReferences(outputReferences)
-            // ================================================
+            infoRequestDto.outputReferences = infoRequestUtils.getOutputReferences(infoRequestDto.xmlResponse.toString());
+
+            result.setInfoRequestDto(infoRequestDto);
 
             return result
         } catch (e: ConnectorException) {

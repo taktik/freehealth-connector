@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.dto.etarif
 
+import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto
 import org.taktik.freehealth.middleware.dto.MycarenetError
 import java.io.Serializable
 import java.util.ArrayList
@@ -23,7 +24,7 @@ class TarificationConsultationResult {
     var tarificationConsultationResponse:String? = null
     var tarificationConsultationResponseJSON:String? = null
     var codeResults: MutableList<CodeResult> = ArrayList()
-    var outputReferences: OutputReferences? = null
+    var infoRequestDto: InfoRequestDto? = null
 
     enum class Sex : Serializable {
         MALE, FEMALE
