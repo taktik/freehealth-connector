@@ -68,6 +68,10 @@ interface Chapter4Service {
                        hcpLastName: String,
                        passPhrase: String,
                        patientSsin: String,
+                       patientDateOfBirth: Long,
+                       patientFirstName: String,
+                       patientLastName: String,
+                       patientGender: String,
                        decisionReference: String): AgreementResponse
 
     fun getParagraphInfos(chapterName: String, paragraphName: String): ParagraphInfos?

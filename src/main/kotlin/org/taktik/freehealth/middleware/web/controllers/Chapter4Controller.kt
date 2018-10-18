@@ -122,12 +122,12 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
                          @PathVariable requestType: String,
                          @PathVariable civicsVersion: String,
                          @PathVariable paragraph: String,
-                         @RequestParam verses: String,
-                         @RequestParam incomplete: Boolean?,
-                         @RequestParam start: Long?,
-                         @RequestParam end: Long?,
-                         @RequestParam decisionReference: String?,
-                         @RequestParam ioRequestReference: String?,
+                         @RequestParam(required = false) verses: String? = null,
+                         @RequestParam(required = false) incomplete: Boolean? = false,
+                         @RequestParam(required = false) start: Long? = null,
+                         @RequestParam(required = false) end: Long? = null,
+                         @RequestParam(required = false) decisionReference: String? = null,
+                         @RequestParam(required = false) ioRequestReference: String? = null,
                          @RequestBody appendices: List<Appendix>
                         ) =
         chapter4Service.requestAgreement(
@@ -146,7 +146,7 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
             requestType = RequestType.valueOf(requestType),
             civicsVersion = civicsVersion,
             paragraph = paragraph,
-            verses = verses.split(","),
+            verses = verses?.split(","),
             incomplete = incomplete ?: false,
             start = start
                 ?: LocalDate.now().minusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
@@ -188,6 +188,10 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
                        @RequestParam hcpLastName: String,
                        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
                        @PathVariable patientSsin: String,
+                       @RequestParam patientDateOfBirth: Long,
+                       @RequestParam patientFirstName: String,
+                       @RequestParam patientLastName: String,
+                       @RequestParam patientGender: String,
                        @RequestParam decisionReference: String) =
         chapter4Service.closeAgreement(
             keystoreId = keystoreId,
@@ -198,6 +202,10 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
             hcpLastName = hcpLastName,
             passPhrase = passPhrase,
             patientSsin = patientSsin,
+            patientDateOfBirth = patientDateOfBirth,
+            patientFirstName = patientFirstName,
+            patientLastName = patientLastName,
+            patientGender = patientGender,
             decisionReference = decisionReference
                                       )
 }

@@ -508,6 +508,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             val mh =
                 MarshallerHelper(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java, be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
             agreementResponse.content = mh.toXMLByteArray(retrievedKmehrResponse.kmehrresponse.kmehrmessage)
+
         }
 
         if (agreementResponse.content != null) {
@@ -549,11 +550,15 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                 hcpLastName: String,
                                 passPhrase: String,
                                 patientSsin: String,
+                                patientDateOfBirth: Long,
+                                patientFirstName: String,
+                                patientLastName: String,
+                                patientGender: String,
                                 decisionReference: String): AgreementResponse {
         val folderType: FolderType
         try {
             folderType =
-                getCloseTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, decisionReference, null)
+                getCloseTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, patientDateOfBirth, patientFirstName, patientLastName, patientGender, decisionReference)
         } catch (e: IOException) {
             return generateError(ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.UNKNOWN_ERROR, e))
         }
@@ -1146,12 +1151,21 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                     hcpFirstName: String,
                                     hcpLastName: String,
                                     patientSsin: String,
-                                    decisionReference: String,
-                                    date: Date?): FolderType {
+                                    patientDateOfBirth: Long,
+                                    patientFirstName: String,
+                                    patientLastName: String,
+                                    patientGender: String,
+                                    decisionReference: String): FolderType {
         return FolderType().apply {
             ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "1" })
             this.patient = PersonType().apply {
                 ids.add(IDPATIENT().apply { s = ID_PATIENT; sv = "1.0"; value = patientSsin })
+                firstnames.add(patientFirstName)
+                familyname = patientLastName
+                birthdate = DateType().apply { date = FuzzyValues.getXMLGregorianCalendarFromFuzzyLong(patientDateOfBirth) }
+                sex = SexType().apply {
+                    cd = CDSEX().apply { s = "CD-SEX"; sv = "1.0"; value = CDSEXvalues.fromValue(patientGender) }
+                }
             }
 
             transactions.add(TransactionType().apply {
@@ -1159,7 +1173,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                                     hcpSsin,
                                                     hcpFirstName,
                                                     hcpLastName,
-                                                    "agreementrequest", RequestType.closure, date)
+                                                    "agreementrequest", RequestType.closure, null)
 
                 headingsAndItemsAndTexts.add(ItemType().apply {
                     ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "3" })
