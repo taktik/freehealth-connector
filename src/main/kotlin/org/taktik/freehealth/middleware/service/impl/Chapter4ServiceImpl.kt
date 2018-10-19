@@ -528,12 +528,16 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         hcpLastName: String,
         passPhrase: String,
         patientSsin: String,
+        patientDateOfBirth: Long,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
         decisionReference: String?,
         iorequestReference: String?): AgreementResponse {
         val folderType: FolderType
         try {
             folderType =
-                getCancelTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, decisionReference, iorequestReference)
+                getCancelTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, patientDateOfBirth, patientFirstName, patientLastName, patientGender, decisionReference, iorequestReference)
         } catch (e: IOException) {
             return generateError(ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.UNKNOWN_ERROR, e))
         }
@@ -1106,17 +1110,26 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         hcpFirstName: String,
         hcpLastName: String,
         patientSsin: String,
+        patientDateOfBirth: Long,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
         decisionReference: String?,
-        ioRequestReference: String?,
-        date: Date? = null): FolderType {
+        ioRequestReference: String?): FolderType {
         return FolderType().apply {
             ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "1" })
             this.patient = PersonType().apply {
                 ids.add(IDPATIENT().apply { s = ID_PATIENT; sv = "1.0"; value = patientSsin })
+                firstnames.add(patientFirstName)
+                familyname = patientLastName
+                birthdate = DateType().apply { date = FuzzyValues.getXMLGregorianCalendarFromFuzzyLong(patientDateOfBirth) }
+                sex = SexType().apply {
+                    cd = CDSEX().apply { s = "CD-SEX"; sv = "1.0"; value = CDSEXvalues.fromValue(patientGender) }
+                }
             }
 
             transactions.add(TransactionType().apply {
-                initialiseTransactionTypeWithSender(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, "agreementrequest", RequestType.cancellation, date)
+                initialiseTransactionTypeWithSender(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, "agreementrequest", RequestType.cancellation, null)
 
                 decisionReference?.let {
                     headingsAndItemsAndTexts.add(ItemType().apply {

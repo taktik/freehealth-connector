@@ -164,8 +164,12 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
                         @RequestParam hcpLastName: String,
                         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
                         @PathVariable patientSsin: String,
+                        @RequestParam patientDateOfBirth: Long,
+                        @RequestParam patientFirstName: String,
+                        @RequestParam patientLastName: String,
+                        @RequestParam patientGender: String,
                         @RequestParam decisionReference: String?,
-                        @RequestParam iorequestReference: String?) =
+                        @RequestParam(required = false) iorequestReference: String? = null) =
         chapter4Service.cancelAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -175,6 +179,10 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
             hcpLastName = hcpLastName,
             passPhrase = passPhrase,
             patientSsin = patientSsin,
+            patientDateOfBirth = patientDateOfBirth,
+            patientFirstName = patientFirstName,
+            patientLastName = patientLastName,
+            patientGender = patientGender,
             decisionReference = decisionReference,
             iorequestReference = iorequestReference
                                        )
