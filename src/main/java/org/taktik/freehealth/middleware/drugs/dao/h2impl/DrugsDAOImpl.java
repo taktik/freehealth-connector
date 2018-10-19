@@ -69,6 +69,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -830,6 +831,25 @@ public class DrugsDAOImpl implements DrugsDAO {
         }
         return null;
     }
+
+    @Override
+    public List<Mpp> getMppsForParagraph(String chapterName, String paragraphName) {
+        if (chapterName != null && paragraphName != null) {
+            Session sess = getHibernateTemplate().getSessionFactory().getCurrentSession();
+            List<Ampp> ampps = sess.createCriteria(Ampp.class, "a_ampp")
+                    .createAlias("a_ampp.amp", "a_amp")
+                    .createAlias("a_amp.atm", "a_atm")
+                    .createAlias("a_atm.therapies", "a_th")
+                    .add(Restrictions.and(Restrictions.eq("t.chapterName", chapterName), Restrictions.eq("t.paragraphName", paragraphName)))
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .list();
+            return (List<Mpp>) sess.createCriteria(Mpp.class)
+                    .add(Restrictions.in("id", ampps.stream().map(Ampp::getId).collect(Collectors.toList())))
+                    .list();
+        }
+        return null;
+    }
+
 
     @Override
     public List<AddedDocument> getAddedDocuments(String chapterName, String paragraphName) {

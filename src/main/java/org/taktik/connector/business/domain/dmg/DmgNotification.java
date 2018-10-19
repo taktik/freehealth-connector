@@ -3,6 +3,7 @@ package org.taktik.connector.business.domain.dmg;
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Date;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Date;
 public class DmgNotification extends DmgMessage implements Serializable {
     private HcpartyType hcParty;
     private Boolean payment;
-    private Date from;
+    private Instant from;
 
     private String requestXML;
     private String gmdRequestXML;
@@ -44,11 +45,11 @@ public class DmgNotification extends DmgMessage implements Serializable {
         this.payment = payment;
     }
 
-    public void setFrom(Date from) {
+    public void setFrom(Instant from) {
         this.from = from;
     }
 
-    public Date getFrom() {
+    public Instant getFrom() {
         return from;
     }
 

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.taktik.connector.business.domain.Error;
+import org.taktik.freehealth.middleware.dto.MycarenetError;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,7 +15,7 @@ import org.taktik.connector.business.domain.Error;
  */
 public class DmgMessage implements Serializable {
     protected boolean complete;
-    private List<Error> errors = new ArrayList<>();
+    private List<MycarenetError> errors = new ArrayList<>();
     private String io;
     private String reference;
     private String valueHash;
@@ -34,11 +35,11 @@ public class DmgMessage implements Serializable {
         this.complete = complete;
     }
 
-    public List<Error> getErrors() {
+    public List<MycarenetError> getErrors() {
         return errors;
     }
 
-    public void setErrors(List<Error> errors) {
+    public void setErrors(List<MycarenetError> errors) {
         this.errors = errors;
     }
 
