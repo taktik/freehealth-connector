@@ -343,7 +343,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("12", (icd.timeOfDay?: InvoicingTimeOfDay.Other).code)
         ws.write("13",990)
         ws.write("15", icd.doctorIdentificationNumber)
-        ws.write("16", if (icd.gnotionNihii == null) 1 else 4)
+        ws.write("16", if (icd.gnotionNihii?.let { it.isNotEmpty() } == true) 1 else 4)
         ws.write("17", icd.relatedCode)
         ws.write("19",(if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
         ws.write("22","+" + nf4.format(icd.units))

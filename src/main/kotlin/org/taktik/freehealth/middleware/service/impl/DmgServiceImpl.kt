@@ -109,12 +109,23 @@ import org.taktik.connector.technical.ws.domain.GenericRequest
 import org.taktik.connector.technical.ws.domain.TokenType
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.common.BusinessError
+import org.taktik.freehealth.middleware.dto.MycarenetError
 import org.taktik.freehealth.middleware.service.DmgService
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3._2005._05.xmlmime.Base64Binary
+import org.w3c.dom.Element
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+import java.io.ByteArrayInputStream
 import java.net.URI
 import java.time.Instant
 import java.util.*
+import javax.xml.namespace.NamespaceContext
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.xpath.XPathConstants
+import javax.xml.xpath.XPathExpression
+import javax.xml.xpath.XPathExpressionException
+import javax.xml.xpath.XPathFactory
 
 @org.springframework.stereotype.Service
 class DmgServiceImpl(private val stsService: STSService) : DmgService {
@@ -123,14 +134,13 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
     private val genAsyncService = GenAsyncServiceImpl("dmg")
     private val config = ConfigFactory.getConfigValidator(listOf())
 
-    private val errorMessages = try {
-        this.javaClass.getResourceAsStream("errors.json")
-            ?.let {
-                gson.fromJson<List<BusinessError>>(it.reader(), object : TypeToken<ArrayList<BusinessError>>() {}.type)
-            }
-    } catch (_: Exception) {
-        null
-    } ?: listOf()
+    val dmgConsultationErrors =
+        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgConsultationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+    val dmgNotificationErrors =
+        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgNotificationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+    val xPathfactory = XPathFactory.newInstance()
+
+
 
     private val replyValidator = EhealthReplyValidatorImpl()
 
@@ -154,8 +164,6 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         val isTest = config.getProperty("endpoint.mcn.registration").contains("-acpt")
 
-        //val mapper = RegistrationRequestBuilderFactory.getRequestObjectBuilder()
-
         val request =
             ("<reg:registrations xmlns:p=\"urn:be:cin:mycarenet:esb:common:v2\"\n" +
                 "xmlns:reg=\"urn:be:cin:nip:sync:reg:v1\"\n" + "xmlns:other=\"urn:other\"\n" +
@@ -172,7 +180,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 "</reg:registration>\n" +
                 "</reg:registrations>").replace("replaceWithDateYYYY-MM-DD".toRegex(),
                 DateTime().toString("YYYY-MM-dd")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    )
+                                               )
                 .replace("replaceWithNihiiNumber".toRegex(), hcpNihii).replace("replaceWithBic".toRegex(), bic)
                 .replace("replaceWithIban".toRegex(), iban.toUpperCase())
 
@@ -238,29 +246,23 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             isSuccess = registrationsAnswer.registrationAnswer.status == RegistrationStatus.SUCCESS
             isComplete = true
             if (registrationsAnswer.registrationAnswer.status != RegistrationStatus.SUCCESS) {
-                errors.addAll(registrationsAnswer.registrationAnswer.answerDetails.map { cd ->
-                    org.taktik.connector.business.domain.Error(
-                        cd.detailCode,
-                        cd.location,
-                        cd.detailSource,
-                        errorMessages.find { it.code == cd.detailCode && it.context == "CINNIC" }?.message
-                                                              )
-                })
+                errors.addAll(listOf() /* TODO */)
             }
         }
     }
 
     fun fillGmdRequest(gmdRequest: SendRequestType,
-                       isTest: Boolean,
-                       blob: Blob,
-                       credential: Credential,
-                       references: DMGReferences,
-                       hcpNihii: String,
-                       hcpSsin: String,
-                       hcpFirstName: String,
-                       hcpLastName: String,
-                       patientInfo: Patient,
-                       referenceDate: DateTime) {
+        isTest: Boolean,
+        blob: Blob,
+        credential: Credential,
+        references: DMGReferences,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientInfo: Patient,
+        referenceDate: DateTime,
+        generateXades: Boolean) {
         this.checkInputParameters(references.inputReference, patientInfo, referenceDate, blob)
         gmdRequest.apply {
             commonInput = createCommonInputType(isTest, hcpNihii, hcpSsin, references)
@@ -279,10 +281,10 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 this.hashValue = blob.hashValue
                 this.contentType = blob.contentType
             }
-            val xadesValue = if (ArrayUtils.isEmpty(ArrayUtils.EMPTY_BYTE_ARRAY) && false) {
+            val xadesValue = if (generateXades && ArrayUtils.isEmpty(ArrayUtils.EMPTY_BYTE_ARRAY)) {
                 SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES).sign(
                     credential, ConnectorXmlUtils.toByteArray(this), mapOf<kotlin.String?, kotlin.Any?>(
-                    "baseURI" to detail.id, "tranformerList" to listOf("http://www.w3.org/2000/09/xmldsig#base64")))
+                    "baseURI" to detail.id, "transformerList" to listOf("http://www.w3.org/2000/09/xmldsig#base64")))
             } else {
                 ArrayUtils.clone(ArrayUtils.EMPTY_BYTE_ARRAY)
             }
@@ -296,9 +298,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
     }
 
     private fun createCommonInputType(isTest: Boolean,
-                                      hcpNihii: String,
-                                      hcpSsin: String,
-                                      references: DMGReferences): CommonInputType {
+        hcpNihii: String,
+        hcpSsin: String,
+        references: DMGReferences): CommonInputType {
         return CommonInputType().apply {
             this.request = be.fgov.ehealth.globalmedicalfile.core.v1.RequestType().apply {
                 this.isIsTest = isTest
@@ -386,7 +388,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 hcpFirstName,
                 hcpLastName,
                 patientInfo,
-                referenceDate)
+                referenceDate,
+                false)
         }
     }
 
@@ -413,16 +416,13 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 this.date = DateTime()
                 this.time = DateTime()
             }
-            this.kmehrmessage = kmehrmessage
+            this.kmehrmessage = kmehrMessage
         }
 
         val kmehrRequestMarshaller =
             MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
         val xmlByteArray = kmehrRequestMarshaller.toXMLByteArray(req)
-        if (xmlByteArray != null && config.getBooleanProperty(
-                "be.ehealth.businessconnector.dmg.builders.impl.dumpMessages",
-                false
-                                                             )) {
+        if (xmlByteArray != null && config.getBooleanProperty("be.ehealth.businessconnector.dmg.builders.impl.dumpMessages", false)) {
             log.debug("RequestObjectBuilder : created blob content: " + String(xmlByteArray))
         }
         val blob =
@@ -443,7 +443,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 hcpFirstName,
                 hcpLastName,
                 patientInfo,
-                referenceDate
+                referenceDate,
+                true
                           )
         }
     }
@@ -526,7 +527,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                         patientGender?.let {
                             SexType().apply {
                                 cd =
-                                    CDSEX().apply { sv = "1.0"; value = CDSEXvalues.fromValue(it) }
+                                    CDSEX().apply { s = "CD-SEX"; sv = "1.0"; value = CDSEXvalues.fromValue(it) }
                             }
                         }
                 }
@@ -540,33 +541,26 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     date = now; time = now
                     isIscomplete = true; isIsvalidated = true
                     item.add(ItemType().apply {
-                        ItemType().apply {
-                            cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "gmdmanager" })
-                            ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "1"; sv = "1.0" })
-                            contents.add(ContentType().apply { hcparty = author.hcparties.first() })
-                        }
+                        cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "gmdmanager" })
+                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "1"; sv = "1.0" })
+                        contents.add(ContentType().apply { hcparty = author.hcparties.first() })
                     })
                     item.add(ItemType().apply {
-                        ItemType().apply {
-                            cds.add(CDITEM().apply {
-                                s = CDITEMschemes.CD_ITEM; sv = "1.0"; value =
-                                "encounterdatetime"
-                            })
-                            ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "2"; sv = "1.0" })
-                            contents.add(ContentType().apply { date = DateTime(requestDate.time) })
-                        }
+                        cds.add(CDITEM().apply {
+                            s = CDITEMschemes.CD_ITEM; sv = "1.0"; value =
+                            "encounterdatetime"
+                        })
+                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "2"; sv = "1.0" })
+                        contents.add(ContentType().apply { date = DateTime(requestDate.time) })
                     })
                     item.add(ItemType().apply {
-                        ItemType().apply {
-                            cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "claim" })
-                            ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "3"; sv = "1.0" })
-                            contents.add(ContentType().apply {
-                                cds.add(CDCONTENT().apply {
-                                    s =
-                                        CDCONTENTschemes.CD_NIHDI; sv = "1.0"; value = nomenclature
-                                })
+                        cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "claim" })
+                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "3"; sv = "1.0" })
+                        contents.add(ContentType().apply {
+                            cds.add(CDCONTENT().apply {
+                                s = CDCONTENTschemes.CD_NIHDI; sv = "1.0"; value = nomenclature
                             })
-                        }
+                        })
                     })
                 })
             })
@@ -606,9 +600,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                         setPayload(gmdRequest)
                         setSoapAction("urn:be:fgov:ehealth:globalmedicalfile:protocol:v1:NotifyGlobalMedicalFile")
                     }).asObject(NotifyGlobalMedicalFileResponse::class.java).apply {
-                        replyValidator.validateReplyStatus(
-                            this
-                                                          )
+                        replyValidator.validateReplyStatus(this)
                     })
 
         if (response.ehealthStatus != "200") {
@@ -617,21 +609,21 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         return DmgNotification(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
             this.errors.addAll(response.sendTransactionResponse.acknowledge.errors?.filterNotNull()?.flatMap { et ->
-                et.cds.map { cd ->
-                    org.taktik.connector.business.domain.Error(
+                et.cds.firstOrNull()?.let { cd ->
+                    this@DmgServiceImpl.extractError(
+                        gmdRequest.detail.value,
                         cd.value,
-                        et.url,
-                        et.description?.value,
-                        errorMessages.find { it.code == cd.value && it.context == "CINNIC" && it.subcontext == "DMG-NOTIF" }?.message
-                                                              )
-                }
+                        dmgNotificationErrors,
+                        et.url
+                        )
+                } ?: setOf()
             } ?: listOf())
             response.sendTransactionResponse.kmehrmessage?.let {
                 it.folders.forEach {
                     it.transactions.find { it.cds.any { it.value.toLowerCase() == "gmd" } }?.let {
                         it.item.forEach {
                             if (it.cds.any { it.value.toLowerCase() == "gmdmanager" }) {
-                                from = it.beginmoment?.date?.toDate()
+                                from = it.beginmoment?.date?.toInstant()?.millis?.let { Instant.ofEpochMilli(it) }
                                 hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
                             }
                             if (it.cds.any { it.value.toLowerCase() == "payment" }) {
@@ -695,7 +687,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     patientGender?.let {
                         SexType().apply {
                             cd =
-                                CDSEX().apply { sv = "1.0"; value = CDSEXvalues.fromValue(it) }
+                                CDSEX().apply { s = "CD-SEX"; sv = "1.0"; value = CDSEXvalues.fromValue(it) }
                         }
                     }
             }
@@ -757,14 +749,14 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         return DmgConsultation(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
             this.errors.addAll(response.sendTransactionResponse.acknowledge.errors?.filterNotNull()?.flatMap { et ->
-                et.cds.map { cd ->
-                    org.taktik.connector.business.domain.Error(
+                et.cds.firstOrNull()?.let { cd ->
+                    this@DmgServiceImpl.extractError(
+                        consultRequest.detail.value,
                         cd.value,
-                        et.url,
-                        et.description?.value,
-                        errorMessages.find { it.code == cd.value && it.context == "CINNIC" && it.subcontext == "DMG-NOTIF" }?.message
-                                                              )
-                }
+                        dmgConsultationErrors,
+                        et.url
+                                                    )
+                } ?: setOf()
             } ?: listOf())
             response.sendTransactionResponse.kmehrmessage?.let {
                 it.folders.firstOrNull()?.let {
@@ -853,8 +845,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         val confirm =
             BuilderFactory.getRequestObjectBuilder("dmg")
                 .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
-                                               listOf(),
-                                               dmgTacks.map { ack -> Base64.getDecoder().decode(ack.valueHash) })
+                    listOf(),
+                    dmgTacks.map { ack -> Base64.getDecoder().decode(ack.valueHash) })
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
 
@@ -911,16 +903,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                         reference = r.commonOutput.nipReference
                         valueHash = b64.encodeToString(r.detail.hashValue)
                         rtr.acknowledge?.errors?.let {
-                            errors.addAll(it.flatMap { et ->
-                                et.cds.map { cd ->
-                                    org.taktik.connector.business.domain.Error(
-                                        cd.value,
-                                        et.url,
-                                        et.description?.value,
-                                        errorMessages.find { it.code == cd.value && it.context == "CINNIC" && it.subcontext == "DMG-LISTREQ" }?.message
-                                                                              )
-                                }
-                            })
+                            errors.addAll(listOf() /* TODO */)
                         }
                         if (rtr.acknowledge?.isIscomplete == true) {
                             dec.kmehrmessage?.let { km ->
@@ -1158,4 +1141,52 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 }
             }
         }
+
+    private fun extractError(sendTransactionRequest: ByteArray, ec: String, errors: Map<String, MycarenetError>, errorUrl: String?): Set<MycarenetError> {
+        return errorUrl?.let { url ->
+            val factory = DocumentBuilderFactory.newInstance()
+            factory.isNamespaceAware = true
+            val builder = factory.newDocumentBuilder()
+
+            val xpath = xPathfactory.newXPath()
+            val expr : XPathExpression? = try { xpath.compile(if (url.startsWith("/")) url else "/" + url) } catch (e: XPathExpressionException) {
+                log.warn("Invalid XPATH returned in url $url",e);  null
+            }
+            val result = mutableSetOf<MycarenetError>()
+
+            (expr?.evaluate(
+                builder.parse(ByteArrayInputStream(sendTransactionRequest)),
+                XPathConstants.NODESET
+                          ) as NodeList?)?.let { it ->
+                if (it.length > 0) {
+                    var node = it.item(0)
+                    val textContent = node.textContent
+                    var base = "/" + nodeDescr(node)
+                    while (node.parentNode != null && node.parentNode is Element) {
+                        base = "/${nodeDescr(node.parentNode)}$base"
+                        node = node.parentNode
+                    }
+                    val elements =
+                        errors.values.filter { it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*"))) }
+                    elements.forEach { it.value = textContent }
+                    result.addAll(elements)
+                } else {
+                    result.add(
+                        MycarenetError(
+                            code = ec,
+                            path = url,
+                            msgFr = "Erreur générique, xpath invalide",
+                            msgNl = "Onbekend foutmelding, xpath ongeldig"
+                                      )
+                              )
+                }
+            }
+            result
+        } ?: setOf()
+    }
+
+
+    private fun nodeDescr(node: Node): String =
+        node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
+
 }

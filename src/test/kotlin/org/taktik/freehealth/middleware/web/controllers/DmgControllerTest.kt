@@ -15,6 +15,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.dto.dmg.DmgConsultation
+import org.taktik.freehealth.middleware.dto.dmg.DmgNotification
 import org.taktik.freehealth.middleware.dto.dmg.DmgRegistration
 import java.io.File
 import java.time.LocalDateTime
@@ -118,6 +119,24 @@ class DmgControllerTest : EhealthTest() {
                 "&patientSsin=$it",
                                                  HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
             val dmgc = gson.fromJson(res.body, DmgConsultation::class.java)
+
+            dmgc
+        }
+
+        results.forEach {
+            assertThat(it.errors).isEmpty()
+        }
+    }
+
+    @Test
+    fun scenario4() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val now = LocalDateTime.now()
+
+        val results = getNisses(1).map {
+            val res = this.restTemplate.exchange("http://localhost:$port/gmd/notify/101076?hcpNihii=11478761004&hcpSsin=$ssin1&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientSsin=$it&patientFirstName=XXX&patientLastName=XXX&patientGender=male",
+                                                 HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
+            val dmgc = gson.fromJson(res.body, DmgNotification::class.java)
 
             dmgc
         }
