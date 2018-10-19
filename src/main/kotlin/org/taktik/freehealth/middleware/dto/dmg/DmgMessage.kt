@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.dto.dmg
 
 import org.taktik.connector.business.domain.Error
+import org.taktik.freehealth.middleware.dto.MycarenetError
 
 import java.io.Serializable
 import java.util.ArrayList
@@ -12,12 +13,10 @@ import java.util.ArrayList
  * Time: 08:38
  * To change this template use File | Settings | File Templates.
  */
-open class DmgMessage(complete: Boolean? = null) : Serializable {
-    constructor() : this(null)
-
-    var io: String? = null
-    var reference: String? = null
-    var valueHash: String? = null
-    var isComplete: Boolean? = complete
-    var errors: MutableList<Error> = ArrayList()
-}
+open class DmgMessage(
+    var isComplete: Boolean? = null,
+    var io: String? = null,
+    var reference: String? = null,
+    var valueHash: String? = null,
+    var errors: MutableList<MycarenetError> = ArrayList()
+) : Serializable
