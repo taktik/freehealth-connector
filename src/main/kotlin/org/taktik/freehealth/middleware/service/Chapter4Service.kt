@@ -58,6 +58,10 @@ interface Chapter4Service {
                         hcpLastName: String,
                         passPhrase: String,
                         patientSsin: String,
+                        patientDateOfBirth: Long,
+                        patientFirstName: String,
+                        patientLastName: String,
+                        patientGender: String,
                         decisionReference: String?,
                         iorequestReference: String?): AgreementResponse
     fun closeAgreement(keystoreId: UUID,
