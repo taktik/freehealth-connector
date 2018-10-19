@@ -123,11 +123,11 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
                          @PathVariable civicsVersion: String,
                          @PathVariable paragraph: String,
                          @RequestParam verses: String,
-                         @RequestParam incomplete: Boolean?,
-                         @RequestParam start: Long?,
-                         @RequestParam end: Long?,
-                         @RequestParam decisionReference: String?,
-                         @RequestParam ioRequestReference: String?,
+                         @RequestParam(required = false) incomplete: Boolean = false,
+                         @RequestParam(required = false) start: Long? = null,
+                         @RequestParam(required = false) end: Long? = null,
+                         @RequestParam(required = false) decisionReference: String? = null,
+                         @RequestParam(required = false) ioRequestReference: String? = null,
                          @RequestBody appendices: List<Appendix>
                         ) =
         chapter4Service.requestAgreement(
