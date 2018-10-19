@@ -1140,7 +1140,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
             val xpath = xPathfactory.newXPath()
             val expr : XPathExpression? = try { xpath.compile(if (url.startsWith("/")) url else "/" + url) } catch (e: XPathExpressionException) {
-                log.warn("Invalid XPATH returned in url $url",e);  null
+                log.warn("Invalid XPATH returned: `$url‘",e);  null
             }
             val result = mutableSetOf<MycarenetError>()
 

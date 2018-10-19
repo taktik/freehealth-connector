@@ -123,6 +123,8 @@ import java.io.IOException
 import java.io.Serializable
 import java.io.UnsupportedEncodingException
 import java.math.BigDecimal
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 import java.security.KeyStore
 import java.time.Instant
 import java.time.LocalDateTime
@@ -133,6 +135,7 @@ import java.util.Arrays
 import java.util.Date
 import java.util.UUID
 import javax.xml.bind.JAXBContext
+import javax.xml.soap.SOAPException
 
 @Service
 class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic, val kgssService : KgssServiceImpl) : Chapter4Service {
@@ -487,6 +490,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
             .createMarshaller().marshal(consultationMessage, bos)
         val msg = bos.toByteArray()
+
+        if (log.isDebugEnabled) {
+            val requestString = bos.toByteArray().toString(Charset.defaultCharset())
+            log.debug("Sent CH4 request: $requestString")
+        }
+
         val v1Message =
             JAXBContext.newInstance(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createUnmarshaller().unmarshal(ByteArrayInputStream(msg)) as be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 
@@ -504,6 +513,11 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val retrievedKmehrResponse =
             responseBuilder.validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(response)
 
+        if (log.isDebugEnabled) {
+            val kmehrString = retrievedKmehrResponse.getKmehrResponseBytes().toString(Charset.defaultCharset())
+            log.debug("Received CH4 response: $kmehrString")
+        }
+
         val agreementResponse = AgreementResponse()
         val ack = retrievedKmehrResponse.kmehrresponse.acknowledge
         agreementResponse.isAcknowledged = ack.isIscomplete
@@ -511,12 +525,15 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             ack.warnings.map { errorType -> Problem(errorType.cds, getWarningDescription(errorType, consultMessages), errorType.url) }
         agreementResponse.errors =
             ack.errors.map { errorType -> Problem(errorType.cds, getErrorDescription(errorType, consultMessages), errorType.url) }
-
         if (retrievedKmehrResponse.kmehrresponse.kmehrmessage != null) {
             val mh =
                 MarshallerHelper(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java, be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
             agreementResponse.content = mh.toXMLByteArray(retrievedKmehrResponse.kmehrresponse.kmehrmessage)
 
+            if (log.isDebugEnabled) {
+                val respString = mh.toXMLByteArray(retrievedKmehrResponse.kmehrresponse.kmehrmessage).toString(Charset.defaultCharset())
+                log.debug("Received CH4 response(formatted): $respString")
+            }
         }
 
         if (agreementResponse.content != null) {

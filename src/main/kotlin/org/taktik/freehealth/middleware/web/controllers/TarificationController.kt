@@ -20,6 +20,9 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import com.google.gson.Gson
+import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
+import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
 import ma.glasnost.orika.MapperFacade
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -37,6 +40,14 @@ import java.util.*
 @RestController
 @RequestMapping("/tarif")
 class TarificationController(val tarificationService: TarificationService, val mapper: MapperFacade) {
+
+
+    private val ConsultTarifErrors =
+        Gson().fromJson(
+            this.javaClass.getResourceAsStream("/be/errors/ConsultTarifErrors.json").reader(Charsets.UTF_8),
+            arrayOf<MycarenetError>().javaClass
+        ).associateBy({ it.uid }, { it })
+
     @PostMapping("/{ssin}")
     fun consultTarification(
         @PathVariable ssin: String,
@@ -67,11 +78,15 @@ class TarificationController(val tarificationService: TarificationService, val m
         consultationDate = date?.let { LocalDateTime.of((date / 10000).toInt(), ((date / 100).toInt() % 100), (date % 100).toInt(), 0, 0)} ?: LocalDateTime.now(),
         justification = justification,
         gmdNihii = gmdNihii,
-        traineeSupervisorSsin = traineeSupervisorSsin,
-        traineeSupervisorNihii = traineeSupervisorNihii,
-        traineeSupervisorFirstName = traineeSupervisorFirstName,
-        traineeSupervisorLastName = traineeSupervisorLastName,
-        codes = codes).let { mapper.map(it, TarificationConsultationResult::class.java) } } catch (e : Exception) {
+        traineeSsin = traineeSsin,
+        traineeNihii = traineeNihii,
+        codes = codes).let { mapper.map(it, TarificationConsultationResult::class.java) } }
+    catch (e: javax.xml.ws.soap.SOAPFaultException) {
+         TarificationConsultationResult().apply {
+             errors = extractError(e).toMutableList()
+         }
+    }
+    catch (e : Exception) {
         TarificationConsultationResult().apply { errors.add(MycarenetError(
             code = "999999",
             msgFr = e.message,
@@ -80,4 +95,31 @@ class TarificationController(val tarificationService: TarificationService, val m
             locNl = e.stackTrace?.toList()?.map { it.toString() }?.joinToString(";")))
         }
     }
+
+    private fun extractError(e: javax.xml.ws.soap.SOAPFaultException): Set<MycarenetError> {
+        val result = mutableSetOf<MycarenetError>()
+
+        e.fault.detail.detailEntries.forEach { it ->
+            if(it != null) {
+                val detailEntry = it as DetailEntry1_1Impl
+                val codeElements = detailEntry.getElementsByTagName("Code")
+                for (i in 0..(codeElements.length - 1)){
+                    val codeElement = codeElements?.item(i) as ElementImpl
+                    val currentConsultTarifErrors = ConsultTarifErrors.values.filter { it.code == codeElement.value }
+                    if (currentConsultTarifErrors.count() > 0) result.addAll(currentConsultTarifErrors)
+                    else {
+                        val msgElements = detailEntry.getElementsByTagName("Message")
+                        val msgElement = msgElements?.item(0) as ElementImpl
+                        result.add(MycarenetError(
+                            code = codeElement.value,
+                            msgFr = msgElement.value,
+                            msgNl = msgElement.value)
+                        )
+                    }
+                }
+            }
+        }
+        return result
+    }
+
 }

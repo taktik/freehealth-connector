@@ -28,6 +28,8 @@ import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsFlatResp
 import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsXmlOrFlatRequestType
 import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityResponse
 import com.google.gson.Gson
+import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
+import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
 import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
@@ -192,8 +194,9 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                 faultMessage = e.fault.faultString,
                 faultSource = e.message,
                 faultCode = e.fault?.faultCode,
-                transfers = listOf()
-                               )
+                transfers = listOf(),
+                errors = extractError(e).toList()
+            )
         }
     }
 
@@ -238,6 +241,22 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
             }
             result
         } ?: setOf()
+    }
+
+    private fun extractError(e: javax.xml.ws.soap.SOAPFaultException): Set<MycarenetError> {
+        val result = mutableSetOf<MycarenetError>()
+
+        e.fault.detail.detailEntries.forEach { it ->
+            if(it != null) {
+                val detailEntry = it as DetailEntry1_1Impl
+                val codeElements = detailEntry.getElementsByTagName("Code")
+                for (i in 0..(codeElements.length - 1)){
+                    val codeElement = codeElements?.item(i) as ElementImpl
+                    result.addAll(GenInsErrors.values.filter { it.code == codeElement.value })
+                }
+            }
+        }
+        return result
     }
 
     private fun nodeDescr(node: Node): String {

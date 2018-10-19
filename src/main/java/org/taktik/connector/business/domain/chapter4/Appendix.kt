@@ -27,9 +27,4 @@ import java.io.Serializable
  * Time: 14:20
  * To change this template use File | Settings | File Templates.
  */
-class Appendix(var verseSeq: Long?, var documentSeq: Long?, data: ByteArray) : Serializable {
-    var mimeType: String? = null
-    var path: String? = null
-    var data: ByteArray? = data
-
-}
+class Appendix(var verseSeq: Long? = null, var documentSeq: Long? = null, var data: ByteArray? = null, var mimeType: String? = null, var path: String? = null) : Serializable
