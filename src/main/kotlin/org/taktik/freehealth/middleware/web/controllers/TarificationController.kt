@@ -78,9 +78,11 @@ class TarificationController(val tarificationService: TarificationService, val m
         consultationDate = date?.let { LocalDateTime.of((date / 10000).toInt(), ((date / 100).toInt() % 100), (date % 100).toInt(), 0, 0)} ?: LocalDateTime.now(),
         justification = justification,
         gmdNihii = gmdNihii,
-        traineeSsin = traineeSsin,
-        traineeNihii = traineeNihii,
-        codes = codes).let { mapper.map(it, TarificationConsultationResult::class.java) } }
+        codes = codes,
+        traineeSupervisorSsin = traineeSupervisorSsin,
+        traineeSupervisorNihii = traineeSupervisorSsin,
+        traineeSupervisorFirstName = traineeSupervisorSsin,
+        traineeSupervisorLastName = traineeSupervisorSsin).let { mapper.map(it, TarificationConsultationResult::class.java) } }
     catch (e: javax.xml.ws.soap.SOAPFaultException) {
          TarificationConsultationResult().apply {
              errors = extractError(e).toMutableList()
