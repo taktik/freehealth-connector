@@ -44,7 +44,7 @@ class DmgControllerTest : EhealthTest() {
 //    900 to listOf("60021055234", "33011334166", "48030158922", "52012945565", "10110111079", "98051354789")
 
     private val oas = listOf("100", "300", "500", "600")
-    private val regOa = listOf("100") //do not register to all OA at the same time, deregister is not possible
+    private val regOa = listOf("300") //do not register to all OA at the same time, deregister is not possible
     private fun getNisses(idx: Int) = listOf(nisses[100]!![idx], nisses[300]!![idx], nisses[500]!![idx], nisses[600]!![idx])//, nisses[900]!![idx])
 
     @Autowired
@@ -133,9 +133,41 @@ class DmgControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
 
-        val results = getNisses(1).map {
-            val res = this.restTemplate.exchange("http://localhost:$port/gmd/notify/101076?hcpNihii=11478761004&hcpSsin=$ssin1&hcpFirstName=${"Antoine"}&hcpLastName=${"Baudoux"}&patientSsin=$it&patientFirstName=XXX&patientLastName=XXX&patientGender=male",
-                                                 HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
+        val results = getNisses(3).map {
+            val res = this.restTemplate.exchange("http://localhost:$port/gmd/notify/101010"  +
+                "?hcpNihii=$nihii1" +
+                "&hcpSsin=$ssin1" +
+                "&hcpFirstName=$firstName1" +
+                "&hcpLastName=$lastName1" +
+                "&patientSsin=$it" +
+                "&patientFirstName=XXX&patientLastName=XXX" +
+                "&patientGender=female",
+                HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
+            val dmgc = gson.fromJson(res.body, DmgNotification::class.java)
+
+            dmgc
+        }
+
+        results.forEach {
+            assertThat(it.errors).isEmpty()
+        }
+    }
+
+    @Test
+    fun scenario5() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val now = LocalDateTime.now()
+
+        val results = getNisses(4).map {
+            val res = this.restTemplate.exchange("http://localhost:$port/gmd/notify/101076"  +
+                "?hcpNihii=$nihii1" +
+                "&hcpSsin=$ssin1" +
+                "&hcpFirstName=$firstName1" +
+                "&hcpLastName=$lastName1" +
+                "&patientSsin=$it" +
+                "&patientFirstName=XXX&patientLastName=XXX" +
+                "&patientGender=female",
+                HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
             val dmgc = gson.fromJson(res.body, DmgNotification::class.java)
 
             dmgc
@@ -151,7 +183,7 @@ class DmgControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
 
-        val results = getNisses(5).map {
+        val results = getNisses(2).map {
             val res = this.restTemplate.exchange("http://localhost:$port/gmd" +
                 "?hcpNihii=$nihii1&hcpSsin=" +
                 "$ssin1&hcpFirstName=$firstName1" +
@@ -173,8 +205,13 @@ class DmgControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
         val results = regOa.map {
-            val str = this.restTemplate.exchange("http://localhost:$port/gmd/register/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName1}&hcpLastName={lastName1}&bic=$BIC1&iban=$IBAN1",
-                                                 HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
+            val str = this.restTemplate.exchange("http://localhost:$port/gmd/register/$it" +
+                "?hcpNihii=$nihii1" +
+                "&hcpSsin=$ssin1" +
+                "&hcpFirstName={firstName1}" +
+                "&hcpLastName={lastName1}" +
+                "&bic=$BIC1&iban=$IBAN1",
+                HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
             val dmgr = gson.fromJson(str.body, DmgRegistration::class.java)
 
             dmgr
