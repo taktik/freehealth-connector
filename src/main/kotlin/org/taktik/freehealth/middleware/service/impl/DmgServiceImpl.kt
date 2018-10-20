@@ -1176,7 +1176,31 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
     }
 
 
-    private fun nodeDescr(node: Node): String =
-        node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
+    private fun nodeDescr(node: Node): String {
+        val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
+
+        val xpath = xPathfactory.newXPath()
+        xpath.namespaceContext = object : NamespaceContext {
+            override fun getNamespaceURI(prefix: String?) = when (prefix) {
+                "ns3" -> "http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
+                else -> null
+            }
+
+            override fun getPrefix(namespaceURI: String?) = when (namespaceURI) {
+                "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> "ns3"
+                else -> null
+            }
+
+            override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
+                when (namespaceURI) {
+                    "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> listOf("ns3").iterator()
+                    else -> listOf<String>().iterator()
+                }
+        }
+        if (localName == "item") {
+            return "item[${xpath.evaluate("ns3:cd[@S=\"CD-ITEM\"]", node)}]"
+        }
+        return localName
+    }
 
 }
