@@ -80,9 +80,9 @@ class TarificationController(val tarificationService: TarificationService, val m
         gmdNihii = gmdNihii,
         codes = codes,
         traineeSupervisorSsin = traineeSupervisorSsin,
-        traineeSupervisorNihii = traineeSupervisorSsin,
-        traineeSupervisorFirstName = traineeSupervisorSsin,
-        traineeSupervisorLastName = traineeSupervisorSsin).let { mapper.map(it, TarificationConsultationResult::class.java) } }
+        traineeSupervisorNihii = traineeSupervisorNihii,
+        traineeSupervisorFirstName = traineeSupervisorFirstName,
+        traineeSupervisorLastName = traineeSupervisorLastName).let { mapper.map(it, TarificationConsultationResult::class.java) } }
     catch (e: javax.xml.ws.soap.SOAPFaultException) {
          TarificationConsultationResult().apply {
              errors = extractError(e).toMutableList()

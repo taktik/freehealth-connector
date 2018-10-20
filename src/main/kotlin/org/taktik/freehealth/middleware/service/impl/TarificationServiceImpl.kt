@@ -213,12 +213,13 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                     careProviderNihii?.let {
                                         this.nihii =
                                             NihiiType().apply {
-                                                this.quality = "doctor"
+                                                this.quality = "physician"
                                                 this.value =
                                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
                                                         .apply { this.value = hcpNihii }
                                             }
                                     }
+
                                 }
                             }
                         }
