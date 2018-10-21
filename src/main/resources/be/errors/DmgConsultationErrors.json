@@ -40,6 +40,6 @@
 	{"uid":"39","path":"/RetrieveTransactionRequest/select/transaction/begindate","code":"100","locFr":"","locNl":"","msgFr":"Zone obligatoire non présente","msgNl":""},
 	{"uid":"40","path":"/RetrieveTransactionRequest/select/transaction/begindate","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
 	{"uid":"41","path":"/RetrieveTransactionRequest/select/transaction/begindate","code":"113","locFr":"","locNl":"","msgFr":"Date invraisemblable","msgNl":""},
-	{"uid":"42","path":"/RetrieveTransactionRequest/select/transaction/begindate","code":"145","locFr":"","locNl":"","msgFr":"Date de demande < Date du jour – 2 ans.","msgNl":""},
+	{"uid":"42","path":"/RetrieveTransactionRequest/select/transaction/begindate","code":"145","locFr":"Date de demande","locNl":"Aanvraagdatum","msgFr":"Date de demande < Date du jour – 2 ans.","msgNl":""},
 	{"uid":"43","path":"/RetrieveTransactionRequest/select/transaction/begindate","code":"146","locFr":"","locNl":"","msgFr":"Date > Date du jour","msgNl":""}
 ]
