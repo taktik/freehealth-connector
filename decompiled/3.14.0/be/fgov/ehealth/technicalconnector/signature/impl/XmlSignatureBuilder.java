@@ -106,9 +106,9 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
       }
    }
 
-   private static Transforms transforms(List<String> tranformerList, Document doc) throws TransformationException {
+   private static Transforms transforms(List<String> transformerList, Document doc) throws TransformationException {
       Transforms baseDocTransform = new Transforms(doc);
-      Iterator i$ = tranformerList.iterator();
+      Iterator i$ = transformerList.iterator();
 
       while(i$.hasNext()) {
          String transform = (String)i$.next();

@@ -6,7 +6,7 @@ public final class XadesOption {
    public static final String TRANSFORMERLIST = "transformerList";
    /** @deprecated */
    @Deprecated
-   public static final String TRANFORMERLIST = "transformerList";
+   public static final String TRANSFORMERLIST = "transformerList";
    public static final String CANONICALIZATIONMETHODURI = "canonicalizationMethodURI";
    public static final String SIGNATUREMETHODURI = "signatureMethodURI";
    public static final String BASEURI = "baseURI";
