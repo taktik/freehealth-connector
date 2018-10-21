@@ -24,9 +24,7 @@ import be.fgov.ehealth.genericinsurability.core.v1.*
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityContactTypeType.AMBULATORY_CARE
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityContactTypeType.HOSPITALIZED_ELSEWHERE
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityRequestTypeType.INFORMATION
-import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsFlatResponse
 import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsXmlOrFlatRequestType
-import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityResponse
 import com.google.gson.Gson
 import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
@@ -41,11 +39,14 @@ import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto
+import org.taktik.freehealth.middleware.dto.InfoRequest.OutputReferences
 import org.taktik.freehealth.middleware.dto.MycarenetError
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import org.taktik.freehealth.middleware.mapper.toInsurabilityInfoDto
 import org.taktik.freehealth.middleware.service.GenInsService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.utils.InfoRequestUtils
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -177,15 +178,24 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
 
             genInsResponseDTO.errors = genInsResponse.response.messageFault?.details?.details?.flatMap { extractError(xmlData, it.detailCode, it.location).toList() } ?: listOf()
 
+            //  Instantiate a new InfoRequestDto object
+            val infoRequestDto = InfoRequestDto()
 
-            genInsResponseDTO.xmlRequest = xmlData.toString(Charsets.UTF_8);
-            val kmehrRequestMarshaller2 =
+            infoRequestDto.xmlRequest = xmlData.toString(Charsets.UTF_8);
+
+            val xmlRequestMarshaller =
                 MarshallerHelper(
-                    GetInsurabilityResponse::class.java,
-                    GetInsurabilityResponse::class.java
+                    genInsResponse.javaClass,
+                    genInsResponse.javaClass
                 )
-            val xmlData2 = kmehrRequestMarshaller2.toXMLByteArray(genInsResponse)
-            genInsResponseDTO.xmlResponse = xmlData2.toString(Charsets.UTF_8);
+            val xmlData2 = xmlRequestMarshaller.toXMLByteArray(genInsResponse)
+            infoRequestDto.xmlResponse = xmlData2.toString(Charsets.UTF_8);
+
+            val infoRequestUtils = InfoRequestUtils();
+
+            infoRequestDto.outputReferences = infoRequestUtils.getOutputReferences(infoRequestDto.xmlResponse.toString());
+
+            genInsResponseDTO.infoRequestDto = infoRequestDto;
 
             return genInsResponseDTO
 

@@ -5,24 +5,15 @@ import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEM;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEXvalues;
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR;
-import be.fgov.ehealth.standards.kmehr.schema.v1.ContentType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.CostType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.DateType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.ItemType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.PersonType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.SexType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.TransactionType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.UnitType;
+import be.fgov.ehealth.standards.kmehr.schema.v1.*;
 import org.joda.time.DateTime;
+import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto;
+import org.taktik.freehealth.middleware.dto.MycarenetError;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.taktik.connector.business.domain.Error;
-import org.taktik.freehealth.middleware.dto.MycarenetError;
-import springfox.documentation.spring.web.json.Json;
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,6 +37,9 @@ public class TarificationConsultationResult implements Serializable {
 
 	private List<MycarenetError> errors = new ArrayList<>();
 	private List<CodeResult> codeResults = new ArrayList<>();
+
+	private InfoRequestDto infoRequestDto;
+
     private String retrieveTransactionRequest;
     private String commonInputResponse;
     private String tarificationConsultationResponse;
@@ -242,6 +236,14 @@ public class TarificationConsultationResult implements Serializable {
 
 	public void setCodeResults(List<CodeResult> codeResults) {
 		this.codeResults = codeResults;
+	}
+
+	public InfoRequestDto getInfoRequestDto() {
+		return infoRequestDto;
+	}
+
+	public void setInfoRequestDto(InfoRequestDto infoRequestDto){
+		this.infoRequestDto = infoRequestDto;
 	}
 
 	public String getRetrieveTransactionRequest(){

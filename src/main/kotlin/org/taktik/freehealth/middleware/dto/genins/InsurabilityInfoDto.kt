@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto.genins
 
+import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto
 import org.taktik.freehealth.middleware.dto.MycarenetError
 import java.io.Serializable
 import java.util.ArrayList
@@ -49,8 +50,5 @@ class InsurabilityInfoDto(
     val paymentByIo: Boolean = false,
     val specialSocialCategory: Boolean = false,
     val transfers: List<TransferDto>? = null,
-    var xmlRequest: String? = null,
-    var xmlResponse: String? = null,
-    val SoapRequest: String? = null,
-    val SoapResponse: String? = null
-                         ) : Serializable
+    var infoRequestDto: InfoRequestDto? = null) : Serializable
+
