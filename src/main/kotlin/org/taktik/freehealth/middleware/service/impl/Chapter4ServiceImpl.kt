@@ -185,6 +185,8 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
 
     override fun getMppsForParagraph(chapterName: String, paragraphName: String) = drugsLogic.getMppsForParagraph(chapterName, paragraphName)
 
+    override fun getVtmNamesForParagraph(chapterName: String, paragraphName: String, language: String) = drugsLogic.getVtmNamesForParagraph(chapterName, paragraphName, language) ?: listOf()
+
     override fun getAddedDocuments(chapterName: String, paragraphName: String): List<AddedDocumentPreview> = drugsLogic.getAddedDocuments(chapterName, paragraphName)
 
     private fun buildOriginType(nihii: String, ssin: String, firstName: String, lastName: String): OriginType =

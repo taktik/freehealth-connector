@@ -577,6 +577,16 @@ public class DrugsLogicImpl implements DrugsLogic {
     }
 
     @Override
+    public List<String> getVtmNamesForParagraph(String chapterName, String paragraphName, String language) {
+        try {
+            drugsDAO.openDataStoreSession();
+            return drugsDAO.getVtmNamesForParagraph(chapterName, paragraphName, language);
+        } finally {
+            drugsDAO.closeDataStoreSession();
+        }
+    }
+
+    @Override
     public List<AddedDocumentPreview> getAddedDocuments(String chapterName, String paragraphName) {
         try {
             drugsDAO.openDataStoreSession();
