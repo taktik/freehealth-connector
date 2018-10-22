@@ -51,6 +51,7 @@ import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEM
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.AGREEMENTENDDATE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.AGREEMENTSTARTDATE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.AGREEMENTTYPE
@@ -65,6 +66,7 @@ import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.REQUESTTYPE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.RESPONSETYPE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.UNITNUMBER
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.STRENGTH
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MAA
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDLNKvalues.ISANAPPENDIXOF
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDLNKvalues.MULTIMEDIA
@@ -432,7 +434,20 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             request?.let { freehealthChapter4Service.askChap4MedicalAdvisorAgreement(samlToken, it) }
                 ?: AskChap4MedicalAdvisorAgreementResponse()
         } catch (e: SoaErrorException) {
-            return generateError(e, CommonOutput())
+            return generateError(e, CommonOutput()).apply {
+                val rt = e.responseType
+                if (rt is AskChap4MedicalAdvisorAgreementResponse) {
+                    val co = rt.commonOutput
+                    this.commonOutput?.apply {
+                        this.inputReference = co?.inputReference ?: rt?.recordCommonOutput?.inputReference?.toString()
+                        this.nipReference = co?.nipReference
+                        this.outputReference = co?.outputReference ?: rt?.recordCommonOutput?.outputReference?.toString()
+                    }
+                    rt.returnInfo?.let { ri ->
+                        this.errors = this.errors?.let { it + listOf(MycarenetError(code = ri.faultCode, path = ri.faultSource, msgFr = ri.message.value, msgNl = ri.message.value))}
+                    }
+                }
+            }
         }
 
         val commonOutput = CommonOutput(response.commonOutput?.inputReference ?: response.recordCommonOutput.inputReference?.toString(), response.commonOutput.nipReference, response.commonOutput.outputReference ?: response.recordCommonOutput.outputReference?.toString())
@@ -762,13 +777,38 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                 at.unitNumber =
                     its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == UNITNUMBER.value() } }
                         ?.contents?.map { it.decimal }?.find { it != null }?.toDouble()
-                //TODO at.strength = its.find { it.cds.any { it.s == be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MAA && it.value == UNITNUMBER.value() } }?.contents?.map { it.decimal }?.find {it != null}?.toDouble()
+
+                its?.find { it.cds.any { it.s == be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MAA && it.value == CDITEMMAAvalues.STRENGTH.value()}}?.let {
+                    val c = it.contents?.find {
+                        it.decimal != null
+                    }
+                    at.strength = c!!.decimal.toDouble()
+                    at.strengthUnit = c!!.unit?.cd?.value
+                }
+
+                its?.find { it.cds.any { it.s == be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MAA && it.value == CDITEMMAAvalues.RESTSTRENGTH.value()}}?.let {
+                    val c = it.contents?.find {
+                        it.decimal != null
+                    }
+                    at.restStrength = c!!.decimal.toDouble()
+                    at.restStrengthUnit = c!!.unit?.cd?.value
+                }
+
+                at.restUnitNumber = its?.find { it.cds.any { it.s == be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MAA && it.value == CDITEMMAAvalues.RESTUNITNUMBER.value()}}?.contents?.map{it.decimal}?.find{it != null}?.toDouble()
+
                 at.responseType =
                     its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == RESPONSETYPE.value() } }
                         ?.contents?.map { it.cds?.find { it.s == v1CDMAARESPONSETYPE }?.value }?.find { it != null }
                 at.paragraph =
                     its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == CHAPTER_4_REFERENCE.value() } }
                         ?.contents?.map { it.cds?.find { it.s == v1CDCHAPTER4PARAGRAPH }?.value }?.find { it != null }
+
+                its?.find { it.cds.any { it.s == be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MAA && it.value == CDITEMMAAvalues.COVERAGETYPE.value()}}.let{
+                    val c = it!!.contents?.find { it.cds != null}
+                    at.coverageType = c!!.cds.map{it.value}?.find { it != null }
+                }
+
+
                 val bos = ByteArrayOutputStream()
                 JAXBContext.newInstance(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
                     .createMarshaller()

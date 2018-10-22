@@ -113,7 +113,7 @@ class Chapter4ControllerTest : EhealthTest() {
         println("scenario 01 \n====================")
 
         results.forEach {
-            assertThat(it!!.errors!!.size > 0 && it!!.errors!!.first().cds[0].value == "180")
+            assertThat(it!!.errors!!.size > 0 && it!!.errors!!.first().code == "180")
         }
     }
 
@@ -198,7 +198,7 @@ class Chapter4ControllerTest : EhealthTest() {
 
         println("scenario 03 \n====================")
         results.forEach {
-            assertThat(it!!.body!!.content!!.size == 1 && it!!.body!!.warnings!!.size >= 1 && it!!.body!!.warnings!!.first().cds[0].value == "601")
+            assertThat(it!!.body!!.content!!.size == 1 && it!!.body!!.warnings!!.size >= 1 && it!!.body!!.warnings!!.first().code == "601")
         }
 
         //Assertions.assertThat(results!!.content!!.size).isEqualTo(1)
@@ -288,7 +288,7 @@ class Chapter4ControllerTest : EhealthTest() {
 
         println("scenario 05 \n====================")
         Assertions.assertThat(results!!.errors).isNotNull.isNotEmpty
-        Assertions.assertThat(results!!.errors!!.first().cds[0].value).isEqualTo("181")
+        Assertions.assertThat(results!!.errors!!.first().code).isEqualTo("181")
 
     }
 
@@ -712,7 +712,7 @@ class Chapter4ControllerTest : EhealthTest() {
 
         println("scenario 13 \n====================")
         Assertions.assertThat(results!!.errors).isNotNull.isNotEmpty
-        Assertions.assertThat(results!!.errors!!.first().cds[0].value).isEqualTo("157")
+        Assertions.assertThat(results!!.errors!!.first().code).isEqualTo("157")
 
     }
     /*
@@ -749,7 +749,7 @@ class Chapter4ControllerTest : EhealthTest() {
 
         println("scenario 05 \n====================")
         Assertions.assertThat(results!!.errors).isNotNull.isNotEmpty
-        Assertions.assertThat(results!!.errors!!.first().cds[0].value).isEqualTo("130")
+        Assertions.assertThat(results!!.errors!!.first().code).isEqualTo("130")
 
     }
 
