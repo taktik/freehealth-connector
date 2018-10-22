@@ -23,11 +23,6 @@ class AgreementResponse(
     var transactions: MutableList<AgreementTransaction> = ArrayList()
                        ) : Serializable {
 
-    var requestXML: String? = null
-    var responseXML: String? = null
-
-    internal var transactions: MutableList<AgreementTransaction> = ArrayList()
-
     fun addTransaction(t: AgreementTransaction): AgreementTransaction {
         transactions.add(t)
         return t

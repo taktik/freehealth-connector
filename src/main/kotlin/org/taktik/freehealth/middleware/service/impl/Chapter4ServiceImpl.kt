@@ -501,21 +501,6 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         } catch (ex: ChapterIVBusinessConnectorException) {
             return generateError(ex, commonOutput)
         }
-        if (aggResponse.isAcknowledged) {
-            aggResponse.content = msg
-        }
-
-        val requestMarshaller =
-            MarshallerHelper(AskChap4MedicalAdvisorAgreementRequest::class.java, AskChap4MedicalAdvisorAgreementRequest::class.java)
-        val requestXmlByteArray = requestMarshaller.toXMLByteArray(request);
-        aggResponse.requestXML = requestXmlByteArray.toString(Charsets.UTF_8);
-
-        val responseMarshaller =
-            MarshallerHelper(AskChap4MedicalAdvisorAgreementResponse::class.java, AskChap4MedicalAdvisorAgreementResponse::class.java)
-        val responseXmlByteArray = responseMarshaller.toXMLByteArray(response);
-        aggResponse.responseXML = responseXmlByteArray.toString(Charsets.UTF_8);
-
-        return aggResponse
     }
 
     override fun agreementRequestsConsultation(
@@ -655,18 +640,6 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         } catch (ex: ChapterIVBusinessConnectorException) {
             return generateError(ex, commonOutput)
         }
-
-        val requestMarshaller =
-            MarshallerHelper(ConsultChap4MedicalAdvisorAgreementRequest::class.java, ConsultChap4MedicalAdvisorAgreementRequest::class.java)
-        val requestXmlByteArray = requestMarshaller.toXMLByteArray(request);
-        agreementResponse.requestXML = requestXmlByteArray.toString(Charsets.UTF_8);
-
-        val responseMarshaller =
-            MarshallerHelper(ConsultChap4MedicalAdvisorAgreementResponse::class.java, ConsultChap4MedicalAdvisorAgreementResponse::class.java)
-        val responseXmlByteArray = responseMarshaller.toXMLByteArray(response);
-        agreementResponse.responseXML = responseXmlByteArray.toString(Charsets.UTF_8);
-
-        return agreementResponse
     }
 
     override fun cancelAgreement(

@@ -8,7 +8,6 @@ import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR;
 import be.fgov.ehealth.standards.kmehr.schema.v1.*;
 import org.joda.time.DateTime;
 import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto;
-import org.taktik.freehealth.middleware.dto.MycarenetError;
 
 import java.io.Serializable;
 import java.util.ArrayList;
