@@ -190,13 +190,19 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
             this.xades = BlobUtil.generateXades(this.detail, credential, "mcn.registration")
         }
-        val registrationsAnswer =
-            ResponseHelper.toObject(
-                org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(
-                    org.taktik.connector.business.registration.service.ServiceFactory.getRegistrationService(samlToken).apply {
-                        setPayload(mcRequest)
-                        setSoapAction("urn:be:fgov:ehealth:mycarenet:registration:protocol:v1:RegisterToMycarenetService")
-                    }).asObject(RegisterToMycarenetServiceResponse::class.java).`return`.detail.value)
+
+        val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(
+            org.taktik.connector.business.registration.service.ServiceFactory.getRegistrationService(samlToken).apply {
+                setPayload(mcRequest)
+                setSoapAction("urn:be:fgov:ehealth:mycarenet:registration:protocol:v1:RegisterToMycarenetService")
+            })
+
+        val intermediateResponse = xmlResponse.asObject(RegisterToMycarenetServiceResponse::class.java)
+
+        intermediateResponse.soapRequest = xmlResponse.request
+        intermediateResponse.soapResponse = xmlResponse.soapMessage
+
+        val registrationsAnswer = ResponseHelper.toObject(intermediateResponse.`return`.detail.value)
 
         return DmgRegistration().apply {
             isSuccess = registrationsAnswer.registrationAnswer.status == RegistrationStatus.SUCCESS
@@ -204,6 +210,17 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             if (registrationsAnswer.registrationAnswer.status != RegistrationStatus.SUCCESS) {
                 errors.addAll(listOf() /* TODO */)
             }
+            this.mycarenetConversation = MycarenetConversation().apply{
+                this.transactionResponse = MarshallerHelper(RegisterToMycarenetServiceResponse::class.java, RegisterToMycarenetServiceResponse::class.java).toXMLByteArray(intermediateResponse).toString(Charsets.UTF_8)
+                this.transactionRequest = MarshallerHelper(RegisterToMycarenetServiceRequest::class.java, RegisterToMycarenetServiceRequest::class.java).toXMLByteArray(mcRequest).toString(Charsets.UTF_8)
+                intermediateResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                intermediateResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+            }
+            this.commonOutput = CommonOutput(
+                intermediateResponse?.`return`?.commonOutput?.inputReference,
+                intermediateResponse?.`return`?.commonOutput?.nipReference,
+                intermediateResponse?.`return`?.commonOutput?.outputReference
+            )
         }
     }
 
@@ -535,29 +552,31 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 kmehrmessage
             )
 
-        val response =
-            ResponseObjectBuilderFactory.getResponseObjectBuilder()
-                .handleSendResponseType(
-                    org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(GenericRequest().apply {
-                        setEndpoint(
-                            config.getProperty(
-                                "endpoint.dmg.notification.v1",
-                                "\$uddi{uddi:ehealth-fgov-be:business:globalmedicalfilenotification:v1}"
-                            )
-                        )
-                        setCredential(samlToken, TokenType.SAML)
-                        addDefaulHandlerChain()
-                        addHandlerChain(
-                            HandlerChainUtil.buildChainWithValidator(
-                                "validation.incoming.message.dmg.notification.v1",
-                                "/ehealth-gmf/XSD/gmf_services_protocol-1_1.xsd"
-                            )
-                        )
-                        setPayload(gmdRequest)
-                        setSoapAction("urn:be:fgov:ehealth:globalmedicalfile:protocol:v1:NotifyGlobalMedicalFile")
-                    }).asObject(NotifyGlobalMedicalFileResponse::class.java).apply {
-                        replyValidator.validateReplyStatus(this)
-                    })
+        val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(GenericRequest().apply {
+            setEndpoint(
+                config.getProperty(
+                    "endpoint.dmg.notification.v1",
+                    "\$uddi{uddi:ehealth-fgov-be:business:globalmedicalfilenotification:v1}"
+                )
+            )
+            setCredential(samlToken, TokenType.SAML)
+            addDefaulHandlerChain()
+            addHandlerChain(
+                HandlerChainUtil.buildChainWithValidator(
+                    "validation.incoming.message.dmg.notification.v1",
+                    "/ehealth-gmf/XSD/gmf_services_protocol-1_1.xsd"
+                )
+            )
+            setPayload(gmdRequest)
+            setSoapAction("urn:be:fgov:ehealth:globalmedicalfile:protocol:v1:NotifyGlobalMedicalFile")
+        })
+
+        val intermediateResponse = xmlResponse.asObject(NotifyGlobalMedicalFileResponse::class.java).apply {
+                replyValidator.validateReplyStatus(this)
+            }
+
+        val response = ResponseObjectBuilderFactory.getResponseObjectBuilder()
+            .handleSendResponseType(intermediateResponse)
 
         if (response.ehealthStatus != "200") {
             throw RuntimeException("Wrong status code" + response.ehealthStatus)
@@ -590,33 +609,18 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 }
             }
 
-/*            this.mycarenetConversation = MycarenetConversation().apply {
-                response.soapRequest?.writeTo(this.soapRequestOutputStream())
-                consultTarificationResponse.soapResponse?.writeTo(this.soapResponseOutputStream())
-                this.transactionRequest = MarshallerHelper(TarificationConsultationRequest::class.java, TarificationConsultationRequest::class.java)
-                    .toXMLByteArray(request)
-                    .toString(Charsets.UTF_8)
-                this.transactionResponse = MarshallerHelper(TarificationConsultationResponse::class.java, TarificationConsultationResponse::class.java)
-                    .toXMLByteArray(consultTarificationResponse)
-                    .toString(Charsets.UTF_8)
-            }*/
+            this.mycarenetConversation = MycarenetConversation().apply{
+                this.transactionResponse = MarshallerHelper(NotifyGlobalMedicalFileResponse::class.java, NotifyGlobalMedicalFileResponse::class.java).toXMLByteArray(intermediateResponse).toString(Charsets.UTF_8)
+                this.transactionRequest = MarshallerHelper(NotifyGlobalMedicalFileRequest::class.java, NotifyGlobalMedicalFileRequest::class.java).toXMLByteArray(gmdRequest).toString(Charsets.UTF_8)
+                intermediateResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                intermediateResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+            }
+            this.commonOutput = CommonOutput(
+                intermediateResponse?.`return`?.commonOutput?.inputReference,
+                intermediateResponse?.`return`?.commonOutput?.nipReference,
+                intermediateResponse?.`return`?.commonOutput?.outputReference
+            )
         }
-
-
-//        val requestMarshaller =
-//            MarshallerHelper(SelectRetrieveTransaction::class.java, SelectRetrieveTransaction::class.java)
-//        val requestXmlByteArray = requestMarshaller.toXMLByteArray(request);
-//        dmg.requestXML = requestXmlByteArray.toString(Charsets.UTF_8);
-
-/*        val consultRequestMarshaller =
-            MarshallerHelper(NotifyGlobalMedicalFileRequest::class.java, NotifyGlobalMedicalFileRequest::class.java)
-        val consultRequestXmlByteArray = consultRequestMarshaller.toXMLByteArray(gmdRequest);
-        dmg.gmdRequestXML = consultRequestXmlByteArray.toString(Charsets.UTF_8);
-
-        val responseMarshaller =
-            MarshallerHelper(DmgBuilderResponse::class.java, DmgBuilderResponse::class.java)
-        val responseXmlByteArray = responseMarshaller.toXMLByteArray(response);
-        dmg.responseXML = responseXmlByteArray.toString(Charsets.UTF_8);*/
 
         return dmg
     }
@@ -736,7 +740,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         if (!response.ehealthStatus.equals("200")) {
             throw RuntimeException("Wrong status code" + response.ehealthStatus)
         }
-        
+
         val dmg = DmgConsultation(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
             this.errors.addAll(response.sendTransactionResponse.acknowledge.errors?.filterNotNull()?.flatMap { et ->
                 et.cds.firstOrNull()?.let { cd ->
