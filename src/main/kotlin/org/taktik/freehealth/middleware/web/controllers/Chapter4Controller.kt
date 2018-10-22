@@ -70,6 +70,13 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @PathVariable paragraphName: String) : List<MppPreview> =
         chapter4Service.getMppsForParagraph(chapterName, paragraphName)
 
+    @GetMapping("/sam/vtms/{chapterName}/{paragraphName}/{language}")
+    fun getVtmNamesForParagraph(
+        @PathVariable chapterName: String,
+        @PathVariable paragraphName: String,
+        @PathVariable language: String) : List<String> =
+        chapter4Service.getVtmNamesForParagraph(chapterName, paragraphName, language)
+
     @GetMapping("/sam/info/{chapterName}/{paragraphName}")
     fun getParagraphInfos(
         @PathVariable chapterName: String,

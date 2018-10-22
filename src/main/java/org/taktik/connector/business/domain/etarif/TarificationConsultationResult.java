@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError;
+
 /**
  * Created with IntelliJ IDEA.
  * User: aduchate

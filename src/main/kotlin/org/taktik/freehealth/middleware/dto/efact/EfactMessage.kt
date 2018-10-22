@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.dto.efact
 
 import be.cin.nip.async.generic.TAck
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 
 class EfactMessage {
     var detail: String? = null

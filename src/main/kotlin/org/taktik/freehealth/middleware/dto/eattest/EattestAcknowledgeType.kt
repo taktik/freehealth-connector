@@ -20,6 +20,6 @@
 
 package org.taktik.freehealth.middleware.dto.eattest
 
-import org.taktik.freehealth.middleware.dto.MycarenetError
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 
 class EattestAcknowledgeType(var errors: List<MycarenetError> = listOf(), var iscomplete: Boolean = false)

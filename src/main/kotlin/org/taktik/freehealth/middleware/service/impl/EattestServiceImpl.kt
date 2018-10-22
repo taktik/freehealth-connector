@@ -95,7 +95,6 @@ import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilder
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
 import org.taktik.connector.technical.config.ConfigFactory
-import org.taktik.connector.technical.enumeration.Charset
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
@@ -111,8 +110,7 @@ import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
-import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto
-import org.taktik.freehealth.middleware.dto.MycarenetError
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.eattest.EattestAcknowledgeType
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResultWithResponse
@@ -881,7 +879,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                        )
+                                                                                     )
                     )
                 }
             }

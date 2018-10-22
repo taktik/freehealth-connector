@@ -1,11 +1,9 @@
 package org.taktik.freehealth.middleware.dto.dmg
 
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
-import org.taktik.connector.business.domain.Error
-import org.taktik.freehealth.middleware.dto.MycarenetError
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 
 import java.io.Serializable
-import java.time.Instant
 
 /**
  * Created with IntelliJ IDEA.

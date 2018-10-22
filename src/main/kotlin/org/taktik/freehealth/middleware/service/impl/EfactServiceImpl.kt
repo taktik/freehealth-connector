@@ -27,7 +27,7 @@ import org.taktik.connector.technical.handler.domain.WsAddressingHeader
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorIOUtils
 import org.taktik.freehealth.middleware.dao.User
-import org.taktik.freehealth.middleware.dto.efact.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.efact.EfactMessage
 import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
 import org.taktik.freehealth.middleware.dto.efact.ErrorDetail
@@ -215,7 +215,8 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val tack = postResponse.getReturn()
         val success = tack.resultMajor != null && tack.resultMajor == "urn:nip:tack:result:major:success"
 
-        return EfactSendResponse(success, inputReference, tack, content, BelgianInsuranceInvoicingFormatReader("unused").parse(content.reader(), false)!!.map { mapper.map(it, Record::class.java) })
+        val records = BelgianInsuranceInvoicingFormatReader("unused").parse(content.reader(), false)!!.map { mapper.map(it, Record::class.java) }
+        return EfactSendResponse(success, inputReference, tack, content, records)
     }
 
 

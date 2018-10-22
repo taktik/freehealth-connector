@@ -203,6 +203,8 @@ public interface DrugsLogic {
 
 	List<MppPreview> getMppsForParagraph(String chapterName, String paragraphName);
 
+	List<String> getVtmNamesForParagraph(String chapterName, String paragraphName, String language);
+
 	List<AddedDocumentPreview> getAddedDocuments(String chapterName, String paragraphName);
 
     List<ParagraphPreview> findParagraphsWithCnk(Long cnk, String language);

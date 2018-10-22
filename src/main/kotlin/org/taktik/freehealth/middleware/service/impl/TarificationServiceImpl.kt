@@ -28,9 +28,7 @@ import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
-import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto
-import org.taktik.freehealth.middleware.dto.InfoRequest.IntermediateRequest
-import org.taktik.freehealth.middleware.dto.MycarenetError
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.TarificationService
 import org.taktik.freehealth.utils.InfoRequestUtils
@@ -341,7 +339,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                      )
+                                                                                     )
                               )
                 }
             }
