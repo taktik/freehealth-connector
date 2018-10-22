@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
    name = "RetrieveTransactionResponseType",
-   propOrder = {"commonOutput", "recordCommonOutput", "response", "acknowledge", "kmehrmessage"}
+   propOrder = {/*"commonOutput", "recordCommonOutput",*/ "response", "acknowledge", "kmehrmessage"}
 )
 @XmlRootElement(
    name = "RetrieveTransactionResponse",
@@ -23,14 +23,14 @@ import javax.xml.bind.annotation.XmlType;
 )
 public class RetrieveTransactionResponse implements Serializable {
    private static final long serialVersionUID = 1L;
-   @XmlElement(
+/*   @XmlElement(
            name = "CommonOutput"
    )
    protected CommonOutputType commonOutput;
    @XmlElement(
            name = "RecordCommonOutput"
    )
-   protected RecordCommonOutputType recordCommonOutput;
+   protected RecordCommonOutputType recordCommonOutput;*/
    @XmlElement(
       required = true
    )
@@ -45,7 +45,7 @@ public class RetrieveTransactionResponse implements Serializable {
    )
    protected BigDecimal messageProtocoleSchemaVersion;
 
-   public CommonOutputType getCommonOutput() {
+/*   public CommonOutputType getCommonOutput() {
       return this.commonOutput;
    }
 
@@ -59,7 +59,7 @@ public class RetrieveTransactionResponse implements Serializable {
 
    public void setRecordCommonOutput(RecordCommonOutputType value) {
       this.recordCommonOutput = value;
-   }
+   }*/
 
    public ResponseType getResponse() {
       return this.response;
