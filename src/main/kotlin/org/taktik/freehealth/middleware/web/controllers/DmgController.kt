@@ -60,7 +60,9 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
         @RequestParam(required = false) requestDate: Long? = null
     ) =
         dmgService.notifyDmg(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, patientSsin = patientSsin, patientGender = patientGender, patientFirstName = patientFirstName, patientLastName = patientLastName, oa = oa, regNrWithMut = regNrWithMut, requestDate = requestDate?.let { Date(requestDate) }
-            ?: Date(), nomenclature = nomenclature)
+            ?: Date(), nomenclature = nomenclature).let {
+            mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgNotification::class.java)
+        }
 
     @PostMapping("/reqlist")
     fun postDmgsListRequest(
