@@ -20,8 +20,6 @@ import be.fgov.ehealth.globalmedicalfile.protocol.v1.SendRequestType
 import be.fgov.ehealth.messageservices.core.v1.*
 import be.fgov.ehealth.messageservices.core.v1.RequestType
 import be.fgov.ehealth.messageservices.core.v1.TransactionType
-import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationRequest
-import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationResponse
 import be.fgov.ehealth.mycarenet.registration.protocol.v1.RegisterToMycarenetServiceRequest
 import be.fgov.ehealth.mycarenet.registration.protocol.v1.RegisterToMycarenetServiceResponse
 import be.fgov.ehealth.standards.kmehr.cd.v1.*
@@ -574,6 +572,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         val intermediateResponse = xmlResponse.asObject(NotifyGlobalMedicalFileResponse::class.java).apply {
                 replyValidator.validateReplyStatus(this)
             }
+
+        intermediateResponse.soapRequest = xmlResponse.request
+        intermediateResponse.soapResponse = xmlResponse.soapMessage
 
         val response = ResponseObjectBuilderFactory.getResponseObjectBuilder()
             .handleSendResponseType(intermediateResponse)
