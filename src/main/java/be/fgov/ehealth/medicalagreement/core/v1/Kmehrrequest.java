@@ -23,6 +23,13 @@ public class Kmehrrequest implements Serializable {
    )
    protected Kmehrmessage kmehrmessage;
 
+   public Kmehrrequest() {
+   }
+
+   public Kmehrrequest(Kmehrmessage kmehrmessage) {
+      this.kmehrmessage = kmehrmessage;
+   }
+
    public Kmehrmessage getKmehrmessage() {
       return this.kmehrmessage;
    }

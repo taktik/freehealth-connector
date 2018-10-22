@@ -6,12 +6,16 @@ import be.fgov.ehealth.chap4.core.v1.OriginType
 import be.fgov.ehealth.chap4.core.v1.RecordCommonInputType
 import be.fgov.ehealth.chap4.core.v1.SecuredContentType
 import be.fgov.ehealth.chap4.protocol.v1.AbstractChap4MedicalAdvisorAgreementResponseType
+import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementRequest
 import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementResponse
+import be.fgov.ehealth.chap4.protocol.v1.ConsultChap4MedicalAdvisorAgreementRequest
 import be.fgov.ehealth.chap4.protocol.v1.ConsultChap4MedicalAdvisorAgreementResponse
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import be.fgov.ehealth.medicalagreement.core.v1.Kmehrrequest
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDERROR
+import be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+import com.google.gson.Gson
 import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
@@ -56,6 +60,7 @@ import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.CONSULTATIONENDDATE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.CONSULTATIONSTARTDATE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.DECISIONREFERENCE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.REFUSALJUSTIFICATION
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.IOREQUESTREFERENCE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.REQUESTTYPE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.RESPONSETYPE
@@ -115,10 +120,14 @@ import org.taktik.freehealth.middleware.domain.common.messages.WarningMessage
 import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
 import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
+import org.taktik.freehealth.middleware.dto.MycarenetError
+import org.taktik.freehealth.middleware.dto.efact.CommonOutput
 import org.taktik.freehealth.middleware.service.Chapter4Service
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.utils.FuzzyValues
 import org.w3c.dom.Element
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -137,10 +146,16 @@ import java.util.Arrays
 import java.util.Date
 import java.util.UUID
 import javax.xml.bind.JAXBContext
+import javax.xml.namespace.NamespaceContext
+import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.soap.SOAPException
+import javax.xml.xpath.XPathConstants
+import javax.xml.xpath.XPathExpression
+import javax.xml.xpath.XPathExpressionException
+import javax.xml.xpath.XPathFactory
 
 @Service
-class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic, val kgssService : KgssServiceImpl) : Chapter4Service {
+class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic, val kgssService: KgssServiceImpl) : Chapter4Service {
     private val freehealthChapter4Service: org.taktik.connector.business.chapterIV.service.ChapterIVService =
         org.taktik.connector.business.chapterIV.service.impl.ChapterIVServiceImpl(EhealthReplyValidatorImpl())
 
@@ -149,21 +164,28 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     private val chapter4XmlValidator: Chapter4XmlValidator = Chapter4XmlValidatorImpl()
     private val config = ConfigFactory.getConfigValidator(emptyList())
 
+    val chapter4ConsultationWarnings =
+        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/Chapter4ConsultationWarnings.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+    val chapter4ConsultationErrors =
+        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/Chapter4ConsultationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+    val chapter4NotificationWarnings =
+        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/Chapter4AgreementWarnings.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+    val chapter4NotificationErrors =
+        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/Chapter4AgreementErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+    val xPathfactory = XPathFactory.newInstance()
+
+
     private val log = LogFactory.getLog(this::class.java)
 
-    override fun findParagraphs(searchString: String, language: String): List<ParagraphPreview> {
-        return drugsLogic.findParagraphs(searchString, language)
-    }
+    override fun findParagraphs(searchString: String, language: String): List<ParagraphPreview> = drugsLogic.findParagraphs(searchString, language)
 
-    override fun findParagraphsWithCnk(cnk: Long?, language: String): List<ParagraphPreview> {
-        return drugsLogic.findParagraphsWithCnk(cnk, language)
-    }
+    override fun findParagraphsWithCnk(cnk: Long?, language: String): List<ParagraphPreview> = drugsLogic.findParagraphsWithCnk(cnk, language)
 
     override fun getParagraphInfos(chapterName: String, paragraphName: String) = drugsLogic.getParagraphInfos(chapterName, paragraphName)
 
-    override fun getAddedDocuments(chapterName: String, paragraphName: String): List<AddedDocumentPreview> {
-        return drugsLogic.getAddedDocuments(chapterName, paragraphName)
-    }
+    override fun getMppsForParagraph(chapterName: String, paragraphName: String) = drugsLogic.getMppsForParagraph(chapterName, paragraphName)
+
+    override fun getAddedDocuments(chapterName: String, paragraphName: String): List<AddedDocumentPreview> = drugsLogic.getAddedDocuments(chapterName, paragraphName)
 
     private fun buildOriginType(nihii: String, ssin: String, firstName: String, lastName: String): OriginType =
         OriginType().apply {
@@ -195,8 +217,8 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         }
 
     private fun createCommonInput(isTest: Boolean, commonReference: String,
-                                  hcpNihii: String, hcpSsin: String,
-                                  hcpFirstName: String, hcpLastName: String) = CommonInputType().apply {
+        hcpNihii: String, hcpSsin: String,
+        hcpFirstName: String, hcpLastName: String) = CommonInputType().apply {
         request = be.fgov.ehealth.chap4.core.v1.RequestType().apply {
             isIsTest = isTest
         }
@@ -205,10 +227,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun getUnknownKey(keystoreId: String,
-                              keyStore: KeyStore,
-                              passPhrase: String,
-                              subTypeName: String,
-                              credential: Credential): KeyResult {
+        keyStore: KeyStore,
+        passPhrase: String,
+        subTypeName: String,
+        credential: Credential): KeyResult {
         val acl = ACLUtils.createAclChapterIV(subTypeName)
         val etk = KeyDepotManagerFactory.getKeyDepotManager().getETK(credential)
         if (etk == null) {
@@ -221,12 +243,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun createAndValidateSealedRequest(keystoreId: String,
-                                               keyStore: KeyStore,
-                                               passPhrase: String,
-                                               crypto: Crypto, credential: Credential, message: Kmehrmessage,
-                                               careReceiver: CareReceiverIdType,
-                                               xmlObjectFactory: XmlObjectFactory,
-                                               agreementStartDate: DateTime): SealedRequestWrapper<*> {
+        keyStore: KeyStore,
+        passPhrase: String,
+        crypto: Crypto, credential: Credential, message: Kmehrmessage,
+        careReceiver: CareReceiverIdType,
+        xmlObjectFactory: XmlObjectFactory,
+        agreementStartDate: DateTime): SealedRequestWrapper<*> {
         try {
             val e = this.getUnknownKey(keystoreId, keyStore, passPhrase, xmlObjectFactory.getSubtypeNameToRetrieveCredentialTypeProperties(), credential)
             val request = xmlObjectFactory.createSealedRequest()
@@ -253,17 +275,17 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun getSealedContent(crypto: Crypto,
-                                 credential: Credential,
-                                 message: Kmehrmessage,
-                                 unknownKey: KeyResult,
-                                 xmlObjectFactory: XmlObjectFactory): ByteArray {
+        credential: Credential,
+        message: Kmehrmessage,
+        unknownKey: KeyResult,
+        xmlObjectFactory: XmlObjectFactory): ByteArray {
         val request = this.createAndValidateUnsealedRequest(credential, message, xmlObjectFactory)
         return crypto.seal(WrappedObjectMarshallerHelper.toXMLByteArray(request), unknownKey.secretKey, unknownKey.keyId)
     }
 
     private fun createAndValidateUnsealedRequest(credential: Credential,
-                                                 message: Kmehrmessage,
-                                                 xmlObjectFactory: XmlObjectFactory): UnsealedRequestWrapper<*> {
+        message: Kmehrmessage,
+        xmlObjectFactory: XmlObjectFactory): UnsealedRequestWrapper<*> {
         val request = xmlObjectFactory.createUnsealedRequest()
         request.etkHcp = KeyDepotManagerFactory.getKeyDepotManager().getETK(credential).etk.encoded
         request.kmehrRequest = this.createAndValidateKmehrRequestXmlByteArray(message)
@@ -288,10 +310,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun buildAndValidateAgreementRequest(crypto: Crypto, xmlObjectFactory: XmlObjectFactory,
-                                                 careReceiver: CareReceiverIdType,
-                                                 recordCommonInput: RecordCommonInputType,
-                                                 commonInput: CommonInputType,
-                                                 sealedRequest: SealedRequestWrapper<*>): Chap4MedicalAdvisorAgreementRequestWrapper<*> {
+        careReceiver: CareReceiverIdType,
+        recordCommonInput: RecordCommonInputType,
+        commonInput: CommonInputType,
+        sealedRequest: SealedRequestWrapper<*>): Chap4MedicalAdvisorAgreementRequestWrapper<*> {
         val agreementRequest = xmlObjectFactory.createChap4MedicalAdvisorAgreementRequest()
         agreementRequest.careReceiver = careReceiver
         agreementRequest.recordCommonInput = recordCommonInput
@@ -302,19 +324,19 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun createAgreementRequest(keystoreId: String,
-                                       keyStore: KeyStore,
-                                       passPhrase: String,
-                                       crypto: Crypto,
-                                       credential: Credential,
-                                       hcpNihii: String,
-                                       hcpSsin: String,
-                                       hcpFirstName: String,
-                                       hcpLastName: String,
-                                       message: be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage,
-                                       isTest: Boolean,
-                                       references: ChapterIVReferences,
-                                       xmlObjectFactory: XmlObjectFactory,
-                                       agreementStartDate: DateTime?): ChapterIVBuilderResponse {
+        keyStore: KeyStore,
+        passPhrase: String,
+        crypto: Crypto,
+        credential: Credential,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        message: be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage,
+        isTest: Boolean,
+        references: ChapterIVReferences,
+        xmlObjectFactory: XmlObjectFactory,
+        agreementStartDate: DateTime?): ChapterIVBuilderResponse {
         if (agreementStartDate == null) {
             throw ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.INPUT_PARAM_NULL, "input parameter agreementStartDate was null")
         } else {
@@ -395,7 +417,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             .createMarshaller().marshal(demandMessage, bos)
         val msg = bos.toByteArray()
 
-        log.debug("Agreement request kmehr message:"+msg.toString(Charsets.UTF_8))
+        log.debug("Agreement request kmehr message:" + msg.toString(Charsets.UTF_8))
 
         val v1Message =
             JAXBContext.newInstance(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createUnmarshaller().unmarshal(ByteArrayInputStream(msg)) as be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
@@ -410,37 +432,47 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             request?.let { freehealthChapter4Service.askChap4MedicalAdvisorAgreement(samlToken, it) }
                 ?: AskChap4MedicalAdvisorAgreementResponse()
         } catch (e: SoaErrorException) {
-            AskChap4MedicalAdvisorAgreementResponse()
-            //TODO add SOA Error
-        }
-        val kmehrResponse =
-            responseBuilder.validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(response).kmehrresponse
-
-        val aggResponse = AgreementResponse()
-        aggResponse.isAcknowledged = kmehrResponse.acknowledge != null && kmehrResponse.acknowledge.isIscomplete
-        kmehrResponse.acknowledge?.let {
-            aggResponse.warnings = it.warnings?.map { errType -> errType?.let { Problem(it.cds, getWarningDescription(it, demandMessages), it.url) } }?.filterNotNull() ?:
-                ArrayList()
-            aggResponse.errors = it.errors?.map { errorType -> errorType?.let { Problem(it.cds, getWarningDescription(it, demandMessages), it.url) } }?.filterNotNull() ?:
-                ArrayList()
+            return generateError(e, CommonOutput())
         }
 
-        if (kmehrResponse.kmehrmessage != null) {
-            val mh =
-                MarshallerHelper(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java, be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
-            aggResponse.content = mh.toXMLByteArray(kmehrResponse.kmehrmessage)
-        }
+        val commonOutput = CommonOutput(response.commonOutput?.inputReference ?: response.recordCommonOutput.inputReference?.toString(), response.commonOutput.nipReference, response.commonOutput.outputReference ?: response.recordCommonOutput.outputReference?.toString())
 
-        if (aggResponse.content != null) {
-            kmehrResponse.kmehrmessage.apply {
-                includeMessageInResponse(aggResponse, this)
+        try {
+            val kmehrResponse =
+                responseBuilder.validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(response).kmehrresponse
+
+            val aggResponse = AgreementResponse(commonOutput = commonOutput)
+            aggResponse.isAcknowledged = kmehrResponse.acknowledge != null && kmehrResponse.acknowledge.isIscomplete
+            kmehrResponse.acknowledge?.let {
+                aggResponse.warnings = it.warnings?.flatMap { errorType ->
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                                 errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4NotificationWarnings, errorType.url)
+                }
+                aggResponse.errors = it.errors?.flatMap { errorType ->
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                                 errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4NotificationErrors, errorType.url)
+                }
             }
-        }
-        if (aggResponse.isAcknowledged) {
-            aggResponse.content = msg
-        }
 
-        return aggResponse
+            if (kmehrResponse.kmehrmessage != null) {
+                val mh =
+                    MarshallerHelper(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java, be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
+                aggResponse.content = mh.toXMLByteArray(kmehrResponse.kmehrmessage)
+            }
+
+            if (aggResponse.content != null) {
+                kmehrResponse.kmehrmessage.apply {
+                    includeMessageInResponse(aggResponse, this)
+                }
+            }
+            if (aggResponse.isAcknowledged) {
+                aggResponse.content = msg
+            }
+
+            return aggResponse
+        } catch (ex: ChapterIVBusinessConnectorException) {
+            return generateError(ex, commonOutput)
+        }
     }
 
     override fun agreementRequestsConsultation(
@@ -498,42 +530,61 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, ConsultationXmlObjectFactory(), agreementStartDate
                 ?: DateTime()).consultChap4MedicalAdvisorAgreementRequest
 
-        val response =
+        val response = try {
             request?.let { freehealthChapter4Service.consultChap4MedicalAdvisorAgreement(samlToken, it) }
                 ?: ConsultChap4MedicalAdvisorAgreementResponse()
-
-        val retrievedKmehrResponse =
-            responseBuilder.validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(response)
-
-        if (log.isDebugEnabled) {
-            val kmehrString = retrievedKmehrResponse.getKmehrResponseBytes().toString(Charset.defaultCharset())
-            log.debug("Received CH4 response: $kmehrString")
+        } catch (e: SoaErrorException) {
+            return generateError(e, CommonOutput())
         }
 
-        val agreementResponse = AgreementResponse()
-        val ack = retrievedKmehrResponse.kmehrresponse.acknowledge
-        agreementResponse.isAcknowledged = ack.isIscomplete
-        agreementResponse.warnings =
-            ack.warnings.map { errorType -> Problem(errorType.cds, getWarningDescription(errorType, consultMessages), errorType.url) }
-        agreementResponse.errors =
-            ack.errors.map { errorType -> Problem(errorType.cds, getErrorDescription(errorType, consultMessages), errorType.url) }
-        if (retrievedKmehrResponse.kmehrresponse.kmehrmessage != null) {
-            val mh =
-                MarshallerHelper(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java, be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
-            agreementResponse.content = mh.toXMLByteArray(retrievedKmehrResponse.kmehrresponse.kmehrmessage)
+        val commonOutput = CommonOutput(response.commonOutput?.inputReference ?: response.recordCommonOutput.inputReference?.toString(), response.commonOutput.nipReference, response.commonOutput.outputReference ?: response.recordCommonOutput.outputReference?.toString())
+
+        try {
+            val retrievedKmehrResponse =
+                responseBuilder.validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(response)
 
             if (log.isDebugEnabled) {
-                val respString = mh.toXMLByteArray(retrievedKmehrResponse.kmehrresponse.kmehrmessage).toString(Charset.defaultCharset())
-                log.debug("Received CH4 response(formatted): $respString")
+                val kmehrString = retrievedKmehrResponse.getKmehrResponseBytes().toString(Charset.defaultCharset())
+                log.debug("Received CH4 response: $kmehrString")
             }
+
+            val agreementResponse = AgreementResponse()
+            val ack = retrievedKmehrResponse.kmehrresponse.acknowledge
+            agreementResponse.isAcknowledged = ack.isIscomplete
+            agreementResponse.warnings =
+                ack.warnings.flatMap { errorType ->
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                                 errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4ConsultationWarnings, errorType.url)
+                }
+            agreementResponse.errors =
+                ack.errors.flatMap { errorType ->
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                                 errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4ConsultationErrors, errorType.url)
+                }
+            if (retrievedKmehrResponse.kmehrresponse.kmehrmessage != null) {
+                val mh =
+                    MarshallerHelper(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java, be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
+                agreementResponse.content = mh.toXMLByteArray(retrievedKmehrResponse.kmehrresponse.kmehrmessage)
+
+                if (log.isDebugEnabled) {
+                    val respString = mh.toXMLByteArray(retrievedKmehrResponse.kmehrresponse.kmehrmessage).toString(Charset.defaultCharset())
+                    log.debug("Received CH4 response(formatted): $respString")
+                }
+            }
+
+            if (agreementResponse.content != null) {
+                retrievedKmehrResponse.kmehrresponse.kmehrmessage.apply {
+                    includeMessageInResponse(agreementResponse, this)
+                }
+            }
+
+            agreementResponse.commonOutput = commonOutput
+
+            return agreementResponse
+        } catch (ex: ChapterIVBusinessConnectorException) {
+            return generateError(ex, commonOutput)
         }
 
-        if (agreementResponse.content != null) {
-            retrievedKmehrResponse.kmehrresponse.kmehrmessage.apply {
-                includeMessageInResponse(agreementResponse, this)
-            }
-        }
-        return agreementResponse
     }
 
     override fun cancelAgreement(
@@ -545,14 +596,18 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         hcpLastName: String,
         passPhrase: String,
         patientSsin: String,
+        patientDateOfBirth: Long,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
         decisionReference: String?,
         iorequestReference: String?): AgreementResponse {
         val folderType: FolderType
         try {
             folderType =
-                getCancelTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, decisionReference, iorequestReference)
+                getCancelTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, patientDateOfBirth, patientFirstName, patientLastName, patientGender, decisionReference, iorequestReference)
         } catch (e: IOException) {
-            return generateError(ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.UNKNOWN_ERROR, e))
+            return generateError(ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.UNKNOWN_ERROR, e), CommonOutput())
         }
 
         return agreementModification(keystoreId, tokenId, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, passPhrase, folderType)
@@ -560,20 +615,24 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
 
 
     override fun closeAgreement(keystoreId: UUID,
-                                tokenId: UUID,
-                                hcpNihii: String,
-                                hcpSsin: String,
-                                hcpFirstName: String,
-                                hcpLastName: String,
-                                passPhrase: String,
-                                patientSsin: String,
-                                decisionReference: String): AgreementResponse {
+        tokenId: UUID,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        passPhrase: String,
+        patientSsin: String,
+        patientDateOfBirth: Long,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
+        decisionReference: String): AgreementResponse {
         val folderType: FolderType
         try {
             folderType =
-                getCloseTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, decisionReference, null)
+                getCloseTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, patientDateOfBirth, patientFirstName, patientLastName, patientGender, decisionReference, null)
         } catch (e: IOException) {
-            return generateError(ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.UNKNOWN_ERROR, e))
+            return generateError(ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.UNKNOWN_ERROR, e), CommonOutput())
         }
 
         return agreementModification(keystoreId, tokenId, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, passPhrase, folderType)
@@ -621,85 +680,49 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                    v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
                                        ?: DateTime()).askChap4MedicalAdvisorAgreementRequest
 
-        val response = freehealthChapter4Service.askChap4MedicalAdvisorAgreement(samlToken, request!!)
+        val response = try { freehealthChapter4Service.askChap4MedicalAdvisorAgreement(samlToken, request!!)
+        } catch (e: SoaErrorException) {
+            return generateError(e, CommonOutput())
+        }
+
+        val commonOutput = CommonOutput(response.commonOutput?.inputReference ?: response.recordCommonOutput.inputReference?.toString(), response.commonOutput.nipReference, response.commonOutput.outputReference ?: response.recordCommonOutput.outputReference?.toString())
+
+
         val retrievedKmehrResponse =
             responseBuilder.validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(response)
 
-        val agreementResponse = AgreementResponse()
-        agreementResponse.isAcknowledged = retrievedKmehrResponse.kmehrresponse.acknowledge.isIscomplete
-        agreementResponse.warnings =
-            CollectionUtils.collect(retrievedKmehrResponse.kmehrresponse.acknowledge.warnings) { errorType -> Problem(errorType.cds, getWarningDescription(errorType, demandMessages), errorType.url) }
-        agreementResponse.errors =
-            CollectionUtils.collect(retrievedKmehrResponse.kmehrresponse.acknowledge.errors) { errorType -> Problem(errorType.cds, getErrorDescription(errorType, demandMessages), errorType.url) }
+        try {
+            val agreementResponse = AgreementResponse()
+            agreementResponse.isAcknowledged = retrievedKmehrResponse.kmehrresponse.acknowledge.isIscomplete
+            agreementResponse.warnings =
+                retrievedKmehrResponse.kmehrresponse.acknowledge.warnings.flatMap { errorType ->
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                                 errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4NotificationWarnings, errorType.url)
+                }
+            agreementResponse.errors =
+                retrievedKmehrResponse.kmehrresponse.acknowledge.errors.flatMap { errorType ->
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                                 errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4NotificationErrors, errorType.url)
+                }
 
-        if (retrievedKmehrResponse.kmehrresponse.kmehrmessage != null) {
-            val mh =
-                MarshallerHelper(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java, be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
-            agreementResponse.content = mh.toXMLByteArray(retrievedKmehrResponse.kmehrresponse.kmehrmessage)
-        }
-
-        //Parse response
-        if (agreementResponse.content != null) {
-            retrievedKmehrResponse.kmehrresponse.kmehrmessage.apply {
-                includeMessageInResponse(agreementResponse, this)
+            if (retrievedKmehrResponse.kmehrresponse.kmehrmessage != null) {
+                val mh =
+                    MarshallerHelper(be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java, be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
+                agreementResponse.content = mh.toXMLByteArray(retrievedKmehrResponse.kmehrresponse.kmehrmessage)
             }
-        }
-        return agreementResponse
 
-    }
-
-    private fun getErrorDescription(errorType: be.fgov.ehealth.standards.kmehr.schema.v1.ErrorType,
-                                    messages: List<AbstractMessage>): String {
-        val result = StringBuilder(errorType.description.value).append("\n")
-
-        var flag = false
-        if (errorType.url != null) {
-            for (cd in errorType.cds) {
-                if (cd.value != null) {
-                    for (m in messages) {
-                        m.pattern?.let { pattern ->
-                            if (pattern.isNotEmpty() && cd.value == m.code && errorType.url.contains(pattern)) {
-                                result.append(m.message["fr"]).append(" in zone ").append(m.zone).append("\n")
-                                flag = true
-                            }
-                        }
-                    }
+            //Parse response
+            if (agreementResponse.content != null) {
+                retrievedKmehrResponse.kmehrresponse.kmehrmessage.apply {
+                    includeMessageInResponse(agreementResponse, this)
                 }
             }
+            agreementResponse.commonOutput = commonOutput
+
+            return agreementResponse
+        } catch (ex: ChapterIVBusinessConnectorException) {
+            return generateError(ex, commonOutput)
         }
-
-        if (!flag) {
-            for (cd in errorType.cds) {
-                if (cd.value != null) {
-                    for (m in messages) {
-                        if (cd.value == m.code) {
-                            result.append(m.message["fr"]).append(" in zone ").append(m.zone).append(" ?\n")
-                        }
-                    }
-                }
-            }
-        }
-
-        return result.toString()
-    }
-
-    private fun getWarningDescription(errorType: be.fgov.ehealth.standards.kmehr.schema.v1.ErrorType,
-                                      messages: List<AbstractMessage>): String {
-        val result = StringBuilder(errorType.description?.value ?: "")
-
-        for (cd in errorType.cds ?: ArrayList<CDERROR>()) {
-            if (cd.value != null) {
-                for (m in messages) {
-                    if (m is WarningMessage) {
-                        if (cd.value == m.code) {
-                            result.append(m.message["fr"]).append("\n")
-                        }
-                    }
-                }
-            }
-        }
-
-        return result.toString()
     }
 
     private fun includeMessageInResponse(agreementResponse: AgreementResponse, kmsg: Kmehrmessage) {
@@ -717,6 +740,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                     at.isAccepted = it == AGREEMENT.value()
                     at.isInTreatment = it == INTREATMENT.value()
                 }
+                at.timestamp = t.date.millis + t.time.millis
                 at.careProviderReference =
                     its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == CAREPROVIDERREFERENCE.value() } }
                         ?.contents?.map { it.texts?.firstOrNull()?.value }?.firstOrNull()
@@ -726,6 +750,9 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                 at.ioRequestReference =
                     its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == IOREQUESTREFERENCE.value() } }
                         ?.contents?.map { it.ids?.find { it.s == v1LOCAL }?.value }?.find { it != null }
+                at.refusalJustification =
+                    its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == REFUSALJUSTIFICATION.value() } }
+                        ?.contents?.find { it.texts?.size ?: 0 > 0 }?.let { it.texts?.fold(mapOf()) { acc, txt -> acc + listOf(Pair(txt.l, txt.value)) } }
                 at.start =
                     its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == AGREEMENTSTARTDATE.value() } }
                         ?.contents?.map { it.date }?.find { it != null }?.toGregorianCalendar()?.time
@@ -751,50 +778,42 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         }
     }
 
-    private fun generateError(e: ChapterIVBusinessConnectorException): AgreementResponse {
+    private fun generateError(e: ChapterIVBusinessConnectorException, co: CommonOutput): AgreementResponse {
         val error = AgreementResponse()
         error.isAcknowledged = false
-        val ec = be.fgov.ehealth.standards.kmehr.cd.v1.CDERROR()
-        ec.s = be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORschemes.CD_ERROR
-        ec.value = e.errorCode + ":" + e.message
-
-        error.errors = Arrays.asList(Problem(arrayListOf(ec), e.message, null))
+        error.errors = Arrays.asList(MycarenetError(code = e.errorCode, msgFr = e.message, msgNl = e.message))
+        error.commonOutput = co
         return error
     }
 
-    private fun generateError(e: SoaErrorException): AgreementResponse {
+    private fun generateError(e: SoaErrorException, co: CommonOutput): AgreementResponse {
         val error = AgreementResponse()
         error.isAcknowledged = false
-
-        val rt = e.responseType as AbstractChap4MedicalAdvisorAgreementResponseType
-
-        val ec = be.fgov.ehealth.standards.kmehr.cd.v1.CDERROR()
-        ec.s = be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORschemes.CD_ERROR
-        ec.value = rt.returnInfo.faultCode + ":" + rt.returnInfo.faultSource
-        error.errors = Arrays.asList(Problem(Arrays.asList(ec), rt.returnInfo.message.value, null))
+        error.errors = Arrays.asList(MycarenetError(code = e.errorCode, msgFr = e.message, msgNl = e.message))
+        error.commonOutput = co
         return error
     }
 
     private fun getDemandKmehrMessage(hcpNihii: String,
-                                      hcpSsin: String,
-                                      hcpFirstName: String,
-                                      hcpLastName: String,
-                                      patientSsin: String,
-                                      patientDateOfBirth: Long,
-                                      patientFirstName: String,
-                                      patientLastName: String,
-                                      patientGender: String,
-                                      requestType: RequestType,
-                                      commonInput: String,
-                                      civicsVersion: String,
-                                      start: Long?,
-                                      end: Long?,
-                                      verses: List<String>?,
-                                      appendices: List<Appendix>?,
-                                      reference: String?,
-                                      decisionReference: String?,
-                                      ioRequestReference: String?,
-                                      paragraph: String?): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientSsin: String,
+        patientDateOfBirth: Long,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
+        requestType: RequestType,
+        commonInput: String,
+        civicsVersion: String,
+        start: Long?,
+        end: Long?,
+        verses: List<String>?,
+        appendices: List<Appendix>?,
+        reference: String?,
+        decisionReference: String?,
+        ioRequestReference: String?,
+        paragraph: String?): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
         val startDate =
             start?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) } ?: LocalDateTime.now().minus(12, ChronoUnit.MONTHS)
         val endDate = end?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) }
@@ -1076,11 +1095,11 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun getKmehrMessage(commonInput: String,
-                                hcpNihii: String,
-                                hcpSsin: String,
-                                hcpFirstName: String,
-                                hcpLastName: String,
-                                folderType: FolderType): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        folderType: FolderType): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
         return org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage()
             .apply {
                 val inami = hcpNihii.replace("[^0-9]".toRegex(), "")
@@ -1119,6 +1138,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         hcpFirstName: String,
         hcpLastName: String,
         patientSsin: String,
+        patientDateOfBirth: Long,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
         decisionReference: String?,
         ioRequestReference: String?,
         date: Date? = null): FolderType {
@@ -1126,6 +1149,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "1" })
             this.patient = PersonType().apply {
                 ids.add(IDPATIENT().apply { s = ID_PATIENT; sv = "1.0"; value = patientSsin })
+                firstnames.add(patientFirstName)
+                familyname = patientLastName
+                birthdate = DateType().apply { this.date = FuzzyValues.getXMLGregorianCalendarFromFuzzyLong(patientDateOfBirth) }
+                sex = SexType().apply {
+                    cd = CDSEX().apply { s = "CD-SEX"; sv = "1.0"; value = CDSEXvalues.fromValue(patientGender) }
+                }
             }
 
             transactions.add(TransactionType().apply {
@@ -1160,16 +1189,26 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun getCloseTransaction(hcpNihii: String,
-                                    hcpSsin: String,
-                                    hcpFirstName: String,
-                                    hcpLastName: String,
-                                    patientSsin: String,
-                                    decisionReference: String,
-                                    date: Date?): FolderType {
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientSsin: String,
+        patientDateOfBirth: Long,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
+        decisionReference: String,
+        date: Date?): FolderType {
         return FolderType().apply {
             ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "1" })
             this.patient = PersonType().apply {
                 ids.add(IDPATIENT().apply { s = ID_PATIENT; sv = "1.0"; value = patientSsin })
+                firstnames.add(patientFirstName)
+                familyname = patientLastName
+                birthdate = DateType().apply { this.date = FuzzyValues.getXMLGregorianCalendarFromFuzzyLong(patientDateOfBirth) }
+                sex = SexType().apply {
+                    cd = CDSEX().apply { s = "CD-SEX"; sv = "1.0"; value = CDSEXvalues.fromValue(patientGender) }
+                }
             }
 
             transactions.add(TransactionType().apply {
@@ -1195,13 +1234,13 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun TransactionType.initialiseTransactionTypeWithSender(hcpNihii: String,
-                                                                    hcpSsin: String,
-                                                                    hcpFirstName: String,
-                                                                    hcpLastName: String,
-                                                                    maa: String,
-                                                                    requestType: RequestType? = null,
-                                                                    date: Date? = null,
-                                                                    kmehrId: String = "1") {
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        maa: String,
+        requestType: RequestType? = null,
+        date: Date? = null,
+        kmehrId: String = "1") {
         ids.add(IDKMEHR().apply { s = ID_KMEHR; value = kmehrId })
         cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION; sv = "1.4"; value = CDTRANSACTIONvalues.MEDICALADVISORAGREEMENT.value() })
         cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MAA; value = maa })
@@ -1247,5 +1286,77 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         }
     }
 
+    private fun extractError(kmehrRequest: ByteArray, ec: String, errors: Map<String, MycarenetError>, errorUrl: String?): Set<MycarenetError> {
+        return errorUrl?.let { url ->
+            val factory = DocumentBuilderFactory.newInstance()
+            factory.isNamespaceAware = true
+            val builder = factory.newDocumentBuilder()
+
+            val xpath = xPathfactory.newXPath()
+            val expr: XPathExpression? = try {
+                xpath.compile(if (url.startsWith("/")) url else "/" + url)
+            } catch (e: XPathExpressionException) {
+                log.warn("Invalid XPATH returned: `$url‘", e); null
+            }
+            val result = mutableSetOf<MycarenetError>()
+
+            (expr?.evaluate(
+                builder.parse(ByteArrayInputStream(kmehrRequest)),
+                XPathConstants.NODESET
+                           ) as NodeList?)?.let { it ->
+                if (it.length > 0) {
+                    var node = it.item(0)
+                    val textContent = node.textContent
+                    var base = "/" + nodeDescr(node)
+                    while (node.parentNode != null && node.parentNode is Element) {
+                        base = "/${nodeDescr(node.parentNode)}$base"
+                        node = node.parentNode
+                    }
+                    val elements =
+                        errors.values.filter { it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*"))) }
+                    elements.forEach { it.value = textContent }
+                    result.addAll(elements)
+                } else {
+                    result.add(
+                        MycarenetError(
+                            code = ec,
+                            path = url,
+                            msgFr = "Erreur générique, xpath invalide",
+                            msgNl = "Onbekend foutmelding, xpath ongeldig"
+                                      )
+                              )
+                }
+            }
+            result
+        } ?: setOf()
+    }
+
+
+    private fun nodeDescr(node: Node): String {
+        val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
+
+        val xpath = xPathfactory.newXPath()
+        xpath.namespaceContext = object : NamespaceContext {
+            override fun getNamespaceURI(prefix: String?) = when (prefix) {
+                "ns3" -> "http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
+                else -> null
+            }
+
+            override fun getPrefix(namespaceURI: String?) = when (namespaceURI) {
+                "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> "ns3"
+                else -> null
+            }
+
+            override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
+                when (namespaceURI) {
+                    "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> listOf("ns3").iterator()
+                    else -> listOf<String>().iterator()
+                }
+        }
+        if (localName == "item") {
+            return "item[${xpath.evaluate("ns3:cd[@S=\"CD-ITEM-MAA\"]", node)}]"
+        }
+        return localName
+    }
 
 }
