@@ -20,6 +20,8 @@ import be.fgov.ehealth.globalmedicalfile.protocol.v1.SendRequestType
 import be.fgov.ehealth.messageservices.core.v1.*
 import be.fgov.ehealth.messageservices.core.v1.RequestType
 import be.fgov.ehealth.messageservices.core.v1.TransactionType
+import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationRequest
+import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationResponse
 import be.fgov.ehealth.mycarenet.registration.protocol.v1.RegisterToMycarenetServiceRequest
 import be.fgov.ehealth.mycarenet.registration.protocol.v1.RegisterToMycarenetServiceResponse
 import be.fgov.ehealth.standards.kmehr.cd.v1.*
@@ -62,6 +64,8 @@ import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.connector.technical.ws.domain.GenericRequest
 import org.taktik.connector.technical.ws.domain.TokenType
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.service.DmgService
 import org.taktik.freehealth.middleware.service.STSService
@@ -94,7 +98,6 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
     val xPathfactory = XPathFactory.newInstance()
 
 
-
     private val replyValidator = EhealthReplyValidatorImpl()
 
     override fun registerDoctor(
@@ -108,7 +111,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         oa: String,
         bic: String,
         iban: String
-                               ): DmgRegistration {
+    ): DmgRegistration {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -133,7 +136,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 "</reg:registration>\n" +
                 "</reg:registrations>").replace("replaceWithDateYYYY-MM-DD".toRegex(),
                 DateTime().toString("YYYY-MM-dd")
-                                               )
+            )
                 .replace("replaceWithNihiiNumber".toRegex(), hcpNihii).replace("replaceWithBic".toRegex(), bic)
                 .replace("replaceWithIban".toRegex(), iban.toUpperCase())
 
@@ -143,7 +146,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         java.lang.System.setProperty(
             "javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema",
             "com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory"
-                                    )
+        )
         val blob = RequestBuilderFactory.getBlobBuilder("mcn.registration").build(request.toByteArray(charset("UTF8")))
 
         val careReceiver = CareReceiverId(null).apply { mutuality = oa }
@@ -205,17 +208,17 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
     }
 
     fun fillGmdRequest(gmdRequest: SendRequestType,
-        isTest: Boolean,
-        blob: Blob,
-        credential: Credential,
-        references: DMGReferences,
-        hcpNihii: String,
-        hcpSsin: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        patientInfo: Patient,
-        referenceDate: DateTime,
-        generateXades: Boolean) {
+                       isTest: Boolean,
+                       blob: Blob,
+                       credential: Credential,
+                       references: DMGReferences,
+                       hcpNihii: String,
+                       hcpSsin: String,
+                       hcpFirstName: String,
+                       hcpLastName: String,
+                       patientInfo: Patient,
+                       referenceDate: DateTime,
+                       generateXades: Boolean) {
         this.checkInputParameters(references.inputReference, patientInfo, referenceDate, blob)
         gmdRequest.apply {
             commonInput = createCommonInputType(isTest, hcpNihii, hcpSsin, references)
@@ -251,9 +254,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
     }
 
     private fun createCommonInputType(isTest: Boolean,
-        hcpNihii: String,
-        hcpSsin: String,
-        references: DMGReferences): CommonInputType {
+                                      hcpNihii: String,
+                                      hcpSsin: String,
+                                      references: DMGReferences): CommonInputType {
         return CommonInputType().apply {
             this.request = be.fgov.ehealth.globalmedicalfile.core.v1.RequestType().apply {
                 this.isIsTest = isTest
@@ -299,7 +302,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         patientInfo: Patient,
         referenceDate: DateTime,
         request: SelectRetrieveTransaction
-                               ): ConsultGlobalMedicalFileRequest {
+    ): ConsultGlobalMedicalFileRequest {
         val req = RetrieveTransactionRequest().apply {
             this.request = RequestType().apply {
                 this.id =
@@ -320,7 +323,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         if (xmlByteArray != null && config.getBooleanProperty(
                 "be.ehealth.businessconnector.dmg.builders.impl.dumpMessages",
                 false
-                                                             )) {
+            )) {
             log.debug("RequestObjectBuilder : created blob content: " + String(xmlByteArray))
         }
         val blob =
@@ -357,7 +360,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         patientInfo: Patient,
         referenceDate: DateTime,
         kmehrMessage: Kmehrmessage
-                              ): NotifyGlobalMedicalFileRequest {
+    ): NotifyGlobalMedicalFileRequest {
         val req = SendTransactionRequest().apply {
             this.request = RequestType().apply {
                 this.id =
@@ -398,7 +401,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 patientInfo,
                 referenceDate,
                 true
-                          )
+            )
         }
     }
 
@@ -418,7 +421,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         patientGender: String?,
         nomenclature: String,
         requestDate: Date
-                          ): DmgNotification {
+    ): DmgNotification {
         val now = DateTime().withMillisOfSecond(0)
 
         assert(patientSsin != null || oa != null && regNrWithMut != null)
@@ -530,7 +533,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 pI,
                 dateReference,
                 kmehrmessage
-                                  )
+            )
 
         val response =
             ResponseObjectBuilderFactory.getResponseObjectBuilder()
@@ -540,16 +543,16 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                             config.getProperty(
                                 "endpoint.dmg.notification.v1",
                                 "\$uddi{uddi:ehealth-fgov-be:business:globalmedicalfilenotification:v1}"
-                                              )
-                                   )
+                            )
+                        )
                         setCredential(samlToken, TokenType.SAML)
                         addDefaulHandlerChain()
                         addHandlerChain(
                             HandlerChainUtil.buildChainWithValidator(
                                 "validation.incoming.message.dmg.notification.v1",
                                 "/ehealth-gmf/XSD/gmf_services_protocol-1_1.xsd"
-                                                                    )
-                                       )
+                            )
+                        )
                         setPayload(gmdRequest)
                         setSoapAction("urn:be:fgov:ehealth:globalmedicalfile:protocol:v1:NotifyGlobalMedicalFile")
                     }).asObject(NotifyGlobalMedicalFileResponse::class.java).apply {
@@ -568,7 +571,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                         cd.value,
                         dmgNotificationErrors,
                         et.url
-                        )
+                    )
                 } ?: setOf()
             } ?: listOf())
             response.sendTransactionResponse.kmehrmessage?.let {
@@ -586,14 +589,26 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     }
                 }
             }
+
+/*            this.mycarenetConversation = MycarenetConversation().apply {
+                response.soapRequest?.writeTo(this.soapRequestOutputStream())
+                consultTarificationResponse.soapResponse?.writeTo(this.soapResponseOutputStream())
+                this.transactionRequest = MarshallerHelper(TarificationConsultationRequest::class.java, TarificationConsultationRequest::class.java)
+                    .toXMLByteArray(request)
+                    .toString(Charsets.UTF_8)
+                this.transactionResponse = MarshallerHelper(TarificationConsultationResponse::class.java, TarificationConsultationResponse::class.java)
+                    .toXMLByteArray(consultTarificationResponse)
+                    .toString(Charsets.UTF_8)
+            }*/
         }
+
 
 //        val requestMarshaller =
 //            MarshallerHelper(SelectRetrieveTransaction::class.java, SelectRetrieveTransaction::class.java)
 //        val requestXmlByteArray = requestMarshaller.toXMLByteArray(request);
 //        dmg.requestXML = requestXmlByteArray.toString(Charsets.UTF_8);
 
-        val consultRequestMarshaller =
+/*        val consultRequestMarshaller =
             MarshallerHelper(NotifyGlobalMedicalFileRequest::class.java, NotifyGlobalMedicalFileRequest::class.java)
         val consultRequestXmlByteArray = consultRequestMarshaller.toXMLByteArray(gmdRequest);
         dmg.gmdRequestXML = consultRequestXmlByteArray.toString(Charsets.UTF_8);
@@ -601,9 +616,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         val responseMarshaller =
             MarshallerHelper(DmgBuilderResponse::class.java, DmgBuilderResponse::class.java)
         val responseXmlByteArray = responseMarshaller.toXMLByteArray(response);
-        dmg.responseXML = responseXmlByteArray.toString(Charsets.UTF_8);
+        dmg.responseXML = responseXmlByteArray.toString(Charsets.UTF_8);*/
 
-        return dmg;
+        return dmg
     }
 
     override fun consultDmg(
@@ -619,7 +634,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         oa: String?,
         regNrWithMut: String?,
         requestDate: Date
-                           ): DmgConsultation {
+    ): DmgConsultation {
         var now = DateTime()
         assert(patientSsin != null || oa != null && regNrWithMut != null)
         val samlToken =
@@ -687,37 +702,41 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 request
             )
 
-        val response =
-            ResponseObjectBuilderFactory.getResponseObjectBuilder()
-                .handleSendResponseType(
-                    org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(GenericRequest().apply {
-                        setEndpoint(
-                            config.getProperty(
-                                "endpoint.dmg.consultation.v1",
-                                "\$uddi{uddi:ehealth-fgov-be:business:globalmedicalfileconsultation:v1}"
-                            )
-                        )
-                        setCredential(samlToken, TokenType.SAML)
-                        addDefaulHandlerChain()
-                        addHandlerChain(
-                            HandlerChainUtil.buildChainWithValidator(
-                                "validation.incoming.message.dmg.consultation.v1",
-                                "/ehealth-gmf/XSD/gmf_services_protocol-1_1.xsd"
-                            )
-                        )
-                        setPayload(consultRequest)
-                        setSoapAction("urn:be:fgov:ehealth:globalmedicalfile:protocol:v1:ConsultGlobalMedicalFile")
-                    }).asObject(NotifyGlobalMedicalFileResponse::class.java).apply {
-                        replyValidator.validateReplyStatus(
-                            this
-                        )
-                    })
+        val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(GenericRequest().apply {
+            setEndpoint(
+                config.getProperty(
+                    "endpoint.dmg.consultation.v1",
+                    "\$uddi{uddi:ehealth-fgov-be:business:globalmedicalfileconsultation:v1}"
+                )
+            )
+            setCredential(samlToken, TokenType.SAML)
+            addDefaulHandlerChain()
+            addHandlerChain(
+                HandlerChainUtil.buildChainWithValidator(
+                    "validation.incoming.message.dmg.consultation.v1",
+                    "/ehealth-gmf/XSD/gmf_services_protocol-1_1.xsd"
+                )
+            )
+            setPayload(consultRequest)
+            setSoapAction("urn:be:fgov:ehealth:globalmedicalfile:protocol:v1:ConsultGlobalMedicalFile")
+
+        });
+
+        val intermediateResponse = xmlResponse.asObject(NotifyGlobalMedicalFileResponse::class.java).apply {
+            replyValidator.validateReplyStatus(
+                this
+            )
+        }
+
+        intermediateResponse.soapRequest = xmlResponse.request
+        intermediateResponse.soapResponse = xmlResponse.soapMessage
+
+        val response = ResponseObjectBuilderFactory.getResponseObjectBuilder().handleSendResponseType(intermediateResponse)
 
         if (!response.ehealthStatus.equals("200")) {
             throw RuntimeException("Wrong status code" + response.ehealthStatus)
         }
-
-
+        
         val dmg = DmgConsultation(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
             this.errors.addAll(response.sendTransactionResponse.acknowledge.errors?.filterNotNull()?.flatMap { et ->
                 et.cds.firstOrNull()?.let { cd ->
@@ -726,7 +745,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                         cd.value,
                         dmgConsultationErrors,
                         et.url
-                                                    )
+                    )
                 } ?: setOf()
             } ?: listOf())
             response.sendTransactionResponse.kmehrmessage?.let {
@@ -759,24 +778,20 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     }
                 }
             }
+            this.commonOutput = CommonOutput(
+                response?.originalResponse?.`return`?.commonOutput?.inputReference,
+                response?.originalResponse?.`return`?.commonOutput?.nipReference,
+                response?.originalResponse?.`return`?.commonOutput?.outputReference
+            )
+            this.mycarenetConversation = MycarenetConversation().apply{
+                this.transactionResponse = MarshallerHelper(DmgBuilderResponse::class.java, DmgBuilderResponse::class.java).toXMLByteArray(response).toString(Charsets.UTF_8)
+                this.transactionRequest = MarshallerHelper(ConsultGlobalMedicalFileRequest::class.java, ConsultGlobalMedicalFileRequest::class.java).toXMLByteArray(consultRequest).toString(Charsets.UTF_8)
+                intermediateResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                intermediateResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+            }
         }
 
-        val requestMarshaller =
-            MarshallerHelper(SelectRetrieveTransaction::class.java, SelectRetrieveTransaction::class.java)
-        val requestXmlByteArray = requestMarshaller.toXMLByteArray(request);
-        dmg.requestXML = requestXmlByteArray.toString(Charsets.UTF_8);
-
-        val consultRequestMarshaller =
-            MarshallerHelper(ConsultGlobalMedicalFileRequest::class.java, ConsultGlobalMedicalFileRequest::class.java)
-        val consultRequestXmlByteArray = consultRequestMarshaller.toXMLByteArray(consultRequest);
-        dmg.consultRequestXML = consultRequestXmlByteArray.toString(Charsets.UTF_8);
-
-        val responseMarshaller =
-            MarshallerHelper(DmgBuilderResponse::class.java, DmgBuilderResponse::class.java)
-        val responseXmlByteArray = responseMarshaller.toXMLByteArray(response);
-        dmg.responseXML = responseXmlByteArray.toString(Charsets.UTF_8);
-
-        return dmg;
+        return dmg
     }
 
     override fun confirmDmgMessages(
@@ -788,7 +803,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpFirstName: String,
         hcpLastName: String,
         dmgMessages: List<DmgMessage>
-                                   ): Boolean {
+    ): Boolean {
         if (dmgMessages.isEmpty()) {
             return true
         }
@@ -821,7 +836,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpFirstName: String,
         hcpLastName: String,
         dmgTacks: List<DmgAcknowledge>
-                            ): Boolean {
+    ): Boolean {
         if (dmgTacks.isEmpty()) {
             return true
         }
@@ -851,7 +866,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpLastName: String,
         oa: String,
         messageNames: List<String>?
-                               ): List<DmgMessage> {
+    ): List<DmgMessage> {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -978,7 +993,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpLastName: String,
         oa: String?,
         requestDate: Date
-                                    ): Boolean {
+    ): Boolean {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -1021,7 +1036,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             "deflate",
             "_" + UUID.randomUUID().toString(),
             "text/xml"
-                                                                             ).apply {
+        ).apply {
             messageName = "GMD-CONSULT-HCP"
         }
 
@@ -1083,14 +1098,14 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     throw DmgBusinessConnectorException(
                         DmgBusinessConnectorExceptionValues.PARAMETER_NULL,
                         "Ssin and mutuality (No valid patient information)"
-                                                       )
+                    )
                 }
 
                 if (patientInfo.regNrWithMut == null || patientInfo.regNrWithMut.isEmpty()) {
                     throw DmgBusinessConnectorException(
                         DmgBusinessConnectorExceptionValues.PARAMETER_NULL,
                         "Ssin and registration number (No valid patient information)"
-                                                       )
+                    )
                 }
             }
         } else {
@@ -1137,15 +1152,17 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             val builder = factory.newDocumentBuilder()
 
             val xpath = xPathfactory.newXPath()
-            val expr : XPathExpression? = try { xpath.compile(if (url.startsWith("/")) url else "/" + url) } catch (e: XPathExpressionException) {
-                log.warn("Invalid XPATH returned: `$url‘",e);  null
+            val expr: XPathExpression? = try {
+                xpath.compile(if (url.startsWith("/")) url else "/" + url)
+            } catch (e: XPathExpressionException) {
+                log.warn("Invalid XPATH returned: `$url‘", e); null
             }
             val result = mutableSetOf<MycarenetError>()
 
             (expr?.evaluate(
                 builder.parse(ByteArrayInputStream(sendTransactionRequest)),
                 XPathConstants.NODESET
-                          ) as NodeList?)?.let { it ->
+            ) as NodeList?)?.let { it ->
                 if (it.length > 0) {
                     var node = it.item(0)
                     val textContent = node.textContent
@@ -1165,8 +1182,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                                                                     )
-                              )
+                        )
+                    )
                 }
             }
             result

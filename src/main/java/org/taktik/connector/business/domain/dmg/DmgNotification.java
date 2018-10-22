@@ -1,6 +1,8 @@
 package org.taktik.connector.business.domain.dmg;
 
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType;
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput;
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -14,13 +16,11 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public class DmgNotification extends DmgMessage implements Serializable {
+    private CommonOutput commonOutput;
+    private MycarenetConversation mycarenetConversation;
     private HcpartyType hcParty;
     private Boolean payment;
     private Instant from;
-
-    private String requestXML;
-    private String gmdRequestXML;
-    private String responseXML;
 
     public DmgNotification() {
     }
@@ -53,27 +53,20 @@ public class DmgNotification extends DmgMessage implements Serializable {
         return from;
     }
 
-    public String getRequestXML() {
-        return requestXML;
+    public void setCommonOutput(CommonOutput commonOutput){
+        this.commonOutput = commonOutput;
     }
 
-    public void setRequestXML(String requestXML) {
-        this.requestXML = requestXML;
+    public CommonOutput getCommonOutput(){
+        return this.commonOutput;
     }
 
-    public String getGmdRequestXML() {
-        return gmdRequestXML;
+    public void setMycarenetConversation(MycarenetConversation mycarenetConversation){
+        this.mycarenetConversation = mycarenetConversation;
     }
 
-    public void setGmdRequestXML(String gmdRequestXML) {
-        this.gmdRequestXML = gmdRequestXML;
+    public MycarenetConversation getMycarenetConversation(){
+        return this.mycarenetConversation;
     }
 
-    public String getResponseXML() {
-        return responseXML;
-    }
-
-    public void setResponseXML(String responseXML) {
-        this.responseXML = responseXML;
-    }
 }

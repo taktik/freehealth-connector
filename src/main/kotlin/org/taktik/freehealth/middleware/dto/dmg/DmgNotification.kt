@@ -1,6 +1,8 @@
 package org.taktik.freehealth.middleware.dto.dmg
 
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 
 import java.io.Serializable

@@ -1,6 +1,8 @@
 package org.taktik.connector.business.domain.dmg;
 
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType;
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput;
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -28,10 +30,6 @@ public class DmgConsultation extends DmgMessage implements Serializable {
     private Instant to;
 
     private Boolean payment;
-
-    private String requestXML;
-    private String consultRequestXML;
-    private String responseXML;
 
     public DmgConsultation(boolean complete) {
         super(complete);
@@ -133,27 +131,4 @@ public class DmgConsultation extends DmgMessage implements Serializable {
         this.mutuality = mutuality;
     }
 
-    public String getRequestXML() {
-        return requestXML;
-    }
-
-    public void setRequestXML(String requestXML) {
-        this.requestXML = requestXML;
-    }
-
-    public String getConsultRequestXML() {
-        return consultRequestXML;
-    }
-
-    public void setConsultRequestXML(String consultRequestXML) {
-        this.consultRequestXML = consultRequestXML;
-    }
-
-    public String getResponseXML() {
-        return responseXML;
-    }
-
-    public void setResponseXML(String responseXML) {
-        this.responseXML = responseXML;
-    }
 }
