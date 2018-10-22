@@ -27,7 +27,7 @@ import org.taktik.connector.technical.handler.domain.WsAddressingHeader
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorIOUtils
 import org.taktik.freehealth.middleware.dao.User
-import org.taktik.freehealth.middleware.dto.efact.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.efact.EfactMessage
 import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
 import org.taktik.freehealth.middleware.dto.efact.ErrorDetail

@@ -20,10 +20,21 @@ import org.w3c.dom.Node;
 
 public class GenericResponse {
    private static final Logger LOG = LoggerFactory.getLogger(GenericResponse.class);
+
    private SOAPMessage message;
+   private SOAPMessage request;
 
    public GenericResponse(SOAPMessage message) {
       this.message = message;
+   }
+
+   public GenericResponse(SOAPMessage message, SOAPMessage request) {
+      this.message = message;
+      this.request = request;
+   }
+
+   public SOAPMessage getRequest() {
+      return request;
    }
 
    public Node asNode() throws SOAPException {

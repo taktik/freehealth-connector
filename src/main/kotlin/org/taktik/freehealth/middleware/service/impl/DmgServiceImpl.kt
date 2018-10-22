@@ -64,7 +64,6 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.StandardType
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import org.apache.commons.lang.ArrayUtils
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
@@ -95,7 +94,6 @@ import org.taktik.connector.business.mycarenetdomaincommons.domain.Blob
 import org.taktik.connector.business.mycarenetdomaincommons.domain.CareReceiverId
 import org.taktik.connector.business.mycarenetdomaincommons.domain.Routing
 import org.taktik.connector.business.mycarenetdomaincommons.util.WsAddressingUtil
-import org.taktik.connector.business.registration.builder.RegistrationRequestBuilderFactory
 import org.taktik.connector.business.registration.helper.ResponseHelper
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.handler.domain.WsAddressingHeader
@@ -108,8 +106,7 @@ import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.connector.technical.ws.domain.GenericRequest
 import org.taktik.connector.technical.ws.domain.TokenType
 import org.taktik.freehealth.middleware.dao.User
-import org.taktik.freehealth.middleware.domain.common.BusinessError
-import org.taktik.freehealth.middleware.dto.MycarenetError
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.service.DmgService
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3._2005._05.xmlmime.Base64Binary
@@ -1177,7 +1174,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                      )
+                                                                                     )
                               )
                 }
             }

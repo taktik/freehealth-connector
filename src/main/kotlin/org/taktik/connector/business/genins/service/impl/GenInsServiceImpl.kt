@@ -62,7 +62,13 @@ class GenInsServiceImpl : GenInsService, ConfigurationModuleBootstrap.ModuleBoot
         try {
             val service = ServiceFactory.getGeninsPort(token).apply { setPayload(genericReq) }
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
-            return xmlResponse.asObject(GetInsurabilityResponse::class.java) as GetInsurabilityResponse
+
+            val response = xmlResponse.asObject(GetInsurabilityResponse::class.java) as GetInsurabilityResponse
+
+            response.soapRequest = xmlResponse.request
+            response.soapResponse = xmlResponse.soapMessage
+
+            return response
         } catch (e: MalformedURLException) {
             LOG.error("GeninsServiceImpl : " + e.message)
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.MALFORMED_URL, e, "genins " + e.message)

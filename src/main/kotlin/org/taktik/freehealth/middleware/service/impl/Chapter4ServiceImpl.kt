@@ -5,18 +5,14 @@ import be.fgov.ehealth.chap4.core.v1.CommonInputType
 import be.fgov.ehealth.chap4.core.v1.OriginType
 import be.fgov.ehealth.chap4.core.v1.RecordCommonInputType
 import be.fgov.ehealth.chap4.core.v1.SecuredContentType
-import be.fgov.ehealth.chap4.protocol.v1.AbstractChap4MedicalAdvisorAgreementResponseType
-import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementRequest
 import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementResponse
-import be.fgov.ehealth.chap4.protocol.v1.ConsultChap4MedicalAdvisorAgreementRequest
 import be.fgov.ehealth.chap4.protocol.v1.ConsultChap4MedicalAdvisorAgreementResponse
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import be.fgov.ehealth.medicalagreement.core.v1.Kmehrrequest
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDERROR
+import be.fgov.ehealth.medicalagreement.core.v1.Kmehrresponse
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import com.google.gson.Gson
-import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.springframework.security.core.context.SecurityContextHolder
@@ -41,7 +37,6 @@ import org.taktik.connector.business.chapterIV.wrapper.impl.WrappedObjectMarshal
 import org.taktik.connector.business.domain.chapter4.AgreementResponse
 import org.taktik.connector.business.domain.chapter4.AgreementTransaction
 import org.taktik.connector.business.domain.chapter4.Appendix
-import org.taktik.connector.business.domain.chapter4.Problem
 import org.taktik.connector.business.domain.chapter4.RequestType
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes
@@ -118,12 +113,12 @@ import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.common.messages.AbstractMessage
-import org.taktik.freehealth.middleware.domain.common.messages.WarningMessage
 import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
 import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
-import org.taktik.freehealth.middleware.dto.MycarenetError
-import org.taktik.freehealth.middleware.dto.efact.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.service.Chapter4Service
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.utils.FuzzyValues
@@ -137,7 +132,6 @@ import java.io.Serializable
 import java.io.UnsupportedEncodingException
 import java.math.BigDecimal
 import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
 import java.security.KeyStore
 import java.time.Instant
 import java.time.LocalDateTime
@@ -150,7 +144,6 @@ import java.util.UUID
 import javax.xml.bind.JAXBContext
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.soap.SOAPException
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathExpression
 import javax.xml.xpath.XPathExpressionException
@@ -432,18 +425,23 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val request =
             createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
                 ?: DateTime()).askChap4MedicalAdvisorAgreementRequest
+
         val response = try {
             request?.let { freehealthChapter4Service.askChap4MedicalAdvisorAgreement(samlToken, it) }
                 ?: AskChap4MedicalAdvisorAgreementResponse()
         } catch (e: SoaErrorException) {
-            return generateError(e, CommonOutput()).apply {
+            return generateError(e).apply {
                 val rt = e.responseType
                 if (rt is AskChap4MedicalAdvisorAgreementResponse) {
                     val co = rt.commonOutput
-                    this.commonOutput?.apply {
+                    this.commonOutput = CommonOutput().apply {
                         this.inputReference = co?.inputReference ?: rt?.recordCommonOutput?.inputReference?.toString()
                         this.nipReference = co?.nipReference
                         this.outputReference = co?.outputReference ?: rt?.recordCommonOutput?.outputReference?.toString()
+                    }
+                    this.mycarenetConversation = MycarenetConversation().apply {
+                        rt.soapRequest?.writeTo(this.soapRequestOutputStream())
+                        rt.soapRequest?.writeTo(this.soapResponseOutputStream())
                     }
                     rt.returnInfo?.let { ri ->
                         this.errors = this.errors?.let { it + listOf(MycarenetError(code = ri.faultCode, path = ri.faultSource, msgFr = ri.message.value, msgNl = ri.message.value))}
@@ -452,13 +450,26 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             }
         }
 
-        val commonOutput = CommonOutput(response.commonOutput?.inputReference ?: response.recordCommonOutput.inputReference?.toString(), response.commonOutput.nipReference, response.commonOutput.outputReference ?: response.recordCommonOutput.outputReference?.toString())
+        val commonOutput =
+            CommonOutput(response.commonOutput?.inputReference ?: response.recordCommonOutput.inputReference?.toString(), response.commonOutput.nipReference, response.commonOutput.outputReference
+                ?: response.recordCommonOutput.outputReference?.toString())
 
         try {
             val kmehrResponse =
                 responseBuilder.validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(response).kmehrresponse
 
-            val aggResponse = AgreementResponse(commonOutput = commonOutput)
+            val aggResponse = AgreementResponse(commonOutput = commonOutput).apply {
+                this.mycarenetConversation = MycarenetConversation().apply {
+                    response.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    response.soapRequest?.writeTo(this.soapResponseOutputStream())
+                    this.transactionRequest = v1Message?.let {
+                        MarshallerHelper(Kmehrrequest::class.java, Kmehrrequest::class.java).toXMLByteArray(Kmehrrequest().apply { this.kmehrmessage = it })
+                    }.toString(Charsets.UTF_8)
+                    this.transactionResponse = kmehrResponse?.let {
+                        MarshallerHelper(Kmehrresponse::class.java, Kmehrresponse::class.java).toXMLByteArray(it)
+                    }.toString(Charsets.UTF_8)
+                }
+            }
             aggResponse.isAcknowledged = kmehrResponse.acknowledge != null && kmehrResponse.acknowledge.isIscomplete
             kmehrResponse.acknowledge?.let {
                 aggResponse.warnings = it.warnings?.flatMap { errorType ->
@@ -551,10 +562,29 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             request?.let { freehealthChapter4Service.consultChap4MedicalAdvisorAgreement(samlToken, it) }
                 ?: ConsultChap4MedicalAdvisorAgreementResponse()
         } catch (e: SoaErrorException) {
-            return generateError(e, CommonOutput())
+            return generateError(e).apply {
+                val rt = e.responseType
+                if (rt is ConsultChap4MedicalAdvisorAgreementResponse) {
+                    val co = rt.commonOutput
+                    this.commonOutput = CommonOutput().apply {
+                        this.inputReference = co?.inputReference ?: rt?.recordCommonOutput?.inputReference?.toString()
+                        this.nipReference = co?.nipReference
+                        this.outputReference = co?.outputReference ?: rt?.recordCommonOutput?.outputReference?.toString()
+                    }
+                    this.mycarenetConversation = MycarenetConversation().apply {
+                        rt.soapRequest?.writeTo(this.soapRequestOutputStream())
+                        rt.soapRequest?.writeTo(this.soapResponseOutputStream())
+                    }
+                    rt.returnInfo?.let { ri ->
+                        this.errors = this.errors?.let { it + listOf(MycarenetError(code = ri.faultCode, path = ri.faultSource, msgFr = ri.message.value, msgNl = ri.message.value))}
+                    }
+                }
+            }
         }
 
-        val commonOutput = CommonOutput(response.commonOutput?.inputReference ?: response.recordCommonOutput.inputReference?.toString(), response.commonOutput.nipReference, response.commonOutput.outputReference ?: response.recordCommonOutput.outputReference?.toString())
+        val commonOutput =
+            CommonOutput(response.commonOutput?.inputReference ?: response.recordCommonOutput.inputReference?.toString(), response.commonOutput.nipReference, response.commonOutput.outputReference
+                ?: response.recordCommonOutput.outputReference?.toString())
 
         try {
             val retrievedKmehrResponse =
@@ -565,7 +595,18 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                 log.debug("Received CH4 response: $kmehrString")
             }
 
-            val agreementResponse = AgreementResponse()
+            val agreementResponse = AgreementResponse(commonOutput = commonOutput).apply {
+                this.mycarenetConversation = MycarenetConversation().apply {
+                    response.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    response.soapRequest?.writeTo(this.soapResponseOutputStream())
+                    this.transactionRequest = v1Message?.let {
+                        MarshallerHelper(Kmehrrequest::class.java, Kmehrrequest::class.java).toXMLByteArray(Kmehrrequest().apply { this.kmehrmessage = it })
+                    }.toString(Charsets.UTF_8)
+                    this.transactionResponse = retrievedKmehrResponse.kmehrresponse?.let {
+                        MarshallerHelper(Kmehrresponse::class.java, Kmehrresponse::class.java).toXMLByteArray(it)
+                    }.toString(Charsets.UTF_8)
+                }
+            }
             val ack = retrievedKmehrResponse.kmehrresponse.acknowledge
             agreementResponse.isAcknowledged = ack.isIscomplete
             agreementResponse.warnings =
@@ -594,8 +635,6 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                     includeMessageInResponse(agreementResponse, this)
                 }
             }
-
-            agreementResponse.commonOutput = commonOutput
 
             return agreementResponse
         } catch (ex: ChapterIVBusinessConnectorException) {
@@ -699,17 +738,47 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
 
         val response = try { freehealthChapter4Service.askChap4MedicalAdvisorAgreement(samlToken, request!!)
         } catch (e: SoaErrorException) {
-            return generateError(e, CommonOutput())
+            return generateError(e).apply {
+                val rt = e.responseType
+                if (rt is AskChap4MedicalAdvisorAgreementResponse) {
+                    val co = rt.commonOutput
+                    this.commonOutput = CommonOutput().apply {
+                        this.inputReference = co?.inputReference ?: rt?.recordCommonOutput?.inputReference?.toString()
+                        this.nipReference = co?.nipReference
+                        this.outputReference = co?.outputReference ?: rt?.recordCommonOutput?.outputReference?.toString()
+                    }
+                    this.mycarenetConversation = MycarenetConversation().apply {
+                        rt.soapRequest?.writeTo(this.soapRequestOutputStream())
+                        rt.soapRequest?.writeTo(this.soapResponseOutputStream())
+                    }
+                    rt.returnInfo?.let { ri ->
+                        this.errors = this.errors?.let { it + listOf(MycarenetError(code = ri.faultCode, path = ri.faultSource, msgFr = ri.message.value, msgNl = ri.message.value))}
+                    }
+                }
+            }
         }
 
-        val commonOutput = CommonOutput(response.commonOutput?.inputReference ?: response.recordCommonOutput.inputReference?.toString(), response.commonOutput.nipReference, response.commonOutput.outputReference ?: response.recordCommonOutput.outputReference?.toString())
+        val commonOutput =
+            CommonOutput(response.commonOutput?.inputReference ?: response.recordCommonOutput.inputReference?.toString(), response.commonOutput.nipReference, response.commonOutput.outputReference
+                ?: response.recordCommonOutput.outputReference?.toString())
 
 
         val retrievedKmehrResponse =
             responseBuilder.validateTimestampAndretrieveChapterIVKmehrResponseWithTimeStampInfo(response)
 
         try {
-            val agreementResponse = AgreementResponse()
+            val agreementResponse = AgreementResponse(commonOutput = commonOutput).apply {
+                this.mycarenetConversation = MycarenetConversation().apply {
+                    response.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    response.soapRequest?.writeTo(this.soapResponseOutputStream())
+                    this.transactionRequest = v1Message?.let {
+                        MarshallerHelper(Kmehrrequest::class.java, Kmehrrequest::class.java).toXMLByteArray(Kmehrrequest().apply { this.kmehrmessage = it })
+                    }.toString(Charsets.UTF_8)
+                    this.transactionResponse = retrievedKmehrResponse.kmehrresponse?.let {
+                        MarshallerHelper(Kmehrresponse::class.java, Kmehrresponse::class.java).toXMLByteArray(it)
+                    }.toString(Charsets.UTF_8)
+                }
+            }
             agreementResponse.isAcknowledged = retrievedKmehrResponse.kmehrresponse.acknowledge.isIscomplete
             agreementResponse.warnings =
                 retrievedKmehrResponse.kmehrresponse.acknowledge.warnings.flatMap { errorType ->
@@ -828,11 +897,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         return error
     }
 
-    private fun generateError(e: SoaErrorException, co: CommonOutput): AgreementResponse {
+    private fun generateError(e: SoaErrorException): AgreementResponse {
         val error = AgreementResponse()
         error.isAcknowledged = false
         error.errors = Arrays.asList(MycarenetError(code = e.errorCode, msgFr = e.message, msgNl = e.message))
-        error.commonOutput = co
         return error
     }
 
@@ -1365,7 +1433,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                      )
+                                                                                     )
                               )
                 }
             }
