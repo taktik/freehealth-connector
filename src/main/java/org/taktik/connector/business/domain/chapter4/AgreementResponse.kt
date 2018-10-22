@@ -1,5 +1,7 @@
 package org.taktik.connector.business.domain.chapter4
 
+import org.taktik.freehealth.middleware.dto.MycarenetError
+import org.taktik.freehealth.middleware.dto.efact.CommonOutput
 import java.io.Serializable
 import java.util.ArrayList
 
@@ -10,12 +12,13 @@ import java.util.ArrayList
  * Time: 15:07
  * To change this template use File | Settings | File Templates.
  */
-class AgreementResponse : Serializable {
+class AgreementResponse(var commonOutput: CommonOutput? = null) : Serializable {
 
     var isAcknowledged: Boolean = false
-    var warnings: Collection<Problem>? = null
-    var errors: Collection<Problem>? = null
+    var warnings: List<MycarenetError>? = null
+    var errors: List<MycarenetError>? = null
     var content: ByteArray? = null
+    var transactions: MutableList<AgreementTransaction> = ArrayList()
 
     var requestXML: String? = null
     var responseXML: String? = null
@@ -27,8 +30,5 @@ class AgreementResponse : Serializable {
         return t
     }
 
-    fun getTransactions(): List<AgreementTransaction> {
-        return transactions
-    }
 
 }

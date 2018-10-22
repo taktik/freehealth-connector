@@ -35,6 +35,7 @@ import org.taktik.connector.business.domain.chapter4.RequestType
 import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
 import org.taktik.freehealth.middleware.drugs.civics.ParagraphInfos
 import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
+import org.taktik.freehealth.middleware.drugs.dto.MppPreview
 import org.taktik.freehealth.middleware.service.Chapter4Service
 import java.time.LocalDate
 import java.time.ZoneId
@@ -62,6 +63,12 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @PathVariable cnk: Long,
         @PathVariable language: String): List<ParagraphPreview> =
         chapter4Service.findParagraphsWithCnk(cnk, language)
+
+    @GetMapping("/sam/mpps/{chapterName}/{paragraphName}")
+    fun getMppsForParagraph(
+        @PathVariable chapterName: String,
+        @PathVariable paragraphName: String) : List<MppPreview> =
+        chapter4Service.getMppsForParagraph(chapterName, paragraphName)
 
     @GetMapping("/sam/info/{chapterName}/{paragraphName}")
     fun getParagraphInfos(
@@ -109,11 +116,11 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
     @PostMapping("/new/{patientSsin}/{civicsVersion}/{requestType}/{paragraph}")
     fun requestAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
                          @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+                         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
                          @RequestParam hcpNihii: String,
                          @RequestParam hcpSsin: String,
                          @RequestParam hcpFirstName: String,
                          @RequestParam hcpLastName: String,
-                         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
                          @PathVariable patientSsin: String,
                          @RequestParam patientDateOfBirth: Long,
                          @RequestParam patientFirstName: String,
@@ -158,11 +165,11 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
     @DeleteMapping("/cancel/{patientSsin}")
     fun cancelAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
                         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+                        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
                         @RequestParam hcpNihii: String,
                         @RequestParam hcpSsin: String,
                         @RequestParam hcpFirstName: String,
                         @RequestParam hcpLastName: String,
-                        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
                         @PathVariable patientSsin: String,
                         @RequestParam patientDateOfBirth: Long,
                         @RequestParam patientFirstName: String,
@@ -190,11 +197,11 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
     @DeleteMapping("/close/{patientSsin}")
     fun closeAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
                        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+                       @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
                        @RequestParam hcpNihii: String,
                        @RequestParam hcpSsin: String,
                        @RequestParam hcpFirstName: String,
                        @RequestParam hcpLastName: String,
-                       @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
                        @PathVariable patientSsin: String,
                        @RequestParam patientDateOfBirth: Long,
                        @RequestParam patientFirstName: String,
