@@ -16,7 +16,7 @@ import javax.xml.soap.SOAPMessage;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
    name = "GetInsurabilityResponseType",
-   propOrder = {"commonOutput", "recordCommonOutput", "response"}
+   propOrder = {"soapRequest", "soapResponse", "commonOutput", "recordCommonOutput", "response"}
 )
 @XmlRootElement(
    name = "GetInsurabilityResponse"
@@ -62,7 +62,6 @@ public class GetInsurabilityResponse extends ResponseType implements Serializabl
    public void setResponse(SingleInsurabilityResponseType value) {
       this.response = value;
    }
-
 
    private SOAPMessage soapRequest;
    private SOAPMessage soapResponse;
