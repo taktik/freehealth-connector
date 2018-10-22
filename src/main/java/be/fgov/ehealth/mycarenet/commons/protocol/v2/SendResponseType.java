@@ -1,5 +1,7 @@
 package be.fgov.ehealth.mycarenet.commons.protocol.v2;
 
+import be.fgov.ehealth.chap4.core.v1.CommonOutputType;
+import be.fgov.ehealth.chap4.core.v1.RecordCommonOutputType;
 import be.fgov.ehealth.commons.protocol.v2.ResponseType;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,4 +29,5 @@ public class SendResponseType extends ResponseType implements Serializable {
    public void setReturn(ResponseReturnType value) {
       this._return = value;
    }
+
 }

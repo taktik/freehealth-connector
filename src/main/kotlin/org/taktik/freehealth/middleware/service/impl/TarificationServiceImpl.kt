@@ -30,6 +30,8 @@ import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto
 import org.taktik.freehealth.middleware.dto.InfoRequest.IntermediateRequest
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.TarificationService
@@ -56,7 +58,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
         Gson().fromJson(
             this.javaClass.getResourceAsStream("/be/errors/ConsultTarifErrors.json").reader(Charsets.UTF_8),
             arrayOf<MycarenetError>().javaClass
-                       ).associateBy({ it.uid }, { it })
+        ).associateBy({ it.uid }, { it })
     private val xPathfactory = XPathFactory.newInstance()
 
     override fun consultTarif(keystoreId: UUID,
@@ -85,14 +87,14 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             val kmehrUUID = now.toString("YYYYddhhmmssSS")
             val reqId = "$hcpNihii.$kmehrUUID"
 
-            var careProviderFirstName =  hcpFirstName;
-            var careProviderLastName =  hcpLastName;
+            var careProviderFirstName = hcpFirstName;
+            var careProviderLastName = hcpLastName;
 
             traineeSupervisorFirstName?.let {
-                careProviderFirstName =  it;
+                careProviderFirstName = it;
             }
             traineeSupervisorLastName?.let {
-                careProviderLastName =  it;
+                careProviderLastName = it;
             }
 
             val csDT = DateTime(consultationDate.year, consultationDate.monthValue, consultationDate.dayOfMonth, 0, 0)
@@ -155,7 +157,6 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 }
             }
 
-
             val kmehrRequestMarshaller =
                 MarshallerHelper(RetrieveTransactionRequest::class.java, RetrieveTransactionRequest::class.java)
             val xmlByteArray = kmehrRequestMarshaller.toXMLByteArray(req)
@@ -186,14 +187,14 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                             }
                         }
 
-                        var careProviderSsin =  hcpSsin;
-                        var careProviderNihii =  hcpNihii;
+                        var careProviderSsin = hcpSsin;
+                        var careProviderNihii = hcpNihii;
 
                         traineeSupervisorSsin?.let {
-                            careProviderSsin =  it;
+                            careProviderSsin = it;
                         }
                         traineeSupervisorNihii?.let {
-                            careProviderNihii =  it;
+                            careProviderNihii = it;
                         }
 
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
@@ -236,6 +237,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             }
 
             var consultTarificationResponse = freehealthTarificationService.consultTarification(samlToken, request)
+
             val detail = consultTarificationResponse.getReturn().detail
             val content = BlobBuilderFactory.getBlobBuilder("mcn.tarification").checkAndRetrieveContent(SendRequestMapper.mapBlobTypeToBlob(detail))
 
@@ -243,7 +245,25 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 MarshallerHelper(RetrieveTransactionResponse::class.java, RetrieveTransactionResponse::class.java)
             val commonInputResponse = helper.toObject(content)
 
-            val result = TarificationConsultationResult()
+            val commonOutput =
+                CommonOutput(
+                    consultTarificationResponse.`return`?.commonOutput?.inputReference?.toString(),
+                    consultTarificationResponse.`return`?.commonOutput?.nipReference?.toString(),
+                    consultTarificationResponse.`return`?.commonOutput?.outputReference?.toString())
+
+            val result = TarificationConsultationResult().apply {
+                this.mycarenetConversation = MycarenetConversation().apply {
+                    consultTarificationResponse.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    consultTarificationResponse.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    this.transactionRequest = MarshallerHelper(TarificationConsultationRequest::class.java, TarificationConsultationRequest::class.java)
+                        .toXMLByteArray(request)
+                        .toString(Charsets.UTF_8)
+                    this.transactionResponse = MarshallerHelper(TarificationConsultationResponse::class.java, TarificationConsultationResponse::class.java)
+                        .toXMLByteArray(consultTarificationResponse)
+                        .toString(Charsets.UTF_8)
+                }
+               this.commonOutput = commonOutput
+            }
 
             val errors = commonInputResponse.acknowledge.errors?.flatMap { e ->
                 e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
@@ -265,37 +285,6 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             }
 
             result.errors = errors
-
-            var infoRequestDto = InfoRequestDto()
-            var intermediateRequestL:MutableList<IntermediateRequest> = mutableListOf()
-
-            val requestMarshaller =
-                MarshallerHelper(TarificationConsultationRequest::class.java, TarificationConsultationRequest::class.java)
-            val xmlByteArrayRequest = requestMarshaller.toXMLByteArray(request)
-            infoRequestDto.xmlRequest = xmlByteArrayRequest.toString(Charsets.UTF_8)
-
-            val responseMarshaller =
-                MarshallerHelper(TarificationConsultationResponse::class.java, TarificationConsultationResponse::class.java)
-            val xmlByteArrayresponse = responseMarshaller.toXMLByteArray(consultTarificationResponse);
-            infoRequestDto.xmlResponse = xmlByteArrayresponse.toString(Charsets.UTF_8)
-
-
-            val kmehrRequestMarshallerResp =
-                MarshallerHelper(RetrieveTransactionResponse::class.java, RetrieveTransactionResponse::class.java)
-            val xmlByteArrayResp = kmehrRequestMarshallerResp.toXMLByteArray(commonInputResponse)
-
-            val intermediateRequest = IntermediateRequest()
-            intermediateRequest.xmlResponse = xmlByteArrayResp.toString(Charsets.UTF_8)
-
-            intermediateRequestL.add(intermediateRequest)
-
-            infoRequestDto.intermediateRequest = intermediateRequestL;
-
-            val infoRequestUtils = InfoRequestUtils();
-
-            infoRequestDto.outputReferences = infoRequestUtils.getOutputReferences(infoRequestDto.xmlResponse.toString());
-
-            result.setInfoRequestDto(infoRequestDto);
 
             return result
         } catch (e: ConnectorException) {
@@ -319,7 +308,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             (expr.evaluate(
                 builder.parse(ByteArrayInputStream(sendTransactionRequest)),
                 XPathConstants.NODESET
-                          ) as NodeList).let { it ->
+            ) as NodeList).let { it ->
                 if (it.length > 0) {
                     var node = it.item(0)
                     val textContent = node.textContent
@@ -341,8 +330,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                                                                     )
-                              )
+                        )
+                    )
                 }
             }
             result

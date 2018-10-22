@@ -1,5 +1,7 @@
 package be.fgov.ehealth.messageservices.core.v1;
 
+import be.fgov.ehealth.chap4.core.v1.CommonOutputType;
+import be.fgov.ehealth.chap4.core.v1.RecordCommonOutputType;
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,7 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
    name = "RetrieveTransactionResponseType",
-   propOrder = {"response", "acknowledge", "kmehrmessage"}
+   propOrder = {"commonOutput", "recordCommonOutput", "response", "acknowledge", "kmehrmessage"}
 )
 @XmlRootElement(
    name = "RetrieveTransactionResponse",
@@ -21,6 +23,14 @@ import javax.xml.bind.annotation.XmlType;
 )
 public class RetrieveTransactionResponse implements Serializable {
    private static final long serialVersionUID = 1L;
+   @XmlElement(
+           name = "CommonOutput"
+   )
+   protected CommonOutputType commonOutput;
+   @XmlElement(
+           name = "RecordCommonOutput"
+   )
+   protected RecordCommonOutputType recordCommonOutput;
    @XmlElement(
       required = true
    )
@@ -34,6 +44,22 @@ public class RetrieveTransactionResponse implements Serializable {
       name = "messageProtocoleSchemaVersion"
    )
    protected BigDecimal messageProtocoleSchemaVersion;
+
+   public CommonOutputType getCommonOutput() {
+      return this.commonOutput;
+   }
+
+   public void setCommonOutput(CommonOutputType value) {
+      this.commonOutput = value;
+   }
+
+   public RecordCommonOutputType getRecordCommonOutput() {
+      return this.recordCommonOutput;
+   }
+
+   public void setRecordCommonOutput(RecordCommonOutputType value) {
+      this.recordCommonOutput = value;
+   }
 
    public ResponseType getResponse() {
       return this.response;

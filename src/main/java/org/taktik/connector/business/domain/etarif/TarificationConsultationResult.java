@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput;
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation;
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError;
 
 /**
@@ -24,6 +26,8 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError;
  * To change this template use File | Settings | File Templates.
  */
 public class TarificationConsultationResult implements Serializable {
+	private CommonOutput commonOutput;
+	private MycarenetConversation mycarenetConversation;
 	private Date birthdate;
 	private String CT1;
 	private String CT2;
@@ -38,14 +42,6 @@ public class TarificationConsultationResult implements Serializable {
 
 	private List<MycarenetError> errors = new ArrayList<>();
 	private List<CodeResult> codeResults = new ArrayList<>();
-
-	private InfoRequestDto infoRequestDto;
-
-    private String retrieveTransactionRequest;
-    private String commonInputResponse;
-    private String tarificationConsultationResponse;
-    private String tarificationConsultationResponseJSON;
-    private OutputReferences outputReferences;
 
 	public void fill(PersonType patient) {
 		this.setLastName(patient.getFamilyname());
@@ -239,52 +235,20 @@ public class TarificationConsultationResult implements Serializable {
 		this.codeResults = codeResults;
 	}
 
-	public InfoRequestDto getInfoRequestDto() {
-		return infoRequestDto;
+	public void setCommonOutput(CommonOutput commonOutput){
+		this.commonOutput = commonOutput;
 	}
 
-	public void setInfoRequestDto(InfoRequestDto infoRequestDto){
-		this.infoRequestDto = infoRequestDto;
+	public CommonOutput getCommonOutput(){
+		return this.commonOutput;
 	}
 
-	public String getRetrieveTransactionRequest(){
-		return this.retrieveTransactionRequest;
+	public void setMycarenetConversation(MycarenetConversation mycarenetConversation){
+		this.mycarenetConversation = mycarenetConversation;
 	}
 
-	public void setRetrieveTransactionRequest(String retrieveTransactionRequest){
-		this.retrieveTransactionRequest = retrieveTransactionRequest;
-	}
-
-	public String getCommonInputResponse(){
-		return this.commonInputResponse;
-	}
-
-	public void setCommonInputResponse(String commonInputResponse){
-		this.commonInputResponse = commonInputResponse;
-	}
-
-	public String getTarificationConsultationResponse(){
-		return this.tarificationConsultationResponse;
-	}
-
-	public void setTarificationConsultationResponse(String tarificationConsultationResponse){
-		this.tarificationConsultationResponse = tarificationConsultationResponse;
-	}
-
-	public String getTarificationConsultationResponseJSON(){
-		return this.tarificationConsultationResponseJSON;
-	}
-
-	public void setTarificationConsultationResponseJSON(String tarificationConsultationResponseJSON){
-		this.tarificationConsultationResponseJSON = tarificationConsultationResponseJSON;
-	}
-
-	public void setOutputReferences(OutputReferences references) {
-		this.outputReferences = references;
-	}
-
-	public OutputReferences getOutputReferences() {
-		return this.outputReferences;
+	public MycarenetConversation getMycarenetConversation(){
+		return this.mycarenetConversation;
 	}
 
 	private Date asDate(DateTime date) {
@@ -383,12 +347,6 @@ public class TarificationConsultationResult implements Serializable {
 		public void setCurrencyUnit(String currencyUnit) {
 			this.currencyUnit = currencyUnit;
 		}
-	}
-
-	public static class OutputReferences implements Serializable {
-		public String inputReference;
-		public String outputReference;
-		public String nipReference;
 	}
 
 	public enum Sex implements Serializable {
