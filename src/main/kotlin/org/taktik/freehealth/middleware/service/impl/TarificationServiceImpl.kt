@@ -43,7 +43,6 @@ import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
-import kotlin.collections.ArrayList
 
 @Service
 class TarificationServiceImpl(private val stsService: STSService) : TarificationService {

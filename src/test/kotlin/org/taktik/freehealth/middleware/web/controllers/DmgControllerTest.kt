@@ -132,7 +132,6 @@ class DmgControllerTest : EhealthTest() {
     fun scenario4() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
-
         val results = getNisses(3).map {
             val res = this.restTemplate.exchange("http://localhost:$port/gmd/notify/101010"  +
                 "?hcpNihii=$nihii1" +
@@ -166,7 +165,8 @@ class DmgControllerTest : EhealthTest() {
                 "&hcpLastName=$lastName1" +
                 "&patientSsin=$it" +
                 "&patientFirstName=XXX&patientLastName=XXX" +
-                "&patientGender=female",
+                "&patientGender=female" +
+                "&requestDate=${now.minusDays(2).toInstant(ZoneOffset.UTC).toEpochMilli()}",
                 HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
             val dmgc = gson.fromJson(res.body, DmgNotification::class.java)
 
