@@ -765,8 +765,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                             ?.let { inss = it.value }
                         it.insurancymembership?.let {
                             mutuality = it.id.value; it.membership?.let {
-                            this.regNrWithMut =
-                                it.toString()
+                            this.regNrWithMut = (it as? Node)?.textContent
                         }
                         }
                     }
@@ -1177,12 +1176,12 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                         base = "/${nodeDescr(node.parentNode)}$base"
                         node = node.parentNode
                     }
-                    val elements =
+                    var elements =
                         errors.values.filter { it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*"))) }
                     if (elements.isEmpty()) {
                         //IOs sometimes are overeager to provide us with precise xpath. Let's try again while truncating after the item
                         base = base.replace(Regex("(.+/item.+?)/.*"), "$1")
-                        errors.values.filter {
+                        elements = errors.values.filter {
                             it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
                         }
                     }
