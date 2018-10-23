@@ -110,14 +110,12 @@ import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
-import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.eattest.EattestAcknowledgeType
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResultWithResponse
 import org.taktik.freehealth.middleware.service.EattestService
 import org.taktik.freehealth.middleware.service.STSService
-import org.taktik.freehealth.utils.InfoRequestUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -684,8 +682,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
             })
 
-            var infoRequestDto = InfoRequestDto();
-
             val sendAttestationResponse =
                 freehealthEattestService.sendAttestion(samlToken, SendAttestationRequest().apply {
                     val encryptedKnownContent = EncryptedKnownContent()
@@ -770,7 +766,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     val requestMarshaller =
                         MarshallerHelper(SendAttestationRequest::class.java, SendAttestationRequest::class.java)
                     val requestXmlByteArray = requestMarshaller.toXMLByteArray(this);
-                    infoRequestDto.xmlRequest = requestXmlByteArray.toString(Charsets.UTF_8);
                 })
 
 
@@ -798,11 +793,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             val requestMarshaller =
                 MarshallerHelper(SendAttestationResponse::class.java, SendAttestationResponse::class.java)
             val requestXmlByteArray = requestMarshaller.toXMLByteArray(sendAttestationResponse);
-            infoRequestDto.xmlResponse = requestXmlByteArray.toString(Charsets.UTF_8);
-
-
-            val infoRequestUtils = InfoRequestUtils();
-            infoRequestDto.outputReferences = infoRequestUtils.getOutputReferences(infoRequestDto.xmlResponse.toString());
 
 
             val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
@@ -825,18 +815,14 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                          fee = t.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "fee" } }?.cost?.decimal?.toDouble()
                      )
                  } ?: listOf()),
-                 kmehrMessage = encryptedKnownContent.businessContent.value,
-                 xades = xades,
-                 infoRequestDto = infoRequestDto
-                );
+                 xades = xades
+                                            );
             } ?: SendAttestResultWithResponse(EattestAcknowledgeType(
                     iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
                     errors = errors ?: listOf()
                 ),
-                kmehrMessage = null,
-                xades = xades,
-                infoRequestDto = infoRequestDto
-            )
+                xades = xades
+                                             )
         }
     }
 

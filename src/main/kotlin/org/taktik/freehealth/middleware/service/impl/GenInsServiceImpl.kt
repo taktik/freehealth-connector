@@ -40,7 +40,6 @@ import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
-import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
@@ -48,7 +47,6 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.mapper.toInsurabilityInfoDto
 import org.taktik.freehealth.middleware.service.GenInsService
 import org.taktik.freehealth.middleware.service.STSService
-import org.taktik.freehealth.utils.InfoRequestUtils
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList

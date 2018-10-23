@@ -20,14 +20,10 @@
 
 package org.taktik.freehealth.middleware.dto.eattest
 
-import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto
 
 class SendAttestResultWithResponse(
     acknowledge: EattestAcknowledgeType? = null,
     invoicingNumber: String? = null,
     attest: Eattest? = null,
-    var kmehrMessage: ByteArray?,
-    var xades: ByteArray?,
-    var infoRequestDto: InfoRequestDto? = null
-
+    var xades: ByteArray?
 ) : SendAttestResult(acknowledge, invoicingNumber, attest)
