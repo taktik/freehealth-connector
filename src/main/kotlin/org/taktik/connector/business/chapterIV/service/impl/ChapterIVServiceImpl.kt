@@ -25,7 +25,6 @@ class ChapterIVServiceImpl(private val replyValidator: EhealthReplyValidator) : 
             service.setPayload(request)
             service.setSoapAction("urn:be:fgov:ehealth:chap4:protocol:v1:ConsultChap4MedicalAdvisorAgreement")
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
-
             val response = xmlResponse.asObject(ConsultChap4MedicalAdvisorAgreementResponse::class.java)
 
             response.soapRequest = xmlResponse.request

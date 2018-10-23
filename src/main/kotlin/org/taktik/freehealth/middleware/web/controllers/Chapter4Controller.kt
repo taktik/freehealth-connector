@@ -160,7 +160,7 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
             requestType = RequestType.valueOf(requestType),
             civicsVersion = civicsVersion,
             paragraph = paragraph,
-            verses = verses.split(","),
+            verses = verses?.split(","),
             incomplete = incomplete ?: false,
             start = start
                 ?: LocalDate.now().minusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
@@ -183,7 +183,7 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
                         @RequestParam patientLastName: String,
                         @RequestParam patientGender: String,
                         @RequestParam decisionReference: String?,
-                        @RequestParam iorequestReference: String?) =
+                        @RequestParam(required = false) iorequestReference: String? = null) =
         chapter4Service.cancelAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,

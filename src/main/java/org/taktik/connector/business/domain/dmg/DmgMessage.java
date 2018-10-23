@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput;
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation;
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError;
 
 /**
@@ -14,6 +16,9 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError;
  * To change this template use File | Settings | File Templates.
  */
 public class DmgMessage implements Serializable {
+
+    private CommonOutput commonOutput;
+    private MycarenetConversation mycarenetConversation;
     protected boolean complete;
     private List<MycarenetError> errors = new ArrayList<>();
     private String io;
@@ -65,5 +70,21 @@ public class DmgMessage implements Serializable {
 
     public void setValueHash(String valueHash) {
         this.valueHash = valueHash;
+    }
+
+    public void setCommonOutput(CommonOutput commonOutput){
+        this.commonOutput = commonOutput;
+    }
+
+    public CommonOutput getCommonOutput(){
+        return this.commonOutput;
+    }
+
+    public void setMycarenetConversation(MycarenetConversation mycarenetConversation){
+        this.mycarenetConversation = mycarenetConversation;
+    }
+
+    public MycarenetConversation getMycarenetConversation(){
+        return this.mycarenetConversation;
     }
 }

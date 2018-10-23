@@ -40,11 +40,15 @@ import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.mapper.toInsurabilityInfoDto
 import org.taktik.freehealth.middleware.service.GenInsService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.utils.InfoRequestUtils
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -176,15 +180,21 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
 
             genInsResponseDTO.errors = genInsResponse.response.messageFault?.details?.details?.flatMap { extractError(xmlData, it.detailCode, it.location).toList() } ?: listOf()
 
+            val commonOutput = CommonOutput(
+                genInsResponse?.commonOutput?.inputReference?.toString(),
+                genInsResponse?.commonOutput?.nipReference?.toString(),
+                genInsResponse?.commonOutput?.outputReference?.toString()
+            )
 
-            genInsResponseDTO.xmlRequest = xmlData.toString(Charsets.UTF_8);
-            val kmehrRequestMarshaller2 =
-                MarshallerHelper(
-                    GetInsurabilityResponse::class.java,
-                    GetInsurabilityResponse::class.java
-                )
-            val xmlData2 = kmehrRequestMarshaller2.toXMLByteArray(genInsResponse)
-            genInsResponseDTO.xmlResponse = xmlData2.toString(Charsets.UTF_8);
+            genInsResponseDTO?.apply {
+                this.commonOutput = commonOutput
+                this.mycarenetConversation = MycarenetConversation().apply {
+                    genInsResponse.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    genInsResponse.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    this.transactionRequest = xmlData.toString(Charsets.UTF_8)
+                    this.transactionResponse = MarshallerHelper(GetInsurabilityResponse::class.java, GetInsurabilityResponse::class.java).toXMLByteArray(genInsResponse).toString(Charsets.UTF_8)
+                }
+            }
 
             return genInsResponseDTO
 
