@@ -15,7 +15,6 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.ItemType
 import com.google.gson.Gson
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
-import org.json.XML
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.etarif.TarificationConsultationResult
@@ -28,14 +27,11 @@ import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
-import org.taktik.freehealth.middleware.dto.InfoRequest.InfoRequestDto
-import org.taktik.freehealth.middleware.dto.InfoRequest.IntermediateRequest
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.TarificationService
-import org.taktik.freehealth.utils.InfoRequestUtils
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -302,6 +298,14 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                         ConsultTarifErrors.values.filter {
                             it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
                         }
+                    if (elements.isEmpty()) {
+                        //IOs sometimes are overeager to provide us with precise xpath. Let's try again while truncating after the item
+                        base = base.replace(Regex("(.+/item.+?)/.*"), "$1")
+                        ConsultTarifErrors.values.filter {
+                            it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+                        }
+                    }
+
                     elements.forEach { it.value = textContent }
                     result.addAll(elements)
                 } else {

@@ -1178,6 +1178,13 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     }
                     val elements =
                         errors.values.filter { it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*"))) }
+                    if (elements.isEmpty()) {
+                        //IOs sometimes are overeager to provide us with precise xpath. Let's try again while truncating after the item
+                        base = base.replace(Regex("(.+/item.+?)/.*"), "$1")
+                        errors.values.filter {
+                            it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+                        }
+                    }
                     elements.forEach { it.value = textContent }
                     result.addAll(elements)
                 } else {
