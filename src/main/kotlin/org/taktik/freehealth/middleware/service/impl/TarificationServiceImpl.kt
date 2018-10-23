@@ -87,27 +87,30 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             val kmehrUUID = now.toString("YYYYddhhmmssSS")
             val reqId = "$hcpNihii.$kmehrUUID"
 
-            var careProviderFirstName = hcpFirstName;
-            var careProviderLastName = hcpLastName;
-
-            traineeSupervisorFirstName?.let {
-                careProviderFirstName = it;
+            //  The author is always the caller
+            val author = AuthorType().apply {
+                hcparties.add(HcpartyType().apply {
+                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  hcpNihii })
+                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
+                    firstname = hcpFirstName
+                    familyname = hcpLastName
+                })
             }
-            traineeSupervisorLastName?.let {
-                careProviderLastName = it;
+
+            //  The supervisor
+            val supervisor = AuthorType().apply {
+                hcparties.add(HcpartyType().apply {
+                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  traineeSupervisorNihii })
+                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = traineeSupervisorSsin })
+                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
+                    firstname = traineeSupervisorFirstName
+                    familyname = traineeSupervisorLastName
+                })
             }
 
             val csDT = DateTime(consultationDate.year, consultationDate.monthValue, consultationDate.dayOfMonth, 0, 0)
             val req = RetrieveTransactionRequest().apply {
-                val author = AuthorType().apply {
-                    hcparties.add(HcpartyType().apply {
-                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
-                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
-                        firstname = careProviderFirstName
-                        familyname = careProviderLastName
-                    })
-                }
 
                 this.request = RequestType().apply {
                     id = IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = reqId }
@@ -120,7 +123,13 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                     }
                     transaction = TransactionType().apply {
                         var h = 1
-                        this.author = author
+
+                        traineeSupervisorNihii?.let {
+                            this.author = supervisor
+                        } ?: run {
+                            this.author = author
+                        }
+
                         cds.add(CDTRANSACTION().apply { s = CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET; sv = "1.1"; value = "tariff" })
                         headingsAndItemsAndTexts.add(ItemType().apply {
                             ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (h++).toString() })
@@ -187,45 +196,17 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                             }
                         }
 
-                        var careProviderSsin = hcpSsin;
-                        var careProviderNihii = hcpNihii;
-
-                        traineeSupervisorSsin?.let {
-                            careProviderSsin = it;
-                        }
-                        traineeSupervisorNihii?.let {
-                            careProviderNihii = it;
-                        }
-
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
                                 this.quality = "doctor"
                                 this.value =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                        .apply { this.value = careProviderNihii }
+                                        .apply { this.value = hcpNihii }
                             }
                             this.physicalPerson = be.fgov.ehealth.mycarenet.commons.core.v2.IdType().apply {
                                 this.ssin =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                        .apply { this.value = careProviderSsin }
-                            }
-                        }
-                        traineeSupervisorSsin?.let {
-                            this.sender = PartyType().apply {
-                                physicalPerson = IdType().apply {
-                                    this.ssin =
-                                        be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString().apply { this.value = hcpSsin }
-                                    careProviderNihii?.let {
-                                        this.nihii =
-                                            NihiiType().apply {
-                                                this.quality = "physician"
-                                                this.value =
-                                                    be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                                        .apply { this.value = hcpNihii }
-                                            }
-                                    }
-
-                                }
+                                        .apply { this.value = hcpSsin }
                             }
                         }
                     }
