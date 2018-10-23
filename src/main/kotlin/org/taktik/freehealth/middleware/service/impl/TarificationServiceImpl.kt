@@ -15,7 +15,6 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.ItemType
 import com.google.gson.Gson
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
-import org.json.XML
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.etarif.TarificationConsultationResult
