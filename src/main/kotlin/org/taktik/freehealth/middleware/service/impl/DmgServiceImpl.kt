@@ -765,8 +765,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                             ?.let { inss = it.value }
                         it.insurancymembership?.let {
                             mutuality = it.id.value; it.membership?.let {
-                            this.regNrWithMut =
-                                it.toString()
+                            this.regNrWithMut = (it as? Node)?.textContent
                         }
                         }
                     }
