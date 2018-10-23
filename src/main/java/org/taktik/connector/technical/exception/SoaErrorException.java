@@ -3,9 +3,12 @@ package org.taktik.connector.technical.exception;
 import be.fgov.ehealth.commons.protocol.v1.ResponseType;
 import be.fgov.ehealth.errors.core.v1.ErrorType;
 
+import javax.xml.soap.SOAPMessage;
+
 public class SoaErrorException extends TechnicalConnectorException {
    private static final long serialVersionUID = 1L;
    private String errorCode;
+   private SOAPMessage request;
    private ResponseType responseTypeV1;
    private ErrorType errorType;
    private be.fgov.ehealth.commons.protocol.v2.ResponseType responseTypeV2;

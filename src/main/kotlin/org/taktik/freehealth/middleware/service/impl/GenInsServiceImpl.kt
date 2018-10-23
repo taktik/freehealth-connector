@@ -24,7 +24,6 @@ import be.fgov.ehealth.genericinsurability.core.v1.*
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityContactTypeType.AMBULATORY_CARE
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityContactTypeType.HOSPITALIZED_ELSEWHERE
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityRequestTypeType.INFORMATION
-import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsFlatResponse
 import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsXmlOrFlatRequestType
 import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityResponse
 import com.google.gson.Gson
@@ -41,7 +40,7 @@ import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
-import org.taktik.freehealth.middleware.dto.MycarenetError
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import org.taktik.freehealth.middleware.mapper.toInsurabilityInfoDto
 import org.taktik.freehealth.middleware.service.GenInsService
@@ -235,7 +234,7 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                      )
+                                                                                     )
                               )
                 }
             }

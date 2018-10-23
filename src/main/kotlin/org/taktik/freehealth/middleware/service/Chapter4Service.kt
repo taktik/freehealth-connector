@@ -81,4 +81,5 @@ interface Chapter4Service {
 
     fun getParagraphInfos(chapterName: String, paragraphName: String): ParagraphInfos?
     fun getMppsForParagraph(chapterName: String, paragraphName: String): List<MppPreview>
+    fun getVtmNamesForParagraph(chapterName: String, paragraphName: String, language: String): List<String>
 }

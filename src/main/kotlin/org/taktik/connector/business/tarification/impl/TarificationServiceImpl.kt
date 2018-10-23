@@ -18,7 +18,12 @@ class TarificationServiceImpl : TarificationService, ConfigurationModuleBootstra
             val service = ServiceFactory.getTarificationSessionForMycarenet(token)
             service.setPayload(request as Any)
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
-            return xmlResponse.asObject(TarificationConsultationResponse::class.java) as TarificationConsultationResponse
+            val tarificationConsultationResponse = xmlResponse.asObject(TarificationConsultationResponse::class.java) as TarificationConsultationResponse
+
+            tarificationConsultationResponse.soapRequest = xmlResponse.request
+            tarificationConsultationResponse.soapResponse = xmlResponse.soapMessage
+
+            return tarificationConsultationResponse
         } catch (ex: SOAPException) {
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
         }

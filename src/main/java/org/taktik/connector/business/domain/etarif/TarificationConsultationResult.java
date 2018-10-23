@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.taktik.connector.business.domain.Error;
-import org.taktik.freehealth.middleware.dto.MycarenetError;
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError;
 
 /**
  * Created with IntelliJ IDEA.

@@ -3,8 +3,8 @@ package org.taktik.connector.business.domain.dmg;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.taktik.connector.business.domain.Error;
-import org.taktik.freehealth.middleware.dto.MycarenetError;
+
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError;
 
 /**
  * Created with IntelliJ IDEA.
