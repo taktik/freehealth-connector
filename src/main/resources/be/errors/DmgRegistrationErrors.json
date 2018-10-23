@@ -1,0 +1,14 @@
+[
+	{"uid":"1","path":"/registrations/registrant/CareProvider/Nihii/Value","code":"100","locFr":"","locNl":"","msgFr":"Zone obligatoire non complétée","msgNl":""},
+	{"uid":"2","path":"/registrations/registrant/CareProvider/Nihii/Value","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
+	{"uid":"3","path":"/registrations/registrant/CareProvider/Nihii/Value","code":"140","locFr":"","locNl":"","msgFr":"Tiers non habilité pour ce type d’inscription à la date du jour","msgNl":""},
+	{"uid":"4","path":"/registrations/registrant/CareProvider/Nihii/Value","code":"141","locFr":"","locNl":"","msgFr":"Tiers pas connu à l’OA à la date du jour","msgNl":""},
+	{"uid":"5","path":"/registrations/registrant/CareProvider/Nihii/Value","code":"155","locFr":"","locNl":"","msgFr":"Valeur incohérente avec celle du Web Service","msgNl":""},
+	{"uid":"6","path":"/registrations/registrant/CareProvider/Nihii/Value","code":"168","locFr":"","locNl":"","msgFr":"Tiers déjà inscrit pour ce service","msgNl":""},
+	{"uid":"7","path":"/registrations/registration","code":"100","locFr":"","locNl":"","msgFr":"Zone obligatoire non complété","msgNl":""},
+	{"uid":"8","path":"/registrations/registration","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
+	{"uid":"9","path":"/registrations/registration","code":"130","locFr":"","locNl":"","msgFr":"Valeur non permise","msgNl":""},
+	{"uid":"10","path":"/registrations/registration/bankAccount","code":"100","locFr":"","locNl":"","msgFr":"Zone obligatoire non complétée pour ce type de flux / ce tiers","msgNl":""},
+	{"uid":"11","path":"/registrations/registration/bankAccount","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
+	{"uid":"12","path":"/registrations/registration/bankAccount","code":"130","locFr":"","locNl":"","msgFr":"Valeur non permise","msgNl":""}
+]

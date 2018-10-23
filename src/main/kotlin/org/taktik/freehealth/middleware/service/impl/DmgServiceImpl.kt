@@ -89,6 +89,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
     private val genAsyncService = GenAsyncServiceImpl("dmg")
     private val config = ConfigFactory.getConfigValidator(listOf())
 
+    val dmgRegistrationErrors =
+        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgRegistrationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
     val dmgConsultationErrors =
         Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgConsultationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
     val dmgNotificationErrors =
@@ -145,7 +147,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             "javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema",
             "com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory"
         )
-        val blob = RequestBuilderFactory.getBlobBuilder("mcn.registration").build(request.toByteArray(charset("UTF8")))
+        val binaryRequest = request.toByteArray(charset("UTF8"))
+        val blob = RequestBuilderFactory.getBlobBuilder("mcn.registration").build(binaryRequest)
 
         val careReceiver = CareReceiverId(null).apply { mutuality = oa }
 
@@ -206,7 +209,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             isSuccess = registrationsAnswer.registrationAnswer.status == RegistrationStatus.SUCCESS
             isComplete = true
             if (registrationsAnswer.registrationAnswer.status != RegistrationStatus.SUCCESS) {
-                errors.addAll(listOf() /* TODO */)
+                errors.addAll(registrationsAnswer.registrationAnswer.answerDetails.flatMap { extractError(binaryRequest,it.detailCode, dmgRegistrationErrors, it.location) })
             }
             this.mycarenetConversation = MycarenetConversation().apply{
                 this.transactionResponse = MarshallerHelper(RegisterToMycarenetServiceResponse::class.java, RegisterToMycarenetServiceResponse::class.java).toXMLByteArray(intermediateResponse).toString(Charsets.UTF_8)
@@ -682,14 +685,12 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     }
             }
             transaction = TransactionType().apply {
-                this.author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
                 ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "1"; sv = "1.0" })
                 cds.add(CDTRANSACTION().apply {
                     sv = "1.0"; value = "gmd"; s =
                     CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET
                 })
                 begindate = DateTime(requestDate.time)
-                isIscomplete = true; isIsvalidated = true
             }
         }
 
