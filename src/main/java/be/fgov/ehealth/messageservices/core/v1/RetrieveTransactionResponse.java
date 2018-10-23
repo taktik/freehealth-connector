@@ -4,18 +4,13 @@ import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import javax.xml.soap.SOAPMessage;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
    name = "RetrieveTransactionResponseType",
-   propOrder = {"soapRequest", "soapResponse", "response", "acknowledge", "kmehrmessage"}
+   propOrder = {"response", "acknowledge", "kmehrmessage"}
 )
 @XmlRootElement(
    name = "RetrieveTransactionResponse",
@@ -37,7 +32,9 @@ public class RetrieveTransactionResponse implements Serializable, SoapConversati
    )
    protected BigDecimal messageProtocoleSchemaVersion;
 
+   @XmlTransient
    private SOAPMessage soapRequest;
+   @XmlTransient
    private SOAPMessage soapResponse;
 
    @Override
