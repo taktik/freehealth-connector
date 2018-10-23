@@ -872,11 +872,11 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                 at.paragraph =
                     its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == CHAPTER_4_REFERENCE.value() } }
                         ?.contents?.map { it.cds?.find { it.s == v1CDCHAPTER4PARAGRAPH }?.value }?.find { it != null }
-
+/*
                 its?.find { it.cds.any { it.s == be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MAA && it.value == CDITEMMAAvalues.COVERAGETYPE.value()}}.let{
                     val c = it!!.contents?.find { it.cds != null}
                     at.coverageType = c!!.cds.map{it.value}?.find { it != null }
-                }
+                }*/
 
 
                 val bos = ByteArrayOutputStream()
@@ -1420,12 +1420,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                         base = "/${nodeDescr(node.parentNode)}$base"
                         node = node.parentNode
                     }
-                    val elements =
+                    var elements =
                         errors.values.filter { it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*"))) }
                     if (elements.isEmpty()) {
                         //IOs sometimes are overeager to provide us with precise xpath. Let's try again while truncating after the item
                         base = base.replace(Regex("(.+/item.+?)/.*"), "$1")
-                        errors.values.filter {
+                        elements = errors.values.filter {
                             it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
                         }
                     }
