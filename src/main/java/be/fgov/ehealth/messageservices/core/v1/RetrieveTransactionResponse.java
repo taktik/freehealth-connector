@@ -15,7 +15,7 @@ import javax.xml.soap.SOAPMessage;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
    name = "RetrieveTransactionResponseType",
-   propOrder = {"response", "acknowledge", "kmehrmessage"}
+   propOrder = {"soapRequest", "soapResponse", "response", "acknowledge", "kmehrmessage"}
 )
 @XmlRootElement(
    name = "RetrieveTransactionResponse",
