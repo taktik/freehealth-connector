@@ -20,7 +20,9 @@
 
 package org.taktik.freehealth.middleware.dto.genins
 
-import org.taktik.freehealth.middleware.dto.MycarenetError
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import java.io.Serializable
 import java.util.ArrayList
 
@@ -32,6 +34,8 @@ import java.util.ArrayList
  * To change this template use File | Settings | File Templates.
  */
 class InsurabilityInfoDto(
+    var commonOutput: CommonOutput? = null,
+    var mycarenetConversation: MycarenetConversation? = null,
     val inss: String? = null,
     val firstName: String? = null,
     val lastName: String? = null,
@@ -48,9 +52,5 @@ class InsurabilityInfoDto(
     val generalSituation: String? = null,
     val paymentByIo: Boolean = false,
     val specialSocialCategory: Boolean = false,
-    val transfers: List<TransferDto>? = null,
-    var xmlRequest: String? = null,
-    var xmlResponse: String? = null,
-    val SoapRequest: String? = null,
-    val SoapResponse: String? = null
-                         ) : Serializable
+    val transfers: List<TransferDto>? = null) : Serializable
+

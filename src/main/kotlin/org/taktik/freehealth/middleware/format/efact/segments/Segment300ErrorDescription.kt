@@ -31,7 +31,7 @@ object Segment300ErrorDescription : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "3081", "Code erreur", "N", pos, 2)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "309", "Mode facturation", "N", pos, 2)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "3091", "Code erreur", "N", pos, 2)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "310", "Pourcentage erreurs", "N", pos, 5)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "310", "Reserve", "N", pos, 5)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "3101", "Code erreur", "N", pos, 2)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "311", "Type refus facturation", "N", pos, 2)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "3111", "Code erreur", "N", pos, 2)

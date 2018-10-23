@@ -18,7 +18,7 @@
  *
  */
 
-package org.taktik.freehealth.middleware.dto
+package org.taktik.freehealth.middleware.dto.mycarenet
 
 class MycarenetError(
     var uid: String? = null,

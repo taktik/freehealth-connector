@@ -41,7 +41,12 @@ class EattestServiceImpl : EattestService, ConfigurationModuleBootstrap.ModuleBo
             val service = ServiceFactory.getAttestPort(token)
             service.setPayload(request as Any)
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
-            return xmlResponse.asObject(SendAttestationResponse::class.java) as SendAttestationResponse
+            val response = xmlResponse.asObject(SendAttestationResponse::class.java) as SendAttestationResponse
+
+            response.soapRequest = xmlResponse.request
+            response.soapResponse = xmlResponse.soapMessage
+
+            return response
         } catch (ex: SOAPException) {
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
         }

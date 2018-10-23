@@ -1,9 +1,11 @@
 package org.taktik.freehealth.middleware.dto.dmg
 
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 
 import java.io.Serializable
-import java.util.Date
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,10 +14,14 @@ import java.util.Date
  * Time: 07:55
  * To change this template use File | Settings | File Templates.
  */
-class DmgNotification(complete: Boolean?) : DmgMessage(complete = complete), Serializable {
-    constructor() : this(null)
-
-    var hcParty: HcpartyType? = null
-    var payment: Boolean? = null
-    var from: Date? = null
+class DmgNotification(
+    isComplete: Boolean? = null,
+    io: String? = null,
+    reference: String? = null,
+    valueHash: String? = null,
+    errors: MutableList<MycarenetError> = ArrayList(),
+    var hcParty: HcpartyType? = null,
+    var payment: Boolean? = null,
+    var from: Long? = null
+                     ) : DmgMessage(isComplete, io, reference, valueHash, errors), Serializable {
 }

@@ -58,7 +58,7 @@ public abstract class AbstractWsSender {
       request.put("javax.xml.ws.handler.message.outbound", true);
       Handler<?>[] chain = genericRequest.getHandlerchain();
       SOAPConnection conn = null;
-      SOAPMessageContext reply = null;
+      SOAPMessageContext reply;
 
       try {
          URL endpoint = generateEndpoint(request);
@@ -103,7 +103,7 @@ public abstract class AbstractWsSender {
          }
       }
 
-      return new GenericResponse(reply.getMessage());
+      return new GenericResponse(reply.getMessage(), request.getMessage());
    }
 
    private static SOAPMessageContext createSOAPMessageCtx(SOAPMessage msg) {

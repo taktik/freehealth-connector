@@ -1,6 +1,7 @@
 package org.taktik.connector.business.domain.chapter4
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.taktik.connector.business.chapterIV.domain.ChapterIVReferences
 
 import java.io.IOException
 import java.io.Serializable
@@ -14,6 +15,7 @@ import java.util.Date
  * To change this template use File | Settings | File Templates.
  */
 class AgreementTransaction : Serializable {
+    var timestamp: Long? = null
     var paragraph: String? = null
     var isAccepted: Boolean = false
     var isInTreatment: Boolean = false
@@ -21,10 +23,17 @@ class AgreementTransaction : Serializable {
     var decisionReference: String? = null
     var start: Date? = null
     var end: Date? = null
-    var unitNumber: Double? = null
-    private val quantityValue: Double? = null
-    private val quantityUnit: String? = null
+    var quantityValue: Double? = null
+    var quantityUnit: String? = null
     var ioRequestReference: String? = null
     var content: ByteArray? = null
     var responseType: String? = null
+    var refusalJustification: Map<String, String>? = null
+    var coverageType: String? = null
+    var unitNumber: Double? = null
+    var strength : Double? = null
+    var strengthUnit : String? = null
+    var restUnitNumber: Double? = null
+    var restStrength: Double? = null
+    var restStrengthUnit: String? = null
 }

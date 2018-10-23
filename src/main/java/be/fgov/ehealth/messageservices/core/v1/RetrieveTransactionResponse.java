@@ -1,5 +1,6 @@
 package be.fgov.ehealth.messageservices.core.v1;
 
+import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.soap.SOAPMessage;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
@@ -19,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
    name = "RetrieveTransactionResponse",
    namespace = "http://www.ehealth.fgov.be/messageservices/protocol/v1"
 )
-public class RetrieveTransactionResponse implements Serializable {
+public class RetrieveTransactionResponse implements Serializable, SoapConversationLogger {
    private static final long serialVersionUID = 1L;
    @XmlElement(
       required = true
@@ -34,6 +36,29 @@ public class RetrieveTransactionResponse implements Serializable {
       name = "messageProtocoleSchemaVersion"
    )
    protected BigDecimal messageProtocoleSchemaVersion;
+
+   private SOAPMessage soapRequest;
+   private SOAPMessage soapResponse;
+
+   @Override
+   public SOAPMessage getSoapRequest() {
+      return this.soapRequest;
+   }
+
+   @Override
+   public void setSoapRequest(SOAPMessage soapRequest) {
+      this.soapRequest = soapRequest;
+   }
+
+   @Override
+   public SOAPMessage getSoapResponse() {
+      return this.soapResponse;
+   }
+
+   @Override
+   public void setSoapResponse(SOAPMessage soapResponse) {
+      this.soapResponse = soapResponse;
+   }
 
    public ResponseType getResponse() {
       return this.response;

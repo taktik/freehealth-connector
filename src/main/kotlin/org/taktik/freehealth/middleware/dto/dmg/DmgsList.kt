@@ -1,5 +1,7 @@
 package org.taktik.freehealth.middleware.dto.dmg
 
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import java.io.Serializable
 import java.util.ArrayList
 import java.util.Date

@@ -21,28 +21,6 @@ import org.w3c.dom.Node;
 public final class ConnectorExceptionUtils {
    private static final Logger LOG = LoggerFactory.getLogger(ConnectorExceptionUtils.class);
 
-   public static void processSOAPFault(SOAPFaultException e) throws SoaErrorException {
-      if (e.getFault() == null) {
-         throw e;
-      } else {
-         Node detail = ConnectorXmlUtils.getFirstChildElement(e.getFault().getDetail());
-         if (detail == null) {
-            throw e;
-         } else {
-            MarshallerHelper helper;
-            if ("BusinessError".equals(detail.getLocalName())) {
-               helper = new MarshallerHelper(BusinessError.class, BusinessError.class);
-               throw new SoaErrorException(e.getFault().getFaultCode() + ": " + e.getFault().getFaultString(), (ErrorType)helper.toObject((Node)detail));
-            } else if ("SystemError".equals(detail.getLocalName())) {
-               helper = new MarshallerHelper(SystemError.class, SystemError.class);
-               throw new SoaErrorException(e.getFault().getFaultCode() + ": " + e.getFault().getFaultString(), (ErrorType)helper.toObject((Node)detail));
-            } else {
-               throw e;
-            }
-         }
-      }
-   }
-
    public static byte[] processUnsealConnectorException(UnsealConnectorException e, String... allowedErrors) throws UnsealConnectorException, TechnicalConnectorException {
       CryptoResult<UnsealedData> result = (CryptoResult<UnsealedData>) e.getUnsealResult();
       Set<NotificationError> errors = new HashSet();

@@ -1479,10 +1479,10 @@ class EfactMessagesLoadTest : EhealthTest() {
     @Test
     fun testLoadAndConfirmMessage() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        this.restTemplate.exchange("http://localhost:$port/efact/$nihii1/fr?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<EfactErrorMessage>>() {}, firstName1, lastName1)
+        this.restTemplate.exchange("http://localhost:$port/efact/$nihii1/fr?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<EfactMessage>>() {}, firstName1, lastName1)
             ?.let {
                 this.restTemplate.exchange("http://localhost:$port/efact/confirm/acks/$nihii1?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck != null }.map { it.hashValue }.filterNotNull(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
-                this.restTemplate.exchange("http://localhost:$port/efact/confirm/msgs/$nihii1?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck == null }.map { it.hashValue }.filterNotNull(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
+                this.restTemplate.exchange("http://localhost:$port/efact/confirm/msgs/$nihii1?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck == null }.map { it.hashValue }.filterNotNull().let {it.subList(0, Math.min(20, it.size))}, createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
             }
     }
 
@@ -1496,5 +1496,19 @@ class EfactMessagesLoadTest : EhealthTest() {
             w.close()
         }
     }
+
+
+    @Test
+    fun testReParse920999() {
+        val res = BelgianInsuranceInvoicingFormatReader("fr").parse("9209990001009200400000000020180919001826260000000200               20150900004002018091900FHCA18.600   00999199900Baudoux                                      00Antoine                 00322333584000030001000000000000000000000095006002000201809196000+0000000192000+0000000000015+0000000192000000000030055000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".reader(), false)!!.map { it.toString() }.joinToString("\n")
+        println(res)
+    }
+
+    @Test
+    fun testReParse920098() {
+        val res1 = BelgianInsuranceInvoicingFormatReader("fr").parse("920098000200120000000050002018082300020185010444010000000000000000020180800235002018082300             00000199900SERVICE                                      00TARIFICATION            000027789555000300010000000000000                                                                                                                                                                                                                                                                                                                                                                                                                                                                           10000001000019990000000000000000235000000000000000000400114787610000000000000000000000000000000000000000000020180800000201808230508465387INB-B7D46B7DD683474886B560000GEBABEBB   0BE25001686081682                  000000           00000000000000000000000000000000000000000                                  00000000000000000000000000000000000000000000161112018083111111111111111111111111111111111101147876100011111111111111111111111111111111111111111111111111 000000 000000 000000111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110000019000006000000000000000000000000023500000000000000000000011478761000+0000000000000000000+0000003224200000000020180800000000000000508465387INB-B7D46B7DD683474886B560000GEBABEBB   0BE25001686081682                  000000           00000000000000000000000000000000000000000                                  00000000000000000000000000000000000000000066729999999999999999999999999999999999999999999901147876100099999999999999999999999999999999999999999999999999 000000 000000 00000099999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999000002".reader(), true)!!.map { it.toString() }.joinToString("\n")
+        println(res1)
+    }
+
 }
 

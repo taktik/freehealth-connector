@@ -40,10 +40,12 @@ import org.taktik.freehealth.middleware.drugs.Mp;
 import org.taktik.freehealth.middleware.drugs.Mpp;
 import org.taktik.freehealth.middleware.drugs.civics.AddedDocument;
 import org.taktik.freehealth.middleware.drugs.civics.Ampp;
+import org.taktik.freehealth.middleware.drugs.civics.Atm;
 import org.taktik.freehealth.middleware.drugs.civics.NameTranslation;
 import org.taktik.freehealth.middleware.drugs.civics.Paragraph;
 import org.taktik.freehealth.middleware.drugs.civics.Therapy;
 import org.taktik.freehealth.middleware.drugs.civics.Verse;
+import org.taktik.freehealth.middleware.drugs.civics.Vtm;
 import org.taktik.freehealth.middleware.drugs.dao.DrugsDAO;
 import org.taktik.freehealth.middleware.drugs.dto.AtcId;
 import org.taktik.freehealth.middleware.drugs.dto.DocId;
@@ -58,7 +60,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.file.Files;
-import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -69,6 +70,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -832,6 +834,43 @@ public class DrugsDAOImpl implements DrugsDAO {
     }
 
     @Override
+    public List<Mpp> getMppsForParagraph(String chapterName, String paragraphName) {
+        if (chapterName != null && paragraphName != null) {
+            Session sess = getHibernateTemplate().getSessionFactory().getCurrentSession();
+            List<Ampp> ampps = sess.createCriteria(Ampp.class, "a_ampp")
+                    .createAlias("a_ampp.amp", "a_amp")
+                    .createAlias("a_amp.atm", "a_atm")
+                    .createAlias("a_atm.therapies", "a_th")
+                    .add(Restrictions.and(Restrictions.eq("a_th.chapterName", chapterName), Restrictions.eq("a_th.paragraphName", paragraphName)))
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .list();
+            return (List<Mpp>) sess.createCriteria(Mpp.class, "a_mpp")
+                    .add(Restrictions.in("id.id", ampps.stream().map(ampp -> ampp.getId().toString()).collect(Collectors.toList())))
+		            .add(Restrictions.eq("id.lang", "fr"))
+                    .list();
+        }
+        return null;
+    }
+
+	@Override
+	public List<String> getVtmNamesForParagraph(String chapterName, String paragraphName, String language) {
+		if (chapterName != null && paragraphName != null) {
+			Session sess = getHibernateTemplate().getSessionFactory().getCurrentSession();
+			List<Atm> atms = sess.createCriteria(Atm.class, "a_atm")
+					.createAlias("a_atm.therapies", "a_th")
+					.add(Restrictions.and(Restrictions.eq("a_th.chapterName", chapterName), Restrictions.eq("a_th.paragraphName", paragraphName)))
+					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+					.list();
+			return ((List<NameTranslation>) sess.createCriteria(NameTranslation.class)
+					.createAlias("name", "n")
+					.add(Restrictions.in("n.id", atms.stream().map(atm -> atm.getVtm().getNameId()).distinct().collect(Collectors.toList())))
+					.add(Restrictions.eq("languageCv", language.toUpperCase())).list()).stream().map(nt->nt.getShortText()).collect(Collectors.toList());
+		}
+		return null;
+	}
+
+
+	@Override
     public List<AddedDocument> getAddedDocuments(String chapterName, String paragraphName) {
         if (chapterName != null && paragraphName != null) {
             Session sess = getHibernateTemplate().getSessionFactory().getCurrentSession();

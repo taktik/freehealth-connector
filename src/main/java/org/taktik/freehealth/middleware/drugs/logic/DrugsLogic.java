@@ -21,51 +21,51 @@ import java.util.List;
 
 /**
  * The main interface to the drugs database system.
- * 
+ *
  * MP 	= Medial product
  * MPP 	= Medical product package
- * 
- * 
+ *
+ *
  * @author abaudoux
  *
  */
 
 public interface DrugsLogic {
-	
+
 	/**
 	 * Initialize the drugs database :
-	 * open a connection, and copy the default 
+	 * open a connection, and copy the default
 	 * database if needed.
-	 * 
+	 *
 	 */
 	public void initDrugsDatabase();
-	
+
 	/**
 	 * Is there any valid drug database?
 	 * @return
 	 */
 	public boolean isDataBasePresent();
-	
+
 	/**
 	 * Installs a new Drugs database from the file at Path
 	 * @param path
 	 */
 	public void installNewDrugsDatabase(String path);
-	
+
 	/**
-	 * Return the most appropriate available language for 
+	 * Return the most appropriate available language for
 	 * the given proposed language
 	 */
-	
+
 	public String getAvailableLanguage(String proposedLanguage);
-	
+
 	/**
 	 * Retrieve a list of MPP's by name.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param searchString the first letters of the mpp
 	 * @param lang The language of the Search
-	 * @param types The types of the dbs to search in. Specify null or empty list 
+	 * @param types The types of the dbs to search in. Specify null or empty list
 	 * To search in all dbs.
 	 * @param first the first result to return
 	 * @param count the number of results to return
@@ -201,7 +201,11 @@ public interface DrugsLogic {
 
     ParagraphInfos getParagraphInfos(String chapterName, String paragraphName);
 
-    List<AddedDocumentPreview> getAddedDocuments(String chapterName, String paragraphName);
+	List<MppPreview> getMppsForParagraph(String chapterName, String paragraphName);
+
+	List<String> getVtmNamesForParagraph(String chapterName, String paragraphName, String language);
+
+	List<AddedDocumentPreview> getAddedDocuments(String chapterName, String paragraphName);
 
     List<ParagraphPreview> findParagraphsWithCnk(Long cnk, String language);
 }

@@ -308,7 +308,6 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                            sender: InvoiceSender,
                            invoicingYear: Int?,
                            invoicingMonth: Int?,
-                           invoiceRef: String,
                            patient: Patient,
                            insuranceCode: String,
                            icd: InvoiceItem): Int {
@@ -344,14 +343,14 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("12", (icd.timeOfDay?: InvoicingTimeOfDay.Other).code)
         ws.write("13",990)
         ws.write("15", icd.doctorIdentificationNumber)
-        ws.write("16", if (icd.gnotionNihii == null) 1 else 4)
+        ws.write("16", if (icd.gnotionNihii == null || icd.gnotionNihii?.let { it.isEmpty() } == true) 1 else 4)
         ws.write("17", icd.relatedCode)
         ws.write("19",(if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
         ws.write("22","+" + nf4.format(icd.units))
         ws.write("24", icd.prescriberNihii) //!!!
         ws.write("26", (icd.percentNorm?: InvoicingPercentNorm.None).code)
         ws.write("27",(if (icd.patientFee >= 0) "+" else "-") + nf9.format(Math.abs(icd.patientFee)))
-        ws.write("28", invoiceRef)
+        ws.write("28", icd.invoiceRef)
         ws.write("30",(if (icd.doctorSupplement >= 0) "+" else "-") + nf9.format(Math.abs(icd.doctorSupplement)))
         ws.write("32", icd.override3rdPayerCode?. let { if (it >= 0) it else 0 } ?: 0)
         ws.write("33", icd.personalInterventionCoveredByThirdPartyCode?. let { if (it >= 0) it else 0 } ?: 0)//MAF Zone 33 todo //Mettre 1 si a charge du medecin

@@ -158,7 +158,11 @@ public interface DrugsDAO {
 
     Paragraph getParagraph(String chapterName, String paragraphName);
 
-    List<AddedDocument> getAddedDocuments(String chapterName, String paragraphName);
+	List<Mpp> getMppsForParagraph(String chapterName, String paragraphName);
+
+	List<String> getVtmNamesForParagraph(String chapterName, String paragraphName, String language);
+
+	List<AddedDocument> getAddedDocuments(String chapterName, String paragraphName);
 
     String getShortText(Long nameId, String fr);
 

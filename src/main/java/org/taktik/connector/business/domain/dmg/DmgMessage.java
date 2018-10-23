@@ -3,7 +3,10 @@ package org.taktik.connector.business.domain.dmg;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.taktik.connector.business.domain.Error;
+
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput;
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation;
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,8 +16,11 @@ import org.taktik.connector.business.domain.Error;
  * To change this template use File | Settings | File Templates.
  */
 public class DmgMessage implements Serializable {
+
+    private CommonOutput commonOutput;
+    private MycarenetConversation mycarenetConversation;
     protected boolean complete;
-    private List<Error> errors = new ArrayList<>();
+    private List<MycarenetError> errors = new ArrayList<>();
     private String io;
     private String reference;
     private String valueHash;
@@ -34,11 +40,11 @@ public class DmgMessage implements Serializable {
         this.complete = complete;
     }
 
-    public List<Error> getErrors() {
+    public List<MycarenetError> getErrors() {
         return errors;
     }
 
-    public void setErrors(List<Error> errors) {
+    public void setErrors(List<MycarenetError> errors) {
         this.errors = errors;
     }
 
@@ -64,5 +70,21 @@ public class DmgMessage implements Serializable {
 
     public void setValueHash(String valueHash) {
         this.valueHash = valueHash;
+    }
+
+    public void setCommonOutput(CommonOutput commonOutput){
+        this.commonOutput = commonOutput;
+    }
+
+    public CommonOutput getCommonOutput(){
+        return this.commonOutput;
+    }
+
+    public void setMycarenetConversation(MycarenetConversation mycarenetConversation){
+        this.mycarenetConversation = mycarenetConversation;
+    }
+
+    public MycarenetConversation getMycarenetConversation(){
+        return this.mycarenetConversation;
     }
 }

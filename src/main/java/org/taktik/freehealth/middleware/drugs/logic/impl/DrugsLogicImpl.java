@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Service
 public class DrugsLogicImpl implements DrugsLogic {
@@ -558,6 +559,28 @@ public class DrugsLogicImpl implements DrugsLogic {
             Paragraph paragraph = drugsDAO.getParagraph(chapterName, paragraphName);
 
             return paragraph == null ? null : PARAGRAPH_TO_PARAGRAPHINFOS.transform(paragraph);
+        } finally {
+            drugsDAO.closeDataStoreSession();
+        }
+    }
+
+    @Override
+    public List<MppPreview> getMppsForParagraph(String chapterName, String paragraphName) {
+        try {
+            drugsDAO.openDataStoreSession();
+            List<Mpp> mpps = drugsDAO.getMppsForParagraph(chapterName, paragraphName);
+
+            return mpps == null ? null : mpps.stream().map(MPP_TO_MPPPREVIEW::transform).collect(Collectors.toList());
+        } finally {
+            drugsDAO.closeDataStoreSession();
+        }
+    }
+
+    @Override
+    public List<String> getVtmNamesForParagraph(String chapterName, String paragraphName, String language) {
+        try {
+            drugsDAO.openDataStoreSession();
+            return drugsDAO.getVtmNamesForParagraph(chapterName, paragraphName, language);
         } finally {
             drugsDAO.closeDataStoreSession();
         }

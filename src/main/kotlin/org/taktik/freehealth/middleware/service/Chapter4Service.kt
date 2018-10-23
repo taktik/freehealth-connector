@@ -5,6 +5,7 @@ import org.taktik.connector.business.domain.chapter4.Appendix
 import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
 import org.taktik.freehealth.middleware.drugs.civics.ParagraphInfos
 import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
+import org.taktik.freehealth.middleware.drugs.dto.MppPreview
 import java.util.UUID
 
 interface Chapter4Service {
@@ -36,6 +37,10 @@ interface Chapter4Service {
                          hcpLastName: String,
                          passPhrase: String,
                          patientSsin: String,
+                         patientDateOfBirth: Long,
+                         patientFirstName: String,
+                         patientLastName: String,
+                         patientGender: String,
                          requestType: org.taktik.connector.business.domain.chapter4.RequestType,
                          civicsVersion: String,
                          paragraph: String,
@@ -54,6 +59,10 @@ interface Chapter4Service {
                         hcpLastName: String,
                         passPhrase: String,
                         patientSsin: String,
+                        patientDateOfBirth: Long,
+                        patientFirstName: String,
+                        patientLastName: String,
+                        patientGender: String,
                         decisionReference: String?,
                         iorequestReference: String?): AgreementResponse
     fun closeAgreement(keystoreId: UUID,
@@ -63,8 +72,14 @@ interface Chapter4Service {
                        hcpFirstName: String,
                        hcpLastName: String,
                        passPhrase: String,
-                       patientSsin: String,
+                        patientSsin: String,
+                        patientDateOfBirth: Long,
+                        patientFirstName: String,
+                        patientLastName: String,
+                        patientGender: String,
                        decisionReference: String): AgreementResponse
 
     fun getParagraphInfos(chapterName: String, paragraphName: String): ParagraphInfos?
+    fun getMppsForParagraph(chapterName: String, paragraphName: String): List<MppPreview>
+    fun getVtmNamesForParagraph(chapterName: String, paragraphName: String, language: String): List<String>
 }

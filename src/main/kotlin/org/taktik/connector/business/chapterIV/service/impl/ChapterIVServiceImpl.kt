@@ -8,8 +8,6 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.validator.EhealthReplyValidator
-import org.taktik.connector.technical.ws.domain.GenericRequest
-import org.taktik.connector.technical.ws.domain.GenericResponse
 import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementRequest
 import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementResponse
 import be.fgov.ehealth.chap4.protocol.v1.ConsultChap4MedicalAdvisorAgreementRequest
@@ -28,6 +26,10 @@ class ChapterIVServiceImpl(private val replyValidator: EhealthReplyValidator) : 
             service.setSoapAction("urn:be:fgov:ehealth:chap4:protocol:v1:ConsultChap4MedicalAdvisorAgreement")
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
             val response = xmlResponse.asObject(ConsultChap4MedicalAdvisorAgreementResponse::class.java)
+
+            response.soapRequest = xmlResponse.request
+            response.soapResponse = xmlResponse.soapMessage
+
             this.replyValidator.validateReplyStatus(response)
             return response
         } catch (malformedUrlException: MalformedURLException) {
@@ -48,6 +50,10 @@ class ChapterIVServiceImpl(private val replyValidator: EhealthReplyValidator) : 
             service.setSoapAction("urn:be:fgov:ehealth:chap4:protocol:v1:AskChap4MedicalAdvisorAgreement")
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
             val response = xmlResponse.asObject(AskChap4MedicalAdvisorAgreementResponse::class.java)
+
+            response.soapRequest = xmlResponse.request
+            response.soapResponse = xmlResponse.soapMessage
+
             this.replyValidator.validateReplyStatus(response)
             return response
         } catch (malformedUrlException: MalformedURLException) {

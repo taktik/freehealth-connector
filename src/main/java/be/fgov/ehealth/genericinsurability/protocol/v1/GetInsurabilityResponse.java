@@ -1,5 +1,6 @@
 package be.fgov.ehealth.genericinsurability.protocol.v1;
 
+import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
 import be.fgov.ehealth.commons.protocol.v1.ResponseType;
 import be.fgov.ehealth.genericinsurability.core.v1.CommonOutputType;
 import be.fgov.ehealth.genericinsurability.core.v1.RecordCommonOutputType;
@@ -10,16 +11,17 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.soap.SOAPMessage;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
    name = "GetInsurabilityResponseType",
-   propOrder = {"commonOutput", "recordCommonOutput", "response"}
+   propOrder = {"soapRequest", "soapResponse", "commonOutput", "recordCommonOutput", "response"}
 )
 @XmlRootElement(
    name = "GetInsurabilityResponse"
 )
-public class GetInsurabilityResponse extends ResponseType implements Serializable {
+public class GetInsurabilityResponse extends ResponseType implements Serializable, SoapConversationLogger {
    private static final long serialVersionUID = 1L;
    @XmlElement(
       name = "CommonOutput",
@@ -60,4 +62,28 @@ public class GetInsurabilityResponse extends ResponseType implements Serializabl
    public void setResponse(SingleInsurabilityResponseType value) {
       this.response = value;
    }
+
+   private SOAPMessage soapRequest;
+   private SOAPMessage soapResponse;
+
+   @Override
+   public SOAPMessage getSoapRequest() {
+      return soapRequest;
+   }
+
+   @Override
+   public void setSoapRequest(SOAPMessage soapRequest) {
+      this.soapRequest = soapRequest;
+   }
+
+   @Override
+   public SOAPMessage getSoapResponse() {
+      return soapResponse;
+   }
+
+   @Override
+   public void setSoapResponse(SOAPMessage soapResponse) {
+      this.soapResponse = soapResponse;
+   }
+
 }
