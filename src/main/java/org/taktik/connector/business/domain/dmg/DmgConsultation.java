@@ -1,6 +1,8 @@
 package org.taktik.connector.business.domain.dmg;
 
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType;
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput;
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -128,4 +130,5 @@ public class DmgConsultation extends DmgMessage implements Serializable {
     public void setMutuality(String mutuality) {
         this.mutuality = mutuality;
     }
+
 }

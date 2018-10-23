@@ -214,8 +214,8 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         }
 
     private fun createCommonInput(isTest: Boolean, commonReference: String,
-        hcpNihii: String, hcpSsin: String,
-        hcpFirstName: String, hcpLastName: String) = CommonInputType().apply {
+                                  hcpNihii: String, hcpSsin: String,
+                                  hcpFirstName: String, hcpLastName: String) = CommonInputType().apply {
         request = be.fgov.ehealth.chap4.core.v1.RequestType().apply {
             isIsTest = isTest
         }
@@ -224,10 +224,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun getUnknownKey(keystoreId: String,
-        keyStore: KeyStore,
-        passPhrase: String,
-        subTypeName: String,
-        credential: Credential): KeyResult {
+                              keyStore: KeyStore,
+                              passPhrase: String,
+                              subTypeName: String,
+                              credential: Credential): KeyResult {
         val acl = ACLUtils.createAclChapterIV(subTypeName)
         val etk = KeyDepotManagerFactory.getKeyDepotManager().getETK(credential)
         if (etk == null) {
@@ -240,12 +240,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun createAndValidateSealedRequest(keystoreId: String,
-        keyStore: KeyStore,
-        passPhrase: String,
-        crypto: Crypto, credential: Credential, message: Kmehrmessage,
-        careReceiver: CareReceiverIdType,
-        xmlObjectFactory: XmlObjectFactory,
-        agreementStartDate: DateTime): SealedRequestWrapper<*> {
+                                               keyStore: KeyStore,
+                                               passPhrase: String,
+                                               crypto: Crypto, credential: Credential, message: Kmehrmessage,
+                                               careReceiver: CareReceiverIdType,
+                                               xmlObjectFactory: XmlObjectFactory,
+                                               agreementStartDate: DateTime): SealedRequestWrapper<*> {
         try {
             val e = this.getUnknownKey(keystoreId, keyStore, passPhrase, xmlObjectFactory.getSubtypeNameToRetrieveCredentialTypeProperties(), credential)
             val request = xmlObjectFactory.createSealedRequest()
@@ -272,17 +272,17 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun getSealedContent(crypto: Crypto,
-        credential: Credential,
-        message: Kmehrmessage,
-        unknownKey: KeyResult,
-        xmlObjectFactory: XmlObjectFactory): ByteArray {
+                                 credential: Credential,
+                                 message: Kmehrmessage,
+                                 unknownKey: KeyResult,
+                                 xmlObjectFactory: XmlObjectFactory): ByteArray {
         val request = this.createAndValidateUnsealedRequest(credential, message, xmlObjectFactory)
         return crypto.seal(WrappedObjectMarshallerHelper.toXMLByteArray(request), unknownKey.secretKey, unknownKey.keyId)
     }
 
     private fun createAndValidateUnsealedRequest(credential: Credential,
-        message: Kmehrmessage,
-        xmlObjectFactory: XmlObjectFactory): UnsealedRequestWrapper<*> {
+                                                 message: Kmehrmessage,
+                                                 xmlObjectFactory: XmlObjectFactory): UnsealedRequestWrapper<*> {
         val request = xmlObjectFactory.createUnsealedRequest()
         request.etkHcp = KeyDepotManagerFactory.getKeyDepotManager().getETK(credential).etk.encoded
         request.kmehrRequest = this.createAndValidateKmehrRequestXmlByteArray(message)
@@ -307,10 +307,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun buildAndValidateAgreementRequest(crypto: Crypto, xmlObjectFactory: XmlObjectFactory,
-        careReceiver: CareReceiverIdType,
-        recordCommonInput: RecordCommonInputType,
-        commonInput: CommonInputType,
-        sealedRequest: SealedRequestWrapper<*>): Chap4MedicalAdvisorAgreementRequestWrapper<*> {
+                                                 careReceiver: CareReceiverIdType,
+                                                 recordCommonInput: RecordCommonInputType,
+                                                 commonInput: CommonInputType,
+                                                 sealedRequest: SealedRequestWrapper<*>): Chap4MedicalAdvisorAgreementRequestWrapper<*> {
         val agreementRequest = xmlObjectFactory.createChap4MedicalAdvisorAgreementRequest()
         agreementRequest.careReceiver = careReceiver
         agreementRequest.recordCommonInput = recordCommonInput
@@ -321,19 +321,19 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun createAgreementRequest(keystoreId: String,
-        keyStore: KeyStore,
-        passPhrase: String,
-        crypto: Crypto,
-        credential: Credential,
-        hcpNihii: String,
-        hcpSsin: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        message: be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage,
-        isTest: Boolean,
-        references: ChapterIVReferences,
-        xmlObjectFactory: XmlObjectFactory,
-        agreementStartDate: DateTime?): ChapterIVBuilderResponse {
+                                       keyStore: KeyStore,
+                                       passPhrase: String,
+                                       crypto: Crypto,
+                                       credential: Credential,
+                                       hcpNihii: String,
+                                       hcpSsin: String,
+                                       hcpFirstName: String,
+                                       hcpLastName: String,
+                                       message: be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage,
+                                       isTest: Boolean,
+                                       references: ChapterIVReferences,
+                                       xmlObjectFactory: XmlObjectFactory,
+                                       agreementStartDate: DateTime?): ChapterIVBuilderResponse {
         if (agreementStartDate == null) {
             throw ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.INPUT_PARAM_NULL, "input parameter agreementStartDate was null")
         } else {
@@ -461,7 +461,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             val aggResponse = AgreementResponse(commonOutput = commonOutput).apply {
                 this.mycarenetConversation = MycarenetConversation().apply {
                     response.soapRequest?.writeTo(this.soapRequestOutputStream())
-                    response.soapRequest?.writeTo(this.soapResponseOutputStream())
+                    response.soapResponse?.writeTo(this.soapResponseOutputStream())
                     this.transactionRequest = v1Message?.let {
                         MarshallerHelper(Kmehrrequest::class.java, Kmehrrequest::class.java).toXMLByteArray(Kmehrrequest().apply { this.kmehrmessage = it })
                     }.toString(Charsets.UTF_8)
@@ -536,7 +536,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
 
         val consultationMessage =
             getConsultationTransaction(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, patientDateOfBirth, patientFirstName, patientLastName, patientGender, references.commonReference!!, start, end, civicsVersion,
-                                       paragraph, ref)
+                paragraph, ref)
 
         val bos = ByteArrayOutputStream()
         JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
@@ -640,7 +640,6 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         } catch (ex: ChapterIVBusinessConnectorException) {
             return generateError(ex, commonOutput)
         }
-
     }
 
     override fun cancelAgreement(
@@ -671,18 +670,18 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
 
 
     override fun closeAgreement(keystoreId: UUID,
-        tokenId: UUID,
-        hcpNihii: String,
-        hcpSsin: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        passPhrase: String,
-        patientSsin: String,
-        patientDateOfBirth: Long,
-        patientFirstName: String,
-        patientLastName: String,
-        patientGender: String,
-        decisionReference: String): AgreementResponse {
+                                tokenId: UUID,
+                                hcpNihii: String,
+                                hcpSsin: String,
+                                hcpFirstName: String,
+                                hcpLastName: String,
+                                passPhrase: String,
+                                patientSsin: String,
+                                patientDateOfBirth: Long,
+                                patientFirstName: String,
+                                patientLastName: String,
+                                patientGender: String,
+                                decisionReference: String): AgreementResponse {
         val folderType: FolderType
         try {
             folderType =
@@ -730,9 +729,9 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
         val request =
             createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii,
-                                   hcpSsin,
-                                   hcpFirstName,
-                                   hcpLastName,
+                hcpSsin,
+                hcpFirstName,
+                hcpLastName,
                                    v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
                                        ?: DateTime()).askChap4MedicalAdvisorAgreementRequest
 
@@ -905,23 +904,23 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun getDemandKmehrMessage(hcpNihii: String,
-        hcpSsin: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        patientSsin: String,
-        patientDateOfBirth: Long,
-        patientFirstName: String,
-        patientLastName: String,
-        patientGender: String,
-        requestType: RequestType,
-        commonInput: String,
-        civicsVersion: String,
-        start: Long?,
-        end: Long?,
-        verses: List<String>?,
-        appendices: List<Appendix>?,
-        reference: String?,
-        decisionReference: String?,
+                                      hcpSsin: String,
+                                      hcpFirstName: String,
+                                      hcpLastName: String,
+                                      patientSsin: String,
+                                      patientDateOfBirth: Long,
+                                      patientFirstName: String,
+                                      patientLastName: String,
+                                      patientGender: String,
+                                      requestType: RequestType,
+                                      commonInput: String,
+                                      civicsVersion: String,
+                                      start: Long?,
+                                      end: Long?,
+                                      verses: List<String>?,
+                                      appendices: List<Appendix>?,
+                                      reference: String?,
+                                      decisionReference: String?,
         ioRequestReference: String?,
         paragraph: String?): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
         val startDate =
@@ -1044,11 +1043,11 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                     if (app.data != null && app.mimeType != null) {
                         transactions.add(TransactionType().apply {
                             initialiseTransactionTypeWithSender(hcpNihii,
-                                                                hcpSsin,
-                                                                hcpFirstName,
-                                                                hcpLastName,
-                                                                app.verseSeq?.let { "reglementaryappendix" }
-                                                                    ?: "freeappendix", kmehrId = (transactions.size + 1).toString())
+                                hcpSsin,
+                                hcpFirstName,
+                                hcpLastName,
+                                app.verseSeq?.let { "reglementaryappendix" }
+                                    ?: "freeappendix", kmehrId = (transactions.size + 1).toString())
 
                             headingsAndItemsAndTexts.add(ItemType().apply {
                                 ids.add(IDKMEHR().apply {
@@ -1134,10 +1133,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
 
                 transactions.add(TransactionType().apply {
                     initialiseTransactionTypeWithSender(hcpNihii,
-                                                        hcpSsin,
-                                                        hcpFirstName,
-                                                        hcpLastName,
-                                                        "consultationrequest")
+                        hcpSsin,
+                        hcpFirstName,
+                        hcpLastName,
+                        "consultationrequest")
                     headingsAndItemsAndTexts.add(ItemType().apply {
                         ids.add(IDKMEHR().apply {
                             s = ID_KMEHR; value =
@@ -1205,11 +1204,11 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun getKmehrMessage(commonInput: String,
-        hcpNihii: String,
-        hcpSsin: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        folderType: FolderType): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
+                                hcpNihii: String,
+                                hcpSsin: String,
+                                hcpFirstName: String,
+                                hcpLastName: String,
+                                folderType: FolderType): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
         return org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage()
             .apply {
                 val inami = hcpNihii.replace("[^0-9]".toRegex(), "")
@@ -1253,8 +1252,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         patientLastName: String,
         patientGender: String,
         decisionReference: String?,
-        ioRequestReference: String?,
-        date: Date? = null): FolderType {
+        ioRequestReference: String?): FolderType {
         return FolderType().apply {
             ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "1" })
             this.patient = PersonType().apply {
@@ -1268,7 +1266,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             }
 
             transactions.add(TransactionType().apply {
-                initialiseTransactionTypeWithSender(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, "agreementrequest", RequestType.cancellation, date)
+                initialiseTransactionTypeWithSender(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, "agreementrequest", RequestType.cancellation, null)
 
                 decisionReference?.let {
                     headingsAndItemsAndTexts.add(ItemType().apply {
@@ -1299,16 +1297,16 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun getCloseTransaction(hcpNihii: String,
-        hcpSsin: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        patientSsin: String,
-        patientDateOfBirth: Long,
-        patientFirstName: String,
-        patientLastName: String,
-        patientGender: String,
-        decisionReference: String,
-        date: Date?): FolderType {
+                                    hcpSsin: String,
+                                    hcpFirstName: String,
+                                    hcpLastName: String,
+                                    patientSsin: String,
+                                    patientDateOfBirth: Long,
+                                    patientFirstName: String,
+                                    patientLastName: String,
+                                    patientGender: String,
+                                    decisionReference: String,
+                                    date: Date?): FolderType {
         return FolderType().apply {
             ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "1" })
             this.patient = PersonType().apply {
@@ -1323,10 +1321,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
 
             transactions.add(TransactionType().apply {
                 initialiseTransactionTypeWithSender(hcpNihii,
-                                                    hcpSsin,
-                                                    hcpFirstName,
-                                                    hcpLastName,
-                                                    "agreementrequest", RequestType.closure, date)
+                    hcpSsin,
+                    hcpFirstName,
+                    hcpLastName,
+                    "agreementrequest", RequestType.closure, null)
 
                 headingsAndItemsAndTexts.add(ItemType().apply {
                     ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "3" })
@@ -1344,13 +1342,13 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun TransactionType.initialiseTransactionTypeWithSender(hcpNihii: String,
-        hcpSsin: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        maa: String,
-        requestType: RequestType? = null,
-        date: Date? = null,
-        kmehrId: String = "1") {
+                                                                    hcpSsin: String,
+                                                                    hcpFirstName: String,
+                                                                    hcpLastName: String,
+                                                                    maa: String,
+                                                                    requestType: RequestType? = null,
+                                                                    date: Date? = null,
+                                                                    kmehrId: String = "1") {
         ids.add(IDKMEHR().apply { s = ID_KMEHR; value = kmehrId })
         cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION; sv = "1.4"; value = CDTRANSACTIONvalues.MEDICALADVISORAGREEMENT.value() })
         cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MAA; value = maa })
@@ -1413,7 +1411,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             (expr?.evaluate(
                 builder.parse(ByteArrayInputStream(kmehrRequest)),
                 XPathConstants.NODESET
-                           ) as NodeList?)?.let { it ->
+            ) as NodeList?)?.let { it ->
                 if (it.length > 0) {
                     var node = it.item(0)
                     val textContent = node.textContent
@@ -1440,8 +1438,8 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                                                                     )
-                              )
+                        )
+                    )
                 }
             }
             result

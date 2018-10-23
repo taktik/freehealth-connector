@@ -5,13 +5,9 @@ import be.fgov.ehealth.mycarenet.commons.core.v2.IdType
 import be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType
 import be.fgov.ehealth.mycarenet.commons.core.v2.PartyType
 import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationRequest
+import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationResponse
 import be.fgov.ehealth.standards.kmehr.cd.v1.*
-import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
-import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
-import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes
-import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENT
-import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENTschemes
+import be.fgov.ehealth.standards.kmehr.id.v1.*
 import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
 import be.fgov.ehealth.standards.kmehr.schema.v1.ContentType
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
@@ -31,6 +27,8 @@ import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.TarificationService
@@ -40,11 +38,12 @@ import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
 import java.io.UnsupportedEncodingException
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
+import kotlin.collections.ArrayList
 
 @Service
 class TarificationServiceImpl(private val stsService: STSService) : TarificationService {
@@ -55,7 +54,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
         Gson().fromJson(
             this.javaClass.getResourceAsStream("/be/errors/ConsultTarifErrors.json").reader(Charsets.UTF_8),
             arrayOf<MycarenetError>().javaClass
-                       ).associateBy({ it.uid }, { it })
+        ).associateBy({ it.uid }, { it })
     private val xPathfactory = XPathFactory.newInstance()
 
     override fun consultTarif(keystoreId: UUID,
@@ -69,8 +68,10 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                               consultationDate: LocalDateTime,
                               justification: String?,
                               gmdNihii: String?,
-                              traineeSsin: String?,
-                              traineeNihii: String?,
+                              traineeSupervisorSsin: String?,
+                              traineeSupervisorNihii: String?,
+                              traineeSupervisorFirstName: String?,
+                              traineeSupervisorLastName: String?,
                               codes: List<String>): TarificationConsultationResult {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -82,6 +83,16 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             val kmehrUUID = now.toString("YYYYddhhmmssSS")
             val reqId = "$hcpNihii.$kmehrUUID"
 
+            var careProviderFirstName = hcpFirstName;
+            var careProviderLastName = hcpLastName;
+
+            traineeSupervisorFirstName?.let {
+                careProviderFirstName = it;
+            }
+            traineeSupervisorLastName?.let {
+                careProviderLastName = it;
+            }
+
             val csDT = DateTime(consultationDate.year, consultationDate.monthValue, consultationDate.dayOfMonth, 0, 0)
             val req = RetrieveTransactionRequest().apply {
                 val author = AuthorType().apply {
@@ -89,8 +100,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
                         cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
-                        firstname = hcpFirstName
-                        familyname = hcpLastName
+                        firstname = careProviderFirstName
+                        familyname = careProviderLastName
                     })
                 }
 
@@ -142,7 +153,6 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 }
             }
 
-
             val kmehrRequestMarshaller =
                 MarshallerHelper(RetrieveTransactionRequest::class.java, RetrieveTransactionRequest::class.java)
             val xmlByteArray = kmehrRequestMarshaller.toXMLByteArray(req)
@@ -172,33 +182,45 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                 this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
                             }
                         }
+
+                        var careProviderSsin = hcpSsin;
+                        var careProviderNihii = hcpNihii;
+
+                        traineeSupervisorSsin?.let {
+                            careProviderSsin = it;
+                        }
+                        traineeSupervisorNihii?.let {
+                            careProviderNihii = it;
+                        }
+
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
                                 this.quality = "doctor"
                                 this.value =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                        .apply { this.value = hcpNihii }
+                                        .apply { this.value = careProviderNihii }
                             }
                             this.physicalPerson = be.fgov.ehealth.mycarenet.commons.core.v2.IdType().apply {
                                 this.ssin =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                        .apply { this.value = hcpSsin }
+                                        .apply { this.value = careProviderSsin }
                             }
                         }
-                        traineeSsin?.let {
+                        traineeSupervisorSsin?.let {
                             this.sender = PartyType().apply {
                                 physicalPerson = IdType().apply {
                                     this.ssin =
-                                        be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString().apply { this.value = it }
-                                    traineeNihii?.let {
+                                        be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString().apply { this.value = hcpSsin }
+                                    careProviderNihii?.let {
                                         this.nihii =
                                             NihiiType().apply {
-                                                this.quality = "doctor"
+                                                this.quality = "physician"
                                                 this.value =
                                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                                        .apply { this.value = it }
+                                                        .apply { this.value = hcpNihii }
                                             }
                                     }
+
                                 }
                             }
                         }
@@ -211,6 +233,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             }
 
             var consultTarificationResponse = freehealthTarificationService.consultTarification(samlToken, request)
+
             val detail = consultTarificationResponse.getReturn().detail
             val content = BlobBuilderFactory.getBlobBuilder("mcn.tarification").checkAndRetrieveContent(SendRequestMapper.mapBlobTypeToBlob(detail))
 
@@ -218,7 +241,25 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 MarshallerHelper(RetrieveTransactionResponse::class.java, RetrieveTransactionResponse::class.java)
             val commonInputResponse = helper.toObject(content)
 
-            val result = TarificationConsultationResult()
+            val commonOutput =
+                CommonOutput(
+                    consultTarificationResponse.`return`?.commonOutput?.inputReference?.toString(),
+                    consultTarificationResponse.`return`?.commonOutput?.nipReference?.toString(),
+                    consultTarificationResponse.`return`?.commonOutput?.outputReference?.toString())
+
+            val result = TarificationConsultationResult().apply {
+                this.mycarenetConversation = MycarenetConversation().apply {
+                    consultTarificationResponse.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    consultTarificationResponse.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    this.transactionRequest = MarshallerHelper(TarificationConsultationRequest::class.java, TarificationConsultationRequest::class.java)
+                        .toXMLByteArray(request)
+                        .toString(Charsets.UTF_8)
+                    this.transactionResponse = MarshallerHelper(TarificationConsultationResponse::class.java, TarificationConsultationResponse::class.java)
+                        .toXMLByteArray(consultTarificationResponse)
+                        .toString(Charsets.UTF_8)
+                }
+               this.commonOutput = commonOutput
+            }
 
             val errors = commonInputResponse.acknowledge.errors?.flatMap { e ->
                 e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
@@ -240,13 +281,6 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             }
 
             result.errors = errors
-
-            result.retrieveTransactionRequest = xmlByteArray.toString(Charsets.UTF_8);
-
-            val kmehrRequestMarshaller2 =
-                MarshallerHelper(RetrieveTransactionResponse::class.java, RetrieveTransactionResponse::class.java)
-            val xmlByteArray2 = kmehrRequestMarshaller2.toXMLByteArray(commonInputResponse)
-            result.commonInputResponse = xmlByteArray2.toString(Charsets.UTF_8);
 
             return result
         } catch (e: ConnectorException) {
@@ -270,7 +304,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             (expr.evaluate(
                 builder.parse(ByteArrayInputStream(sendTransactionRequest)),
                 XPathConstants.NODESET
-                          ) as NodeList).let { it ->
+            ) as NodeList).let { it ->
                 if (it.length > 0) {
                     var node = it.item(0)
                     val textContent = node.textContent
@@ -300,8 +334,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                                                                     )
-                              )
+                        )
+                    )
                 }
             }
             result

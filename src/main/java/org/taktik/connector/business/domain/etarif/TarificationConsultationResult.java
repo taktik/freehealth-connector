@@ -5,14 +5,7 @@ import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEM;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEXvalues;
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR;
-import be.fgov.ehealth.standards.kmehr.schema.v1.ContentType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.CostType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.DateType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.ItemType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.PersonType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.SexType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.TransactionType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.UnitType;
+import be.fgov.ehealth.standards.kmehr.schema.v1.*;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
@@ -20,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput;
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation;
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError;
 
 /**
@@ -30,6 +25,8 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError;
  * To change this template use File | Settings | File Templates.
  */
 public class TarificationConsultationResult implements Serializable {
+	private CommonOutput commonOutput;
+	private MycarenetConversation mycarenetConversation;
 	private Date birthdate;
 	private String CT1;
 	private String CT2;
@@ -44,8 +41,6 @@ public class TarificationConsultationResult implements Serializable {
 
 	private List<MycarenetError> errors = new ArrayList<>();
 	private List<CodeResult> codeResults = new ArrayList<>();
-    private String retrieveTransactionRequest;
-    private String commonInputResponse;
 
 	public void fill(PersonType patient) {
 		this.setLastName(patient.getFamilyname());
@@ -239,20 +234,20 @@ public class TarificationConsultationResult implements Serializable {
 		this.codeResults = codeResults;
 	}
 
-	public String getRetrieveTransactionRequest(){
-		return this.retrieveTransactionRequest;
+	public void setCommonOutput(CommonOutput commonOutput){
+		this.commonOutput = commonOutput;
 	}
 
-	public void setRetrieveTransactionRequest(String retrieveTransactionRequest){
-		this.retrieveTransactionRequest = retrieveTransactionRequest;
+	public CommonOutput getCommonOutput(){
+		return this.commonOutput;
 	}
 
-	public String getCommonInputResponse(){
-		return this.commonInputResponse;
+	public void setMycarenetConversation(MycarenetConversation mycarenetConversation){
+		this.mycarenetConversation = mycarenetConversation;
 	}
 
-	public void setCommonInputResponse(String commonInputResponse){
-		this.commonInputResponse = commonInputResponse;
+	public MycarenetConversation getMycarenetConversation(){
+		return this.mycarenetConversation;
 	}
 
 	private Date asDate(DateTime date) {
@@ -352,7 +347,6 @@ public class TarificationConsultationResult implements Serializable {
 			this.currencyUnit = currencyUnit;
 		}
 	}
-
 
 	public enum Sex implements Serializable {
 		MALE, FEMALE

@@ -1,5 +1,7 @@
 package org.taktik.freehealth.middleware.dto.dmg
 
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 
 import java.io.Serializable
@@ -17,5 +19,7 @@ open class DmgMessage(
     var io: String? = null,
     var reference: String? = null,
     var valueHash: String? = null,
-    var errors: MutableList<MycarenetError> = ArrayList()
+    var errors: MutableList<MycarenetError> = ArrayList(),
+    var commonOutput: CommonOutput? = null,
+    var mycarenetConversation: MycarenetConversation? = null
 ) : Serializable
