@@ -1395,8 +1395,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun extractError(kmehrRequest: ByteArray, ec: String, errors: Map<String, MycarenetError>, errorUrl: String?): Set<MycarenetError> {
-        return errorUrl?.let { url ->
+        val url = errorUrl?.let { if (it.isNotEmpty()) it else null }
+        var textContent: String? = null
+        val result = mutableSetOf<MycarenetError>()
+        val base = url?.let { url ->
             val factory = DocumentBuilderFactory.newInstance()
+
             factory.isNamespaceAware = true
             val builder = factory.newDocumentBuilder()
 
@@ -1406,7 +1410,6 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             } catch (e: XPathExpressionException) {
                 log.warn("Invalid XPATH returned: `$url‘", e); null
             }
-            val result = mutableSetOf<MycarenetError>()
 
             (expr?.evaluate(
                 builder.parse(ByteArrayInputStream(kmehrRequest)),
@@ -1414,23 +1417,13 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             ) as NodeList?)?.let { it ->
                 if (it.length > 0) {
                     var node = it.item(0)
-                    val textContent = node.textContent
+                    textContent = node.textContent
                     var base = "/" + nodeDescr(node)
                     while (node.parentNode != null && node.parentNode is Element) {
                         base = "/${nodeDescr(node.parentNode)}$base"
                         node = node.parentNode
                     }
-                    var elements =
-                        errors.values.filter { it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*"))) }
-                    if (elements.isEmpty()) {
-                        //IOs sometimes are overeager to provide us with precise xpath. Let's try again while truncating after the item
-                        base = base.replace(Regex("(.+/item.+?)/.*"), "$1")
-                        elements = errors.values.filter {
-                            it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
-                        }
-                    }
-                    elements.forEach { it.value = textContent }
-                    result.addAll(elements)
+                    base
                 } else {
                     result.add(
                         MycarenetError(
@@ -1440,10 +1433,23 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
                         )
                     )
+                    null
                 }
             }
-            result
-        } ?: setOf()
+        }
+
+        var elements = errors.values.filter { (base == null || it.path == base) && it.code == ec && (it.regex == null || (url?.matches(Regex(".*" + it.regex + ".*")) ?: true)) }
+        if (base != null && elements.isEmpty()) {
+            //IOs sometimes are overeager to provide us with precise xpath. Let's try again while truncating after the item
+            val trimmedBase = base.replace(Regex("(.+/item.+?)/.*"), "$1")
+            elements = errors.values.filter {
+                it.path == trimmedBase && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+            }
+        }
+        elements.forEach { it.value = textContent }
+        result.addAll(elements)
+
+        return result
     }
 
 
