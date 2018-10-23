@@ -682,14 +682,12 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     }
             }
             transaction = TransactionType().apply {
-                this.author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
                 ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "1"; sv = "1.0" })
                 cds.add(CDTRANSACTION().apply {
                     sv = "1.0"; value = "gmd"; s =
                     CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET
                 })
                 begindate = DateTime(requestDate.time)
-                isIscomplete = true; isIsvalidated = true
             }
         }
 
