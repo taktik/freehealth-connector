@@ -14,15 +14,15 @@
 	{"uid":"13","path":"Select","code":"100","locFr":"","locNl":"","msgFr":"Zone obligatoire non présente","msgNl":""},
 	{"uid":"14","path":"Select","code":"160","locFr":"","locNl":"","msgFr":"Combinaison de critères de « Select » non supportée","msgNl":""},
 	{"uid":"15","path":"Select/transaction","code":"100","locFr":"","locNl":"","msgFr":"Zone obligatoire non présente","msgNl":""},
-	{"uid":"16","path":"Select/transaction/cd (CD-TRANSACTION-MYCARENET)","code":"100","locFr":"","locNl":"","msgFr":"Item obligatoire non complété","msgNl":""},
-	{"uid":"17","path":"Select/transaction/cd (CD-TRANSACTION-MYCARENET)","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
-	{"uid":"18","path":"Select/transaction/cd (CD-TRANSACTION-MYCARENET)","code":"130","locFr":"","locNl":"","msgFr":"Valeur non permise","msgNl":""},
+	{"uid":"16","path":"Select/transaction/cd","code":"100","locFr":"","locNl":"","msgFr":"Item obligatoire non complété","msgNl":""},
+	{"uid":"17","path":"Select/transaction/cd","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
+	{"uid":"18","path":"Select/transaction/cd","code":"130","locFr":"","locNl":"","msgFr":"Valeur non permise","msgNl":""},
 	{"uid":"19","path":"Select/transaction/author","code":"100","locFr":"","locNl":"","msgFr":"Zone obligatoire non complétée","msgNl":""},
 	{"uid":"20","path":"Select/transaction/author","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
 	{"uid":"21","path":"Select/transaction/author","code":"156","locFr":"","locNl":"","msgFr":"Valeur du author incohérente avec celle du Request/Author","msgNl":""},
-	{"uid":"22","path":"Select/transaction/begindate (= date de la demande)","code":"100","locFr":"","locNl":"","msgFr":"Zone obligatoire non présente","msgNl":""},
-	{"uid":"23","path":"Select/transaction/begindate (= date de la demande)","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
-	{"uid":"24","path":"Select/transaction/begindate (= date de la demande)","code":"113","locFr":"","locNl":"","msgFr":"Date invraisemblable","msgNl":""},
-	{"uid":"25","path":"Select/transaction/begindate (= date de la demande)","code":"145","locFr":"","locNl":"","msgFr":"Date de demande < Date du jour – 2 ans.","msgNl":""},
-	{"uid":"26","path":"Select/transaction/begindate (= date de la demande)","code":"146","locFr":"","locNl":"","msgFr":"Date > Date du jour","msgNl":""}
+	{"uid":"22","path":"Select/transaction/begindate","code":"100","locFr":"","locNl":"","msgFr":"Zone obligatoire non présente","msgNl":""},
+	{"uid":"23","path":"Select/transaction/begindate","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
+	{"uid":"24","path":"Select/transaction/begindate","code":"113","locFr":"","locNl":"","msgFr":"Date invraisemblable","msgNl":""},
+	{"uid":"25","path":"Select/transaction/begindate","code":"145","locFr":"","locNl":"","msgFr":"Date de demande < Date du jour – 2 ans.","msgNl":""},
+	{"uid":"26","path":"Select/transaction/begindate","code":"146","locFr":"","locNl":"","msgFr":"Date > Date du jour","msgNl":""}
 ]

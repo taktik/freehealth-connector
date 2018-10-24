@@ -473,7 +473,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     hcparties.add(HcpartyType().apply {
                         name = "mycarenet"
                         cds.add(CDHCPARTY().apply {
-                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.0"; value =
+                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value =
                             "application"
                         })
                     })
@@ -1084,7 +1084,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             hcparties.add(HcpartyType().apply {
                 ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
                 ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.0"; value = "persphysician" })
+                cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
                 firstname = hcpFirstName
                 familyname = hcpLastName
             })
