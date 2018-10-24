@@ -148,6 +148,18 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                 })
                             })
                         }
+                        gmdNihii?.let { g ->
+                            headingsAndItemsAndTexts.add(ItemType().apply {
+                                ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (h++).toString() })
+                                cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "gmdmanager" })
+                                contents.add(ContentType().apply {
+                                    hcparty = HcpartyType().apply {
+                                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = g })
+                                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
+                                    }
+                                })
+                            })
+                        }
                     }
                 }
             }
@@ -182,15 +194,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                             }
                         }
 
-                        var careProviderSsin = hcpSsin;
-                        var careProviderNihii = hcpNihii;
-
-                        traineeSupervisorSsin?.let {
-                            careProviderSsin = it;
-                        }
-                        traineeSupervisorNihii?.let {
-                            careProviderNihii = it;
-                        }
+                        val careProviderSsin = hcpSsin;
+                        val careProviderNihii = hcpNihii;
 
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
@@ -203,24 +208,6 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                 this.ssin =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
                                         .apply { this.value = careProviderSsin }
-                            }
-                        }
-                        traineeSupervisorSsin?.let {
-                            this.sender = PartyType().apply {
-                                physicalPerson = IdType().apply {
-                                    this.ssin =
-                                        be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString().apply { this.value = hcpSsin }
-                                    careProviderNihii?.let {
-                                        this.nihii =
-                                            NihiiType().apply {
-                                                this.quality = "physician"
-                                                this.value =
-                                                    be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                                        .apply { this.value = hcpNihii }
-                                            }
-                                    }
-
-                                }
                             }
                         }
                     }

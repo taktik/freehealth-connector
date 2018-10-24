@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.soap.SOAPMessage;
 
@@ -37,8 +38,8 @@ public class RetrieveTransactionResponse implements Serializable, SoapConversati
    )
    protected BigDecimal messageProtocoleSchemaVersion;
 
-   private SOAPMessage soapRequest;
-   private SOAPMessage soapResponse;
+   @XmlTransient private SOAPMessage soapRequest;
+   @XmlTransient private SOAPMessage soapResponse;
 
    @Override
    public SOAPMessage getSoapRequest() {
