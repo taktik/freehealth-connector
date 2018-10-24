@@ -77,6 +77,7 @@ import java.time.Instant
 import java.util.*
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.ws.soap.SOAPFaultException
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathExpression
 import javax.xml.xpath.XPathExpressionException
@@ -198,18 +199,20 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 setSoapAction("urn:be:fgov:ehealth:mycarenet:registration:protocol:v1:RegisterToMycarenetService")
             })
 
-        val intermediateResponse = xmlResponse.asObject(RegisterToMycarenetServiceResponse::class.java)
+        val intermediateResponse = try { xmlResponse.asObject(RegisterToMycarenetServiceResponse::class.java) } catch (e : SOAPFaultException) {
+            RegisterToMycarenetServiceResponse()
+        }
 
         intermediateResponse.soapRequest = xmlResponse.request
         intermediateResponse.soapResponse = xmlResponse.soapMessage
 
-        val registrationsAnswer = ResponseHelper.toObject(intermediateResponse.`return`.detail.value)
+        val registrationsAnswer = intermediateResponse?.`return`?.detail?.value?.let { ResponseHelper.toObject(it) }
 
         return DmgRegistration().apply {
-            isSuccess = registrationsAnswer.registrationAnswer.status == RegistrationStatus.SUCCESS
+            isSuccess = registrationsAnswer?.registrationAnswer?.status == RegistrationStatus.SUCCESS
             isComplete = true
-            if (registrationsAnswer.registrationAnswer.status != RegistrationStatus.SUCCESS) {
-                errors.addAll(registrationsAnswer.registrationAnswer.answerDetails.flatMap { extractError(binaryRequest,it.detailCode, dmgRegistrationErrors, it.location) })
+            if (registrationsAnswer?.registrationAnswer?.status != RegistrationStatus.SUCCESS) {
+                errors.addAll(registrationsAnswer?.registrationAnswer?.answerDetails?.flatMap { extractError(binaryRequest,it.detailCode, dmgRegistrationErrors, it.location) } ?: listOf())
             }
             this.mycarenetConversation = MycarenetConversation().apply{
                 this.transactionResponse = MarshallerHelper(RegisterToMycarenetServiceResponse::class.java, RegisterToMycarenetServiceResponse::class.java).toXMLByteArray(intermediateResponse).toString(Charsets.UTF_8)
@@ -473,7 +476,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     hcparties.add(HcpartyType().apply {
                         name = "mycarenet"
                         cds.add(CDHCPARTY().apply {
-                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.0"; value =
+                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value =
                             "application"
                         })
                     })
@@ -1084,7 +1087,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             hcparties.add(HcpartyType().apply {
                 ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
                 ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.0"; value = "persphysician" })
+                cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
                 firstname = hcpFirstName
                 familyname = hcpLastName
             })
@@ -1150,9 +1153,13 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             }
         }
 
-    private fun extractError(sendTransactionRequest: ByteArray, ec: String, errors: Map<String, MycarenetError>, errorUrl: String?): Set<MycarenetError> {
-        return errorUrl?.let { url ->
+    private fun extractError(kmehrRequest: ByteArray, ec: String, errors: Map<String, MycarenetError>, errorUrl: String?): Set<MycarenetError> {
+        val url = errorUrl?.let { if (it.isNotEmpty()) it else null }
+        var textContent: String? = null
+        val result = mutableSetOf<MycarenetError>()
+        val base = url?.let { url ->
             val factory = DocumentBuilderFactory.newInstance()
+
             factory.isNamespaceAware = true
             val builder = factory.newDocumentBuilder()
 
@@ -1162,31 +1169,20 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             } catch (e: XPathExpressionException) {
                 log.warn("Invalid XPATH returned: `$url‘", e); null
             }
-            val result = mutableSetOf<MycarenetError>()
 
             (expr?.evaluate(
-                builder.parse(ByteArrayInputStream(sendTransactionRequest)),
+                builder.parse(ByteArrayInputStream(kmehrRequest)),
                 XPathConstants.NODESET
-            ) as NodeList?)?.let { it ->
+                           ) as NodeList?)?.let { it ->
                 if (it.length > 0) {
                     var node = it.item(0)
-                    val textContent = node.textContent
+                    textContent = node.textContent
                     var base = "/" + nodeDescr(node)
                     while (node.parentNode != null && node.parentNode is Element) {
                         base = "/${nodeDescr(node.parentNode)}$base"
                         node = node.parentNode
                     }
-                    var elements =
-                        errors.values.filter { it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*"))) }
-                    if (elements.isEmpty()) {
-                        //IOs sometimes are overeager to provide us with precise xpath. Let's try again while truncating after the item
-                        base = base.replace(Regex("(.+/item.+?)/.*"), "$1")
-                        elements = errors.values.filter {
-                            it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
-                        }
-                    }
-                    elements.forEach { it.value = textContent }
-                    result.addAll(elements)
+                    base
                 } else {
                     result.add(
                         MycarenetError(
@@ -1194,12 +1190,28 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                        )
-                    )
+                                      )
+                              )
+                    null
                 }
             }
-            result
-        } ?: setOf()
+        }
+
+        var elements = errors.values.filter { (base == null || it.path == base) && it.code == ec && (it.regex == null || (url?.matches(Regex(".*" + it.regex + ".*")) ?: true)) }
+        if (base != null && elements.isEmpty()) {
+            //IOs sometimes are overeager to provide us with precise xpath. Let's try again while truncating after the item
+            val trimmedBase = base.replace(Regex("(.+/item.+?)/.*"), "$1")
+            elements = errors.values.filter {
+                it.path == trimmedBase && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+            }
+            if (elements.isEmpty()) {
+                elements = errors.values.filter { it.code == ec }
+            }
+        }
+        elements.forEach { it.value = textContent }
+        result.addAll(elements)
+
+        return result
     }
 
 
