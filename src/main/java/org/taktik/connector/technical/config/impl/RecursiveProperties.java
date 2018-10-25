@@ -20,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RecursiveProperties extends Properties {
+public class RecursiveProperties extends SystemOverridenProperties {
    private static final Logger LOG = LoggerFactory.getLogger(RecursiveProperties.class);
    private Properties uddi = new Properties();
    private Map<String, RecursiveProperties.Lookup> lookups;
