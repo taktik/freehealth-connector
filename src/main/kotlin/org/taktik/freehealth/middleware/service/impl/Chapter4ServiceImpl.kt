@@ -873,10 +873,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                     its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == CHAPTER_4_REFERENCE.value() } }
                         ?.contents?.map { it.cds?.find { it.s == v1CDCHAPTER4PARAGRAPH }?.value }?.find { it != null }
 
-                its?.find { it.cds.any { it.s == be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MAA && it.value == CDITEMMAAvalues.COVERAGETYPE.value()}}.let{
+/*                its?.find { it.cds.any { it.s == be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MAA && it.value == CDITEMMAAvalues.COVERAGETYPE.value()}}.let{
                     val c = it!!.contents?.find { it.cds != null}
                     at.coverageType = c!!.cds.map{it.value}?.find { it != null }
-                }
+                }*/
 
 
                 val bos = ByteArrayOutputStream()
