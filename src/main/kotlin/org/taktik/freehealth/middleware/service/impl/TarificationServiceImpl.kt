@@ -157,18 +157,6 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                 })
                             })
                         }
-                        gmdNihii?.let { g ->
-                            headingsAndItemsAndTexts.add(ItemType().apply {
-                                ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (h++).toString() })
-                                cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "gmdmanager" })
-                                contents.add(ContentType().apply {
-                                    hcparty = HcpartyType().apply {
-                                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = g })
-                                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
-                                    }
-                                })
-                            })
-                        }
                     }
                 }
             }

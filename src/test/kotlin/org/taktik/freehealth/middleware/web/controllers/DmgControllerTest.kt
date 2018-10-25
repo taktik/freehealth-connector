@@ -221,4 +221,18 @@ class DmgControllerTest : EhealthTest() {
             assertThat(it.errors).isEmpty()
         }
     }
+
+    @Test
+    fun scenarioMsgList() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val str = this.restTemplate.exchange("http://localhost:$port/gmd/reqlist" +
+                                                 "?hcpNihii=$nihii1" +
+                                                 "&hcpSsin=$ssin1" +
+                                                 "&hcpFirstName={firstName1}" +
+                                                 "&hcpLastName={lastName1}",
+                                             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
+        val ok = gson.fromJson(str.body, Boolean::class.java)
+
+        assertThat(ok).isTrue()
+    }
 }
