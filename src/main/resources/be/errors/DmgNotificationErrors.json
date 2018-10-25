@@ -33,7 +33,7 @@
 	{"uid":"32","path":"/SendTransactionRequest/kmehrmessage/folder/patient","code":"100","locFr":"","locNl":"","msgFr":"Zone obligatoire non présente Kmehr - notification DMG - V01r02.docx","msgNl":""},
 	{"uid":"33","path":"/SendTransactionRequest/kmehrmessage/folder/patient","code":"158","locFr":"","locNl":"","msgFr":"Données d’identification incohérentes","msgNl":""},
 	{"uid":"34","path":"/SendTransactionRequest/kmehrmessage/folder/patient/id","code":"161","locFr":"","locNl":"","msgFr":"Le médecin ne peut envoyer une notification DMG pour ce patient car le patient a déjà un droit DMG chez lui pour cette année (soit par notification, soit via le paiement de la prolongation accélérée).","msgNl":""},
-	{"uid":"35","path":"/SendTransactionRequest/kmehrmessage/folder/patient/id","code":"162","locFr":"","locNl":"","msgFr":"Le médecin ne peut envoyer une notification DMG pour ce patient car le patient a un contrat maison médicale","msgNl":""},
+	{"uid":"35","path":"/SendTransactionRequest/kmehrmessage/folder/patient","code":"162","locFr":"","locNl":"","msgFr":"Le médecin ne peut envoyer une notification DMG pour ce patient car le patient a un contrat maison médicale","msgNl":""},
 	{"uid":"36","path":"/SendTransactionRequest/kmehrmessage/folder/patient/id","code":"100","locFr":"","locNl":"","msgFr":"Zone obligatoire non présente","msgNl":""},
 	{"uid":"37","path":"/SendTransactionRequest/kmehrmessage/folder/patient/id","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
 	{"uid":"38","path":"/SendTransactionRequest/kmehrmessage/folder/patient/id","code":"112","locFr":"","locNl":"","msgFr":"Erreur check digit","msgNl":""},
