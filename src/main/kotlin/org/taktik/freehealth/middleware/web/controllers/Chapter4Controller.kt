@@ -40,6 +40,12 @@ import org.taktik.freehealth.middleware.service.Chapter4Service
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
+import javax.servlet.http.HttpServletResponse
+import com.sun.xml.internal.ws.streaming.XMLStreamWriterUtil.getOutputStream
+import org.apache.commons.io.IOUtils
+import org.springframework.http.MediaType
+import java.net.URL
+
 
 @RestController
 @RequestMapping("/chap4")
@@ -51,6 +57,23 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @PathVariable chapterName: String,
         @PathVariable paragraphName: String): List<AddedDocumentPreview> =
         chapter4Service.getAddedDocuments(chapterName, paragraphName)
+
+    @GetMapping("/sam/docpreview/{chapterName}/{paragraphName}/{verseSeq}/{docSeq}/{language}")
+    fun getAddedDocument(
+        @PathVariable chapterName: String,
+        @PathVariable paragraphName: String,
+        @PathVariable verseSeq: Long,
+        @PathVariable docSeq: Long,
+        @PathVariable language: String,
+        response : HttpServletResponse) {
+        val url = chapter4Service.getAddedDocuments(chapterName, paragraphName).find {d -> d.documentSeq == docSeq && d.verseSeq == verseSeq}?.addressUrl
+        url?.let { response.contentType = MediaType.APPLICATION_PDF_VALUE
+            val url = URL(it.replace("@lng@",language))
+            val inputStream = url.openStream()
+            IOUtils.copy(inputStream, response.outputStream)
+            inputStream.close()
+        }
+    }
 
     @GetMapping("/sam/search/{searchString}/{language}")
     fun findParagraphs(
