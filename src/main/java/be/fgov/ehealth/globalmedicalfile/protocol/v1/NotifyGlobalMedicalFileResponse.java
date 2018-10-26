@@ -2,6 +2,7 @@ package be.fgov.ehealth.globalmedicalfile.protocol.v1;
 
 import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.soap.SOAPMessage;
 
 @XmlRootElement(
@@ -11,8 +12,8 @@ import javax.xml.soap.SOAPMessage;
 public class NotifyGlobalMedicalFileResponse extends SendResponseType implements SoapConversationLogger {
     private static final long serialVersionUID = 7474695658294730459L;
 
-    private SOAPMessage soapRequest;
-    private SOAPMessage soapResponse;
+    @XmlTransient private SOAPMessage soapRequest;
+    @XmlTransient private SOAPMessage soapResponse;
 
     @Override
     public SOAPMessage getSoapRequest() {

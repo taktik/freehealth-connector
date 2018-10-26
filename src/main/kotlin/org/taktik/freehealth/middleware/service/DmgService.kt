@@ -5,6 +5,7 @@ import org.taktik.connector.business.domain.dmg.DmgConsultation
 import org.taktik.connector.business.domain.dmg.DmgMessage
 import org.taktik.connector.business.domain.dmg.DmgNotification
 import org.taktik.connector.business.domain.dmg.DmgRegistration
+import org.taktik.connector.business.domain.dmg.DmgsList
 import java.util.*
 
 interface DmgService {
@@ -76,7 +77,7 @@ interface DmgService {
         hcpLastName: String,
         oa: String,
         messageNames: List<String>?
-    ): List<DmgMessage>
+    ): DmgsList
 
     fun confirmDmgMessages(
         keystoreId: UUID,

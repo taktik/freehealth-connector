@@ -3,6 +3,7 @@ package be.fgov.ehealth.mycarenet.commons.protocol.v2;
 import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
@@ -13,8 +14,8 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 public class TarificationConsultationResponse extends SendResponseType implements SoapConversationLogger {
    private static final long serialVersionUID = -1823503051478209431L;
 
-   private SOAPMessage soapRequest;
-   private SOAPMessage soapResponse;
+   @XmlTransient private SOAPMessage soapRequest;
+   @XmlTransient private SOAPMessage soapResponse;
 
    @Override
    public SOAPMessage getSoapRequest() {

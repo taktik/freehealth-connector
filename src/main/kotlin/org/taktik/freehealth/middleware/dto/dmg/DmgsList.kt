@@ -1,7 +1,5 @@
 package org.taktik.freehealth.middleware.dto.dmg
 
-import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
-import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import java.io.Serializable
 import java.util.ArrayList
 import java.util.Date
@@ -14,7 +12,13 @@ import java.util.Date
  * To change this template use File | Settings | File Templates.
  */
 class DmgsList : DmgMessage(), Serializable {
-    var oa: String? = null
+
+    var lists: MutableList<DmgsList> = ArrayList()
+
+    var acks: MutableList<DmgAcknowledge> = ArrayList()
     var inscriptions: MutableList<DmgInscription> = ArrayList()
+    var closures: MutableList<DmgClosure> = ArrayList()
+    var extensions: MutableList<DmgExtension> = ArrayList()
+
     var date: Date? = null
 }

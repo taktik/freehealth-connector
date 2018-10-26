@@ -7,7 +7,7 @@ configurations {
 }
 
 group = 'org.taktik'
-version = '0.1.29'
+version = '0.1.30'
 
 
 buildscript {
@@ -156,8 +156,6 @@ dependencies {
 	compile('org.apache.lucene:lucene-suggest:4.10.4')
 
 	compile('org.jdom:jdom-legacy:1.1.3')
-
-	compile("org.json:json:20180813")
 
 	//jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
 	//compile(files(genJaxb.classesDir).builtBy(genJaxb))
