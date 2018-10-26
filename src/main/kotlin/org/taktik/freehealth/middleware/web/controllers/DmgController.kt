@@ -81,8 +81,8 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
 
     @PostMapping("/messages")
     fun getDmgMessages(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestParam oa: String, @RequestBody messageNames: List<String>?) =
-        dmgService.getDmgMessages(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, oa = oa, messageNames = messageNames).map {
-            mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgMessage::class.java)
+        dmgService.getDmgMessages(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, oa = oa, messageNames = messageNames).let {
+            mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgsList::class.java)
         }
 
     @PostMapping("/confirm/messages")

@@ -10,11 +10,13 @@ import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.dto.dmg.DmgConsultation
+import org.taktik.freehealth.middleware.dto.dmg.DmgMessage
 import org.taktik.freehealth.middleware.dto.dmg.DmgNotification
 import org.taktik.freehealth.middleware.dto.dmg.DmgRegistration
 import java.io.File
@@ -235,4 +237,22 @@ class DmgControllerTest : EhealthTest() {
 
         assertThat(ok).isTrue()
     }
+
+    @Test
+    fun scenarioFetchMsgList() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val results = regOa.map {
+            val messages = this.restTemplate.exchange("http://localhost:$port/gmd/messages" +
+                                                     "?hcpNihii=$nihii1" +
+                                                     "&hcpSsin=$ssin1" +
+                                                     "&hcpFirstName={firstName1}" +
+                                                     "&hcpLastName={lastName1}" +
+                                                     "&oa=$it",
+                                                 HttpMethod.POST, HttpEntity<List<String>>(listOf(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<DmgMessage>>() {}, firstName1, lastName1)
+
+            assertThat(messages.body).isNotEmpty
+            println(messages.body)
+        }
+    }
+
 }
