@@ -1076,7 +1076,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                 })
                             })
 
-                            lnks.add(LnkType().apply {
+                            headingsAndItemsAndTexts.add(LnkType().apply {
                                 type = MULTIMEDIA;
                                 try {
                                     mediatype = CDMEDIATYPEvalues.fromValue(app.mimeType)
@@ -1085,7 +1085,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                 }
                                 value = app.data
                             })
-                            lnks.add(LnkType().apply { type = ISANAPPENDIXOF; url = "//folder[position()=1]" })
+                            headingsAndItemsAndTexts.add(LnkType().apply { type = ISANAPPENDIXOF; url = "//folder[position()=1]" })
                         })
                     }
                 }
