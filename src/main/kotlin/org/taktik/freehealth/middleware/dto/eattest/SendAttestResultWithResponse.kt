@@ -29,6 +29,7 @@ class SendAttestResultWithResponse(
     invoicingNumber: String? = null,
     attest: Eattest? = null,
     var xades: ByteArray?,
-    var commonOutput: CommonOutput? = null,
-    var mycarenetConversation: MycarenetConversation? = null
+    commonOutput: CommonOutput? = null,
+    mycarenetConversation: MycarenetConversation? = null,
     var kmehrMessage: ByteArray?
+): SendAttestResult(acknowledge, invoicingNumber, attest)
