@@ -10,4 +10,4 @@ import java.util.Date
  * Time: 13:07
  * To change this template use File | Settings | File Templates.
  */
-class DmgAcknowledge(var major: String, var minor: String, var message: String, var date: Long? = null) : DmgMessage(), Serializable
+class DmgAcknowledge(var major: String? = null, var minor: String? = null, var message: String? = null, var date: Long? = null) : DmgMessage(), Serializable
