@@ -1,14 +1,11 @@
 package be.fgov.ehealth.messageservices.core.v1;
 
+import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
+import javax.xml.soap.SOAPMessage;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
@@ -19,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
    name = "SendTransactionResponse",
    namespace = "http://www.ehealth.fgov.be/messageservices/protocol/v1"
 )
-public class SendTransactionResponse implements Serializable {
+public class SendTransactionResponse implements Serializable, SoapConversationLogger {
    private static final long serialVersionUID = 1L;
    @XmlElement(
       required = true
@@ -34,6 +31,9 @@ public class SendTransactionResponse implements Serializable {
       name = "messageProtocoleSchemaVersion"
    )
    protected BigDecimal messageProtocoleSchemaVersion;
+
+   @XmlTransient private SOAPMessage soapRequest;
+   @XmlTransient private SOAPMessage soapResponse;
 
    public ResponseType getResponse() {
       return this.response;
@@ -65,5 +65,25 @@ public class SendTransactionResponse implements Serializable {
 
    public void setMessageProtocoleSchemaVersion(BigDecimal value) {
       this.messageProtocoleSchemaVersion = value;
+   }
+
+   @Override
+   public SOAPMessage getSoapRequest() {
+      return soapRequest;
+   }
+
+   @Override
+   public void setSoapRequest(SOAPMessage soapRequest) {
+      this.soapRequest = soapRequest;
+   }
+
+   @Override
+   public SOAPMessage getSoapResponse() {
+      return soapResponse;
+   }
+
+   @Override
+   public void setSoapResponse(SOAPMessage soapResponse) {
+      this.soapResponse = soapResponse;
    }
 }
