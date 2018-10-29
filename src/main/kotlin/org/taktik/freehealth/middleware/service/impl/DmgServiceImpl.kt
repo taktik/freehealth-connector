@@ -812,9 +812,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        dmgMessages: List<DmgMessage>
+        dmgMessagesHashes: List<String>
                                    ): Boolean {
-        if (dmgMessages.isEmpty()) {
+        if (dmgMessagesHashes.isEmpty()) {
             return true
         }
         val samlToken =
@@ -826,10 +826,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             BuilderFactory.getRequestObjectBuilder("dmg")
                 .buildConfirmRequestWithHashes(
                     buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
-                    dmgMessages.map { dmgMessage ->
-                        Base64.getDecoder()
-                            .decode(dmgMessage.valueHash)
-                    },
+                    dmgMessagesHashes.map { valueHash -> Base64.getDecoder().decode(valueHash) },
                     listOf())
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
@@ -845,9 +842,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        dmgTacks: List<DmgAcknowledge>
+        dmgAcksHashes: List<String>
                             ): Boolean {
-        if (dmgTacks.isEmpty()) {
+        if (dmgAcksHashes.isEmpty()) {
             return true
         }
         val samlToken =
@@ -859,7 +856,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             BuilderFactory.getRequestObjectBuilder("dmg")
                 .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
                                                listOf(),
-                                               dmgTacks.map { ack -> Base64.getDecoder().decode(ack.valueHash) })
+                                               dmgAcksHashes.map { valueHash -> Base64.getDecoder().decode(valueHash) })
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
 
@@ -901,14 +898,14 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         val b64 = Base64.getEncoder()
         return DmgsList().apply {
-            acks = response.`return`.tAckResponses.map {
+            acks = response.`return`.tAckResponses?.map {
                 DmgAcknowledge(it.tAck.resultMajor, it.tAck.resultMinor, it.tAck.resultMessage).apply {
                     io = it.tAck.issuer.replace("urn:nip:issuer:io:".toRegex(), "")
                     reference = it.tAck.reference
                     valueHash = b64.encodeToString(it.tAck.value)
                 }
-            }
-            messages = response.`return`.msgResponses.map { r ->
+            } ?: listOf()
+            messages = response.`return`.msgResponses?.map { r ->
                 ResponseObjectBuilderFactory.getResponseObjectBuilder().handleAsyncResponse(r)?.let { dec ->
                     dec.retrieveTransactionResponse?.let { rtr ->
                         DmgsList().apply {
@@ -994,7 +991,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                         }
                     }
                 }
-            }
+            } ?: listOf()
         }
     }
 
