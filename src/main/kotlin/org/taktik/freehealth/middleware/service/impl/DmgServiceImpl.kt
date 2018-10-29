@@ -898,14 +898,14 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         val b64 = Base64.getEncoder()
         return DmgsList().apply {
-            acks = response.`return`.tAckResponses.map {
+            acks = response.`return`.tAckResponses?.map {
                 DmgAcknowledge(it.tAck.resultMajor, it.tAck.resultMinor, it.tAck.resultMessage).apply {
                     io = it.tAck.issuer.replace("urn:nip:issuer:io:".toRegex(), "")
                     reference = it.tAck.reference
                     valueHash = b64.encodeToString(it.tAck.value)
                 }
-            }
-            messages = response.`return`.msgResponses.map { r ->
+            } ?: listOf()
+            messages = response.`return`.msgResponses?.map { r ->
                 ResponseObjectBuilderFactory.getResponseObjectBuilder().handleAsyncResponse(r)?.let { dec ->
                     dec.retrieveTransactionResponse?.let { rtr ->
                         DmgsList().apply {
@@ -991,7 +991,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                         }
                     }
                 }
-            }
+            } ?: listOf()
         }
     }
 
