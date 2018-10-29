@@ -96,6 +96,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgConsultationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
     val dmgNotificationErrors =
         Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgNotificationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+    val dmgListsConsultationErrors =
+        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgListsConsultationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
     val xPathfactory = XPathFactory.newInstance()
 
 
@@ -918,7 +920,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                                 errors.addAll(listOf() /* TODO */)
                             }
                             if (rtr.acknowledge?.isIscomplete == true) {
-                                dec.kmehrmessage?.let { km ->
+                                rtr.kmehrmessage?.let { km ->
                                     date = km.header.date.toDate()
                                     inscriptions.addAll(km.folders?.map {
                                         DmgInscription().apply {
@@ -1013,7 +1015,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         val istest = config.getProperty("endpoint.dmg.notification.v1").contains("-acpt")
         val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
         val inputReference =
-            IdGeneratorFactory.getIdGenerator().generateId().let { if (istest) "T" + it.substring(1) else it }
+            IdGeneratorFactory.getIdGenerator().generateId()//.let { if (istest) "T" + it.substring(1) else it }
         val now = DateTime().withMillisOfSecond(0)
 
         val postHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:post:msg")).apply {
