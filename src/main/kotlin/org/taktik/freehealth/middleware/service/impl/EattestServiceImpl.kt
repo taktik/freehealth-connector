@@ -766,9 +766,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                 }
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
 
-                val requestMarshaller =
-                    MarshallerHelper(SendAttestationRequest::class.java, SendAttestationRequest::class.java)
-                val requestXmlByteArray = requestMarshaller.toXMLByteArray(this);
             }
 
             val sendAttestationResponse = freehealthEattestService.sendAttestion(samlToken, sendAttestationRequest)
@@ -793,11 +790,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                         SendTransactionResponse::class.java
                                     ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
                                      )
-
-            val requestMarshaller =
-                MarshallerHelper(SendAttestationResponse::class.java, SendAttestationResponse::class.java)
-            val requestXmlByteArray = requestMarshaller.toXMLByteArray(sendAttestationResponse);
-
 
             val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
                 e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
@@ -828,7 +820,8 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                         this.transactionRequest = MarshallerHelper(SendAttestationRequest::class.java, SendAttestationRequest::class.java).toXMLByteArray(sendAttestationRequest).toString(Charsets.UTF_8)
                         sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                         sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
-                    }
+                    },
+                    kmehrMessage = encryptedKnownContent?.businessContent?.value
                                             )
             } ?: SendAttestResultWithResponse(
                 acknowledge = EattestAcknowledgeType(
@@ -841,7 +834,8 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     this.transactionRequest = MarshallerHelper(SendAttestationRequest::class.java, SendAttestationRequest::class.java).toXMLByteArray(sendAttestationRequest).toString(Charsets.UTF_8)
                     sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
-                }
+                },
+                kmehrMessage = encryptedKnownContent?.businessContent?.value
 
                                              )
         }
