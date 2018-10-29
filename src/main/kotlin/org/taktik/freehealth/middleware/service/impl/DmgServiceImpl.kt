@@ -1025,7 +1025,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         val retrieveTransactionRequest = RetrieveTransactionRequest().apply {
             request = RequestType().apply {
-                id = IDKMEHR()//TODO HcPartyUtil.createKmehrId(DmgConstants.PROJECT_IDENTIFIER, inputReference)
+                id = IDKMEHR().apply {
+                    this.s = IDKMEHRschemes.ID_KMEHR; this.sv = "1.0"; this.value = hcpNihii + "." + inputReference
+                }
                 this.author = author
                 date = now
                 time = now
