@@ -87,7 +87,7 @@ interface DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        dmgMessages: List<DmgMessage>
+        dmgMessagesHashes: List<String>
     ): Boolean
 
     fun confirmAcks(
@@ -98,6 +98,7 @@ interface DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        dmgTacks: List<DmgAcknowledge>
+        dmgAcksHashes: List<String>
     ): Boolean
+
 }
