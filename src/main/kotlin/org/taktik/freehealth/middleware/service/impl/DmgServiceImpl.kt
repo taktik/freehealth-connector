@@ -96,6 +96,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgConsultationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
     val dmgNotificationErrors =
         Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgNotificationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+    val dmgListsConsultationErrors =
+        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgListsConsultationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
     val xPathfactory = XPathFactory.newInstance()
 
 
@@ -812,9 +814,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        dmgMessages: List<DmgMessage>
+        dmgMessagesHashes: List<String>
                                    ): Boolean {
-        if (dmgMessages.isEmpty()) {
+        if (dmgMessagesHashes.isEmpty()) {
             return true
         }
         val samlToken =
@@ -826,10 +828,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             BuilderFactory.getRequestObjectBuilder("dmg")
                 .buildConfirmRequestWithHashes(
                     buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
-                    dmgMessages.map { dmgMessage ->
-                        Base64.getDecoder()
-                            .decode(dmgMessage.valueHash)
-                    },
+                    dmgMessagesHashes.map { valueHash -> Base64.getDecoder().decode(valueHash) },
                     listOf())
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
@@ -845,9 +844,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        dmgTacks: List<DmgAcknowledge>
+        dmgAcksHashes: List<String>
                             ): Boolean {
-        if (dmgTacks.isEmpty()) {
+        if (dmgAcksHashes.isEmpty()) {
             return true
         }
         val samlToken =
@@ -859,7 +858,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             BuilderFactory.getRequestObjectBuilder("dmg")
                 .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
                                                listOf(),
-                                               dmgTacks.map { ack -> Base64.getDecoder().decode(ack.valueHash) })
+                                               dmgAcksHashes.map { valueHash -> Base64.getDecoder().decode(valueHash) })
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
 
@@ -901,14 +900,14 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         val b64 = Base64.getEncoder()
         return DmgsList().apply {
-            acks = response.`return`.tAckResponses.map {
+            acks = response.`return`.tAckResponses?.map {
                 DmgAcknowledge(it.tAck.resultMajor, it.tAck.resultMinor, it.tAck.resultMessage).apply {
                     io = it.tAck.issuer.replace("urn:nip:issuer:io:".toRegex(), "")
                     reference = it.tAck.reference
                     valueHash = b64.encodeToString(it.tAck.value)
                 }
-            }
-            messages = response.`return`.msgResponses.map { r ->
+            } ?: listOf()
+            messages = response.`return`.msgResponses?.map { r ->
                 ResponseObjectBuilderFactory.getResponseObjectBuilder().handleAsyncResponse(r)?.let { dec ->
                     dec.retrieveTransactionResponse?.let { rtr ->
                         DmgsList().apply {
@@ -921,7 +920,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                                 errors.addAll(listOf() /* TODO */)
                             }
                             if (rtr.acknowledge?.isIscomplete == true) {
-                                dec.kmehrmessage?.let { km ->
+                                rtr.kmehrmessage?.let { km ->
                                     date = km.header.date.toDate()
                                     inscriptions.addAll(km.folders?.map {
                                         DmgInscription().apply {
@@ -994,7 +993,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                         }
                     }
                 }
-            }
+            } ?: listOf()
         }
     }
 
@@ -1016,7 +1015,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         val istest = config.getProperty("endpoint.dmg.notification.v1").contains("-acpt")
         val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
         val inputReference =
-            IdGeneratorFactory.getIdGenerator().generateId().let { if (istest) "T" + it.substring(1) else it }
+            IdGeneratorFactory.getIdGenerator().generateId()//.let { if (istest) "T" + it.substring(1) else it }
         val now = DateTime().withMillisOfSecond(0)
 
         val postHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:post:msg")).apply {
@@ -1028,7 +1027,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         val retrieveTransactionRequest = RetrieveTransactionRequest().apply {
             request = RequestType().apply {
-                id = IDKMEHR()//TODO HcPartyUtil.createKmehrId(DmgConstants.PROJECT_IDENTIFIER, inputReference)
+                id = IDKMEHR().apply {
+                    this.s = IDKMEHRschemes.ID_KMEHR; this.sv = "1.0"; this.value = "$hcpNihii.$inputReference"
+                }
                 this.author = author
                 date = now
                 time = now
