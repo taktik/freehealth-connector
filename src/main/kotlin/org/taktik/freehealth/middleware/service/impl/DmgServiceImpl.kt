@@ -438,6 +438,10 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
+        traineeSupervisorSsin: String?,
+        traineeSupervisorNihii: String?,
+        traineeSupervisorFirstName: String?,
+        traineeSupervisorLastName: String?,
         patientSsin: String?,
         oa: String?,
         regNrWithMut: String?,
@@ -468,6 +472,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         val dateReference = DateTime()
         val istest = config.getProperty("endpoint.dmg.notification.v1").contains("-acpt")
         val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+        val supervisor = traineeSupervisorNihii?.let {nihii -> traineeSupervisorSsin?.let {ssin -> traineeSupervisorFirstName?.let {firstName -> traineeSupervisorLastName?.let {lastName -> makeHcparty(nihii, ssin, firstName, lastName)} } } }
         val kmehrmessage = Kmehrmessage().apply {
             header = HeaderType().apply {
                 sender = SenderType().apply { hcparties.addAll(author.hcparties) }
@@ -524,7 +529,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     item.add(ItemType().apply {
                         cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "gmdmanager" })
                         ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "1"; sv = "1.0" })
-                        contents.add(ContentType().apply { hcparty = author.hcparties.first() })
+                        contents.add(ContentType().apply { hcparty = supervisor ?: author.hcparties.first() })
                     })
                     item.add(ItemType().apply {
                         cds.add(CDITEM().apply {
@@ -1092,13 +1097,17 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
     private fun makeAuthor(hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String): AuthorType {
         return AuthorType().apply {
-            hcparties.add(HcpartyType().apply {
-                ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
-                ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
-                firstname = hcpFirstName
-                familyname = hcpLastName
-            })
+            hcparties.add(makeHcparty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName))
+        }
+    }
+
+    private fun makeHcparty(hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String): HcpartyType {
+        return HcpartyType().apply {
+            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
+            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
+            firstname = hcpFirstName
+            familyname = hcpLastName
         }
     }
 
