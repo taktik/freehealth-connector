@@ -64,5 +64,4 @@
 	{"uid":"63","path":"kmehrrequest/kmehrmessage/folder/transaction = annexe","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
 	{"uid":"64","path":"kmehrrequest/kmehrmessage/folder/transaction = annexe","code":"131","locFr":"","locNl":"","msgFr":"Annexe présente alors que CD-MAA-REQUESTTYPE = cancellation ou closure ou alors qu’il s’agit d’un médicament de type 1 (qui ne nécessite pas d’annexe pour la procédure via MyCareNet)..","msgNl":""},
 	{"uid":"65","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[chapter4reference]/content/cd","code":"176","locFr":"","locNl":"","msgFr":"Frais incohérent avec le type d'application","msgNl":"Incoherente verse met het type aanvraag"}
-
 ]

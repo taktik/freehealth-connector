@@ -878,7 +878,6 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        oa: String,
         messageNames: List<String>?
                                ): DmgsList {
         val samlToken =
@@ -1045,8 +1044,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     this.author = author
                     begindate = DateTime(requestDate)
                     cds.add(CDTRANSACTION().apply {
-                        s = CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET; sv =
-                        "1.0"; value = "gmd"
+                        s = CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET; sv = "1.0"; value = "gmd"
                     })
                 }
             }
@@ -1221,9 +1219,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             elements = errors.values.filter {
                 it.path == trimmedBase && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
             }
-            if (elements.isEmpty()) {
-                elements = errors.values.filter { it.code == ec }
-            }
+        }
+        if (elements.isEmpty()) {
+            elements = errors.values.filter { it.code == ec }
         }
         elements.forEach { it.value = textContent }
         result.addAll(elements)

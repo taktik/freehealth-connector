@@ -782,6 +782,7 @@ public class DrugsDAOImpl implements DrugsDAO {
                             Restrictions.ilike("paragraphName", searchString + "%"),
                             Restrictions.ilike(language != null && language.startsWith("nl") ? "keyStringNl" : "keyStringFr", "%" + searchString + "%")
                     ))
+                    .add(Restrictions.in("processType", Arrays.asList(1L,2L,3L,4L)))
                     .list());
 
             List<Long> ids = new LinkedList<>();
