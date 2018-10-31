@@ -407,7 +407,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val references = ChapterIVReferences(true)
 
         val demandMessage =
-            getDemandKmehrMessage(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, patientDateOfBirth, patientFirstName, patientLastName, patientGender, requestType, references.commonReference!!, civicsVersion, start, end, verses, appendices, ref, decisionReference, ioRequestReference, paragraph)
+            getDemandKmehrMessage(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, patientSsin, patientDateOfBirth, patientFirstName, patientLastName, patientGender, requestType, references.commonReference!!, civicsVersion,incomplete ?: false, start, end, verses, appendices, ref, decisionReference, ioRequestReference, paragraph)
 
         val bos = ByteArrayOutputStream()
         JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
@@ -915,6 +915,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                       requestType: RequestType,
                                       commonInput: String,
                                       civicsVersion: String,
+                                      incomplete: Boolean,
                                       start: Long?,
                                       end: Long?,
                                       verses: List<String>?,
@@ -946,7 +947,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                 }
 
                 transactions.add(TransactionType().apply {
-                    initialiseTransactionTypeWithSender(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, "agreementrequest", requestType, kmehrId = "1")
+                    initialiseTransactionTypeWithSender(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, "agreementrequest", requestType, kmehrId = "1", incomplete = incomplete)
 
                     if (requestType != RequestType.complimentaryannex) {
                         headingsAndItemsAndTexts.add(ItemType().apply {
@@ -1348,7 +1349,8 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                                                     maa: String,
                                                                     requestType: RequestType? = null,
                                                                     date: Date? = null,
-                                                                    kmehrId: String = "1") {
+                                                                    kmehrId: String = "1",
+                                                                    incomplete: Boolean = false) {
         ids.add(IDKMEHR().apply { s = ID_KMEHR; value = kmehrId })
         cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION; sv = "1.4"; value = CDTRANSACTIONvalues.MEDICALADVISORAGREEMENT.value() })
         cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MAA; value = maa })
@@ -1358,7 +1360,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             this.date = it
             this.time = it
         }
-        isIscomplete = true
+        isIscomplete = !incomplete
         isIsvalidated = true
 
         headingsAndItemsAndTexts.add(ItemType().apply {
@@ -1445,9 +1447,9 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             elements = errors.values.filter {
                 it.path == trimmedBase && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
             }
-            if (elements.isEmpty()) {
-                elements = errors.values.filter { it.code == ec }
-            }
+        }
+        if (elements.isEmpty()) {
+            elements = errors.values.filter { it.code == ec }
         }
         elements.forEach { it.value = textContent }
         result.addAll(elements)

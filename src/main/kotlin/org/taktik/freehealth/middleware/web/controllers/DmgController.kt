@@ -56,9 +56,14 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
         @RequestParam(required = false) patientLastName: String,
         @RequestParam(required = false) patientGender: String?,
         @PathVariable nomenclature: String,
-        @RequestParam(required = false) requestDate: Long? = null
-    ) =
-        dmgService.notifyDmg(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, patientSsin = patientSsin, patientGender = patientGender, patientFirstName = patientFirstName, patientLastName = patientLastName, oa = oa, regNrWithMut = regNrWithMut, requestDate = requestDate?.let { Date(requestDate) }
+        @RequestParam(required = false) requestDate: Long? = null,
+        @RequestParam(required = false) traineeSupervisorSsin: String?,
+        @RequestParam(required = false) traineeSupervisorNihii: String?,
+        @RequestParam(required = false) traineeSupervisorFirstName: String?,
+        @RequestParam(required = false) traineeSupervisorLastName: String?
+
+        ) =
+        dmgService.notifyDmg(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, traineeSupervisorFirstName = traineeSupervisorFirstName, traineeSupervisorLastName = traineeSupervisorLastName, traineeSupervisorSsin = traineeSupervisorSsin, traineeSupervisorNihii = traineeSupervisorNihii, patientSsin = patientSsin, patientGender = patientGender, patientFirstName = patientFirstName, patientLastName = patientLastName, oa = oa, regNrWithMut = regNrWithMut, requestDate = requestDate?.let { Date(requestDate) }
             ?: Date(), nomenclature = nomenclature).let {
             mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgNotification::class.java)
         }
@@ -79,8 +84,8 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
             ?: Date())
 
     @PostMapping("/messages")
-    fun getDmgMessages(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestParam oa: String, @RequestBody messageNames: List<String>?) =
-        dmgService.getDmgMessages(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, oa = oa, messageNames = messageNames).let {
+    fun getDmgMessages(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestBody messageNames: List<String>?) =
+        dmgService.getDmgMessages(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, messageNames = messageNames).let {
             mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgsList::class.java)
         }
 
