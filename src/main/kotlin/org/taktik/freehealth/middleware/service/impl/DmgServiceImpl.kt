@@ -659,7 +659,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         assert(patientSsin != null || oa != null && regNrWithMut != null)
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw IllegalArgumentException("Cannot obtain token for DMG operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
 
@@ -740,75 +740,74 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         });
 
-        val intermediateResponse = xmlResponse.asObject(NotifyGlobalMedicalFileResponse::class.java).apply {
-            replyValidator.validateReplyStatus(
-                this
-                                              )
-        }
+        return try {
+            val response = ResponseObjectBuilderFactory.getResponseObjectBuilder()
+                .handleSendResponseType(xmlResponse.asObject(
+                    NotifyGlobalMedicalFileResponse::class.java).apply { replyValidator.validateReplyStatus(this) })
 
-        intermediateResponse.soapRequest = xmlResponse.request
-        intermediateResponse.soapResponse = xmlResponse.soapMessage
-
-        val response = ResponseObjectBuilderFactory.getResponseObjectBuilder().handleSendResponseType(intermediateResponse)
-
-        if (!response.ehealthStatus.equals("200")) {
-            throw RuntimeException("Wrong status code" + response.ehealthStatus)
-        }
-
-        val dmg = DmgConsultation(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
-            this.errors.addAll(response.sendTransactionResponse.acknowledge.errors?.filterNotNull()?.flatMap { et ->
-                et.cds.firstOrNull()?.let { cd ->
-                    this@DmgServiceImpl.extractError(
-                        consultRequest.detail.value,
-                        cd.value,
-                        dmgConsultationErrors,
-                        et.url
-                                                    )
-                } ?: setOf()
-            } ?: listOf())
-            response.sendTransactionResponse.kmehrmessage?.let {
-                it.folders.firstOrNull()?.let {
-                    it.patient?.let {
-                        lastName = it.familyname
-                        firstName = it.firstnames.joinToString(" ")
-                        it.sex?.let { sex = it.cd.value.value() }
-                        it.birthdate?.let { birthday = Instant.ofEpochMilli(it.date.millis) }
-                        it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT || it.s == IDPATIENTschemes.INSS }
-                            ?.let { inss = it.value }
-                        it.insurancymembership?.let {
-                            mutuality = it.id.value; it.membership?.let {
-                            this.regNrWithMut = (it as? Node)?.textContent
-                        }
-                        }
-                    }
-                    it.transactions.find { it.cds.any { it.value.toLowerCase() == "gmd" } }?.let {
-                        it.item.forEach {
-                            if (it.cds.any { it.value.toLowerCase() == "gmdmanager" }) {
-                                it.beginmoment?.date?.let { from = Instant.ofEpochMilli(it.millis) }
-                                it.endmoment?.date?.let { to = Instant.ofEpochMilli(it.millis) }
-                                hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
+            DmgConsultation(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
+                this.errors.addAll(response.sendTransactionResponse.acknowledge.errors?.filterNotNull()?.flatMap { et ->
+                    et.cds.firstOrNull()?.let { cd ->
+                        this@DmgServiceImpl.extractError(
+                            consultRequest.detail.value,
+                            cd.value,
+                            dmgConsultationErrors,
+                            et.url
+                                                        )
+                    } ?: setOf()
+                } ?: listOf())
+                response.sendTransactionResponse.kmehrmessage?.let {
+                    it.folders.firstOrNull()?.let {
+                        it.patient?.let {
+                            lastName = it.familyname
+                            firstName = it.firstnames.joinToString(" ")
+                            it.sex?.let { sex = it.cd.value.value() }
+                            it.birthdate?.let { birthday = Instant.ofEpochMilli(it.date.millis) }
+                            it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT || it.s == IDPATIENTschemes.INSS }
+                                ?.let { inss = it.value }
+                            it.insurancymembership?.let {
+                                mutuality = it.id.value; it.membership?.let {
+                                this.regNrWithMut = (it as? Node)?.textContent
                             }
-                            if (it.cds.any { it.value.toLowerCase() == "payment" }) {
-                                payment = it.contents.map { it.isBoolean }.filterNotNull().first()
+                            }
+                        }
+                        it.transactions.find { it.cds.any { it.value.toLowerCase() == "gmd" } }?.let {
+                            it.item.forEach {
+                                if (it.cds.any { it.value.toLowerCase() == "gmdmanager" }) {
+                                    it.beginmoment?.date?.let { from = Instant.ofEpochMilli(it.millis) }
+                                    it.endmoment?.date?.let { to = Instant.ofEpochMilli(it.millis) }
+                                    hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
+                                }
+                                if (it.cds.any { it.value.toLowerCase() == "payment" }) {
+                                    payment = it.contents.map { it.isBoolean }.filterNotNull().first()
+                                }
                             }
                         }
                     }
                 }
+                this.commonOutput = CommonOutput(
+                    response?.originalResponse?.`return`?.commonOutput?.inputReference,
+                    response?.originalResponse?.`return`?.commonOutput?.nipReference,
+                    response?.originalResponse?.`return`?.commonOutput?.outputReference
+                                                )
+                this.mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionResponse = MarshallerHelper(DmgBuilderResponse::class.java, DmgBuilderResponse::class.java).toXMLByteArray(response).toString(Charsets.UTF_8)
+                    this.transactionRequest = MarshallerHelper(ConsultGlobalMedicalFileRequest::class.java, ConsultGlobalMedicalFileRequest::class.java).toXMLByteArray(consultRequest).toString(Charsets.UTF_8)
+                    xmlResponse?.soapMessage?.writeTo(this.soapResponseOutputStream())
+                    xmlResponse?.request?.writeTo(this.soapRequestOutputStream())
+                }
             }
-            this.commonOutput = CommonOutput(
-                response?.originalResponse?.`return`?.commonOutput?.inputReference,
-                response?.originalResponse?.`return`?.commonOutput?.nipReference,
-                response?.originalResponse?.`return`?.commonOutput?.outputReference
-                                            )
-            this.mycarenetConversation = MycarenetConversation().apply {
-                this.transactionResponse = MarshallerHelper(DmgBuilderResponse::class.java, DmgBuilderResponse::class.java).toXMLByteArray(response).toString(Charsets.UTF_8)
-                this.transactionRequest = MarshallerHelper(ConsultGlobalMedicalFileRequest::class.java, ConsultGlobalMedicalFileRequest::class.java).toXMLByteArray(consultRequest).toString(Charsets.UTF_8)
-                intermediateResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                intermediateResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+        } catch (e:SOAPFaultException) {
+            DmgConsultation(false).apply {
+                this.errors.add(MycarenetError(code = e.fault.faultCode, msgFr =  e.fault.faultString, msgNl = e.fault.faultString))
+                this.mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest = MarshallerHelper(ConsultGlobalMedicalFileRequest::class.java, ConsultGlobalMedicalFileRequest::class.java).toXMLByteArray(consultRequest).toString(Charsets.UTF_8)
+                    xmlResponse?.soapMessage?.writeTo(this.soapResponseOutputStream())
+                    xmlResponse?.request?.writeTo(this.soapRequestOutputStream())
+                }
             }
         }
 
-        return dmg
     }
 
     override fun confirmDmgMessages(

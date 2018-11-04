@@ -75,11 +75,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             val keyStore = getKeyStore(keystoreId, passPhrase)
             val result = DOMResult()
             transformer.transform(StreamSource(StringReader(it.token)), result)
-            return SAMLTokenFactory.getInstance()
-                .createSamlToken(
-                    result.node.firstChild as Element,
-                    KeyStoreCredential(keyStore, "authentication", passPhrase)
-                )
+            return result.node?.firstChild?.let {el ->
+                SAMLTokenFactory.getInstance()
+                    .createSamlToken(el as Element, KeyStoreCredential(keyStore, "authentication", passPhrase))
+            }
         }
     }
 
@@ -181,7 +180,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     }
 
     override fun checkTokenValid(tokenId: UUID): Boolean {
-        return tokensMap.get(tokenId)?.let { (it.validity ?: 0) > Instant.now().toEpochMilli() } ?: false
+        return tokensMap[tokenId]?.let { (it.token?.length ?: 0) > 0 && (it.validity ?: 0) > Instant.now().toEpochMilli() } ?: false
     }
 
     override fun getHolderOfKeysEtk(credential: KeyStoreCredential): EncryptionToken {
