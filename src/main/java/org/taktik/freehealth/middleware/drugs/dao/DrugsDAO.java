@@ -167,4 +167,6 @@ public interface DrugsDAO {
     String getShortText(Long nameId, String fr);
 
     List<Paragraph> findParagraphsWithCnk(Long cnk, String language);
+
+	List<Verse> getChildrenVerses(Paragraph paragraph);
 }
