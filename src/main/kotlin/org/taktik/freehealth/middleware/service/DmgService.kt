@@ -1,8 +1,7 @@
 package org.taktik.freehealth.middleware.service
 
-import org.taktik.connector.business.domain.dmg.DmgAcknowledge
+import be.cin.nip.async.generic.TAckResponse
 import org.taktik.connector.business.domain.dmg.DmgConsultation
-import org.taktik.connector.business.domain.dmg.DmgMessage
 import org.taktik.connector.business.domain.dmg.DmgNotification
 import org.taktik.connector.business.domain.dmg.DmgRegistration
 import org.taktik.connector.business.domain.dmg.DmgsList
@@ -69,7 +68,7 @@ interface DmgService {
         hcpLastName: String,
         oa: String?,
         requestDate: Date
-    ): Boolean
+    ): TAckResponse
 
     fun getDmgMessages(
         keystoreId: UUID,

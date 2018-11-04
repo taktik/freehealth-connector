@@ -10,6 +10,7 @@ import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Query
+import be.cin.nip.async.generic.TAckResponse
 import be.cin.nip.sync.reg.v1.RegistrationStatus
 import be.fgov.ehealth.globalmedicalfile.core.v1.*
 import be.fgov.ehealth.globalmedicalfile.core.v1.RoutingType
@@ -1010,7 +1011,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpLastName: String,
         oa: String?,
         requestDate: Date
-                                    ): Boolean {
+                                    ): TAckResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -1070,7 +1071,10 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             BuilderFactory.getRequestObjectBuilder("dmg")
                 .buildPostRequest(ci, SendRequestMapper.mapBlobToCinBlob(blob), null)
         val postResponse = genAsyncService.postRequest(samlToken, post, postHeader)
-        return postResponse.`return`.resultMajor == "urn:nip:tack:result:major:success"
+
+        return TAckResponse().apply {
+            this.tAck =  postResponse.`return`
+        }
     }
 
     fun fillDmgMessage(msg: DmgMessageWithPatient, patient: PersonType) {
