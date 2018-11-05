@@ -205,7 +205,7 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
                         @RequestParam patientFirstName: String,
                         @RequestParam patientLastName: String,
                         @RequestParam patientGender: String,
-                        @RequestParam decisionReference: String?,
+                        @RequestParam(required = false) decisionReference: String?,
                         @RequestParam(required = false) iorequestReference: String? = null) =
         chapter4Service.cancelAgreement(
             keystoreId = keystoreId,

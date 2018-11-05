@@ -443,6 +443,9 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                     this.mycarenetConversation = MycarenetConversation().apply {
                         rt.soapRequest?.writeTo(this.soapRequestOutputStream())
                         rt.soapRequest?.writeTo(this.soapResponseOutputStream())
+                        this.transactionRequest = v1Message?.let {
+                            MarshallerHelper(Kmehrrequest::class.java, Kmehrrequest::class.java).toXMLByteArray(Kmehrrequest().apply { this.kmehrmessage = it })
+                        }.toString(Charsets.UTF_8)
                     }
                     rt.returnInfo?.let { ri ->
                         this.errors = this.errors?.let { it + listOf(MycarenetError(code = ri.faultCode, path = ri.faultSource, msgFr = ri.message.value, msgNl = ri.message.value))}
@@ -575,6 +578,9 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                     this.mycarenetConversation = MycarenetConversation().apply {
                         rt.soapRequest?.writeTo(this.soapRequestOutputStream())
                         rt.soapRequest?.writeTo(this.soapResponseOutputStream())
+                        this.transactionRequest = v1Message?.let {
+                            MarshallerHelper(Kmehrrequest::class.java, Kmehrrequest::class.java).toXMLByteArray(Kmehrrequest().apply { this.kmehrmessage = it })
+                        }.toString(Charsets.UTF_8)
                     }
                     rt.returnInfo?.let { ri ->
                         this.errors = this.errors?.let { it + listOf(MycarenetError(code = ri.faultCode, path = ri.faultSource, msgFr = ri.message.value, msgNl = ri.message.value))}
@@ -730,9 +736,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
         val request =
             createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii,
-                hcpSsin,
-                hcpFirstName,
-                hcpLastName,
+                                   hcpSsin, hcpFirstName, hcpLastName,
                                    v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
                                        ?: DateTime()).askChap4MedicalAdvisorAgreementRequest
 
@@ -750,6 +754,9 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                     this.mycarenetConversation = MycarenetConversation().apply {
                         rt.soapRequest?.writeTo(this.soapRequestOutputStream())
                         rt.soapRequest?.writeTo(this.soapResponseOutputStream())
+                        this.transactionRequest = v1Message?.let {
+                            MarshallerHelper(Kmehrrequest::class.java, Kmehrrequest::class.java).toXMLByteArray(Kmehrrequest().apply { this.kmehrmessage = it })
+                        }.toString(Charsets.UTF_8)
                     }
                     rt.returnInfo?.let { ri ->
                         this.errors = this.errors?.let { it + listOf(MycarenetError(code = ri.faultCode, path = ri.faultSource, msgFr = ri.message.value, msgNl = ri.message.value))}
