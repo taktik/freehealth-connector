@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -43,39 +44,38 @@ public class DrugsLogicImpl implements DrugsLogic {
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    protected DrugsDAO drugsDAO;
+    private DrugsDAO drugsDAO;
     private MapperFacade mapper;
 
     private final static List<String> availableLanguages = Arrays.asList("fr", "nl");
     private final static String defaultLanguage = "fr";
 
-    protected final Transformer<Therapy, TherapyInfos> THERAPY_TO_THERAPYINFOS = new Transformer<Therapy, TherapyInfos>() {
+    private final Transformer<Therapy, TherapyInfos> THERAPY_TO_THERAPYINFOS = new Transformer<Therapy, TherapyInfos>() {
         public TherapyInfos transform(Therapy therapy) {
             return mapper.map(therapy, TherapyInfos.class);
         }
     };
 
-    protected final Transformer<Verse, VerseInfos> VERSE_TO_VERSEINFOS = new Transformer<Verse, VerseInfos>() {
-        @Override
-        public VerseInfos transform(Verse verse) {
+    private VerseInfos transformVERSE_TO_VERSEINFOS(Verse verse, List<Verse> verses) {
             VerseInfos verseInfos = mapper.map(verse, VerseInfos.class);
-            verseInfos.setVerses(new TreeSet<>(CollectionUtils.collect(drugsDAO.getChildrenVerses(verse), VERSE_TO_VERSEINFOS)));
+            verseInfos.setVerses(new TreeSet<>(verses.stream().filter(v -> Objects.equals(v.getVerseSeqParent(), verse.getVerseSeq())).map(v -> transformVERSE_TO_VERSEINFOS(v, verses)).collect(Collectors.toSet())));
 
             return verseInfos;
-        }
     };
 
-    protected final Transformer<Paragraph, ParagraphInfos> PARAGRAPH_TO_PARAGRAPHINFOS = new Transformer<Paragraph, ParagraphInfos>() {
+    private final Transformer<Paragraph, ParagraphInfos> PARAGRAPH_TO_PARAGRAPHINFOS = new Transformer<Paragraph, ParagraphInfos>() {
         public ParagraphInfos transform(Paragraph paragraph) {
             ParagraphInfos paragraphInfos = mapper.map(paragraph, ParagraphInfos.class);
 
-            paragraphInfos.setHeaderVerse(VERSE_TO_VERSEINFOS.transform(drugsDAO.getHeaderVerse(paragraph)));
+            List<Verse> verses = drugsDAO.getChildrenVerses(paragraph);
+
+            paragraphInfos.setHeaderVerse(transformVERSE_TO_VERSEINFOS(verses.get(0), verses));
 
             return paragraphInfos;
         }
     };
 
-    protected final Transformer<AddedDocument, AddedDocumentPreview> ADDDOC_TO_ADDDOCPREVIEW = new Transformer<AddedDocument, AddedDocumentPreview>() {
+    private final Transformer<AddedDocument, AddedDocumentPreview> ADDDOC_TO_ADDDOCPREVIEW = new Transformer<AddedDocument, AddedDocumentPreview>() {
         public AddedDocumentPreview transform(AddedDocument addedDocument) {
             AddedDocumentPreview documentPreview = mapper.map(addedDocument, AddedDocumentPreview.class);
 
@@ -86,7 +86,7 @@ public class DrugsLogicImpl implements DrugsLogic {
         }
     };
 
-    protected final Transformer<Paragraph, ParagraphPreview> PARAGRAPH_TO_PARAGRAPHPREVIEW = new Transformer<Paragraph, ParagraphPreview>() {
+    private final Transformer<Paragraph, ParagraphPreview> PARAGRAPH_TO_PARAGRAPHPREVIEW = new Transformer<Paragraph, ParagraphPreview>() {
         public ParagraphPreview transform(Paragraph paragraph) {
             return mapper.map(paragraph, ParagraphPreview.class);
         }
@@ -108,55 +108,55 @@ public class DrugsLogicImpl implements DrugsLogic {
         return mppPreview;
     };
 
-    protected final Transformer<Mpp, MppPreview> MPP_TO_MPPPREVIEW = new Transformer<Mpp, MppPreview>() {
+    private final Transformer<Mpp, MppPreview> MPP_TO_MPPPREVIEW = new Transformer<Mpp, MppPreview>() {
         public MppPreview transform(Mpp mpp) {
             return mapper.map(mpp, MppPreview.class);
         }
     };
 
-    protected final Transformer<Iam, IamFullInfos> IAM_TO_IAMFULL = new Transformer<Iam, IamFullInfos>() {
+    private final Transformer<Iam, IamFullInfos> IAM_TO_IAMFULL = new Transformer<Iam, IamFullInfos>() {
         public IamFullInfos transform(Iam iam) {
             return mapper.map(iam, IamFullInfos.class);
         }
     };
 
-    protected final Transformer<Mpp, MppInfos> MPP_TO_MPPINFOS = new Transformer<Mpp, MppInfos>() {
+    private final Transformer<Mpp, MppInfos> MPP_TO_MPPINFOS = new Transformer<Mpp, MppInfos>() {
         public MppInfos transform(Mpp mpp) {
             return mapper.map(mpp, MppInfos.class);
         }
     };
 
-    protected final Transformer<Mp, MpExtendedInfos> MP_TO_MPEXTENDEDINFOS = new Transformer<Mp, MpExtendedInfos>() {
+    private final Transformer<Mp, MpExtendedInfos> MP_TO_MPEXTENDEDINFOS = new Transformer<Mp, MpExtendedInfos>() {
         public MpExtendedInfos transform(Mp mp) {
             return mapper.map(mp, MpExtendedInfos.class);
         }
     };
 
-    protected final Transformer<Mp, MpFullInfos> MP_TO_MPFULLINFOS = new Transformer<Mp, MpFullInfos>() {
+    private final Transformer<Mp, MpFullInfos> MP_TO_MPFULLINFOS = new Transformer<Mp, MpFullInfos>() {
         public MpFullInfos transform(Mp mp) {
             return mapper.map(mp, MpFullInfos.class);
         }
     };
 
-    protected final Transformer<Mp, MpPreview> MP_TO_MPPREVIEW = new Transformer<Mp, MpPreview>() {
+    private final Transformer<Mp, MpPreview> MP_TO_MPPREVIEW = new Transformer<Mp, MpPreview>() {
         public MpPreview transform(Mp mp) {
             return mapper.map(mp, MpPreview.class);
         }
     };
 
-    protected final Transformer<Equivalence, MpPreview> EQUIV_TO_MPPREVIEW = new Transformer<Equivalence, MpPreview>() {
+    private final Transformer<Equivalence, MpPreview> EQUIV_TO_MPPREVIEW = new Transformer<Equivalence, MpPreview>() {
         public MpPreview transform(Equivalence eq) {
             return mapper.map(eq.getMpByTargetequivalence(), MpPreview.class);
         }
     };
 
-    protected final Transformer<Doc, DocExtendedInfos> DOC_TO_DOCEXTENDEDINFOS = new Transformer<Doc, DocExtendedInfos>() {
+    private final Transformer<Doc, DocExtendedInfos> DOC_TO_DOCEXTENDEDINFOS = new Transformer<Doc, DocExtendedInfos>() {
         public DocExtendedInfos transform(Doc doc) {
             return mapper.map(doc, DocExtendedInfos.class);
         }
     };
 
-    protected final Transformer<Doc, DocPreview> DOC_TO_DOCPREVIEW = new Transformer<Doc, DocPreview>() {
+    private final Transformer<Doc, DocPreview> DOC_TO_DOCPREVIEW = new Transformer<Doc, DocPreview>() {
         public DocPreview transform(Doc doc) {
             return mapper.map(doc, DocPreview.class);
         }

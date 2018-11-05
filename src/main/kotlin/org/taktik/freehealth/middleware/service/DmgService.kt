@@ -45,6 +45,10 @@ interface DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
+        traineeSupervisorSsin: String?,
+        traineeSupervisorNihii: String?,
+        traineeSupervisorFirstName: String?,
+        traineeSupervisorLastName: String?,
         patientSsin: String?,
         oa: String?,
         regNrWithMut: String?,
@@ -75,7 +79,6 @@ interface DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        oa: String,
         messageNames: List<String>?
     ): DmgsList
 
@@ -87,7 +90,7 @@ interface DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        dmgMessages: List<DmgMessage>
+        dmgMessagesHashes: List<String>
     ): Boolean
 
     fun confirmAcks(
@@ -98,6 +101,7 @@ interface DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        dmgTacks: List<DmgAcknowledge>
+        dmgAcksHashes: List<String>
     ): Boolean
+
 }

@@ -159,7 +159,7 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
                          @PathVariable requestType: String,
                          @PathVariable civicsVersion: String,
                          @PathVariable paragraph: String,
-                         @RequestParam verses: String,
+                         @RequestParam(required = false) verses: String?  = null,
                          @RequestParam(required = false) incomplete: Boolean = false,
                          @RequestParam(required = false) start: Long? = null,
                          @RequestParam(required = false) end: Long? = null,
@@ -183,7 +183,7 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
             requestType = RequestType.valueOf(requestType),
             civicsVersion = civicsVersion,
             paragraph = paragraph,
-            verses = verses?.split(","),
+            verses = verses?.split(",") ?: listOf(),
             incomplete = incomplete ?: false,
             start = start
                 ?: LocalDate.now().minusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),

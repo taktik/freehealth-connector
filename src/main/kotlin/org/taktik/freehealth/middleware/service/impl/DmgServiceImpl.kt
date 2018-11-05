@@ -96,6 +96,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgConsultationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
     val dmgNotificationErrors =
         Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgNotificationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+    val dmgListsConsultationErrors =
+        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgListsConsultationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
     val xPathfactory = XPathFactory.newInstance()
 
 
@@ -436,6 +438,10 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
+        traineeSupervisorSsin: String?,
+        traineeSupervisorNihii: String?,
+        traineeSupervisorFirstName: String?,
+        traineeSupervisorLastName: String?,
         patientSsin: String?,
         oa: String?,
         regNrWithMut: String?,
@@ -466,6 +472,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         val dateReference = DateTime()
         val istest = config.getProperty("endpoint.dmg.notification.v1").contains("-acpt")
         val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+        val supervisor = traineeSupervisorNihii?.let {nihii -> traineeSupervisorSsin?.let {ssin -> traineeSupervisorFirstName?.let {firstName -> traineeSupervisorLastName?.let {lastName -> makeHcparty(nihii, ssin, firstName, lastName)} } } }
         val kmehrmessage = Kmehrmessage().apply {
             header = HeaderType().apply {
                 sender = SenderType().apply { hcparties.addAll(author.hcparties) }
@@ -522,7 +529,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     item.add(ItemType().apply {
                         cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "gmdmanager" })
                         ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "1"; sv = "1.0" })
-                        contents.add(ContentType().apply { hcparty = author.hcparties.first() })
+                        contents.add(ContentType().apply { hcparty = supervisor ?: author.hcparties.first() })
                     })
                     item.add(ItemType().apply {
                         cds.add(CDITEM().apply {
@@ -652,7 +659,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         assert(patientSsin != null || oa != null && regNrWithMut != null)
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw IllegalArgumentException("Cannot obtain token for DMG operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
 
@@ -733,75 +740,74 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         });
 
-        val intermediateResponse = xmlResponse.asObject(NotifyGlobalMedicalFileResponse::class.java).apply {
-            replyValidator.validateReplyStatus(
-                this
-                                              )
-        }
+        return try {
+            val response = ResponseObjectBuilderFactory.getResponseObjectBuilder()
+                .handleSendResponseType(xmlResponse.asObject(
+                    NotifyGlobalMedicalFileResponse::class.java).apply { replyValidator.validateReplyStatus(this) })
 
-        intermediateResponse.soapRequest = xmlResponse.request
-        intermediateResponse.soapResponse = xmlResponse.soapMessage
-
-        val response = ResponseObjectBuilderFactory.getResponseObjectBuilder().handleSendResponseType(intermediateResponse)
-
-        if (!response.ehealthStatus.equals("200")) {
-            throw RuntimeException("Wrong status code" + response.ehealthStatus)
-        }
-
-        val dmg = DmgConsultation(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
-            this.errors.addAll(response.sendTransactionResponse.acknowledge.errors?.filterNotNull()?.flatMap { et ->
-                et.cds.firstOrNull()?.let { cd ->
-                    this@DmgServiceImpl.extractError(
-                        consultRequest.detail.value,
-                        cd.value,
-                        dmgConsultationErrors,
-                        et.url
-                                                    )
-                } ?: setOf()
-            } ?: listOf())
-            response.sendTransactionResponse.kmehrmessage?.let {
-                it.folders.firstOrNull()?.let {
-                    it.patient?.let {
-                        lastName = it.familyname
-                        firstName = it.firstnames.joinToString(" ")
-                        it.sex?.let { sex = it.cd.value.value() }
-                        it.birthdate?.let { birthday = Instant.ofEpochMilli(it.date.millis) }
-                        it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT || it.s == IDPATIENTschemes.INSS }
-                            ?.let { inss = it.value }
-                        it.insurancymembership?.let {
-                            mutuality = it.id.value; it.membership?.let {
-                            this.regNrWithMut = (it as? Node)?.textContent
-                        }
-                        }
-                    }
-                    it.transactions.find { it.cds.any { it.value.toLowerCase() == "gmd" } }?.let {
-                        it.item.forEach {
-                            if (it.cds.any { it.value.toLowerCase() == "gmdmanager" }) {
-                                it.beginmoment?.date?.let { from = Instant.ofEpochMilli(it.millis) }
-                                it.endmoment?.date?.let { to = Instant.ofEpochMilli(it.millis) }
-                                hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
+            DmgConsultation(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
+                this.errors.addAll(response.sendTransactionResponse.acknowledge.errors?.filterNotNull()?.flatMap { et ->
+                    et.cds.firstOrNull()?.let { cd ->
+                        this@DmgServiceImpl.extractError(
+                            consultRequest.detail.value,
+                            cd.value,
+                            dmgConsultationErrors,
+                            et.url
+                                                        )
+                    } ?: setOf()
+                } ?: listOf())
+                response.sendTransactionResponse.kmehrmessage?.let {
+                    it.folders.firstOrNull()?.let {
+                        it.patient?.let {
+                            lastName = it.familyname
+                            firstName = it.firstnames.joinToString(" ")
+                            it.sex?.let { sex = it.cd.value.value() }
+                            it.birthdate?.let { birthday = Instant.ofEpochMilli(it.date.millis) }
+                            it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT || it.s == IDPATIENTschemes.INSS }
+                                ?.let { inss = it.value }
+                            it.insurancymembership?.let {
+                                mutuality = it.id.value; it.membership?.let {
+                                this.regNrWithMut = (it as? Node)?.textContent
                             }
-                            if (it.cds.any { it.value.toLowerCase() == "payment" }) {
-                                payment = it.contents.map { it.isBoolean }.filterNotNull().first()
+                            }
+                        }
+                        it.transactions.find { it.cds.any { it.value.toLowerCase() == "gmd" } }?.let {
+                            it.item.forEach {
+                                if (it.cds.any { it.value.toLowerCase() == "gmdmanager" }) {
+                                    it.beginmoment?.date?.let { from = Instant.ofEpochMilli(it.millis) }
+                                    it.endmoment?.date?.let { to = Instant.ofEpochMilli(it.millis) }
+                                    hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
+                                }
+                                if (it.cds.any { it.value.toLowerCase() == "payment" }) {
+                                    payment = it.contents.map { it.isBoolean }.filterNotNull().first()
+                                }
                             }
                         }
                     }
                 }
+                this.commonOutput = CommonOutput(
+                    response?.originalResponse?.`return`?.commonOutput?.inputReference,
+                    response?.originalResponse?.`return`?.commonOutput?.nipReference,
+                    response?.originalResponse?.`return`?.commonOutput?.outputReference
+                                                )
+                this.mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionResponse = MarshallerHelper(DmgBuilderResponse::class.java, DmgBuilderResponse::class.java).toXMLByteArray(response).toString(Charsets.UTF_8)
+                    this.transactionRequest = MarshallerHelper(ConsultGlobalMedicalFileRequest::class.java, ConsultGlobalMedicalFileRequest::class.java).toXMLByteArray(consultRequest).toString(Charsets.UTF_8)
+                    xmlResponse?.soapMessage?.writeTo(this.soapResponseOutputStream())
+                    xmlResponse?.request?.writeTo(this.soapRequestOutputStream())
+                }
             }
-            this.commonOutput = CommonOutput(
-                response?.originalResponse?.`return`?.commonOutput?.inputReference,
-                response?.originalResponse?.`return`?.commonOutput?.nipReference,
-                response?.originalResponse?.`return`?.commonOutput?.outputReference
-                                            )
-            this.mycarenetConversation = MycarenetConversation().apply {
-                this.transactionResponse = MarshallerHelper(DmgBuilderResponse::class.java, DmgBuilderResponse::class.java).toXMLByteArray(response).toString(Charsets.UTF_8)
-                this.transactionRequest = MarshallerHelper(ConsultGlobalMedicalFileRequest::class.java, ConsultGlobalMedicalFileRequest::class.java).toXMLByteArray(consultRequest).toString(Charsets.UTF_8)
-                intermediateResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                intermediateResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+        } catch (e:SOAPFaultException) {
+            DmgConsultation(false).apply {
+                this.errors.add(MycarenetError(code = e.fault.faultCode, msgFr =  e.fault.faultString, msgNl = e.fault.faultString))
+                this.mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest = MarshallerHelper(ConsultGlobalMedicalFileRequest::class.java, ConsultGlobalMedicalFileRequest::class.java).toXMLByteArray(consultRequest).toString(Charsets.UTF_8)
+                    xmlResponse?.soapMessage?.writeTo(this.soapResponseOutputStream())
+                    xmlResponse?.request?.writeTo(this.soapRequestOutputStream())
+                }
             }
         }
 
-        return dmg
     }
 
     override fun confirmDmgMessages(
@@ -812,9 +818,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        dmgMessages: List<DmgMessage>
+        dmgMessagesHashes: List<String>
                                    ): Boolean {
-        if (dmgMessages.isEmpty()) {
+        if (dmgMessagesHashes.isEmpty()) {
             return true
         }
         val samlToken =
@@ -826,10 +832,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             BuilderFactory.getRequestObjectBuilder("dmg")
                 .buildConfirmRequestWithHashes(
                     buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
-                    dmgMessages.map { dmgMessage ->
-                        Base64.getDecoder()
-                            .decode(dmgMessage.valueHash)
-                    },
+                    dmgMessagesHashes.map { valueHash -> Base64.getDecoder().decode(valueHash) },
                     listOf())
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
@@ -845,9 +848,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        dmgTacks: List<DmgAcknowledge>
+        dmgAcksHashes: List<String>
                             ): Boolean {
-        if (dmgTacks.isEmpty()) {
+        if (dmgAcksHashes.isEmpty()) {
             return true
         }
         val samlToken =
@@ -859,7 +862,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             BuilderFactory.getRequestObjectBuilder("dmg")
                 .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
                                                listOf(),
-                                               dmgTacks.map { ack -> Base64.getDecoder().decode(ack.valueHash) })
+                                               dmgAcksHashes.map { valueHash -> Base64.getDecoder().decode(valueHash) })
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
 
@@ -874,7 +877,6 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        oa: String,
         messageNames: List<String>?
                                ): DmgsList {
         val samlToken =
@@ -901,14 +903,14 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         val b64 = Base64.getEncoder()
         return DmgsList().apply {
-            acks = response.`return`.tAckResponses.map {
+            acks = response.`return`.tAckResponses?.map {
                 DmgAcknowledge(it.tAck.resultMajor, it.tAck.resultMinor, it.tAck.resultMessage).apply {
                     io = it.tAck.issuer.replace("urn:nip:issuer:io:".toRegex(), "")
                     reference = it.tAck.reference
                     valueHash = b64.encodeToString(it.tAck.value)
                 }
-            }
-            messages = response.`return`.msgResponses.map { r ->
+            } ?: listOf()
+            messages = response.`return`.msgResponses?.map { r ->
                 ResponseObjectBuilderFactory.getResponseObjectBuilder().handleAsyncResponse(r)?.let { dec ->
                     dec.retrieveTransactionResponse?.let { rtr ->
                         DmgsList().apply {
@@ -921,7 +923,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                                 errors.addAll(listOf() /* TODO */)
                             }
                             if (rtr.acknowledge?.isIscomplete == true) {
-                                dec.kmehrmessage?.let { km ->
+                                rtr.kmehrmessage?.let { km ->
                                     date = km.header.date.toDate()
                                     inscriptions.addAll(km.folders?.map {
                                         DmgInscription().apply {
@@ -994,7 +996,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                         }
                     }
                 }
-            }
+            } ?: listOf()
         }
     }
 
@@ -1016,7 +1018,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         val istest = config.getProperty("endpoint.dmg.notification.v1").contains("-acpt")
         val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
         val inputReference =
-            IdGeneratorFactory.getIdGenerator().generateId().let { if (istest) "T" + it.substring(1) else it }
+            IdGeneratorFactory.getIdGenerator().generateId()//.let { if (istest) "T" + it.substring(1) else it }
         val now = DateTime().withMillisOfSecond(0)
 
         val postHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:post:msg")).apply {
@@ -1028,7 +1030,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         val retrieveTransactionRequest = RetrieveTransactionRequest().apply {
             request = RequestType().apply {
-                id = IDKMEHR()//TODO HcPartyUtil.createKmehrId(DmgConstants.PROJECT_IDENTIFIER, inputReference)
+                id = IDKMEHR().apply {
+                    this.s = IDKMEHRschemes.ID_KMEHR; this.sv = "1.0"; this.value = "$hcpNihii.$inputReference"
+                }
                 this.author = author
                 date = now
                 time = now
@@ -1039,8 +1043,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     this.author = author
                     begindate = DateTime(requestDate)
                     cds.add(CDTRANSACTION().apply {
-                        s = CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET; sv =
-                        "1.0"; value = "gmd"
+                        s = CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET; sv = "1.0"; value = "gmd"
                     })
                 }
             }
@@ -1091,13 +1094,17 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
     private fun makeAuthor(hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String): AuthorType {
         return AuthorType().apply {
-            hcparties.add(HcpartyType().apply {
-                ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
-                ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
-                firstname = hcpFirstName
-                familyname = hcpLastName
-            })
+            hcparties.add(makeHcparty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName))
+        }
+    }
+
+    private fun makeHcparty(hcpNihii: String, hcpSsin: String, hcpFirstName: String, hcpLastName: String): HcpartyType {
+        return HcpartyType().apply {
+            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
+            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
+            firstname = hcpFirstName
+            familyname = hcpLastName
         }
     }
 
@@ -1211,9 +1218,9 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             elements = errors.values.filter {
                 it.path == trimmedBase && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
             }
-            if (elements.isEmpty()) {
-                elements = errors.values.filter { it.code == ec }
-            }
+        }
+        if (elements.isEmpty()) {
+            elements = errors.values.filter { it.code == ec }
         }
         elements.forEach { it.value = textContent }
         result.addAll(elements)
