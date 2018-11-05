@@ -79,7 +79,6 @@ interface DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        oa: String,
         messageNames: List<String>?
     ): DmgsList
 

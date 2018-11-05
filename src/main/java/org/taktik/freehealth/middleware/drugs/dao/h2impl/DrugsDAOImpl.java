@@ -74,6 +74,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+@SuppressWarnings("unchecked")
 @Repository("drugsDAO")
 public class DrugsDAOImpl implements DrugsDAO {
 
@@ -772,16 +773,29 @@ public class DrugsDAOImpl implements DrugsDAO {
     }
 
     @Override
+    public List<Verse> getChildrenVerses(Paragraph paragraph) {
+        if (paragraph != null) {
+            Session sess = this.getSessionFactory().getCurrentSession();
+            return (List<Verse>) sess.createCriteria(Verse.class)
+                    .add(Restrictions.eq("chapterName", paragraph.getChapterName()))
+                    .add(Restrictions.eq("paragraphName", paragraph.getParagraphName()))
+                    .addOrder(Order.asc("verseSeq"))
+                    .list();
+        }
+        return null;
+    }
+
+    @Override
     public List<Paragraph> findParagraphs(String searchString, String language) {
         if (searchString != null && searchString.length() >= 2) {
-            Set<Paragraph> result = new HashSet<>();
             Session sess = this.getSessionFactory().getCurrentSession();
 
-            result.addAll(sess.createCriteria(Paragraph.class)
+            Set<Paragraph> result = new HashSet<>(sess.createCriteria(Paragraph.class)
                     .add(Restrictions.or(
                             Restrictions.ilike("paragraphName", searchString + "%"),
                             Restrictions.ilike(language != null && language.startsWith("nl") ? "keyStringNl" : "keyStringFr", "%" + searchString + "%")
                     ))
+                    .add(Restrictions.in("processType", Arrays.asList(1L, 2L, 3L, 4L)))
                     .list());
 
             List<Long> ids = new LinkedList<>();
