@@ -1,5 +1,6 @@
 package org.taktik.connector.technical.ws.domain;
 
+import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import org.taktik.connector.technical.utils.MarshallerHelper;
@@ -69,7 +70,14 @@ public class GenericResponse {
             helper.addAttachmentPart(this.getAttachmentPartId(element), element);
          }
 
-         return helper.toObject((Node)this.getFirstChildElement());
+	      T res = helper.toObject((Node) this.getFirstChildElement());
+
+         if (res instanceof SoapConversationLogger) {
+	         ((SoapConversationLogger) res).setSoapRequest(this.request);
+	         ((SoapConversationLogger) res).setSoapResponse(this.message);
+         }
+
+	      return res;
       }
    }
 
