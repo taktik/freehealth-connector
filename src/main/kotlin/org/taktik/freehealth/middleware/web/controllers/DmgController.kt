@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.taktik.freehealth.middleware.dto.common.GenAsyncResponse
 import org.taktik.freehealth.middleware.dto.dmg.DmgAcknowledge
 import org.taktik.freehealth.middleware.service.DmgService
 import java.util.*
@@ -81,7 +82,7 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
         @RequestParam(required = false) requestDate: Long? = null
     ) =
         dmgService.postDmgsListRequest(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, oa = oa, requestDate = requestDate?.let { Date(requestDate) }
-            ?: Date())
+            ?: Date()).let { mapper.map(it, GenAsyncResponse::class.java)}
 
     @PostMapping("/messages")
     fun getDmgMessages(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestBody messageNames: List<String>?) =

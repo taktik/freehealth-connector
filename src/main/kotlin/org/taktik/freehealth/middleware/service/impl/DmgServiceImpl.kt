@@ -9,6 +9,7 @@ import be.cin.mycarenet.esb.common.v2.PackageType
 import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
+import be.cin.nip.async.generic.PostResponse
 import be.cin.nip.async.generic.Query
 import be.cin.nip.sync.reg.v1.RegistrationStatus
 import be.fgov.ehealth.globalmedicalfile.core.v1.*
@@ -39,6 +40,7 @@ import org.taktik.connector.business.dmg.domain.DMGReferences
 import org.taktik.connector.business.dmg.domain.DmgBuilderResponse
 import org.taktik.connector.business.dmg.exception.DmgBusinessConnectorException
 import org.taktik.connector.business.dmg.exception.DmgBusinessConnectorExceptionValues
+import org.taktik.connector.business.domain.common.GenAsyncResponse
 import org.taktik.connector.business.domain.dmg.*
 import org.taktik.connector.business.genericasync.builders.BuilderFactory
 import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
@@ -1010,7 +1012,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         hcpLastName: String,
         oa: String?,
         requestDate: Date
-                                    ): Boolean {
+                                    ): GenAsyncResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -1066,11 +1068,19 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             this.inputReference = inputReference
         }
         // no xades needed for dmg async
-        val post =
-            BuilderFactory.getRequestObjectBuilder("dmg")
+        val post = BuilderFactory.getRequestObjectBuilder("dmg")
                 .buildPostRequest(ci, SendRequestMapper.mapBlobToCinBlob(blob), null)
         val postResponse = genAsyncService.postRequest(samlToken, post, postHeader)
-        return postResponse.`return`.resultMajor == "urn:nip:tack:result:major:success"
+        return GenAsyncResponse().apply {
+            result = postResponse.`return`.resultMajor == "urn:nip:tack:result:major:success"
+            this.tack = postResponse.`return`
+            mycarenetConversation = MycarenetConversation().apply {
+                this.transactionRequest = MarshallerHelper(be.cin.nip.async.generic.Post::class.java, be.cin.nip.async.generic.Post::class.java).toXMLByteArray(post).toString(Charsets.UTF_8)
+                this.transactionResponse = MarshallerHelper(PostResponse::class.java, PostResponse::class.java).toXMLByteArray(postResponse).toString(Charsets.UTF_8)
+                postResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                postResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+            }
+        }
     }
 
     fun fillDmgMessage(msg: DmgMessageWithPatient, patient: PersonType) {
