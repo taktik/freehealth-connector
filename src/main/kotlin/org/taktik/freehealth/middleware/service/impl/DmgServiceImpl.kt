@@ -985,8 +985,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                                                 it.contents.map { it.hcparty }.firstOrNull()?.let { hcp ->
                                                     it.beginmoment?.date?.let { beginOfNewDmg = it.toDate(); newHcParty = hcp }
                                                     it.endmoment?.date?.let {
-                                                        endOfPreviousDmg = it.toDate(); previousHcParty =
-                                                        hcp
+                                                        endOfPreviousDmg = it.toDate();
+                                                        previousHcParty = hcp
                                                     }
                                                     null
                                                 }
