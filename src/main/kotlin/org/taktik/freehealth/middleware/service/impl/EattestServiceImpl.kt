@@ -38,6 +38,8 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.OriginType
 import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
+import be.fgov.ehealth.mycarenet.registration.protocol.v1.RegisterToMycarenetServiceRequest
+import be.fgov.ehealth.mycarenet.registration.protocol.v1.RegisterToMycarenetServiceResponse
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.CD_NIHDI
@@ -114,6 +116,8 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.eattest.EattestAcknowledgeType
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResultWithResponse
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.service.EattestService
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Document
@@ -144,7 +148,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         Gson().fromJson(
             this.javaClass.getResourceAsStream("/be/errors/eAttestErrors.json").reader(Charsets.UTF_8),
             arrayOf<MycarenetError>().javaClass
-        ).associateBy({ it.uid }, { it })
+                       ).associateBy({ it.uid }, { it })
     private val xPathFactory = XPathFactory.newInstance()
 
     fun NodeList.forEach(action: (Node) -> Unit) {
@@ -163,7 +167,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         patientSsin: String,
         referenceDate: Int?,
         attest: Eattest
-    ): SendAttestResultWithResponse? {
+                           ): SendAttestResultWithResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -298,7 +302,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                         BigDecimal.valueOf(attest.codes.sumBy {
                                             Math.round(
                                                 ((it.reimbursement ?: 0.0) + (it.reglementarySupplement ?: 0.0)) * 100
-                                            ).toInt()
+                                                      ).toInt()
                                         }.toLong()).divide(BigDecimal(100L))
                                     unit = UnitType().apply {
                                         cd =
@@ -351,7 +355,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                                        })
                                                    })
                                                }).filterNotNull()
-                            )
+                                       )
                         }).plus(attest.codes.map { code ->
                             TransactionType().apply {
                                 ids.add(IDKMEHR().apply {
@@ -602,11 +606,11 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                 }
             }
             val kmehrMarshallHelper =
-            MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
+                MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
             val requestXml = kmehrMarshallHelper.toXMLByteArray(sendTransactionRequest)
 
 
-            freehealthEattestService.sendAttestion(samlToken, SendAttestationRequest().apply {
+            val sendAttestationRequest = SendAttestationRequest().apply {
                 val encryptedKnownContent = EncryptedKnownContent()
                 encryptedKnownContent.replyToEtk = it.encoded
                 val businessContent = BusinessContent().apply { id = detailId }
@@ -660,7 +664,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                     ValueRefString().apply { value = hcpNihii }
                                 }
                             physicalPerson = IdType().apply {
-                                name = ValueRefString().apply { value = hcpFirstName + " " + hcpLastName }
+                                name = ValueRefString().apply { value = "$hcpFirstName $hcpLastName" }
                                 ssin = ValueRefString().apply { value = hcpSsin }
                                 nihii =
                                     NihiiType().apply {
@@ -680,94 +684,9 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     this.referenceDate = refDateTime
                 }
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
-            })
+            }
 
-            val sendAttestationResponse =
-                freehealthEattestService.sendAttestion(samlToken, SendAttestationRequest().apply {
-                    val encryptedKnownContent = EncryptedKnownContent()
-                    encryptedKnownContent.replyToEtk = it.encoded
-                    val businessContent = BusinessContent().apply { id = detailId }
-                    encryptedKnownContent.businessContent = businessContent
-
-                    businessContent.value = requestXml
-                    log.info("Request is: " + businessContent.value.toString(Charsets.UTF_8))
-                    val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
-                    val blob =
-                        BlobBuilderFactory.getBlobBuilder("attest")
-                            .build(
-                                xmlByteArray,
-                                "none",
-                                detailId,
-                                "text/xml",
-                                null as String?,
-                                "encryptedForKnownCINNIC"
-                            )
-                    blob.messageName = "E-ATTEST"
-
-                    val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                    val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword)
-
-                    this.commonInput = CommonInputType().apply {
-                        request =
-                            be.fgov.ehealth.mycarenet.commons.core.v3.RequestType()
-                                .apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
-                        this.inputReference = inputReference
-                        origin = OriginType().apply {
-                            `package` = PackageType().apply {
-                                license = LicenseType().apply {
-                                    username = packageInfo.userName
-                                    password = packageInfo.password
-                                }
-                                name = ValueRefString().apply { value = packageInfo.packageName }
-                            }
-                            siteID =
-                                ValueRefString().apply {
-                                    value =
-                                        config.getProperty(
-                                            "mycarenet.${PropertyUtil.retrieveProjectNameToUse(
-                                                "genins",
-                                                "mycarenet."
-                                            )}.site.id"
-                                        )
-                                }
-                            careProvider = CareProviderType().apply {
-                                nihii =
-                                    NihiiType().apply {
-                                        quality = "doctor"; value =
-                                        ValueRefString().apply { value = hcpNihii }
-                                    }
-                                physicalPerson = IdType().apply {
-                                    name = ValueRefString().apply { value = hcpFirstName + " " + hcpLastName }
-                                    ssin = ValueRefString().apply { value = hcpSsin }
-                                    nihii =
-                                        NihiiType().apply {
-                                            quality = "doctor"; value =
-                                            ValueRefString().apply { value = hcpNihii }
-                                        }
-                                }
-                            }
-                        }
-                    }
-                    this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                    this.issueInstant = DateTime()
-                    this.routing = RoutingType().apply {
-                        careReceiver = CareReceiverIdType().apply {
-                            ssin = patientSsin
-                        }
-                        this.referenceDate = refDateTime
-                    }
-                    try{
-                        BlobMapper.mapBlobTypefromBlob(blob)
-                    }catch(e:Exception){
-                        print(e.toString())
-                    }
-                    this.detail = BlobMapper.mapBlobTypefromBlob(blob)
-
-                    val requestMarshaller =
-                        MarshallerHelper(SendAttestationRequest::class.java, SendAttestationRequest::class.java)
-                    val requestXmlByteArray = requestMarshaller.toXMLByteArray(this);
-                })
-
+            val sendAttestationResponse = freehealthEattestService.sendAttestion(samlToken, sendAttestationRequest)
 
             val blobType = sendAttestationResponse.`return`.detail
             val blob = BlobMapper.mapBlobfromBlobType(blobType)
@@ -776,7 +695,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             val encryptedKnownContent =
                 MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
                     unsealedData
-                )
+                                                                                                               )
             val xades = encryptedKnownContent!!.xades
             val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
             val options = emptyMap<String, Any>()
@@ -787,41 +706,55 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     MarshallerHelper(
                         SendTransactionResponse::class.java,
                         SendTransactionResponse::class.java
-                    ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
-                )
-
-            val requestMarshaller =
-                MarshallerHelper(SendAttestationResponse::class.java, SendAttestationResponse::class.java)
-            val requestXmlByteArray = requestMarshaller.toXMLByteArray(sendAttestationResponse);
-
+                                    ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
+                                     )
 
             val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
                 e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
                     extractError(requestXml, ec, e.url)
                 } ?: setOf()
             }
+            val commonOutput = sendAttestationResponse.`return`.commonOutput
             decryptedAndVerifiedResponse.sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
-                SendAttestResultWithResponse(EattestAcknowledgeType(
+                SendAttestResultWithResponse(
+                    acknowledge = EattestAcknowledgeType(
+                        iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
+                        errors = errors ?: listOf()
+                                                        ),
+                    invoicingNumber = folder.transactions.find { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cga" } }?.let {
+                        it.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "invoicingnumber" } }
+                            ?.contents?.firstOrNull()?.texts?.firstOrNull()?.value
+                    },
+                    attest = Eattest(codes = folder.transactions?.filter { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cgd" } }?.map { t ->
+                        Eattest.EattestCode(
+                            riziv = t.item.find { it.cds.any { it.s == CD_ITEM && it.value == "claim" } }?.contents?.mapNotNull { it.cds?.find { it.s == CD_NIHDI }?.value }?.firstOrNull(),
+                            fee = t.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "fee" } }?.cost?.decimal?.toDouble()
+                                           )
+                    } ?: listOf()),
+                    xades = xades,
+                    commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
+                    mycarenetConversation = MycarenetConversation().apply {
+                        this.transactionResponse = MarshallerHelper(SendAttestationResponse::class.java, SendAttestationResponse::class.java).toXMLByteArray(sendAttestationResponse).toString(Charsets.UTF_8)
+                        this.transactionRequest = MarshallerHelper(SendAttestationRequest::class.java, SendAttestationRequest::class.java).toXMLByteArray(sendAttestationRequest).toString(Charsets.UTF_8)
+                        sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                        sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    },
+                    kmehrMessage = encryptedKnownContent?.businessContent?.value
+                                            )
+            } ?: SendAttestResultWithResponse(
+                acknowledge = EattestAcknowledgeType(
                     iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
                     errors = errors ?: listOf()
-                ),
-                 invoicingNumber = folder.transactions.find { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cga" } }?.let {
-                     it.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "invoicingnumber" } }
-                         ?.contents?.firstOrNull()?.texts?.firstOrNull()?.value
-                 },
-                 attest = Eattest(codes = folder.transactions?.filter { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cgd" } }?.map { t ->
-                     Eattest.EattestCode(
-                         riziv = t.item.find { it.cds.any { it.s == CD_ITEM && it.value == "claim" } }?.contents?.mapNotNull { it.cds?.find { it.s == CD_NIHDI }?.value }?.firstOrNull(),
-                         fee = t.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "fee" } }?.cost?.decimal?.toDouble()
-                     )
-                 } ?: listOf()),
-                 xades = xades
-                                            );
-            } ?: SendAttestResultWithResponse(EattestAcknowledgeType(
-                    iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
-                    errors = errors ?: listOf()
-                ),
-                xades = xades
+                                                    ),
+                xades = xades,
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionResponse = MarshallerHelper(SendAttestationResponse::class.java, SendAttestationResponse::class.java).toXMLByteArray(sendAttestationResponse).toString(Charsets.UTF_8)
+                    this.transactionRequest = MarshallerHelper(SendAttestationRequest::class.java, SendAttestationRequest::class.java).toXMLByteArray(sendAttestationRequest).toString(Charsets.UTF_8)
+                    sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                },
+                kmehrMessage = encryptedKnownContent?.businessContent?.value
+
                                              )
         }
     }
@@ -844,7 +777,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             (expr.evaluate(
                 builder.parse(ByteArrayInputStream(sendTransactionRequest)),
                 XPathConstants.NODESET
-            ) as NodeList).let { it ->
+                          ) as NodeList).let { it ->
                 if (it.length > 0) {
                     var node = it.item(0)
                     val textContent = node.textContent
@@ -866,8 +799,8 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                                                                     )
-                    )
+                                      )
+                              )
                 }
             }
             result
@@ -900,7 +833,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         credential: Credential,
         crypto: Crypto,
         detailId: String
-    ): ByteArray? {
+                                ): ByteArray? {
         val marshaller = JAXBContext.newInstance(request.javaClass).createMarshaller()
         val res = DOMResult()
         marshaller.marshal(request, res)
@@ -929,9 +862,9 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                 IdentifierType.CBE,
                 820563481L,
                 "MYCARENET"
-            ),
+                                                                 ),
             encryptedKnowContent
-        )
+                          )
     }
 
     @Throws(TransformerException::class)

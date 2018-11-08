@@ -20,10 +20,16 @@
 
 package org.taktik.freehealth.middleware.dto.eattest
 
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+
 
 class SendAttestResultWithResponse(
     acknowledge: EattestAcknowledgeType? = null,
     invoicingNumber: String? = null,
     attest: Eattest? = null,
-    var xades: ByteArray?
-) : SendAttestResult(acknowledge, invoicingNumber, attest)
+    var xades: ByteArray?,
+    commonOutput: CommonOutput? = null,
+    mycarenetConversation: MycarenetConversation? = null,
+    var kmehrMessage: ByteArray?
+): SendAttestResult(acknowledge, invoicingNumber, attest)

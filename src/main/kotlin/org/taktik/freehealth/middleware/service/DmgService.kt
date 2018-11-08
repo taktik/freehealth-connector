@@ -1,10 +1,11 @@
 package org.taktik.freehealth.middleware.service
 
+import org.taktik.connector.business.domain.common.GenAsyncResponse
 import org.taktik.connector.business.domain.dmg.DmgAcknowledge
 import org.taktik.connector.business.domain.dmg.DmgConsultation
-import org.taktik.connector.business.domain.dmg.DmgMessage
 import org.taktik.connector.business.domain.dmg.DmgNotification
 import org.taktik.connector.business.domain.dmg.DmgRegistration
+import org.taktik.connector.business.domain.dmg.DmgsList
 import java.util.*
 
 interface DmgService {
@@ -44,6 +45,10 @@ interface DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
+        traineeSupervisorSsin: String?,
+        traineeSupervisorNihii: String?,
+        traineeSupervisorFirstName: String?,
+        traineeSupervisorLastName: String?,
         patientSsin: String?,
         oa: String?,
         regNrWithMut: String?,
@@ -64,7 +69,7 @@ interface DmgService {
         hcpLastName: String,
         oa: String?,
         requestDate: Date
-    ): Boolean
+    ): GenAsyncResponse
 
     fun getDmgMessages(
         keystoreId: UUID,
@@ -74,9 +79,8 @@ interface DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        oa: String,
         messageNames: List<String>?
-    ): List<DmgMessage>
+    ): DmgsList
 
     fun confirmDmgMessages(
         keystoreId: UUID,
@@ -86,7 +90,7 @@ interface DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        dmgMessages: List<DmgMessage>
+        dmgMessagesHashes: List<String>
     ): Boolean
 
     fun confirmAcks(
@@ -97,6 +101,7 @@ interface DmgService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        dmgTacks: List<DmgAcknowledge>
+        dmgAcksHashes: List<String>
     ): Boolean
+
 }
