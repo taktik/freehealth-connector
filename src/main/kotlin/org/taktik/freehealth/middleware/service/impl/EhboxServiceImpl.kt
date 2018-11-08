@@ -122,6 +122,7 @@ class EhboxServiceImpl(val stsService: STSService) : EhboxService {
                     readReceipt
                 }
             }
+        request.publicationId = UUID.randomUUID().toString().substring(0,12)
         return freehealthEhboxService.sendMessage(samlToken, request).status?.code == "100"
     }
 
