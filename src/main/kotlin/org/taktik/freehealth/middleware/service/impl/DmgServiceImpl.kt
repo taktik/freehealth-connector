@@ -11,6 +11,7 @@ import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.PostResponse
 import be.cin.nip.async.generic.Query
+import be.cin.nip.async.generic.TAckResponse
 import be.cin.nip.sync.reg.v1.RegistrationStatus
 import be.fgov.ehealth.globalmedicalfile.core.v1.*
 import be.fgov.ehealth.globalmedicalfile.core.v1.RoutingType
