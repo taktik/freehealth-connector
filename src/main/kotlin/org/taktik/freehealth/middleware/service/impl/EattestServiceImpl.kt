@@ -166,8 +166,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         passPhrase: String,
         patientSsin: String,
         referenceDate: Int?,
-        attest: Eattest
-                           ): SendAttestResultWithResponse? {
+        attest: Eattest): SendAttestResultWithResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -396,28 +395,29 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                         (itemId++).toString()
                                     })
                                     cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "claim" })
-                                    contents.addAll(listOf(ContentType().apply {
+                                    contents.addAll(listOf(
+                                        ContentType().apply {
                                         cds.add(CDCONTENT().apply {
                                             s = CD_NIHDI; sv =
                                             "1.0"; value = code.riziv
                                         })
                                     },
-                                                           ContentType().apply {
-                                                               cds.add(CDCONTENT().apply {
-                                                                   s =
-                                                                       CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                                                   "NIHDI-CLAIM-NORM"; value = code.norm.toString()
-                                                               })
-                                                           },
-                                                           code.relativeService?.let {
-                                                               ContentType().apply {
-                                                                   cds.add(CDCONTENT().apply {
-                                                                       s =
-                                                                           CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value =
-                                                                       code.relativeService
-                                                                   })
-                                                               }
-                                                           }).filterNotNull())
+                                   ContentType().apply {
+                                       cds.add(CDCONTENT().apply {
+                                           s =
+                                               CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                           "NIHDI-CLAIM-NORM"; value = code.norm.toString()
+                                       })
+                                   },
+                                   code.relativeService?.let {
+                                       ContentType().apply {
+                                           cds.add(CDCONTENT().apply {
+                                               s =
+                                                   CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value =
+                                               code.relativeService
+                                           })
+                                       }
+                                   }).filterNotNull())
                                     quantity = QuantityType().apply { decimal = BigDecimal(code.quantity) }
                                 }, ItemType().apply {
                                     ids.add(IDKMEHR().apply {

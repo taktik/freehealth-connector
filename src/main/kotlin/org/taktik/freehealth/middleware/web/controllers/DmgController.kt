@@ -78,7 +78,7 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
-        @RequestParam(required = false) oa: String?,
+        @RequestParam(required = false) oa: String? = null,
         @RequestParam(required = false) requestDate: Long? = null
     ) =
         dmgService.postDmgsListRequest(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, oa = oa, requestDate = requestDate?.let { Date(requestDate) }
