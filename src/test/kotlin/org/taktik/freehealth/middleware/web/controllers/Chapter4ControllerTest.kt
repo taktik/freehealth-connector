@@ -401,7 +401,7 @@ class Chapter4ControllerTest : EhealthTest() {
 
         println("scenario 08 \n====================")
         Assertions.assertThat(results!!.errors).isNull()
-        Assertions.assertThat(results!!.transactions[0].end).isAfter(results!!.transactions[0].start)
+        Assertions.assertThat(results!!.transactions[0].end).isGreaterThan(results!!.transactions[0].start)
     }
 
     /**
@@ -441,7 +441,7 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&start=$sixMonth",{},AgreementResponse::class.java)
         }
         Assertions.assertThat(results!!.errors).isNull()
-        Assertions.assertThat(results!!.transactions[0].end).isAfter(results!!.transactions[0].start)
+        Assertions.assertThat(results!!.transactions[0].end).isGreaterThan(results!!.transactions[0].start)
 
         val results2 = getNisses(0)[2].let {
             this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?keystoreId=$keystoreId" +

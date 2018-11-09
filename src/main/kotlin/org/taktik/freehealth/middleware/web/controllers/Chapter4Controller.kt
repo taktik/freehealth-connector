@@ -42,8 +42,12 @@ import java.time.ZoneId
 import java.util.*
 import javax.servlet.http.HttpServletResponse
 import com.sun.xml.internal.ws.streaming.XMLStreamWriterUtil.getOutputStream
+import io.swagger.annotations.Api
+import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiResponse
 import org.apache.commons.io.IOUtils
 import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.ResponseBody
 import java.net.URL
 
 
@@ -58,7 +62,8 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @PathVariable paragraphName: String): List<AddedDocumentPreview> =
         chapter4Service.getAddedDocuments(chapterName, paragraphName)
 
-    @GetMapping("/sam/docpreview/{chapterName}/{paragraphName}/{verseSeq}/{docSeq}/{language}")
+    @GetMapping("/sam/docpreview/{chapterName}/{paragraphName}/{verseSeq}/{docSeq}/{language}", produces = ["application/octet-stream"])
+    @ResponseBody
     fun getAddedDocument(
         @PathVariable chapterName: String,
         @PathVariable paragraphName: String,

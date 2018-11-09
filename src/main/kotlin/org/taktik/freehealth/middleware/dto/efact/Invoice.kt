@@ -28,5 +28,6 @@ class Invoice {
     var reason: InvoicingTreatmentReasonCode? = null
     var invoiceRef: String? = null
     var invoiceNumber: Long? = null
+    var ignorePrescriptionDate: Boolean = false
     var hospitalisedPatient: Boolean = false
 }
