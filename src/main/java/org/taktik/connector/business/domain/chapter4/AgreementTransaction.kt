@@ -21,8 +21,8 @@ class AgreementTransaction : Serializable {
     var isInTreatment: Boolean = false
     var careProviderReference: String? = null
     var decisionReference: String? = null
-    var start: Date? = null
-    var end: Date? = null
+    var start: Long? = null
+    var end: Long? = null
     var quantityValue: Double? = null
     var quantityUnit: String? = null
     var ioRequestReference: String? = null

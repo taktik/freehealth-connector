@@ -77,14 +77,10 @@ public abstract class AbstractWsSender {
          }
          conn = scf.createConnection();
          reply = createSOAPMessageCtx(conn.call(msgToSend, endpoint));
-      } catch (UnsupportedOperationException var13) {
-         throw translate(var13);
-      } catch (SOAPException var14) {
-         throw translate(var14);
-      } catch (MalformedURLException var15) {
-         throw translate(var15);
+      } catch (UnsupportedOperationException | SOAPException | MalformedURLException ex) {
+         throw translate(ex);
       } finally {
-         ConnectorIOUtils.closeQuietly((Object)conn);
+         ConnectorIOUtils.closeQuietly(conn);
       }
 
       reply.put("javax.xml.ws.handler.message.outbound", false);
@@ -96,10 +92,8 @@ public abstract class AbstractWsSender {
          try {
             reply.getMessage().writeTo(bos);
             log.debug("SOAP message details " + new String(bos.toByteArray(), StandardCharsets.UTF_8));
-         } catch (IOException e) {
+         } catch (IOException | SOAPException e) {
             log.debug("Error while logging message", e);
-         } catch(SOAPException e){
-            log.debug("Error while logging message",e);
          }
       }
 

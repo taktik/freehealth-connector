@@ -847,10 +847,10 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                         ?.contents?.map { it.ids?.find { it.s == v1LOCAL }?.value }?.find { it != null }
                 at.start =
                     its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == AGREEMENTSTARTDATE.value() } }
-                        ?.contents?.map { it.date }?.find { it != null }?.toGregorianCalendar()?.time
+                        ?.contents?.map { it.date }?.find { it != null }?.toGregorianCalendar()?.timeInMillis
                 at.end =
                     its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == AGREEMENTENDDATE.value() } }
-                        ?.contents?.map { it.date }?.find { it != null }?.toGregorianCalendar()?.time
+                        ?.contents?.map { it.date }?.find { it != null }?.toGregorianCalendar()?.timeInMillis
                 at.unitNumber =
                     its?.find { it.cds.any { it.s == v1CDITEMMAA && it.value == UNITNUMBER.value() } }
                         ?.contents?.map { it.decimal }?.find { it != null }?.toDouble()
