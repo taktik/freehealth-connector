@@ -20,4 +20,4 @@
 
 package org.taktik.connector.business.ehbox.api.domain
 
-class AcknowledgeMessage<T> : Message<T>()
+class AcknowledgeMessage<T> : DocumentMessage<T>()

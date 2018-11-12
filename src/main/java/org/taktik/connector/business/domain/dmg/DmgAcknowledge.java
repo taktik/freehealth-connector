@@ -16,6 +16,9 @@ public class DmgAcknowledge extends DmgMessage implements Serializable {
     String message;
     Date date;
 
+    public DmgAcknowledge() {
+    }
+
     public DmgAcknowledge(String major, String minor, String message) {
         this.major = major;
         this.minor = minor;
@@ -53,4 +56,5 @@ public class DmgAcknowledge extends DmgMessage implements Serializable {
     public void setDate(Date date) {
         this.date = date;
     }
+
 }

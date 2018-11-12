@@ -32,4 +32,4 @@ class SendAttestResultWithResponse(
     commonOutput: CommonOutput? = null,
     mycarenetConversation: MycarenetConversation? = null,
     var kmehrMessage: ByteArray?
-): SendAttestResult(acknowledge, invoicingNumber, attest)
+): SendAttestResult(acknowledge, invoicingNumber, attest, commonOutput, mycarenetConversation)

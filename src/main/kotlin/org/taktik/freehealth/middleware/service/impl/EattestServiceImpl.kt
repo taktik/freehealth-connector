@@ -166,8 +166,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         passPhrase: String,
         patientSsin: String,
         referenceDate: Int?,
-        attest: Eattest
-                           ): SendAttestResultWithResponse? {
+        attest: Eattest): SendAttestResultWithResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -396,28 +395,29 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                         (itemId++).toString()
                                     })
                                     cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "claim" })
-                                    contents.addAll(listOf(ContentType().apply {
+                                    contents.addAll(listOf(
+                                        ContentType().apply {
                                         cds.add(CDCONTENT().apply {
                                             s = CD_NIHDI; sv =
                                             "1.0"; value = code.riziv
                                         })
                                     },
-                                                           ContentType().apply {
-                                                               cds.add(CDCONTENT().apply {
-                                                                   s =
-                                                                       CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                                                   "NIHDI-CLAIM-NORM"; value = code.norm.toString()
-                                                               })
-                                                           },
-                                                           code.relativeService?.let {
-                                                               ContentType().apply {
-                                                                   cds.add(CDCONTENT().apply {
-                                                                       s =
-                                                                           CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value =
-                                                                       code.relativeService
-                                                                   })
-                                                               }
-                                                           }).filterNotNull())
+                                   ContentType().apply {
+                                       cds.add(CDCONTENT().apply {
+                                           s =
+                                               CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                           "NIHDI-CLAIM-NORM"; value = code.norm.toString()
+                                       })
+                                   },
+                                   code.relativeService?.let {
+                                       ContentType().apply {
+                                           cds.add(CDCONTENT().apply {
+                                               s =
+                                                   CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value =
+                                               code.relativeService
+                                           })
+                                       }
+                                   }).filterNotNull())
                                     quantity = QuantityType().apply { decimal = BigDecimal(code.quantity) }
                                 }, ItemType().apply {
                                     ids.add(IDKMEHR().apply {
@@ -608,90 +608,9 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             val kmehrMarshallHelper =
                 MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
             val requestXml = kmehrMarshallHelper.toXMLByteArray(sendTransactionRequest)
+            val requestXmlString = String(requestXml)
 
             val sendAttestationRequest = SendAttestationRequest().apply {
-                val encryptedKnownContent = EncryptedKnownContent()
-                encryptedKnownContent.replyToEtk = it.encoded
-                val businessContent = BusinessContent().apply { id = detailId }
-                encryptedKnownContent.businessContent = businessContent
-
-                businessContent.value = requestXml
-                log.info("Request is: " + businessContent.value.toString(Charsets.UTF_8))
-                val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
-                val blob =
-                    BlobBuilderFactory.getBlobBuilder("attest")
-                        .build(
-                            xmlByteArray,
-                            "none",
-                            detailId,
-                            "text/xml",
-                            null as String?,
-                            "encryptedForKnownCINNIC"
-                              )
-                blob.messageName = "E-ATTEST"
-
-                val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword)
-
-                this.commonInput = CommonInputType().apply {
-                    request =
-                        be.fgov.ehealth.mycarenet.commons.core.v3.RequestType()
-                            .apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
-                    this.inputReference = inputReference
-                    origin = OriginType().apply {
-                        `package` = PackageType().apply {
-                            license = LicenseType().apply {
-                                username = packageInfo.userName
-                                password = packageInfo.password
-                            }
-                            name = ValueRefString().apply { value = packageInfo.packageName }
-                        }
-                        siteID =
-                            ValueRefString().apply {
-                                value =
-                                    config.getProperty(
-                                        "mycarenet.${PropertyUtil.retrieveProjectNameToUse(
-                                            "genins",
-                                            "mycarenet."
-                                                                                          )}.site.id"
-                                                      )
-                            }
-                        careProvider = CareProviderType().apply {
-                            nihii =
-                                NihiiType().apply {
-                                    quality = "doctor"; value =
-                                    ValueRefString().apply { value = hcpNihii }
-                                }
-                            physicalPerson = IdType().apply {
-                                name = ValueRefString().apply { value = hcpFirstName + " " + hcpLastName }
-                                ssin = ValueRefString().apply { value = hcpSsin }
-                                nihii =
-                                    NihiiType().apply {
-                                        quality = "doctor"; value =
-                                        ValueRefString().apply { value = hcpNihii }
-                                    }
-                            }
-                        }
-                    }
-                }
-                this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                this.issueInstant = DateTime()
-                this.routing = RoutingType().apply {
-                    careReceiver = CareReceiverIdType().apply {
-                        ssin = patientSsin
-                    }
-                    this.referenceDate = refDateTime
-                }
-                try {
-                    BlobMapper.mapBlobTypefromBlob(blob)
-                } catch (e: Exception) {
-                    print(e.toString())
-                }
-                this.detail = BlobMapper.mapBlobTypefromBlob(blob)
-
-            }
-
-            val sendAttestationResponse = freehealthEattestService.sendAttestion(samlToken, SendAttestationRequest().apply {
                 val encryptedKnownContent = EncryptedKnownContent()
                 encryptedKnownContent.replyToEtk = it.encoded
                 val businessContent = BusinessContent().apply { id = detailId }
@@ -765,8 +684,9 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     this.referenceDate = refDateTime
                 }
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
-            })
+            }
 
+            val sendAttestationResponse = freehealthEattestService.sendAttestion(samlToken, sendAttestationRequest)
             val blobType = sendAttestationResponse.`return`.detail
             val blob = BlobMapper.mapBlobfromBlobType(blobType)
             val unsealedData =
@@ -814,7 +734,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
                     mycarenetConversation = MycarenetConversation().apply {
                         this.transactionResponse = MarshallerHelper(SendAttestationResponse::class.java, SendAttestationResponse::class.java).toXMLByteArray(sendAttestationResponse).toString(Charsets.UTF_8)
-                        this.transactionRequest = MarshallerHelper(SendAttestationRequest::class.java, SendAttestationRequest::class.java).toXMLByteArray(sendAttestationRequest).toString(Charsets.UTF_8)
+                        this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
                         sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                         sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                     },
@@ -828,7 +748,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                 xades = xades,
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse = MarshallerHelper(SendAttestationResponse::class.java, SendAttestationResponse::class.java).toXMLByteArray(sendAttestationResponse).toString(Charsets.UTF_8)
-                    this.transactionRequest = MarshallerHelper(SendAttestationRequest::class.java, SendAttestationRequest::class.java).toXMLByteArray(sendAttestationRequest).toString(Charsets.UTF_8)
+                    this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
                     sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },

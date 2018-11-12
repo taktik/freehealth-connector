@@ -11,6 +11,7 @@ import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.PostResponse
 import be.cin.nip.async.generic.Query
+import be.cin.nip.async.generic.TAckResponse
 import be.cin.nip.sync.reg.v1.RegistrationStatus
 import be.fgov.ehealth.globalmedicalfile.core.v1.*
 import be.fgov.ehealth.globalmedicalfile.core.v1.RoutingType
@@ -909,96 +910,117 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 DmgAcknowledge(it.tAck.resultMajor, it.tAck.resultMinor, it.tAck.resultMessage).apply {
                     io = it.tAck.issuer.replace("urn:nip:issuer:io:".toRegex(), "")
                     reference = it.tAck.reference
+                    appliesTo = it.tAck.appliesTo
                     valueHash = b64.encodeToString(it.tAck.value)
                 }
             } ?: listOf()
             messages = response.`return`.msgResponses?.map { r ->
+                val nipReference = r.commonOutput.nipReference
+                val encodedHashValue = b64.encodeToString(r.detail.hashValue)
+
                 ResponseObjectBuilderFactory.getResponseObjectBuilder().handleAsyncResponse(r)?.let { dec ->
-                    dec.retrieveTransactionResponse?.let { rtr ->
-                        DmgsList().apply {
-                            io =
-                                rtr.response?.author?.hcparties?.find { it.ids.isNotEmpty() && it.cds.any { it.s == CDHCPARTYschemes.CD_HCPARTY && it.value == "orginsurance" } }
-                                    ?.ids?.firstOrNull()?.value
-                            reference = r.commonOutput.nipReference
-                            valueHash = b64.encodeToString(r.detail.hashValue)
-                            rtr.acknowledge?.errors?.let {
-                                errors.addAll(listOf() /* TODO */)
-                            }
-                            if (rtr.acknowledge?.isIscomplete == true) {
-                                rtr.kmehrmessage?.let { km ->
-                                    date = km.header.date.toDate()
-                                    inscriptions.addAll(km.folders?.map {
-                                        DmgInscription().apply {
-                                            it.patient?.let { fillDmgMessage(this, it) }
-                                            it.transactions.find { it.cds.any { it.value.toLowerCase() == "gmd" } }?.let {
-                                                it.item.find { it.cds.any { it.value.toLowerCase() == "gmdmanager" } }
-                                                    ?.let {
-                                                        it.beginmoment?.date?.let { from = it.toDate() }
-                                                        it.endmoment?.date?.let { to = it.toDate() }
-                                                        hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
-                                                    }
-                                                it.item.filter { it.cds.any { it.value.toLowerCase() == "payment" } }
-                                                    .forEachIndexed { idx, i ->
-                                                        i.cost.decimal?.let { setPaymentAmount(idx + 1, it.toDouble()) }
-                                                        i.cost.unit?.let { setPaymentCurrency(idx + 1, it.cd?.value) }
-                                                        i.beginmoment?.let { setPaymentDate(idx + 1, it.date?.toDate()) }
-                                                    }
-                                            }
-                                        }
-                                    } ?: listOf())
-                                }
-                            }
-                        }
+                    dec.retrieveTransactionResponse?.let { retrieveTransactionResponse ->
+                        createDmgsList(retrieveTransactionResponse, nipReference, encodedHashValue)
                     } ?: dec.kmehrmessage?.let {
-                        val io =
-                            dec.kmehrmessage?.header?.sender?.hcparties?.firstOrNull()
-                                ?.ids?.find { it.s == IDHCPARTYschemes.ID_INSURANCE }?.value
-                        it.folders.firstOrNull()?.let { f ->
-                            f.transactions?.firstOrNull()?.let { t ->
-                                when {
-                                    t.cds.any { cd -> cd.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && cd.value == "gmdextension" } ->
-                                        DmgExtension().apply {
-                                            this.io = io
-                                            f.patient?.let { fillDmgMessage(this, it) }
-                                            reference = r.commonOutput.nipReference
-                                            valueHash = b64.encodeToString(r.detail.hashValue)
-                                            t.item.find { it.cds.any { it.value.toLowerCase() == "gmdmanager" } }?.let {
-                                                hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
-                                            }
-                                            t.item.find { it.cds.any { it.value.toLowerCase() == "encounterdatetime" } }?.let {
-                                                it.contents.find { it.date != null }?.let { encounterDate = it.date.toDate() }
-                                            }
-                                            t.item.find { it.cds.any { it.value.toLowerCase() == "claim" } }?.let {
-                                                it.contents.forEach {
-                                                    it.cds?.find { it.s == CDCONTENTschemes.CD_NIHDI }
-                                                        ?.let { claim = it.value }
-                                                }
-                                            }
-                                        }
-                                    t.cds.any { cd -> cd.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && cd.value == "gmdclosure" } ->
-                                        DmgClosure().apply {
-                                            this.io = io
-                                            f.patient?.let { fillDmgMessage(this, it) }
-                                            reference = r.commonOutput.nipReference
-                                            valueHash = b64.encodeToString(r.detail.hashValue)
-                                            t.item.filter { it.cds.any { it.value.toLowerCase() == "gmdmanager" } }.forEach {
-                                                it.contents.map { it.hcparty }.firstOrNull()?.let { hcp ->
-                                                    it.beginmoment?.date?.let { beginOfNewDmg = it.toDate(); newHcParty = hcp }
-                                                    it.endmoment?.date?.let {
-                                                        endOfPreviousDmg = it.toDate();
-                                                        previousHcParty = hcp
-                                                    }
-                                                    null
-                                                }
-                                            }
-                                        }
-                                    else -> null
-                                }
-                            }
-                        }
+                        createClosureOrExtension(it, nipReference, encodedHashValue)
                     }
                 }
             } ?: listOf()
+        }
+    }
+
+    protected fun createClosureOrExtension(it: Kmehrmessage, nipReference: String?, encodedHashValue: String?): DmgMessageWithPatient? {
+        val io =
+            it.header?.sender?.hcparties?.firstOrNull()
+                ?.ids?.find { it.s == IDHCPARTYschemes.ID_INSURANCE }?.value
+        return it.folders.firstOrNull()?.let { f ->
+            f.transactions?.firstOrNull()?.let { t ->
+                when {
+                    t.cds.any { cd -> cd.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && cd.value == "gmdextension" } ->
+                        DmgExtension().apply {
+                            this.io = io
+                            f.patient?.let { fillDmgMessage(this, it) }
+                            reference = nipReference
+                            valueHash = encodedHashValue
+                            t.item.find { it.cds.any { it.value.toLowerCase() == "gmdmanager" } }?.let {
+                                hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
+                            }
+                            t.item.find { it.cds.any { it.value.toLowerCase() == "encounterdatetime" } }?.let {
+                                it.contents.find { it.date != null }?.let { encounterDate = it.date.toDate() }
+                            }
+                            t.item.find { it.cds.any { it.value.toLowerCase() == "claim" } }?.let {
+                                it.contents.forEach {
+                                    it.cds?.find { it.s == CDCONTENTschemes.CD_NIHDI }
+                                        ?.let { claim = it.value }
+                                }
+                            }
+                        }
+                    t.cds.any { cd -> cd.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && cd.value == "gmdclosure" } ->
+                        DmgClosure().apply {
+                            this.io = io
+                            f.patient?.let { fillDmgMessage(this, it) }
+                            reference = nipReference
+                            valueHash = encodedHashValue
+                            t.item.filter { it.cds.any { it.value.toLowerCase() == "gmdmanager" } }.forEach {
+                                it.contents.map { it.hcparty }.firstOrNull()?.let { hcp ->
+                                    it.beginmoment?.date?.let { beginOfNewDmg = it.toDate(); newHcParty = hcp }
+                                    it.endmoment?.date?.let {
+                                        endOfPreviousDmg = it.toDate(); previousHcParty =
+                                        hcp
+                                    }
+                                    null
+                                }
+                            }
+                        }
+                    else -> null
+                }
+            }
+        }
+    }
+
+    protected fun createDmgsList(retrieveTransactionResponse: RetrieveTransactionResponse, nipReference: String?, encodedHashValue: String?): DmgsList {
+        return DmgsList().apply {
+            io =
+                retrieveTransactionResponse.response?.author?.hcparties?.find { it.ids.isNotEmpty() && it.cds.any { it.s == CDHCPARTYschemes.CD_HCPARTY && it.value == "orginsurance" } }
+                    ?.ids?.firstOrNull()?.value
+            reference = nipReference
+            valueHash = encodedHashValue
+
+    appliesTo = r.commonOutput.nipReference
+    commonOutput = CommonOutput().apply {
+        nipReference = r.commonOutput.nipReference
+        inputReference = r.commonOutput.inputReference
+        outputReference = r.commonOutput.outputReference
+    }
+
+
+            retrieveTransactionResponse.acknowledge?.errors?.let {
+                errors.addAll(listOf() /* TODO */)
+            }
+            if (retrieveTransactionResponse.acknowledge?.isIscomplete == true) {
+                retrieveTransactionResponse.kmehrmessage?.let { km ->
+                    date = km.header.date.toDate()
+                    inscriptions.addAll(km.folders?.map {
+                        DmgInscription().apply {
+                            it.patient?.let { fillDmgMessage(this, it) }
+                            it.transactions.find { it.cds.any { it.value.toLowerCase() == "gmd" } }?.let {
+                                it.item.find { it.cds.any { it.value.toLowerCase() == "gmdmanager" } }
+                                    ?.let {
+                                        it.beginmoment?.date?.let { from = it.toDate() }
+                                        it.endmoment?.date?.let { to = it.toDate() }
+                                        hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
+                                    }
+                                it.item.filter { it.cds.any { it.value.toLowerCase() == "payment" } }
+                                    .forEachIndexed { idx, i ->
+                                        i.cost.decimal?.let { setPaymentAmount(idx + 1, it.toDouble()) }
+                                        i.cost.unit?.let { setPaymentCurrency(idx + 1, it.cd?.value) }
+                                        i.beginmoment?.let { setPaymentDate(idx + 1, it.date?.toDate()) }
+                                    }
+                            }
+                        }
+                    } ?: listOf())
+                }
+            }
         }
     }
 
