@@ -21,5 +21,6 @@ open class DmgMessage(
     var valueHash: String? = null,
     var errors: MutableList<MycarenetError> = ArrayList(),
     var commonOutput: CommonOutput? = null,
-    var mycarenetConversation: MycarenetConversation? = null
+    var mycarenetConversation: MycarenetConversation? = null,
+    var appliesTo: String? = null
 ) : Serializable
