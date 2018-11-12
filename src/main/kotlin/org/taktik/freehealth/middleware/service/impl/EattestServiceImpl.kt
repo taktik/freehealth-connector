@@ -608,6 +608,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             val kmehrMarshallHelper =
                 MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
             val requestXml = kmehrMarshallHelper.toXMLByteArray(sendTransactionRequest)
+            val requestXmlString = String(requestXml)
 
 
             val sendAttestationRequest = SendAttestationRequest().apply {
@@ -735,7 +736,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
                     mycarenetConversation = MycarenetConversation().apply {
                         this.transactionResponse = MarshallerHelper(SendAttestationResponse::class.java, SendAttestationResponse::class.java).toXMLByteArray(sendAttestationResponse).toString(Charsets.UTF_8)
-                        this.transactionRequest = MarshallerHelper(SendAttestationRequest::class.java, SendAttestationRequest::class.java).toXMLByteArray(sendAttestationRequest).toString(Charsets.UTF_8)
+                        this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
                         sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                         sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                     },
@@ -749,7 +750,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                 xades = xades,
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse = MarshallerHelper(SendAttestationResponse::class.java, SendAttestationResponse::class.java).toXMLByteArray(sendAttestationResponse).toString(Charsets.UTF_8)
-                    this.transactionRequest = MarshallerHelper(SendAttestationRequest::class.java, SendAttestationRequest::class.java).toXMLByteArray(sendAttestationRequest).toString(Charsets.UTF_8)
+                    this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
                     sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
