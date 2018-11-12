@@ -191,9 +191,6 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                             }
                         }
 
-                        val careProviderSsin = hcpSsin;
-                        val careProviderNihii = hcpNihii;
-
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
                                 this.quality = "doctor"

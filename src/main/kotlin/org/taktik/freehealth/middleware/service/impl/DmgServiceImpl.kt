@@ -910,6 +910,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 DmgAcknowledge(it.tAck.resultMajor, it.tAck.resultMinor, it.tAck.resultMessage).apply {
                     io = it.tAck.issuer.replace("urn:nip:issuer:io:".toRegex(), "")
                     reference = it.tAck.reference
+                    appliesTo = it.tAck.appliesTo
                     valueHash = b64.encodeToString(it.tAck.value)
                 }
             } ?: listOf()
@@ -922,6 +923,12 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                                     ?.ids?.firstOrNull()?.value
                             reference = r.commonOutput.nipReference
                             valueHash = b64.encodeToString(r.detail.hashValue)
+                            appliesTo = r.commonOutput.nipReference
+                            commonOutput = CommonOutput().apply {
+                                nipReference = r.commonOutput.nipReference
+                                inputReference = r.commonOutput.inputReference
+                                outputReference = r.commonOutput.outputReference
+                            }
                             rtr.acknowledge?.errors?.let {
                                 errors.addAll(listOf() /* TODO */)
                             }
