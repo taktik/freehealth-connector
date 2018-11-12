@@ -56,4 +56,5 @@ public class DmgAcknowledge extends DmgMessage implements Serializable {
     public void setDate(Date date) {
         this.date = date;
     }
+
 }
