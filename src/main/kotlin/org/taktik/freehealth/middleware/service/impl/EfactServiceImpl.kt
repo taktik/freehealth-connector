@@ -10,6 +10,8 @@ import be.cin.mycarenet.esb.common.v2.OrigineType
 import be.cin.mycarenet.esb.common.v2.PackageType
 import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.GetResponse
+import be.cin.nip.async.generic.Post
+import be.cin.nip.async.generic.PostResponse
 import ma.glasnost.orika.MapperFacade
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
@@ -26,6 +28,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.handler.domain.WsAddressingHeader
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorIOUtils
+import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.efact.EfactMessage
@@ -36,6 +39,7 @@ import org.taktik.freehealth.middleware.dto.efact.Record
 import org.taktik.freehealth.middleware.dto.efact.Zone
 import org.taktik.freehealth.middleware.dto.efact.segments.RecordOrSegmentDescription
 import org.taktik.freehealth.middleware.dto.efact.segments.ZoneDescription
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatReader
 import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatWriter
 import org.taktik.freehealth.middleware.service.EfactService
@@ -199,6 +203,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         }
 
         val xades = BlobUtil.generateXades(SendRequestMapper.mapBlobToBlobType(blob), credential, "invoicing").value
+
         val post = requestObjectBuilder.buildPostRequest(ci, SendRequestMapper.mapBlobToCinBlob(blob), xades)
         val header: WsAddressingHeader
         try {
@@ -212,11 +217,19 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         }
 
         val postResponse = genAsyncService.postRequest(samlToken, post, header)
+
         val tack = postResponse.getReturn()
         val success = tack.resultMajor != null && tack.resultMajor == "urn:nip:tack:result:major:success"
 
         val records = BelgianInsuranceInvoicingFormatReader("unused").parse(content.reader(), false)!!.map { mapper.map(it, Record::class.java) }
-        return EfactSendResponse(success, inputReference, tack, content, records)
+        return EfactSendResponse(success, inputReference, tack, content, records).apply {
+            this.mycarenetConversation = MycarenetConversation().apply {
+                this.transactionRequest = MarshallerHelper(Post::class.java, Post::class.java).toXMLByteArray(post).toString(Charsets.UTF_8)
+                this.transactionResponse = MarshallerHelper(PostResponse::class.java, PostResponse::class.java).toXMLByteArray(postResponse).toString(Charsets.UTF_8)
+                postResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                postResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+            }
+        }
     }
 
 

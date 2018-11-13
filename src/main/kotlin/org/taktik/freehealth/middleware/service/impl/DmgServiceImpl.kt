@@ -910,16 +910,20 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 DmgAcknowledge(it.tAck.resultMajor, it.tAck.resultMinor, it.tAck.resultMessage).apply {
                     io = it.tAck.issuer.replace("urn:nip:issuer:io:".toRegex(), "")
                     reference = it.tAck.reference
+                    appliesTo = it.tAck.appliesTo
                     valueHash = b64.encodeToString(it.tAck.value)
                 }
             } ?: listOf()
             messages = response.`return`.msgResponses?.map { r ->
                 val nipReference = r.commonOutput.nipReference
+                val inputReference = r.commonOutput.inputReference
+                val outputReference = r.commonOutput.outputReference
+
                 val encodedHashValue = b64.encodeToString(r.detail.hashValue)
 
                 ResponseObjectBuilderFactory.getResponseObjectBuilder().handleAsyncResponse(r)?.let { dec ->
                     dec.retrieveTransactionResponse?.let { retrieveTransactionResponse ->
-                        createDmgsList(retrieveTransactionResponse, nipReference, encodedHashValue)
+                        createDmgsList(retrieveTransactionResponse, nipReference, inputReference, outputReference, encodedHashValue)
                     } ?: dec.kmehrmessage?.let {
                         createClosureOrExtension(it, nipReference, encodedHashValue)
                     }
@@ -977,13 +981,22 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         }
     }
 
-    protected fun createDmgsList(retrieveTransactionResponse: RetrieveTransactionResponse, nipReference: String?, encodedHashValue: String?): DmgsList {
+    protected fun createDmgsList(retrieveTransactionResponse: RetrieveTransactionResponse, nipReference: String?, inputReference: String?, outputReference: String?, encodedHashValue: String?): DmgsList {
         return DmgsList().apply {
             io =
                 retrieveTransactionResponse.response?.author?.hcparties?.find { it.ids.isNotEmpty() && it.cds.any { it.s == CDHCPARTYschemes.CD_HCPARTY && it.value == "orginsurance" } }
                     ?.ids?.firstOrNull()?.value
             reference = nipReference
             valueHash = encodedHashValue
+
+            appliesTo = nipReference
+            commonOutput = CommonOutput().apply {
+                this.nipReference = nipReference
+                this.inputReference = inputReference
+                this.outputReference = outputReference
+            }
+
+
             retrieveTransactionResponse.acknowledge?.errors?.let {
                 errors.addAll(listOf() /* TODO */)
             }

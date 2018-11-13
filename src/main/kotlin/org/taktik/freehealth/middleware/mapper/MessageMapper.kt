@@ -114,7 +114,17 @@ fun <T> AcknowledgeMessage<T>.toAcknowledgeMessage(): org.taktik.freehealth.midd
         publicationDateTime = publicationDateTime?.let { FuzzyValues.getFuzzyDate(it, ChronoUnit.SECONDS) },
         expirationDateTime = expirationDateTime?.let { FuzzyValues.getFuzzyDate(it, ChronoUnit.SECONDS) },
         size = size,
-        customMetas = getCustomMetas()
+        customMetas = getCustomMetas(),
+        document = if(original is be.fgov.ehealth.ehbox.consultation.protocol.v3.Message) (original as be.fgov.ehealth.ehbox.consultation.protocol.v3.Message).toDocument() else null
+    )
+
+fun be.fgov.ehealth.ehbox.consultation.protocol.v3.Message.toDocument(): org.taktik.freehealth.middleware.dto.common.Document =
+    org.taktik.freehealth.middleware.dto.common.Document(
+        title = contentInfo.title,
+        content = null,
+        textContent = null,
+        filename = null,
+        mimeType = contentInfo.mimeType
     )
 
 fun Document.toDocumentDto(): org.taktik.freehealth.middleware.dto.common.Document =
@@ -139,7 +149,7 @@ fun <T> ErrorMessage<T>.toErrorMessage(): org.taktik.freehealth.middleware.dto.e
         destinations = getDestinations().map { it.toAddresseeDto() },
         size = size,
         customMetas = getCustomMetas(),
-        title = title,
+        title = title + " " + errorMsg.joinToString(" "),
         errorPublicationId = errorPublicationId,
         errorCode = errorCode
     )

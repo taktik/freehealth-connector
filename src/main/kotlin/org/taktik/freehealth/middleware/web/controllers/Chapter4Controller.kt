@@ -41,10 +41,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
 import javax.servlet.http.HttpServletResponse
-import com.sun.xml.internal.ws.streaming.XMLStreamWriterUtil.getOutputStream
-import io.swagger.annotations.Api
-import io.swagger.annotations.ApiOperation
-import io.swagger.annotations.ApiResponse
 import org.apache.commons.io.IOUtils
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ResponseBody

@@ -22,6 +22,7 @@ public class DmgMessage implements Serializable {
     protected boolean complete;
     private List<MycarenetError> errors = new ArrayList<>();
     private String io;
+    private String appliesTo;
     private String reference;
     private String valueHash;
 
@@ -86,5 +87,13 @@ public class DmgMessage implements Serializable {
 
     public MycarenetConversation getMycarenetConversation(){
         return this.mycarenetConversation;
+    }
+
+    public String getAppliesTo() {
+        return appliesTo;
+    }
+
+    public void setAppliesTo(String appliesTo) {
+        this.appliesTo = appliesTo;
     }
 }
