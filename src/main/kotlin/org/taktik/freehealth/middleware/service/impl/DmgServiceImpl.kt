@@ -916,11 +916,14 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             } ?: listOf()
             messages = response.`return`.msgResponses?.map { r ->
                 val nipReference = r.commonOutput.nipReference
+                val inputReference = r.commonOutput.inputReference
+                val outputReference = r.commonOutput.outputReference
+
                 val encodedHashValue = b64.encodeToString(r.detail.hashValue)
 
                 ResponseObjectBuilderFactory.getResponseObjectBuilder().handleAsyncResponse(r)?.let { dec ->
                     dec.retrieveTransactionResponse?.let { retrieveTransactionResponse ->
-                        createDmgsList(retrieveTransactionResponse, nipReference, encodedHashValue)
+                        createDmgsList(retrieveTransactionResponse, nipReference, inputReference, outputReference, encodedHashValue)
                     } ?: dec.kmehrmessage?.let {
                         createClosureOrExtension(it, nipReference, encodedHashValue)
                     }
@@ -978,7 +981,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         }
     }
 
-    protected fun createDmgsList(retrieveTransactionResponse: RetrieveTransactionResponse, nipReference: String?, encodedHashValue: String?): DmgsList {
+    protected fun createDmgsList(retrieveTransactionResponse: RetrieveTransactionResponse, nipReference: String?, inputReference: String?, outputReference: String?, encodedHashValue: String?): DmgsList {
         return DmgsList().apply {
             io =
                 retrieveTransactionResponse.response?.author?.hcparties?.find { it.ids.isNotEmpty() && it.cds.any { it.s == CDHCPARTYschemes.CD_HCPARTY && it.value == "orginsurance" } }
@@ -986,12 +989,12 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             reference = nipReference
             valueHash = encodedHashValue
 
-    appliesTo = r.commonOutput.nipReference
-    commonOutput = CommonOutput().apply {
-        nipReference = r.commonOutput.nipReference
-        inputReference = r.commonOutput.inputReference
-        outputReference = r.commonOutput.outputReference
-    }
+            appliesTo = nipReference
+            commonOutput = CommonOutput().apply {
+                this.nipReference = nipReference
+                this.inputReference = inputReference
+                this.outputReference = outputReference
+            }
 
 
             retrieveTransactionResponse.acknowledge?.errors?.let {
