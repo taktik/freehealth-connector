@@ -53,7 +53,7 @@ class BelgianInsuranceInvoicingFormatReader(private val language: String) {
         if (this.errorCodes == null) {
             this.errorCodes = Gson().fromJson<List<EfactError>>(this.javaClass.getResourceAsStream("/be/errors/EfactErrors.json").reader(Charsets.UTF_8), object : TypeToken<ArrayList<EfactError>>() {}.type)
         }
-        return errorCodes?.find { it.code == errorCode }?.let { c -> c.label[language]?.let { "${c.type}:$it${message?.let { "[$it]" }}" } } ?: message
+        return errorCodes?.find { it.code == errorCode }?.let { c -> c.label[language]?.let { "${c.type}:$it${message?.let { "[$it]" } ?: ""}" } } ?: message
     }
 
     @Throws(IOException::class)
