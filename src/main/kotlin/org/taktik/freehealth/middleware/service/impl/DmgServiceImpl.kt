@@ -920,9 +920,23 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
                 ResponseObjectBuilderFactory.getResponseObjectBuilder().handleAsyncResponse(r)?.let { dec ->
                     dec.retrieveTransactionResponse?.let { retrieveTransactionResponse ->
-                        createDmgsList(retrieveTransactionResponse, nipReference, encodedHashValue)
+                        createDmgsList(retrieveTransactionResponse, nipReference, encodedHashValue).apply {
+                            commonOutput = CommonOutput().apply {
+                                this.nipReference = r.commonOutput.nipReference
+                                this.inputReference = r.commonOutput.inputReference
+                                this.outputReference = r.commonOutput.outputReference
+                            }
+                            appliesTo = r.commonOutput.inputReference
+                        }
                     } ?: dec.kmehrmessage?.let {
-                        createClosureOrExtension(it, nipReference, encodedHashValue)
+                        createClosureOrExtension(it, nipReference, encodedHashValue).apply {
+                            commonOutput = CommonOutput().apply {
+                                this.nipReference = r.commonOutput.nipReference
+                                this.inputReference = r.commonOutput.inputReference
+                                this.outputReference = r.commonOutput.outputReference
+                            }
+                            appliesTo = r.commonOutput.inputReference
+                        }
                     }
                 }
             } ?: listOf()
@@ -985,14 +999,6 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     ?.ids?.firstOrNull()?.value
             reference = nipReference
             valueHash = encodedHashValue
-
-    appliesTo = r.commonOutput.nipReference
-    commonOutput = CommonOutput().apply {
-        nipReference = r.commonOutput.nipReference
-        inputReference = r.commonOutput.inputReference
-        outputReference = r.commonOutput.outputReference
-    }
-
 
             retrieveTransactionResponse.acknowledge?.errors?.let {
                 errors.addAll(listOf() /* TODO */)
