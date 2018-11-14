@@ -906,6 +906,12 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         val b64 = Base64.getEncoder()
         return DmgsList().apply {
+            mycarenetConversation = MycarenetConversation().apply {
+                this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
+                this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
+                response?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                response?.soapRequest?.writeTo(this.soapRequestOutputStream())
+            }
             acks = response.`return`.tAckResponses?.map {
                 DmgAcknowledge(it.tAck.resultMajor, it.tAck.resultMinor, it.tAck.resultMessage).apply {
                     io = it.tAck.issuer.replace("urn:nip:issuer:io:".toRegex(), "")
@@ -989,7 +995,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             reference = nipReference
             valueHash = encodedHashValue
 
-            appliesTo = nipReference
+            appliesTo = inputReference
             commonOutput = CommonOutput().apply {
                 this.nipReference = nipReference
                 this.inputReference = inputReference
