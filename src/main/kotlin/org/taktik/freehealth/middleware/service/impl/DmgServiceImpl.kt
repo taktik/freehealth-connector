@@ -906,6 +906,12 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
         val b64 = Base64.getEncoder()
         return DmgsList().apply {
+            mycarenetConversation = MycarenetConversation().apply {
+                this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
+                this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
+                response?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                response?.soapRequest?.writeTo(this.soapRequestOutputStream())
+            }
             acks = response.`return`.tAckResponses?.map {
                 DmgAcknowledge(it.tAck.resultMajor, it.tAck.resultMinor, it.tAck.resultMessage).apply {
                     io = it.tAck.issuer.replace("urn:nip:issuer:io:".toRegex(), "")
@@ -916,11 +922,14 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             } ?: listOf()
             messages = response.`return`.msgResponses?.map { r ->
                 val nipReference = r.commonOutput.nipReference
+                val inputReference = r.commonOutput.inputReference
+                val outputReference = r.commonOutput.outputReference
+
                 val encodedHashValue = b64.encodeToString(r.detail.hashValue)
 
                 ResponseObjectBuilderFactory.getResponseObjectBuilder().handleAsyncResponse(r)?.let { dec ->
                     dec.retrieveTransactionResponse?.let { retrieveTransactionResponse ->
-                        createDmgsList(retrieveTransactionResponse, nipReference, encodedHashValue)
+                        createDmgsList(retrieveTransactionResponse, nipReference, inputReference, outputReference, encodedHashValue)
                     } ?: dec.kmehrmessage?.let {
                         createClosureOrExtension(it, nipReference, encodedHashValue)
                     }
@@ -978,7 +987,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         }
     }
 
-    protected fun createDmgsList(retrieveTransactionResponse: RetrieveTransactionResponse, nipReference: String?, encodedHashValue: String?): DmgsList {
+    protected fun createDmgsList(retrieveTransactionResponse: RetrieveTransactionResponse, nipReference: String?, inputReference: String?, outputReference: String?, encodedHashValue: String?): DmgsList {
         return DmgsList().apply {
             io =
                 retrieveTransactionResponse.response?.author?.hcparties?.find { it.ids.isNotEmpty() && it.cds.any { it.s == CDHCPARTYschemes.CD_HCPARTY && it.value == "orginsurance" } }
@@ -986,12 +995,12 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             reference = nipReference
             valueHash = encodedHashValue
 
-    appliesTo = r.commonOutput.nipReference
-    commonOutput = CommonOutput().apply {
-        nipReference = r.commonOutput.nipReference
-        inputReference = r.commonOutput.inputReference
-        outputReference = r.commonOutput.outputReference
-    }
+            appliesTo = inputReference
+            commonOutput = CommonOutput().apply {
+                this.nipReference = nipReference
+                this.inputReference = inputReference
+                this.outputReference = outputReference
+            }
 
 
             retrieveTransactionResponse.acknowledge?.errors?.let {
