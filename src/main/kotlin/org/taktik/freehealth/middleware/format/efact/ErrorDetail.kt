@@ -41,4 +41,9 @@ class ErrorDetail : Serializable {
     var rejectionZoneDescr3: String? = null
     var reserve: String? = null
     var sendingId: Int = 0
+    var zone114: String? = null
+    var zone115: String? = null
+    var zone116: String? = null
+    var zone117: String? = null
+    var zone118: String? = null
 }
