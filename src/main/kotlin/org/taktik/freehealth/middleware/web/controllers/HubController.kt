@@ -439,7 +439,7 @@ class HubController(val hubService: HubService) {
         value = id
     )
 
-    @PostMapping("/ts/{hubId}/{patientSsin}")
+    @PostMapping("/ts/{hubId}/{patientSsin}", consumes = [MediaType.APPLICATION_XML_VALUE])
     fun putTransactionSet(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -456,7 +456,7 @@ class HubController(val hubService: HubService) {
                     required = false
                 ) hubApplication: String?,
         @PathVariable patientSsin: String,
-        @RequestBody message: String
+        @RequestBody message: ByteArray
     ): PutTransactionSetResponse = hubService.putTransactionSet(
         endpoint = endpoint,
         hubId = hubId,
