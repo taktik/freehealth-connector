@@ -647,16 +647,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                             }
                             name = ValueRefString().apply { value = packageInfo.packageName }
                         }
-                        siteID =
-                            ValueRefString().apply {
-                                value =
-                                    config.getProperty(
-                                        "mycarenet.${PropertyUtil.retrieveProjectNameToUse(
-                                            "genins",
-                                            "mycarenet."
-                                        )}.site.id"
-                                    )
-                            }
                         careProvider = CareProviderType().apply {
                             nihii =
                                 NihiiType().apply {

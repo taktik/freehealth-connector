@@ -697,7 +697,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         hcpSsin: String,
         hcpZip: String,
         ssin: String,
-        transaction: String,
+        transaction: ByteArray,
         hubPackageId: String?
     ): PutTransactionSetResponse {
         val samlToken =
@@ -714,7 +714,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             PutTransactionSetRequest().apply {
                 request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null,true)
                 kmehrmessage =
-                    marshallerHelper.toObject(transaction.toByteArray(Charsets.UTF_8))
+                    marshallerHelper.toObject(transaction)
             })
     }
 
