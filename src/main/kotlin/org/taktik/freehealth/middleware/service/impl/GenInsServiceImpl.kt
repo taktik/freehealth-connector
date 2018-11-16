@@ -115,16 +115,11 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                         }
                         name = ValueRefString().apply { value = packageInfo.packageName }
                     }
-                    siteID =
-                        ValueRefString().apply {
-                            value =
-                                config.getProperty(
-                                    "mycarenet.${PropertyUtil.retrieveProjectNameToUse(
-                                        "genins",
-                                        "mycarenet."
-                                    )}.site.id"
-                                )
+                    config.getProperty("mycarenet.${PropertyUtil.retrieveProjectNameToUse("genins","mycarenet.")}.site.id")?.let{
+                        if (it.isNotBlank()) {
+                            siteID = ValueRefString().apply { value = it }
                         }
+                    }
                     careProvider = CareProviderType().apply {
                         nihii =
                             NihiiType().apply {
