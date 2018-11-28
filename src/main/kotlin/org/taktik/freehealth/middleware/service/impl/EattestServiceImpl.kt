@@ -726,7 +726,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     xades = xades,
                     commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
                     mycarenetConversation = MycarenetConversation().apply {
-                        this.transactionResponse = MarshallerHelper(SendAttestationResponse::class.java, SendAttestationResponse::class.java).toXMLByteArray(sendAttestationResponse).toString(Charsets.UTF_8)
+                        this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse).toString(Charsets.UTF_8)
                         this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
                         sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                         sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
