@@ -249,7 +249,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                           patient: Patient,
                           insuranceCode: String,
                           ignorePrescriptionDate: Boolean,
-                          hospitalisedPatient: Boolean
+                          hospitalisedPatient: Boolean,
+                          creditNote: Boolean
         ): Int {
 
         val ws = WriterSession(writer, Record20Description)
@@ -280,6 +281,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("8a", noSIS)
         ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
         ws.write("10", if (hospitalisedPatient) 1 else 3)
+        ws.write("11", if (!creditNote) 0 else 3)
         ws.write("14", sender.nihii)
         ws.write("16", if (ignorePrescriptionDate) 1 else 0)
         ws.write("17", treatmentReason.code)
