@@ -46,6 +46,9 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpCbe: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientGender: String,
         @RequestParam(
                     required = false
                 ) date: Long?,
@@ -60,6 +63,9 @@ class EattestController(val eattestService: EattestService) {
         hcpCbe,
         passPhrase,
         patientSsin,
+        patientFirstName,
+        patientLastName,
+        patientGender,
         null,
         attest
     )
@@ -75,6 +81,9 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpCbe: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientGender: String,
         @RequestParam(
                     required = false
                 ) date: Long?,
@@ -89,6 +98,9 @@ class EattestController(val eattestService: EattestService) {
         hcpCbe,
         passPhrase,
         patientSsin,
+        patientFirstName,
+        patientLastName,
+        patientGender,
         null,
         attest
     )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }

@@ -35,6 +35,9 @@ interface EattestService {
         hcpCbe: String,
         passPhrase: String,
         patientSsin: String,
+        patientFirstName:String,
+        patientLastName:String,
+        patientGender:String,
         referenceDate: Int?,
         attest: Eattest
     ): SendAttestResultWithResponse?
