@@ -46,6 +46,7 @@ class InvoiceItem {
     var override3rdPayerCode: Int? = null
     var gnotionNihii: String? = null
 
+    var derogationMaxNumber: InvoicingDerogationMaxNumberCode? = null
     var prescriberNorm: InvoicingPrescriberCode? = null
     var prescriberNihii: String? = null
 

@@ -21,12 +21,7 @@ package org.taktik.freehealth.middleware.format.efact
 import org.taktik.freehealth.middleware.domain.common.InsuranceParameter
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.dto.common.Gender
-import org.taktik.freehealth.middleware.dto.efact.InvoiceItem
-import org.taktik.freehealth.middleware.dto.efact.InvoiceSender
-import org.taktik.freehealth.middleware.dto.efact.InvoicingPercentNorm
-import org.taktik.freehealth.middleware.dto.efact.InvoicingSideCode
-import org.taktik.freehealth.middleware.dto.efact.InvoicingTimeOfDay
-import org.taktik.freehealth.middleware.dto.efact.InvoicingTreatmentReasonCode
+import org.taktik.freehealth.middleware.dto.efact.*
 import org.taktik.freehealth.middleware.format.StringUtils
 import org.taktik.freehealth.middleware.format.WriterSession
 import org.taktik.freehealth.middleware.format.efact.segments.Record10Description
@@ -254,7 +249,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                           patient: Patient,
                           insuranceCode: String,
                           ignorePrescriptionDate: Boolean,
-                          hospitalisedPatient: Boolean
+                          hospitalisedPatient: Boolean,
+                          creditNote: Boolean
         ): Int {
 
         val ws = WriterSession(writer, Record20Description)
@@ -285,6 +281,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("8a", noSIS)
         ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
         ws.write("10", if (hospitalisedPatient) 1 else 3)
+        ws.write("11", if (!creditNote) 0 else 3)
         ws.write("14", sender.nihii)
         ws.write("16", if (ignorePrescriptionDate) 1 else 0)
         ws.write("17", treatmentReason.code)
@@ -347,7 +344,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("17", icd.relatedCode)
         ws.write("19",(if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
         ws.write("22","+" + nf4.format(icd.units))
-        ws.write("24", icd.prescriberNihii) //!!!
+        ws.write("23", (icd.derogationMaxNumber?: InvoicingDerogationMaxNumberCode.Other).code)
+        ws.write("24", icd.prescriberNihii)
         ws.write("26", (icd.percentNorm?: InvoicingPercentNorm.None).code)
         ws.write("27",(if (icd.patientFee >= 0) "+" else "-") + nf9.format(Math.abs(icd.patientFee)))
         ws.write("28", icd.invoiceRef)
