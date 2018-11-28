@@ -235,7 +235,6 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         }
     }
 
-
     override fun loadMessages(
         keystoreId: UUID,
         tokenId: UUID,
