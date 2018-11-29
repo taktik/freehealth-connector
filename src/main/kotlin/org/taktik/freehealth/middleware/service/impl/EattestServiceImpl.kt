@@ -319,7 +319,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                                    Math.round((it.doctorSupplement ?: 0.0) * 100)
                                                        .toInt()
                                                }.let {
-                                                   if (it > 0) ItemType().apply {
+                                                   if (it !== 0) ItemType().apply {
                                                        ids.add(IDKMEHR().apply {
                                                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                                            (itemId++).toString()
