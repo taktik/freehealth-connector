@@ -433,7 +433,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         sv: String,
         sl: String,
         value: String
-    ): String {
+    ): Kmehrmessage? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
@@ -463,10 +463,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                     }
                 })
 
-        return MarshallerHelper(
-            Kmehrmessage::class.java,
-            Kmehrmessage::class.java
-        ).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
+        return transaction.kmehrmessage
     }
 
     override fun revokeTransaction(
@@ -648,7 +645,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         sv: String,
         sl: String,
         value: String
-    ): String {
+    ): Kmehrmessage? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
@@ -678,10 +675,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                     }
                 })
 
-        return MarshallerHelper(
-            Kmehrmessage::class.java,
-            Kmehrmessage::class.java
-        ).toXMLByteArray(transaction.kmehrmessage).toString(Charsets.UTF_8)
+        return transaction.kmehrmessage
     }
 
     override fun putTransactionSet(

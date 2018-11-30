@@ -22,9 +22,11 @@ package org.taktik.freehealth.middleware.web.controllers
 
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
 import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
+import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
+import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.domain.consent.Consent
 import org.taktik.freehealth.middleware.domain.hub.TransactionSummary
 import org.taktik.freehealth.middleware.dto.common.Gender
@@ -310,7 +312,7 @@ class HubController(val hubService: HubService) {
         @PathVariable sv: String,
         @PathVariable sl: String,
         @RequestParam id: String
-    ): String {
+    ): String? {
         return hubService.getTransaction(
             endpoint = endpoint,
             keystoreId = keystoreId,
@@ -327,7 +329,48 @@ class HubController(val hubService: HubService) {
             sv = sv,
             sl = sl,
             value = id
-        )
+        )?.let {
+            MarshallerHelper(
+                Kmehrmessage::class.java,
+                Kmehrmessage::class.java
+                            ).toXMLByteArray(it).toString(Charsets.UTF_8)}
+    }
+
+    @GetMapping("/t/{ssin}/{sv}/{sl}/kmehr")
+    fun getTransactionMessage(
+        @RequestParam endpoint: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam hcpZip: String,
+        @RequestParam(required = false) breakTheGlassReason: String? = null,
+        @PathVariable ssin: String,
+        @PathVariable sv: String,
+        @PathVariable sl: String,
+        @RequestParam id: String
+                      ): Kmehrmessage? {
+        return hubService.getTransaction(
+            endpoint = endpoint,
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hubPackageId = hubPackageId,
+            hcpLastName = hcpLastName,
+            hcpFirstName = hcpFirstName,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpZip = hcpZip,
+            ssin = ssin,
+            breakTheGlassReason = breakTheGlassReason,
+            sv = sv,
+            sl = sl,
+            value = id
+                                        )
     }
 
     @DeleteMapping("/t/{ssin}/{sv}/{sl}")
@@ -421,7 +464,7 @@ class HubController(val hubService: HubService) {
         @PathVariable sv: String,
         @PathVariable sl: String,
         @RequestParam id: String
-    ): String = hubService.getTransactionSet(
+    ): String? = hubService.getTransactionSet(
         endpoint = endpoint,
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -437,7 +480,46 @@ class HubController(val hubService: HubService) {
         sv = sv,
         sl = sl,
         value = id
-    )
+                                             )?.let {
+        MarshallerHelper(
+            Kmehrmessage::class.java,
+            Kmehrmessage::class.java
+                        ).toXMLByteArray(it).toString(Charsets.UTF_8)}
+
+    @GetMapping("/ts/{ssin}/{sv}/{sl}/kmehr")
+    fun getTransactionSetMessage(
+        @RequestParam endpoint: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam hcpZip: String,
+        @RequestParam(required = false) breakTheGlassReason: String? = null,
+        @PathVariable ssin: String,
+        @PathVariable sv: String,
+        @PathVariable sl: String,
+        @RequestParam id: String
+                         ): Kmehrmessage? = hubService.getTransactionSet(
+        endpoint = endpoint,
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hubPackageId = hubPackageId,
+        hcpLastName = hcpLastName,
+        hcpFirstName = hcpFirstName,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpZip = hcpZip,
+        ssin = ssin,
+        breakTheGlassReason = breakTheGlassReason,
+        sv = sv,
+        sl = sl,
+        value = id
+                                                                  )
 
     @PostMapping("/ts/{hubId}/{patientSsin}", consumes = [MediaType.APPLICATION_XML_VALUE])
     fun putTransactionSet(

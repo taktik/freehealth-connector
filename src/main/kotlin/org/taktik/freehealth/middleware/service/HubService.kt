@@ -22,6 +22,7 @@ package org.taktik.freehealth.middleware.service
 
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
 import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
+import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
 import org.taktik.freehealth.middleware.domain.consent.Consent
 import org.taktik.freehealth.middleware.dto.common.Gender
@@ -192,7 +193,7 @@ interface HubService {
         sv: String,
         sl: String,
         value: String
-    ): String
+    ): Kmehrmessage?
 
     fun revokeTransaction(
         endpoint: String,
@@ -245,5 +246,5 @@ interface HubService {
         sv: String,
         sl: String,
         value: String
-    ): String
+    ): Kmehrmessage?
 }
