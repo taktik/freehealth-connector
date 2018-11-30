@@ -250,7 +250,10 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                           insuranceCode: String,
                           ignorePrescriptionDate: Boolean,
                           hospitalisedPatient: Boolean,
-                          creditNote: Boolean
+                          creditNote: Boolean,
+                          relatedBatchSendNumber: Long?,
+                          relatedInvoiceIoCode: String?,
+                          relatedInvoiceNumber: Long?
         ): Int {
 
         val ws = WriterSession(writer, Record20Description)
@@ -276,7 +279,6 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
             affCode = "000"
         }
 
-        //ws.write("3", )
         ws.write("7", affCode)
         ws.write("8a", noSIS)
         ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
@@ -292,8 +294,17 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("18", destCode)
         ws.write("24", invoiceNumber)
         ws.write("27", ct1 * 1000 + ct2)
+        if (relatedInvoiceNumber != null) {
+            ws.write("29", relatedInvoiceNumber)
+        }
         ws.write("28", invoiceRef)
         ws.write("32", 1)
+        if (relatedBatchSendNumber != null) {
+            ws.write("34", relatedBatchSendNumber)
+        }
+        if (relatedInvoiceIoCode != null) {
+            ws.write("37", getDestCode(relatedInvoiceIoCode, sender))
+        }
 
         ws.writeFieldsWithCheckSum()
 
