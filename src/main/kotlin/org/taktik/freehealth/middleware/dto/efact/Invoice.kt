@@ -31,4 +31,8 @@ class Invoice {
     var ignorePrescriptionDate: Boolean = false
     var hospitalisedPatient: Boolean = false
     var creditNote: Boolean = false
+
+    var relatedInvoiceIoCode: String? = null
+    var relatedInvoiceNumber: Long? = null
+    var relatedBatchSendNumber: Long? = null
 }
