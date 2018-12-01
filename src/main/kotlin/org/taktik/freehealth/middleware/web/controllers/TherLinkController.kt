@@ -52,16 +52,16 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
         @RequestParam patientLastName: String,
         @RequestParam(
                     required = false
-                ) eidCardNumber: String? = null,
-        @RequestParam(required = false) isiCardNumber: String? = null,
+                ) eidCardNumber: String?,
+        @RequestParam(required = false) isiCardNumber: String?,
         @RequestParam(
                     required = false
-                ) startDate: Date? = null,
-        @RequestParam(required = false) endDate: Date? = null,
-        @RequestParam(required = false) type: String? = null,
+                ) startDate: Date?,
+        @RequestParam(required = false) endDate: Date?,
+        @RequestParam(required = false) type: String?,
         @RequestParam(
                     required = false
-                ) sign: Boolean? = null
+                ) sign: Boolean?
     ) = therLinkService.getAllTherapeuticLinks(
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -89,7 +89,7 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
         @RequestBody queryLink: TherapeuticLinkDto,
         @RequestParam(
                     required = false
-                ) sign: Boolean? = null
+                ) sign: Boolean?
     ) = therLinkService.getAllTherapeuticLinksWithQueryLink(
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -121,17 +121,17 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
         @RequestParam patientLastName: String,
         @RequestParam(
                     required = false
-                ) eidCardNumber: String? = null,
-        @RequestParam(required = false) isiCardNumber: String? = null,
+                ) eidCardNumber: String?,
+        @RequestParam(required = false) isiCardNumber: String?,
         @RequestParam(
                     required = false
-                ) start: Date? = null,
-        @RequestParam(required = false) end: Date? = null,
-        @RequestParam(required = false) therLinkType: String? = null,
+                ) start: Date?,
+        @RequestParam(required = false) end: Date?,
+        @RequestParam(required = false) therLinkType: String?,
         @RequestParam(
                     required = false
-                ) comment: String? = null,
-        @RequestParam(required = false) sign: Boolean? = null
+                ) comment: String?,
+        @RequestParam(required = false) sign: Boolean?
     ) = therLinkService.registerTherapeuticLink(
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -166,17 +166,17 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
         @RequestParam patientLastName: String,
         @RequestParam(
                     required = false
-                ) eidCardNumber: String? = null,
-        @RequestParam(required = false) isiCardNumber: String? = null,
+                ) eidCardNumber: String?,
+        @RequestParam(required = false) isiCardNumber: String?,
         @RequestParam(
                     required = false
-                ) start: Date? = null,
+                ) start: Date?,
         @RequestParam(required = false) end: Date?,
-        @RequestParam(required = false) therLinkType: String? = null,
+        @RequestParam(required = false) therLinkType: String?,
         @RequestParam(
                     required = false
-                ) comment: String? = null,
-        @RequestParam(required = false) sign: Boolean? = null
+                ) comment: String?,
+        @RequestParam(required = false) sign: Boolean?
     ) = therLinkService.revokeLink(
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -205,7 +205,7 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
         @RequestBody therLink: TherapeuticLinkDto,
         @RequestParam(
                     required = false
-                ) sign: Boolean? = null
+                ) sign: Boolean?
     ) = therLinkService.revokeLink(
         keystoreId = keystoreId,
         tokenId = tokenId,

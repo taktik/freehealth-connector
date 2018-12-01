@@ -76,30 +76,23 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         endDate: Date?,
         type: String?,
         sign: Boolean?
-                                       ): List<TherapeuticLinkMessage>? =
-        getAllTherapeuticLinksWithQueryLink(
+                                       ): List<TherapeuticLinkMessage>? {
+        val linkBuilder = TherapeuticLink.Builder()
+            .withHcParty(makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName))
+            .withPatient(makePatient(patientSsin, eidCardNumber, isiCardNumber, patientFirstName, patientLastName))
+            .withStartDateTime(startDate?.let { DateTime(it.time) })
+            .withEndDateTime(endDate?.let { DateTime(it.time) })
+            .withStatus(TherapeuticLinkStatus.ACTIVE)
+
+        type?.let { linkBuilder.withType(it) }
+
+        return getAllTherapeuticLinksWithQueryLink(
             keystoreId,
             tokenId,
             passPhrase,
-            TherapeuticLink.Builder()
-                .withHcParty(makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName))
-                .withPatient(
-                    makePatient(patientSsin, eidCardNumber, isiCardNumber, patientFirstName, patientLastName)
-                            ).withStartDateTime(startDate?.let {
-                    DateTime(
-                        it.time
-                            )
-                }).withEndDateTime(endDate?.let {
-                    DateTime(
-                        it.time
-                            )
-                }).withStatus(
-                    TherapeuticLinkStatus.ACTIVE
-                             ).withType(
-                    type ?: "gpconsultation"
-                                       ).build(),
-            sign
-                                           )
+            linkBuilder.build(),
+            sign)
+    }
 
     override fun getAllTherapeuticLinksWithQueryLink(
         keystoreId: UUID,
@@ -133,20 +126,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                     setSoapAction("urn:be:fgov:ehealth:therlink:protocol:v1:GetTherapeuticLink")
                     setPayload(
                         requestObjectMapper.mapGetTherapeuticLinkRequest(
-                            GetTherapeuticLinkRequest(
-                                DateTime.now(),
-                                getNihii(
-                                    queryLink.hcParty
-                                        )!!,
-                                Author().apply {
-                                    hcParties.add(
-                                        queryLink.hcParty
-                                                 )
-                                },
-                                queryLink,
-                                100,
-                                proof
-                                                     )
+                            GetTherapeuticLinkRequest(DateTime.now(),getNihii(queryLink.hcParty)!!, Author().apply { hcParties.add(queryLink.hcParty) }, queryLink, 100, proof)
                                                                         )
                               )
                 }).asObject(GetTherapeuticLinkResponse::class.java)

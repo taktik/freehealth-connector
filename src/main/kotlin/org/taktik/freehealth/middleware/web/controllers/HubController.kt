@@ -49,7 +49,7 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
         @RequestParam firstName: String,
@@ -84,7 +84,7 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String
     ) = hubService.getPatient(
@@ -112,7 +112,7 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpZip: String,
-        @RequestParam(required = false) hubPackageId: String? = null
+        @RequestParam(required = false) hubPackageId: String?
     ) = hubService.getHcPartyConsent(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -136,7 +136,7 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
         @RequestParam(
@@ -167,7 +167,7 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String
     ): Consent? = hubService.getPatientConsent(
@@ -194,7 +194,7 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @PathVariable hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
         @RequestParam(
@@ -225,7 +225,7 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @PathVariable hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
         @RequestParam(
@@ -260,19 +260,19 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
         @RequestParam(
                     required = false
-                ) from: Long? = null,
-        @RequestParam(required = false) to: Long? = null,
-        @RequestParam(required = false) authorNihii: String? = null,
+                ) from: Long?,
+        @RequestParam(required = false) to: Long?,
+        @RequestParam(required = false) authorNihii: String?,
         @RequestParam(
                     required = false
-                ) authorSsin: String? = null,
-        @RequestParam(required = false) isGlobal: Boolean = false,
-        @RequestParam(required = false) breakTheGlassReason: String? = null
+                ) authorSsin: String?,
+        @RequestParam(required = false) isGlobal: Boolean?,
+        @RequestParam(required = false) breakTheGlassReason: String?
         ): List<TransactionSummary> {
         return hubService.getTransactionsList(
             endpoint = endpoint,
@@ -290,7 +290,7 @@ class HubController(val hubService: HubService) {
             to = to,
             authorNihii = authorNihii,
             authorSsin = authorSsin,
-            isGlobal = isGlobal,
+            isGlobal = isGlobal ?: false,
             breakTheGlassReason = breakTheGlassReason
         )
     }
@@ -305,9 +305,9 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
-        @RequestParam(required = false) breakTheGlassReason: String? = null,
+        @RequestParam(required = false) breakTheGlassReason: String?,
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
@@ -346,9 +346,9 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
-        @RequestParam(required = false) breakTheGlassReason: String? = null,
+        @RequestParam(required = false) breakTheGlassReason: String?,
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
@@ -383,9 +383,9 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
-        @RequestParam(required = false) breakTheGlassReason: String? = null,
+        @RequestParam(required = false) breakTheGlassReason: String?,
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
@@ -420,7 +420,7 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable hubId: Long,
         @RequestParam(
@@ -457,9 +457,9 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
-        @RequestParam(required = false) breakTheGlassReason: String? = null,
+        @RequestParam(required = false) breakTheGlassReason: String?,
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
@@ -496,9 +496,9 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
-        @RequestParam(required = false) breakTheGlassReason: String? = null,
+        @RequestParam(required = false) breakTheGlassReason: String?,
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
@@ -531,7 +531,7 @@ class HubController(val hubService: HubService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String? = null,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable hubId: Long,
         @RequestParam(
