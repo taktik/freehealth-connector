@@ -41,7 +41,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @PathVariable lastName: String,
         @RequestParam(
                     required = false
-                ) firstName: String? = null,
+                ) firstName: String?,
         @RequestParam(required = false) type: String?
     ): List<HealthcareParty> = addressbookService.searchHcp(
         keystoreId, tokenId, passPhrase, lastName, firstName, type ?: "PHYSICIAN"
