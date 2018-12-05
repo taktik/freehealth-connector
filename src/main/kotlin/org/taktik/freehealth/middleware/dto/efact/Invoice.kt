@@ -35,4 +35,5 @@ class Invoice {
     var relatedInvoiceIoCode: String? = null
     var relatedInvoiceNumber: Long? = null
     var relatedBatchSendNumber: Long? = null
+    var relatedBatchYearMonth: Long? = null
 }

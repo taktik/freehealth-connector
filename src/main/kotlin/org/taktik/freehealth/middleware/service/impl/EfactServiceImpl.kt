@@ -109,7 +109,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     var recordFee = 0L
                     var recordSup = 0L
                     rn =
-                        iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber)
+                        iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedBatchYearMonth, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber)
                     recordsCountPerOA[0]++
                     recordsCount++
                     for (it in invoice.items) {
