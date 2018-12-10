@@ -139,9 +139,7 @@ class HubController(val hubService: HubService) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
-        @RequestParam(
-                    required = false
-                ) patientEidCardNumber: String?
+        @RequestParam(required = false) patientEidCardNumber: String?
     ) = hubService.registerPatientConsent(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -197,9 +195,7 @@ class HubController(val hubService: HubService) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
-        @RequestParam(
-                    required = false
-                ) patientEidCardNumber: String?
+        @RequestParam(required = false) patientEidCardNumber: String?
     ) = hubService.registerTherapeuticLink(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -228,9 +224,7 @@ class HubController(val hubService: HubService) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
-        @RequestParam(
-                    required = false
-                ) therLinkType: String?,
+        @RequestParam(required = false) therLinkType: String?,
         @RequestParam(required = false) from: Instant?,
         @RequestParam(required = false) to: Instant?
     ): List<TherapeuticLink> = hubService.getTherapeuticLinks(
@@ -263,14 +257,10 @@ class HubController(val hubService: HubService) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
-        @RequestParam(
-                    required = false
-                ) from: Long?,
+        @RequestParam(required = false) from: Long?,
         @RequestParam(required = false) to: Long?,
         @RequestParam(required = false) authorNihii: String?,
-        @RequestParam(
-                    required = false
-                ) authorSsin: String?,
+        @RequestParam(required = false) authorSsin: String?,
         @RequestParam(required = false) isGlobal: Boolean?,
         @RequestParam(required = false) breakTheGlassReason: String?
         ): List<TransactionSummary> {
@@ -423,9 +413,7 @@ class HubController(val hubService: HubService) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable hubId: Long,
-        @RequestParam(
-                    required = false
-                ) hubApplication: String?,
+        @RequestParam(required = false) hubApplication: String?,
         @PathVariable patientSsin: String,
         @RequestBody message: ByteArray
     ): TransactionIdType {
@@ -534,9 +522,7 @@ class HubController(val hubService: HubService) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable hubId: Long,
-        @RequestParam(
-                    required = false
-                ) hubApplication: String?,
+        @RequestParam(required = false) hubApplication: String?,
         @PathVariable patientSsin: String,
         @RequestBody message: ByteArray
     ): PutTransactionSetResponse = hubService.putTransactionSet(
