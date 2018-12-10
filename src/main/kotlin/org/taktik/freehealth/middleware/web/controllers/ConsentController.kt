@@ -51,9 +51,7 @@ class ConsentController(val consentService: ConsentService, val mapper: MapperFa
         @PathVariable patientSsin: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
-        @RequestParam(
-                    required = false
-                ) eidCardNumber: String?,
+        @RequestParam(required = false) eidCardNumber: String?,
         @RequestParam(required = false) isiCardNumber: String?
     ) = consentService.registerPatientConsent(
         keystoreId = keystoreId,
@@ -105,9 +103,7 @@ class ConsentController(val consentService: ConsentService, val mapper: MapperFa
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestBody existingConsent: ConsentTypeDto,
-        @RequestParam(
-                    required = false
-                ) eidCardNumber: String?,
+        @RequestParam(required = false) eidCardNumber: String?,
         @RequestParam(required = false) isiCardNumber: String?
     ) = consentService.revokePatientConsent(
         keystoreId = keystoreId,

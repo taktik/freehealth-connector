@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
 	<include resource="org/springframework/boot/logging/logback/base.xml"/>
-	<logger name="org.taktik.freehealth.middleware.service.impl" level="TRACE" />
-	<logger name="org.taktik.connector.technical.ws" level="TRACE" />
-	<logger name="org.taktik.connector.technical.ws.impl" level="TRACE" />
+	<logger name="org.taktik.freehealth.middleware.service.impl" level="INFO" />
+	<logger name="org.taktik.connector.technical.ws" level="INFO" />
+	<logger name="org.taktik.connector.technical.ws.impl" level="INFO" />
 </configuration>

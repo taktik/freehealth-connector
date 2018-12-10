@@ -53,8 +53,8 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) oa: String?,
         @RequestParam(required = false) regNrWithMut: String?,
-        @RequestParam(required = false) patientFirstName: String,
-        @RequestParam(required = false) patientLastName: String,
+        @RequestParam(required = false) patientFirstName: String?,
+        @RequestParam(required = false) patientLastName: String?,
         @RequestParam(required = false) patientGender: String?,
         @PathVariable nomenclature: String,
         @RequestParam(required = false) requestDate: Long?,
@@ -64,7 +64,7 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
         @RequestParam(required = false) traineeSupervisorLastName: String?
 
         ) =
-        dmgService.notifyDmg(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, traineeSupervisorFirstName = traineeSupervisorFirstName, traineeSupervisorLastName = traineeSupervisorLastName, traineeSupervisorSsin = traineeSupervisorSsin, traineeSupervisorNihii = traineeSupervisorNihii, patientSsin = patientSsin, patientGender = patientGender, patientFirstName = patientFirstName, patientLastName = patientLastName, oa = oa, regNrWithMut = regNrWithMut, requestDate = requestDate?.let { Date(requestDate) }
+        dmgService.notifyDmg(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, traineeSupervisorFirstName = traineeSupervisorFirstName, traineeSupervisorLastName = traineeSupervisorLastName, traineeSupervisorSsin = traineeSupervisorSsin, traineeSupervisorNihii = traineeSupervisorNihii, patientSsin = patientSsin, patientGender = patientGender, patientFirstName = patientFirstName ?: "", patientLastName = patientLastName ?: "", oa = oa, regNrWithMut = regNrWithMut, requestDate = requestDate?.let { Date(requestDate) }
             ?: Date(), nomenclature = nomenclature).let {
             mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgNotification::class.java)
         }

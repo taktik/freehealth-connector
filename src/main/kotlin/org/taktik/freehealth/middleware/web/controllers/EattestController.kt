@@ -49,9 +49,7 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam(
-                    required = false
-                ) date: Long?,
+        @RequestParam(required = false) date: Long?,
         @RequestBody attest: Eattest
     ) = eattestService.sendAttest(
         keystoreId,
@@ -84,9 +82,7 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam(
-                    required = false
-                ) date: Long?,
+        @RequestParam(required = false) date: Long?,
         @RequestBody attest: Eattest
     ): SendAttestResult? = eattestService.sendAttest(
         keystoreId,

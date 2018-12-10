@@ -234,8 +234,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                     this.transactionRequest = MarshallerHelper(TarificationConsultationRequest::class.java, TarificationConsultationRequest::class.java)
                         .toXMLByteArray(request)
                         .toString(Charsets.UTF_8)
-                    this.transactionResponse = MarshallerHelper(TarificationConsultationResponse::class.java, TarificationConsultationResponse::class.java)
-                        .toXMLByteArray(consultTarificationResponse)
+                    this.transactionResponse = MarshallerHelper(RetrieveTransactionResponse::class.java, RetrieveTransactionResponse::class.java)
+                        .toXMLByteArray(commonInputResponse)
                         .toString(Charsets.UTF_8)
                 }
                this.commonOutput = commonOutput
@@ -317,6 +317,16 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                         )
                     )
                 }
+            }
+            if (result.isEmpty()) {
+                result.add(
+                    MycarenetError(
+                        code = ec,
+                        path = url,
+                        msgFr = "Erreur générique, xpath invalide",
+                        msgNl = "Onbekend foutmelding, xpath ongeldig"
+                                  ))
+
             }
             result
         } ?: setOf()
