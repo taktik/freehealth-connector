@@ -46,6 +46,10 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpCbe: String,
+        @RequestParam(required = false) traineeSupervisorSsin: String?,
+        @RequestParam(required = false) traineeSupervisorNihii: String?,
+        @RequestParam(required = false) traineeSupervisorFirstName: String?,
+        @RequestParam(required = false) traineeSupervisorLastName: String?,
         @RequestParam(
                     required = false
                 ) date: Long?,
@@ -58,6 +62,10 @@ class EattestController(val eattestService: EattestService) {
         hcpFirstName,
         hcpLastName,
         hcpCbe,
+        traineeSupervisorSsin,
+        traineeSupervisorNihii,
+        traineeSupervisorFirstName,
+        traineeSupervisorLastName,
         passPhrase,
         patientSsin,
         null,
@@ -75,6 +83,10 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpCbe: String,
+        @RequestParam(required = false) traineeSupervisorSsin: String?,
+        @RequestParam(required = false) traineeSupervisorNihii: String?,
+        @RequestParam(required = false) traineeSupervisorFirstName: String?,
+        @RequestParam(required = false) traineeSupervisorLastName: String?,
         @RequestParam(
                     required = false
                 ) date: Long?,
@@ -87,6 +99,10 @@ class EattestController(val eattestService: EattestService) {
         hcpFirstName,
         hcpLastName,
         hcpCbe,
+        traineeSupervisorSsin,
+        traineeSupervisorNihii,
+        traineeSupervisorFirstName,
+        traineeSupervisorLastName,
         passPhrase,
         patientSsin,
         null,
