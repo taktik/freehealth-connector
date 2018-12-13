@@ -26,6 +26,6 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 
 interface EattestService {
-    @Throws(exceptionClasses = TechnicalConnectorException::class)
+    @Throws(exceptionClasses = [TechnicalConnectorException::class])
     fun sendAttestion(token: SAMLToken, request: SendAttestationRequest): SendAttestationResponse
 }

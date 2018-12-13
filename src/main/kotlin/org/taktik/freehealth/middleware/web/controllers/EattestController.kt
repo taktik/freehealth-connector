@@ -46,13 +46,14 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpCbe: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientGender: String,
+        @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
         @RequestParam(required = false) traineeSupervisorLastName: String?,
-        @RequestParam(
-                    required = false
-                ) date: Long?,
         @RequestBody attest: Eattest
     ) = eattestService.sendAttest(
         keystoreId,
@@ -68,6 +69,9 @@ class EattestController(val eattestService: EattestService) {
         traineeSupervisorLastName,
         passPhrase,
         patientSsin,
+        patientFirstName,
+        patientLastName,
+        patientGender,
         null,
         attest
     )
@@ -83,13 +87,14 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpCbe: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientGender: String,
+        @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
         @RequestParam(required = false) traineeSupervisorLastName: String?,
-        @RequestParam(
-                    required = false
-                ) date: Long?,
         @RequestBody attest: Eattest
     ): SendAttestResult? = eattestService.sendAttest(
         keystoreId,
@@ -105,6 +110,9 @@ class EattestController(val eattestService: EattestService) {
         traineeSupervisorLastName,
         passPhrase,
         patientSsin,
+        patientFirstName,
+        patientLastName,
+        patientGender,
         null,
         attest
     )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }

@@ -20,6 +20,8 @@
 	{"uid":"19","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[chapter4reference]","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
 	{"uid":"20","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[chapter4reference]","code":"130","locFr":"","locNl":"","msgFr":"Valeur non permise","msgNl":""},
 	{"uid":"21","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[chapter4reference]","code":"154","locFr":"","locNl":"","msgFr":"Data Base médicaments - Versions incohérentes","msgNl":""},
+	{"uid":"38","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[chapter4reference]","code":"180","locFr":"","locNl":"","msgFr":"Paragraphe n’existe pas (plus) à la date de la demande ","msgNl":""},
+	{"uid":"39","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[chapter4reference]","code":"181","locFr":"","locNl":"","msgFr":"Code CNK n’existe pas (plus) à la date de la demande ","msgNl":""},
 	{"uid":"22","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[consultationstartdate]","code":"100","locFr":"","locNl":"","msgFr":"Item obligatoire non complété","msgNl":""},
 	{"uid":"23","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[consultationstartdate]","code":"111","locFr":"","locNl":"","msgFr":"Erreur format","msgNl":""},
 	{"uid":"24","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[consultationstartdate]","code":"113","locFr":"","locNl":"","msgFr":"Date invraisemblable","msgNl":""},

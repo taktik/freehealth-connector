@@ -39,9 +39,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable lastName: String,
-        @RequestParam(
-                    required = false
-                ) firstName: String? = null,
+        @RequestParam(required = false) firstName: String?,
         @RequestParam(required = false) type: String?
     ): List<HealthcareParty> = addressbookService.searchHcp(
         keystoreId, tokenId, passPhrase, lastName, firstName, type ?: "PHYSICIAN"
@@ -53,9 +51,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable name: String,
-        @RequestParam(
-                    required = false
-                ) type: String?
+        @RequestParam(required = false) type: String?
     ): List<HealthcareParty> = addressbookService.searchOrg(
         keystoreId, tokenId, passPhrase, name, type ?: "HOSPITAL"
     )
@@ -66,9 +62,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable nihii: String,
-        @RequestParam(
-                    required = false
-                ) language: String?
+        @RequestParam(required = false) language: String?
     ): HealthcareParty = addressbookService.getHcp(
         keystoreId, tokenId, passPhrase, nihii, null, language ?: "fr"
     )
@@ -79,9 +73,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable ssin: String,
-        @RequestParam(
-                    required = false
-                ) language: String?
+        @RequestParam(required = false) language: String?
     ): HealthcareParty = addressbookService.getHcp(
         keystoreId, tokenId, passPhrase, null, ssin, language ?: "fr"
     )
@@ -92,9 +84,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable nihii: String,
-        @RequestParam(
-                    required = false
-                ) language: String?
+        @RequestParam(required = false) language: String?
     ): HealthcareParty = addressbookService.getOrg(
         keystoreId, tokenId, passPhrase, null, null, nihii, language ?: "fr"
     )
@@ -105,9 +95,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable cbe: String?,
-        @RequestParam(
-                    required = false
-                ) language: String?
+        @RequestParam(required = false) language: String?
     ): HealthcareParty = addressbookService.getOrg(
         keystoreId, tokenId, passPhrase, null, cbe, null, language ?: "fr"
     )
@@ -118,9 +106,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable ehp: String?,
-        @RequestParam(
-                    required = false
-                ) language: String?
+        @RequestParam(required = false) language: String?
     ): HealthcareParty = addressbookService.getOrg(
         keystoreId, tokenId, passPhrase, ehp, null, null, language ?: "fr"
     )

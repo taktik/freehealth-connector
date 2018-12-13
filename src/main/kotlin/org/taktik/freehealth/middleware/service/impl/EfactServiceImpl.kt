@@ -95,7 +95,11 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             recordsCount++
 
             for (invoice in batch.invoices.sortedWith(Comparator { i1, i2 ->
-                iv.getDestCode(i1.ioCode!!, batch.sender!!).compareTo(iv.getDestCode(i2.ioCode!!, batch.sender!!))
+                when {
+                    i1.creditNote && !i2.creditNote -> -1
+                    i2.creditNote && !i1.creditNote -> 1
+                    else -> iv.getDestCode(i1.ioCode!!, batch.sender!!).compareTo(iv.getDestCode(i2.ioCode!!, batch.sender!!))
+                }
             })) {
                 if (invoice.items.isNotEmpty()) {
                     val destCode = iv.getDestCode(invoice.ioCode!!, batch.sender!!)
@@ -113,8 +117,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     recordsCountPerOA[0]++
                     recordsCount++
                     for (it in invoice.items) {
-                        rn =
-                            iv.writeRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, invoice.ioCode!!, it)
+                        rn = iv.writeRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, invoice.ioCode!!, it)
 
                         recordsCountPerOA[0]++
                         recordsCount++
@@ -231,7 +234,6 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             }
         }
     }
-
 
     override fun loadMessages(
         keystoreId: UUID,

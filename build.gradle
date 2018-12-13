@@ -7,12 +7,12 @@ configurations {
 }
 
 group = 'org.taktik'
-version = '0.1.32'
+version = '0.1.36'
 
 
 buildscript {
 	ext {
-		kotlinVersion = '1.2.30'
+		kotlinVersion = '1.3.10'
 		springBootVersion = '1.5.7.RELEASE'
 	}
 	repositories {

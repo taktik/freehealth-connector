@@ -121,11 +121,11 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam(required = false) civicsVersion: String? = null,
-        @RequestParam(required = false) paragraph: String? = null,
-        @RequestParam(required = false) start: Long? = null,
-        @RequestParam(required = false) end: Long? = null,
-        @RequestParam(required = false) reference: String? = null) = chapter4Service.agreementRequestsConsultation(
+        @RequestParam(required = false) civicsVersion: String?,
+        @RequestParam(required = false) paragraph: String?,
+        @RequestParam(required = false) start: Long?,
+        @RequestParam(required = false) end: Long?,
+        @RequestParam(required = false) reference: String?) = chapter4Service.agreementRequestsConsultation(
         keystoreId = keystoreId,
         tokenId = tokenId,
         passPhrase = passPhrase,
@@ -160,12 +160,12 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
                          @PathVariable requestType: String,
                          @PathVariable civicsVersion: String,
                          @PathVariable paragraph: String,
-                         @RequestParam(required = false) verses: String?  = null,
-                         @RequestParam(required = false) incomplete: Boolean = false,
-                         @RequestParam(required = false) start: Long? = null,
-                         @RequestParam(required = false) end: Long? = null,
-                         @RequestParam(required = false) decisionReference: String? = null,
-                         @RequestParam(required = false) ioRequestReference: String? = null,
+                         @RequestParam(required = false) verses: String?,
+                         @RequestParam(required = false) incomplete: Boolean?,
+                         @RequestParam(required = false) start: Long?,
+                         @RequestParam(required = false) end: Long?,
+                         @RequestParam(required = false) decisionReference: String?,
+                         @RequestParam(required = false) ioRequestReference: String?,
                          @RequestBody appendices: List<Appendix>
                         ) =
         chapter4Service.requestAgreement(
@@ -207,7 +207,7 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
                         @RequestParam patientLastName: String,
                         @RequestParam patientGender: String,
                         @RequestParam(required = false) decisionReference: String?,
-                        @RequestParam(required = false) iorequestReference: String? = null) =
+                        @RequestParam(required = false) iorequestReference: String?) =
         chapter4Service.cancelAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
