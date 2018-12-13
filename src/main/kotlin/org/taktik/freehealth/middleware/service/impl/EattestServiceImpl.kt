@@ -163,6 +163,10 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         hcpFirstName: String,
         hcpLastName: String,
         hcpCbe: String,
+        traineeSupervisorSsin: String?,
+        traineeSupervisorNihii: String?,
+        traineeSupervisorFirstName: String?,
+        traineeSupervisorLastName: String?,
         passPhrase: String,
         patientSsin: String,
         patientFirstName:String,
@@ -263,14 +267,25 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                         }
                         transactions.addAll(listOf(TransactionType().apply {
                             var itemId = 1
-
-                            ids.add(IDKMEHR().apply {
-                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
-                                (trnsId++).toString()
-                            })
-                            cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MYCARENET; sv = "1.2"; value = "cga" })
-                            date = refDateTime; time = refDateTime
-                            author = AuthorType().apply {
+                            var supervisor = AuthorType().apply {
+                                hcparties.add(HcpartyType().apply {
+                                    ids.add(IDHCPARTY().apply {
+                                        s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                        traineeSupervisorNihii
+                                    })
+                                    ids.add(IDHCPARTY().apply {
+                                        s = IDHCPARTYschemes.INSS; sv = "1.0"; value =
+                                        traineeSupervisorSsin
+                                    })
+                                    cds.add(CDHCPARTY().apply {
+                                        s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                        "persphysician"
+                                    })
+                                    firstname = traineeSupervisorFirstName
+                                    familyname = traineeSupervisorLastName
+                                })
+                            }
+                            var author = AuthorType().apply {
                                 hcparties.add(HcpartyType().apply {
                                     ids.add(IDHCPARTY().apply {
                                         s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
@@ -287,6 +302,18 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                     firstname = hcpFirstName
                                     familyname = hcpLastName
                                 })
+                            }
+
+                            ids.add(IDKMEHR().apply {
+                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                (trnsId++).toString()
+                            })
+                            cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MYCARENET; sv = "1.2"; value = "cga" })
+                            date = refDateTime; time = refDateTime
+                            traineeSupervisorNihii?.let {
+                                this.author = supervisor
+                            } ?: run {
+                                this.author = author
                             }
                             isIscomplete = true
                             isIsvalidated = true

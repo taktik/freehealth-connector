@@ -50,6 +50,10 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
         @RequestParam(required = false) date: Long?,
+        @RequestParam(required = false) traineeSupervisorSsin: String?,
+        @RequestParam(required = false) traineeSupervisorNihii: String?,
+        @RequestParam(required = false) traineeSupervisorFirstName: String?,
+        @RequestParam(required = false) traineeSupervisorLastName: String?,
         @RequestBody attest: Eattest
     ) = eattestService.sendAttest(
         keystoreId,
@@ -59,6 +63,10 @@ class EattestController(val eattestService: EattestService) {
         hcpFirstName,
         hcpLastName,
         hcpCbe,
+        traineeSupervisorSsin,
+        traineeSupervisorNihii,
+        traineeSupervisorFirstName,
+        traineeSupervisorLastName,
         passPhrase,
         patientSsin,
         patientFirstName,
@@ -83,6 +91,10 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
         @RequestParam(required = false) date: Long?,
+        @RequestParam(required = false) traineeSupervisorSsin: String?,
+        @RequestParam(required = false) traineeSupervisorNihii: String?,
+        @RequestParam(required = false) traineeSupervisorFirstName: String?,
+        @RequestParam(required = false) traineeSupervisorLastName: String?,
         @RequestBody attest: Eattest
     ): SendAttestResult? = eattestService.sendAttest(
         keystoreId,
@@ -92,6 +104,10 @@ class EattestController(val eattestService: EattestService) {
         hcpFirstName,
         hcpLastName,
         hcpCbe,
+        traineeSupervisorSsin,
+        traineeSupervisorNihii,
+        traineeSupervisorFirstName,
+        traineeSupervisorLastName,
         passPhrase,
         patientSsin,
         patientFirstName,

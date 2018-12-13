@@ -252,6 +252,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                           hospitalisedPatient: Boolean,
                           creditNote: Boolean,
                           relatedBatchSendNumber: Long?,
+                          relatedBatchYearMonth: Long?,
                           relatedInvoiceIoCode: String?,
                           relatedInvoiceNumber: Long?
         ): Int {
@@ -283,28 +284,24 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("8a", noSIS)
         ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
         ws.write("10", if (hospitalisedPatient) 1 else 3)
-        ws.write("11", if (!creditNote) 0 else 3)
+        ws.write("11", if (relatedInvoiceNumber == null) 0 else { if(!creditNote) 1 else 3 })
         ws.write("14", sender.nihii)
         ws.write("16", if (ignorePrescriptionDate) 1 else 0)
         ws.write("17", treatmentReason.code)
 
         //Silly rules for this field
         val destCode = getDestCode(insuranceCode, sender)
+        val relatedDestCode = if (relatedInvoiceIoCode != null) getDestCode(relatedInvoiceIoCode, sender) else null
 
         ws.write("18", destCode)
         ws.write("24", invoiceNumber)
         ws.write("27", ct1 * 1000 + ct2)
-        if (relatedInvoiceNumber != null) {
-            ws.write("29", relatedInvoiceNumber)
-        }
+        ws.write("29", relatedInvoiceNumber)
         ws.write("28", invoiceRef)
         ws.write("32", 1)
-        if (relatedBatchSendNumber != null) {
-            ws.write("34", relatedBatchSendNumber)
-        }
-        if (relatedInvoiceIoCode != null) {
-            ws.write("37", getDestCode(relatedInvoiceIoCode, sender))
-        }
+        ws.write("34", relatedBatchSendNumber)
+        ws.write("37", relatedDestCode)
+        ws.write("41", relatedBatchYearMonth)
 
         ws.writeFieldsWithCheckSum()
 
@@ -354,7 +351,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("16", if (icd.gnotionNihii == null || icd.gnotionNihii?.let { it.isEmpty() } == true) 1 else 4)
         ws.write("17", icd.relatedCode)
         ws.write("19",(if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
-        ws.write("22","+" + nf4.format(icd.units))
+        ws.write("22",(if (icd.units >= 0) "+" else "-") + nf4.format(Math.abs(icd.units)))
         ws.write("23", (icd.derogationMaxNumber?: InvoicingDerogationMaxNumberCode.Other).code)
         ws.write("24", icd.prescriberNihii)
         ws.write("26", (icd.percentNorm?: InvoicingPercentNorm.None).code)
