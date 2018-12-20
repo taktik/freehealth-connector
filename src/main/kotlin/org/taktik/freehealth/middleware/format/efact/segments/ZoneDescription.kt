@@ -27,7 +27,8 @@ class ZoneDescription private constructor(val label: String,
                                           val type: ZoneType,
                                           val zones: List<String>,
                                           val value: String? = null,
-                                          val cs: Boolean = false) {
+                                          val cs: Boolean = false,
+                                          val optional: Boolean = false) {
     var zonesList: String? = null
         get() = field ?: StringUtils.join(zones, ",")
 
@@ -56,11 +57,12 @@ class ZoneDescription private constructor(val label: String,
                   position: Int,
                   length: Int,
                   value: String? = null,
-                  cs: Boolean = false): ZoneDescription {
+                  cs: Boolean = false,
+                  optional: Boolean = false): ZoneDescription {
             val type = ZoneType.fromSymbol(typeSymbol) ?: throw IllegalArgumentException("Invalid type $typeSymbol")
             val splitZones = commaSeparatedZones.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             val zones = splitZones.map { it.trim { it <= ' ' } }
-            return ZoneDescription(label, position, length, type, zones, value, cs)
+            return ZoneDescription(label, position, length, type, zones, value, cs, optional)
         }
     }
 }
