@@ -496,10 +496,12 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                 cd = RecipeCDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = versions["CD-ITEM"]; value = "medication" }
                                 med.medicinalProduct?.intendedcds?.let {
                                     it.find { it.type == "CD-DRUG-CNK" }?.let { c ->
-                                        content = RecipecontentType().apply {
-                                            medicinalproduct = RecipemedicinalProductType().apply {
-                                                intendedcds.add(KmehrPrescriptionHelper.toCDDRUGCNK(c))
-                                                intendedname = med.medicinalProduct?.intendedname
+                                        if(c.code != "0000000"  || (med.compoundPrescription == null && med.compoundPrescriptionV2 == null)){
+                                            content = RecipecontentType().apply {
+                                                medicinalproduct = RecipemedicinalProductType().apply {
+                                                    intendedcds.add(KmehrPrescriptionHelper.toCDDRUGCNK(c))
+                                                    intendedname = med.medicinalProduct?.intendedname
+                                                }
                                             }
                                         }
                                     }
@@ -922,9 +924,9 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         if (prescriptionType != null) {
             return prescriptionType
         }
-        if (medications.any { it.compoundPrescription != null || it.compoundPrescriptionV2 != null }) {
-            return "P2"
-        }
+//        if (medications.any { it.compoundPrescription != null || it.compoundPrescriptionV2 != null }) {
+//            return "P2"
+//        }
         medications.filter { isAnyReimbursedMedicinalProduct(it.medicinalProduct?.intendedcds) }
                 .forEach { return "P1" }
 
