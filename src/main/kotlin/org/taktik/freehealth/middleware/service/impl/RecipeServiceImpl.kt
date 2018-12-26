@@ -605,8 +605,8 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                 }
                                 med.renewal?.let {
                                     renewal = ReciperenewalType().apply {
-                                        it.allowedRenewals?.let { decimal = BigDecimal(it.toLong()) }
-                                        duration = toDurationType(it.delayBetweenDeliveries)
+                                        it.decimal?.let { decimal = BigDecimal(it.toLong()) }
+                                        duration = toDurationType(it.duration)
                                     }
                                 }
                                 med.intakeRoute?.code?.let { c ->
