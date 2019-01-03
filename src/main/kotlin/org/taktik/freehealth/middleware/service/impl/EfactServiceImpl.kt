@@ -170,6 +170,27 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         return stringWriter.toString()
     }
 
+    fun sanitizeBatchNames(batch: InvoicesBatch): InvoicesBatch {
+        val specialChars = Regex("[!@#&/\\\\]")
+        batch.sender = batch.sender?.apply {
+            firstName = firstName?.replace(specialChars, "")
+            lastName = lastName?.replace(specialChars, "")
+        }
+
+        batch.invoices.replaceAll {
+            it.patient = it.patient?.apply {
+                firstName = firstName?.replace(specialChars, "")
+                lastName = lastName?.replace(specialChars, "")
+                spouseName = spouseName?.replace(specialChars, "")
+                maidenName = maidenName?.replace(specialChars, "")
+                partnerName = partnerName?.replace(specialChars, "")
+            }
+            it
+        }
+
+        return batch
+    }
+
     override fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch): EfactSendResponse {
         requireNotNull(keystoreId) { "Keystore id cannot be null" }
         requireNotNull(tokenId) { "Token id cannot be null" }
@@ -179,9 +200,11 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
         val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
 
-        val fed = batch.ioFederationCode
-        val inputReference = "" + DecimalFormat("00000000000000").format(batch.numericalRef ?: 0)
-        val content = makeFlatFile(batch, isTest)
+        val sanitizedBatch = sanitizeBatchNames(batch)
+
+        val fed = sanitizedBatch.ioFederationCode
+        val inputReference = "" + DecimalFormat("00000000000000").format(sanitizedBatch.numericalRef ?: 0)
+        val content = makeFlatFile(sanitizedBatch, isTest)
 
         val requestObjectBuilder = try {
             BuilderFactory.getRequestObjectBuilder("invoicing")
@@ -201,7 +224,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                 isIsTest = isTest!!
             }
             origin =
-                buildOriginType(batch.sender!!.nihii!!.toString(), batch.sender!!.ssin!!.toString(), batch.sender!!.firstName!!, batch.sender!!.lastName!!)
+                buildOriginType(sanitizedBatch.sender!!.nihii!!.toString(), sanitizedBatch.sender!!.ssin!!.toString(), sanitizedBatch.sender!!.firstName!!, sanitizedBatch.sender!!.lastName!!)
             this.inputReference = inputReference
         }
 
