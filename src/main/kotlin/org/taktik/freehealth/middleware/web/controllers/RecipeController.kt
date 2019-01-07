@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -160,4 +161,15 @@ class RecipeController(val recipeService: RecipeService) {
 
     @GetMapping("/{rid}")
     fun getPrescription(@PathVariable rid: String): PrescriptionFullWithFeedback? = recipeService.getPrescription(rid)
+
+    @GetMapping("/prescription/{rid}")
+    fun getPrescriptionMessage(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @PathVariable rid: String): org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage? =
+        recipeService.getPrescriptionMessage(keystoreId = keystoreId,
+            tokenId = tokenId,
+            hcpQuality = hcpQuality,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpName = hcpName,
+            passPhrase = passPhrase,
+            rid = rid)
 }
