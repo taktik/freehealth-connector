@@ -75,6 +75,19 @@ class RecipeController(val recipeService: RecipeService) {
             passPhrase = passPhrase
         )
 
+    @GetMapping("/patient")
+    fun listOpenPrescriptionsByPatient(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam patientId: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Prescription> =
+        recipeService.listOpenPrescriptions(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            hcpQuality = hcpQuality,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpName = hcpName,
+            passPhrase = passPhrase,
+            patientId = patientId
+        )
+
     @PostMapping("/notify/{rid}")
     fun sendNotification(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
