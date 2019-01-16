@@ -267,7 +267,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                         }
                         transactions.addAll(listOf(TransactionType().apply {
                             var itemId = 1
-                            var supervisor = AuthorType().apply {
+                            val supervisor = AuthorType().apply {
                                 hcparties.add(HcpartyType().apply {
                                     ids.add(IDHCPARTY().apply {
                                         s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
@@ -285,7 +285,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                     familyname = traineeSupervisorLastName
                                 })
                             }
-                            var author = AuthorType().apply {
+                            val author = AuthorType().apply {
                                 hcparties.add(HcpartyType().apply {
                                     ids.add(IDHCPARTY().apply {
                                         s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
@@ -386,6 +386,40 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                                }).filterNotNull()
                                        )
                         }).plus(attest.codes.map { code ->
+                            val author = HcpartyType().apply {
+                                    ids.add(IDHCPARTY().apply {
+                                        s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                        hcpNihii
+                                    })
+                                    ids.add(IDHCPARTY().apply {
+                                        s = IDHCPARTYschemes.INSS; sv = "1.0"; value =
+                                        hcpSsin
+                                    })
+                                    cds.add(CDHCPARTY().apply {
+                                        s = CDHCPARTYschemes.CD_HCPARTY; sv =
+                                        "1.10"; value = "persphysician"
+                                    })
+                                    firstname = hcpFirstName
+                                    familyname = hcpLastName
+                            }
+
+                            val supervisor = HcpartyType().apply {
+                                ids.add(IDHCPARTY().apply {
+                                    s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                    traineeSupervisorNihii
+                                })
+                                ids.add(IDHCPARTY().apply {
+                                    s = IDHCPARTYschemes.INSS; sv = "1.0"; value =
+                                    traineeSupervisorSsin
+                                })
+                                cds.add(CDHCPARTY().apply {
+                                    s = CDHCPARTYschemes.CD_HCPARTY; sv =
+                                    "1.10"; value = "persphysician"
+                                })
+                                firstname = traineeSupervisorFirstName
+                                familyname = traineeSupervisorLastName
+                            }
+
                             TransactionType().apply {
                                 ids.add(IDKMEHR().apply {
                                     s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
@@ -396,23 +430,12 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                     "cgd"
                                 })
                                 date = refDateTime; time = refDateTime
-                                author = AuthorType().apply {
-                                    hcparties.add(HcpartyType().apply {
-                                        ids.add(IDHCPARTY().apply {
-                                            s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
-                                            hcpNihii
-                                        })
-                                        ids.add(IDHCPARTY().apply {
-                                            s = IDHCPARTYschemes.INSS; sv = "1.0"; value =
-                                            hcpSsin
-                                        })
-                                        cds.add(CDHCPARTY().apply {
-                                            s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                            "1.10"; value = "persphysician"
-                                        })
-                                        firstname = hcpFirstName
-                                        familyname = hcpLastName
-                                    })
+                                this.author = AuthorType().apply {
+                                    if (traineeSupervisorNihii != null) {
+                                        hcparties.add(supervisor)
+                                    } else {
+                                        hcparties.add(author)
+                                    }
                                 }
                                 isIscomplete = true
                                 isIsvalidated = true
@@ -538,7 +561,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                                 cds.add(CDHCPARTY().apply {
                                                     s =
                                                         CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
-                                                    gmdm.cdHcParty
+                                                    gmdm.cdHcParty ?: "persphysician"
                                                 })
                                                 firstname = gmdm.firstName ?: ""
                                                 familyname = gmdm.lastName ?: ""
