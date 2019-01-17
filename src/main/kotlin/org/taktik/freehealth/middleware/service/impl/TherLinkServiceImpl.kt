@@ -402,7 +402,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                 BeIDCredential.getInstance("Therapeutic Link", "Signature")
                                           )
             patient.eidCardNumber != null -> Proof(ProofTypeValues.EIDREADING.value)
-            patient.isiCardNumber != null -> Proof(ProofTypeValues.SISREADING.value)
+            patient.isiCardNumber != null -> Proof(ProofTypeValues.ISIREADING.value)
             else -> null
         }
     }
