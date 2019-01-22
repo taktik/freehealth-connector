@@ -87,6 +87,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         nihiiOrSsin: String, //nihii for medical house and niss for doctor
         passPhrase: String,
         medicalHouse: Boolean,
+        guardPost: Boolean,
         extraDesignators: List<Pair<String, String>>
     ): SamlTokenResult {
         val keyStore = getKeyStore(keystoreId, passPhrase)
@@ -112,12 +113,27 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             SAMLAttributeDesignator(
                 "urn:be:fgov:ehealth:1.0:certificateholder:medicalhouse:nihii-number",
                 "urn:be:fgov:certified-namespace:ehealth"
-            ),
+            )
+            ,
             SAMLAttributeDesignator(
                 "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number:recognisedmedicalhouse:nihii11",
                 "urn:be:fgov:certified-namespace:ehealth"
             )
-        ) else listOf(
+        ) else if (guardPost) listOf(
+            SAMLAttributeDesignator(
+            "urn:be:fgov:ehealth:1.0:guardpost:nihii-number",
+            "urn:be:fgov:identification-namespace"
+            ),
+            SAMLAttributeDesignator(
+                "urn:be:fgov:ehealth:1.0:certificateholder:guardpost:nihii-number",
+                "urn:be:fgov:identification-namespace"
+            ),
+            SAMLAttributeDesignator(
+                "urn:be:fgov:ehealth:1.0:certificateholder:guardpost:nihii-number",
+                "urn:be:fgov:certified-namespace:ehealth"
+            )
+        )
+        else listOf(
             SAMLAttributeDesignator(
                 "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
                 "urn:be:fgov:identification-namespace"
@@ -145,6 +161,17 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             ),
             SAMLAttribute(
                 "urn:be:fgov:ehealth:1.0:certificateholder:medicalhouse:nihii-number",
+                "urn:be:fgov:identification-namespace",
+                nihiiOrSsin
+            )
+        ) else if (guardPost) listOf(
+            SAMLAttribute(
+                "urn:be:fgov:ehealth:1.0:guardpost:nihii-number",
+                "urn:be:fgov:identification-namespace",
+                nihiiOrSsin
+            ),
+            SAMLAttribute(
+                "urn:be:fgov:ehealth:1.0:certificateholder:guardpost:nihii-number",
                 "urn:be:fgov:identification-namespace",
                 nihiiOrSsin
             )
