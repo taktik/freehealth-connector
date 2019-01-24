@@ -116,11 +116,13 @@ class RequestObjectMapper {
         GetTherapeuticLinkSelectType().apply {
             begindate = it.startDate?.let { it.toDateTime(LocalTime.MIDNIGHT) }
             enddate = it.endDate?.let { it.toDateTime(LocalTime.MIDNIGHT) }
-            cds.add(CDTHERAPEUTICLINK().apply {
-                s = CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE
-                sv = "1.0"
-                value = link.type
-            })
+            if(link.type != null){
+                cds.add(CDTHERAPEUTICLINK().apply {
+                    s = CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE
+                    sv = "1.0"
+                    value = link.type
+                })
+            }
             it.status?.let { therapeuticlinkstatus = it.toString().toLowerCase(Locale.getDefault()) }
             patientsAndHcparties.add(mapPatient(it.patient))
             patientsAndHcparties.add(mapHcPartyIdType(it.hcParty))
