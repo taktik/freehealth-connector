@@ -1,6 +1,7 @@
 package org.taktik.connector.business.recipeprojects.core.utils;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import be.apb.gfddpp.validation.exception.SingleMessageValidationException;
@@ -10,7 +11,7 @@ import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationM
 
 public class Exceptionutils {
 
-	private static final Logger LOG = Logger.getLogger(Exceptionutils.class);
+	private static final Logger LOG = LogManager.getLogger(Exceptionutils.class);
 
 	public static void errorHandler(Throwable t) throws IntegrationModuleException, IntegrationModuleEhealthException, IntegrationModuleRuntimeException {
 		if (t instanceof IntegrationModuleRuntimeException) {

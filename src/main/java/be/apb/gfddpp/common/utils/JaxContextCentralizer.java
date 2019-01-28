@@ -19,10 +19,11 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class JaxContextCentralizer {
-   private static final Logger LOG = Logger.getLogger(JaxContextCentralizer.class);
+   private static final Logger LOG = LogManager.getLogger(JaxContextCentralizer.class);
    private static JaxContextCentralizer instance;
    private Map<Class<?>, JAXBContext> contextStore;
    private XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();

@@ -17,7 +17,8 @@ import be.fgov.ehealth.etkdepot._1_0.protocol.IdentifierType;
 import be.fgov.ehealth.etkdepot._1_0.protocol.MatchingEtk;
 import be.fgov.ehealth.etkdepot._1_0.protocol.SearchCriteriaType;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.taktik.connector.business.recipeprojects.core.domain.KgssIdentifierType;
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException;
@@ -30,7 +31,7 @@ import org.taktik.connector.technical.service.keydepot.impl.KeyDepotServiceImpl;
 
 public class ETKHelper {
 
-    private static final Logger LOG = Logger.getLogger(ETKHelper.class);
+    private static final Logger LOG = LogManager.getLogger(ETKHelper.class);
     private static final String RECIPE_ID = "0823257311";
     private static final String KGSS_ID = "0809394427";
 

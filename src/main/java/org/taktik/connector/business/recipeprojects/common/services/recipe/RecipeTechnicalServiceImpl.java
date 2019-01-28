@@ -2,7 +2,8 @@ package org.taktik.connector.business.recipeprojects.common.services.recipe;
 
 import javax.xml.bind.JAXBElement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException;
@@ -19,7 +20,7 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken;
 public class RecipeTechnicalServiceImpl implements RecipeTechnicalService {
 
 	/** The Constant LOG. */
-	private final static Logger LOG = Logger.getLogger(RecipeTechnicalServiceImpl.class);
+	private final static Logger LOG = LogManager.getLogger(RecipeTechnicalServiceImpl.class);
 
 	private static final String ENDPOINT_NAME = "endpoint.technical";
 

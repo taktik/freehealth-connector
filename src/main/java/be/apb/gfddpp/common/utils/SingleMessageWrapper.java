@@ -33,7 +33,8 @@ import be.apb.standards.smoa.schema.v1.SenderType;
 import be.apb.standards.smoa.schema.v1.SingleMessage;
 import be.apb.standards.smoa.schema.v1.SmoaMessageType;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -52,7 +53,7 @@ public class SingleMessageWrapper {
    private static final String SMC_VERSION_PROP = "smcVersion";
    private static final String SMC_PROP_FILE = "/smc.properties";
    private final SingleMessage singleMessage;
-   private static final Logger LOG = Logger.getLogger(SingleMessageWrapper.class);
+   private static final Logger LOG = LogManager.getLogger(SingleMessageWrapper.class);
 
    public SingleMessageWrapper(CareServiceIdType type, String id) throws GFDDPPException {
       DatatypeFactory dataTypeFactory;
