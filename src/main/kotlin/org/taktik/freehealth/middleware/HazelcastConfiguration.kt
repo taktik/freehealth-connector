@@ -21,6 +21,7 @@
 package org.taktik.freehealth.middleware
 
 import com.hazelcast.config.Config
+import com.hazelcast.config.EvictionPolicy
 import com.hazelcast.config.MapConfig
 import com.hazelcast.config.MaxSizeConfig
 import com.hazelcast.core.HazelcastInstance
@@ -44,38 +45,36 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
     @Bean fun config() = Config().apply {
         hazelcastProperties.groupName?.let { groupConfig.name = it }
         hazelcastProperties.groupPassword?.let { groupConfig.name = it }
+        addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KEYSTORES").apply {
+            timeToLiveSeconds = 12*3600
+            maxSizeConfig = MaxSizeConfig(1024, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
+            evictionPolicy = EvictionPolicy.LRU
+        })
+        addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.TOKENS").apply {
+            timeToLiveSeconds = 12*3600
+            maxSizeConfig = MaxSizeConfig(1024, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
+            evictionPolicy = EvictionPolicy.LRU
+        })
+        addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK").apply {
+            timeToLiveSeconds = 12*3600
+            maxSizeConfig = MaxSizeConfig(1024, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
+            evictionPolicy = EvictionPolicy.LRU
+        })
     }
 
     @Bean
     fun keystoresMap(hazelcastInstance: HazelcastInstance): IMap<UUID, ByteArray> {
-        val config = hazelcastInstance.config
-        val mapName = "ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KEYSTORES"
-        config.addMapConfig(MapConfig(mapName).apply {
-            timeToLiveSeconds = 12*3600
-            maxSizeConfig = MaxSizeConfig(100000, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
-        })
-        return hazelcastInstance.getMap<UUID, ByteArray>(mapName)
+        val map = hazelcastInstance.getMap<UUID, ByteArray>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KEYSTORES")
+        return map
     }
 
     @Bean
     fun tokensMap(hazelcastInstance: HazelcastInstance): IMap<UUID, SamlTokenResult> {
-        val config = hazelcastInstance.config
-        val mapName = "ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.TOKENS"
-        config.addMapConfig(MapConfig(mapName). apply{
-            timeToLiveSeconds = 12*3600
-            maxSizeConfig = MaxSizeConfig(100000, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
-        })
-        return hazelcastInstance.getMap<UUID, SamlTokenResult>(mapName)
+        return hazelcastInstance.getMap<UUID, SamlTokenResult>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.TOKENS")
     }
 
     @Bean
     fun etkCache(hazelcastInstance: HazelcastInstance): IMap<UUID, String> {
-        val config = hazelcastInstance.config
-        val mapName = "ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK"
-        config.addMapConfig(MapConfig(mapName). apply{
-            timeToLiveSeconds = 12*3600
-            maxSizeConfig = MaxSizeConfig(100000, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
-        })
-        return hazelcastInstance.getMap<UUID, String>(mapName)
+        return hazelcastInstance.getMap<UUID, String>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK")
     }
 }
