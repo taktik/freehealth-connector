@@ -26,7 +26,8 @@ import be.fgov.ehealth.etee.crypto.status.NotificationError;
 import be.fgov.ehealth.etee.crypto.status.NotificationWarning;
 import be.fgov.ehealth.etee.crypto.utils.KeyManager;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 
@@ -157,7 +158,7 @@ public class EncryptionUtils {
     /**
      * The Constant LOG.
      */
-    private final static Logger LOG = Logger.getLogger(EncryptionUtils.class);
+    private final static Logger LOG = LogManager.getLogger(EncryptionUtils.class);
 
     /**
      * The instance.

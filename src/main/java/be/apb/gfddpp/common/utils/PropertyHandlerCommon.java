@@ -10,10 +10,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PropertyHandlerCommon {
-   private static final Logger LOG = Logger.getLogger(PropertyHandlerCommon.class);
+   private static final Logger LOG = LogManager.getLogger(PropertyHandlerCommon.class);
    private static PropertyHandlerCommon instance = null;
    private Properties properties;
    private Properties originalProperties;

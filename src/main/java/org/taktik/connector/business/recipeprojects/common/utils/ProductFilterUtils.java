@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import be.apb.gfddpp.common.utils.SingleMessageWrapper;
@@ -24,7 +25,7 @@ import org.taktik.connector.business.recipeprojects.core.utils.I18nHelper;
 import org.taktik.connector.business.recipeprojects.core.utils.PropertyHandler;
 
 public class ProductFilterUtils {
-	private final static Logger LOG = Logger.getLogger(ProductFilterUtils.class);
+	private final static Logger LOG = LogManager.getLogger(ProductFilterUtils.class);
 
 	public SingleMessage filterProducts(SingleMessage singleMessage, PropertyHandler property) throws IntegrationModuleException {
 

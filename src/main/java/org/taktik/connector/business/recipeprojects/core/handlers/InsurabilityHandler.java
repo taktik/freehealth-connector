@@ -35,12 +35,13 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.w3c.dom.NodeList;
 
 public class InsurabilityHandler implements SOAPHandler<SOAPMessageContext> {
-	private final static Logger LOG = Logger.getLogger(InsurabilityHandler.class);
+	private final static Logger LOG = LogManager.getLogger(InsurabilityHandler.class);
 	private static String insurability;
 	private static String messageId;
 	

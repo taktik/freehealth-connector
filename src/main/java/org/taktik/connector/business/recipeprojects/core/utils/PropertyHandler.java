@@ -15,7 +15,8 @@
  */
 package org.taktik.connector.business.recipeprojects.core.utils;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.ConfigValidator;
 
@@ -24,7 +25,7 @@ import java.util.List;
 
 public class PropertyHandler {
 
-    private final static Logger LOG = Logger.getLogger(PropertyHandler.class);
+    private final static Logger LOG = LogManager.getLogger(PropertyHandler.class);
 
     private static PropertyHandler instance = null; // Singleton pattern
     private ConfigValidator config = ConfigFactory.getConfigValidator();
