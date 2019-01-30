@@ -1021,8 +1021,8 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                                     }
                                 it.item.filter { it.cds.any { it.value.toLowerCase() == "payment" } }
                                     .forEachIndexed { idx, i ->
-                                        i.cost.decimal?.let { setPaymentAmount(idx + 1, it.toDouble()) }
-                                        i.cost.unit?.let { setPaymentCurrency(idx + 1, it.cd?.value) }
+                                        i.cost?.decimal?.let { setPaymentAmount(idx + 1, it.toDouble()) }
+                                        i.cost?.unit?.let { setPaymentCurrency(idx + 1, it.cd?.value) }
                                         i.beginmoment?.let { setPaymentDate(idx + 1, it.date?.toDate()) }
                                     }
                             }
