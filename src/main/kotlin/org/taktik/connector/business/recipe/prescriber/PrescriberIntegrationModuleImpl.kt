@@ -297,7 +297,7 @@ class PrescriberIntegrationModuleImpl(val stsService: STSService) : AbstractInte
             // unseal WS response
             val result = helper.unsealWithSymmKey(response.securedGetPrescriptionForPrescriberResponse.securedContent, symmKey)
             getKeyFromKgss(keystore, samlToken, passPhrase, result.encryptionKeyId, stsService.getHolderOfKeysEtk(credential).encoded)?.let { key ->
-                result.prescription = IOUtils.decompress(unsealPrescriptionForUnknown(key, result.prescription))
+                result.prescription = IOUtils.decompress(getCrypto(credential).unseal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, key, result.prescription).contentAsByte)
             }
 
             // update the local cache

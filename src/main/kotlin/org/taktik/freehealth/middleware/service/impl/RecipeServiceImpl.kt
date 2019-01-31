@@ -296,8 +296,35 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
 
     @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
     override fun listOpenPrescriptions(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patientId: String): List<Prescription> {
-        val prescritpionsList = listOpenPrescriptions(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase)
-        return prescritpionsList.filter { it.patientId == patientId }
+        //val prescritpionsList = listOpenPrescriptions(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase)
+        //return prescritpionsList.filter { it.patientId == patientId }
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val ridList = service.listOpenPrescription(samlToken, credential, hcpNihii, patientId)
+
+        val es = Executors.newFixedThreadPool(5)
+        try {
+            val getFeedback = es.submit<List<Feedback>> { listFeedbacks(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase) }
+            val futures = es.invokeAll<GetPrescriptionForPrescriberResult>(ridList.map { rid -> Callable<GetPrescriptionForPrescriberResult> { ridCache[rid, { service!!.getPrescription(samlToken, credential, keystore, passPhrase, hcpNihii, rid) }] } })
+            val result = futures.map { f -> f.get() }.map { r -> Prescription(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId) }
+
+            try {
+                for (d in getFeedback.get()) {
+                    feedbacksCache[d.rid!!, { TreeSet() }].add(d)
+                }
+            } catch (e: ExecutionException) {
+                log.error("Unexpected error", e)
+            }
+
+            es.shutdown()
+            return result
+        } catch (e: InterruptedException) {
+            log.error("Unexpected error", e)
+        }
+
+        return emptyList()
     }
 
     @Throws(JAXBException::class)
@@ -496,10 +523,12 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                 cd = RecipeCDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = versions["CD-ITEM"]; value = "medication" }
                                 med.medicinalProduct?.intendedcds?.let {
                                     it.find { it.type == "CD-DRUG-CNK" }?.let { c ->
-                                        content = RecipecontentType().apply {
-                                            medicinalproduct = RecipemedicinalProductType().apply {
-                                                intendedcds.add(KmehrPrescriptionHelper.toCDDRUGCNK(c))
-                                                intendedname = med.medicinalProduct?.intendedname
+                                        if(c.code != "0000000"  || (med.compoundPrescription == null && med.compoundPrescriptionV2 == null)){
+                                            content = RecipecontentType().apply {
+                                                medicinalproduct = RecipemedicinalProductType().apply {
+                                                    intendedcds.add(KmehrPrescriptionHelper.toCDDRUGCNK(c))
+                                                    intendedname = med.medicinalProduct?.intendedname
+                                                }
                                             }
                                         }
                                     }
@@ -603,8 +632,8 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                 }
                                 med.renewal?.let {
                                     renewal = ReciperenewalType().apply {
-                                        it.allowedRenewals?.let { decimal = BigDecimal(it.toLong()) }
-                                        duration = toDurationType(it.delayBetweenDeliveries)
+                                        it.decimal?.let { decimal = BigDecimal(it.toLong()) }
+                                        duration = toDurationType(it.duration)
                                     }
                                 }
                                 med.intakeRoute?.code?.let { c ->
@@ -922,9 +951,9 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         if (prescriptionType != null) {
             return prescriptionType
         }
-        if (medications.any { it.compoundPrescription != null || it.compoundPrescriptionV2 != null }) {
-            return "P2"
-        }
+//        if (medications.any { it.compoundPrescription != null || it.compoundPrescriptionV2 != null }) {
+//            return "P2"
+//        }
         medications.filter { isAnyReimbursedMedicinalProduct(it.medicinalProduct?.intendedcds) }
                 .forEach { return "P1" }
 
