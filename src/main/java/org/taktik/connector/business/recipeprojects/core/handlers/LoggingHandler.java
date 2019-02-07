@@ -25,7 +25,8 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import org.taktik.connector.business.recipeprojects.core.utils.MessageDumper;
@@ -36,7 +37,7 @@ import org.taktik.connector.business.recipeprojects.core.utils.MessageDumper;
 public class LoggingHandler  implements SOAPHandler<SOAPMessageContext> {
 
 	/** The Constant LOG. */
-	private final static Logger LOG = Logger.getLogger(LoggingHandler.class);
+	private final static Logger LOG = LogManager.getLogger(LoggingHandler.class);
 
 	/** {@inheritDoc} */
 	public Set<QName> getHeaders() {

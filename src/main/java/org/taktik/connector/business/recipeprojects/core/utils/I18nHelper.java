@@ -21,7 +21,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -29,7 +30,7 @@ import org.apache.log4j.Logger;
  */
 public class I18nHelper {
 
-    private static final Logger LOG = Logger.getLogger(I18nHelper.class);
+    private static final Logger LOG = LogManager.getLogger(I18nHelper.class);
 
     /**
      * The properties.

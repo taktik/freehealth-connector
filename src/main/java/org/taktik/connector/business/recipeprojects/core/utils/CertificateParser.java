@@ -10,7 +10,8 @@ import java.util.regex.Pattern;
 import javax.security.auth.x500.X500Principal;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException;
@@ -22,7 +23,7 @@ import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationM
 public class CertificateParser {
 		
 	  /** The Constant LOG. */
-  	private static final Logger LOG = Logger.getLogger(CertificateParser.class);
+  	private static final Logger LOG = LogManager.getLogger(CertificateParser.class);
 	  
   	/** The Constant ORGANIZATION_UNIT_NAME_ATTRIBUTE_TYPE. */
   	private static final String ORGANIZATION_UNIT_NAME_ATTRIBUTE_TYPE = "OU";

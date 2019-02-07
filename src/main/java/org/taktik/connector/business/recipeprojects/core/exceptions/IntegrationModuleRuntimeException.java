@@ -20,12 +20,13 @@ import be.recipe.services.RecipeException;
 import be.recipe.services.RecipeExceptionDetails;
 import java.util.Locale;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 public class IntegrationModuleRuntimeException extends RuntimeException {
 
-	private final static Logger LOG = Logger.getLogger(IntegrationModuleRuntimeException.class);
+	private final static Logger LOG = LogManager.getLogger(IntegrationModuleRuntimeException.class);
 
 	private static final long serialVersionUID = 1L;
 	

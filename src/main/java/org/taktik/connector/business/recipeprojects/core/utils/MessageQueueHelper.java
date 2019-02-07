@@ -6,7 +6,8 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.Collection;
@@ -17,7 +18,7 @@ import java.util.Date;
  */
 public class MessageQueueHelper {
 
-    private final static Logger LOG = Logger.getLogger(MessageQueueHelper.class);
+    private final static Logger LOG = LogManager.getLogger(MessageQueueHelper.class);
 
     public static void unlockLockedFilesOnQueue() {
     final PropertyHandler propertyHandler = PropertyHandler.getInstance();

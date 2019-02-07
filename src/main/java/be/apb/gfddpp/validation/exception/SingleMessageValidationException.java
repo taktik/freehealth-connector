@@ -16,7 +16,8 @@
 
 package be.apb.gfddpp.validation.exception;
 
-//import org.apache.log4j.Logger;
+//import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class SingleMessageValidationException extends Exception {
 

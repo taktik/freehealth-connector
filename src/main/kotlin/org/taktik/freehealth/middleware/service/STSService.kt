@@ -36,6 +36,7 @@ interface STSService {
         nihiiOrSsin: String,
         passPhrase: String,
         medicalHouse: Boolean = false,
+        guardPost: Boolean = false,
         extraDesignators: List<Pair<String, String>> = listOf()
     ): SamlTokenResult
 

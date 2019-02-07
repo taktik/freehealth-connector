@@ -16,7 +16,8 @@
 
 package org.taktik.connector.business.recipeprojects.core.utils;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 import java.io.ByteArrayInputStream;
@@ -34,7 +35,7 @@ import java.util.Date;
 public class MessageDumper {
 	
 	/** The Constant LOG. */
-	private final static Logger LOG = Logger.getLogger(MessageDumper.class);
+	private final static Logger LOG = LogManager.getLogger(MessageDumper.class);
 
 	/** The Constant IN. */
 	public static final String IN = "IN";

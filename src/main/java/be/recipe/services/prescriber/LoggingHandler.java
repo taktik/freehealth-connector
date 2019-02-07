@@ -11,11 +11,12 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.NodeList;
 
 public class LoggingHandler implements SOAPHandler<SOAPMessageContext> {
-   private static final Logger LOG = Logger.getLogger(LoggingHandler.class);
+   private static final Logger LOG = LogManager.getLogger(LoggingHandler.class);
 
    public Set<QName> getHeaders() {
       return null;

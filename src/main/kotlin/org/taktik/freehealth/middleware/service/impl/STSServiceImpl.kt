@@ -22,6 +22,7 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import com.hazelcast.core.IMap
+import org.apache.commons.logging.LogFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import org.taktik.connector.technical.exception.TechnicalConnectorException
@@ -54,6 +55,7 @@ import javax.xml.transform.stream.StreamSource
 
 @Service
 class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, SamlTokenResult>) : STSService {
+    private val log = LogFactory.getLog(this.javaClass)
     val freehealthStsService: org.taktik.connector.technical.service.sts.STSService =
         org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
     val freehealthKeyDepotService: org.taktik.connector.technical.service.keydepot.KeyDepotService =
@@ -68,6 +70,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
 
         tokensMap[tokenId] =
             SamlTokenResult(tokenId, token, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
+        log.info("tokensMap size: ${tokensMap.size}")
     }
 
     override fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken? {
@@ -87,6 +90,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         nihiiOrSsin: String, //nihii for medical house and niss for doctor
         passPhrase: String,
         medicalHouse: Boolean,
+        guardPost: Boolean,
         extraDesignators: List<Pair<String, String>>
     ): SamlTokenResult {
         val keyStore = getKeyStore(keystoreId, passPhrase)
@@ -112,12 +116,27 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             SAMLAttributeDesignator(
                 "urn:be:fgov:ehealth:1.0:certificateholder:medicalhouse:nihii-number",
                 "urn:be:fgov:certified-namespace:ehealth"
-            ),
+            )
+            ,
             SAMLAttributeDesignator(
                 "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number:recognisedmedicalhouse:nihii11",
                 "urn:be:fgov:certified-namespace:ehealth"
             )
-        ) else listOf(
+        ) else if (guardPost) listOf(
+            SAMLAttributeDesignator(
+            "urn:be:fgov:ehealth:1.0:guardpost:nihii-number",
+            "urn:be:fgov:identification-namespace"
+            ),
+            SAMLAttributeDesignator(
+                "urn:be:fgov:ehealth:1.0:certificateholder:guardpost:nihii-number",
+                "urn:be:fgov:identification-namespace"
+            ),
+            SAMLAttributeDesignator(
+                "urn:be:fgov:ehealth:1.0:certificateholder:guardpost:nihii-number",
+                "urn:be:fgov:certified-namespace:ehealth"
+            )
+        )
+        else listOf(
             SAMLAttributeDesignator(
                 "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
                 "urn:be:fgov:identification-namespace"
@@ -145,6 +164,17 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             ),
             SAMLAttribute(
                 "urn:be:fgov:ehealth:1.0:certificateholder:medicalhouse:nihii-number",
+                "urn:be:fgov:identification-namespace",
+                nihiiOrSsin
+            )
+        ) else if (guardPost) listOf(
+            SAMLAttribute(
+                "urn:be:fgov:ehealth:1.0:guardpost:nihii-number",
+                "urn:be:fgov:identification-namespace",
+                nihiiOrSsin
+            ),
+            SAMLAttribute(
+                "urn:be:fgov:ehealth:1.0:certificateholder:guardpost:nihii-number",
                 "urn:be:fgov:identification-namespace",
                 nihiiOrSsin
             )
@@ -176,6 +206,8 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val samlTokenResult =
             SamlTokenResult(randomUUID, samlToken, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
         tokensMap[randomUUID] = samlTokenResult
+        log.info("tokensMap size: ${tokensMap.size}")
+
         return samlTokenResult
     }
 
@@ -196,23 +228,26 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     }
 
     override fun uploadKeystore(file: MultipartFile): UUID {
-        val keystoreId = UUID.randomUUID()
-        keystoresMap.put(keystoreId, file.bytes)
+        val keystoreId = UUID.nameUUIDFromBytes(file.bytes)
+        keystoresMap[keystoreId] = file.bytes
+        log.info("keystoresMap size: ${keystoresMap.size}")
+
         return keystoreId
     }
 
     override fun uploadKeystore(data: ByteArray): UUID {
-        val keystoreId = UUID.randomUUID()
-        keystoresMap.put(keystoreId, data)
+        val keystoreId = UUID.nameUUIDFromBytes(data)
+        keystoresMap[keystoreId] = data
+        log.info("keystoresMap size: ${keystoresMap.size}")
+
         return keystoreId
     }
 
     override fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore? {
         val keyStoreData =
-            keystoresMap.get(keystoreId)
+            keystoresMap[keystoreId]
                 ?: throw(IllegalArgumentException("Missing Keystore, please upload a keystore and use the returned keystoreId"))
-        val keyStore = KeyManager.getKeyStore(keyStoreData.inputStream(), "PKCS12", passPhrase.toCharArray())
-        return keyStore
+        return KeyManager.getKeyStore(keyStoreData.inputStream(), "PKCS12", passPhrase.toCharArray())
     }
 
     @Throws(TechnicalConnectorException::class)

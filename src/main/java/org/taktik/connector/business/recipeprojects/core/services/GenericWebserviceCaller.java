@@ -11,7 +11,8 @@ import org.taktik.connector.business.recipeprojects.core.utils.I18nHelper;
 import org.taktik.connector.business.recipeprojects.core.utils.PropertyHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.taktik.connector.technical.exception.ConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.Credential;
@@ -27,7 +28,7 @@ import javax.xml.soap.SOAPException;
 
 public abstract class GenericWebserviceCaller {
 
-    private final static Logger LOG = Logger.getLogger(GenericWebserviceCaller.class);
+    private final static Logger LOG = LogManager.getLogger(GenericWebserviceCaller.class);
     private static GenericWsSender sender = new GenericWsSenderImpl();
 
     public static <T extends Object> T callGenericWebservice(SAMLToken samlToken, Credential credential, Object request, Class<T> responseType, String endpointName, String serviceName, boolean addLoggingHandler, boolean addSoapFaultHandler, boolean addMustUnderstandHandler, boolean addInsurabilityHandler) throws IntegrationModuleException, TechnicalConnectorException {

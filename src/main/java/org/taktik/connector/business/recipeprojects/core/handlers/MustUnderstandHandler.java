@@ -15,13 +15,14 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import com.sun.xml.wss.impl.SecurableSoapMessage;
 
 public class MustUnderstandHandler implements SOAPHandler<SOAPMessageContext> {
-	private static final Logger LOG = Logger.getLogger(MustUnderstandHandler.class);
+	private static final Logger LOG = LogManager.getLogger(MustUnderstandHandler.class);
 	private static final QName WSSE = new QName("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security", "wsse");
 
 	public void close(MessageContext c) {

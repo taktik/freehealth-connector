@@ -21,7 +21,6 @@
 package org.taktik.freehealth.middleware
 
 import org.eclipse.jetty.client.HttpClient
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -45,54 +44,69 @@ import org.taktik.freehealth.middleware.web.AuthenticationFailureHandler
 import org.taktik.freehealth.middleware.web.AuthenticationSuccessHandler
 import org.taktik.freehealth.middleware.web.Http401UnauthorizedEntryPoint
 import org.taktik.freehealth.middleware.web.LoginUrlAuthenticationEntryPoint
-import javax.servlet.Filter
 
 @Configuration
 class SecurityConfig {
-	@Bean fun passwordEncoder() = BCryptPasswordEncoder(8)
-	@Bean fun authenticationProcessingFilterEntryPoint() = LoginUrlAuthenticationEntryPoint("/", mapOf("/api" to "api/login.html"))
-	@Bean fun basicAuthenticationFilter(authenticationManager: AuthenticationManager, authenticationProcessingFilterEntryPoint: LoginUrlAuthenticationEntryPoint) = BasicAuthenticationFilter(authenticationManager)
-	@Bean fun usernamePasswordAuthenticationFilter(authenticationManager: AuthenticationManager, authenticationProcessingFilterEntryPoint: LoginUrlAuthenticationEntryPoint) = UsernamePasswordAuthenticationFilter().apply {
-		usernameParameter = "username"
-		passwordParameter = "password"
-		setAuthenticationManager(authenticationManager)
-		setAuthenticationSuccessHandler(AuthenticationSuccessHandler().apply { setDefaultTargetUrl("/"); setAlwaysUseDefaultTargetUrl(false) })
-		setAuthenticationFailureHandler(AuthenticationFailureHandler().apply { setDefaultFailureUrl("/error"); })
-		setRequiresAuthenticationRequestMatcher(AntPathRequestMatcher("/login"))
-		setPostOnly(true)
-	}
-	@Bean fun remotingExceptionTranslationFilter() = ExceptionTranslationFilter(Http401UnauthorizedEntryPoint())
-	@Bean fun exceptionTranslationFilter(authenticationProcessingFilterEntryPoint: LoginUrlAuthenticationEntryPoint) = ExceptionTranslationFilter(authenticationProcessingFilterEntryPoint)
-	@Bean fun securityConfigAdapter(
-			daoAuthenticationProvider:DaoAuthenticationProvider,
-			basicAuthenticationFilter : BasicAuthenticationFilter,
-			usernamePasswordAuthenticationFilter : UsernamePasswordAuthenticationFilter,
-			exceptionTranslationFilter : ExceptionTranslationFilter,
-			remotingExceptionTranslationFilter : ExceptionTranslationFilter) = SecurityConfigAdapter(daoAuthenticationProvider, basicAuthenticationFilter, usernamePasswordAuthenticationFilter, exceptionTranslationFilter, remotingExceptionTranslationFilter)
+//	@Bean fun passwordEncoder() = BCryptPasswordEncoder(8)
+//	@Bean fun authenticationProcessingFilterEntryPoint() = LoginUrlAuthenticationEntryPoint("/", mapOf("/api" to "api/login.html"))
+//	@Bean fun basicAuthenticationFilter(authenticationManager: AuthenticationManager, authenticationProcessingFilterEntryPoint: LoginUrlAuthenticationEntryPoint) = BasicAuthenticationFilter(authenticationManager)
+//	@Bean fun usernamePasswordAuthenticationFilter(authenticationManager: AuthenticationManager, authenticationProcessingFilterEntryPoint: LoginUrlAuthenticationEntryPoint) = UsernamePasswordAuthenticationFilter().apply {
+//		usernameParameter = "username"
+//		passwordParameter = "password"
+//		setAuthenticationManager(authenticationManager)
+//		setAuthenticationSuccessHandler(AuthenticationSuccessHandler().apply { setDefaultTargetUrl("/"); setAlwaysUseDefaultTargetUrl(false) })
+//		setAuthenticationFailureHandler(AuthenticationFailureHandler().apply { setDefaultFailureUrl("/error"); })
+//		setRequiresAuthenticationRequestMatcher(AntPathRequestMatcher("/login"))
+//		setPostOnly(true)
+//	}
+//	@Bean fun remotingExceptionTranslationFilter() = ExceptionTranslationFilter(Http401UnauthorizedEntryPoint())
+//	@Bean fun exceptionTranslationFilter(authenticationProcessingFilterEntryPoint: LoginUrlAuthenticationEntryPoint) = ExceptionTranslationFilter(authenticationProcessingFilterEntryPoint)
+	@Bean fun securityConfigAdapter(httpClient: HttpClient, couchDbProperties: CouchDbProperties, cacheManager: CacheManager) = SecurityConfigAdapter(httpClient, couchDbProperties, cacheManager)
 
-	@Bean fun daoAuthenticationProvider(userDetailsService : UserDetailsService, passwordEncoder: org.springframework.security.crypto.password.PasswordEncoder) = DaoAuthenticationProvider().apply {
-		setPasswordEncoder(passwordEncoder)
-		setUserDetailsService(userDetailsService)
-	}
+//	@Bean fun daoAuthenticationProvider(userDetailsService : UserDetailsService, passwordEncoder: org.springframework.security.crypto.password.PasswordEncoder) = DaoAuthenticationProvider().apply {
+//		setPasswordEncoder(passwordEncoder)
+//		setUserDetailsService(userDetailsService)
+//	}
     @Bean fun httpClient() = HttpClient().apply { start() }
-	@Bean fun userDetailsService(httpClient: HttpClient, couchDbProperties: CouchDbProperties, cacheManager: CacheManager) = CouchdbUserDetailsService(httpClient, couchDbProperties, cacheManager)
+//	@Bean fun userDetailsService(httpClient: HttpClient, couchDbProperties: CouchDbProperties, cacheManager: CacheManager) = CouchdbUserDetailsService(httpClient, couchDbProperties, cacheManager)
 }
 
 @Configuration
-class SecurityConfigAdapter(private val daoAuthenticationProvider: DaoAuthenticationProvider,
-                                          private val basicAuthenticationFilter : Filter,
-                                          private val usernamePasswordAuthenticationFilter : Filter,
-                                          private val exceptionTranslationFilter : Filter,
-                                          private val remotingExceptionTranslationFilter : Filter) : WebSecurityConfigurerAdapter(false) {
-	@Autowired
-	fun configureGlobal(auth: AuthenticationManagerBuilder?) {
-		auth!!.authenticationProvider(daoAuthenticationProvider)
+class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: CouchDbProperties, val cacheManager: CacheManager) : WebSecurityConfigurerAdapter(false) {
+    @Bean
+    override fun authenticationManagerBean(): AuthenticationManager {
+        return super.authenticationManagerBean()
+    }
+
+    //@Autowired
+    override fun configure(auth: AuthenticationManagerBuilder?) {
+		auth!!.authenticationProvider(DaoAuthenticationProvider().apply {
+            setPasswordEncoder(BCryptPasswordEncoder(8))
+            setUserDetailsService(CouchdbUserDetailsService(httpClient, couchDbProperties, cacheManager))
+        })
 	}
 
 	override fun configure(http: HttpSecurity?) {
-		http!!.csrf().disable().addFilterBefore(FilterChainProxy(listOf(
+
+        val authenticationManager = authenticationManager()
+        val loginUrlAuthenticationEntryPoint = LoginUrlAuthenticationEntryPoint("/", mapOf("/api" to "api/login.html"))
+        val basicAuthenticationFilter = BasicAuthenticationFilter(authenticationManager)
+
+        val exceptionTranslationFilter = ExceptionTranslationFilter(loginUrlAuthenticationEntryPoint)
+
+        val usernamePasswordAuthenticationFilter = UsernamePasswordAuthenticationFilter().apply {
+            usernameParameter = "username"
+            passwordParameter = "password"
+            setAuthenticationManager(authenticationManager)
+            setAuthenticationSuccessHandler(AuthenticationSuccessHandler().apply { setDefaultTargetUrl("/"); setAlwaysUseDefaultTargetUrl(false) })
+            setAuthenticationFailureHandler(AuthenticationFailureHandler().apply { setDefaultFailureUrl("/error"); })
+            setRequiresAuthenticationRequestMatcher(AntPathRequestMatcher("/login"))
+            setPostOnly(true)
+        }
+
+        http!!.csrf().disable().addFilterBefore(FilterChainProxy(listOf(
             DefaultSecurityFilterChain(AntPathRequestMatcher("/api/**"), basicAuthenticationFilter, usernamePasswordAuthenticationFilter, exceptionTranslationFilter),
-            DefaultSecurityFilterChain(AntPathRequestMatcher("/**"), basicAuthenticationFilter, remotingExceptionTranslationFilter))), FilterSecurityInterceptor::class.java)
+            DefaultSecurityFilterChain(AntPathRequestMatcher("/**"), BasicAuthenticationFilter(authenticationManager), ExceptionTranslationFilter(Http401UnauthorizedEntryPoint())))), FilterSecurityInterceptor::class.java)
 				.authorizeRequests()
 
 				.antMatchers("/api/login.html").permitAll()

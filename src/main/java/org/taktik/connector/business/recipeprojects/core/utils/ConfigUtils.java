@@ -14,7 +14,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import be.apb.gfddpp.common.exceptions.GFDDPPException;
@@ -25,7 +26,7 @@ import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationM
 
 public class ConfigUtils {
 
-    private final static Logger LOG = Logger.getLogger(ConfigUtils.class);
+    private final static Logger LOG = LogManager.getLogger(ConfigUtils.class);
 
     public static XMLGregorianCalendar getLatestProductFilterVersion(String path) throws IntegrationModuleException {
 
