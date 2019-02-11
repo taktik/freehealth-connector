@@ -120,16 +120,17 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
 
-        val response =
+        val query = GetTherapeuticLinkRequest(DateTime.now(),getNihii(queryLink.hcParty)!!, Author().apply { hcParties.add(queryLink.hcParty) }, queryLink, 100, proof)
+
+
+        val rawResponse =
             org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender()
                 .send(getTherLinkPort(samlToken).apply {
                     setSoapAction("urn:be:fgov:ehealth:therlink:protocol:v1:GetTherapeuticLink")
-                    setPayload(
-                        requestObjectMapper.mapGetTherapeuticLinkRequest(
-                            GetTherapeuticLinkRequest(DateTime.now(),getNihii(queryLink.hcParty)!!, Author().apply { hcParties.add(queryLink.hcParty) }, queryLink, 100, proof)
-                                                                        )
-                              )
-                }).asObject(GetTherapeuticLinkResponse::class.java)
+                    setPayload(requestObjectMapper.mapGetTherapeuticLinkRequest(query))
+                })
+
+        val response = rawResponse.asObject(GetTherapeuticLinkResponse::class.java)
 
         return if (response.acknowledge.isIscomplete) {
             responseObjectMapper.mapJaxbToGetTherapeuticLinkResponse(response)
@@ -306,7 +307,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                     therLink.hcParty.familyName
                           ),
                 makeTherapeuticLink(
-                    therLink.type,
+                    therLink.type!!,
                     therLink.hcParty,
                     therLink.patient,
                     therLink.startDate?.toDateTime(LocalTime.MIDNIGHT) ?: DateTime(),
@@ -402,7 +403,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                 BeIDCredential.getInstance("Therapeutic Link", "Signature")
                                           )
             patient.eidCardNumber != null -> Proof(ProofTypeValues.EIDREADING.value)
-            patient.isiCardNumber != null -> Proof(ProofTypeValues.SISREADING.value)
+            patient.isiCardNumber != null -> Proof(ProofTypeValues.ISIREADING.value)
             else -> null
         }
     }

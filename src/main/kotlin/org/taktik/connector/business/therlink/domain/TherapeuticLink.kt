@@ -12,7 +12,7 @@ import org.taktik.connector.business.common.domain.Patient
 open class TherapeuticLink(
     var patient: Patient = Patient(),
     var hcParty: HcParty = HcParty(),
-    var type: String = "gpconsultation"
+    var type: String? = null
 ) : Serializable {
     var startDate: LocalDate? = null
     var endDate: LocalDate? = null

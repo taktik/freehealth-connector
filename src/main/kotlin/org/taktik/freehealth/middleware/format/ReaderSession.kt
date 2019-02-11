@@ -40,8 +40,8 @@ class ReaderSession(reader: Reader) {
     fun peek(label: String, length: Int) = read(label, length).apply { reader.unread(length) }
 
     @Throws(IOException::class)
-    fun read(label: String, length: Int): String {
-        val chars = readChars(label, length)
+    fun read(label: String, length: Int, optional: Boolean = false): String {
+        val chars = readChars(label, length, optional)
         return String(chars)
     }
 
@@ -88,11 +88,15 @@ class ReaderSession(reader: Reader) {
     fun peekChars(label: String, length: Int) = readChars(label, length).apply { reader.unread(length) }
 
     @Throws(IOException::class)
-    private fun readChars(label: String, length: Int): CharArray {
+    private fun readChars(label: String, length: Int, optional: Boolean = false): CharArray {
         val chars = CharArray(length)
         val readChars = reader.read(chars)
         if (readChars < length) {
-            throw EOFException("Not enough characters left to read $length characters from the field '$label'")
+            if (optional) {
+                chars.fill(' ')
+            } else {
+                throw EOFException("Not enough characters left to read $length characters from the field '$label'")
+            }
         }
         return chars
     }
