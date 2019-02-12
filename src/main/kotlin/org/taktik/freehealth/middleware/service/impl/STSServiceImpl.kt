@@ -92,12 +92,12 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         medicalHouse: Boolean,
         guardPost: Boolean,
         extraDesignators: List<Pair<String, String>>
-    ): SamlTokenResult {
+    ): SamlTokenResult? {
         val keyStore = getKeyStore(keystoreId, passPhrase)
         val credential = KeyStoreCredential(keyStore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keyStore, passPhrase.toCharArray())
-        val etk = getHolderOfKeysEtk(credential)
-        if (!hokPrivateKeys.containsKey(etk.certificate.serialNumber.toString(10))) {
+        val etk = getHolderOfKeysEtk(credential, nihiiOrSsin)
+        if (!hokPrivateKeys.containsKey(etk?.certificate?.serialNumber?.toString(10))) {
             throw TechnicalConnectorException(
                 ERROR_CONFIG,
                 arrayOf<Any>("The certificate from the ETK don't match with the one in the encryption keystore")
@@ -186,45 +186,53 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             ), SAMLAttribute("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace", nihiiOrSsin)
         )
 
-        val assertion =
-            freehealthStsService.getToken(
-                credential,
-                credential,
-                attributes,
-                designators,
-                "urn:oasis:names:tc:SAML:1.0:cm:holder-of-key",
-                24
-            )
+        return try {
+            val assertion =
+                freehealthStsService.getToken(
+                    credential,
+                    credential,
+                    attributes,
+                    designators,
+                    "urn:oasis:names:tc:SAML:1.0:cm:holder-of-key",
+                    24
+                                             )
 
-        //Serialize
-        val result = StreamResult(StringWriter())
-        transformer.transform(DOMSource(assertion), result)
-        val randomUUID = UUID.randomUUID()
-        val samlToken = result.writer.toString()
+            //Serialize
+            val result = StreamResult(StringWriter())
+            transformer.transform(DOMSource(assertion), result)
+            val randomUUID = UUID.randomUUID()
+            val samlToken = result.writer.toString()
 
 
-        val samlTokenResult =
-            SamlTokenResult(randomUUID, samlToken, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
-        tokensMap[randomUUID] = samlTokenResult
-        log.info("tokensMap size: ${tokensMap.size}")
+            val samlTokenResult =
+                SamlTokenResult(randomUUID, samlToken, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
+            tokensMap[randomUUID] = samlTokenResult
+            log.info("tokensMap size: ${tokensMap.size}")
 
-        return samlTokenResult
+            samlTokenResult
+        } catch(e:TechnicalConnectorException) {
+            null
+        }
     }
 
     override fun checkTokenValid(tokenId: UUID): Boolean {
         return tokensMap[tokenId]?.let { (it.token?.length ?: 0) > 0 && (it.validity ?: 0) > Instant.now().toEpochMilli() } ?: false
     }
 
-    override fun getHolderOfKeysEtk(credential: KeyStoreCredential): EncryptionToken {
+    override fun getHolderOfKeysEtk(credential: KeyStoreCredential, nihiiOrSsin: String?): EncryptionToken? {
         val cert = credential.certificate
 
         val parser = CertificateParser(cert)
-        val identifierType = parser.identifier
-        val identifierValue = parser.id
-        val application = parser.application
+        return try {
+            val identifierType = parser.identifier
+            val identifierValue = parser.id
+            val application = parser.application
 
-        val etk = this.getEtk(identifierType, java.lang.Long.parseLong(identifierValue), application)
-        return etk
+            this.getEtk(identifierType, java.lang.Long.parseLong(identifierValue), application)
+        } catch (e:java.lang.IllegalStateException) {
+            log.info("Invalid certificate: ${parser.id} : ${parser.identifier} : ${parser.application} - nihii/ssin: ${nihiiOrSsin ?: ""}")
+            null
+        }
     }
 
     override fun uploadKeystore(file: MultipartFile): UUID {

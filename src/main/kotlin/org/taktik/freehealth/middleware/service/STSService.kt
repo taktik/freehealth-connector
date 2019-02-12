@@ -38,12 +38,12 @@ interface STSService {
         medicalHouse: Boolean = false,
         guardPost: Boolean = false,
         extraDesignators: List<Pair<String, String>> = listOf()
-    ): SamlTokenResult
+    ): SamlTokenResult?
 
     fun registerToken(tokenId: UUID, token: String)
     fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken?
     fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore?
     fun checkIfKeystoreExist(keystoreId: UUID): Boolean
-    fun getHolderOfKeysEtk(credential: KeyStoreCredential): EncryptionToken
+    fun getHolderOfKeysEtk(credential: KeyStoreCredential, nihiiOrSsin: String? = null): EncryptionToken?
     fun checkTokenValid(tokenId: UUID): Boolean
 }
