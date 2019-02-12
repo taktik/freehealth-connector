@@ -2,7 +2,8 @@ package org.taktik.connector.business.recipeprojects.common.services.pcdh;
 
 import javax.xml.bind.JAXBElement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException;
@@ -22,7 +23,7 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken;
 public class PcdhServiceImpl implements PcdhService {
 
 	/** The Constant LOG. */
-	private final static Logger LOG = Logger.getLogger(PcdhServiceImpl.class);
+	private final static Logger LOG = LogManager.getLogger(PcdhServiceImpl.class);
 
 	public static final String ENDPOINT_NAME = "endpoint.pcdh";
 

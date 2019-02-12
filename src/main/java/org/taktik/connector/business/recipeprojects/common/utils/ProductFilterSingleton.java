@@ -3,7 +3,8 @@ package org.taktik.connector.business.recipeprojects.common.utils;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import be.apb.gfddpp.common.exceptions.GFDDPPException;
@@ -14,7 +15,7 @@ import org.taktik.connector.business.recipeprojects.core.utils.I18nHelper;
 import org.taktik.connector.business.recipeprojects.core.utils.PropertyHandler;
 
 public class ProductFilterSingleton {
-	private final static Logger LOG = Logger.getLogger(ProductFilterSingleton.class);
+	private final static Logger LOG = LogManager.getLogger(ProductFilterSingleton.class);
 	private ProductFilterEngine productFilterEngine = null;
 	private static ProductFilterSingleton instance = null;
 	private File productFilterXmlFile = null;

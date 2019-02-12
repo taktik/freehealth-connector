@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class StatusResolver {
-   private static final Logger LOG = Logger.getLogger(StatusResolver.class);
+   private static final Logger LOG = LogManager.getLogger(StatusResolver.class);
    public static List<ResourceBundle> MESSAGE_BUNDLES;
    public static ResourceBundle MESSAGE_DEFAULT_BUNDLE;
    public static ResourceBundle TYPE_BUNDLE;

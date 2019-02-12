@@ -9,11 +9,12 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import org.apache.commons.lang.Validate;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
 
 public class XSDValidator {
-   private static final Logger LOG = Logger.getLogger(XSDValidator.class);
+   private static final Logger LOG = LogManager.getLogger(XSDValidator.class);
    private static volatile Map<String, Schema> cachedSchemas = new HashMap();
    private Validator validator;
 

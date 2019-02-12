@@ -1,6 +1,5 @@
 package org.taktik.connector.technical.config.impl;
 
-import com.sun.javafx.runtime.SystemProperties;
 import org.taktik.connector.technical.exception.ConfigurationException;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
 import java.io.File;

@@ -2,13 +2,14 @@ package be.apb.gfddpp.common.medicationscheme.validator.xsd;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 public class XSDErrorHandler implements ErrorHandler {
-   private static final Logger LOG = Logger.getLogger(XSDErrorHandler.class);
+   private static final Logger LOG = LogManager.getLogger(XSDErrorHandler.class);
    private List<String> errors = new ArrayList();
    private List<String> warnings = new ArrayList();
 

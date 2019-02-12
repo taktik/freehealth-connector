@@ -15,10 +15,11 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class CommonIOUtils {
-   private static final Logger LOG = Logger.getLogger(CommonIOUtils.class);
+   private static final Logger LOG = LogManager.getLogger(CommonIOUtils.class);
 
    public static byte[] getBytes(InputStream inputStream) {
       try {

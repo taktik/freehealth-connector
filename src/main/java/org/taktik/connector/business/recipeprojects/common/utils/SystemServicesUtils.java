@@ -9,7 +9,8 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import be.apb.gfddpp.common.xml.XmlBindingTool;
@@ -25,7 +26,7 @@ import org.taktik.connector.business.recipeprojects.core.utils.PropertyHandler;
 import be.gfddpp.services.systemservices.v2.Service;
 
 public class SystemServicesUtils {
-	private final static Logger LOG = Logger.getLogger(SystemServicesUtils.class);
+	private final static Logger LOG = LogManager.getLogger(SystemServicesUtils.class);
 	private static final String SYTEMTYPE_TIP = "TIP";
 	private static SystemServicesUtils instance = null;
 	private File systemServicesXmlFile;

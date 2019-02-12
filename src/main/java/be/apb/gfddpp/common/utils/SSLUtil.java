@@ -11,10 +11,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class SSLUtil {
-   private static final Logger LOG = Logger.getLogger(SSLUtil.class);
+   private static final Logger LOG = LogManager.getLogger(SSLUtil.class);
 
    public static void trustAllCertificates() {
       try {
