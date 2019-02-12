@@ -29,7 +29,7 @@ public final class UddiUpdater {
    }
 
    public static void launch() throws Exception {
-      String dirLocation = config.getProperty("uddi.local.cache.dir", System.getProperty("java.io.tmpdir"));
+      String dirLocation = config.getProperty("uddi.local.cache.dir", System.getProperty("java.io.tmpdir").replaceAll("[/\\\\]?$","") + File.separator);
       File dir = new File(dirLocation);
       if (!dir.exists() && !dir.mkdirs()) {
          throw new IOException("Unable to create directory. [" + dirLocation + "]");

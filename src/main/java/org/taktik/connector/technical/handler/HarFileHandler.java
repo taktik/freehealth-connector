@@ -37,7 +37,7 @@ public class HarFileHandler extends AbstractSOAPHandler {
    private Long start;
    private Long recieved;
    private Long split;
-   private String outputdir = ConfigFactory.getConfigValidator().getProperty("connector.output.dir", System.getProperty("java.io.tmpdir"));
+   private String outputdir = ConfigFactory.getConfigValidator().getProperty("connector.output.dir", System.getProperty("java.io.tmpdir").replaceAll("[/\\\\]?$","") + File.separator);
    private static Properties applicationProps = new Properties();
 
    public boolean handleFault(SOAPMessageContext ctx) {

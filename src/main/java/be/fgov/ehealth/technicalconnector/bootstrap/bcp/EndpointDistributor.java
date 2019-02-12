@@ -90,7 +90,7 @@ public final class EndpointDistributor {
             throw new IllegalArgumentException("Unable to find currentValue [" + currentEndpoint + "] in list " + StringUtils.join(endpoints, ","));
          } else {
             ++pos;
-            return endpoints.size() == pos ? (String)endpoints.get(0) : (String)endpoints.get(pos);
+            return endpoints.size() == pos ? endpoints.get(0) : endpoints.get(pos);
          }
       }
    }
