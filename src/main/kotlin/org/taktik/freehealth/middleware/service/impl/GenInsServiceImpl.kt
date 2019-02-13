@@ -126,14 +126,24 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                                 quality = hcpQuality; value =
                                 ValueRefString().apply { value = hcpNihii }
                             }
-                        physicalPerson = IdType().apply {
-                            name = ValueRefString().apply { value = hcpName }
-                            ssin = ValueRefString().apply { value = hcpSsin }
-                            nihii =
-                                NihiiType().apply {
-                                    quality = hcpQuality; value =
-                                    ValueRefString().apply { value = hcpNihii }
-                                }
+                        if(hcpQuality == "guardpost") {
+                            organization = IdType().apply {
+                                nihii =
+                                    NihiiType().apply {
+                                        quality = hcpQuality; value =
+                                        ValueRefString().apply { value = hcpNihii }
+                                    }
+                            }
+                        }else{
+                            physicalPerson = IdType().apply {
+                                name = ValueRefString().apply { value = hcpName }
+                                ssin = ValueRefString().apply { value = hcpSsin }
+                                nihii =
+                                    NihiiType().apply {
+                                        quality = hcpQuality; value =
+                                        ValueRefString().apply { value = hcpNihii }
+                                    }
+                            }
                         }
                     }
                 }
