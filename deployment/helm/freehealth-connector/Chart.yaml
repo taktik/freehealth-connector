@@ -1,0 +1,4 @@
+name: freehealth-connector
+version: 1.0
+apiVersion: v1
+description: Freehealth Connector (prod and acc)
