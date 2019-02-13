@@ -106,6 +106,8 @@ task genJaxb {
 
 dependencies {
 	ktlint "com.github.shyiko:ktlint:0.22.0"
+
+	compile("com.taktik.boot:spring-boot-starter-micrometer:develop-6-g6a00e9d646")
 	compile('org.springframework.boot:spring-boot-starter-jetty')
 	compile('org.springframework.boot:spring-boot-starter-web'){
 		exclude module: "spring-boot-starter-tomcat"
