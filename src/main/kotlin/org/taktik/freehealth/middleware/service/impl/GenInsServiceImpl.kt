@@ -121,20 +121,26 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                         }
                     }
                     careProvider = CareProviderType().apply {
-                        nihii =
-                            NihiiType().apply {
-                                quality = hcpQuality; value =
-                                ValueRefString().apply { value = hcpNihii }
-                            }
                         if(hcpQuality == "guardpost") {
+                            // nihii11 is required with guardpost
+                            nihii =
+                                NihiiType().apply {
+                                    quality = hcpQuality; value =
+                                    ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                                }
                             organization = IdType().apply {
                                 nihii =
                                     NihiiType().apply {
                                         quality = hcpQuality; value =
-                                        ValueRefString().apply { value = hcpNihii }
+                                        ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
                                     }
                             }
                         }else{
+                            nihii =
+                                NihiiType().apply {
+                                    quality = hcpQuality; value =
+                                    ValueRefString().apply { value = hcpNihii }
+                                }
                             physicalPerson = IdType().apply {
                                 name = ValueRefString().apply { value = hcpName }
                                 ssin = ValueRefString().apply { value = hcpSsin }
