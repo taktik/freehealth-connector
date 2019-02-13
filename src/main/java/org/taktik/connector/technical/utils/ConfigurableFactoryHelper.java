@@ -84,11 +84,11 @@ public class ConfigurableFactoryHelper<T> {
       if (useCaching && this.cache.containsKey(cacheKey)) {
          return this.cache.get(cacheKey);
       } else if (headerClassName == null && !silent) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"No valid configuration " + this.classPropertyName + " not found."});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, "No valid configuration " + this.classPropertyName + " not found.");
       } else {
          T result = this.getImplementation(headerClassName, configParameters, useCaching, silent);
          if (result == null && !silent) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"No valid configuration " + this.classPropertyName + " not found."});
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, "No valid configuration " + this.classPropertyName + " not found.");
          } else {
             return result;
          }

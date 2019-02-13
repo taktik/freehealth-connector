@@ -951,16 +951,14 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         if (prescriptionType != null) {
             return prescriptionType
         }
-//        if (medications.any { it.compoundPrescription != null || it.compoundPrescriptionV2 != null }) {
-//            return "P2"
-//        }
+
         medications.filter { isAnyReimbursedMedicinalProduct(it.medicinalProduct?.intendedcds) }
                 .forEach { return "P1" }
 
         medications.filter { isAnyReimbursedSubstanceProduct(it.substanceProduct?.intendedcds) }
                 .forEach { return "P1" }
 
-        return if (medications.any { it.options?.get(Medication.REIMBURSED)?.booleanValue != true }) {
+        return if (medications.any { it.options?.get(Medication.REIMBURSED)?.booleanValue == true }) {
             "P1"
         } else {
             "P0"

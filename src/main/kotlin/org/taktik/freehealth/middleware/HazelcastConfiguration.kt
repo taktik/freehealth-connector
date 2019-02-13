@@ -46,7 +46,7 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
         hazelcastProperties.groupName?.let { groupConfig.name = it }
         hazelcastProperties.groupPassword?.let { groupConfig.name = it }
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KEYSTORES").apply {
-            timeToLiveSeconds = 12*3600
+            timeToLiveSeconds = 18*3600
             maxSizeConfig = MaxSizeConfig(1024, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })

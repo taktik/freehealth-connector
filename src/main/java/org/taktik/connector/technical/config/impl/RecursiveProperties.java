@@ -52,7 +52,7 @@ public class RecursiveProperties extends SystemOverridenProperties {
    RecursiveProperties() {
       this.lookups = create(new RecursiveProperties.RecursiveLookup(this), new RecursiveProperties.UddiLookup(this.uddi, this), new RecursiveProperties.SystemLookup());
       load("/uddi/uddi-default.properties", this.uddi);
-      load(this.getProperty("uddi.local.cache.dir", System.getProperty("java.io.tmpdir")) + File.separator + "uddi-local.properties", this.uddi);
+      load(this.getProperty("uddi.local.cache.dir", System.getProperty("java.io.tmpdir")).replaceAll("[/\\\\]?$","") + File.separator + "uddi-local.properties", this.uddi);
    }
 
    private static void load(String location, Properties properties) {

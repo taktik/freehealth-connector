@@ -86,7 +86,7 @@ class PrescriberIntegrationModuleImpl(val stsService: STSService) : AbstractInte
             keyCache.remove(cacheId)
         } else {
             val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-            key = getNewKeyFromKgss(keystore, samlToken, passPhrase, prescriptionType, nihii, null, patientId, stsService.getHolderOfKeysEtk(credential).encoded)
+            key = getNewKeyFromKgss(keystore, samlToken, passPhrase, prescriptionType, nihii, null, patientId, stsService.getHolderOfKeysEtk(credential, null)!!.encoded)
         }
         return key
     }
@@ -296,7 +296,7 @@ class PrescriberIntegrationModuleImpl(val stsService: STSService) : AbstractInte
 
             // unseal WS response
             val result = helper.unsealWithSymmKey(response.securedGetPrescriptionForPrescriberResponse.securedContent, symmKey)
-            getKeyFromKgss(keystore, samlToken, passPhrase, result.encryptionKeyId, stsService.getHolderOfKeysEtk(credential).encoded)?.let { key ->
+            getKeyFromKgss(keystore, samlToken, passPhrase, result.encryptionKeyId, stsService.getHolderOfKeysEtk(credential, null)!!.encoded)?.let { key ->
                 result.prescription = IOUtils.decompress(getCrypto(credential).unseal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, key, result.prescription).contentAsByte)
             }
 

@@ -68,7 +68,7 @@ public final class CryptoFactory {
       signingOptions.put(SigningOption.TSA_CERT_STORE, generateCertStore("be.fgov.ehealth.etee.crypto.policies.SigningOption.TSA_CERT_STORE"));
       configParameters.put("cryptolib.signing.optionmap", signingOptions);
       configParameters.put("cryptolib.ocsp.optionmap", getOCSPOptions());
-      return (Crypto)helper.getImplementation(configParameters);
+      return helper.getImplementation(configParameters, false);
    }
 
    public static Map<OCSPOption, Object> getOCSPOptions() throws TechnicalConnectorException {

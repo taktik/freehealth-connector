@@ -310,11 +310,6 @@ fun yasminDragMedication(): Medication {
         beginMoment = FuzzyValues.getFuzzyDate(LocalDateTime.now().plusDays(1))
         instructionForPatient = "1 tablet per dag"
         renewal = MedicationRenewal().apply {
-            allowedRenewals = 3
-            delayBetweenDeliveries = Duration().apply {
-                value = 3.0
-                unit = Code("CD-TIMEUNIT", "mo")
-            }
         }
     }
 }
