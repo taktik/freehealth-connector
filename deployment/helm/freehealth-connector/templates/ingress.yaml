@@ -1,0 +1,32 @@
+apiVersion: voyager.appscode.com/v1beta1
+kind: Ingress
+metadata:
+    name: "{{ template "fullname" . }}"
+    annotations:
+        kubernetes.io/ingress.class: "voyager"
+      {{- if .Values.ingressIP }}
+        ingress.appscode.com/load-balancer-ip: {{ .Values.ingressIP }}
+      {{- end }}
+spec:
+  {{- if (.Values.tls.host) and .Values.tls.refName }}
+    tls:
+    - ref:
+          kind: Secret
+          name: {{ .Values.tls.refName }}
+      hosts:
+        - "freehealth.{{ .Values.tls.host }}"
+    frontendRules:
+        - port: 443
+          rules:
+              - option httplog
+              - option forwardfor
+              - http-request set-header X-Forwarded-Proto https
+  {{- end }}
+    rules:
+      -   host: "freehealth.{{ .Values.tls.host }}"
+          http:
+            paths:
+              -   path: /
+                  backend:
+                    serviceName: "{{ template "fullname" . }}"
+                    servicePort: {{ .Values.images.freehealth.servicePort }}
