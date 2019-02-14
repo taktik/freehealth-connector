@@ -47,17 +47,17 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
         hazelcastProperties.groupPassword?.let { groupConfig.name = it }
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KEYSTORES").apply {
             timeToLiveSeconds = 18*3600
-            maxSizeConfig = MaxSizeConfig(1024, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
+            maxSizeConfig = MaxSizeConfig(256, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.TOKENS").apply {
             timeToLiveSeconds = 12*3600
-            maxSizeConfig = MaxSizeConfig(1024, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
+            maxSizeConfig = MaxSizeConfig(256, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK").apply {
             timeToLiveSeconds = 12*3600
-            maxSizeConfig = MaxSizeConfig(1024, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
+            maxSizeConfig = MaxSizeConfig(256, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })
     }

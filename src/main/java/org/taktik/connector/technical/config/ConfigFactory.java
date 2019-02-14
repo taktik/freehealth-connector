@@ -63,7 +63,9 @@ public final class ConfigFactory {
    }
 
    public static String getConfigLocation() throws TechnicalConnectorException {
-      return System.getProperties().containsKey("org.taktik.connector.technical.config.location") ? System.getProperty("org.taktik.connector.technical.config.location") : configLocation;
+      String loc = System.getProperties().containsKey("org.taktik.connector.technical.config.location") ? System.getProperty("org.taktik.connector.technical.config.location") : configLocation;
+      LOG.warn("Loading config from {}", loc);
+      return loc;
    }
 
    public static void setConfigLocation(String configLocation) throws TechnicalConnectorException {
