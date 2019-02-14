@@ -3,9 +3,10 @@ ingressIP: "" # defined during helm install
 
 couchdbUrl: "http://couchdb-svc-couchdb.couch:5984"
 
-tls:
-  host: ""
-  refName: ""
+#tls:
+#  - hosts:
+#      - example.com
+#    refName: tls-example-com
 
 images:
   freehealth:
