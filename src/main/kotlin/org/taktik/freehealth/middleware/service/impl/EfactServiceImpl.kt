@@ -79,7 +79,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val iv = BelgianInsuranceInvoicingFormatWriter(stringWriter)
 
         try {
-            iv.write200and300(batch.sender!!, batch.numericalRef
+            if(!batch.magneticInvoice) iv.write200and300(batch.sender!!, batch.numericalRef
                 ?: 0, batch.fileRef!!, if (isTest) 92 else 12, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, isTest)
 
             val codes = ArrayList<Long>()
@@ -91,7 +91,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             val recordsCountPerOAMap = HashMap<String, Array<Long>>()
 
             var rn =
-                iv.writeFileHeader(1, batch.sender!!, if (isTest) 9991999L else 1999L, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, batch.batchRef!!)
+                iv.writeFileHeader(1, batch.sender!!, if (isTest) 9991999L else 1999L, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, batch.batchRef!!, batch.invoiceContent)
             recordsCount++
 
             for (invoice in batch.invoices.sortedWith(Comparator { i1, i2 ->
@@ -113,11 +113,11 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     var recordFee = 0L
                     var recordSup = 0L
                     rn =
-                        iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedBatchYearMonth, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber)
+                        iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedBatchYearMonth, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber, batch.magneticInvoice, invoice.startOfCoveragePeriod)
                     recordsCountPerOA[0]++
                     recordsCount++
                     for (it in invoice.items) {
-                        rn = iv.writeRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, invoice.ioCode!!, it)
+                        rn = iv.writeRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, invoice.ioCode!!, it, batch.magneticInvoice)
 
                         recordsCountPerOA[0]++
                         recordsCount++
@@ -147,7 +147,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
                     }
                     rn =
-                        iv.writeRecordFooter(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, recordCodes, recordAmount, recordFee, recordSup)
+                        iv.writeRecordFooter(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, recordCodes, recordAmount, recordFee, recordSup, batch.magneticInvoice)
                     recordsCountPerOA[0]++
                     recordsCount++
 
@@ -159,9 +159,9 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             recordsCount++
 
             for (k in codesPerOAMap.keys) {
-                iv.write400(k, batch.numericalRef, recordsCountPerOAMap[k]!![0], codesPerOAMap[k]!!, amountPerOAMap[k]!![0])
+                if(!batch.magneticInvoice) iv.write400(k, batch.numericalRef, recordsCountPerOAMap[k]!![0], codesPerOAMap[k]!!, amountPerOAMap[k]!![0])
             }
-            iv.write960000(batch.ioFederationCode!!.replace(Regex("00$"), "99"), recordsCount, codes, amount)
+            if(!batch.magneticInvoice) iv.write960000(batch.ioFederationCode!!.replace(Regex("00$"), "99"), recordsCount, codes, amount)
         } catch (e: IOException) {
             throw IllegalArgumentException(e)
         }
