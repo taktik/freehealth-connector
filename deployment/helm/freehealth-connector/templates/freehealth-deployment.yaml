@@ -1,0 +1,61 @@
+{{- if .Values.images.freehealth.replicaCount }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ template "fullname" . }}"
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ template "chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: "main"
+spec:
+  replicas: {{ .Values.images.freehealth.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}
+      release: {{ .Release.Name }}
+      component: "main"
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
+        component: "main"
+    spec:
+      containers:
+      - name: "{{ .Chart.Name }}"
+        image: "{{ .Values.images.freehealth.repository }}:{{ .Values.images.freehealth.tag }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        ports:
+        - containerPort: {{ .Values.images.freehealth.servicePort }}
+          name: http
+        {{- if or .Values.images.freehealth.debug .Values.images.freehealth.debugsuspend }}
+        - containerPort: 5005
+          name: "jvm-debug"
+        {{- end }}
+        env:
+          - name: JAVA_OPTS
+            value: "{{ .Values.images.freehealth.javaOpts }} -Dorg.taktik.connector.couchdb.url={{ .Values.couchdbUrl }}{{ if .Values.images.freehealth.debug }} -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005{{ end }}{{ if .Values.images.freehealth.debugsuspend }} -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005{{ end }}"
+          - name: HAZELCAST_KUBERNETES_SERVICE
+            value: "{{ template "fullname" . }}"
+          - name: HAZELCAST_KUBERNETES_NAMESPACE
+            value: "{{ .Release.Namespace }}"
+          {{- range $key, $value := .Values.images.freehealth.env }}
+          - name: "{{ $key }}"
+            value: "{{ $value }}"
+          {{- end }}
+        resources:
+          requests:
+            memory: {{ .Values.images.freehealth.memoryRequest | quote }}
+            {{- if .Values.images.freehealth.cpuRequest }}
+            cpu: {{ .Values.images.freehealth.cpuRequest | quote }}
+            {{- end }}
+          limits:
+            memory: {{ .Values.images.freehealth.memoryLimit | quote }}
+            {{- if .Values.images.freehealth.cpuLimit }}
+            cpu: {{ .Values.images.freehealth.cpuLimit | quote }}
+            {{- end }}
+      imagePullSecrets:
+        - name: regsecret
+{{- end }}

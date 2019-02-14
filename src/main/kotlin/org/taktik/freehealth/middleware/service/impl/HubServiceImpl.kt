@@ -239,6 +239,15 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 PutTherapeuticLinkRequest().apply {
                     request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null,false)
                     therapeuticlink = TherapeuticLinkType().apply {
+                        cd = CDTHERAPEUTICLINK().apply {
+                            s = CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE
+                            sv = "1.0"
+                            value = "gpconsultation"
+                        }
+                        hcparty = HCPartyIdType().apply {
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  hcpNihii })
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+                        }
                         patient = PatientIdType().apply {
                             ids.add(IDPATIENT().apply {
                                 this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value =

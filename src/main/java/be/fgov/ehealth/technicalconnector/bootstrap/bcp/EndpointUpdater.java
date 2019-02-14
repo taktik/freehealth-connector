@@ -107,8 +107,8 @@ public final class EndpointUpdater {
    }
 
    static {
-      loadedSha2Location = System.getProperty("java.io.tmpdir") + File.separator + EndpointUpdater.class.getCanonicalName() + ".sha2";
-      loadedXmlLocation = System.getProperty("java.io.tmpdir") + File.separator + EndpointUpdater.class.getCanonicalName() + ".xml";
+      loadedSha2Location = System.getProperty("java.io.tmpdir").replaceAll("[/\\\\]?$","") + File.separator + EndpointUpdater.class.getCanonicalName() + ".sha2";
+      loadedXmlLocation = System.getProperty("java.io.tmpdir").replaceAll("[/\\\\]?$","") + File.separator + EndpointUpdater.class.getCanonicalName() + ".xml";
 
       try {
          loadedSha2 = ConnectorIOUtils.getResourceAsString(loadedSha2Location);

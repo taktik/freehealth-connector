@@ -37,8 +37,8 @@ public final class TrustStoreUpdater {
    public static void launch() throws TechnicalConnectorException {
       init();
       BootStrapUtils.merge(location("be.fgov.ehealth.technicalconnector.bootstrap.tsl.keystore.location"), pwd("be.fgov.ehealth.technicalconnector.bootstrap.tsl.keystore.pwd"), location("CAKEYSTORE_LOCATION"), pwd("CAKEYSTORE_PASSWORD"));
-      update("ssl", determineEndpoint(TrustStoreUpdater.TrustedServiceType.TRANSPORT), location("truststore_location"), pwd("truststore_password"), "http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", "http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
-      store();
+      //update("ssl", determineEndpoint(TrustStoreUpdater.TrustedServiceType.TRANSPORT), location("truststore_location"), pwd("truststore_password"), "http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", "http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
+      //store();
       update("ca", determineEndpoint(TrustStoreUpdater.TrustedServiceType.PERSON), location("CAKEYSTORE_LOCATION"), pwd("CAKEYSTORE_PASSWORD"), "http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", "http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
       store();
       update("tsl", determineEndpoint(TrustStoreUpdater.TrustedServiceType.APPLICATION), location("be.fgov.ehealth.technicalconnector.bootstrap.tsl.keystore.location"), pwd("be.fgov.ehealth.technicalconnector.bootstrap.tsl.keystore.pwd"), "http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", "http://uri.etsi.org/TrstSvc/Svctype/CA/QC", "http://uri.etsi.org/TrstSvd/Svctype/TLIssuer");
@@ -70,11 +70,11 @@ public final class TrustStoreUpdater {
       InputStream is = null;
 
       try {
-         shaCacheLocation = config.getProperty("truststoreupdater.local.cache", System.getProperty("java.io.tmpdir") + TrustStoreUpdater.class.getCanonicalName() + ".properties");
+         shaCacheLocation = config.getProperty("truststoreupdater.local.cache", System.getProperty("java.io.tmpdir").replaceAll("[/\\\\]?$","") + File.separator + TrustStoreUpdater.class.getCanonicalName() + ".properties");
          is = ConnectorIOUtils.getResourceAsStream(shaCacheLocation);
          shaCache.load(is);
       } catch (Exception var5) {
-         LOG.error("Unable to load sha cache", var5);
+         LOG.warn("Unable to load sha cache", var5);
       } finally {
          ConnectorIOUtils.closeQuietly((Object)is);
       }
@@ -138,7 +138,6 @@ public final class TrustStoreUpdater {
       } else {
          LOG.warn("Invalid TSL file on [" + tslEndpoint + "], skipping update");
       }
-
    }
 
    private static enum TrustedServiceType {

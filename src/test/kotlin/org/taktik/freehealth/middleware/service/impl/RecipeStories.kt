@@ -91,7 +91,7 @@ class RecipeStories {
     @Before
     fun setup() {
         keystoreId = stsService.uploadKeystore((MyTestsConfiguration::class).java.getResource("$ssin.acc-p12").readBytes())
-        tokenId = stsService.requestToken(keystoreId!!, ssin!!, passPhrase!!, false).tokenId
+        tokenId = stsService.requestToken(keystoreId!!, ssin!!, passPhrase!!, false)?.tokenId
     }
 
     private val prescriptions = listOf(

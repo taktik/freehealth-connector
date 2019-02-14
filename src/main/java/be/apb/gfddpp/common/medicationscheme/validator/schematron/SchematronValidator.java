@@ -1,7 +1,8 @@
 package be.apb.gfddpp.common.medicationscheme.validator.schematron;
 
 import org.apache.commons.lang.Validate;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SchematronValidator {
-   private static final Logger LOG = Logger.getLogger(SchematronValidator.class);
+   private static final Logger LOG = LogManager.getLogger(SchematronValidator.class);
    private static volatile Map<String, Templates> cachedTemplates = new HashMap();
    private static volatile TransformerFactory transformerFactory = TransformerFactory.newInstance();
    private Transformer transformer;

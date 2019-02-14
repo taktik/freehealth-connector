@@ -30,7 +30,8 @@ import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleEhealthException;
@@ -42,7 +43,7 @@ import org.taktik.connector.business.recipeprojects.core.utils.I18nHelper;
 public class SoapFaultHandler  implements SOAPHandler<SOAPMessageContext> {
 
 	/** The Constant LOG. */
-	private final static Logger LOG = Logger.getLogger(SoapFaultHandler.class);
+	private final static Logger LOG = LogManager.getLogger(SoapFaultHandler.class);
 
 	/** {@inheritDoc} */
 	public Set<QName> getHeaders() {
