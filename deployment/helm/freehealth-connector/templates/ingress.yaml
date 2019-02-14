@@ -16,7 +16,7 @@ spec:
         name: {{ .refName }}
       hosts:
         {{- range .hosts }}
-        - "{{ . }}"
+        - "freehealth.{{ . }}"
         {{- end }}
     {{- end }}
   frontendRules:
