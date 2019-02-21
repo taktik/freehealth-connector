@@ -1,32 +1,48 @@
 apiVersion: voyager.appscode.com/v1beta1
 kind: Ingress
 metadata:
-    name: "{{ template "fullname" . }}"
-    annotations:
-        kubernetes.io/ingress.class: "voyager"
-      {{- if .Values.ingressIP }}
-        ingress.appscode.com/load-balancer-ip: {{ .Values.ingressIP }}
-      {{- end }}
+  name: "{{ template "fullname" . }}"
+  annotations:
+    kubernetes.io/ingress.class: "voyager"
+    {{- if .Values.ingressIP }}
+    ingress.appscode.com/load-balancer-ip: {{ .Values.ingressIP }}
+    {{- end }}
 spec:
-  {{- if (.Values.tls.host) and .Values.tls.refName }}
-    tls:
+  {{- if .Values.tls }}
+  tls:
+    {{- range .Values.tls }}
     - ref:
-          kind: Secret
-          name: {{ .Values.tls.refName }}
+        kind: Secret
+        name: {{ .refName }}
       hosts:
-        - "freehealth.{{ .Values.tls.host }}"
-    frontendRules:
-        - port: 443
-          rules:
-              - option httplog
-              - option forwardfor
-              - http-request set-header X-Forwarded-Proto https
+        {{- range .hosts }}
+        - "freehealth.{{ . }}"
+        {{- end }}
+    {{- end }}
+  frontendRules:
+    - port: 443
+      rules:
+        - option httplog
+        - option forwardfor
+        - http-request set-header X-Forwarded-Proto https
   {{- end }}
-    rules:
-      -   host: "freehealth.{{ .Values.tls.host }}"
-          http:
-            paths:
-              -   path: /
-                  backend:
-                    serviceName: "{{ template "fullname" . }}"
-                    servicePort: {{ .Values.images.freehealth.servicePort }}
+  rules:
+    {{- if .Values.tls }}
+    {{- range .Values.tls }}
+    {{- range .hosts }}
+    {{- include "rules" $ | nindent 4 }}
+    host: "freehealth.{{ . }}"
+    {{- end }}
+    {{- end }}
+    {{- else }}
+    {{- include "rules" $ | nindent 4 }}
+    {{- end }}
+
+{{- define "rules" -}}
+- http:
+    paths:
+      - path: /
+        backend:
+          serviceName: "{{ template "fullname" . }}"
+          servicePort: {{ .Values.images.freehealth.servicePort }}
+{{- end }}

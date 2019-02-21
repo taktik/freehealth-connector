@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.taktik.freehealth.middleware.dto.efact.FlatFileWithMetadata
 import org.taktik.freehealth.middleware.dto.efact.InvoicesBatch
 import org.taktik.freehealth.middleware.dto.etarif.TarificationConsultationResult
 import org.taktik.freehealth.middleware.service.EfactService
@@ -60,6 +61,15 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestBody batch: InvoicesBatch
                     ) =
         efactService.makeFlatFile(
+            batch = batch,
+            isTest = false
+                                 )
+
+    @PostMapping("/flatcore")
+    fun makeFlatFileCore(
+        @RequestBody batch: InvoicesBatch
+                    ) =
+        efactService.makeFlatFileCoreWithMetadata(
             batch = batch,
             isTest = false
                                  )
