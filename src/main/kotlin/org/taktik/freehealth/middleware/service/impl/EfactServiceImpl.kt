@@ -148,7 +148,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                 var recordFee = 0L
                 var recordSup = 0L
                 rn =
-                    iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedBatchYearMonth, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber)
+                    iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedBatchYearMonth, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber, batch.magneticInvoice, invoice.startOfCoveragePeriod)
                 recordsCountPerOA[0]++
                 metadata.recordsCount++
                 for (it in invoice.items) {
@@ -182,7 +182,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
                 }
                 rn =
-                    iv.writeRecordFooter(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, recordCodes, recordAmount, recordFee, recordSup)
+                    iv.writeRecordFooter(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, recordCodes, recordAmount, recordFee, recordSup, batch.magneticInvoice)
                 recordsCountPerOA[0]++
                 metadata.recordsCount++
 
