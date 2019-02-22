@@ -21,14 +21,17 @@ package org.taktik.freehealth.middleware.format.efact.segments
 import org.apache.commons.lang.StringUtils
 import java.lang.IllegalArgumentException
 
-class ZoneDescription private constructor(val label: String,
-                                          val position: Int,
-                                          val length: Int,
-                                          val type: ZoneType,
-                                          val zones: List<String>,
-                                          val value: String? = null,
-                                          val cs: Boolean = false,
-                                          val optional: Boolean = false) {
+class ZoneDescription private constructor(
+    val label: String,
+    val property: String?,
+    val position: Int,
+    val length: Int,
+    val type: ZoneType,
+    val zones: List<String>,
+    val value: String? = null,
+    val cs: Boolean = false,
+    val optional: Boolean = false
+                                         ) {
     var zonesList: String? = null
         get() = field ?: StringUtils.join(zones, ",")
 
@@ -52,17 +55,18 @@ class ZoneDescription private constructor(val label: String,
 
     companion object {
         fun build(commaSeparatedZones: String,
-                  label: String,
-                  typeSymbol: String,
-                  position: Int,
-                  length: Int,
-                  value: String? = null,
-                  cs: Boolean = false,
-                  optional: Boolean = false): ZoneDescription {
+            label: String,
+            property: String?,
+            typeSymbol: String,
+            position: Int,
+            length: Int,
+            value: String? = null,
+            cs: Boolean = false,
+            optional: Boolean = false): ZoneDescription {
             val type = ZoneType.fromSymbol(typeSymbol) ?: throw IllegalArgumentException("Invalid type $typeSymbol")
             val splitZones = commaSeparatedZones.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             val zones = splitZones.map { it.trim { it <= ' ' } }
-            return ZoneDescription(label, position, length, type, zones, value, cs, optional)
+            return ZoneDescription(label, property, position, length, type, zones, value, cs, optional)
         }
     }
 }

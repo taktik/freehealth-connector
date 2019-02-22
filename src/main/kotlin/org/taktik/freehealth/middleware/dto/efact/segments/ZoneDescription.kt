@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils
 import java.lang.IllegalArgumentException
 
 class ZoneDescription(var label: String? = null,
+                                          var property: String? = null,
                                           var position: Int? = null,
                                           var length: Int? = null,
                                           var type: ZoneType? = null,
