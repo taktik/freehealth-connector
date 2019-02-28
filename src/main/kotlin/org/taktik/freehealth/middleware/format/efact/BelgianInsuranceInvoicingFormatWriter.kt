@@ -59,19 +59,24 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         return null
     }
 
-    fun getDestCode(affCode: String, invoiceSender: InvoiceSender): String {
+    fun getDestCode(affCode: String, invoiceSender: InvoiceSender, returnAffCodeIfMH: Boolean = false): String {
         val firstCode = affCode.substring(0, 3).replace("[^0-9]".toRegex(), "")
-        if (affCode.startsWith("3")) {
-            return if(invoiceSender.isMedicalHouse)
-                if (Arrays.asList("304", "305", "309", "311", "315", "317", "319", "322", "323", "325").contains(firstCode)) "300"
-                else "306"
-            else
-                if (Arrays.asList("305", "315", "317", "319", "323", "325").contains(firstCode))
-                    if (invoiceSender.isSpecialist) "317"
-                    else "319"
-                else firstCode
-        } else if (affCode.startsWith("4")) {
-            return "400"
+        if(invoiceSender.isMedicalHouse && returnAffCodeIfMH){
+            return firstCode
+        }
+        else {
+            if (affCode.startsWith("3")) {
+                return if (invoiceSender.isMedicalHouse)
+                    if (Arrays.asList("304", "305", "309", "311", "315", "317", "319", "322", "323", "325").contains(firstCode)) "300"
+                    else "306"
+                else
+                    if (Arrays.asList("305", "315", "317", "319", "323", "325").contains(firstCode))
+                        if (invoiceSender.isSpecialist) "317"
+                        else "319"
+                    else firstCode
+            } else if (affCode.startsWith("4")) {
+                return "400"
+            }
         }
         return firstCode
     }
