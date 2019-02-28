@@ -126,7 +126,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val metadata = FlatFileWithMetadata.FlatFileMetadata()
 
         var rn =
-            iv.writeFileHeader(1, batch.sender!!, if (isTest) 9991999L else 1999L, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, batch.batchRef!!)
+            iv.writeFileHeader(1, batch.sender!!, if (isTest) 9991999L else 1999L, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, batch.batchRef!!, batch.invoiceContent)
         metadata.recordsCount++
 
         for (invoice in batch.invoices.sortedWith(Comparator { i1, i2 ->

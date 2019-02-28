@@ -318,6 +318,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("34", relatedBatchSendNumber)
         ws.write("37", relatedDestCode)
         ws.write("41", relatedBatchYearMonth)
+        ws.write("47", (if (magneticInvoice!!) formattedCreationDate else "00000000"))
 
         ws.writeFieldsWithCheckSum()
 
@@ -518,7 +519,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         ws.write("18", destCode)
         ws.write("19", (if (amount >= 0) "+" else "-") + nf11.format(Math.abs(amount)))
-        ws.write("20", formattedCreationDate)
+        ws.write("20", (if(magneticInvoice) "00000000" else formattedCreationDate))
         ws.write("24", invoiceNumber)
         ws.write("27", (if (fee >= 0) "+" else "-") + nf9.format(Math.abs(fee)))
         ws.write("28", invoiceRef)
