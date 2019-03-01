@@ -59,19 +59,24 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         return null
     }
 
-    fun getDestCode(affCode: String, invoiceSender: InvoiceSender): String {
+    fun getDestCode(affCode: String, invoiceSender: InvoiceSender, returnAffCodeIfMH: Boolean = false): String {
         val firstCode = affCode.substring(0, 3).replace("[^0-9]".toRegex(), "")
-        if (affCode.startsWith("3")) {
-            return if(invoiceSender.isMedicalHouse)
-                if (Arrays.asList("304", "305", "309", "311", "315", "317", "319", "322", "323", "325").contains(firstCode)) "300"
-                else "306"
-            else
-                if (Arrays.asList("305", "315", "317", "319", "323", "325").contains(firstCode))
-                    if (invoiceSender.isSpecialist) "317"
-                    else "319"
-                else firstCode
-        } else if (affCode.startsWith("4")) {
-            return "400"
+        if(invoiceSender.isMedicalHouse && returnAffCodeIfMH){
+            return firstCode
+        }
+        else {
+            if (affCode.startsWith("3")) {
+                return if (invoiceSender.isMedicalHouse)
+                    if (Arrays.asList("304", "305", "309", "311", "315", "317", "319", "322", "323", "325").contains(firstCode)) "300"
+                    else "306"
+                else
+                    if (Arrays.asList("305", "315", "317", "319", "323", "325").contains(firstCode))
+                        if (invoiceSender.isSpecialist) "317"
+                        else "319"
+                    else firstCode
+            } else if (affCode.startsWith("4")) {
+                return "400"
+            }
         }
         return firstCode
     }
@@ -313,6 +318,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("34", relatedBatchSendNumber)
         ws.write("37", relatedDestCode)
         ws.write("41", relatedBatchYearMonth)
+        ws.write("47", (if (magneticInvoice!!) formattedCreationDate else "00000000"))
 
         ws.writeFieldsWithCheckSum()
 
@@ -513,7 +519,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         ws.write("18", destCode)
         ws.write("19", (if (amount >= 0) "+" else "-") + nf11.format(Math.abs(amount)))
-        ws.write("20", formattedCreationDate)
+        ws.write("20", (if(magneticInvoice) "00000000" else formattedCreationDate))
         ws.write("24", invoiceNumber)
         ws.write("27", (if (fee >= 0) "+" else "-") + nf9.format(Math.abs(fee)))
         ws.write("28", invoiceRef)

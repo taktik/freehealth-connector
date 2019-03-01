@@ -126,19 +126,18 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val metadata = FlatFileWithMetadata.FlatFileMetadata()
 
         var rn =
-            iv.writeFileHeader(1, batch.sender!!, if (isTest) 9991999L else 1999L, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, batch.batchRef!!)
+            iv.writeFileHeader(1, batch.sender!!, if (isTest) 9991999L else 1999L, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, batch.batchRef!!, batch.invoiceContent)
         metadata.recordsCount++
 
         for (invoice in batch.invoices.sortedWith(Comparator { i1, i2 ->
             when {
                 i1.creditNote && !i2.creditNote -> -1
                 i2.creditNote && !i1.creditNote -> 1
-                else -> iv.getDestCode(i1.ioCode!!, batch.sender!!).compareTo(iv.getDestCode(i2.ioCode!!, batch.sender!!))
+                else -> iv.getDestCode(i1.ioCode!!, batch.sender!!, true).compareTo(iv.getDestCode(i2.ioCode!!, batch.sender!!), true)
             }
         })) {
             if (invoice.items.isNotEmpty()) {
-                val destCode = iv.getDestCode(invoice.ioCode!!, batch.sender!!)
-
+                val destCode = iv.getDestCode(invoice.ioCode!!, batch.sender!!, true)
                 val codesPerOA: MutableList<Long> = metadata.codesPerOAMap.getOrPut(destCode) { LinkedList() }
                 val amountPerOA: Array<Long> = metadata.amountPerOAMap.getOrPut(destCode) { arrayOf(0L) }  //An array to pass it by reference
                 val recordsCountPerOA: Array<Long> = metadata.recordsCountPerOAMap.getOrPut(destCode) { arrayOf(0L) }  //An array to pass it by reference
