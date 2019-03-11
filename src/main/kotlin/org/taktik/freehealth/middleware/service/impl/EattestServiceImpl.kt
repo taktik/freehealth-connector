@@ -40,23 +40,12 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import be.fgov.ehealth.mycarenet.registration.protocol.v1.RegisterToMycarenetServiceRequest
 import be.fgov.ehealth.mycarenet.registration.protocol.v1.RegisterToMycarenetServiceResponse
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes
+import be.fgov.ehealth.standards.kmehr.cd.v1.*
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.CD_NIHDI
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.CD_NIHDI_RELATEDSERVICE
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORMYCARENETschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEM
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MYCARENET
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEX
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEXvalues
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDSTANDARD
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDUNIT
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDUNITschemes
 import be.fgov.ehealth.standards.kmehr.dt.v1.TextType
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
@@ -607,7 +596,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                             s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                             (itemId++).toString()
                                         })
-                                        cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "documentidentity" })
+                                        cds.add(CDITEMMYCARENET().apply { s = CD_ITEM_MYCARENET; sv = "1.0"; value = "documentidentity" })
                                         contents.addAll(listOf(ContentType().apply {
                                             date = (dateTime(cr.date) ?: now)
                                             time =
