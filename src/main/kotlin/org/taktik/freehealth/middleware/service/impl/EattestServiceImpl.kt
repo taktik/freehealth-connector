@@ -57,6 +57,7 @@ import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDUNIT
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDUNITschemes
+import be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORMYCARENETschemes
 import be.fgov.ehealth.standards.kmehr.dt.v1.TextType
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
@@ -64,7 +65,6 @@ import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENT
 import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENTschemes
-import be.fgov.ehealth.standards.kmehr.id.v1.CDERRORMYCARENETschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
 import be.fgov.ehealth.standards.kmehr.schema.v1.ContentType
 import be.fgov.ehealth.standards.kmehr.schema.v1.CostType
