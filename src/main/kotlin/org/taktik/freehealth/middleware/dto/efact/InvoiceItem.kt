@@ -17,7 +17,6 @@
  */
 
 package org.taktik.freehealth.middleware.dto.efact
-
 /**
  * Created with IntelliJ IDEA.
  * User: aduchate
@@ -27,6 +26,7 @@ package org.taktik.freehealth.middleware.dto.efact
  */
 class InvoiceItem {
     var dateCode: Long? = null
+    var endDateCode: Long? = null
     var codeNomenclature: Long = 0
     var relatedCode: Long? = null
 
