@@ -11,9 +11,9 @@ object Segment300StubDescription : RecordOrSegmentDescription() {
     init {
         var pos = 1
 
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "300", "Nom du message", "A", pos, 6)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "3001", "Code erreur", "N", pos, 2)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "301", "Reserve", "A", pos, 152)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "300", "Nom du message", "messageType", "A", pos, 6)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "3001", "Code erreur", null, "N", pos, 2)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "301", "Reserve", null, "A", pos, 152)
     }
 
     override fun toString(): String {

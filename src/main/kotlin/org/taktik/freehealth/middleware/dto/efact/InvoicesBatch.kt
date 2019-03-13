@@ -18,6 +18,7 @@
 
 package org.taktik.freehealth.middleware.dto.efact
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import java.util.LinkedList
 
 /**
@@ -36,5 +37,7 @@ class InvoicesBatch {
     var uniqueSendNumber : Long? = null //3 digits number for batch (typically the number of the day * 2 + 1 if 306)
     var sender:  InvoiceSender? = null
     var numericalRef : Long? = null
+    var invoiceContent : Int = 40
+    var magneticInvoice: Boolean = false
     var invoices: MutableList<Invoice> = LinkedList()
 }

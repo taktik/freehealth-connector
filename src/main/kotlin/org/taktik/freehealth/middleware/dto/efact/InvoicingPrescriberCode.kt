@@ -30,6 +30,8 @@ enum class InvoicingPrescriberCode private constructor(val code: Int) {
     OnePrescriber(1),
     SelfPrescriber(3),
     AddedCode(4),
+    OnePrescriberSubstituted(5),
+    ManyPrescribersSubstituted(6),
     ManyPrescribers(9);
 
 
