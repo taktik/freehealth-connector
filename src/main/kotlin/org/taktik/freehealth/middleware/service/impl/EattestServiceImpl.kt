@@ -44,10 +44,10 @@ import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.CD_NIHDI
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.CD_NIHDI_RELATEDSERVICE
+import be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORMYCARENETschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEM
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMYCARENET
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MYCARENET
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEX
@@ -64,7 +64,6 @@ import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENT
 import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENTschemes
-import be.fgov.ehealth.standards.kmehr.id.v1.CDERRORMYCARENETschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
 import be.fgov.ehealth.standards.kmehr.schema.v1.ContentType
 import be.fgov.ehealth.standards.kmehr.schema.v1.CostType
@@ -608,7 +607,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                             s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                             (itemId++).toString()
                                         })
-                                        cds.add(CDITEMMYCARENET().apply { s = CD_ITEM_MYCARENET; sv = "1.0"; value = "documentidentity" })
+                                        cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.3"; value = "documentidentity" })
                                         contents.addAll(listOf(ContentType().apply {
                                             date = (dateTime(cr.date) ?: now)
                                             time =
