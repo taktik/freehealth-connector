@@ -10,12 +10,19 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
+import org.taktik.freehealth.middleware.domain.common.Patient
+import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
+import org.taktik.freehealth.middleware.dto.eattest.SendAttestResultWithResponse
+import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import java.io.File
 import java.time.LocalDateTime
+import java.util.*
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
@@ -47,6 +54,18 @@ class EattestControllerTest : EhealthTest() {
         }
     }
 
+    private fun getPatientFromNiss(ssin: String, keystoreId: UUID, tokenId: String, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpName: String): Patient {
+        val genIns = this.restTemplate!!.exchange("http://localhost:$port/genins/$ssin?hcpNihii=$hcpNihii&hcpSsin=$hcpSsin&hcpName=$hcpName&hcpQuality=${"doctor"}",
+            HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+        Assertions.assertThat(genIns != null && genIns.body != null)
+        return Patient().apply {
+            firstName = genIns.body?.firstName
+            lastName = genIns.body?.lastName
+            gender = if (genIns.body?.sex == "female") Gender.female else Gender.male
+            this.ssin = ssin
+        }
+    }
+
     @Autowired
     private val restTemplate: TestRestTemplate? = null
 
@@ -69,7 +88,14 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject(
+                "http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}",
+                eattest,
+                String::class.java,
+                firstName1,
+                lastName1,
+                passPhrase
+            )
         }
         assertResults("scenario 1", results)
     }
@@ -408,5 +434,37 @@ class EattestControllerTest : EhealthTest() {
             this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 18", results)
+    }
+
+    @Test
+    fun guardPost() {
+        val (keystoreId, tokenId, passPhrase) = registerGuardPost(restTemplate!!, port, nihii4!!, password4!!)
+        val now = LocalDateTime.now()
+        val eattest = Eattest(listOf(Eattest.EattestCode(
+            date = now.year * 10000 + now.monthValue * 100 + now.dayOfMonth,
+            riziv = "101076",
+            reimbursement = 20.27,
+            reglementarySupplement = 6.0
+        )))
+
+        val results = getNisses(0).map { getPatientFromNiss(it, keystoreId!!, tokenId, passPhrase, nihii4!!, ssin4!!, name4!!) }.map {
+            try {
+                this.restTemplate.exchange(
+                    "http://localhost:$port/eattest/send/${it.ssin}/verbose?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe4&patientFirstName=${it.firstName}&patientLastName=${it.lastName}&patientGender=${it.gender}&guardPostNihii=$nihii4&guardPostSsin=$ssin4&guardPostName=$name4",
+                    HttpMethod.POST,
+                    HttpEntity<Eattest>(eattest, createHeaders(null, null, keystoreId, tokenId, passPhrase)),
+                    SendAttestResultWithResponse::class.java, firstName1, lastName1)
+            } catch (err: Exception) {
+                println("Timeout testing eAttest for ssin: ${it.ssin}")
+                null
+            }
+
+        }.map { it?.body }
+
+        results.forEach {
+            println(it?.mycarenetConversation?.transactionRequest)
+            println(it?.mycarenetConversation?.transactionResponse)
+        }
+
     }
 }
