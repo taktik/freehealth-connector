@@ -295,4 +295,21 @@ class ConsultTarifControllerTest : EhealthTest() {
         }
         assertResults("scenario 11", 7,  results.map { it.body }, 1)
     }
+
+    @Test
+    fun guardPost() {
+        val (keystoreId, tokenId, passPhrase) = registerGuardPost(restTemplate!!, port, nihii4!!, password4!!)
+        val now = LocalDateTime.now()
+
+        val codes = listOf("101076")
+
+        val results = listOf("36121015396").map {
+            this.restTemplate.exchange(
+                "http://localhost:$port/tarif/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName=$firstName1&hcpLastName=$lastName1&justification=7&guardPostNihii=$nihii4&guardPostSsin=$ssin4",
+                HttpMethod.POST, HttpEntity(codes, createHeaders(null, null, keystoreId, tokenId, passPhrase)),
+                TarificationConsultationResult::class.java
+            )
+        }
+        assertResults("guardPost", 7, results.map { it.body }, 1)
+    }
 }

@@ -71,6 +71,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                               traineeSupervisorNihii: String?,
                               traineeSupervisorFirstName: String?,
                               traineeSupervisorLastName: String?,
+                              guardPostNihii: String?,
+                              guardPostSsin: String?,
                               codes: List<String>): TarificationConsultationResult {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -80,6 +82,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
             val now = DateTime().withMillisOfSecond(0).withZone(null)
             val kmehrUUID = now.toString("YYYYddhhmmssSS")
+            val requestAuthorNihii = (guardPostNihii ?: hcpNihii).padEnd(11, '0')
+            val requestAuthorSsin = guardPostSsin ?: hcpSsin
             val reqId = "$hcpNihii.$kmehrUUID"
 
             //  The author is always the caller
@@ -109,7 +113,15 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
                 this.request = RequestType().apply {
                     id = IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = reqId }
-                    this.author = author
+                    this.author = AuthorType().apply {
+                        hcparties.add(HcpartyType().apply {
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  requestAuthorNihii })
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
+                            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = if (guardPostNihii?.isEmpty() == true) "persphysician" else "guardpost" })
+                            firstname = hcpFirstName
+                            familyname = hcpLastName
+                        })
+                    }
                     date = now; time = now
                 }
                 this.select = SelectRetrieveTransactionType().apply {
@@ -193,15 +205,23 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
-                                this.quality = "doctor"
+                                this.quality = if (guardPostNihii?.isEmpty() == true) "doctor" else "guardpost"
                                 this.value =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                        .apply { this.value = hcpNihii }
+                                        .apply { this.value = requestAuthorNihii }
                             }
-                            this.physicalPerson = be.fgov.ehealth.mycarenet.commons.core.v2.IdType().apply {
-                                this.ssin =
-                                    be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                        .apply { this.value = hcpSsin }
+                            if (guardPostNihii?.isEmpty() == true) {
+                                this.physicalPerson = be.fgov.ehealth.mycarenet.commons.core.v2.IdType().apply {
+                                    this.ssin =
+                                        be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
+                                            .apply { this.value = hcpSsin }
+                                }
+                            } else {
+                                this.organization = be.fgov.ehealth.mycarenet.commons.core.v2.IdType().apply {
+                                    this.ssin = be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString().apply {
+                                        this.value = guardPostSsin
+                                    }
+                                }
                             }
                         }
                     }
@@ -211,6 +231,10 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 this.routing = SendRequestMapper.mapRouting(Routing(CareReceiverId(patientSsin), csDT))
                 this.detail = SendRequestMapper.mapBlobToBlobType(blob)
             }
+
+            println(MarshallerHelper(TarificationConsultationRequest::class.java, TarificationConsultationRequest::class.java)
+                .toXMLByteArray(request)
+                .toString(Charsets.UTF_8))
 
             var consultTarificationResponse = freehealthTarificationService.consultTarification(samlToken, request)
 

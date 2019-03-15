@@ -15,6 +15,8 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
+import org.taktik.freehealth.middleware.domain.common.Patient
+import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import java.io.File
 import java.time.Instant
@@ -763,5 +765,16 @@ class GenInsControllerTest : EhealthTest() {
             Assertions.assertThat(it.insurabilities.size).isEqualTo(1)
         }
 
+    }
+
+    @Test
+    fun guardPostScenario() {
+        val (keystoreId, tokenId, passPhrase) = registerGuardPost(restTemplate!!, port, nihii4!!, password4!!)
+
+        val genIns = getNisses(3).map {
+            this.restTemplate!!.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3&hcpSsin=$ssin3&hcpName=$name3&hcpQuality=${"guardpost"}&guardPostNihii=$nihii4&guardPostSsin=$ssin4",
+                HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+        }
+        Assertions.assertThat(genIns.map { it.body }.isNotEmpty())
     }
 }

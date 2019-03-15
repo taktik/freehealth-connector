@@ -54,8 +54,8 @@ class EattestControllerTest : EhealthTest() {
         }
     }
 
-    private fun getPatientFromNiss(ssin: String, keystoreId: UUID, tokenId: String, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpName: String): Patient {
-        val genIns = this.restTemplate!!.exchange("http://localhost:$port/genins/$ssin?hcpNihii=$hcpNihii&hcpSsin=$hcpSsin&hcpName=$hcpName&hcpQuality=${"doctor"}",
+    private fun getPatientFromNissForGuardPost(ssin: String, keystoreId: UUID, tokenId: String, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpName: String): Patient {
+        val genIns = this.restTemplate!!.exchange("http://localhost:$port/genins/$ssin?hcpNihii=$hcpNihii&hcpSsin=$hcpSsin&hcpName=$hcpName&hcpQuality=${"guardpost"}",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
         Assertions.assertThat(genIns != null && genIns.body != null)
         return Patient().apply {
@@ -447,7 +447,7 @@ class EattestControllerTest : EhealthTest() {
             reglementarySupplement = 6.0
         )))
 
-        val results = getNisses(0).map { getPatientFromNiss(it, keystoreId!!, tokenId, passPhrase, nihii4!!, ssin4!!, name4!!) }.map {
+        val results = getNisses(0).map { getPatientFromNissForGuardPost(it, keystoreId!!, tokenId, passPhrase, nihii4!!, ssin4!!, name4!!) }.map {
             try {
                 this.restTemplate.exchange(
                     "http://localhost:$port/eattest/send/${it.ssin}/verbose?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe4&patientFirstName=${it.firstName}&patientLastName=${it.lastName}&patientGender=${it.gender}&guardPostNihii=$nihii4&guardPostSsin=$ssin4&guardPostName=$name4",
