@@ -232,10 +232,6 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 this.detail = SendRequestMapper.mapBlobToBlobType(blob)
             }
 
-            println(MarshallerHelper(TarificationConsultationRequest::class.java, TarificationConsultationRequest::class.java)
-                .toXMLByteArray(request)
-                .toString(Charsets.UTF_8))
-
             var consultTarificationResponse = freehealthTarificationService.consultTarification(samlToken, request)
 
             val detail = consultTarificationResponse.getReturn().detail
