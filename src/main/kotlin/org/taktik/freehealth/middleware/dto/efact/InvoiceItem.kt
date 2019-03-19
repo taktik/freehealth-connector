@@ -17,7 +17,6 @@
  */
 
 package org.taktik.freehealth.middleware.dto.efact
-
 /**
  * Created with IntelliJ IDEA.
  * User: aduchate
