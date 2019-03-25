@@ -6,7 +6,7 @@
  Implementation-Title: XSD 03.b Commons MyCarenet
  Specification-Version: 3.0
  Implementation-Version: 3.0.0
- Build-Time: 20170524-1411 
+ Build-Time: 20170524-1411
  </xs:appinfo>
  </xs:annotation>
 	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd"/>
@@ -297,6 +297,7 @@
 				<xs:attribute name="ContentType" type="xs:string" use="required"/>
 				<xs:attribute name="ContentEncoding" type="xs:string" default="deflate"/>
 				<xs:attribute name="ContentEncryption" type="xs:string" use="optional"/>
+				<xs:attribute name="Etk" type="xs:base64Binary" use="optional"/>
 				<xs:attribute name="HashValue" type="xs:base64Binary"/>
 				<xs:attribute name="Id" type="xs:NCName"/>
 			</xs:extension>

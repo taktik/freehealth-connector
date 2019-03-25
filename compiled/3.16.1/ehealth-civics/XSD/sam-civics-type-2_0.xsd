@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:samcivics:type:v2" 
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           targetNamespace="urn:be:fgov:ehealth:samcivics:type:v2" 
+           elementFormDefault="unqualified" attributeFormDefault="unqualified" 
+           version="2.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD civics
+ Specification-Version: 2.0
+ Implementation-Version: 2.0.0
+ Build-Time: 20170113-1208 
+ </xs:appinfo>
+ </xs:annotation>
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd" />
+ 	<xs:complexType name="AddedDocumentType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="ChapterName" type="xs:string"/>
+					<xs:element name="ParagraphName" type="xs:string"/>
+					<xs:element name="VerseSeq" type="xs:integer"/>
+					<xs:element name="DocumentSeq" type="xs:integer"/>
+					<xs:element name="Name" type="xs:string"/>
+					<xs:element name="FormTypeName" type="xs:string"/>
+					<xs:element name="AppendixTypeName" type="xs:string"/>
+					<xs:element name="MimeType" type="xs:string" minOccurs="0"/>
+					<xs:element name="AddressURL" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AgreementTermType">
+		<xs:simpleContent>
+			<xs:extension base="xs:integer">
+				<xs:attribute name="unit" type="ValidityPeriodUnit" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="AmountType">
+		<xs:simpleContent>
+			<xs:extension base="xs:float">
+				<xs:attribute name="currency" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="AmppType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="AmppId" type="xs:long"/>
+					<xs:element name="Name" type="xs:string"/>
+					<xs:element name="ContentQuantity" type="ContentQuantityType"/>
+					<xs:element name="TreatmentDurationCatCv" type="xs:string"/>
+					<xs:element name="ContentMultiplier" type="xs:integer"/>
+					<xs:element name="TotalPackSizeValue" type="xs:float"/>
+					<xs:element name="SocsecReimbCv" type="xs:string" minOccurs="0"/>
+					<xs:element name="DistributorId" type="xs:long" minOccurs="0"/>
+					<xs:element name="InitDate" type="xs:date" minOccurs="0"/>
+					<xs:element name="CloseDate" type="xs:date" minOccurs="0"/>
+					<xs:element name="Cheapest" type="xs:string" minOccurs="0"/>
+					<xs:element name="InSupply" type="xs:date" minOccurs="0"/>
+					<xs:element name="Availability" type="xs:date" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AtmAndChildrenType">
+		<xs:complexContent>
+			<xs:extension base="AtmType">
+				<xs:sequence>
+					<xs:element name="Ampp" type="FindAmppType" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AtmType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="AtmId" type="xs:long"/>
+					<xs:element name="Name" type="xs:string"/>
+					<xs:element name="SpecialtyOrigin" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BaseType">
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:date"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ContentQuantityType">
+		<xs:simpleContent>
+			<xs:extension base="xs:float">
+				<xs:attribute name="unit" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="CopaymentType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="RegimeType" type="xs:integer"/>
+					<xs:element name="CopayAmnt" type="AmountType" minOccurs="0"/>
+					<xs:element name="SolidFlatRateAmnt" type="AmountType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ExcludedParagraphType">
+		<xs:sequence>
+			<xs:element name="ChapterName" type="xs:string"/>
+			<xs:element name="ParagraphName" type="xs:string"/>
+			<xs:element name="IdentifierNum" type="IdentifierNumType"/>
+			<xs:element name="AtmAndChildren" type="AtmAndChildrenType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ExclusionType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="IdentifierNum" type="IdentifierNumType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FindAmppType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="AmppId" type="xs:long"/>
+					<xs:element name="Name" type="xs:string"/>
+					<xs:element name="DeliveryEnvironment" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FindParagraphType">
+		<xs:annotation>
+			<xs:documentation>Response structure returning information on paragraph in reimbursement</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="ChapterName" type="xs:string"/>
+					<xs:element name="ParagraphName" type="xs:string"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="IdentifierNumType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="exclusionType" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="MaximumAgeAuthorizedType">
+		<xs:simpleContent>
+			<xs:extension base="xs:float">
+				<xs:attribute name="unit" type="ValidityPeriodUnit" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="MaximumContentType">
+		<xs:simpleContent>
+			<xs:extension base="xs:float">
+				<xs:attribute name="unit" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="MaximumDurationType">
+		<xs:simpleContent>
+			<xs:extension base="xs:float">
+				<xs:attribute name="unit" type="ValidityPeriodUnit" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="MaximumStrengthType">
+		<xs:simpleContent>
+			<xs:extension base="xs:float">
+				<xs:attribute name="unit" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="MinimumAgeAuthorizedType">
+		<xs:simpleContent>
+			<xs:extension base="xs:float">
+				<xs:attribute name="unit" type="ValidityPeriodUnit" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="ParagraphType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="ChapterName" type="xs:string"/>
+					<xs:element name="ParagraphName" type="xs:string"/>
+					<xs:element name="Key" type="TextType" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="AgreementType" type="xs:string" minOccurs="0"/>
+					<xs:element name="AgreementTypePro" type="xs:string" minOccurs="0"/>
+					<xs:element name="ProcessType" type="xs:integer" minOccurs="0"/>
+					<xs:element name="LegalReference" type="xs:string" minOccurs="0"/>
+					<xs:element name="PublicationDate" type="xs:date" minOccurs="0"/>
+					<xs:element name="ModificationDate" type="xs:date" minOccurs="0"/>
+					<xs:element name="ProcessTypeOverrule" type="xs:string" minOccurs="0"/>
+					<xs:element name="ParagraphVersion" type="xs:integer"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ParagraphAndChildrenType">
+		<xs:complexContent>
+			<xs:extension base="ParagraphType">
+				<xs:sequence>
+					<xs:element name="Verse" type="VerseType" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="Exclusion" type="ExclusionType" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ParagraphAndTherapyType">
+		<xs:complexContent>
+			<xs:extension base="ParagraphType">
+				<xs:sequence>
+					<xs:element name="TherapyAndChildren" type="TherapyAndChildrenType" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PriceType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="PriceAmnt" type="AmountType" minOccurs="0"/>
+					<xs:element name="ReimbBasePrice" type="AmountType" minOccurs="0"/>
+					<xs:element name="ReferenceBasePrice" type="AmountType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProductType">
+		<xs:annotation>
+			<xs:documentation>Response structure returning information on AMPP</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="Name" type="xs:string"/>
+					<xs:element name="AmppId" type="xs:long"/>
+					<xs:element name="Paragraph" type="FindParagraphType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProfessionalAuthorizationType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="ProfAuId" type="xs:long"/>
+					<xs:element name="PurchasingAdvisorName" type="xs:string" minOccurs="0"/>
+					<xs:element name="ProfessionalCode" type="ProfessionalCodeType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProfessionalCodeType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="Name" type="xs:string"/>
+					<xs:element name="ProfessionalName" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ReimbCategoryCvType">
+		<xs:sequence>
+			<xs:element name="ReimbCategoryCv" type="xs:string"/>
+			<xs:element name="Name" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReimbursementAndChildrenType">
+		<xs:complexContent>
+			<xs:extension base="ReimbursementType">
+				<xs:sequence>
+					<xs:element name="Price" type="PriceType"/>
+					<xs:element name="Ampp" type="AmppType"/>
+					<xs:element name="Copayment" type="CopaymentType" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ReimbursementCriteriaType">
+		<xs:sequence>
+			<xs:element name="ReimbCriteriaCv" type="xs:string"/>
+			<xs:element name="Name" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReimbursementType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="DeliveryEnvironment" type="xs:string"/>
+					<xs:element name="ReferenceBaseInd" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="PackageAgreement" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TextType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute ref="xml:lang" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="TherapyAndChildrenType">
+		<xs:complexContent>
+			<xs:extension base="TherapyType">
+				<xs:sequence>
+					<xs:element name="Atm" type="AtmType"/>
+					<xs:element name="ReimbursementCriteria" type="ReimbursementCriteriaType"/>
+					<xs:element name="ReimbursementCategory" type="ReimbCategoryCvType"/>
+					<xs:element name="ReimbursementAndChildren" type="ReimbursementAndChildrenType" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TherapyType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="MaskedInd" type="xs:string"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="UnstructuredExclusionRuleType">
+		<xs:sequence>
+			<xs:element name="VerseSeq" type="xs:integer"/>
+			<xs:element name="VerseNum" type="xs:integer"/>
+			<xs:element name="Text" type="TextType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="ValidityPeriodUnit">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="D"/>
+			<xs:enumeration value="W"/>
+			<xs:enumeration value="M"/>
+			<xs:enumeration value="Y"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="VerseType">
+		<xs:complexContent>
+			<xs:extension base="BaseType">
+				<xs:sequence>
+					<xs:element name="VerseSeq" type="xs:integer"/>
+					<xs:element name="VerseNum" type="xs:integer"/>
+					<xs:element name="VerseSeqParent" type="xs:integer"/>
+					<xs:element name="VerseLevel" type="xs:integer"/>
+					<xs:element name="VerseType" type="xs:string" minOccurs="0"/>
+					<xs:element name="CheckBoxInd" type="xs:boolean"/>
+					<xs:element name="MinCheckNum" type="xs:integer" minOccurs="0"/>
+					<xs:element name="AndClauseNum" type="xs:integer" minOccurs="0"/>
+					<xs:element name="Text" type="TextType" maxOccurs="unbounded"/>
+					<xs:element name="RequestType" type="xs:string" minOccurs="0"/>
+					<xs:element name="AgreementTerm" type="AgreementTermType" minOccurs="0"/>
+					<xs:element name="MaxPackageNumber" type="xs:integer" minOccurs="0"/>
+					<xs:element name="LegalReference" type="xs:string" minOccurs="0"/>
+					<xs:element name="ModificationDate" type="xs:date" minOccurs="0"/>
+					<xs:element name="AgreementYearMax" type="xs:integer" minOccurs="0"/>
+					<xs:element name="AgreementRenewalMax" type="xs:integer" minOccurs="0"/>
+					<xs:element name="SexRestricted" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="MinimumAgeAuthorized" type="MinimumAgeAuthorizedType" minOccurs="0"/>
+					<xs:element name="MaximumAgeAuthorized" type="MaximumAgeAuthorizedType" minOccurs="0"/>
+					<xs:element name="MaximumContentQuantity" type="MaximumContentType" minOccurs="0"/>
+					<xs:element name="MaximumStrengthQuantity" type="MaximumStrengthType" minOccurs="0"/>
+					<xs:element name="MaximumDurationQuantity" type="MaximumDurationType" minOccurs="0"/>
+					<xs:element name="OtherAddedDocumentInd" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="PurchasingAdvisorQualListId" type="xs:string" minOccurs="0"/>
+					<xs:element name="AddedDocumentInd" type="xs:boolean"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

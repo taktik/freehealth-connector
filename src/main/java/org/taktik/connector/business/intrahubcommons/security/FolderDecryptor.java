@@ -1,11 +1,13 @@
 package org.taktik.connector.business.intrahubcommons.security;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.service.etee.Crypto;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.IntStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,6 +31,8 @@ final class FolderDecryptor {
    private static final String BASE64_ENCRYPTED_DATA = "Base64EncryptedData";
    private static final String BASE64_ENCRYPTED_VALUE = "Base64EncryptedValue";
    private static final DocumentBuilder builder;
+   private static final byte[] KMEHRMESSAGE_START_NODE = "<kmehrmessage xmlns=\"http://www.ehealth.fgov.be/standards/kmehr/schema/v1\" >".getBytes();
+   private static final byte[] KMEHRMESSAGE_END_NODE = "</kmehrmessage>".getBytes();
 
    public static void decryptFolder(SOAPBody soapBody, Crypto crypto) throws TechnicalConnectorException {
       NodeList folderNodes = soapBody.getElementsByTagNameNS("http://www.ehealth.fgov.be/standards/kmehr/schema/v1", "Base64EncryptedData");
@@ -78,13 +82,22 @@ final class FolderDecryptor {
    }
 
    private static NodeList getFolders(byte[] decryptedMessage) throws SAXException, IOException {
-      Document doc = builder.parse(new InputSource(new ByteArrayInputStream(decryptedMessage)));
+      if (decryptedMessage != null) {
+         if (!(new String(decryptedMessage, StandardCharsets.UTF_8)).trim().startsWith("<?xml")) {
+            byte[] kmehr = ArrayUtils.addAll(null, KMEHRMESSAGE_START_NODE);
+            kmehr = ArrayUtils.addAll(kmehr, decryptedMessage);
+            kmehr = ArrayUtils.addAll(kmehr, KMEHRMESSAGE_END_NODE);
+            decryptedMessage = kmehr;
+         }
+         Document doc = builder.parse(new InputSource(new ByteArrayInputStream(decryptedMessage)));
 
-      NodeList folder = doc.getElementsByTagName("folder");
-      if (folder.getLength()==0) {
-         folder = doc.getElementsByTagNameNS("http://www.ehealth.fgov.be/standards/kmehr/schema/v1","folder");
+         NodeList folder = doc.getElementsByTagNameNS("http://www.ehealth.fgov.be/standards/kmehr/schema/v1","folder");
+         if (folder.getLength()==0) {
+            folder = doc.getElementsByTagName("folder");
+         }
+         return folder;
       }
-      return folder;
+      return null;
    }
 
    static {

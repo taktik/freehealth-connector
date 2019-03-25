@@ -1,0 +1,706 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:consultRN:1_0:protocol" xmlns:crnpt="urn:be:fgov:ehealth:consultRN:1_0:protocol" xmlns:crnco="urn:be:fgov:ehealth:consultRN:1_0:core"
+  xmlns:co="urn:be:fgov:ehealth:commons:1_0:core" targetNamespace="urn:be:fgov:ehealth:consultRN:1_0:protocol" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: ConsultRN XSD webservices
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.7
+ Build-Time: 20171219-1300 
+ </xs:appinfo>
+ </xs:annotation>
+
+  <xs:include schemaLocation="../../ehealth-consultrn-commons/XSD/ehealth-consultrn-commons-protocol-1_0.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:consultRN:1_0:core" schemaLocation="../../ehealth-consultrn-commons/XSD/ehealth-consultrn-commons-core-1_0.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:commons:1_0:core" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-core-1_0.xsd" />
+  <xs:include schemaLocation="../../ehealth-consultrn-commons/XSD/ehealth-consultrn-commons-protocol-1_0.xsd" />
+
+  <!--inscription -->
+  <xs:element name="InsertInscriptionRequest" type="InsertInscriptionRequestType" />
+  <xs:complexType name="InsertInscriptionRequestType">
+    <xs:annotation>
+      <xs:documentation>information about the location to insert</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnRequestType">
+        <xs:sequence>
+          <xs:element name="Inscription" type="crnco:InscriptionType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="InsertInscriptionReply" type="InsertInscriptionReplyType" />
+  <xs:complexType name="InsertInscriptionReplyType">
+    <xs:annotation>
+      <xs:documentation>The answer formulated by the insertInscription service</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="DeleteInscriptionRequest" type="DeleteInscriptionRequestType" />
+  <xs:complexType name="DeleteInscriptionRequestType">
+    <xs:annotation>
+      <xs:documentation>information about the location to delete</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnRequestType">
+        <xs:sequence>
+          <xs:element name="Inscription" type="crnco:InscriptionType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="DeleteInscriptionReply" type="DeleteInscriptionReplyType" />
+  <xs:complexType name="DeleteInscriptionReplyType">
+    <xs:annotation>
+      <xs:documentation>The answer formulated by the deleteInscription service</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+
+
+  <!-- familycomposition -->
+  <xs:element name="FamilyCompositionRequest" type="FamilyCompositionRequestType" />
+  <xs:complexType name="FamilyCompositionRequestType">
+    <xs:annotation>
+      <xs:documentation>request to the family composition service</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnRequestType">
+        <xs:sequence>
+          <xs:element name="SSIN" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>Person for which the family composition is requested</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FamilyCompositionReply" type="FamilyCompositionReplyType" />
+  <xs:complexType name="FamilyCompositionReplyType">
+    <xs:annotation>
+      <xs:documentation>the reply of the service familyComposition</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="FamilyComposition" type="crnco:FamilyCompositionType" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The family composition</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <!-- identifyPerson -->
+
+  <xs:element name="SearchBySSINRequest" type="SearchBySSINRequestType" />
+  <xs:complexType name="SearchBySSINRequestType">
+    <xs:annotation>
+      <xs:documentation>request to service searchBySSIN</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnRequestType">
+        <xs:sequence>
+          <xs:element name="Inscription" type="crnco:InscriptionType">
+            <xs:annotation>
+              <xs:documentation>The SSIN to search for (and information about the inscription done in organisation)</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SearchBySSINReply" type="SearchBySSINReplyType" />
+  <xs:complexType name="SearchBySSINReplyType">
+    <xs:annotation>
+      <xs:documentation>reply of service searchBySSIN</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="Person" type="crnco:PersonType" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>person found</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- manageperson -->
+  <xs:element name="CreatePersonRequest" type="CreatePersonRequestType" />
+  <xs:complexType name="CreatePersonRequestType">
+    <xs:annotation>
+      <xs:documentation>The request send to the CreatePerson service</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnRequestType">
+        <xs:sequence>
+          <xs:element name="PersonData" type="crnco:PersonDataType">
+            <xs:annotation>
+              <xs:documentation>information about the person to create</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="CreatePersonReply" type="CreatePersonReplyType" />
+  <xs:complexType name="CreatePersonReplyType">
+    <xs:annotation>
+      <xs:documentation>The answer formulated by the CreatePerson service</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="PersonCreated" type="PersonCreatedType" minOccurs="0" />
+          <xs:element name="PhoneticResult" type="PhoneticResultType" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="ModifyPersonRequest" type="ModifyPersonRequestType" />
+  <xs:complexType name="ModifyPersonRequestType">
+    <xs:annotation>
+      <xs:documentation>request to service modifyPerson</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnRequestType">
+        <xs:sequence>
+          <xs:element name="Person" type="crnco:PersonType">
+            <xs:annotation>
+              <xs:documentation>information modified about the person</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="ModifyPersonReply" type="ModifyPersonReplyType" />
+  <xs:complexType name="ModifyPersonReplyType">
+    <xs:annotation>
+      <xs:documentation>reply of the service modifyPerson</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="Person" type="crnco:PersonType" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>person modified</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+
+  <xs:complexType name="PhoneticResultType">
+    <xs:annotation>
+      <xs:documentation>When there are matches (one or more) with the BIS person to create (either in the BIS or the RN) this element will contain the matching citizen(s) and no BIS creation will be done</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Person" type="crnco:PersonType" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>represents a citizen</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PersonCreatedType">
+    <xs:annotation>
+      <xs:documentation>When no phonetic citizens are found, and the BIS creation succeeded (no validation errors etc) this element will then contain the created BIS citizen</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="SSIN" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The SSIN number of the person</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PersonData" type="crnco:PersonDataType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>container of the information known about the person</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- monitoring -->
+  <xs:element name="MonitoringRequest" type="MonitoringRequestType" />
+  <xs:complexType name="MonitoringRequestType">
+    <xs:annotation>
+      <xs:documentation>requests to monitor services</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnRequestType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="MonitoringReply" type="MonitoringReplyType" />
+  <xs:complexType name="MonitoringReplyType">
+    <xs:annotation>
+      <xs:documentation>The answer formulated by the monitoring service</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- personhistory -->
+  <xs:complexType name="PersonHistoryRequest">
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnRequestType">
+        <xs:sequence>
+          <xs:sequence>
+            <xs:element name="SSIN" type="xs:string">
+              <xs:annotation>
+                <xs:documentation>The SocialSecurityUser whose history is requested</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryNameRequest" type="PersonHistoryNameRequestType" />
+  <xs:complexType name="PersonHistoryNameRequestType">
+    <xs:annotation>
+      <xs:documentation>The request to ask the namehistory of a person</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="PersonHistoryRequest">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryGenderRequest" type="PersonHistoryGenderRequestType" />
+  <xs:complexType name="PersonHistoryGenderRequestType">
+    <xs:annotation>
+      <xs:documentation>The resquet to ask the gender history of a person</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="PersonHistoryRequest">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryBirthRequest" type="PersonHistoryBirthRequestType" />
+  <xs:complexType name="PersonHistoryBirthRequestType">
+    <xs:annotation>
+      <xs:documentation>The resquet to ask the birth history of a person</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="PersonHistoryRequest">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryCivilStateRequest" type="PersonHistoryCivilStateRequestType" />
+  <xs:complexType name="PersonHistoryCivilStateRequestType">
+    <xs:annotation>
+      <xs:documentation>The resquet to ask the civilstate history of a person</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="PersonHistoryRequest">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryDeceaseRequest" type="PersonHistoryDeceaseRequestType" />
+  <xs:complexType name="PersonHistoryDeceaseRequestType">
+    <xs:annotation>
+      <xs:documentation>The resquet to ask the deceasehistory of a person</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="PersonHistoryRequest">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryAddressRequest" type="PersonHistoryAddressRequestType" />
+  <xs:complexType name="PersonHistoryAddressRequestType">
+    <xs:annotation>
+      <xs:documentation>The resquet to ask the adress history of a person</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="PersonHistoryRequest">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryNationalityRequest" type="PersonHistoryNationalityRequestType" />
+  <xs:complexType name="PersonHistoryNationalityRequestType">
+    <xs:annotation>
+      <xs:documentation>The resquet to ask the nationality history of a person</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="PersonHistoryRequest">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryFamilyCompositionRequest" type="PersonHistoryFamilyCompositionRequestType" />
+  <xs:complexType name="PersonHistoryFamilyCompositionRequestType">
+    <xs:annotation>
+      <xs:documentation>The resquet to ask the family composition history of a person</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="PersonHistoryRequest">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryNameReply" type="PersonHistoryNameReplyType" />
+  <xs:complexType name="PersonHistoryNameReplyType">
+    <xs:annotation>
+      <xs:documentation>reply of service PersonHistory</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="SSIN" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The SocialSecurityUser whose history was requested</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="NameHistory" type="crnco:NameHistoryType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>History for Block: NAME</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryGenderReply" type="PersonHistoryGenderReplyType" />
+  <xs:complexType name="PersonHistoryGenderReplyType">
+    <xs:annotation>
+      <xs:documentation>reply of service PersonHistory</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="SSIN" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The SocialSecurityUser whose history was requested</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="GenderHistory" type="crnco:GenderHistoryType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>History for Block: GENDER</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryBirthReply" type="PersonHistoryBirthReplyType" />
+  <xs:complexType name="PersonHistoryBirthReplyType">
+    <xs:annotation>
+      <xs:documentation>reply of service PersonHistory</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="SSIN" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The SocialSecurityUser whose history was requested</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="BirthHistory" type="crnco:BirthHistoryType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>History for Block: BIRTH</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryCivilStateReply" type="PersonHistoryCivilStateReplyType" />
+  <xs:complexType name="PersonHistoryCivilStateReplyType">
+    <xs:annotation>
+      <xs:documentation>reply of service PersonHistory</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="SSIN" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The SocialSecurityUser whose history was requested</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="CivilstateHistory" type="crnco:CivilstateHistoryType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>History for Block: CIVILSTATE</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryDeceaseReply" type="PersonHistoryDeceaseReplyType" />
+  <xs:complexType name="PersonHistoryDeceaseReplyType">
+    <xs:annotation>
+      <xs:documentation>reply of service PersonHistory</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="SSIN" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The SocialSecurityUser whose history was requested</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="DeceaseHistory" type="crnco:DeceaseHistoryType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>History for Block: DECEASE</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryAddressReply" type="PersonHistoryAddressReplyType" />
+  <xs:complexType name="PersonHistoryAddressReplyType">
+    <xs:annotation>
+      <xs:documentation>reply of service PersonHistory</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="SSIN" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The SocialSecurityUser whose history was requested</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="AddressHistory" type="crnco:AddressHistoryType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>History for Block: ADRESS</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryNationalityReply" type="PersonHistoryNationalityReplyType" />
+  <xs:complexType name="PersonHistoryNationalityReplyType">
+    <xs:annotation>
+      <xs:documentation>reply of service PersonHistory</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="SSIN" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The SocialSecurityUser whose history was requested</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="NationalityHistory" type="crnco:NationalityHistoryType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>History for Block: NATIONALITY</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PersonHistoryFamilyCompositionReply" type="PersonHistoryFamilyCompositionReplyType" />
+  <xs:complexType name="PersonHistoryFamilyCompositionReplyType">
+    <xs:annotation>
+      <xs:documentation>reply of service PersonHistory</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="SSIN" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The SocialSecurityUser whose history was requested</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="FamilyCompositionHistory" type="crnco:FamilyCompositionHistoryType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>History for Block: FAMILYCOMPOSITION</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- phonetic search -->
+  <xs:complexType name="PhoneticCriteriaType">
+    <xs:annotation>
+      <xs:documentation>set of criteria available</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="LastName" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>last name of the person to look for</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FirstName" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>first name of the person to look for</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MiddleName" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>middle name of the person to look for</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="BirthDate" type="crnco:IncompleteDateType">
+        <xs:annotation>
+          <xs:documentation>birthdate of the person. may be incomplete. possible formats: yyyy-mm-dd, yyyy-mm-00, yyyy-00-00</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Gender" type="crnco:GenderType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Gender code</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Tolerance" minOccurs="0" type="IntegerType">
+        <xs:annotation>
+          <xs:documentation>Amount that the birthdate of the result may differ from the specified one. Must be specified unless the BirthDate field contains a complete date (in which case 0 is assumed). Unit type depends on format of Birtdate:
+            yyyymmdd:
+            days; yyyymm00: months; yyyy0000: years
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Maximum" minOccurs="0" type="IntegerType">
+        <xs:annotation>
+          <xs:documentation>the maximum numbers of results to return. If more results are found, an error will be returned</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="IntegerType">
+    <xs:restriction base="xs:integer">
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="SearchPhoneticRequest" type="SearchPhoneticRequestType" />
+  <xs:complexType name="SearchPhoneticRequestType">
+    <xs:annotation>
+      <xs:documentation>request to service searchPhonetic</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnRequestType">
+        <xs:sequence>
+          <xs:element name="PhoneticCriteria" type="crnpt:PhoneticCriteriaType">
+            <xs:annotation>
+              <xs:documentation>The criteria that found citizens must match</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SearchPhoneticReply" type="SearchPhoneticReplyType" />
+  <xs:complexType name="SearchPhoneticReplyType">
+    <xs:annotation>
+      <xs:documentation>reply of service search phonetic</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="crnpt:ConsultRnReplyType">
+        <xs:sequence>
+          <xs:element name="Person" type="crnco:PersonType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>list of person found</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- mutationsender v1 -->
+    <xs:element name="MutationRequest" type="MutationRequestType" />
+  <xs:element name="MutationReply" type="MutationReplyType" />
+  <xs:element name="MutationList" type="MutationListType">
+    <xs:annotation>
+      <xs:documentation>list of mutations</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="Mutation" type="MutationType" />
+  <xs:simpleType name="EnvironmentType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="A" />
+      <xs:enumeration value="P" />
+      <xs:enumeration value="T" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="MutationRequestType">
+    <xs:sequence>
+      <xs:element name="Organisation" type="co:IdentifierType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MutationReplyType">
+    <xs:sequence>
+      <xs:element name="Header" type="HeaderType">
+      </xs:element>
+      <xs:element ref="MutationList" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="HeaderType">
+    <xs:sequence>
+      <xs:element name="ApplicationId" type="xs:string" />
+      <xs:element name="Date" type="xs:date" />
+      <xs:element name="SequenceNumber" type="xs:integer" />
+      <xs:element name="Environment" type="EnvironmentType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MutationListType">
+    <xs:sequence>
+      <xs:element ref="Mutation" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MutationType">
+    <xs:sequence>
+      <xs:element name="MutationInformation" type="MutationInformationType"/>
+        <xs:element name="Person" type="crnco:PersonType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MutationInformationType">
+    <xs:sequence>
+      <xs:element name="Author" type="xs:string" />
+      <xs:element name="Type" type="xs:string" />
+      <xs:element name="Description" type="co:LocalisedString" minOccurs="0" maxOccurs="5" />
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

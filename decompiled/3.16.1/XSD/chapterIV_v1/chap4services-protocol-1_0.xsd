@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 rel. 2 (http://www.altova.com) by SMALS-MVM ASBL/VZW (SMALS-MVM ASBL/VZW) -->
+<xs:schema targetNamespace="urn:be:fgov:ehealth:chap4:protocol:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xmlns="urn:be:fgov:ehealth:chap4:protocol:v1" xmlns:cc="urn:be:fgov:ehealth:chap4:core:v1"
+  xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <!-- core elements and types -->
+  <xs:import namespace="urn:be:fgov:ehealth:chap4:core:v1" schemaLocation="chap4services-core-1_0.xsd" />
+  <!--eHealth protocol element -->
+  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v1" schemaLocation="../common/ehealth-commons-schema-protocol-1_6.xsd" />
+  <!-- protocol elements -->
+  <!-- AskChap4MedicalAdvisorAgreement service -->
+  <!-- AskChap4MedicalAdvisorAgreement -->
+
+  <xs:element name="AbstractChap4MedicalAdvisorAgreementRequest" abstract="true" type="AbstractChap4MedicalAdvisorAgreementRequestType"></xs:element>
+  <xs:element name="AbstractChap4MedicalAdvisorAgreementResponse" abstract="true" type="AbstractChap4MedicalAdvisorAgreementResponseType"></xs:element>
+  <xs:element name="AskChap4MedicalAdvisorAgreementRequest" type="AskChap4MedicalAdvisorAgreementRequestType" />
+  <xs:element name="AskChap4MedicalAdvisorAgreementResponse" type="AskChap4MedicalAdvisorAgreementResponseType" />
+  <!-- Consultation service -->
+  <!-- ConsultChap4MedicalAdvisorAgreement -->
+  <xs:element name="ConsultChap4MedicalAdvisorAgreementRequest" type="ConsultChap4MedicalAdvisorAgreementRequestType" />
+  <xs:element name="ConsultChap4MedicalAdvisorAgreementResponse" type="ConsultChap4MedicalAdvisorAgreementResponseType" />
+   
+  <!-- protocol types -->
+   <xs:complexType name="RequestType">
+        <xs:sequence>
+            <xs:element name="EncryptedContent" type="xs:base64Binary" />
+        </xs:sequence>
+    </xs:complexType>
+  <!-- abstract request and response types -->
+  <xs:complexType name="AbstractChap4MedicalAdvisorAgreementRequestType">
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="CommonInput" type="cc:CommonInputType" />
+          <xs:element name="RecordCommonInput" type="cc:RecordCommonInputType" />
+          <xs:element name="CareReceiver" type="cc:CareReceiverIdType" />
+          <xs:element name="Request" type="cc:SecuredContentType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AbstractChap4MedicalAdvisorAgreementResponseType">
+    <xs:complexContent>
+      <xs:extension base="protocol:ResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="CommonOutput" type="cc:CommonOutputType" />
+          <xs:element name="RecordCommonOutput" type="cc:RecordCommonOutputType" />
+          <xs:element name="ReturnInfo" type="cc:FaultType" minOccurs="0" />
+          <xs:element name="Response" type="cc:SecuredContentType" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <!-- Chap4AgreementAdmission service -->
+  <!-- AskChap4MedicalAdvisorAgreement -->
+  <xs:complexType name="AskChap4MedicalAdvisorAgreementRequestType">
+    <xs:complexContent>
+      <xs:extension base="AbstractChap4MedicalAdvisorAgreementRequestType" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AskChap4MedicalAdvisorAgreementResponseType">
+    <xs:complexContent>
+      <xs:extension base="AbstractChap4MedicalAdvisorAgreementResponseType" />
+    </xs:complexContent>
+  </xs:complexType>
+  <!-- Consultation service -->
+  <!-- ConsultChap4MedicalAdvisorAgreement -->
+  <xs:complexType name="ConsultChap4MedicalAdvisorAgreementRequestType">
+    <xs:complexContent>
+      <xs:extension base="AbstractChap4MedicalAdvisorAgreementRequestType" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ConsultChap4MedicalAdvisorAgreementResponseType">
+    <xs:complexContent>
+      <xs:extension base="AbstractChap4MedicalAdvisorAgreementResponseType" />
+    </xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>

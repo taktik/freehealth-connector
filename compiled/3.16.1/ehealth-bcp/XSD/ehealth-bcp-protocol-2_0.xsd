@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:bcp:protocol:v2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" elementFormDefault="qualified" attributeFormDefault="unqualified"
+  targetNamespace="urn:be:fgov:ehealth:bcp:protocol:v2">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-bcp
+ Specification-Version: 2.0
+ Implementation-Version: 2.0.0-SNAPSHOT
+ Build-Time: 20180829-1614 
+ </xs:appinfo>
+ </xs:annotation>
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../external/XSD/xmldsig-core-schema.xsd"/>
+	<xs:element name="ServiceList">
+		<xs:annotation>
+			<xs:documentation>Service list containing all the service of the eHealth Platform</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Service" type="ServiceType" maxOccurs="unbounded"/>
+				<xs:element ref="ds:Signature"/>
+			</xs:sequence>
+			<xs:attribute name="Id" type="xs:ID" use="required"/>
+			<xs:attribute name="IssueInstant" type="xs:dateTime" use="required"/>
+			<xs:attribute name="Environment" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="StatusType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ACTIVE"/>
+			<xs:enumeration value="INACTIVE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="ServiceType">
+		<xs:sequence>
+			<xs:element name="EndpointList">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="Endpoint" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="Cache" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="Id" type="xs:string" use="required"/>
+		<xs:attribute name="Name" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="EndpointType">
+		<xs:simpleContent>
+			<xs:extension base="xs:anyURI">
+				<xs:attribute name="Order" type="xs:integer" use="required"/>
+				<xs:attribute name="Status" type="StatusType" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="CacheType">
+		<xs:sequence>
+			<xs:element name="Key">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="Tranform" use="required">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="xslt"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="Inline" type="xs:boolean" use="required"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Expiry">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="Type" use="required">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="none"/>
+										<xs:enumeration value="ttl"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="Duration" type="xs:duration"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Strategy" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="ENDPOINT_FIRST"/>
+					<xs:enumeration value="CACHE_FIRST"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="Cache" type="CacheType"/>
+	<xs:element name="Endpoint" type="EndpointType"/>	
+	<xs:element name="Service" type="ServiceType"/>
+</xs:schema>

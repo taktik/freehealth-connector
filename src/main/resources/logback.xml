@@ -4,4 +4,5 @@
 	<logger name="org.taktik.freehealth.middleware.service.impl" level="INFO" />
 	<logger name="org.taktik.connector.technical.ws" level="INFO" />
 	<logger name="org.taktik.connector.technical.ws.impl" level="INFO" />
+	<logger name="org.taktik.connector.technical" level="DEBUG" />
 </configuration>

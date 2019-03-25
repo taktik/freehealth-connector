@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema elementFormDefault="qualified"
+	xmlns:tns="urn:be:cin:nip:async:business" targetNamespace="urn:be:cin:nip:async:business"
+	xmlns:types="urn:be:cin:types:v1" xmlns:msg="urn:be:cin:mycarenet:1.0:carenet:types"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:common="urn:be:cin:mycarenet:esb:common:v2"
+	xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
+
+	<xsd:import schemaLocation="../../mycarenet-commons/XSD/commonTypes-v1.4.xsd" namespace="urn:be:cin:types:v1" />
+	<xsd:import schemaLocation="../../external/XSD/xmlmime.xsd"
+		namespace="http://www.w3.org/2005/05/xmlmime" />
+	<xsd:import schemaLocation="MyCareNet_Insurability.xsd"
+		namespace="urn:be:cin:mycarenet:1.0:carenet:types" />
+	<xsd:import namespace="urn:be:cin:mycarenet:esb:common:v2"
+				schemaLocation="../../mycarenet-commons/XSD/commonInfo-v2.4.xsd" />
+	<xsd:import namespace="urn:oasis:names:tc:SAML:2.0:assertion"
+		schemaLocation="../../external/XSD/saml-schema-assertion-2.0.xsd" />
+
+	<xsd:element name="GenericRequestList" type="tns:GenericRequestListType" />
+
+	<xsd:element name="GenericRequest" type="tns:GenericRequestType" />
+
+	<xsd:element name="GenericResponseList" type="tns:GenericResponseListType" />
+
+	<xsd:element name="GenericResponse" type="tns:GenericResponseType" />
+
+	<xsd:complexType name="GenericRequestListType">
+		<xsd:sequence>
+			<xsd:element ref="tns:GenericRequest"
+				maxOccurs="10000" minOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation> A list of GenericRequest items.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="timestamp" type="xsd:dateTime" use="required">
+			<xsd:annotation>					<xsd:documentation> the timestamp of the request file. This information is provided by the caller of the service
+					</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="GenericRequestType">
+		<xsd:sequence>
+			<xsd:element name="CareReceiver" type="msg:CareReceiverIdType"/>
+			<xsd:element name="insRequest" type="msg:InsurabilityRequestDetailType"/>
+			<xsd:element name="ExtendedInformation" minOccurs="0" type="tns:SamlAttributeType" />
+		</xsd:sequence>
+		<xsd:attribute name="recordInputReference" type="msg:MessageReferenceType" use="optional"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="GenericResponseListType">
+		<xsd:sequence>
+			<xsd:element ref="tns:GenericResponse"
+				maxOccurs="10000" minOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation> A list of GenericResponse items.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="GenericResponseType">
+		<xsd:sequence>
+			<xsd:element ref="msg:CareReceiverId">
+				<xsd:annotation>
+					<xsd:documentation> The identification of the care receiver.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="insRequest" type="msg:InsurabilityRequestDetailType">
+				<xsd:annotation>
+					<xsd:documentation> The same data as the request. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ExtendedInformation" minOccurs="0" type="tns:SamlAttributeType" />
+			<xsd:choice>
+				<xsd:sequence>
+					<xsd:element
+						name="MessageFault"
+						type="msg:MessageFaultType"
+						minOccurs="0"
+						maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation> Contains the error that occurred and a reference to
+								the field that contains the error
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+				<xsd:sequence>
+					<xsd:element ref="msg:CareReceiverDetail">
+						<xsd:annotation>
+							<xsd:documentation> Some detailed information about the care receiver.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element ref="msg:InsurabilityResponseDetail" />
+				</xsd:sequence>
+			</xsd:choice>
+		</xsd:sequence>
+		<xsd:attribute name="recordInputReference" type="msg:MessageReferenceType"/>
+		<xsd:attribute name="recordOutputReference" type="msg:MessageReferenceType"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="SamlAttributeType">
+		<xsd:sequence>
+			<xsd:element ref="saml:Attribute" maxOccurs="unbounded"
+				minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

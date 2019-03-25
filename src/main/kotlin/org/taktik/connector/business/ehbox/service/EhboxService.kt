@@ -97,4 +97,7 @@ interface EhboxService {
 
     @Throws(EhboxBusinessConnectorException::class, ConnectorException::class)
     fun sendMessage(token: SAMLToken, request: SendMessageRequest): SendMessageResponse
+
+    @Throws(ConnectorException::class)
+    fun sendMessage2Ebox(token: SAMLToken, request: SendMessageRequest): SendMessageResponse
 }

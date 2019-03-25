@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+  <configuration>
+    <stop-on-errors>true</stop-on-errors>
+    <custom-converters>
+      <converter type="be.ehealth.technicalconnector.mapper.converter.DateTimeConverter">
+        <class-a>java.util.GregorianCalendar</class-a>
+        <class-b>org.joda.time.DateTime</class-b>
+      </converter>
+    </custom-converters>
+  </configuration>
+  <mapping>
+    <class-a>be.fedict.commons.eid.consumer.Identity</class-a>
+    <class-b>be.ehealth.technicalconnector.beid.domain.Identity</class-b>
+  </mapping>
+  <mapping>
+    <class-a>be.fedict.commons.eid.consumer.Address</class-a>
+    <class-b>be.ehealth.technicalconnector.beid.domain.Address</class-b>
+  </mapping>
+</mappings> 

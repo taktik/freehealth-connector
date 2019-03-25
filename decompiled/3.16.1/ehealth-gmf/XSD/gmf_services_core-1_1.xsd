@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:globalmedicalfile:core:v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:be:fgov:ehealth:globalmedicalfile:core:v1" elementFormDefault="qualified" attributeFormDefault="unqualified"
+  version="1.1">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD 21. Global Medical File
+ Specification-Version: 1.1
+ Implementation-Version: 1.1.0
+ Build-Time: 20150928-1547 
+ </xs:appinfo>
+ </xs:annotation>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd" />
+  <!-- Core types -->
+  <!-- CommonInputType -->
+  <xs:complexType name="CommonInputType">
+    <xs:annotation>
+      <xs:documentation>The "root"-type of the common input element.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Request" type="RequestType">
+        <xs:annotation>
+          <xs:documentation>Generic information about the request itself.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Origin" type="OriginType">
+        <xs:annotation>
+          <xs:documentation>Common input about the origin of the request.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InputReference" type="xs:string" minOccurs="0" />
+      <xs:element name="NIPReference" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- RequestType -->
+  <xs:complexType name="RequestType">
+    <xs:annotation>
+      <xs:documentation>Information about the request.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="IsTest" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Indicates if the message is a test message or not.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- OriginType -->
+  <xs:complexType name="OriginType">
+    <xs:annotation>
+      <xs:documentation>Information about the originator of the request.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Package" type="PackageType">
+        <xs:annotation>
+          <xs:documentation>The package that the originator used to send the request.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SiteID" type="ValueRefString" minOccurs="0" maxOccurs="1" />
+      <xs:element name="CareProvider" type="CareProviderType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The care provider for which the request was sent. This is not necessary the party that sent the request, but it can be.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Sender" type="PartyType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The sender of the request if it isn't the care provider.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- ValueRefString -->
+  <xs:complexType name="ValueRefString">
+    <xs:annotation>
+      <xs:documentation>Elements of this type do not require any content, instead it is also possible to refer to another element in the same document with the same values. The referencee should specify and id, and the referencer should specify a
+        ref-attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="ValueRef" type="xs:anyURI">
+          <xs:annotation>
+            <xs:documentation>A XPoiter reference to another element with the same type. When this is present, the content of the element should be empty. MyCareNet will substitute the content of this element by the result of the XPointer. The XPointer
+              should result in a node-set that is compliant with the type of this element. XPointer is a W3C standard that is commonly used to reference other elements. This is for example used by the XMLDSig standard, although it only requires a
+              sub-section to be implemented. See service catalogue for more information.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <!-- CareProviderType -->
+  <xs:complexType name="CareProviderType">
+    <xs:annotation>
+      <xs:documentation>Information about a care provider. This is a person or institution that provides health care service to persons.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Nihii" type="NihiiType">
+        <xs:annotation>
+          <xs:documentation>The NIHII (FR:INAMI, NL:RIZIV) number of the care provider. This is always required.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PhysicalPerson" type="IdType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The physical person that is linked to the NIHII number provided. Should only be provided when the NIHII is linked a person. See service catalogue for more details.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Organization" type="IdType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The organization that is linked to the NIHII number provided. Should only be provided when the NIHII is linked an organization. See service catalogue for more details.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- IdType -->
+  <xs:complexType name="IdType">
+    <xs:annotation>
+      <xs:documentation>Enities that have a unique identification have this type. This identification is always issued by an authority. Only one of the child elements is required, the others are prohibited. In other words, this is actualy a xs:-choise,
+        but this does not always translate so well in code. Therefore we decided to make it an sequence with all optional elements.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="AbstractIdType">
+        <xs:sequence>
+          <xs:element name="Nihii" type="NihiiType" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Identification issued by the NIHII. It uniquely specifies a care provider in his role.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Ssin" type="ValueRefString" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Identification issued by the National Registry of Belgium. It uniquely specifies a physical person.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Cbe" type="ValueRefString" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Identification issued by the CBE. It uniquely specifies an enterprise.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <!-- NihiiType -->
+  <xs:complexType name="NihiiType">
+    <xs:annotation>
+      <xs:documentation>The NIHII number with its meta-data.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="SelfRefType">
+        <xs:sequence>
+          <xs:element name="Quality" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Meta-data that indicates to which type of care provider the NIHII number was assigned too. This element is required and can only be obmitted when the parent element references another element.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Value" type="ValueRefString" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The NIHII number itself. This element is required and can only be obmitted when the parent element references another element.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <!-- PackageType -->
+  <xs:complexType name="PackageType">
+    <xs:annotation>
+      <xs:documentation>Information about the software package that is connectedto MyCareNet.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="AbstractIdType">
+        <xs:sequence>
+          <xs:element name="License" type="LicenseType">
+            <xs:annotation>
+              <xs:documentation>Each software package provider receives a license when he is granted access to MyCareNet. The package must provide this license in this element.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <!-- AbstractIdType -->
+  <xs:complexType name="AbstractIdType" abstract="true">
+    <xs:annotation>
+      <xs:documentation>Everything that is an entity derives from this type. Enties are object that are distinguishable and have a name. This name isn't nesesary unique.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="SelfRefType">
+        <xs:sequence>
+          <xs:element name="Name" type="ValueRefString" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Optional name of entity. If provided it is used in a pure informal way. It will be added to certain logs and might appear on some representations.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <!-- SelfRefType -->
+  <xs:complexType name="SelfRefType" abstract="true">
+    <xs:annotation>
+      <xs:documentation>Elements of this base type do not require any content, instead it is also possible to refer to another element with the same type and same name. The referencee should specify and id, and the referencer should specify a
+        ref-attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" type="xs:ID">
+      <xs:annotation>
+        <xs:documentation>The ID of an element. Can be used by other elements with the same name and type to reference this element. An ID should only be unique inside a document, in this case the SOAP message. In other words, each request can reuse the
+          same ID values.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Ref" type="xs:anyURI">
+      <xs:annotation>
+        <xs:documentation> A XPoiter reference to another element with the same name and type. When this is present, the content of the element should be empty. MyCareNet will substitute the this element by the element it references. The XPointer should
+          result in a single element with the same type the this element. See ValueRefString type for more information about XPointer.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <!-- LicenseType -->
+  <xs:complexType name="LicenseType">
+    <xs:annotation>
+      <xs:documentation>Information about the license of a package.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Username" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The user name of the license. This is a unique identifier of the package.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Password" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The password of the license. This is required to prove the identify of the package.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- PartyType -->
+  <xs:complexType name="PartyType">
+    <xs:annotation>
+      <xs:documentation>Information about the party. A party is rather general. some examples are: 1) A physical person by itself. 2) A physical person working for an enterprise. 3) A enterprise by itself</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="PhysicalPerson" type="IdType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The physical person that authenticated to send the request. This can only be omitted when the organization was authenticated by a eHealth certificate. The SAML-ticket should contain the same information, although there are
+            exception possible in case there is an organization. When not present in the SAML-ticket this information is treated as information. This data in this element should correspond to one or multiple of the following attributes: 1)
+            urn:be:fgov:person:ssin 2) urn:be:fgov:ehealth:1.0:certificateholder:person:ssin</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Organization" type="IdType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The organization (enterprise, laboratory, hospital, ...) that was authenticated to send the request. This can only be omitted when the sender isn't part of an organization that is relevant for the request. Organization that
+            have no link with the requests should not be provided. For example, 'physical person A' should not specify his employer 'enterprise B' if he got a personal mandate from nurse C (his wife). The same information must be present in the
+            SAML-ticket. It can be in one or multiple of the following attributes: 1)urn:be:fgov:ehealth:1.0:xxx:yyy-number 2) urn:be:fgov:ehealth:1.0:certificateholder:xxx:yyy-number</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- CommonOutputType -->
+  <xs:complexType name="CommonOutputType">
+    <xs:annotation>
+      <xs:documentation>The "root"-type of the common output element.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="InputReference" type="xs:string" minOccurs="0" />
+      <xs:element name="NIPReference" type="xs:string" minOccurs="0" />
+      <xs:element name="OutputReference" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- RoutingType -->
+  <xs:complexType name="RoutingType">
+		<xs:annotation>
+			<xs:documentation>Information used to determine the health insurance organization. NIP-PIN uses it if the HIO is not defined explicitely in the WS-Addressing "To" element.</xs:documentation>
+		</xs:annotation>
+    <xs:sequence>
+      <xs:element name="CareReceiver" type="CareReceiverIdType" />
+      <xs:element name="ReferenceDate" type="xs:date" />
+      <xs:element name="Period" type="PeriodType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- CareReceiverIdType -->
+  <xs:complexType name="CareReceiverIdType">
+    <xs:annotation>
+      <xs:documentation>Universal way of identifying a care receiver. A care receiver can be identified in one of the following ways: 1) SSIN only 2) Mutuality code (e.g. 312) and registration number with the mutuality 3) SSIN, Mutuality code (e.g. 312)
+        and registration number with the mutuality. The most common case it the SSIN only.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Ssin" type="xs:string" minOccurs="0" />
+      <xs:element name="RegNrWithMut" type="xs:string" minOccurs="0" />
+      <xs:element name="Mutuality" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- PeriodType -->
+  <xs:complexType name="PeriodType">
+    <xs:annotation>
+      <xs:documentation>A standard period consisting of a start and end date, both required.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Start" type="xs:date" />
+      <xs:element name="End" type="xs:date" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- BlobType -->
+  <xs:complexType name="BlobType">
+		<xs:annotation>
+			<xs:documentation>Used to transfer (large) binary objects. </xs:documentation>
+		</xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:base64Binary">
+        <xs:annotation>
+          <xs:documentation>A Binary Large Object with technical metadata. Can contain large abound of binary data, which can be transported via MTOM/XOP when used in web services. It contains attributes/fields that provide technical data. The
+            content/value contains the binary data, first compressed via deflate and then base 64 encoded.</xs:documentation>
+        </xs:annotation>
+				<xs:attribute name="ContentType" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation>Define which type the content is, it must be values like “text/plain”, “text/xml”, “application/pdf”, …</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="ContentEncoding" type="xs:string" default="deflate">
+					<xs:annotation>
+						<xs:documentation>A fixed value “deflate” to indicate that the content is compressed via deflates. Other values may be used (eg : "none")</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="HashValue" type="xs:base64Binary">
+					<xs:annotation>
+						<xs:documentation>Pre-calculated hash of the uncompressed and decoded content.  Must not be provided by the care provider, always provided to the care provider.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="Id" type="xs:NCName">
+					<xs:annotation>
+						<xs:documentation>The ID of the blob for usage in the XAdES signature. It is an “NCName” instead of an “ID” in order to be able to have different blobs with the same (fixed) id without causing an XSD validation. </xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+      </xs:extension>
+      <!-- MessageName only at Mycarenet - value set by eHealth accoridng to the called operation -->
+      <!--xs:attribute name="MessageName" type="xs:string" use="required"/ -->
+    </xs:simpleContent>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:commons:core:v1" targetNamespace="urn:be:fgov:ehealth:commons:core:v1" elementFormDefault="unqualified" attributeFormDefault="unqualified"
+  version="1.7">
+  <xs:complexType name="IdentifierType">
+    <xs:annotation>
+      <xs:documentation>Basic Type identifying any eHealth Actor.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Id" type="xs:string" />
+      <xs:element name="Type" type="xs:string" />
+      <xs:element name="SubType" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PeriodType">
+    <xs:annotation>
+      <xs:documentation>Closed or open period in time.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="BeginDate" type="xs:date" />
+      <xs:element name="EndDate" type="xs:date" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="LocalisedString">
+    <xs:annotation>
+      <xs:documentation>stringvalue localized for supported language.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="Lang" type="core:LangageType" use="optional" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="StatusType">
+    <xs:annotation>
+      <xs:documentation>Basic Type for Status of a Response.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Code" type="xs:string" />
+      <xs:element name="Message" type="core:LocalisedString" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="LangageType">
+    <xs:annotation>
+      <xs:documentation>Supported languages. NA for NotApplicable.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="FR" />
+      <xs:enumeration value="NL" />
+      <xs:enumeration value="EN" />
+      <xs:enumeration value="DE" />
+      <xs:enumeration value="NA" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="AddressType">
+    <xs:annotation>
+      <xs:documentation>Basic AddressType of any eHealth Actor.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Street" type="core:StreetType" />
+      <xs:element name="HouseNumber" type="xs:string" minOccurs="0" />
+      <xs:element name="PostBox" type="xs:string" minOccurs="0" />
+      <xs:element name="Municipality" type="core:MunicipalityType" />
+      <xs:element name="Country" type="core:CountryType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="StreetType">
+    <xs:annotation>
+      <xs:documentation>Localized name for street.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Description" type="core:LocalisedString" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MunicipalityType">
+    <xs:annotation>
+      <xs:documentation>Localized name for municipality.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ZipCode" type="xs:string" />
+      <xs:element name="InsCode" type="xs:string" minOccurs="0" />
+      <xs:element name="Description" type="core:LocalisedString" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CountryType">
+    <xs:annotation>
+      <xs:documentation>code, abbreviation and Localized name for country.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Code" type="xs:string" minOccurs="0" />
+      <xs:element name="Abbreviation" type="xs:string" minOccurs="0" />
+      <xs:element name="Description" type="core:LocalisedString" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="SsinType">
+    <xs:annotation>
+      <xs:documentation>Social Security Number.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:length value="11" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

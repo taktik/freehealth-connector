@@ -23,10 +23,10 @@ public final class BusinessConfigUtil {
    public static boolean retrieveBooleanProjectProperty(String prefix, String projectName, String suffix, boolean defaultValue) {
       ConfigValidator props = ConfigFactory.getConfigValidator();
       boolean result;
-      if (props.getBooleanProperty(prefix + projectName + ".usedefaultproperties", true).booleanValue()) {
-         result = props.getBooleanProperty(prefix + "default" + suffix, defaultValue).booleanValue();
+      if (props.getBooleanProperty(prefix + projectName + ".usedefaultproperties", true)) {
+         result = props.getBooleanProperty(prefix + "default" + suffix, defaultValue);
       } else {
-         result = props.getBooleanProperty(prefix + projectName + suffix, defaultValue).booleanValue();
+         result = props.getBooleanProperty(prefix + projectName + suffix, defaultValue);
       }
 
       LOG.debug("retrieveBooleanProjectProperty for " + prefix + "." + projectName + "." + suffix + " : returning " + result);
@@ -43,8 +43,8 @@ public final class BusinessConfigUtil {
          } else {
             return false;
          }
-      } catch (IOException var3) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var3, new Object[]{var3.getMessage()});
+      } catch (IOException ex) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, ex, ex.getMessage());
       }
    }
 }

@@ -1,0 +1,28 @@
+<config
+        xmlns='http://www.ehcache.org/v3'
+        xmlns:ehcache="http://www.ehcache.org/v3"
+        xmlns:jsr107="http://www.ehcache.org/v3/jsr107">
+
+    <service>
+        <jsr107:defaults default-template="byValueTemplate" enable-management="true" enable-statistics="true"/>
+    </service>
+
+    <persistence directory="C:\\Users\\SMALS-~2\\AppData\\Local\\Temp\\/connector-cache-data"/>
+
+    <cache-template name="byValueTemplate">
+        <key-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.String</key-type>
+        <value-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.String</value-type>
+        <expiry>
+            <none/>
+        </expiry>
+
+        <resources>
+            <heap>2000</heap>
+            <offheap unit="MB">1</offheap>
+            <disk unit="MB" persistent="true">100</disk>
+        </resources>
+
+    </cache-template>
+
+
+</config>
