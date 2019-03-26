@@ -21,6 +21,8 @@
 package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
 import com.hazelcast.core.IMap
 import org.apache.commons.logging.LogFactory
 import org.springframework.stereotype.Service
@@ -46,6 +48,7 @@ import java.io.StringWriter
 import java.security.KeyStore
 import java.time.Instant
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMResult
@@ -255,11 +258,17 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         return keystoreId
     }
 
+    val keystoreCache = CacheBuilder.newBuilder().maximumSize(2000).expireAfterAccess(1, TimeUnit.HOURS).build(object: CacheLoader<Pair<UUID, String>,KeyStore>() {
+        override fun load(key: Pair<UUID, String>): KeyStore {
+            val keyStoreData =
+                keystoresMap[key.first]
+                    ?: throw(IllegalArgumentException("Missing Keystore, please upload a keystore and use the returned keystoreId"))
+            return KeyManager.getKeyStore(keyStoreData.inputStream(), "PKCS12", key.second.toCharArray())
+        }
+    })
+
     override fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore? {
-        val keyStoreData =
-            keystoresMap[keystoreId]
-                ?: throw(IllegalArgumentException("Missing Keystore, please upload a keystore and use the returned keystoreId"))
-        return KeyManager.getKeyStore(keyStoreData.inputStream(), "PKCS12", passPhrase.toCharArray())
+        return keystoreCache.get(Pair(keystoreId, passPhrase))
     }
 
     @Throws(TechnicalConnectorException::class)
