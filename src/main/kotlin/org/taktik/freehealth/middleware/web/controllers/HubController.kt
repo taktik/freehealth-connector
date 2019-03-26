@@ -23,13 +23,16 @@ package org.taktik.freehealth.middleware.web.controllers
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
 import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+import ma.glasnost.orika.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
+import org.taktik.connector.business.therlink.domain.TherapeuticLinkMessage
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.domain.consent.Consent
 import org.taktik.freehealth.middleware.domain.hub.TransactionSummary
 import org.taktik.freehealth.middleware.dto.common.Gender
+import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkMessageDto
 import org.taktik.freehealth.middleware.service.HubService
 import org.taktik.freehealth.utils.FuzzyValues
 import java.time.Instant
@@ -37,7 +40,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/hub")
-class HubController(val hubService: HubService) {
+class HubController(val hubService: HubService, val mapper: MapperFacade) {
 
     @PostMapping("/patient/{lastName}/{patientSsin}")
     fun putPatient(
@@ -227,7 +230,7 @@ class HubController(val hubService: HubService) {
         @RequestParam(required = false) therLinkType: String?,
         @RequestParam(required = false) from: Instant?,
         @RequestParam(required = false) to: Instant?
-    ): List<TherapeuticLink> = hubService.getTherapeuticLinks(
+    ): List<TherapeuticLinkMessageDto> = hubService.getTherapeuticLinks(
         endpoint = endpoint,
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -242,7 +245,7 @@ class HubController(val hubService: HubService) {
         therLinkType = therLinkType,
         from = from,
         to = to
-    )
+    )?.map { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
     @GetMapping("/list/{patientSsin}")
     fun getTransactionsList(
