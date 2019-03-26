@@ -1,6 +1,10 @@
 package org.taktik.connector.technical.validator
 
-import be.fgov.ehealth.etee.crypto.utils.KeyManager
+import com.gc.iotools.stream.`is`.InputStreamFromOutputStream
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
+import org.apache.commons.lang.ArrayUtils
+import org.slf4j.LoggerFactory
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.handler.SchemaValidatorHandler
@@ -9,32 +13,18 @@ import org.taktik.connector.technical.utils.impl.JaxbContextFactory
 import org.taktik.connector.technical.validator.impl.handler.ErrorCollectorHandler
 import org.taktik.connector.technical.validator.impl.handler.ForkContentHandler
 import org.taktik.connector.technical.validator.impl.handler.XOPValidationHandler
-import com.gc.iotools.stream.`is`.InputStreamFromOutputStream
-import com.google.common.cache.CacheBuilder
-import com.google.common.cache.CacheLoader
 import java.io.InputStream
 import java.io.OutputStream
-import javax.xml.bind.JAXBContext
+import java.util.concurrent.TimeUnit
 import javax.xml.bind.util.JAXBSource
-import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
-import javax.xml.transform.Result
 import javax.xml.transform.Source
-import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
+import javax.xml.validation.Schema
 import javax.xml.validation.SchemaFactory
 import javax.xml.validation.ValidatorHandler
-import org.apache.commons.lang.ArrayUtils
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.taktik.connector.technical.validator.ValidatorHelper.Companion
-import org.xml.sax.ContentHandler
-import java.security.KeyStore
-import java.util.Arrays
-import java.util.UUID
-import java.util.concurrent.TimeUnit
 
 class ValidatorHelper private constructor() {
 
@@ -55,7 +45,7 @@ class ValidatorHelper private constructor() {
                 val collector = ErrorCollectorHandler(handler)
                 validator.errorHandler = collector
                 val parser = SAF.newSAXParser()
-                parser.parse(convert(source), ForkContentHandler(*arrayOf(handler, validator)))
+                parser.parse(convert(source), ForkContentHandler(handler, validator))
                 handleValidationResult(collector)
             } catch (var7: Exception) {
                 throw handleException(var7)
@@ -103,8 +93,8 @@ class ValidatorHelper private constructor() {
             }
         }
 
-        val validatorsCache = CacheBuilder.newBuilder().maximumSize(100).expireAfterAccess(1, TimeUnit.HOURS).build(object: CacheLoader<List<String>, ValidatorHandler>() {
-            override fun load(schemaFiles: List<String>): ValidatorHandler {
+        val validatorsCache = CacheBuilder.newBuilder().maximumSize(100).expireAfterAccess(1, TimeUnit.HOURS).build(object: CacheLoader<List<String>, Schema>() {
+            override fun load(schemaFiles: List<String>): Schema {
                 val schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema")
 
                 try {
@@ -121,7 +111,7 @@ class ValidatorHelper private constructor() {
                         }
                     }
 
-                    return schemaFactory.newSchema(sources).newValidatorHandler()
+                    return schemaFactory.newSchema(sources)
                 } catch (ex: Exception) {
                     throw handleException(ex)
                 }
@@ -131,7 +121,7 @@ class ValidatorHelper private constructor() {
 
         @Throws(TechnicalConnectorException::class)
         protected fun createValidatorForSchemaFiles(vararg schemaFiles: String): ValidatorHandler {
-            return validatorsCache.get(schemaFiles.asList())
+            return validatorsCache.get(schemaFiles.asList()).newValidatorHandler()
         }
 
         @Throws(TechnicalConnectorException::class)
