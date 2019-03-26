@@ -54,7 +54,7 @@ public class SchemaValidatorHandler extends AbstractSOAPHandler {
          }
 
          Node payloadNode = body.getFirstChild();
-         ValidatorHelper.validate(new DOMSource(payloadNode), this.isXOPEnabled(context), this.schemaFiles);
+         ValidatorHelper.Companion.validate(new DOMSource(payloadNode), this.isXOPEnabled(context), this.schemaFiles);
       } catch (Exception var6) {
          dumpMessage(context.getMessage(), mode, LOG);
          LOG.error(var6.getClass().getSimpleName() + ": " + var6.getMessage());

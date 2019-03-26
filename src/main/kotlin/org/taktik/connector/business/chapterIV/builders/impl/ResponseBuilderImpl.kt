@@ -139,7 +139,7 @@ class ResponseBuilderImpl(private val crypto: Crypto, private val credential: Cr
     @Throws(ChapterIVBusinessConnectorException::class, TechnicalConnectorException::class)
     private fun validateTimeStampToken(timeStampResponse: TimeStampResponse) {
         try {
-            TimeStampValidatorFactory.getInstance().validateTimeStampToken(timeStampResponse.timeStampToken)
+            TimeStampValidatorFactory.instance.validateTimeStampToken(timeStampResponse.timeStampToken)
         } catch (ex: InvalidTimeStampException) {
             throw ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.TIMESTAMP_NOT_CORRECT, ex)
         }

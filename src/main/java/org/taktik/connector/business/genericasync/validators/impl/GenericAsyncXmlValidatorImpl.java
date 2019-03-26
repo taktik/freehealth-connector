@@ -12,11 +12,11 @@ public class GenericAsyncXmlValidatorImpl extends XMLValidatorImpl {
    private static final String XSD_GENERIC_ASYNC_GENERIC_ASYNC_XSD = "/XSD/genericAsync/GenericAsync.xsd";
 
    static {
-      XSD_FILE_LOCATION_FOR_CLASS_MAP.put(Post.class, "/XSD/genericAsync/GenericAsync.xsd");
-      XSD_FILE_LOCATION_FOR_CLASS_MAP.put(PostResponse.class, "/XSD/genericAsync/GenericAsync.xsd");
-      XSD_FILE_LOCATION_FOR_CLASS_MAP.put(Get.class, "/XSD/genericAsync/GenericAsync.xsd");
-      XSD_FILE_LOCATION_FOR_CLASS_MAP.put(GetResponse.class, "/XSD/genericAsync/GenericAsync.xsd");
-      XSD_FILE_LOCATION_FOR_CLASS_MAP.put(Confirm.class, "/XSD/genericAsync/GenericAsync.xsd");
-      XSD_FILE_LOCATION_FOR_CLASS_MAP.put(ConfirmResponse.class, "/XSD/genericAsync/GenericAsync.xsd");
+      Companion.getXSD_FILE_LOCATION_FOR_CLASS_MAP().put(Post.class, "/XSD/genericAsync/GenericAsync.xsd");
+      Companion.getXSD_FILE_LOCATION_FOR_CLASS_MAP().put(PostResponse.class, "/XSD/genericAsync/GenericAsync.xsd");
+      Companion.getXSD_FILE_LOCATION_FOR_CLASS_MAP().put(Get.class, "/XSD/genericAsync/GenericAsync.xsd");
+      Companion.getXSD_FILE_LOCATION_FOR_CLASS_MAP().put(GetResponse.class, "/XSD/genericAsync/GenericAsync.xsd");
+      Companion.getXSD_FILE_LOCATION_FOR_CLASS_MAP().put(Confirm.class, "/XSD/genericAsync/GenericAsync.xsd");
+      Companion.getXSD_FILE_LOCATION_FOR_CLASS_MAP().put(ConfirmResponse.class, "/XSD/genericAsync/GenericAsync.xsd");
    }
 }

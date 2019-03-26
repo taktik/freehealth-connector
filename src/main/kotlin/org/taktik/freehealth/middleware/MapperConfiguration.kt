@@ -51,19 +51,23 @@ class MapperConfiguration {
         return (Jackson2ObjectMapperBuilderCustomizer { builder ->
             builder?.serializerByType(LocalDate::class.java, object : JsonSerializer<LocalDate>() {
                 override fun serialize(value: LocalDate?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-                    gen?.let { if (value != null) it.writeNumber(value.year * 10000 + value.monthOfYear * 100 + value.dayOfMonth) else it.writeNull() }
+                    gen?.let { if (value != null) it.writeNumber(value.year * 10000L + value.monthOfYear * 100 + value.dayOfMonth) else it.writeNull() }
                 }
             })?.serializerByType(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
                 override fun serialize(value: LocalDateTime?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-                    gen?.let { if (value != null) it.writeNumber((value.year * 10000 + value.monthOfYear * 100 + value.dayOfMonth) * 1000000 + value.hourOfDay * 10000 + value.minuteOfHour * 100 + value.secondOfMinute) else it.writeNull() }
+                    gen?.let { if (value != null) it.writeNumber((value.year * 10000L + value.monthOfYear * 100 + value.dayOfMonth) * 1000000L + value.hourOfDay * 10000 + value.minuteOfHour * 100 + value.secondOfMinute) else it.writeNull() }
                 }
             })?.serializerByType(java.time.LocalDate::class.java, object : JsonSerializer<java.time.LocalDate>() {
                 override fun serialize(value: java.time.LocalDate?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-                    gen?.let { if (value != null) it.writeNumber(value.year * 10000 + value.monthValue * 100 + value.dayOfMonth) else it.writeNull() }
+                    gen?.let { if (value != null) it.writeNumber(value.year * 10000L + value.monthValue * 100 + value.dayOfMonth) else it.writeNull() }
                 }
             })?.serializerByType(java.time.LocalDateTime::class.java, object : JsonSerializer<java.time.LocalDateTime>() {
                 override fun serialize(value: java.time.LocalDateTime?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-                    gen?.let { if (value != null) it.writeNumber((value.year * 10000 + value.monthValue * 100 + value.dayOfMonth) * 1000000 + value.hour * 10000 + value.minute * 100 + value.second) else it.writeNull() }
+                    gen?.let { if (value != null) it.writeNumber((value.year * 10000L + value.monthValue * 100 + value.dayOfMonth) * 1000000L + value.hour * 10000 + value.minute * 100 + value.second) else it.writeNull() }
+                }
+            })?.serializerByType(DateTime::class.java, object : JsonSerializer<DateTime>() {
+                override fun serialize(value: DateTime?, gen: JsonGenerator?, serializers: SerializerProvider?) {
+                    gen?.let { if (value != null) it.writeNumber((value.year * 10000L + value.monthOfYear * 100 + value.dayOfMonth) * 1000000L + value.hourOfDay * 10000 + value.minuteOfHour * 100 + value.secondOfMinute) else it.writeNull() }
                 }
             })
         })

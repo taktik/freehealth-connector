@@ -79,7 +79,7 @@ public class XadesTSpecification implements XadesSpecification {
                Node timestampNode = timestampList.item(j);
                byte[] digestValue = this.generateTimestampDigest(baseElement, c14nMethodValue);
                TimeStampToken tsToken = TimestampUtil.getTimeStampToken(Base64.decode(timestampNode.getTextContent().getBytes()));
-               TimeStampValidatorFactory.getInstance().validateTimeStampToken(digestValue, tsToken);
+               TimeStampValidatorFactory.Companion.getInstance().validateTimeStampToken(digestValue, tsToken);
                result.getTimestampGenTimes().add(new DateTime(tsToken.getTimeStampInfo().getGenTime()));
                result.getTsTokens().add(tsToken);
             } catch (InvalidTimeStampException var9) {
