@@ -53,7 +53,10 @@ import ma.glasnost.orika.MapperFacade
 import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
+import org.taktik.connector.business.domain.Error
+import org.taktik.connector.business.therlink.domain.HcParty
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
+import org.taktik.connector.business.therlink.domain.TherapeuticLinkMessage
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
@@ -279,7 +282,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         from: Instant?,
         to: Instant?,
         hubPackageId: String?
-    ): List<TherapeuticLink> {
+    ): List<TherapeuticLinkMessage> {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
@@ -308,13 +311,36 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                                 patientSsin
                             })
                         })
-                        begindate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
-                        enddate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
+                        // We have to disable dates due to a bug in RSW
+                        // begindate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
+                        // enddate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
                     }
                 })
-        return therapeuticLinkResponse.therapeuticlinklist?.let {
-            it.therapeuticlinks.map { mapper.map(it, TherapeuticLink::class.java) }
-        } ?: listOf()
+        val errors = therapeuticLinkResponse.acknowledge.errors.map {
+            Error().apply {
+                this.url = it.url;
+                this.descr = it.description.getValue();
+            }
+        };
+        val isComplete = therapeuticLinkResponse.acknowledge.isIscomplete();
+        return therapeuticLinkResponse.therapeuticlinklist.therapeuticlinks?.map {
+            TherapeuticLinkMessage().apply {
+                this.isComplete = isComplete;
+                this.errors = errors;
+                this.therapeuticLink = TherapeuticLink().apply {
+                    this.startDate = it.startdate.toLocalDate();
+                    this.endDate = it.enddate.toLocalDate();
+                    this.type = it.cd.value;
+                    this.comment = it.comment;
+                    this.hcParty = HcParty().apply {
+                        this.setIds(it.hcparty.ids);
+                    }
+                    this.patient = org.taktik.connector.business.common.domain.Patient().apply {
+                        this.inss = it.patient.ids.find { idpatient -> idpatient.s.equals("INSS") } ?.value;
+                    }
+                }
+            }
+        } ?: listOf<TherapeuticLinkMessage>()
     }
 
     override fun putPatient(
