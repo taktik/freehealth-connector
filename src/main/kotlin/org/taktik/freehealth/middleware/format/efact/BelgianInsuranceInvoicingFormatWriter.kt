@@ -291,7 +291,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         //Silly rules for this field
         var affCode = insuranceCode
 
-        if (affCode.startsWith("2") || affCode.startsWith("5") || (magneticInvoice!! && affCode.startsWith("4"))) {
+        if (affCode.startsWith("2") || affCode.startsWith("5")) {
             affCode = "000"
         }
 
@@ -503,7 +503,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         var affCode = insuranceCode
 
-        if (affCode.startsWith("2") || affCode.startsWith("5") || (magneticInvoice!! && affCode.startsWith("4"))) {
+        if (affCode.startsWith("2") || affCode.startsWith("5")) {
             affCode = "000"
         }
 
