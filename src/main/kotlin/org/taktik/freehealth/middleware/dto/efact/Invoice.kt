@@ -37,4 +37,7 @@ class Invoice {
     var relatedBatchSendNumber: Long? = null
     var relatedBatchYearMonth: Long? = null
     var startOfCoveragePeriod: Long? = null //yyyyMMdd
+
+    var internshipNihii: String? = null
+    var gnotionNihii: String? = null
 }
