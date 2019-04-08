@@ -102,8 +102,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val etk = getHolderOfKeysEtk(credential, nihiiOrSsin)
         if (!hokPrivateKeys.containsKey(etk?.certificate?.serialNumber?.toString(10))) {
             throw TechnicalConnectorException(
-                ERROR_CONFIG,
-                arrayOf<Any>("The certificate from the ETK don't match with the one in the encryption keystore")
+                ERROR_CONFIG,"The certificate from the ETK don't match with the one in the encryption keystore"
             )
         }
 

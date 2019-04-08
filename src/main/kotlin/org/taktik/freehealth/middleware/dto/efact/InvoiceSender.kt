@@ -33,7 +33,7 @@ class InvoiceSender {
     var conventionCode: Int? = null
 
     var isMedicalHouse:Boolean = false
-        get() = nihii != null && Arrays.asList("111", "110", "100", "101", "001", "010", "011").contains(nihii!!.toString().substring(8))
+        get() = nihii != null && nihii!!.toString().startsWith("8") && Arrays.asList("111", "110", "100", "101", "001", "010", "011").contains(nihii!!.toString().substring(8))
 
     var isSpecialist: Boolean = false
         get() = nihii!! % 1000L >= 10
