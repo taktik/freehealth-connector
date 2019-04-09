@@ -13,7 +13,7 @@ open class XMLValidatorImpl : XMLValidator {
         if (xmlObject != null) {
             ValidatorHelper.validate(xmlObject, xmlObject.javaClass, this.getXsdFileLocationForXmlObject(xmlObject))
         } else {
-            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_XML_INVALID, *arrayOf<Any>("xml object had null value"))
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_XML_INVALID, "xml object had null value")
         }
     }
 
@@ -22,7 +22,7 @@ open class XMLValidatorImpl : XMLValidator {
         return if (xmlObject != null && XSD_FILE_LOCATION_FOR_CLASS_MAP.containsKey(xmlObject.javaClass)) {
             XSD_FILE_LOCATION_FOR_CLASS_MAP[xmlObject.javaClass] as String
         } else {
-            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_XML_INVALID, *arrayOf<Any>("no xsd source defined for xmlObject " + xmlObject!!))
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_XML_INVALID, "no xsd source defined for xmlObject " + xmlObject!!)
         }
     }
 

@@ -15,16 +15,9 @@ interface TimeStampValidator {
 
 
     @Deprecated("")
-    fun setKeyStore(var1: KeyStore)
+    fun setKeyStore(var1: KeyStore?)
 
 
     @Deprecated("")
     fun setAliases(var1: MutableList<String>)
-
-    companion object {
-
-        @Deprecated("")
-        val ALIASLIST = "timestampvalidatior.aliaslist"
-        val KEYSTORE = "timestampvalidatior.keystore"
-    }
 }
