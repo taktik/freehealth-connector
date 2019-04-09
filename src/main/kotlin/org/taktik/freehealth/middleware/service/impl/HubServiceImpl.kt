@@ -326,7 +326,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             }
         };
         val isComplete = therapeuticLinkResponse.acknowledge.isIscomplete();
-        return therapeuticLinkResponse.therapeuticlinklist.therapeuticlinks?.map {
+        return therapeuticLinkResponse.therapeuticlinklist?.therapeuticlinks?.map {
             TherapeuticLinkMessage().apply {
                 this.isComplete = isComplete;
                 this.errors = errors;
@@ -343,7 +343,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                     }
                 }
             }
-        } ?: listOf<TherapeuticLinkMessage>()
+        } ?: listOf()
     }
 
     override fun putPatient(
