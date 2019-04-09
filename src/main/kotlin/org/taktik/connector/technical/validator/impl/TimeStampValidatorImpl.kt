@@ -88,9 +88,9 @@ class TimeStampValidatorImpl : TimeStampValidator, ConfigurableImplementation {
 
     private fun getAliases(): List<String> {
         try {
-            return Collections.list(this.keyStore!!.aliases())
+            return this.keyStore?.aliases()?.toList() ?: listOf()
         } catch (var2: KeyStoreException) {
-            return ArrayList()
+            return listOf()
         }
 
     }
