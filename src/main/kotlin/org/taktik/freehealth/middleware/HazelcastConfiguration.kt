@@ -24,8 +24,11 @@ import com.hazelcast.config.Config
 import com.hazelcast.config.EvictionPolicy
 import com.hazelcast.config.MapConfig
 import com.hazelcast.config.MaxSizeConfig
+import com.hazelcast.core.EntryEvent
 import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.core.IMap
+import com.hazelcast.map.listener.EntryEvictedListener
+import org.apache.commons.logging.LogFactory
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -42,39 +45,53 @@ class HazelcastProperties {
 
 @Configuration
 class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
+    private val log = LogFactory.getLog(this::class.java)
+
     @Bean fun config() = Config().apply {
         hazelcastProperties.groupName?.let { groupConfig.name = it }
         hazelcastProperties.groupPassword?.let { groupConfig.name = it }
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KEYSTORES").apply {
             timeToLiveSeconds = 18*3600
-            maxSizeConfig = MaxSizeConfig(256, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
+            maxSizeConfig = MaxSizeConfig(128, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.TOKENS").apply {
             timeToLiveSeconds = 12*3600
-            maxSizeConfig = MaxSizeConfig(256, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
+            maxSizeConfig = MaxSizeConfig(128, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK").apply {
             timeToLiveSeconds = 12*3600
-            maxSizeConfig = MaxSizeConfig(256, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
+            maxSizeConfig = MaxSizeConfig(128, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })
     }
 
     @Bean
     fun keystoresMap(hazelcastInstance: HazelcastInstance): IMap<UUID, ByteArray> {
-        val map = hazelcastInstance.getMap<UUID, ByteArray>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KEYSTORES")
+        val map = hazelcastInstance.getMap<UUID, ByteArray>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KEYSTORES").apply {
+            this.addEntryListener(EntryEvictedListener<UUID, SamlTokenResult> {
+                log.warn("Keystore ${it.key} evicted")
+            }, false)
+        }
         return map
     }
 
     @Bean
     fun tokensMap(hazelcastInstance: HazelcastInstance): IMap<UUID, SamlTokenResult> {
-        return hazelcastInstance.getMap<UUID, SamlTokenResult>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.TOKENS")
+        return hazelcastInstance.getMap<UUID, SamlTokenResult>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.TOKENS").apply {
+            this.addEntryListener(EntryEvictedListener<UUID, SamlTokenResult> {
+                log.warn("Token ${it.key} evicted")
+            }, false)
+        }
     }
 
     @Bean
     fun etkCache(hazelcastInstance: HazelcastInstance): IMap<UUID, String> {
-        return hazelcastInstance.getMap<UUID, String>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK")
+        return hazelcastInstance.getMap<UUID, String>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK").apply {
+            this.addEntryListener(EntryEvictedListener<UUID, SamlTokenResult> {
+                log.warn("ETK ${it.key} evicted")
+            }, false)
+        }
     }
 }

@@ -34,6 +34,7 @@ import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEX
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEXvalues
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDTHERAPEUTICLINK
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDTHERAPEUTICLINKschemes
+import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
@@ -118,7 +119,9 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                     }
                 })
         return hcPartyConsent.consent?.let {
-            mapper.map(it, HcPartyConsent::class.java)
+            mapper.map(it, HcPartyConsent::class.java)?.apply {
+                hubId = it.author.hcparties.firstOrNull()?.ids?.find { id -> id.s == IDHCPARTYschemes.ID_HCPARTY }?.value
+            }
         }
     }
 
@@ -323,7 +326,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             }
         };
         val isComplete = therapeuticLinkResponse.acknowledge.isIscomplete();
-        return therapeuticLinkResponse.therapeuticlinklist.therapeuticlinks?.map {
+        return therapeuticLinkResponse.therapeuticlinklist?.therapeuticlinks?.map {
             TherapeuticLinkMessage().apply {
                 this.isComplete = isComplete;
                 this.errors = errors;
@@ -340,7 +343,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                     }
                 }
             }
-        } ?: listOf<TherapeuticLinkMessage>()
+        } ?: listOf()
     }
 
     override fun putPatient(
@@ -660,6 +663,9 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 recorddatetime = it.recorddatetime.millis
                 iscomplete = it.isIscomplete
                 isvalidated = it.isIsvalidated
+
+                desc = it.cds.find { it.s == CDTRANSACTIONschemes.CD_TRANSACTION }?.value
+                authorsList = it.author.hcparties.filterNot { it.cds.any { it.s == CDHCPARTYschemes.CD_HCPARTY && it.value == "hub" } }.map { listOf(it.firstname, it.familyname, it.name).filterNotNull().joinToString(" ")  }.joinToString(",")
             }
         } ?: listOf()
     }

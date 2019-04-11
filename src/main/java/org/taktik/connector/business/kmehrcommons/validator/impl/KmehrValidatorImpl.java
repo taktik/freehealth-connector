@@ -9,6 +9,6 @@ public class KmehrValidatorImpl implements KmehrValidator {
    protected static final String KMEHR_LOCATION = "/ehealth-kmehr/XSD/kmehr_elements-1_19.xsd";
 
    public void validateKmehrMessage(Kmehrmessage msg) throws TechnicalConnectorException {
-      ValidatorHelper.validate(msg, Kmehrmessage.class, "/ehealth-kmehr/XSD/kmehr_elements-1_19.xsd");
+      ValidatorHelper.Companion.validate(msg, Kmehrmessage.class, "/ehealth-kmehr/XSD/kmehr_elements-1_19.xsd");
    }
 }
