@@ -8,7 +8,7 @@ import java.util.UUID
 
 interface EfactService {
 
-    fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch): EfactSendResponse
+    fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch, isGuardPost: Boolean): EfactSendResponse
     fun loadMessages(keystoreId: UUID,
                      tokenId: UUID,
                      passPhrase: String,
@@ -16,7 +16,8 @@ interface EfactService {
                      hcpSsin: String,
                      hcpFirstName: String,
                      hcpLastName: String,
-                     language: String): List<EfactMessage>
+                     language: String,
+                     isGuardPost: Boolean): List<EfactMessage>
     fun confirmAcks(
         keystoreId: UUID,
         tokenId: UUID,
@@ -25,7 +26,8 @@ interface EfactService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        valueHashes: List<String>
+        valueHashes: List<String>,
+        isGuardPost: Boolean
     ): Boolean
 
     fun confirmMessages(
@@ -36,7 +38,8 @@ interface EfactService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        valueHashes: List<String>
+        valueHashes: List<String>,
+        isGuardPost: Boolean
     ): Boolean
 
     fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean): String

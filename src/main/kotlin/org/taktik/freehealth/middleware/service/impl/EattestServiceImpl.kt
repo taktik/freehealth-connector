@@ -195,7 +195,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         val theDayBeforeRefDate = refDateTime.plusDays(-1)
 
         val requestAuthorNihii = guardPostNihii ?: hcpNihii
-        val requestAuthorSsin = guardPostSsin ?: hcpNihii
+        val requestAuthorSsin = guardPostSsin ?: hcpSsin
         val requestAuthorCdHcParty = if (guardPostNihii?.isEmpty() == true) "persphysician" else "guardpost"
 
         return extractEtk(credential)?.let {
@@ -831,8 +831,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
                 kmehrMessage = encryptedKnownContent?.businessContent?.value
-
-                                             )
+            )
         }
     }
 

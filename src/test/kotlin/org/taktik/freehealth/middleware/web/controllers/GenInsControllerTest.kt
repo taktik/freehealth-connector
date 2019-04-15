@@ -2,6 +2,7 @@ package org.taktik.freehealth.middleware.web.controllers
 
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
@@ -13,6 +14,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.common.Patient
@@ -30,7 +32,6 @@ class GenInsControllerTest : EhealthTest() {
 
     @Autowired
     private val restTemplate: TestRestTemplate? = null
-
 
     private val nisses = mapOf(
         100 to listOf("79090527932","50011440637","36081126424","17011612777","790905 217M93","59041744620","68040413141","72060416706","79090527932","97031458484","18010312870","29031620344","31051928426","17011612777","29041042905","02041306532","88082528989","720604015M60","58042644917","13102125767"),
@@ -771,10 +772,28 @@ class GenInsControllerTest : EhealthTest() {
     fun guardPostScenario() {
         val (keystoreId, tokenId, passPhrase) = registerGuardPost(restTemplate!!, port, nihii4!!, password4!!)
 
-        val genIns = getNisses(3).map {
-            this.restTemplate!!.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3&hcpSsin=$ssin3&hcpName=$name3&hcpQuality=${"guardpost"}&guardPostNihii=$nihii4&guardPostSsin=$ssin4",
+//        val nisses = getNisses(0)
+
+        val nisses = listOf("36121015396", "64032764903", "49020508235", "59072957042", "59011214562")
+
+        val results: List<ResponseEntity<InsurabilityInfoDto>> = nisses.map {
+            this.restTemplate!!.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii4&hcpSsin=$ssin4&hcpName=$name4&hcpQuality=${"guardpost"}",
                 HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
         }
-        Assertions.assertThat(genIns.map { it.body }.isNotEmpty())
+
+        val genIns: List<InsurabilityInfoDto> = results.map { it.body }
+
+        genIns.forEach {
+            Assertions.assertThat(it.faultCode).isNull()
+            Assertions.assertThat(it.faultMessage).isNull()
+            Assertions.assertThat(it.faultSource).isNull()
+            Assertions.assertThat(it.commonOutput).isNotNull()
+            Assertions.assertThat(it.commonOutput?.inputReference).isNotNull()
+            Assertions.assertThat(it.commonOutput?.nipReference).isNotNull()
+            Assertions.assertThat(it.commonOutput?.outputReference).isNotNull()
+            Assertions.assertThat(it.mycarenetConversation).isNotNull()
+            Assertions.assertThat(it.mycarenetConversation?.soapRequest).isNotNull()
+            Assertions.assertThat(it.mycarenetConversation?.soapResponse).isNotNull()
+        }
     }
 }
