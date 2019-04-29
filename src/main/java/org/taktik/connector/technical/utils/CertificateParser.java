@@ -28,6 +28,7 @@ public class CertificateParser {
    private String type;
    private String id;
    private String application;
+   private String owner;
 
    public CertificateParser(X509Certificate cert) throws TechnicalConnectorException {
       this(cert.getSubjectX500Principal().getName("RFC2253"));
@@ -37,6 +38,7 @@ public class CertificateParser {
       this.type = "";
       this.id = "";
       this.application = "";
+      this.owner = "";
       LdapName name = null;
 
       try {
@@ -88,6 +90,8 @@ public class CertificateParser {
                      if (cn.endsWith(ou)) {
                         LOG.debug("ApplicationId is present.");
                         this.application = ou;
+                     } else {
+                        this.owner = ou;
                      }
                   }
                }
@@ -136,6 +140,10 @@ public class CertificateParser {
 
    public final String getApplication() {
       return this.application;
+   }
+
+   public final String getOwner() {
+      return this.owner;
    }
 
    public final IdentifierType getIdentifier() {
