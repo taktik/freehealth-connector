@@ -321,25 +321,25 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 })
         val errors = therapeuticLinkResponse.acknowledge.errors.map {
             Error().apply {
-                this.url = it.url;
-                this.descr = it.description.getValue();
+                this.url = it.url
+                this.descr = it.description.value
             }
-        };
-        val isComplete = therapeuticLinkResponse.acknowledge.isIscomplete();
+        }
+        val isComplete = therapeuticLinkResponse.acknowledge.isIscomplete
         return therapeuticLinkResponse.therapeuticlinklist?.therapeuticlinks?.map {
             TherapeuticLinkMessage().apply {
-                this.isComplete = isComplete;
-                this.errors = errors;
+                this.isComplete = isComplete
+                this.errors = errors
                 this.therapeuticLink = TherapeuticLink().apply {
-                    this.startDate = it.startdate.toLocalDate();
-                    this.endDate = it.enddate.toLocalDate();
-                    this.type = it.cd.value;
-                    this.comment = it.comment;
+                    this.startDate = it.startdate.toLocalDate()
+                    this.endDate = it.enddate.toLocalDate()
+                    this.type = it.cd.value
+                    this.comment = it.comment
                     this.hcParty = HcParty().apply {
-                        this.setIds(it.hcparty.ids);
+                        this.setIds(it.hcparty.ids)
                     }
                     this.patient = org.taktik.connector.business.common.domain.Patient().apply {
-                        this.inss = it.patient.ids.find { idpatient -> idpatient.s.equals("INSS") } ?.value;
+                        this.inss = it.patient.ids.find { idpatient -> idpatient.s.name == "INSS" } ?.value
                     }
                 }
             }
