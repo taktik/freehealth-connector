@@ -52,6 +52,8 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.SexType
 import com.google.gson.Gson
 import ma.glasnost.orika.MapperFacade
 import org.apache.commons.lang.StringUtils
+import org.apache.http.ssl.SSLContexts
+import org.apache.logging.slf4j.SLF4JLogger
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.Error
@@ -185,12 +187,11 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         patientSsin: String,
         patientEidCardNumber: String?,
         hubPackageId: String?
-    ) {
+    ): PutPatientConsentResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val patientConsent =
-            freehealthHubService.putPatientConsent(
+        return freehealthHubService.putPatientConsent(
                 endpoint,
                 samlToken,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
@@ -232,12 +233,11 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         patientSsin: String,
         patientEidCardNumber: String?,
         hubPackageId: String?
-    ) {
+    ): PutTherapeuticLinkResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val link =
-            freehealthHubService.putTherapeuticLink(
+        return freehealthHubService.putTherapeuticLink(
                 endpoint,
                 samlToken,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
