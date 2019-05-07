@@ -24,7 +24,7 @@ import org.taktik.freehealth.middleware.dto.common.ErrorDto
 import java.util.ArrayList
 
 class TherapeuticLinkMessageDto {
-    var complete: Boolean = false
+    var isComplete: Boolean = false
     var errors: List<ErrorDto> = ArrayList()
-    var therapeuticLink: TherapeuticLinkDto? = null
+    var therapeuticLinks: List<TherapeuticLinkDto> = ArrayList()
 }

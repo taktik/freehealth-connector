@@ -73,7 +73,7 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
         endDate = endDate,
         type = type,
         sign = sign
-    )?.map { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
+    )?.let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
     @PostMapping("/query")
     fun getAllTherapeuticLinksWithQueryLink(
@@ -88,7 +88,7 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
         passPhrase = passPhrase,
         queryLink = mapper.map(queryLink, org.taktik.connector.business.therlink.domain.TherapeuticLink::class.java),
         sign = sign
-    )?.map { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
+    )?.let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
     @PostMapping("/check")
     fun doesLinkExist(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody therLink: TherapeuticLinkDto) =
