@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.service
 
+import be.fgov.ehealth.hubservices.core.v3.PutPatientConsentResponse
+import be.fgov.ehealth.hubservices.core.v3.PutTherapeuticLinkResponse
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
 import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
@@ -94,7 +96,7 @@ interface HubService {
         patientSsin: String,
         patientEidCardNumber: String?,
         hubPackageId: String?
-    )
+    ): PutPatientConsentResponse
 
     fun getPatientConsent(
         endpoint: String,
@@ -123,7 +125,7 @@ interface HubService {
         patientSsin: String,
         patientEidCardNumber: String?,
         hubPackageId: String?
-    )
+    ): PutTherapeuticLinkResponse
 
     fun getTherapeuticLinks(
         endpoint: String,

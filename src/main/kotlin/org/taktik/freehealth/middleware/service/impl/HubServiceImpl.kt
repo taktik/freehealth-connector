@@ -185,12 +185,11 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         patientSsin: String,
         patientEidCardNumber: String?,
         hubPackageId: String?
-    ) {
+    ): PutPatientConsentResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val patientConsent =
-            freehealthHubService.putPatientConsent(
+        return freehealthHubService.putPatientConsent(
                 endpoint,
                 samlToken,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
@@ -232,12 +231,11 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         patientSsin: String,
         patientEidCardNumber: String?,
         hubPackageId: String?
-    ) {
+    ): PutTherapeuticLinkResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val link =
-            freehealthHubService.putTherapeuticLink(
+        return freehealthHubService.putTherapeuticLink(
                 endpoint,
                 samlToken,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
