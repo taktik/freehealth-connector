@@ -52,8 +52,6 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.SexType
 import com.google.gson.Gson
 import ma.glasnost.orika.MapperFacade
 import org.apache.commons.lang.StringUtils
-import org.apache.http.ssl.SSLContexts
-import org.apache.logging.slf4j.SLF4JLogger
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.Error
