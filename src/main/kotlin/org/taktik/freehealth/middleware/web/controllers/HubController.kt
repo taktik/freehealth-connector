@@ -183,7 +183,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpSsin = hcpSsin,
         hcpZip = hcpZip,
         patientSsin = patientSsin
-                                                                                              )
+    )
 
     @PostMapping("/therlink/{hcpNihii}/{patientSsin}")
     fun registerTherapeuticLink(
@@ -230,7 +230,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) therLinkType: String?,
         @RequestParam(required = false) from: Instant?,
         @RequestParam(required = false) to: Instant?
-    ): List<TherapeuticLinkMessageDto> = hubService.getTherapeuticLinks(
+    ): TherapeuticLinkMessageDto = hubService.getTherapeuticLinks(
         endpoint = endpoint,
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -245,7 +245,10 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         therLinkType = therLinkType,
         from = from,
         to = to
-    )?.map { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
+    )?.let {
+        mapper.map(it, TherapeuticLinkMessageDto::class.java)
+    }
+
 
     @GetMapping("/list/{patientSsin}")
     fun getTransactionsList(
@@ -266,7 +269,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) authorSsin: String?,
         @RequestParam(required = false) isGlobal: Boolean?,
         @RequestParam(required = false) breakTheGlassReason: String?
-        ): List<TransactionSummary> {
+    ): List<TransactionSummary> {
         return hubService.getTransactionsList(
             endpoint = endpoint,
             keystoreId = keystoreId,
@@ -326,7 +329,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
             MarshallerHelper(
                 Kmehrmessage::class.java,
                 Kmehrmessage::class.java
-                            ).toXMLByteArray(it).toString(Charsets.UTF_8)}
+            ).toXMLByteArray(it).toString(Charsets.UTF_8)
+        }
     }
 
     @GetMapping("/t/{ssin}/{sv}/{sl}/kmehr")
@@ -346,7 +350,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @PathVariable sv: String,
         @PathVariable sl: String,
         @RequestParam id: String
-                      ): Kmehrmessage? {
+    ): Kmehrmessage? {
         return hubService.getTransaction(
             endpoint = endpoint,
             keystoreId = keystoreId,
@@ -363,7 +367,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
             sv = sv,
             sl = sl,
             value = id
-                                        )
+        )
     }
 
     @DeleteMapping("/t/{ssin}/{sv}/{sl}")
@@ -471,11 +475,12 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         sv = sv,
         sl = sl,
         value = id
-                                             )?.let {
+    )?.let {
         MarshallerHelper(
             Kmehrmessage::class.java,
             Kmehrmessage::class.java
-                        ).toXMLByteArray(it).toString(Charsets.UTF_8)}
+        ).toXMLByteArray(it).toString(Charsets.UTF_8)
+    }
 
     @GetMapping("/ts/{ssin}/{sv}/{sl}/kmehr")
     fun getTransactionSetMessage(
@@ -494,7 +499,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @PathVariable sv: String,
         @PathVariable sl: String,
         @RequestParam id: String
-                         ): Kmehrmessage? = hubService.getTransactionSet(
+    ): Kmehrmessage? = hubService.getTransactionSet(
         endpoint = endpoint,
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -510,7 +515,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         sv = sv,
         sl = sl,
         value = id
-                                                                  )
+    )
 
     @PostMapping("/ts/{hubId}/{patientSsin}", consumes = [MediaType.APPLICATION_XML_VALUE])
     fun putTransactionSet(

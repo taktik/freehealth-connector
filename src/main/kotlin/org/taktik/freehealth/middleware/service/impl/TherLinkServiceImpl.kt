@@ -76,7 +76,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         endDate: Date?,
         type: String?,
         sign: Boolean?
-                                       ): List<TherapeuticLinkMessage>? {
+                                       ): TherapeuticLinkMessage? {
         val linkBuilder = TherapeuticLink.Builder()
             .withHcParty(makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName))
             .withPatient(makePatient(patientSsin, eidCardNumber, isiCardNumber, patientFirstName, patientLastName))
@@ -100,7 +100,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         passPhrase: String,
         queryLink: TherapeuticLink,
         sign: Boolean?
-                                                    ): List<TherapeuticLinkMessage>? =
+                                                    ): TherapeuticLinkMessage? =
         getAllTherapeuticLinksWithQueryLink(
             keystoreId,
             tokenId,
@@ -115,7 +115,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         passPhrase: String,
         queryLink: TherapeuticLink,
         proof: Proof?
-                                                   ): List<TherapeuticLinkMessage>? {
+                                                   ): TherapeuticLinkMessage? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -133,12 +133,12 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         val response = rawResponse.asObject(GetTherapeuticLinkResponse::class.java)
 
         return if (response.acknowledge.isIscomplete) {
-            responseObjectMapper.mapJaxbToGetTherapeuticLinkResponse(response)
-                .listOfTherapeuticLinks.map { TherapeuticLinkMessage(it) }
+            TherapeuticLinkMessage(responseObjectMapper.mapJaxbToGetTherapeuticLinkResponse(response)
+                .listOfTherapeuticLinks)
         } else {
-            listOf(TherapeuticLinkMessage().apply {
-                isComplete = response.acknowledge.isIscomplete
-                errors =
+            TherapeuticLinkMessage().apply {
+                this.isComplete = response.acknowledge.isIscomplete
+                this.errors =
                     responseObjectMapper.mapAcknowledge(response.acknowledge)
                         .listOfErrors.filter { it.errorCode != "NIP.META.TlServiceBean" }
                         .map {
@@ -149,7 +149,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                                 mapOf()
                                                                       )
                         }
-            })
+            }
         }
     }
 
@@ -158,13 +158,13 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         tokenId: UUID,
         passPhrase: String,
         therLink: TherapeuticLink
-                              ): TherapeuticLink? = getAllTherapeuticLinksWithQueryLink(
+    ): TherapeuticLink? = getAllTherapeuticLinksWithQueryLink(
         keystoreId,
         tokenId,
         passPhrase,
         therLink,
         false
-                                                                                       )?.firstOrNull()?.let { if (it.isComplete) it.therapeuticLink else null }
+    )?.let { if (it.isComplete) it.therapeuticLinks?.firstOrNull() else null }
 
     override fun registerTherapeuticLink(
         keystoreId: UUID,
@@ -228,7 +228,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         return TherapeuticLinkMessage().apply {
             isComplete = response.acknowledge.isIscomplete
             if (isComplete) {
-                therapeuticLink = therLink
+                therapeuticLinks = listOf(therLink)
             } else {
                 errors =
                     responseObjectMapper.mapAcknowledge(response.acknowledge)
@@ -329,7 +329,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         return TherapeuticLinkMessage().apply {
             isComplete = response.acknowledge.isIscomplete
             if (isComplete) {
-                therapeuticLink = therLink
+                therapeuticLinks = listOf(therLink)
             } else {
                 errors =
                     responseObjectMapper.mapAcknowledge(response.acknowledge)
