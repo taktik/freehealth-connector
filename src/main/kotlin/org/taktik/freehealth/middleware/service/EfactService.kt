@@ -17,7 +17,9 @@ interface EfactService {
                      hcpSsin: String,
                      hcpFirstName: String,
                      hcpLastName: String,
-                     language: String): List<EfactMessage>
+                     language: String,
+                     limit: Int
+        ): List<EfactMessage>
     fun confirmAcks(
         keystoreId: UUID,
         tokenId: UUID,
