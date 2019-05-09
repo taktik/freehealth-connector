@@ -216,12 +216,6 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                         be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
                                             .apply { this.value = hcpSsin }
                                 }
-                            } else {
-                                this.organization = be.fgov.ehealth.mycarenet.commons.core.v2.IdType().apply {
-                                    this.ssin = be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString().apply {
-                                        this.value = guardPostSsin
-                                    }
-                                }
                             }
                         }
                     }
