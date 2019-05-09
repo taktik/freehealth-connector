@@ -84,7 +84,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             val kmehrUUID = now.toString("YYYYddhhmmssSS")
             val requestAuthorNihii = (guardPostNihii ?: hcpNihii).padEnd(11, '0')
             val requestAuthorSsin = guardPostSsin ?: hcpSsin
-            val reqId = "$hcpNihii.$kmehrUUID"
+            val reqId = "${(guardPostNihii ?: hcpNihii).padEnd(11, '0')}.$kmehrUUID"
 
             //  The author is always the caller
             val author = AuthorType().apply {
