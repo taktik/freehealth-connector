@@ -11,6 +11,6 @@ public final class XmlValidator {
    }
 
    public static void validateXml(Object xmlObject) throws TechnicalConnectorException {
-      ValidatorHelper.validate(xmlObject, "/ehealth-dics/XSD/ehealth-dics-protocol-3_0.xsd");
+      ValidatorHelper.Companion.validate(xmlObject, "/ehealth-dics/XSD/ehealth-dics-protocol-3_0.xsd");
    }
 }

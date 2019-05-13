@@ -764,6 +764,7 @@ public class DrugsDAOImpl implements DrugsDAO {
                 result.addAll(sess.createCriteria(Paragraph.class)
                         .add(Restrictions.eq("chapterName", "IV"))
                         .add(Restrictions.in("paragraphName", vals))
+                        .add(Restrictions.in("processType", Arrays.asList(1L, 2L, 3L, 4L)))
                         .list());
                 //}
             }

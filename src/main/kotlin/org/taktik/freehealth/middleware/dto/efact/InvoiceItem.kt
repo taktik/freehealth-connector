@@ -55,4 +55,6 @@ class InvoiceItem {
     var doctorIdentificationNumber: String? = null
     var invoiceRef: String? = null
     var percentNorm: InvoicingPercentNorm? = null
+
+    var internshipNihii: String? = null
 }

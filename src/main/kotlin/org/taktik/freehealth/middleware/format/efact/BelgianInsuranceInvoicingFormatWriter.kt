@@ -61,24 +61,26 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
     fun getDestCode(affCode: String, invoiceSender: InvoiceSender, returnAffCodeIfMH: Boolean = false): String {
         val firstCode = affCode.substring(0, 3).replace("[^0-9]".toRegex(), "")
-        if(invoiceSender.isMedicalHouse && returnAffCodeIfMH){
-            return firstCode
-        }
-        else {
-            if (affCode.startsWith("3")) {
-                return if (invoiceSender.isMedicalHouse)
+
+        return if (invoiceSender.isMedicalHouse) {
+            if (returnAffCodeIfMH) firstCode else {
+                if (affCode.startsWith("3")) {
                     if (Arrays.asList("304", "305", "309", "311", "315", "317", "319", "322", "323", "325").contains(firstCode)) "300"
                     else "306"
-                else
-                    if (Arrays.asList("305", "315", "317", "319", "323", "325").contains(firstCode))
-                        if (invoiceSender.isSpecialist) "317"
-                        else "319"
+                } else
+                    if (affCode.startsWith("4")) "400"
                     else firstCode
-            } else if (affCode.startsWith("4")) {
-                return "400"
             }
+        } else {
+            if (affCode.startsWith("3")) {
+                if (Arrays.asList("305", "315", "317", "319", "323", "325").contains(firstCode))
+                    if (invoiceSender.isSpecialist) "317"
+                    else "319"
+                else firstCode
+            } else
+                if (affCode.startsWith("4")) "400"
+                else firstCode
         }
-        return firstCode
     }
 
     //022464328
@@ -291,7 +293,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         //Silly rules for this field
         var affCode = insuranceCode
 
-        if (affCode.startsWith("2") || affCode.startsWith("5") || (magneticInvoice!! && affCode.startsWith("4"))) {
+        if (affCode.startsWith("2") || affCode.startsWith("5")) {
             affCode = "000"
         }
 
@@ -356,7 +358,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         noSIS = noSIS!!.replace("[^0-9]".toRegex(), "")
 
         ws.write("2", recordNumber)
-        ws.write("3", (icd.percentNorm?: InvoicingPercentNorm.None).code)
+        ws.write("3", (icd.percentNorm ?: InvoicingPercentNorm.None).code)
         ws.write("4", icd.codeNomenclature)
         ws.write("5", FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
         ws.write("6a", if(icd.endDateCode != null) FuzzyValues.getLocalDateTime(icd.endDateCode!!)!!.format(dtf) else FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
@@ -374,13 +376,20 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("13",990)
         if (sender.isMedicalHouse) ws.write("14", sender.nihii)
         if (!sender.isMedicalHouse) ws.write("15", icd.doctorIdentificationNumber)
-        ws.write("16", if (sender.isMedicalHouse) 0 else if (icd.gnotionNihii == null || icd.gnotionNihii?.let { it.isEmpty() } == true) 1 else 4)
+        //ws.write("16", if (sender.isMedicalHouse) 0 else if (icd.gnotionNihii == null || icd.gnotionNihii?.let { it.isEmpty() } == true) 1 else 4)
+        ws.write("16",
+                 when {
+                     sender.isMedicalHouse -> 0
+                     icd.gnotionNihii?.isNotEmpty() == true -> 4
+                     icd.internshipNihii?.isNotEmpty() == true -> 5
+                     else -> 1
+                 })
         ws.write("17", icd.relatedCode)
         ws.write("19",(if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
         ws.write("22",(if (icd.units >= 0) "+" else "-") + nf4.format(Math.abs(icd.units)))
-        ws.write("23", (icd.derogationMaxNumber?: InvoicingDerogationMaxNumberCode.Other).code)
+        ws.write("23", (icd.derogationMaxNumber ?: InvoicingDerogationMaxNumberCode.Other).code)
         ws.write("24", icd.prescriberNihii)
-        ws.write("26", (icd.percentNorm?: InvoicingPercentNorm.None).code)
+        ws.write("26", (icd.prescriberNorm ?: InvoicingPrescriberCode.None).code)
         ws.write("27",(if (icd.patientFee >= 0) "+" else "-") + nf9.format(Math.abs(icd.patientFee)))
         ws.write("28", icd.invoiceRef)
         ws.write("30",(if (icd.doctorSupplement >= 0) "+" else "-") + nf9.format(Math.abs(icd.doctorSupplement)))
@@ -388,7 +397,12 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("33", icd.personalInterventionCoveredByThirdPartyCode?. let { if (it >= 0) it else 0 } ?: 0)//MAF Zone 33 todo //Mettre 1 si a charge du medecin
         ws.write("34", (icd.sideCode?: InvoicingSideCode.None).code)
         ws.write("35", sender.conventionCode)
-        ws.write("49",icd.gnotionNihii)
+        //ws.write("49",icd.gnotionNihii)
+        ws.write("49", when {
+            icd.gnotionNihii?.isNotEmpty() == true -> icd.gnotionNihii
+            icd.internshipNihii?.isNotEmpty() == true -> icd.internshipNihii
+            else -> null
+        })
 
         ws.writeFieldsWithCheckSum()
         return recordNumber+1
@@ -503,7 +517,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         var affCode = insuranceCode
 
-        if (affCode.startsWith("2") || affCode.startsWith("5") || (magneticInvoice!! && affCode.startsWith("4"))) {
+        if (affCode.startsWith("2") || affCode.startsWith("5")) {
             affCode = "000"
         }
 

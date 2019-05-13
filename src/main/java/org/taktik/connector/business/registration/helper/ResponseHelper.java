@@ -18,7 +18,7 @@ public class ResponseHelper implements ConfigurationModuleBootstrap.ModuleBootst
    }
 
    public static void validateResponse(RegistrationsAnswer responseContent) throws TechnicalConnectorException {
-      ValidatorHelper.validate((Object)responseContent, (String)"/mycarenet-registration/XSD/registrations-v1.0.xsd");
+      ValidatorHelper.Companion.validate((Object)responseContent, (String)"/mycarenet-registration/XSD/registrations-v1.0.xsd");
    }
 
    public static RegistrationsAnswer toObject(byte[] responseContent) {

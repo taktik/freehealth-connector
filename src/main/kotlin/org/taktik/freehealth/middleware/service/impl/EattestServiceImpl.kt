@@ -607,7 +607,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                             s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                             (itemId++).toString()
                                         })
-                                        cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "documentidentity" })
+                                        cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.3"; value = "documentidentity" })
                                         contents.addAll(listOf(ContentType().apply {
                                             date = (dateTime(cr.date) ?: now)
                                             time =
