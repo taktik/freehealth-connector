@@ -292,7 +292,8 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        language: String
+        language: String,
+        limit: Int
                              ): List<EfactMessage> {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -328,7 +329,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             throw IllegalStateException(e)
         }
 
-        var batchSize = 64
+        var batchSize = Math.min(64, limit)
         var retries = 8
 
         val eFactMessages = ArrayList<EfactMessage>()
@@ -343,7 +344,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     genAsyncService.getRequest(samlToken, requestObjectBuilder.buildGetRequest(ci.origin, msgQuery, query), header)
             } catch (e: TechnicalConnectorException) {
                 if ((e.message?.contains("SocketTimeout") == true) && batchSize > 1) {
-                    batchSize = batchSize / 4
+                    batchSize /= 4
                     continue
                 }
                 throw IllegalStateException(e)
