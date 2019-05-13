@@ -72,6 +72,7 @@ import org.taktik.freehealth.middleware.dto.common.KmehrCd
 import org.taktik.freehealth.middleware.dto.common.KmehrId
 import org.taktik.freehealth.middleware.service.HubService
 import org.taktik.freehealth.middleware.service.STSService
+import be.fgov.ehealth.hubservices.core.v3.GetPatientAuditTrailRequest
 import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
@@ -809,5 +810,68 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             }
             breakTheGlassReason?.let { breaktheglass = it }
         }
+    }
+
+    override fun getPatientAuditTrail(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String?,
+        breakTheGlassReason: String?,
+        from: Long?,
+        to: Long?,
+        authorNihii: String?,
+        authorSsin: String?,
+        isGlobal: Boolean,
+        sv: String?,
+        sl: String?,
+        value: String?,
+        hubPackageId: String?): GetPatientAuditTrailResponse {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        return freehealthHubService.getPatientAuditTrail(
+            endpoint,
+            samlToken,
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase,
+            GetPatientAuditTrailRequest().apply{
+                request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null,true)
+                select = SelectGetPatientAuditTrailType().apply {
+                    from?.let {begindate = DateTime(from) }
+                    to?.let { enddate = DateTime(to) }
+                    ssin?.let{ patient =
+                        PatientIdType().apply {
+                            ids.add(IDPATIENT().apply {
+                                this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin
+                            })
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(authorNihii) && StringUtils.isNotEmpty(authorSsin)) {
+                        hcparty =
+                            HCPartyIdType().apply {
+                            ids.add(IDHCPARTY().apply { this.s = IDHCPARTYschemes.ID_HCPARTY; this.sv = "1.0"; this.value = authorNihii })
+                            ids.add(IDHCPARTY().apply { this.s = IDHCPARTYschemes.INSS; this.sv = "1.0"; this.value = authorSsin })
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(sv) && StringUtils.isNotEmpty(sl) && StringUtils.isNotEmpty(sl)) {
+                        transaction = TransactionBaseType().apply {
+                            id =
+                                IDKMEHR().apply {
+                                    this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
+                                    sl; this.value = value
+                                }
+                        }
+                    }
+                    breakTheGlassReason?.let { breaktheglass = it }
+                }
+            }
+        )
     }
 }

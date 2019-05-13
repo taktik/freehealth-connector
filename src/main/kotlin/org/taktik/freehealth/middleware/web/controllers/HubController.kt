@@ -23,6 +23,8 @@ package org.taktik.freehealth.middleware.web.controllers
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
 import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+import be.fgov.ehealth.hubservices.core.v3.GetPatientAuditTrailRequest
+import be.fgov.ehealth.hubservices.core.v3.GetPatientAuditTrailResponse
 import ma.glasnost.orika.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
@@ -543,5 +545,50 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpZip = hcpZip,
         ssin = patientSsin,
         transaction = message
+    )
+
+    @GetMapping("/trail")
+    fun getPatientAuditTrail(
+        @RequestParam endpoint: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam(required = false) hubPackageId: String?,
+        @RequestParam hcpZip: String,
+        @RequestParam(required = false) from: Long?,
+        @RequestParam(required = false) to: Long?,
+        @RequestParam(required = false) authorNihii: String?,
+        @RequestParam(required = false) authorSsin: String?,
+        @RequestParam(required = false) isGlobal: Boolean?,
+        @RequestParam(required = false) breakTheGlassReason: String?,
+        @RequestParam(required = false) ssin: String?,
+        @RequestParam(required = false) sv: String?,
+        @RequestParam(required = false) sl: String?,
+        @RequestParam(required = false) id: String?
+    ):GetPatientAuditTrailResponse = hubService.getPatientAuditTrail(
+        endpoint = endpoint,
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hcpLastName = hcpLastName,
+        hcpFirstName = hcpFirstName,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpZip = hcpZip,
+        ssin = ssin,
+        breakTheGlassReason = breakTheGlassReason,
+        from = from,
+        to = to,
+        authorNihii = authorNihii,
+        authorSsin = authorSsin,
+        isGlobal = isGlobal ?: false,
+        sv = sv,
+        sl = sl,
+        value = id,
+        hubPackageId = hubPackageId
     )
 }
