@@ -88,7 +88,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam ssin: String,
         @RequestParam firstName: String,
-        @RequestParam lastName: String
+        @RequestParam lastName: String,
+        @RequestParam limit: Int?
                     ) =
         efactService.loadMessages(
             keystoreId = keystoreId,
@@ -98,7 +99,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             hcpNihii = nihii,
             hcpFirstName = firstName,
             hcpLastName = lastName,
-            language = language
+            language = language,
+            limit = limit ?: Integer.MAX_VALUE
                                  )
 
     @PutMapping("/confirm/acks/{nihii}")
