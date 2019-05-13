@@ -3,6 +3,7 @@ package org.taktik.freehealth.middleware.service
 import org.taktik.connector.business.domain.dmg.DmgAcknowledge
 import org.taktik.freehealth.middleware.dto.efact.EfactMessage
 import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
+import org.taktik.freehealth.middleware.dto.efact.FlatFileWithMetadata
 import org.taktik.freehealth.middleware.dto.efact.InvoicesBatch
 import java.util.UUID
 
@@ -17,7 +18,9 @@ interface EfactService {
                      hcpFirstName: String,
                      hcpLastName: String,
                      language: String,
-                     isGuardPost: Boolean): List<EfactMessage>
+                     limit: Int,
+                     isGuardPost: Boolean
+        ): List<EfactMessage>
     fun confirmAcks(
         keystoreId: UUID,
         tokenId: UUID,
@@ -43,4 +46,5 @@ interface EfactService {
     ): Boolean
 
     fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean): String
+    fun makeFlatFileCoreWithMetadata(batch: InvoicesBatch, isTest: Boolean): FlatFileWithMetadata
 }

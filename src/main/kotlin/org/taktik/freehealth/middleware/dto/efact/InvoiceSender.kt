@@ -18,6 +18,8 @@
 
 package org.taktik.freehealth.middleware.dto.efact
 
+import java.util.*
+
 class InvoiceSender {
     var nihii: Long? = null
     var bic: String? = null
@@ -29,6 +31,9 @@ class InvoiceSender {
     var firstName: String? = null
     var phoneNumber: Long? = null
     var conventionCode: Int? = null
+
+    var isMedicalHouse:Boolean = false
+        get() = nihii != null && nihii!!.toString().startsWith("8") && Arrays.asList("111", "110", "100", "101", "001", "010", "011").contains(nihii!!.toString().substring(8))
 
     var isSpecialist: Boolean = false
         get() = nihii!! % 1000L >= 10

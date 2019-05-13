@@ -142,6 +142,7 @@ abstract class EfactAbstractTest : EhealthTest() {
             invoicingYear = 2018
             invoicingMonth = 9
             this.batchRef = batchRef
+            this.fileRef = batchRef + "fr"
             uniqueSendNumber = uniq.toLong()
             ioFederationCode = oa
             numericalRef = ((LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd")).toLong()) * 1_000_000) + (ioFederationCode!!.toLong() * 1_000) + uniq
@@ -162,6 +163,43 @@ abstract class EfactAbstractTest : EhealthTest() {
                 this.invoiceRef = batchRef
                 this.ioCode = patientWithInss.insurabilities.firstOrNull()?.insuranceCode ?: oa
                 reason = InvoicingTreatmentReasonCode.Other
+            })
+        }
+
+    private fun createBatchFlatRate(invoiceNumber: Long,
+                            batchRef: String,
+                            oa: String,
+                            patientWithInss: org.taktik.freehealth.middleware.domain.common.Patient,
+                            uniq: Int): InvoicesBatch =
+        InvoicesBatch().apply {
+
+            invoiceContent = 0
+            magneticInvoice = true
+            invoicingYear = 2018
+            invoicingMonth = 9
+            this.batchRef = batchRef
+            this.fileRef = batchRef + "fr"
+            uniqueSendNumber = uniq.toLong()
+            ioFederationCode = oa
+            numericalRef = ((LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd")).toLong()) * 1_000_000) + (ioFederationCode!!.toLong() * 1_000) + uniq
+            sender = InvoiceSender().apply {
+                nihii = "12345678111".toLong() //nihiiSender
+                //ssin = ssin1 //ssinSender
+                bce = cbe1?.toLong()
+                bic = bicSender
+                iban = ibanSender
+                firstName = firstName1
+                lastName = lastName1
+                phoneNumber = phoneSender.toLong()
+            }
+
+            invoices.add(Invoice().apply {
+                patient = patientWithInss
+                this.invoiceNumber = invoiceNumber
+                this.invoiceRef = batchRef
+                this.ioCode = patientWithInss.insurabilities.firstOrNull()?.insuranceCode ?: oa
+                reason = InvoicingTreatmentReasonCode.Other
+                startOfCoveragePeriod = 20160601
             })
         }
 
@@ -205,15 +243,18 @@ abstract class EfactAbstractTest : EhealthTest() {
                                   patientFee: Int,
                                   doctorSupplement: Int,
                                   contract: String?,
-                                  date: Date): InvoiceItem {
+                                  date: Date,
+                                  endDate: Date? = null,
+                                  mmNihii: String? = null): InvoiceItem {
         val invoiceItem = InvoiceItem()
 
         invoiceItem.insuranceRef = contract
         invoiceItem.insuranceRefDate = contract?.let { date.time }
         invoiceItem.reimbursedAmount = reimbursedAmount.toLong()
         invoiceItem.dateCode = date.time
+        invoiceItem.endDateCode = if(endDate != null) endDate!!.time else null
         invoiceItem.codeNomenclature = codeNomenclature
-        invoiceItem.doctorIdentificationNumber = nihii1
+        invoiceItem.doctorIdentificationNumber = if (mmNihii == null) nihii1 else mmNihii!!
         invoiceItem.patientFee = patientFee.toLong()
         invoiceItem.doctorSupplement = doctorSupplement.toLong()
         invoiceItem.prescriberNorm = InvoicingPrescriberCode.None
@@ -822,6 +863,32 @@ abstract class EfactAbstractTest : EhealthTest() {
                     0, consult.codeResults.firstOrNull()?.contract, DateTime().toDate()).apply {
                     relatedCode = 475075L
                 }))
+        }
+    }
+
+    //Flatrate MH.
+    fun prepareScenarioFlatRate(restTemplate: TestRestTemplate, port: Int, mutualityCode: String,
+                               keystoreId: String,
+                               tokenId: String,
+                               passPhrase: String): InvoicesBatch? {
+
+        val niss = NISSES_BY_MUTUALITY[mutualityCode]!![NISS1]!!
+        println("***** Scenario 10 - Mutuality $mutualityCode - NISS: $niss *****")
+        val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
+
+        val lastDay = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH)
+
+        return createBatchFlatRate(mutualityCode.toLong() * 1000 + sendNumber + 19, "FHCAFF.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 19).apply {
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(
+                java.lang.Long.valueOf("109616"),
+                0,
+                ((15.10) * 100).roundToInt(),
+                ((.0) * 100).roundToInt(),
+                0, null,
+                DateTime().withDayOfMonth(1).toDate(),
+                DateTime().withDayOfMonth(lastDay).toDate(),
+                "12345678111"
+                ))
         }
     }
 
@@ -1444,7 +1511,18 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
         }
     }
 
-
+    //Flatrate MH.
+    @Test
+    fun testFlatFlatRate() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
+            val invBatch = prepareScenarioFlatRate(this.restTemplate, this.port, mutualityCode, keystoreId!!.toString(), tokenId, passPhrase)
+                ?: continue
+            val raw = this.restTemplate.postForObject("http://localhost:$port/efact/flat/test", invBatch, String::class.java)
+            val fileName = "${this.filePrefix}.19"
+            writeFiles(fileName, mutualityCode, raw)
+        }
+    }
 
 }
 

@@ -1003,7 +1003,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
 
                     decisionReference?.let {
                         headingsAndItemsAndTexts.add(ItemType().apply {
-                            ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "3" })
+                            ids.add(IDKMEHR().apply { s = ID_KMEHR; value = (headingsAndItemsAndTexts.size + 1).toString() })
                             cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = DECISIONREFERENCE.value() })
                             contents.add(ContentType().apply {
                                 ids.add(IDKMEHR().apply {
@@ -1014,7 +1014,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                         })
                     } ?: ioRequestReference?.let {
                         headingsAndItemsAndTexts.add(ItemType().apply {
-                            ids.add(IDKMEHR().apply { s = ID_KMEHR; value = "3" })
+                            ids.add(IDKMEHR().apply { s = ID_KMEHR; value = (headingsAndItemsAndTexts.size + 1).toString() })
                             cds.add(CDITEM().apply { s = CD_ITEM_MAA; value = IOREQUESTREFERENCE.value() })
                             contents.add(ContentType().apply {
                                 ids.add(IDKMEHR().apply {

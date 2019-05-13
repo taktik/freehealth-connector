@@ -23,13 +23,16 @@ package org.taktik.freehealth.middleware.web.controllers
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
 import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+import ma.glasnost.orika.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
+import org.taktik.connector.business.therlink.domain.TherapeuticLinkMessage
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.domain.consent.Consent
 import org.taktik.freehealth.middleware.domain.hub.TransactionSummary
 import org.taktik.freehealth.middleware.dto.common.Gender
+import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkMessageDto
 import org.taktik.freehealth.middleware.service.HubService
 import org.taktik.freehealth.utils.FuzzyValues
 import java.time.Instant
@@ -37,7 +40,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/hub")
-class HubController(val hubService: HubService) {
+class HubController(val hubService: HubService, val mapper: MapperFacade) {
 
     @PostMapping("/patient/{lastName}/{patientSsin}")
     fun putPatient(
@@ -180,7 +183,7 @@ class HubController(val hubService: HubService) {
         hcpSsin = hcpSsin,
         hcpZip = hcpZip,
         patientSsin = patientSsin
-                                                                                              )
+    )
 
     @PostMapping("/therlink/{hcpNihii}/{patientSsin}")
     fun registerTherapeuticLink(
@@ -227,7 +230,7 @@ class HubController(val hubService: HubService) {
         @RequestParam(required = false) therLinkType: String?,
         @RequestParam(required = false) from: Instant?,
         @RequestParam(required = false) to: Instant?
-    ): List<TherapeuticLink> = hubService.getTherapeuticLinks(
+    ): TherapeuticLinkMessageDto = hubService.getTherapeuticLinks(
         endpoint = endpoint,
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -242,7 +245,10 @@ class HubController(val hubService: HubService) {
         therLinkType = therLinkType,
         from = from,
         to = to
-    )
+    )?.let {
+        mapper.map(it, TherapeuticLinkMessageDto::class.java)
+    }
+
 
     @GetMapping("/list/{patientSsin}")
     fun getTransactionsList(
@@ -263,7 +269,7 @@ class HubController(val hubService: HubService) {
         @RequestParam(required = false) authorSsin: String?,
         @RequestParam(required = false) isGlobal: Boolean?,
         @RequestParam(required = false) breakTheGlassReason: String?
-        ): List<TransactionSummary> {
+    ): List<TransactionSummary> {
         return hubService.getTransactionsList(
             endpoint = endpoint,
             keystoreId = keystoreId,
@@ -323,7 +329,8 @@ class HubController(val hubService: HubService) {
             MarshallerHelper(
                 Kmehrmessage::class.java,
                 Kmehrmessage::class.java
-                            ).toXMLByteArray(it).toString(Charsets.UTF_8)}
+            ).toXMLByteArray(it).toString(Charsets.UTF_8)
+        }
     }
 
     @GetMapping("/t/{ssin}/{sv}/{sl}/kmehr")
@@ -343,7 +350,7 @@ class HubController(val hubService: HubService) {
         @PathVariable sv: String,
         @PathVariable sl: String,
         @RequestParam id: String
-                      ): Kmehrmessage? {
+    ): Kmehrmessage? {
         return hubService.getTransaction(
             endpoint = endpoint,
             keystoreId = keystoreId,
@@ -360,7 +367,7 @@ class HubController(val hubService: HubService) {
             sv = sv,
             sl = sl,
             value = id
-                                        )
+        )
     }
 
     @DeleteMapping("/t/{ssin}/{sv}/{sl}")
@@ -468,11 +475,12 @@ class HubController(val hubService: HubService) {
         sv = sv,
         sl = sl,
         value = id
-                                             )?.let {
+    )?.let {
         MarshallerHelper(
             Kmehrmessage::class.java,
             Kmehrmessage::class.java
-                        ).toXMLByteArray(it).toString(Charsets.UTF_8)}
+        ).toXMLByteArray(it).toString(Charsets.UTF_8)
+    }
 
     @GetMapping("/ts/{ssin}/{sv}/{sl}/kmehr")
     fun getTransactionSetMessage(
@@ -491,7 +499,7 @@ class HubController(val hubService: HubService) {
         @PathVariable sv: String,
         @PathVariable sl: String,
         @RequestParam id: String
-                         ): Kmehrmessage? = hubService.getTransactionSet(
+    ): Kmehrmessage? = hubService.getTransactionSet(
         endpoint = endpoint,
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -507,7 +515,7 @@ class HubController(val hubService: HubService) {
         sv = sv,
         sl = sl,
         value = id
-                                                                  )
+    )
 
     @PostMapping("/ts/{hubId}/{patientSsin}", consumes = [MediaType.APPLICATION_XML_VALUE])
     fun putTransactionSet(

@@ -48,7 +48,6 @@ import be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORMYCARENETschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEM
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMYCARENET
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes.CD_ITEM_MYCARENET
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEX

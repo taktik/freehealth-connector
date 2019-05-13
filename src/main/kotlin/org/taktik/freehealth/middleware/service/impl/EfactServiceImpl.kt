@@ -34,6 +34,7 @@ import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.efact.EfactMessage
 import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
 import org.taktik.freehealth.middleware.dto.efact.ErrorDetail
+import org.taktik.freehealth.middleware.dto.efact.FlatFileWithMetadata
 import org.taktik.freehealth.middleware.dto.efact.InvoicesBatch
 import org.taktik.freehealth.middleware.dto.efact.Record
 import org.taktik.freehealth.middleware.dto.efact.Zone
@@ -51,7 +52,6 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.text.DecimalFormat
 import java.util.ArrayList
-import java.util.HashMap
 import java.util.LinkedList
 import java.util.UUID
 import javax.xml.ws.soap.SOAPFaultException
@@ -82,93 +82,119 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         try {
             iv.write200and300(batch.sender!!, batch.numericalRef
                 ?: 0, batch.fileRef!!, if (isTest) 92 else 12, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, isTest)
+            val metadata = makeFlatFileCore(iv, batch, isTest)
 
-            val codes = ArrayList<Long>()
-            var amount = 0L
-            var recordsCount = 0L
-
-            val codesPerOAMap = HashMap<String, MutableList<Long>>()
-            val amountPerOAMap = HashMap<String, Array<Long>>()
-            val recordsCountPerOAMap = HashMap<String, Array<Long>>()
-
-            var rn =
-                iv.writeFileHeader(1, batch.sender!!, if (isTest) 9991999L else 1999L, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, batch.batchRef!!)
-            recordsCount++
-
-            for (invoice in batch.invoices.sortedWith(Comparator { i1, i2 ->
-                when {
-                    i1.creditNote && !i2.creditNote -> -1
-                    i2.creditNote && !i1.creditNote -> 1
-                    else -> iv.getDestCode(i1.ioCode!!, batch.sender!!).compareTo(iv.getDestCode(i2.ioCode!!, batch.sender!!))
-                }
-            })) {
-                if (invoice.items.isNotEmpty()) {
-                    val destCode = iv.getDestCode(invoice.ioCode!!, batch.sender!!)
-
-                    val codesPerOA: MutableList<Long> = codesPerOAMap.getOrPut(destCode) { LinkedList() }
-                    val amountPerOA: Array<Long> = amountPerOAMap.getOrPut(destCode) { arrayOf(0L) }  //An array to pass it by reference
-                    val recordsCountPerOA: Array<Long> = recordsCountPerOAMap.getOrPut(destCode) { arrayOf(0L) }  //An array to pass it by reference
-
-                    val recordCodes = ArrayList<Long>()
-                    var recordAmount = 0L
-                    var recordFee = 0L
-                    var recordSup = 0L
-                    rn =
-                        iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedBatchYearMonth, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber)
-                    recordsCountPerOA[0]++
-                    recordsCount++
-                    for (it in invoice.items) {
-                        rn = iv.writeRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, invoice.ioCode!!, it)
-
-                        recordsCountPerOA[0]++
-                        recordsCount++
-
-                        if (it.insuranceRef != null) {
-                            rn =
-                                iv.writeInvolvementRecordContent(rn, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, it)
-                            recordCodes.add(it.codeNomenclature)
-                            recordsCountPerOA[0]++
-                            recordsCount++
-                        }
-
-                        if (it.eidItem != null) {
-                            rn = iv.writeEid(rn, it, invoice.patient!!, batch.sender!!)
-                            recordCodes.add(it.codeNomenclature)
-                            recordsCountPerOA[0]++
-                            recordsCount++
-                        }
-
-                        codesPerOA!!.add(it.codeNomenclature)
-                        amountPerOA!![0] += it.reimbursedAmount
-
-                        recordCodes.add(it.codeNomenclature)
-                        recordAmount += it.reimbursedAmount
-                        recordFee += it.patientFee
-                        recordSup += it.doctorSupplement
-
-                    }
-                    rn =
-                        iv.writeRecordFooter(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, recordCodes, recordAmount, recordFee, recordSup)
-                    recordsCountPerOA[0]++
-                    recordsCount++
-
-                    codes.addAll(recordCodes)
-                    amount += recordAmount
-                }
+            for (k in metadata.codesPerOAMap.keys) {
+                iv.write400(k, batch.numericalRef, metadata.recordsCountPerOAMap[k]!![0], metadata.codesPerOAMap[k]!!, metadata.amountPerOAMap[k]!![0])
             }
-            iv.writeFileFooter(rn, batch.sender!!, batch.uniqueSendNumber, batch.invoicingYear, batch.invoicingMonth, codes, amount)
-            recordsCount++
-
-            for (k in codesPerOAMap.keys) {
-                iv.write400(k, batch.numericalRef, recordsCountPerOAMap[k]!![0], codesPerOAMap[k]!!, amountPerOAMap[k]!![0])
-            }
-            iv.write960000(batch.ioFederationCode!!.replace(Regex("00$"), "99"), recordsCount, codes, amount)
+            iv.write960000(batch.ioFederationCode!!.replace(Regex("00$"), "99"), metadata.recordsCount, metadata.codes, metadata.amount)
         } catch (e: IOException) {
             throw IllegalArgumentException(e)
         }
 
-
         return stringWriter.toString()
+    }
+
+
+    override fun makeFlatFileCoreWithMetadata(batch: InvoicesBatch, isTest: Boolean): FlatFileWithMetadata {
+        require(batch.numericalRef?.let { it <= 999999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (12 positions max)" } ?: "numericalRef is missing" }
+        requireNotNull(batch.sender) { "Sender cannot be null" }
+        requireNotNull(batch.batchRef) { "BatchRef cannot be null" }
+        requireNotNull(batch.uniqueSendNumber) { "UniqueSendNumber cannot be null" }
+
+        batch.invoices.forEach {
+            requireNotNull(it.invoiceNumber) { "One of the invoices has an empty invoice number" }
+            requireNotNull(it.invoiceRef) { "One of the invoices has an empty invoice ref" }
+            requireNotNull(it.ioCode) { "One of the invoices has an empty io code" }
+            requireNotNull(it.patient) { "One of the invoices has an empty patient" }
+        }
+
+        val stringWriter = StringWriter()
+        val iv = BelgianInsuranceInvoicingFormatWriter(stringWriter)
+
+        val metadata = try {
+            this.makeFlatFileCore(iv, batch, isTest)
+        } catch (e: IOException) {
+            throw IllegalArgumentException(e)
+        }
+
+        return FlatFileWithMetadata().apply { this.flatFile = stringWriter.toString(); this.metadata = metadata }
+    }
+
+    fun makeFlatFileCore(iv: BelgianInsuranceInvoicingFormatWriter,
+        batch: InvoicesBatch,
+        isTest: Boolean): FlatFileWithMetadata.FlatFileMetadata {
+        val metadata = FlatFileWithMetadata.FlatFileMetadata()
+
+        var rn =
+            iv.writeFileHeader(1, batch.sender!!, if (isTest) 9991999L else 1999L, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, batch.batchRef!!, batch.invoiceContent)
+        metadata.recordsCount++
+
+        for (invoice in batch.invoices.sortedWith(Comparator { i1, i2 ->
+            when {
+                i1.creditNote && !i2.creditNote -> -1
+                i2.creditNote && !i1.creditNote -> 1
+                else -> iv.getDestCode(i1.ioCode!!, batch.sender!!, true).compareTo(iv.getDestCode(i2.ioCode!!, batch.sender!!), true)
+            }
+        })) {
+            if (invoice.items.isNotEmpty()) {
+                val destCode = iv.getDestCode(invoice.ioCode!!, batch.sender!!, true)
+                val codesPerOA: MutableList<Long> = metadata.codesPerOAMap.getOrPut(destCode) { LinkedList() }
+                val amountPerOA: Array<Long> = metadata.amountPerOAMap.getOrPut(destCode) { arrayOf(0L) }  //An array to pass it by reference
+                val recordsCountPerOA: Array<Long> = metadata.recordsCountPerOAMap.getOrPut(destCode) { arrayOf(0L) }  //An array to pass it by reference
+
+                val recordCodes = ArrayList<Long>()
+                var recordAmount = 0L
+                var recordFee = 0L
+                var recordSup = 0L
+                rn =
+                    iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedBatchYearMonth, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber, batch.magneticInvoice, invoice.startOfCoveragePeriod)
+                recordsCountPerOA[0]++
+                metadata.recordsCount++
+                for (it in invoice.items) {
+                    it.gnotionNihii = it.gnotionNihii ?: invoice.gnotionNihii
+                    it.internshipNihii = it.internshipNihii ?: invoice.internshipNihii
+                    rn = iv.writeRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, invoice.ioCode!!, it)
+
+                    recordsCountPerOA[0]++
+                    metadata.recordsCount++
+
+                    if (it.insuranceRef != null) {
+                        rn =
+                            iv.writeInvolvementRecordContent(rn, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, it)
+                        recordCodes.add(it.codeNomenclature)
+                        recordsCountPerOA[0]++
+                        metadata.recordsCount++
+                    }
+
+                    if (it.eidItem != null) {
+                        rn = iv.writeEid(rn, it, invoice.patient!!, batch.sender!!)
+                        recordCodes.add(it.codeNomenclature)
+                        recordsCountPerOA[0]++
+                        metadata.recordsCount++
+                    }
+
+                    codesPerOA!!.add(it.codeNomenclature)
+                    amountPerOA!![0] += it.reimbursedAmount
+
+                    recordCodes.add(it.codeNomenclature)
+                    recordAmount += it.reimbursedAmount
+                    recordFee += it.patientFee
+                    recordSup += it.doctorSupplement
+
+                }
+                rn =
+                    iv.writeRecordFooter(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, recordCodes, recordAmount, recordFee, recordSup, batch.magneticInvoice)
+                recordsCountPerOA[0]++
+                metadata.recordsCount++
+
+                metadata.codes.addAll(recordCodes)
+                metadata.amount += recordAmount
+            }
+        }
+        iv.writeFileFooter(rn, batch.sender!!, batch.uniqueSendNumber, batch.invoicingYear, batch.invoicingMonth, metadata.codes, metadata.amount)
+        metadata.recordsCount++
+        return metadata
     }
 
     fun sanitizeBatchNames(batch: InvoicesBatch): InvoicesBatch {
@@ -268,6 +294,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         hcpFirstName: String,
         hcpLastName: String,
         language: String,
+        limit: Int,
         isGuardPost: Boolean
     ): List<EfactMessage> {
         val samlToken =
@@ -304,11 +331,12 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             throw IllegalStateException(e)
         }
 
-        var batchSize = 256
+        var batchSize = Math.min(64, limit)
+        var retries = 8
 
         val eFactMessages = ArrayList<EfactMessage>()
 
-        while (true) {
+        while (retries-- > 0) {
             val msgQuery = requestObjectBuilder.createMsgQuery(batchSize, true, "HCPFAC", "HCPAFD", "HCPVWR")
             val query = requestObjectBuilder.createQuery(batchSize, true)
 
@@ -318,13 +346,14 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     genAsyncService.getRequest(samlToken, requestObjectBuilder.buildGetRequest(ci.origin, msgQuery, query), header)
             } catch (e: TechnicalConnectorException) {
                 if ((e.message?.contains("SocketTimeout") == true) && batchSize > 1) {
-                    batchSize /= 2
+                    batchSize /= 4
                     continue
                 }
                 throw IllegalStateException(e)
             } catch (e: SOAPFaultException) {
                 if (e.message?.contains("Not enough time") == true) {
-                    break
+                    Thread.sleep(30000)
+                    continue
                 }
                 throw IllegalStateException(e)
             }
@@ -465,4 +494,5 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                 }
             }
         }
+
 }

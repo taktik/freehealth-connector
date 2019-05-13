@@ -20,15 +20,19 @@
 
 package org.taktik.freehealth.middleware.service
 
+import be.fgov.ehealth.hubservices.core.v3.PutPatientConsentResponse
+import be.fgov.ehealth.hubservices.core.v3.PutTherapeuticLinkResponse
 import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
 import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
+import org.taktik.connector.business.therlink.domain.TherapeuticLinkMessage
 import org.taktik.freehealth.middleware.domain.consent.Consent
 import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.domain.hub.HcPartyConsent
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.hub.TransactionSummary
+import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkMessageDto
 import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
@@ -92,7 +96,7 @@ interface HubService {
         patientSsin: String,
         patientEidCardNumber: String?,
         hubPackageId: String?
-    )
+    ): PutPatientConsentResponse
 
     fun getPatientConsent(
         endpoint: String,
@@ -121,7 +125,7 @@ interface HubService {
         patientSsin: String,
         patientEidCardNumber: String?,
         hubPackageId: String?
-    )
+    ): PutTherapeuticLinkResponse
 
     fun getTherapeuticLinks(
         endpoint: String,
@@ -138,7 +142,7 @@ interface HubService {
         from: Instant?,
         to: Instant?,
         hubPackageId: String?
-    ): List<TherapeuticLink>
+    ): TherapeuticLinkMessage
 
     fun getTransactionsList(
         endpoint: String,

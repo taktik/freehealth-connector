@@ -34,15 +34,16 @@ abstract class RecordOrSegmentDescription {
     }
 
     protected fun register(zoneDescriptionsByZone: MutableMap<String, ZoneDescription>,
-                           zones: String,
-                           label: String,
-                           typeSymbol: String,
-                           position: Int,
-                           length: Int,
-                           value: String? = null,
-                           cs: Boolean = false,
-                           optional: Boolean = false): Int {
-        val zoneDescription = ZoneDescription.build(zones, label, typeSymbol, position, length, value, cs, optional)
+        zones: String,
+        label: String,
+        property: String?,
+        typeSymbol: String,
+        position: Int,
+        length: Int,
+        value: String? = null,
+        cs: Boolean = false,
+        optional: Boolean = false): Int {
+        val zoneDescription = ZoneDescription.build(zones, label, property, typeSymbol, position, length, value, cs, optional)
         for (zone in zones.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
             zoneDescriptionsByZone[zone.trim { it <= ' ' }] = zoneDescription
         }

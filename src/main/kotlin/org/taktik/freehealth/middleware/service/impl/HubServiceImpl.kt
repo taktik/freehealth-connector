@@ -34,6 +34,7 @@ import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEX
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEXvalues
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDTHERAPEUTICLINK
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDTHERAPEUTICLINKschemes
+import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
@@ -53,7 +54,10 @@ import ma.glasnost.orika.MapperFacade
 import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
+import org.taktik.connector.business.domain.Error
+import org.taktik.connector.business.therlink.domain.HcParty
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
+import org.taktik.connector.business.therlink.domain.TherapeuticLinkMessage
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
@@ -115,7 +119,9 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                     }
                 })
         return hcPartyConsent.consent?.let {
-            mapper.map(it, HcPartyConsent::class.java)
+            mapper.map(it, HcPartyConsent::class.java)?.apply {
+                hubId = it.author.hcparties.firstOrNull()?.ids?.find { id -> id.s == IDHCPARTYschemes.ID_HCPARTY }?.value
+            }
         }
     }
 
@@ -179,12 +185,11 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         patientSsin: String,
         patientEidCardNumber: String?,
         hubPackageId: String?
-    ) {
+    ): PutPatientConsentResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val patientConsent =
-            freehealthHubService.putPatientConsent(
+        return freehealthHubService.putPatientConsent(
                 endpoint,
                 samlToken,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
@@ -226,12 +231,11 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         patientSsin: String,
         patientEidCardNumber: String?,
         hubPackageId: String?
-    ) {
+    ): PutTherapeuticLinkResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
-        val link =
-            freehealthHubService.putTherapeuticLink(
+        return freehealthHubService.putTherapeuticLink(
                 endpoint,
                 samlToken,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
@@ -279,7 +283,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         from: Instant?,
         to: Instant?,
         hubPackageId: String?
-    ): List<TherapeuticLink> {
+    ): TherapeuticLinkMessage {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
@@ -308,13 +312,37 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                                 patientSsin
                             })
                         })
-                        begindate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
-                        enddate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
+                        // We have to disable dates due to a bug in RSW
+                        // begindate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
+                        // enddate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
                     }
                 })
-        return therapeuticLinkResponse.therapeuticlinklist?.let {
-            it.therapeuticlinks.map { mapper.map(it, TherapeuticLink::class.java) }
-        } ?: listOf()
+        val errors = therapeuticLinkResponse.acknowledge.errors.map {
+            Error().apply {
+                this.url = it.url;
+                this.descr = it.description.getValue();
+            }
+        };
+        val isComplete = therapeuticLinkResponse.acknowledge.isIscomplete();
+
+        return TherapeuticLinkMessage().apply {
+            this.isComplete = isComplete;
+            this.errors = errors;
+            this.therapeuticLinks = therapeuticLinkResponse.therapeuticlinklist?.therapeuticlinks?.map {
+                TherapeuticLink().apply {
+                    this.startDate = it.startdate.toLocalDate();
+                    this.endDate = it.enddate.toLocalDate();
+                    this.type = it.cd.value;
+                    this.comment = it.comment;
+                    this.hcParty = HcParty().apply {
+                        this.setIds(it.hcparty.ids);
+                    }
+                    this.patient = org.taktik.connector.business.common.domain.Patient().apply {
+                        this.inss = it.patient.ids.find { idpatient -> idpatient.s.equals("INSS") } ?.value;
+                    }
+                }
+            } ?: listOf()
+        }
     }
 
     override fun putPatient(
@@ -634,6 +662,9 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 recorddatetime = it.recorddatetime.millis
                 iscomplete = it.isIscomplete
                 isvalidated = it.isIsvalidated
+
+                desc = it.cds.find { it.s == CDTRANSACTIONschemes.CD_TRANSACTION }?.value
+                authorsList = it.author.hcparties.filterNot { it.cds.any { it.s == CDHCPARTYschemes.CD_HCPARTY && it.value == "hub" } }.map { listOf(it.firstname, it.familyname, it.name).filterNotNull().joinToString(" ")  }.joinToString(",")
             }
         } ?: listOf()
     }

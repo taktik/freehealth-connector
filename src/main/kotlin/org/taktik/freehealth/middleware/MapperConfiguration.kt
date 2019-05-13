@@ -24,12 +24,17 @@ import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.AddressType
 import be.fgov.ehealth.standards.kmehr.schema.v1.CountryType
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.JsonSerializer
+import com.fasterxml.jackson.databind.SerializerProvider
 import ma.glasnost.orika.CustomConverter
 import ma.glasnost.orika.MapperFacade
 import ma.glasnost.orika.impl.DefaultMapperFactory
 import ma.glasnost.orika.metadata.Type
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
+import org.joda.time.LocalDateTime
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.taktik.freehealth.middleware.dto.Address
@@ -41,6 +46,33 @@ import java.util.*
 
 @Configuration
 class MapperConfiguration {
+    @Bean
+    fun customJson(): Jackson2ObjectMapperBuilderCustomizer {
+        return (Jackson2ObjectMapperBuilderCustomizer { builder ->
+            builder?.serializerByType(LocalDate::class.java, object : JsonSerializer<LocalDate>() {
+                override fun serialize(value: LocalDate?, gen: JsonGenerator?, serializers: SerializerProvider?) {
+                    gen?.let { if (value != null) it.writeNumber(value.year * 10000L + value.monthOfYear * 100 + value.dayOfMonth) else it.writeNull() }
+                }
+            })?.serializerByType(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
+                override fun serialize(value: LocalDateTime?, gen: JsonGenerator?, serializers: SerializerProvider?) {
+                    gen?.let { if (value != null) it.writeNumber((value.year * 10000L + value.monthOfYear * 100 + value.dayOfMonth) * 1000000L + value.hourOfDay * 10000 + value.minuteOfHour * 100 + value.secondOfMinute) else it.writeNull() }
+                }
+            })?.serializerByType(java.time.LocalDate::class.java, object : JsonSerializer<java.time.LocalDate>() {
+                override fun serialize(value: java.time.LocalDate?, gen: JsonGenerator?, serializers: SerializerProvider?) {
+                    gen?.let { if (value != null) it.writeNumber(value.year * 10000L + value.monthValue * 100 + value.dayOfMonth) else it.writeNull() }
+                }
+            })?.serializerByType(java.time.LocalDateTime::class.java, object : JsonSerializer<java.time.LocalDateTime>() {
+                override fun serialize(value: java.time.LocalDateTime?, gen: JsonGenerator?, serializers: SerializerProvider?) {
+                    gen?.let { if (value != null) it.writeNumber((value.year * 10000L + value.monthValue * 100 + value.dayOfMonth) * 1000000L + value.hour * 10000 + value.minute * 100 + value.second) else it.writeNull() }
+                }
+            })?.serializerByType(DateTime::class.java, object : JsonSerializer<DateTime>() {
+                override fun serialize(value: DateTime?, gen: JsonGenerator?, serializers: SerializerProvider?) {
+                    gen?.let { if (value != null) it.writeNumber((value.year * 10000L + value.monthOfYear * 100 + value.dayOfMonth) * 1000000L + value.hourOfDay * 10000 + value.minuteOfHour * 100 + value.secondOfMinute) else it.writeNull() }
+                }
+            })
+        })
+    }
+
     @Bean
     fun mapper(): MapperFacade? {
         val factory = DefaultMapperFactory.Builder().build()
