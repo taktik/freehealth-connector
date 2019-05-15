@@ -271,4 +271,57 @@ interface HubService {
         value: String?,
         hubPackageId: String?
     ): GetPatientAuditTrailResponse
+
+    fun putAccessRight(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        sv: String, //trn to manage
+        sl: String, //trn to manage
+        value: String, //trn to manage
+        accessNihii: String?, //hcp to allow/disallow
+        accessSsin: String?, //hcp to allow/disallow
+        accessRight: String, //allow, disallow
+        hubPackageId: String?
+    ): PutAccessRightResponse
+
+    fun getAccessRight(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        sv: String, //trn to manage
+        sl: String, //trn to manage
+        value: String, //trn to manage
+        hubPackageId: String?
+    ): GetAccessRightResponse
+
+    fun revokeAccessRight(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        sv: String, //trn to manage
+        sl: String, //trn to manage
+        value: String, //trn to manage
+        accessNihii: String?, //hcp to allow/disallow
+        accessSsin: String?, //hcp to allow/disallow
+        hubPackageId: String?
+    ): RevokeAccessRightResponse
 }

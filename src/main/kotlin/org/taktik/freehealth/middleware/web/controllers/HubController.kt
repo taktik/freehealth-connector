@@ -20,11 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
-import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
+import be.fgov.ehealth.hubservices.core.v3.*
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
-import be.fgov.ehealth.hubservices.core.v3.GetPatientAuditTrailRequest
-import be.fgov.ehealth.hubservices.core.v3.GetPatientAuditTrailResponse
 import ma.glasnost.orika.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
@@ -589,6 +586,109 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         sv = sv,
         sl = sl,
         value = id,
+        hubPackageId = hubPackageId
+    )
+
+    @PostMapping("/access", consumes = [MediaType.APPLICATION_XML_VALUE])
+    fun putAccessRight(
+        @RequestParam endpoint: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpZip: String,
+        @RequestParam sv: String, //trn to manage
+        @RequestParam sl: String, //trn to manage
+        @RequestParam value: String, //trn to manage
+        @RequestParam (required = false) accessNihii: String?, //hcp to allow/disallow
+        @RequestParam (required = false) accessSsin: String?, //hcp to allow/disallow
+        @RequestParam accessRight: String, //allow, disallow
+        @RequestParam (required = false) hubPackageId: String?
+    ): PutAccessRightResponse = hubService.putAccessRight(
+        endpoint = endpoint,
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hcpLastName = hcpLastName,
+        hcpFirstName = hcpFirstName,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpZip = hcpZip,
+        sv = sv,
+        sl = sl,
+        value = value,
+        accessNihii = accessNihii,
+        accessRight = accessRight,
+        accessSsin = accessSsin,
+        hubPackageId = hubPackageId
+    )
+
+    @GetMapping("/access")
+    fun getAccessRight(
+        @RequestParam endpoint: String,
+        @RequestHeader(name = "X-FHC-keystoreId")keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase")passPhrase: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpZip: String,
+        @RequestParam sv: String, //trn to manage
+        @RequestParam sl: String, //trn to manage
+        @RequestParam value: String, //trn to manage
+        @RequestParam (required = false) hubPackageId: String?
+    ): GetAccessRightResponse = hubService.getAccessRight(
+        endpoint = endpoint,
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hcpLastName = hcpLastName,
+        hcpFirstName = hcpFirstName,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpZip = hcpZip,
+        sv = sv,
+        sl = sl,
+        value = value,
+        hubPackageId = hubPackageId
+    )
+
+    @DeleteMapping("/access")
+    fun revokeAccessRight(
+        @RequestParam endpoint: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpZip: String,
+        @RequestParam sv: String, //trn to manage
+        @RequestParam sl: String, //trn to manage
+        @RequestParam value: String, //trn to manage
+        @RequestParam (required = false) accessNihii: String?, //hcp to allow/disallow
+        @RequestParam (required = false) accessSsin: String?, //hcp to allow/disallow
+        @RequestParam (required = false) hubPackageId: String?
+    ): RevokeAccessRightResponse = hubService.revokeAccessRight(
+        endpoint = endpoint,
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hcpLastName = hcpLastName,
+        hcpFirstName = hcpFirstName,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpZip = hcpZip,
+        sv = sv,
+        sl = sl,
+        value = value,
+        accessNihii = accessNihii,
+        accessSsin = accessSsin,
         hubPackageId = hubPackageId
     )
 }
