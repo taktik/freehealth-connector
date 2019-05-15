@@ -673,7 +673,6 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam value: String, //trn to manage
         @RequestParam (required = false) accessNihii: String?, //hcp to allow/disallow
         @RequestParam (required = false) accessSsin: String?, //hcp to allow/disallow
-        @RequestParam accessRight: String, //allow, disallow
         @RequestParam (required = false) hubPackageId: String?
     ): RevokeAccessRightResponse = hubService.revokeAccessRight(
         endpoint = endpoint,
@@ -689,7 +688,6 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         sl = sl,
         value = value,
         accessNihii = accessNihii,
-        accessRight = accessRight,
         accessSsin = accessSsin,
         hubPackageId = hubPackageId
     )

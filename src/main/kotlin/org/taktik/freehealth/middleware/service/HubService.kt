@@ -322,7 +322,6 @@ interface HubService {
         value: String, //trn to manage
         accessNihii: String?, //hcp to allow/disallow
         accessSsin: String?, //hcp to allow/disallow
-        accessRight: String, //allow, disallow
         hubPackageId: String?
     ): RevokeAccessRightResponse
 }
