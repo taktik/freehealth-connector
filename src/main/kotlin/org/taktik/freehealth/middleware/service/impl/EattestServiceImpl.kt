@@ -719,7 +719,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                             if (guardPostNihii?.isEmpty() == true) {
                                 nihii =
                                     NihiiType().apply {
-                                        quality = "persphysician"; value =
+                                        quality = "doctor"; value =
                                         ValueRefString().apply { value = hcpNihii }
                                     }
 
