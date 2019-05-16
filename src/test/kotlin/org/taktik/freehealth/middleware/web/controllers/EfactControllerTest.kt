@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
+import org.assertj.core.api.Assertions
 import org.joda.time.DateTime
 import org.junit.Before
 import org.junit.Test
@@ -54,16 +55,8 @@ import kotlin.math.roundToInt
 @Suppress("PrivatePropertyName", "PropertyName")
 abstract class EfactAbstractTest : EhealthTest() {
     // Add the scenario number to this to get a unique ID, then you can run all the tests without having to manually change the unique send number
-    private var sendNumber = 400
+    private var sendNumber = 805
 
-    val ssinSender = "62110906574"
-    val nihiiSender = 19234011004L
-    val ibanSender = "BE38063122631172"
-    val bicSender = "GKCCBEBB"
-    val cbeSender = 999999922L //827098610L
-
-    val firstNameSender = "Frédéric"
-    val lastNameSender = "Dujardin"
     val phoneSender = "0479905510"
 
     private val DMG_NIHIIS_FOR_NISS2: MutableMap<String, String> = HashMap()
@@ -157,8 +150,8 @@ abstract class EfactAbstractTest : EhealthTest() {
                 nihii = nihii1?.toLong() //nihiiSender
                 ssin = ssin1 //ssinSender
                 bce = cbe1?.toLong()
-                bic = bicSender
-                iban = ibanSender
+                bic = BIC1
+                iban = IBAN1
                 firstName = firstName1
                 lastName = lastName1
                 phoneNumber = phoneSender.toLong()
@@ -207,6 +200,40 @@ abstract class EfactAbstractTest : EhealthTest() {
                 this.ioCode = patientWithInss.insurabilities.firstOrNull()?.insuranceCode ?: oa
                 reason = InvoicingTreatmentReasonCode.Other
                 startOfCoveragePeriod = 20160601
+            })
+        }
+
+    private fun createGuardPostBatch(invoiceNumber: Long,
+                            batchRef: String,
+                            oa: String,
+                            patientWithInss: org.taktik.freehealth.middleware.domain.common.Patient,
+                            uniq: Int): InvoicesBatch =
+        InvoicesBatch().apply {
+
+            invoicingYear = 2018
+            invoicingMonth = 9
+            this.batchRef = batchRef
+            fileRef = batchRef // FIXME this should be related to invoice
+            uniqueSendNumber = uniq.toLong()
+            ioFederationCode = oa
+            numericalRef = ((LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd")).toLong()) * 1_000_000) + (ioFederationCode!!.toLong() * 1_000) + uniq
+            sender = InvoiceSender().apply {
+                nihii = nihii4?.toLong() //nihiiSender
+                ssin = ssin4 //ssinSender
+                bce = cbe4?.toLong()
+                bic = BIC4
+                iban = IBAN4
+                firstName = firstName1 // TODO
+                lastName = lastName1 // TODO
+                phoneNumber = phoneSender.toLong()
+            }
+
+            invoices.add(Invoice().apply {
+                patient = patientWithInss
+                this.invoiceNumber = invoiceNumber
+                this.invoiceRef = batchRef
+                this.ioCode = patientWithInss.insurabilities.firstOrNull()?.insuranceCode ?: oa
+                reason = InvoicingTreatmentReasonCode.Other
             })
         }
 
@@ -272,6 +299,37 @@ abstract class EfactAbstractTest : EhealthTest() {
                 dateOfBirth = it.dateOfBirth?.toInt()
                 insurabilities = it.insurabilities.map {
                     Insurability().apply {
+                        insuranceCode = it.mutuality
+                        it.ct1?.let { parameters[InsuranceParameter.tc1] = it }
+                        it.ct2?.let { parameters[InsuranceParameter.tc2] = it }
+                    }
+                }
+            }
+        }
+
+    private fun getGuardPostPatient(restTemplate: TestRestTemplate,
+                           port: Int,
+                           niss: String,
+                           keystoreId: UUID,
+                           tokenId: String,
+                           passPhrase: String): Patient? =
+        restTemplate.exchange("http://localhost:$port/genins/$niss?hcpNihii=$nihii4&hcpSsin=$ssin4&hcpName=$name4&hcpQuality=${"guardpost"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java)?.body?.let {
+            Assertions.assertThat(it.faultSource).isNull()
+            Assertions.assertThat(it.faultMessage).isNull()
+            Assertions.assertThat(it.faultCode).isNull()
+            Assertions.assertThat(it.mycarenetConversation).isNotNull
+            Assertions.assertThat(it.commonOutput).isNotNull
+
+            Patient().apply {
+                lastName = it.lastName
+                firstName = it.firstName
+                ssin = it.inss
+                gender = it.sex?.let { Gender.fromCode(it) }
+                dateOfBirth = it.dateOfBirth?.toInt()
+                insurabilities = it.insurabilities.map {
+                    Insurability().apply {
+                        Assertions.assertThat(it.mutuality).isNotNull()
+
                         insuranceCode = it.mutuality
                         it.ct1?.let { parameters[InsuranceParameter.tc1] = it }
                         it.ct2?.let { parameters[InsuranceParameter.tc2] = it }
@@ -611,6 +669,42 @@ abstract class EfactAbstractTest : EhealthTest() {
             }
         }
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 14, "FHCA13.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 14).apply {
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(
+                java.lang.Long.valueOf(consult.codeResults[0].code),
+                consult.codeResults[0].justification,
+                ((consult.codeResults.firstOrNull()?.reimbursement?.amount ?: .0) * 100).roundToInt(),
+                ((consult.codeResults.firstOrNull()?.patientFee?.amount ?: .0) * 100).roundToInt(),
+                0, consult.codeResults.firstOrNull()?.contract, DateTime().toDate()).apply {
+                insuranceRef = null
+            })
+        }
+    }
+
+    //Prestation correspondant au scenario 7 de la consultation des tarifs, sans indiquer le numero d'EP.
+    fun prepareGuardPostScenario14NISS1(restTemplate: TestRestTemplate, port: Int, mutualityCode: String,
+                               keystoreId: UUID,
+                               tokenId: String,
+                               passPhrase: String): InvoicesBatch? {
+
+        val niss = NISSES_BY_MUTUALITY[mutualityCode]!![NISS1]!!
+        println("***** Scenario 14 - Mutuality $mutualityCode - NISS: $niss *****")
+        val patientWithInss = getGuardPostPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
+
+        Assertions.assertThat(patientWithInss).isNotNull()
+        Assertions.assertThat(patientWithInss.insurabilities).isNotNull.isNotEmpty
+
+        val consult = try {
+            consultTarif(restTemplate, port, niss, keystoreId!!.toString(), tokenId, passPhrase, null, listOf("101032"))
+        } catch (e: Exception) {
+            TarificationConsultationResult().apply {
+                val newCodeResult = TarificationConsultationResult.CodeResult()
+                newCodeResult.code = "101032"
+                newCodeResult.reimbursement = TarificationConsultationResult.Payment().apply { amount = 19.20; currencyUnit = "EUR" }
+                newCodeResult.patientFee = TarificationConsultationResult.Payment().apply { amount = 2.00; currencyUnit = "EUR" }
+                codeResults.addAll(listOf(newCodeResult))
+            }
+        }
+        return createGuardPostBatch(mutualityCode.toLong() * 1000 + sendNumber + 14, "FHCA13.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 14).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf(consult.codeResults[0].code),
                 consult.codeResults[0].justification,
@@ -1143,6 +1237,21 @@ class EfactControllerTest : EfactAbstractTest() {
         }
     }
 
+    @Test
+    fun testGuardPostScenario14() {
+        val (keystoreId, tokenId, passPhrase) = registerGuardPost(restTemplate!!, port, nihii4!!, password4!!)
+        for (mutualityCode in NISSES_BY_MUTUALITY.keys) {
+            val invBatch = prepareGuardPostScenario14NISS1(this.restTemplate, this.port, mutualityCode, keystoreId!!, tokenId, passPhrase)
+                ?: continue
+            this.restTemplate.exchange("http://localhost:$port/efact/batch?isGuardPost=true", HttpMethod.POST, HttpEntity<InvoicesBatch>(invBatch, createHeaders(null, null, keystoreId, tokenId, passPhrase)), EfactSendResponse::class.java)
+                ?.let {
+                    assert(it.body.success ?: false)
+                    val fileName = "FHC.ACC.GUARDPOST.14"
+                    it.body.detail?.let { writeFiles(fileName, mutualityCode, it) }
+                }
+        }
+    }
+
 }
 
 
@@ -1156,7 +1265,7 @@ class EfactFlatFileControllerTest : EfactAbstractTest() {
     @Autowired
     private val restTemplate: TestRestTemplate? = null
 
-    private val filePrefix: String = "medispring-acc";
+    private val filePrefix: String = "medispring-acc"
 
 
     @Before
@@ -1557,12 +1666,147 @@ class EfactMessagesLoadTest : EhealthTest() {
     }
 
     @Test
+    fun testGuardPostLoadMessage() {
+        val (keystoreId, tokenId, passPhrase) = registerGuardPost(restTemplate!!, port, nihii4!!, password4!!)
+        this.restTemplate.exchange("http://localhost:$port/efact/$nihii4/fr?ssin=$ssin4&firstName={firstName}&lastName={lastName}&isGuardPost=true", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<EfactMessage>>() {}, firstName1, lastName1)
+            ?.let {
+                var file = ""
+                println("Number of messages: "+it.body)
+                file += "Number of messages: "+it.body.size+"\n\n\n"
+                it.body.forEach {
+                    if (!it.name.equals("tAck")) {
+
+                        println(it.detail)
+
+                        try {
+                            var ref = it.message!![0].zones.find { it.zoneDescription?.zones!!.contains("204") }
+                            println("================= Message =================")
+                            println("Name: " + it.name)
+                            println("OA: "+ref!!.value.toString().substring(8,11))
+                            println("SendNumber: "+ref!!.value.toString().substring(11,14))
+                            println("Message type: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("200") })
+                            println("Message reference: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("204") })
+                            println("Message Oa reference: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("205") })
+
+                            file += "================= Message =================\n"
+                            file += "Name: " + it.name+"\n"
+                            file += "OA: "+ref!!.value.toString().substring(8,11)+"\n"
+                            file += "SendNumber: "+ref!!.value.toString().substring(11,14)+"\n"
+                            file += "Message type: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("200") }+"\n"
+                            file += "Message reference: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("204") }+"\n"
+                            file += "Message Oa reference: " + it.message!![0].zones.find { it.zoneDescription!!.zones!!.contains("205") }+"\n"
+
+                            it.message!!.forEach {
+
+                                if (it.errorDetail != null) {
+
+                                    if (it.errorDetail!!.rejectionCode1 != "000000" && it.errorDetail!!.rejectionCode2 != "000000" && it.errorDetail!!.rejectionCode3 != "000000") {
+                                        println("------- Reccord: " + it.zones.find { it.zoneDescription!!.zones!!.contains("1") } + "--------")
+                                        file += "------- Reccord: " + it.zones.find { it.zoneDescription!!.zones!!.contains("1") } + "--------\n"
+                                    }
+
+                                    if (it.errorDetail!!.rejectionCode1 != "000000") {
+                                        println("Rejection Code 1: " + it.errorDetail!!.rejectionCode1)
+                                        println("Rejection descr 1: " + it.errorDetail!!.rejectionDescr1)
+                                        println("Rejection zone descr 1: " + it.errorDetail!!.rejectionZoneDescr3)
+
+                                        file += "Rejection Code 1: " + it.errorDetail!!.rejectionCode1+"\n"
+                                        file += "Rejection descr 1: " + it.errorDetail!!.rejectionDescr1+"\n"
+                                        file += "Rejection zone descr 1: " + it.errorDetail!!.rejectionZoneDescr1+"\n"
+
+                                    }
+
+                                    if (it.errorDetail!!.rejectionCode2 != "000000") {
+                                        println("Rejection Code 2: " + it.errorDetail!!.rejectionCode2)
+                                        println("Rejection descr 2: " + it.errorDetail!!.rejectionDescr2)
+                                        println("Rejection zone descr 2: " + it.errorDetail!!.rejectionZoneDescr2)
+
+                                        file += "Rejection Code 2: " + it.errorDetail!!.rejectionCode2+"\n"
+                                        file += "Rejection descr 2: " + it.errorDetail!!.rejectionDescr2+"\n"
+                                        file += "Rejection zone descr 2: " + it.errorDetail!!.rejectionZoneDescr2+"\n"
+                                    }
+
+                                    if (it.errorDetail!!.rejectionCode3 != "000000") {
+                                        println("Rejection Code 3: " + it.errorDetail!!.rejectionCode3)
+                                        println("Rejection descr 3: " + it.errorDetail!!.rejectionDescr3)
+                                        println("Rejection zone  descr 3: " + it.errorDetail!!.rejectionZoneDescr3)
+
+                                        file += "Rejection Code 3: " + it.errorDetail!!.rejectionCode3+"\n"
+                                        file += "Rejection descr 3: " + it.errorDetail!!.rejectionDescr3+"\n"
+                                        file += "Rejection zone descr 3: " + it.errorDetail!!.rejectionZoneDescr3+"\n"
+                                    }
+                                }
+
+                                if(it.zones.find{it.zoneDescription!!.zones!!.contains("403")} !== null){
+                                    file += "------- 400 ------- "+"\n"
+                                    file += "Signe montant demandé compte A: " + it.zones.find{it.zoneDescription!!.zones!!.contains("403")}+"\n"
+                                    file += "montant demandé compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("404")}+"\n"
+
+                                    file += "Signe montant accepté compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("411")}+"\n"
+                                    file += "montant accepté compte A: " + it.zones.find{it.zoneDescription!!.zones!!.contains("412")}+"\n"
+                                    file += "Signe montant refusé compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("413")}+"\n"
+                                    file += "montant refusé compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("414")}+"\n"
+                                    file += "Référence paiement compte A OA ou mutualité: " +it.zones.find{it.zoneDescription!!.zones!!.contains("423")}+"\n"
+
+                                }
+
+                                if(it.zones.find{it.zoneDescription!!.zones!!.contains("503")} !== null){
+                                    file += "------- 500 ------- "+"\n"
+                                    file += "Signe total montants demandés compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("503")}+"\n"
+                                    file += "Total montants demandés compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("504")}+"\n"
+                                    file += "Signe total montants acceptés compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("511")}+"\n"
+                                    file += "Total montants acceptés compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("512")}+"\n"
+                                    file += "Signe total montants refusés compte A: " +it.zones.find{it.zoneDescription!!.zones!!.contains("513")}+"\n"
+                                    file += "Total montants refusés compte A: " + it.zones.find{it.zoneDescription!!.zones!!.contains("514")}+"\n"
+                                }
+                            }
+                        } catch (err: Exception) {
+                            println(err)
+                            println(err.stackTrace.toString())
+                        }
+
+                    } else {
+                        println("================= Tack =================")
+                        println("Id: " + it.id)
+                        println("Issuer" + it.tAck!!.issuer)
+                        println("AppliesTo: " + it.tAck!!.appliesTo)
+                        println("ResultMajor: " + it.tAck!!.resultMajor)
+                        println("Tack id: " + it.tAck!!.id)
+                        println("xades: " + it.xades)
+                        println("hashValue: " + it.hashValue)
+
+                        file += "================= Tack ================="
+                        file += "Id: " + it.id+"\n"
+                        file += "Issuer" + it.tAck!!.issuer+"\n"
+                        file += "AppliesTo: " + it.tAck!!.appliesTo+"\n"
+                        file += "ResultMajor: " + it.tAck!!.resultMajor+"\n"
+                        file += "Tack id: " + it.tAck!!.id+"\n"
+                        file += "xades: " + it.xades+"\n"
+                        file += "hashValue: " + it.hashValue+"\n"
+                    }
+                }
+                val fileName = "LoadMessage_"+(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd")).toLong())
+                File(fileName).writeText(file)
+            }
+    }
+
+    @Test
     fun testLoadAndConfirmMessage() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         this.restTemplate.exchange("http://localhost:$port/efact/$nihii1/fr?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<EfactMessage>>() {}, firstName1, lastName1)
             ?.let {
                 this.restTemplate.exchange("http://localhost:$port/efact/confirm/acks/$nihii1?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck != null }.map { it.hashValue }.filterNotNull(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
                 this.restTemplate.exchange("http://localhost:$port/efact/confirm/msgs/$nihii1?ssin=$ssin1&firstName={firstName}&lastName={lastName}", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck == null }.map { it.hashValue }.filterNotNull().let {it.subList(0, Math.min(20, it.size))}, createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
+            }
+    }
+
+    @Test
+    fun testLoadAndConfirmGuardPostMessage() {
+        val (keystoreId, tokenId, passPhrase) = registerGuardPost(restTemplate!!, port, nihii4!!, password4!!)
+        this.restTemplate.exchange("http://localhost:$port/efact/$nihii4/fr?ssin=$ssin4&firstName={firstName}&lastName={lastName}&isGuardPost=true", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<EfactMessage>>() {}, firstName1, lastName1)
+            ?.let {
+                this.restTemplate.exchange("http://localhost:$port/efact/confirm/acks/$nihii4?ssin=$ssin4&firstName={firstName}&lastName={lastName}&isGuardPost=true", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck != null }.map { it.hashValue }.filterNotNull(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
+                this.restTemplate.exchange("http://localhost:$port/efact/confirm/msgs/$nihii4?ssin=$ssin4&firstName={firstName}&lastName={lastName}&isGuardPost=true", HttpMethod.PUT, HttpEntity<List<String>>(it.body.filter { it.tAck == null }.map { it.hashValue }.filterNotNull().let {it.subList(0, Math.min(20, it.size))}, createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
             }
     }
 
@@ -1580,7 +1824,8 @@ class EfactMessagesLoadTest : EhealthTest() {
 
     @Test
     fun testReParse920999() {
-        val res = BelgianInsuranceInvoicingFormatReader("fr").parse("9209990001009200400000000020180919001826260000000200               20150900004002018091900FHCA18.600   00999199900Baudoux                                      00Antoine                 00322333584000030001000000000000000000000095006002000201809196000+0000000192000+0000000000015+0000000192000000000030055000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".reader(), false)!!.map { it.toString() }.joinToString("\n")
+        val fileContent = "9200990002009200000000190408300817001909930000000100               20180900817002019040800FHCA13.300   00999199900HELPDESK CARENET/MYCARENET                   00                        000025151700000000010000000000100                                                                                                                                                                                                                                                                                                                                                                                                                                                                           "
+        val res = BelgianInsuranceInvoicingFormatReader("fr").parse(fileContent.reader(), false)!!.map { it.toString() }.joinToString("\n")
         println(res)
     }
 

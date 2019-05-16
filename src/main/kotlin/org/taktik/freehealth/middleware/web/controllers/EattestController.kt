@@ -54,6 +54,9 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
         @RequestParam(required = false) traineeSupervisorLastName: String?,
+        @RequestParam(required = false) guardPostNihii: String?,
+        @RequestParam(required = false) guardPostSsin: String?,
+        @RequestParam(required = false) guardPostName: String?,
         @RequestBody attest: Eattest
     ) = eattestService.sendAttest(
         keystoreId,
@@ -67,6 +70,9 @@ class EattestController(val eattestService: EattestService) {
         traineeSupervisorNihii,
         traineeSupervisorFirstName,
         traineeSupervisorLastName,
+        guardPostNihii,
+        guardPostSsin,
+        guardPostName,
         passPhrase,
         patientSsin,
         patientFirstName,
@@ -95,6 +101,9 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
         @RequestParam(required = false) traineeSupervisorLastName: String?,
+        @RequestParam(required = false) guardPostNihii: String?,
+        @RequestParam(required = false) guardPostSsin: String?,
+        @RequestParam(required = false) guardPostName: String?,
         @RequestBody attest: Eattest
     ): SendAttestResult? = eattestService.sendAttest(
         keystoreId,
@@ -108,6 +117,9 @@ class EattestController(val eattestService: EattestService) {
         traineeSupervisorNihii,
         traineeSupervisorFirstName,
         traineeSupervisorLastName,
+        guardPostNihii,
+        guardPostSsin,
+        guardPostName,
         passPhrase,
         patientSsin,
         patientFirstName,
