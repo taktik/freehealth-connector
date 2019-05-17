@@ -25,6 +25,7 @@ public class CertificateParser {
    private static final String COMMON_NAME_ATTRIBUTE_TYPE = "CN";
    private static final String SERIALNUMBER_OID_ATTRIBUTE_TYPE;
    private static final String NO_VALUE = "";
+   private Long validity;
    private String type;
    private String id;
    private String application;
@@ -49,12 +50,10 @@ public class CertificateParser {
       }
 
       List<Rdn> rdnList = name.getRdns();
-      List<String> ouList = new ArrayList();
-      List<String> cnList = new ArrayList();
-      Iterator iterator = rdnList.iterator();
+      List<String> ouList = new ArrayList<>();
+      List<String> cnList = new ArrayList<>();
 
-      while(iterator.hasNext()) {
-         Rdn rdn = (Rdn)iterator.next();
+      for (Rdn rdn : rdnList) {
          if (rdn.getType().equals("OU")) {
             ouList.add(this.getValue(rdn.getValue()));
          }
@@ -71,34 +70,27 @@ public class CertificateParser {
       }
 
       if (StringUtils.isEmpty(this.id)) {
-         iterator = ouList.iterator();
 
-         while(true) {
-            while(iterator.hasNext()) {
-               String ou = (String)iterator.next();
-               LOG.debug("Analysing OU:" + ou);
-               if (Pattern.matches("([A-Z(-|_)]+=[0-9]+)", ou)) {
-                  String[] splittedOU = ou.split("=");
-                  this.id = splittedOU[1];
-                  this.type = splittedOU[0];
-               } else if (!"eHealth-platform Belgium".equals(ou)) {
-                  LOG.debug("Analysing OU {} for ApplicationId.", ou);
-                  Iterator i$ = cnList.iterator();
+         for (String ou : ouList) {
+            LOG.debug("Analysing OU:" + ou);
+            if (Pattern.matches("([A-Z(-|_)]+=[0-9]+)", ou)) {
+               String[] splittedOU = ou.split("=");
+               this.id = splittedOU[1];
+               this.type = splittedOU[0];
+            } else if (!"eHealth-platform Belgium".equals(ou)) {
+               LOG.debug("Analysing OU {} for ApplicationId.", ou);
 
-                  while(i$.hasNext()) {
-                     String cn = (String)i$.next();
-                     if (cn.endsWith(ou)) {
-                        LOG.debug("ApplicationId is present.");
-                        this.application = ou;
-                     } else {
-                        this.owner = ou;
-                     }
+               for (String cn : cnList) {
+                  if (cn.endsWith(ou)) {
+                     LOG.debug("ApplicationId is present.");
+                     this.application = ou;
+                  } else {
+                     this.owner = ou;
                   }
                }
             }
-
-            return;
          }
+
       }
    }
 
@@ -152,6 +144,10 @@ public class CertificateParser {
 
    public final String getId() {
       return this.id;
+   }
+
+   public Long getValidity() {
+      return validity;
    }
 
    static {

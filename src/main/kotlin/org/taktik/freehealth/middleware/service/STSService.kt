@@ -25,6 +25,7 @@ import org.taktik.connector.technical.service.etee.domain.EncryptionToken
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
+import org.taktik.freehealth.middleware.dto.CertificateInfo
 import java.security.KeyStore
 import java.util.*
 
@@ -46,4 +47,5 @@ interface STSService {
     fun checkIfKeystoreExist(keystoreId: UUID): Boolean
     fun getHolderOfKeysEtk(credential: KeyStoreCredential, nihiiOrSsin: String? = null): EncryptionToken?
     fun checkTokenValid(tokenId: UUID): Boolean
+    fun getKeystoreInfo(keystoreId: UUID, passPhrase: String): CertificateInfo
 }
