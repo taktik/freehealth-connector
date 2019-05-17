@@ -167,6 +167,9 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         traineeSupervisorNihii: String?,
         traineeSupervisorFirstName: String?,
         traineeSupervisorLastName: String?,
+        guardPostNihii: String?,
+        guardPostSsin: String?,
+        guardPostName: String?,
         passPhrase: String,
         patientSsin: String,
         patientFirstName:String,
@@ -190,25 +193,33 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         val refDateTime = dateTime(referenceDate) ?: now
         val theDayBeforeRefDate = refDateTime.plusDays(-1)
 
+        val requestAuthorNihii = guardPostNihii ?: hcpNihii
+        val requestAuthorSsin = guardPostSsin ?: hcpSsin
+        val requestAuthorCdHcParty = if (guardPostNihii?.isEmpty() == true) "persphysician" else "guardpost"
+
         return extractEtk(credential)?.let {
             val sendTransactionRequest = SendTransactionRequest().apply {
                 messageProtocoleSchemaVersion = BigDecimal("1.18")
                 request = RequestType().apply {
                     id =
                         IDKMEHR().apply {
-                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = hcpNihii + "." +
+                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = requestAuthorNihii.padEnd(11, '0') + "." +
                             refDateTime.toString("yyyyMMddHHmmss")
                         }
                     author = AuthorType().apply {
                         hcparties.add(HcpartyType().apply {
-                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
-                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = requestAuthorNihii.padEnd(11, '0') })
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
-                                "persphysician"
+                                requestAuthorCdHcParty
                             })
-                            firstname = hcpFirstName
-                            familyname = hcpLastName
+                            if (guardPostNihii?.isEmpty() == true) {
+                                firstname = hcpFirstName
+                                familyname = hcpLastName
+                            } else {
+                                name = guardPostName
+                            }
                         })
                     }
                     date = now; time = now
@@ -227,15 +238,19 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                             hcparties.add(HcpartyType().apply {
                                 ids.add(IDHCPARTY().apply {
                                     s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
-                                    hcpNihii
+                                    requestAuthorNihii.padEnd(11, '0')
                                 })
-                                ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+                                ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
                                 cds.add(CDHCPARTY().apply {
                                     s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
-                                    "persphysician"
+                                    requestAuthorCdHcParty
                                 })
-                                firstname = hcpFirstName
-                                familyname = hcpLastName
+                                if (guardPostNihii?.isEmpty() == true) {
+                                    firstname = hcpFirstName
+                                    familyname = hcpLastName
+                                } else {
+                                    name = guardPostName
+                                }
                             })
                         }
                         recipients.add(RecipientType().apply {
@@ -289,7 +304,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                 hcparties.add(HcpartyType().apply {
                                     ids.add(IDHCPARTY().apply {
                                         s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
-                                        hcpNihii
+                                       hcpNihii
                                     })
                                     ids.add(IDHCPARTY().apply {
                                         s = IDHCPARTYschemes.INSS; sv = "1.0"; value =
@@ -389,7 +404,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                             val author = HcpartyType().apply {
                                     ids.add(IDHCPARTY().apply {
                                         s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
-                                        hcpNihii
+                                        hcpNihii.padEnd(11, '0')
                                     })
                                     ids.add(IDHCPARTY().apply {
                                         s = IDHCPARTYschemes.INSS; sv = "1.0"; value =
@@ -701,19 +716,38 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                             name = ValueRefString().apply { value = packageInfo.packageName }
                         }
                         careProvider = CareProviderType().apply {
-                            nihii =
-                                NihiiType().apply {
-                                    quality = "doctor"; value =
-                                    ValueRefString().apply { value = hcpNihii }
-                                }
-                            physicalPerson = IdType().apply {
-                                name = ValueRefString().apply { value = "$hcpFirstName $hcpLastName" }
-                                ssin = ValueRefString().apply { value = hcpSsin }
+                            if (guardPostNihii?.isEmpty() == true) {
                                 nihii =
                                     NihiiType().apply {
                                         quality = "doctor"; value =
                                         ValueRefString().apply { value = hcpNihii }
                                     }
+
+                                physicalPerson = IdType().apply {
+                                    name = ValueRefString().apply { value = "$hcpFirstName $hcpLastName" }
+                                    ssin = ValueRefString().apply { value = hcpSsin }
+                                    nihii =
+                                        NihiiType().apply {
+                                            quality = "doctor"; value =
+                                            ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                                        }
+                                }
+                            } else {
+                                nihii =
+                                    NihiiType().apply {
+                                        quality = "guardpost"; value =
+                                        ValueRefString().apply { value = requestAuthorNihii.padEnd(11, '0') }
+                                    }
+
+                                guardPostNihii?.let {
+                                    organization = IdType().apply {
+                                        name = ValueRefString().apply { value = guardPostName }
+                                        nihii = NihiiType().apply {
+                                            quality = "guardpost"; value =
+                                            ValueRefString().apply { value = requestAuthorNihii.padEnd(11, '0') }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -796,8 +830,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
                 kmehrMessage = encryptedKnownContent?.businessContent?.value
-
-                                             )
+            )
         }
     }
 

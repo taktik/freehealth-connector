@@ -40,6 +40,7 @@ import org.taktik.connector.technical.service.sts.utils.SAMLHelper
 import org.taktik.connector.technical.utils.CertificateParser
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
+import org.taktik.freehealth.middleware.dto.CertificateInfo
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
@@ -209,7 +210,6 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             val randomUUID = UUID.randomUUID()
             val samlToken = result.writer.toString()
 
-
             val samlTokenResult =
                 SamlTokenResult(randomUUID, samlToken, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
             tokensMap[randomUUID] = samlTokenResult
@@ -219,6 +219,14 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         } catch(e:TechnicalConnectorException) {
             null
         }
+    }
+
+    override fun getKeystoreInfo(keystoreId: UUID, passPhrase: String): CertificateInfo {
+        val keyStore = getKeyStore(keystoreId, passPhrase)
+        val credential = KeyStoreCredential(keyStore, "authentication", passPhrase)
+        val parser = CertificateParser(credential.certificate)
+
+        return CertificateInfo(parser.validity, parser.type, parser.id, parser.application, parser.owner)
     }
 
     override fun checkTokenValid(tokenId: UUID): Boolean {

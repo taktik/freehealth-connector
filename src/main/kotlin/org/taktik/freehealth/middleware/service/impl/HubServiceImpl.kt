@@ -283,7 +283,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
         from: Instant?,
         to: Instant?,
         hubPackageId: String?
-    ): List<TherapeuticLinkMessage> {
+    ): TherapeuticLinkMessage {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
@@ -324,11 +324,12 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             }
         };
         val isComplete = therapeuticLinkResponse.acknowledge.isIscomplete();
-        return therapeuticLinkResponse.therapeuticlinklist?.therapeuticlinks?.map {
-            TherapeuticLinkMessage().apply {
-                this.isComplete = isComplete;
-                this.errors = errors;
-                this.therapeuticLink = TherapeuticLink().apply {
+
+        return TherapeuticLinkMessage().apply {
+            this.isComplete = isComplete;
+            this.errors = errors;
+            this.therapeuticLinks = therapeuticLinkResponse.therapeuticlinklist?.therapeuticlinks?.map {
+                TherapeuticLink().apply {
                     this.startDate = it.startdate.toLocalDate();
                     this.endDate = it.enddate.toLocalDate();
                     this.type = it.cd.value;
@@ -340,8 +341,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                         this.inss = it.patient.ids.find { idpatient -> idpatient.s.equals("INSS") } ?.value;
                     }
                 }
-            }
-        } ?: listOf()
+            } ?: listOf()
+        }
     }
 
     override fun putPatient(

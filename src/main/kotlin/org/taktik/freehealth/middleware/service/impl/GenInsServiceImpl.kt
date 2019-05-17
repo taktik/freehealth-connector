@@ -87,6 +87,30 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
         endDate: Date?,
         hospitalized: Boolean
     ): InsurabilityInfoDto {
+        require(
+            hcpQuality.equals("doctor") ||
+                hcpQuality.equals("nurse") ||
+                hcpQuality.equals("physiotherapist") ||
+                hcpQuality.equals("dentist") ||
+                hcpQuality.equals("logopedist") ||
+                hcpQuality.equals("trussmaker") ||
+                hcpQuality.equals("orthopedist") ||
+                hcpQuality.equals("midwife") ||
+                hcpQuality.equals("optician") ||
+                hcpQuality.equals("podologist") ||
+                hcpQuality.equals("dietician") ||
+                hcpQuality.equals("hospital") ||
+                hcpQuality.equals("groupofnurses") ||
+                hcpQuality.equals("labo") ||
+                hcpQuality.equals("retirement") ||
+                hcpQuality.equals("otdpharmacy") ||
+                hcpQuality.equals("medicalhouse") ||
+                hcpQuality.equals("groupofdoctors") ||
+                hcpQuality.equals("psychiatrichouse") ||
+                hcpQuality.equals("guardpost") ||
+                hcpQuality.equals("ambulanceservice")
+        ) { "hcpQuality is invalid" }
+
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Genins operations")

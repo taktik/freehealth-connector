@@ -48,28 +48,29 @@ class TherLinkControllerTest : EhealthTest() {
 
     private val gson: Gson = Gson()
 
-    @Test
-    fun getTherLink() {
+    private fun getTherapeuticLink(): TherapeuticLinkDto {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val therLink = this.restTemplate.getForObject("http://localhost:$port/therlink/${"74010414733"}/$nihii1?keystoreId=$keystoreId&tokenId=$tokenId&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&patientSsin=${"74010414733"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&passPhrase={passPhrase}", String::class.java, firstName1, lastName1, passPhrase)
         assertThat(therLink != null)
-        val tlmsgs: List<TherapeuticLinkMessageDto> = gson.fromJson(therLink, object : TypeToken<ArrayList<TherapeuticLinkMessageDto>>() {}.getType())
-        assertThat(tlmsgs.size).isGreaterThan(0)
-        val tlmsg = tlmsgs.first()
-        assertThat(tlmsg.therapeuticLink?.patient?.inss).isEqualToIgnoringCase("74010414733")
-        assertThat(tlmsg.therapeuticLink?.type).isEqualToIgnoringCase("gpconsultation")
-        assertThat((tlmsg.therapeuticLink?.endDate ?: 0) - (tlmsg.therapeuticLink?.startDate ?: 0)).isGreaterThan(10000L)
+        val tlmsg: TherapeuticLinkMessageDto = gson.fromJson(therLink, object : TypeToken<TherapeuticLinkMessageDto>() {}.getType())
+        assertThat(tlmsg.therapeuticLinks.size).isGreaterThan(0)
+        return tlmsg.therapeuticLinks.first()
+    }
+
+    @Test
+    fun getTherLink() {
+        val therapeuticLink = this.getTherapeuticLink();
+        assertThat(therapeuticLink?.patient?.inss).isEqualToIgnoringCase("74010414733")
+        assertThat(therapeuticLink?.type).isEqualToIgnoringCase("gpconsultation")
+        assertThat((therapeuticLink?.endDate ?: 0) - (therapeuticLink?.startDate ?: 0)).isGreaterThan(10000L)
     }
 
     @Test
     fun doesTherLinkExist() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val therLink = this.restTemplate.getForObject("http://localhost:$port/therlink/${"74010414733"}/$nihii1?keystoreId=$keystoreId&tokenId=$tokenId&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&patientSsin=${"74010414733"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&passPhrase={passPhrase}", String::class.java, firstName1, lastName1, passPhrase)
-        assertThat(therLink != null)
-        val tlmsgs: List<TherapeuticLinkMessageDto> = gson.fromJson(therLink, object : TypeToken<ArrayList<TherapeuticLinkMessageDto>>() {}.getType())
-        assertThat(tlmsgs.size).isGreaterThan(0)
-        val tlmsg = tlmsgs.first()
-        val exists = this.restTemplate.postForObject("http://localhost:$port/therlink/check?keystoreId=$keystoreId&tokenId=$tokenId&&passPhrase={passPhrase}", tlmsg.therapeuticLink!!, String::class.java, passPhrase)
+        val therapeuticLink = this.getTherapeuticLink();
+
+        val exists = this.restTemplate.postForObject("http://localhost:$port/therlink/check?keystoreId=$keystoreId&tokenId=$tokenId&&passPhrase={passPhrase}", therapeuticLink!!, String::class.java, passPhrase)
         val existingLink = gson.fromJson(exists, TherapeuticLinkDto::class.java)
         assertThat(existingLink?.patient?.inss).isEqualToIgnoringCase("74010414733")
         assertThat(existingLink?.type).isEqualToIgnoringCase("gpconsultation")
@@ -81,11 +82,11 @@ class TherLinkControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val therLink = this.restTemplate.getForObject("http://localhost:$port/therlink/${"74010414733"}/$nihii1?keystoreId=$keystoreId&tokenId=$tokenId&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&passPhrase={passPhrase}", String::class.java, firstName1, lastName1, passPhrase)
         assertThat(therLink != null)
-        val tlmsgs: List<TherapeuticLinkMessageDto> = gson.fromJson(therLink, object : TypeToken<ArrayList<TherapeuticLinkMessageDto>>() {}.getType())
-        assertThat(tlmsgs.size).isGreaterThan(0)
-        val tlmsg = tlmsgs.first()
-        assertThat(tlmsg.therapeuticLink?.patient?.inss).isEqualToIgnoringCase("74010414733")
-        val revoke = this.restTemplate.postForObject("http://localhost:$port/therlink/revoke?keystoreId=$keystoreId&tokenId=$tokenId&&passPhrase={passPhrase}", tlmsg.therapeuticLink!!, String::class.java, passPhrase)
+        val tlmsg: TherapeuticLinkMessageDto = gson.fromJson(therLink, object : TypeToken<TherapeuticLinkMessageDto>() {}.getType())
+        assertThat(tlmsg.therapeuticLinks.size).isGreaterThan(0)
+        val therapeuticLink = tlmsg.therapeuticLinks.first()
+        assertThat(therapeuticLink?.patient?.inss).isEqualToIgnoringCase("74010414733")
+        val revoke = this.restTemplate.postForObject("http://localhost:$port/therlink/revoke?keystoreId=$keystoreId&tokenId=$tokenId&&passPhrase={passPhrase}", therapeuticLink!!, String::class.java, passPhrase)
         assertThat(revoke.length).isGreaterThan(0)
         //Recreate link
          this.restTemplate.postForObject("http://localhost:$port/therlink/register?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=${"11478761004"}&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&patientSsin=${"74010414733"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&passPhrase={passPhrase}", null, String::class.java, firstName1, lastName1, passPhrase)
@@ -97,6 +98,7 @@ class TherLinkControllerTest : EhealthTest() {
         val therLink = this.restTemplate.postForObject("http://localhost:$port/therlink/register?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&patientSsin=${"74010414733"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&passPhrase={passPhrase}", null, String::class.java, firstName1, lastName1, passPhrase)
         assertThat(therLink != null)
         val tlmsg = gson.fromJson(therLink, TherapeuticLinkMessageDto::class.java)
-        assertThat(tlmsg.therapeuticLink?.patient?.inss).isEqualToIgnoringCase("74010414733")
+        val therapeuticLink = tlmsg.therapeuticLinks.first();
+        assertThat(therapeuticLink?.patient?.inss).isEqualToIgnoringCase("74010414733")
     }
 }

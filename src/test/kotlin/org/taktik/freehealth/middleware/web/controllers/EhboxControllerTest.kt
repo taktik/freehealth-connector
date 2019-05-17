@@ -2,6 +2,8 @@ package org.taktik.freehealth.middleware.web.controllers
 
 
 import com.google.gson.Gson
+import org.apache.log4j.Level
+import org.apache.log4j.Logger
 import org.assertj.core.api.Assertions
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -131,6 +133,58 @@ class EhboxControllerTest : EhealthTest(){
     "organizationName": null,
     "personInOrganisation": null
   }
+}""".trimIndent(), DocumentMessage::class.java)
+        val message = this.restTemplate.exchange("http://localhost:$port/ehbox?publicationReceipt=true&receptionReceipt=true&readReceipt=true", HttpMethod.POST, HttpEntity<DocumentMessage>(msg, createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
+        Assertions.assertThat(message != null)
+    }
+
+    @Test
+    fun sendGuardPostMessage() {
+        val (keystoreId, tokenId, passPhrase) = registerGuardPost(restTemplate!!, port, nihii4!!, password4!!)
+        this.restTemplate.exchange("http://localhost:$port/admin/loglevel/debug?package=ROOT", HttpMethod.POST, HttpEntity<DocumentMessage>(null, createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
+        val msg = Gson().fromJson(
+            """{
+  "id": null,
+  "publicationId": null,
+  "publicationDateTime": 20190412,
+  "expirationDateTime": 20200412,
+  "customMetas": {},
+  "document": {
+    "title": "C’est un test",
+    "textContent": "Body text",
+    "filename": "rsp.txt",
+    "mimeType": "text/plain",
+    "signing": null
+  },
+  "freeText": null,
+  "freeInformationTableTitle": null,
+  "freeInformationTableRows": {},
+  "patientInss": null,
+  "annex": [],
+  "copyMailTo": [],
+  "documentTitle": null,
+  "annexList": [],
+  "useReceivedReceipt": false,
+  "useReadReceipt": false,
+  "hasAnnex": false,
+  "hasFreeInformations": false,
+  "important": true,
+  "encrypted": false,
+  "usePublicationReceipt": false,
+  "destinations": [
+    {
+      "identifierType": {
+        "type": "NIHII"
+      },
+      "id": "19234011",
+      "quality": "DOCTOR",
+      "applicationId": null,
+      "lastName": null,
+      "firstName": null,
+      "organizationName": null,
+      "personInOrganisation": null
+    }
+  ]
 }""".trimIndent(), DocumentMessage::class.java)
         val message = this.restTemplate.exchange("http://localhost:$port/ehbox?publicationReceipt=true&receptionReceipt=true&readReceipt=true", HttpMethod.POST, HttpEntity<DocumentMessage>(msg, createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
         Assertions.assertThat(message != null)
