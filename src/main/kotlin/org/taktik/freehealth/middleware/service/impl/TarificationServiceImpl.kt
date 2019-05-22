@@ -30,6 +30,7 @@ import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.TarificationService
 import org.w3c.dom.Element
@@ -76,7 +77,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                               codes: List<String>): TarificationConsultationResult {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Tarif operations")
 
         try {
             val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
@@ -117,7 +118,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                         hcparties.add(HcpartyType().apply {
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  requestAuthorNihii })
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
-                            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = if (guardPostNihii?.isEmpty() == true) "persphysician" else "guardpost" })
+                            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = if (guardPostNihii?.isEmpty() != false) "persphysician" else "guardpost" })
                             firstname = hcpFirstName
                             familyname = hcpLastName
                         })
@@ -205,12 +206,12 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
-                                this.quality = if (guardPostNihii?.isEmpty() == true) "doctor" else "guardpost"
+                                this.quality = if (guardPostNihii?.isEmpty() != false) "doctor" else "guardpost"
                                 this.value =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
                                         .apply { this.value = requestAuthorNihii }
                             }
-                            if (guardPostNihii?.isEmpty() == true) {
+                            if (guardPostNihii?.isEmpty() != false) {
                                 this.physicalPerson = be.fgov.ehealth.mycarenet.commons.core.v2.IdType().apply {
                                     this.ssin =
                                         be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()

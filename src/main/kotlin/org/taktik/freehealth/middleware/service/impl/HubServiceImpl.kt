@@ -70,6 +70,7 @@ import org.taktik.freehealth.middleware.dto.common.AuthorDto
 import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.dto.common.KmehrCd
 import org.taktik.freehealth.middleware.dto.common.KmehrId
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.HubService
 import org.taktik.freehealth.middleware.service.STSService
 import java.time.Instant
@@ -102,7 +103,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): HcPartyConsent? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         val hcPartyConsent =
             freehealthHubService.getHCPartyConsent(
                 endpoint,
@@ -140,7 +141,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): Consent? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         val patientConsent =
             freehealthHubService.getPatientConsent(
                 endpoint,
@@ -188,7 +189,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): PutPatientConsentResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         return freehealthHubService.putPatientConsent(
                 endpoint,
                 samlToken,
@@ -234,7 +235,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): PutTherapeuticLinkResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         return freehealthHubService.putTherapeuticLink(
                 endpoint,
                 samlToken,
@@ -286,7 +287,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): TherapeuticLinkMessage {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         val therapeuticLinkResponse =
             freehealthHubService.getTherapeuticLink(
                 endpoint,
@@ -364,7 +365,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): Patient? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         val transaction =
             freehealthHubService.putPatient(
                 endpoint,
@@ -424,7 +425,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): Patient? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         val patient =
             freehealthHubService.getPatient(
                 endpoint,
@@ -473,7 +474,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): Kmehrmessage? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         val transaction =
             freehealthHubService.getTransaction(
                 endpoint,
@@ -522,7 +523,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): String {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         val revokeresp =
             freehealthHubService.revokeTransaction(
             endpoint,
@@ -574,7 +575,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): TransactionIdType {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         val marshallerHelper = MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java)
         return freehealthHubService.putTransaction(
             endpoint,
@@ -611,7 +612,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): List<TransactionSummary> {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         val transactionList =
             freehealthHubService.getTransactionList(
                 endpoint,
@@ -688,7 +689,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): Kmehrmessage? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         val transaction =
             freehealthHubService.getTransactionSet(
                 endpoint,
@@ -736,7 +737,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
     ): PutTransactionSetResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         val marshallerHelper = MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java)
         return freehealthHubService.putTransactionSet(
             endpoint,

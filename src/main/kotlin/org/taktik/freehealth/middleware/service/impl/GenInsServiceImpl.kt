@@ -44,6 +44,7 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.mapper.toInsurabilityInfoDto
 import org.taktik.freehealth.middleware.service.GenInsService
 import org.taktik.freehealth.middleware.service.STSService
@@ -113,7 +114,7 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
 
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Genins operations")
+                ?: throw MissingTokenException("Cannot obtain token for Genins operations")
         assert(patientSsin != null || io != null && ioMembership != null)
 
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User

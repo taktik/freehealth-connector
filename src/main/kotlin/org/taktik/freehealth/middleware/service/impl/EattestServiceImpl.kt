@@ -118,6 +118,7 @@ import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResultWithResponse
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EattestService
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Document
@@ -179,7 +180,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         attest: Eattest): SendAttestResultWithResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Eattest operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
@@ -195,7 +196,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
 
         val requestAuthorNihii = guardPostNihii ?: hcpNihii
         val requestAuthorSsin = guardPostSsin ?: hcpSsin
-        val requestAuthorCdHcParty = if (guardPostNihii?.isEmpty() == true) "persphysician" else "guardpost"
+        val requestAuthorCdHcParty = if (guardPostNihii?.isEmpty() != false) "persphysician" else "guardpost"
 
         return extractEtk(credential)?.let {
             val sendTransactionRequest = SendTransactionRequest().apply {
@@ -214,7 +215,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
                                 requestAuthorCdHcParty
                             })
-                            if (guardPostNihii?.isEmpty() == true) {
+                            if (guardPostNihii?.isEmpty() != false) {
                                 firstname = hcpFirstName
                                 familyname = hcpLastName
                             } else {
@@ -245,7 +246,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                     s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
                                     requestAuthorCdHcParty
                                 })
-                                if (guardPostNihii?.isEmpty() == true) {
+                                if (guardPostNihii?.isEmpty() != false) {
                                     firstname = hcpFirstName
                                     familyname = hcpLastName
                                 } else {
@@ -716,7 +717,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                             name = ValueRefString().apply { value = packageInfo.packageName }
                         }
                         careProvider = CareProviderType().apply {
-                            if (guardPostNihii?.isEmpty() == true) {
+                            if (guardPostNihii?.isEmpty() != false) {
                                 nihii =
                                     NihiiType().apply {
                                         quality = "doctor"; value =

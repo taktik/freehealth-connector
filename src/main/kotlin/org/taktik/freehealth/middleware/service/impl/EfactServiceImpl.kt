@@ -41,6 +41,7 @@ import org.taktik.freehealth.middleware.dto.efact.Zone
 import org.taktik.freehealth.middleware.dto.efact.segments.RecordOrSegmentDescription
 import org.taktik.freehealth.middleware.dto.efact.segments.ZoneDescription
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatReader
 import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatWriter
 import org.taktik.freehealth.middleware.service.EfactService
@@ -299,7 +300,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
     ): List<EfactMessage> {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
+                ?: throw MissingTokenException("Cannot obtain token for Efact operations")
 
         val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
 
@@ -412,7 +413,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         }
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
+                ?: throw MissingTokenException("Cannot obtain token for Efact operations")
 
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
 
@@ -443,7 +444,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         }
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
+                ?: throw MissingTokenException("Cannot obtain token for Efact operations")
 
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
         val confirm =
