@@ -787,13 +787,15 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                         nis = nisCodesPerZip[hcpZip]
                     })
                 })
-                hcparties.add(HcpartyType().apply {
-                    ids.add(IDHCPARTY().apply {
-                        s = IDHCPARTYschemes.LOCAL; sl = "endusersoftwareinfo"; sv =
-                        "1.0"; value = hubPackageId ?: config.getProperty("hub.package.id") ?: "ACC_"
+                if(StringUtils.isNotEmpty(hubPackageId ?: config.getProperty("hub.package.id") ?: "ACC_")) {
+                    hcparties.add(HcpartyType().apply {
+                        ids.add(IDHCPARTY().apply {
+                            s = IDHCPARTYschemes.LOCAL; sl = "endusersoftwareinfo"; sv =
+                            "1.0"; value = hubPackageId ?: config.getProperty("hub.package.id") ?: "ACC_"
+                        })
+                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.1"; value = "application" })
                     })
-                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.1"; value = "application" })
-                })
+                }
             }
             breakTheGlassReason?.let { breaktheglass = it }
         }
