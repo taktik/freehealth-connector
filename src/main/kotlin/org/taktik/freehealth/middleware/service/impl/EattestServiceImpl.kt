@@ -42,6 +42,7 @@ import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.CD_NIHDI
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.CD_NIHDI_RELATEDSERVICE
+import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.LOCAL
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORMYCARENETschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
@@ -1544,6 +1545,13 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                                                 s =
                                                     CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value =
                                                 code.relativeService
+                                            })
+                                        }
+                                    },
+                                    code.justification?.let {
+                                        ContentType().apply {
+                                            cds.add(CDCONTENT().apply {
+                                                s = LOCAL; sl = "NIHDI-CLAIM-EXEMPTION"; sv = "1.0"; value = it
                                             })
                                         }
                                     }).filterNotNull())
