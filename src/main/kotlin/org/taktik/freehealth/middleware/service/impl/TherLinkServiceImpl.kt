@@ -50,6 +50,7 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.BeIDCredential
 import org.taktik.connector.technical.ws.domain.GenericRequest
 import org.taktik.connector.technical.ws.domain.TokenType
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.TherLinkService
 import java.util.*
@@ -118,7 +119,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                                                    ): TherapeuticLinkMessage? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Therlink operations")
 
         val query = GetTherapeuticLinkRequest(DateTime.now(),getNihii(queryLink.hcParty)!!, Author().apply { hcParties.add(queryLink.hcParty) }, queryLink, 100, proof)
 
@@ -187,7 +188,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                                         ): TherapeuticLinkMessage {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val therLink =
             makeTherapeuticLink(
                 therLinkType ?: "gpconsultation",
@@ -294,7 +295,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                            ): TherapeuticLinkMessage {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
 
         val mapRevokeTherapeuticLinkRequest = requestObjectMapper.mapRevokeTherapeuticLinkRequest(
             RevokeTherapeuticLinkRequest(

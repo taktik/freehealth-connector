@@ -118,6 +118,7 @@ import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.Chapter4Service
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.utils.FuzzyValues
@@ -397,7 +398,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val isTest = config.getProperty("endpoint.ch4.admission.v1").contains("-acpt")
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
@@ -528,7 +529,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val isTest = config.getProperty("endpoint.ch4.admission.v1").contains("-acpt")
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
@@ -712,7 +713,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         val isTest = config.getProperty("endpoint.ch4.admission.v1").contains("-acpt")
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)

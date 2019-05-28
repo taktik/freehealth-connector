@@ -29,7 +29,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.DefaultSecurityFilterChain
 import org.springframework.security.web.FilterChainProxy
@@ -47,32 +46,12 @@ import org.taktik.freehealth.middleware.web.LoginUrlAuthenticationEntryPoint
 
 @Configuration
 class SecurityConfig {
-//	@Bean fun passwordEncoder() = BCryptPasswordEncoder(8)
-//	@Bean fun authenticationProcessingFilterEntryPoint() = LoginUrlAuthenticationEntryPoint("/", mapOf("/api" to "api/login.html"))
-//	@Bean fun basicAuthenticationFilter(authenticationManager: AuthenticationManager, authenticationProcessingFilterEntryPoint: LoginUrlAuthenticationEntryPoint) = BasicAuthenticationFilter(authenticationManager)
-//	@Bean fun usernamePasswordAuthenticationFilter(authenticationManager: AuthenticationManager, authenticationProcessingFilterEntryPoint: LoginUrlAuthenticationEntryPoint) = UsernamePasswordAuthenticationFilter().apply {
-//		usernameParameter = "username"
-//		passwordParameter = "password"
-//		setAuthenticationManager(authenticationManager)
-//		setAuthenticationSuccessHandler(AuthenticationSuccessHandler().apply { setDefaultTargetUrl("/"); setAlwaysUseDefaultTargetUrl(false) })
-//		setAuthenticationFailureHandler(AuthenticationFailureHandler().apply { setDefaultFailureUrl("/error"); })
-//		setRequiresAuthenticationRequestMatcher(AntPathRequestMatcher("/login"))
-//		setPostOnly(true)
-//	}
-//	@Bean fun remotingExceptionTranslationFilter() = ExceptionTranslationFilter(Http401UnauthorizedEntryPoint())
-//	@Bean fun exceptionTranslationFilter(authenticationProcessingFilterEntryPoint: LoginUrlAuthenticationEntryPoint) = ExceptionTranslationFilter(authenticationProcessingFilterEntryPoint)
-	@Bean fun securityConfigAdapter(httpClient: HttpClient, couchDbProperties: CouchDbProperties, cacheManager: CacheManager) = SecurityConfigAdapter(httpClient, couchDbProperties, cacheManager)
-
-//	@Bean fun daoAuthenticationProvider(userDetailsService : UserDetailsService, passwordEncoder: org.springframework.security.crypto.password.PasswordEncoder) = DaoAuthenticationProvider().apply {
-//		setPasswordEncoder(passwordEncoder)
-//		setUserDetailsService(userDetailsService)
-//	}
+	@Bean fun securityConfigAdapter(httpClient: HttpClient, couchDbProperties: CouchDbProperties, authenticationProperties: AuthenticationProperties, cacheManager: CacheManager) = SecurityConfigAdapter(httpClient, couchDbProperties, authenticationProperties, cacheManager)
     @Bean fun httpClient() = HttpClient().apply { start() }
-//	@Bean fun userDetailsService(httpClient: HttpClient, couchDbProperties: CouchDbProperties, cacheManager: CacheManager) = CouchdbUserDetailsService(httpClient, couchDbProperties, cacheManager)
 }
 
 @Configuration
-class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: CouchDbProperties, val cacheManager: CacheManager) : WebSecurityConfigurerAdapter(false) {
+class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: CouchDbProperties, val authenticationProperties: AuthenticationProperties, val cacheManager: CacheManager) : WebSecurityConfigurerAdapter(false) {
     @Bean
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
@@ -80,14 +59,14 @@ class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: C
 
     //@Autowired
     override fun configure(auth: AuthenticationManagerBuilder?) {
+        val passwordEncoder = BCryptPasswordEncoder(8)
 		auth!!.authenticationProvider(DaoAuthenticationProvider().apply {
-            setPasswordEncoder(BCryptPasswordEncoder(8))
-            setUserDetailsService(CouchdbUserDetailsService(httpClient, couchDbProperties, cacheManager))
+            setPasswordEncoder(passwordEncoder)
+            setUserDetailsService(CouchdbUserDetailsService(httpClient, couchDbProperties, authenticationProperties, cacheManager, passwordEncoder))
         })
 	}
 
 	override fun configure(http: HttpSecurity?) {
-
         val authenticationManager = authenticationManager()
         val loginUrlAuthenticationEntryPoint = LoginUrlAuthenticationEntryPoint("/", mapOf("/api" to "api/login.html"))
         val basicAuthenticationFilter = BasicAuthenticationFilter(authenticationManager)
