@@ -82,10 +82,11 @@ interface EattestService {
         traineeSupervisorLastName: String?,
         passPhrase: String,
         patientSsin: String,
-        patientFirstName:String,
-        patientLastName:String,
-        patientGender:String,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
         referenceDate: Int?,
-        attest: Eattest
-                  ): SendAttestResultWithResponse?
+        attest: String,
+        reason: String
+                    ): SendAttestResultWithResponse?
 }

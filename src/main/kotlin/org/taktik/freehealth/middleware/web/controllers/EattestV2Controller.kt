@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -116,4 +117,47 @@ class EattestV2Controller(val eattestService: EattestService) {
         null,
         attest
     )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
+
+    @DeleteMapping("/send/{patientSsin}")
+    fun cancelAttest(
+        @PathVariable patientSsin: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpCbe: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientGender: String,
+        @RequestParam(required = false) date: Long?,
+        @RequestParam(required = false) traineeSupervisorSsin: String?,
+        @RequestParam(required = false) traineeSupervisorNihii: String?,
+        @RequestParam(required = false) traineeSupervisorFirstName: String?,
+        @RequestParam(required = false) traineeSupervisorLastName: String?,
+        @RequestParam eAttestRef : String,
+        @RequestParam reason : String
+                  ): SendAttestResult? = eattestService.cancelAttest(
+        keystoreId,
+        tokenId,
+        hcpNihii,
+        hcpSsin,
+        hcpFirstName,
+        hcpLastName,
+        hcpCbe,
+        traineeSupervisorSsin,
+        traineeSupervisorNihii,
+        traineeSupervisorFirstName,
+        traineeSupervisorLastName,
+        passPhrase,
+        patientSsin,
+        patientFirstName,
+        patientLastName,
+        patientGender,
+        null,
+        eAttestRef,
+        reason
+                                                                    )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 }
