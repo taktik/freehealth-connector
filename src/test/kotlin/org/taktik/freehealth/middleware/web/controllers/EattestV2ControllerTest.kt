@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class EattestControllerTest : EhealthTest() {
+class EattestV2ControllerTest : EhealthTest() {
     @LocalServerPort
     private val port: Int = 0
 
@@ -69,7 +69,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 1", results)
     }
@@ -86,7 +86,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 2", results)
     }
@@ -103,7 +103,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 3", results)
     }
@@ -121,7 +121,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 4", results)
     }
@@ -138,7 +138,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(1).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 5", results)
     }
@@ -156,7 +156,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 6", results)
     }
@@ -180,7 +180,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 7", results)
     }
@@ -204,7 +204,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 8", results)
     }
@@ -221,7 +221,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 9", results)
     }
@@ -238,7 +238,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(2).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 10", results)
     }
@@ -255,7 +255,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 11", results)
     }
@@ -280,7 +280,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 12", results)
     }
@@ -311,7 +311,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(2).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 13", results)
     }
@@ -328,7 +328,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(5).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 14", results)
     }
@@ -346,7 +346,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 15", results)
     }
@@ -364,7 +364,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 16", results)
     }
@@ -388,7 +388,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(0).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 17", results)
     }
@@ -405,7 +405,7 @@ class EattestControllerTest : EhealthTest() {
         )))
 
         val results = getNisses(4).map {
-            this.restTemplate.postForObject("http://localhost:$port/eattest/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
+            this.restTemplate.postForObject("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", eattest, String::class.java, firstName1, lastName1, passPhrase)
         }
         assertResults("scenario 18", results)
     }
