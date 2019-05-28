@@ -19,15 +19,14 @@ import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR;
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes;
 import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType;
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.taktik.connector.technical.utils.IdentifierType;
-import org.taktik.connector.technical.utils.SessionUtil;
 
 public final class HcPartyUtil {
    private static final Logger LOG = LoggerFactory.getLogger(HcPartyUtil.class);
@@ -36,6 +35,12 @@ public final class HcPartyUtil {
    private static final String SINGLE_HCPARTY_CONFIG_PREFIX = "kmehr.single.hcparty.template.";
    private static final String MULTIPLE_HCPARTIES_CONFIG_PREFIX = "kmehr.multiple.hcparties.template.";
    private static final String IDVERSION = "1.0";
+   private static final String CD_ENCRYPTION_ACTOR_PROPERTY_KEY = "encryption.actor.cd";
+   private static final String ID_ENCRYPTION_ACTOR_PROPERTY_KEY = "encryption.actor.id";
+   private static final String ID_ENCRYPTION_APPLICATION_PROPERTY_KEY = "encryption.application.id";
+
+   private HcPartyUtil() {
+   }
 
    public static String getAuthorKmehrQuality() {
       String quality = ConfigFactory.getConfigValidator().getProperty("main.kmehr.quality");
@@ -175,6 +180,24 @@ public final class HcPartyUtil {
       }
    }
 
+   public static String createKmehrIdString(String projectName, String kmehrIdSuffix) throws TechnicalConnectorException {
+      String tempKmehrIdSuffix = kmehrIdSuffix;
+      if (kmehrIdSuffix == null) {
+         tempKmehrIdSuffix = createKmehrIdSuffix();
+      }
+
+      return retrieveMainAuthorId(projectName) + "." + tempKmehrIdSuffix;
+   }
+
+   public static String createKmehrIdString(String projectName) throws TechnicalConnectorException {
+      return createKmehrIdString(projectName, (String)null);
+   }
+
+   public static String retrieveMainAuthorId(String projectName) throws TechnicalConnectorException {
+      String finalProjectName = determineProjectNameToUse(projectName);
+      String mainAuthorIdProperty = "kmehr." + finalProjectName + ".identifier.id.idhcparty.value";
+      return ConfigFactory.getConfigValidatorFor(mainAuthorIdProperty).getProperty(mainAuthorIdProperty);
+   }
 
    /** @deprecated */
    @Deprecated
@@ -185,7 +208,15 @@ public final class HcPartyUtil {
    public static String createKmehrIdSuffix() throws TechnicalConnectorException {
       return IdGeneratorFactory.getIdGenerator("kmehr").generateId();
    }
-   
+
+   public static IDKMEHR createKmehrId(String projectName, String kmehrIdSuffix) throws TechnicalConnectorException {
+      IDKMEHR id = new IDKMEHR();
+      id.setS(IDKMEHRschemes.ID_KMEHR);
+      id.setSV("1.0");
+      id.setValue(createKmehrIdString(projectName, kmehrIdSuffix));
+      return id;
+   }
+
    public static IDHCPARTY createInssId(String insz) {
       return buildId("1.0", insz, IDHCPARTYschemes.INSS);
    }
@@ -249,10 +280,16 @@ public final class HcPartyUtil {
       return buildHcpartiesFromConfig("kmehr." + finalProjectName + ".");
    }
 
-	private static String determineProjectNameToUse(String projectName) throws TechnicalConnectorException {
+   public static AuthorType createAuthor(String projectName) throws TechnicalConnectorException {
+      AuthorType authorType = new AuthorType();
+      authorType.getHcparties().addAll(createAuthorHcParties(projectName));
+      return authorType;
+   }
+
+   private static String determineProjectNameToUse(String projectName) throws TechnicalConnectorException {
       Configuration config = ConfigFactory.getConfigValidator().getConfig();
       String finalProjectName = projectName;
-      if (config.getBooleanProperty("kmehr." + projectName + ".usedefaultproperties", true).booleanValue()) {
+      if (config.getBooleanProperty("kmehr." + projectName + ".usedefaultproperties", true)) {
          finalProjectName = "default";
       }
 

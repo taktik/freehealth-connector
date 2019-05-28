@@ -60,7 +60,6 @@ public final class ConnectorXmlUtils {
    public static Element getFirstChildElement(Node node) {
       Node child;
       for(child = node.getFirstChild(); child != null && child.getNodeType() != 1; child = child.getNextSibling()) {
-         ;
       }
 
       return child != null ? (Element)child : null;
@@ -165,6 +164,16 @@ public final class ConnectorXmlUtils {
       return helper.toObject(in);
    }
 
+   public static <T> T toObject(byte[] in, Class<T> clazz) {
+      MarshallerHelper<T, T> helper = new MarshallerHelper(clazz, clazz);
+      return helper.toObject(in);
+   }
+
+   public static <T> T toObject(String xml, Class<T> clazz) throws Exception {
+      MarshallerHelper<T, T> helper = new MarshallerHelper(clazz, clazz);
+      return helper.toObject(xml);
+   }
+
    public static String toString(Object obj) {
       MarshallerHelper marshallerHelper = new MarshallerHelper(obj.getClass(), obj.getClass());
       return marshallerHelper.toString(obj);
@@ -197,7 +206,6 @@ public final class ConnectorXmlUtils {
    public static String flatten(String xml) {
       String result;
       for(result = xml.replaceAll("[\t\n\r]", ""); result.contains(" <"); result = result.replace(" <", "<")) {
-         ;
       }
 
       return result;
