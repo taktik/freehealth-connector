@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:mycarenet:commons:protocol:v3" xmlns:mc="urn:be:fgov:ehealth:mycarenet:commons:core:v3" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" targetNamespace="urn:be:fgov:ehealth:mycarenet:commons:protocol:v3" elementFormDefault="qualified" attributeFormDefault="unqualified" version="3.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD 03.b Commons MyCarenet
+ Specification-Version: 3.0
+ Implementation-Version: 3.0.2
+ Build-Time: 20180619-0919 
+ </xs:appinfo>
+ </xs:annotation>
+	<!-- core elements and types -->
+	<xs:import namespace="urn:be:fgov:ehealth:mycarenet:commons:core:v3" schemaLocation="mycarenet-commons-core-3_0.xsd"/>
+	<!--eHealth commons protocol -->
+	<xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd"/>
+	<!-- external -->
+	<xs:import namespace="http://www.w3.org/2005/05/xmlmime" schemaLocation="../../external/XSD/xmlmime.xsd"/>
+	<!--mycarenet registration web service-->
+	<!-- protocol elements -->
+	<!-- Registration-->
+	<xs:complexType name="SendRequestType">
+		<xs:annotation>
+			<xs:documentation>Generic synchronised request type. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="protocol:RequestType">
+				<xs:sequence>
+					<xs:element name="CommonInput" type="mc:CommonInputType"/>
+					<xs:element name="Routing" type="mc:RoutingType" minOccurs="0"/>
+					<xs:element name="Detail" type="mc:BlobType">
+						<xs:annotation>
+							<xs:documentation>ContentType: text/xml. ContentEncoding: none. MessageName: GMD-Notify-CR, GMD-Consult-CR (Async: GMD-Consult-HCP-REQ/RSP, GMD-Closure-RSP, GMD-Extension-RSP)</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Xades" type="xmime:base64Binary" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>The Xades signature is based on XMLDSig and comes in several variant. Of the 2 base variants, MyCareNet uses the Xades-BES. Of the different Xades extensions, only Xades-T is used.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SendResponseType">
+		<xs:annotation>
+			<xs:documentation>Generic synchronised response type. A SendResponseType contains a single Return element.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="protocol:ResponseType">
+				<xs:sequence>
+					<xs:element name="Return" type="ResponseReturnType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ResponseReturnType">
+		<xs:annotation>
+			<xs:documentation> Describes the business output of NIP-PIN services.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CommonOutput" type="mc:CommonOutputType"/>
+			<xs:element name="Detail" type="mc:BlobType"/>
+			<xs:element name="XadesT" type="xmime:base64Binary" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The signature in xades-t form, base64 encoded to preserve the internal signature. Optional when the input was emtpy.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

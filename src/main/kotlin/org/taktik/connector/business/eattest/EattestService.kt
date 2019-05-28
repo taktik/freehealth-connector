@@ -22,10 +22,19 @@ package org.taktik.connector.business.eattest
 
 import be.fgov.ehealth.mycarenet.attest.protocol.v1.SendAttestationRequest
 import be.fgov.ehealth.mycarenet.attest.protocol.v1.SendAttestationResponse
+import be.fgov.ehealth.mycarenet.attest.protocol.v2.CancelAttestationRequest
+import be.fgov.ehealth.mycarenet.attest.protocol.v2.CancelAttestationResponse
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 
 interface EattestService {
+    //v1
     @Throws(exceptionClasses = [TechnicalConnectorException::class])
-    fun sendAttestion(token: SAMLToken, request: SendAttestationRequest): SendAttestationResponse
+    fun sendAttestion(token: SAMLToken, request: be.fgov.ehealth.mycarenet.attest.protocol.v1.SendAttestationRequest): be.fgov.ehealth.mycarenet.attest.protocol.v1.SendAttestationResponse
+
+    //v2
+    @Throws(exceptionClasses = [TechnicalConnectorException::class])
+    fun sendAttestion(token: SAMLToken, request: be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationRequest): be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationResponse
+    @Throws(exceptionClasses = [TechnicalConnectorException::class])
+    fun cancelAttestion(token: SAMLToken, request: CancelAttestationRequest): CancelAttestationResponse
 }

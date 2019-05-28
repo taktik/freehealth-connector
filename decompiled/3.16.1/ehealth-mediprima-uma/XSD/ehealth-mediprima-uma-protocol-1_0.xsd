@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:mediprima:uma:protocol:v1" xmlns:cc="urn:be:fgov:ehealth:mediprima:uma:core:v1" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="urn:be:fgov:ehealth:mediprima:uma:protocol:v1" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-mediprima-uma
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.0
+ Build-Time: 20180214-1348 
+ </xs:appinfo>
+ </xs:annotation>
+  <!-- core elements and types -->
+  <xs:import namespace="urn:be:fgov:ehealth:mediprima:uma:core:v1" schemaLocation="ehealth-mediprima-uma-core-1_0.xsd" />
+  <!--eHealth protocol element -->
+  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd" />
+  <!-- protocol elements -->
+  <xs:element name="DeleteUrgentMedicalAidAttestationRequest" type="DeleteUrgentMedicalAidAttestationRequestType" />
+  <xs:element name="DeleteUrgentMedicalAidAttestationResponse" type="DeleteUrgentMedicalAidAttestationResponseType" />
+  <xs:element name="SearchUrgentMedicalAidAttestationRequest" type="SearchUrgentMedicalAidAttestationRequestType" />
+  <xs:element name="SearchUrgentMedicalAidAttestationResponse" type="SearchUrgentMedicalAidAttestationResponseType" />
+  <xs:element name="SendUrgentMedicalAidAttestationRequest" type="SendUrgentMedicalAidAttestationRequestType" />
+  <xs:element name="SendUrgentMedicalAidAttestationResponse" type="SendUrgentMedicalAidAttestationResponseType" />
+  <!-- protocol types -->
+  <xs:complexType name="DeleteUrgentMedicalAidAttestationRequestType">
+  <xs:annotation>
+          <xs:documentation>Delete urgent medical aid attestation request</xs:documentation>
+        </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:AuthorRequestType">
+        <xs:sequence>
+          <xs:element name="BeneficiarySsin" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>SSIN of the beneficiary</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="AttestationNumber" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="DeleteUrgentMedicalAidAttestationResponseType">
+  <xs:annotation>
+          <xs:documentation>Delete urgent medical aid attestation result</xs:documentation>
+        </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="AttestionNumber" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="SearchUrgentMedicalAidAttestationRequestType">
+  <xs:annotation>
+          <xs:documentation>Search urgent medical aid attestation with critera</xs:documentation>
+        </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="Criteria" type="cc:CriteriaType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="SearchUrgentMedicalAidAttestationResponseType">
+  <xs:annotation>
+          <xs:documentation>Search urgent medical aid attestation result(s)</xs:documentation>
+        </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="Attestation" type="cc:AttestationType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="SendUrgentMedicalAidAttestationRequestType">
+  <xs:annotation>
+          <xs:documentation>Send urgent medical aid attestation request</xs:documentation>
+        </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:AuthorRequestType">
+        <xs:sequence>
+          <xs:element name="BeneficiarySsin" type="xs:string"/>
+          <xs:element name="ValidityPeriod" type="cc:PeriodType"/>
+          <xs:element name="MedicalCover" type="cc:MedicalCoverType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="SendUrgentMedicalAidAttestationResponseType">
+  <xs:annotation>
+          <xs:documentation>Send urgent medical aid attestation response</xs:documentation>
+        </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="Attestion" type="cc:AttestationType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

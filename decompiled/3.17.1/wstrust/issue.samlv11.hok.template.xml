@@ -1,0 +1,18 @@
+<wst:RequestSecurityToken xmlns:wst="http://docs.oasis-open.org/ws-sx/ws-trust/200512" xmlns:auth="http://docs.oasis-open.org/wsfed/authorization/200706" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+  <wst:TokenType>http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1</wst:TokenType>
+  <wst:RequestType>http://docs.oasis-open.org/ws-sx/ws-trust/200512/Issue</wst:RequestType>
+  <wst:Claims Dialect="http://docs.oasis-open.org/wsfed/authorization/200706/authclaims"></wst:Claims>
+  <wst:Lifetime>
+    <wsu:Created></wsu:Created>
+    <wsu:Expires></wsu:Expires>
+  </wst:Lifetime>
+  <wst:KeyType>http://docs.oasis-open.org/ws-sx/wstrust/200512/PublicKey</wst:KeyType>
+  <wst:UseKey>
+    <wsse:SecurityTokenReference>
+      <ds:X509Data>
+        <ds:X509Certificate></ds:X509Certificate>
+      </ds:X509Data>
+    </wsse:SecurityTokenReference>
+  </wst:UseKey>
+  </wst:RequestSecurityToken>

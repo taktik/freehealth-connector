@@ -73,7 +73,9 @@ public enum TechnicalConnectorExceptionValues {
    BEID_ERROR("beid.error", "Error while reading BeIDCard data : {0}"),
    BEID_ERROR_PHOTO("beid.error.photo", "Error while reading photo from beIdCard : {0}"),
    HARFILE("harfile.error", "An error occured while preparing HARfile : {0}"),
-   ERROR_SAX_EXCEPTION("error.saxexception", "SAXException occured while {0}");
+   ERROR_SAX_EXCEPTION("error.saxexception", "SAXException occured while {0}"),
+   INVALID_PROPERTY_VALUE("invalid.property.value", "Property value {0} is not valid: {1}"),
+   UNEXPECTED_ERROR("error.unexpected", "Unexpected connector error");
 
    private String errorCode;
    private String message;

@@ -1,0 +1,157 @@
+*******************************************************
+* eHealth Technical Connector Signature RELEASE NOTES *
+*******************************************************
+3.16.0 release (oktober 2018)
+  . N/A
+
+3.16.0-beta-3 (june 2018)
+  . N/A
+
+3.16.0-beta-2 (june 2018)
+ . internal release
+
+3.16.0-beta-1 (june 2018)
+ . internal release
+
+3.15.1 release (april 2018)
+  . improvement     b.f.e.t.signature.impl.XmlSignatureBuilder                      Build standard signature
+
+3.15.0 release (april 2018)
+ . internal release
+   
+3.14.2 release (february 2017)
+  . N/A
+     
+3.14.2-beta-1 release (november 2017)
+  . N/A
+
+3.14.2-beta-0 internal release (november 2017)
+
+3.13.1 release (july 2017)
+  . improvement b.f.e.t.signature.domain.XadesOption                                Adding option to specify the encapsulation logic
+  . added       b.f.e.t.signature.transformers.EncapsulationTransformer             Interface to specify the encapsulation logic
+  . improvement b.f.e.t.signature.impl.XmlSignatureBuilder                          Reworked logic in order to specify the encapsulation logic
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . added       b.f.e.t.signature.AdvancedElectronicSignatureEnumeration            Adding option for a PKCS#7 signature
+  . added       b.f.e.t.signature.SignatureBuilderFactory                           Adding XML Signature in default SignatureBuilder list.
+  . added       b.f.e.t.signature.domain.XadesOption                                Adding option for specifing the xpath for encaspulating the signature.
+  . refactoring b.f.e.t.siganture.impl.CmsSignatureBuilder                          Refactoring based on new bouncycastle API
+  . refactoring b.f.e.t.siganture.impl.XmlSignatureBuilder                          Refactoring based in order to support the new BouncyCastle API, the new XadesOptions and a basic XML signature
+  . refactoring b.f.e.t.signature.impl.tsa.impl.TimeStampGeneratorImpl              minor refactoring (clean code)
+  . refactoring b.f.e.t.signature.impl.xades.domain.*                               minor refactoring (clean code, support new BouncyCastle API)
+  . refactoring b.f.e.t.signature.impl.xades.impl.XadesTSpecification               minor refactoring (clean code)
+  
+3.12.0 internal release (mai 2017)
+ 
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . N/A
+  
+3.10.4 release (september 2016)
+  . bug-fix       b.f.e.t.signature.impl.xades.domain.UnsignedPropertiesBuilder     Adding ids on timestamp elements
+
+3.10.3 release
+  . internal release
+
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release
+  . internal release
+
+3.10.0 release (june 2016)
+  . improvement   b.f.e.t.signature.SignatureBuilderFactory                         reworked initialisation in order to
+  . added         b.f.e.t.signature.domain.SignatureVerificationResult              adding method for obtain verified signing time
+  . bug-fix       b.f.e.t.signature.domain.XadesOption                              fixing typo in one of the options (TRANFORMERLIST -> TRANSFORMERLIST)
+  . added         b.f.e.t.signature.domain.XadesOption                              properties to specify the clockskew of the signing time
+  . bug-fix       b.f.e.t.signature.resolvers.DocumentResolver                      minor refactoring (clean code)
+  . bug-fix       b.f.e.t.signature.resolvers.SAMLAssertionKeyResolver              KeyResolver for looking up a SAML Assertion in the signature.
+  . bug-fix       b.f.e.t.signature.impl.AbstractSignatureBuilder                   Using (verified) signing time to verify OCSP/CRL checks
+  . added         b.f.e.t.signature.impl.XmlSignatureBuilder
+  . remove        b.f.e.t.signature.impl.AbstractXadesSignatureBuilder
+  . remove        b.f.e.t.signature.impl.XadesSignatureBuilder
+  . remove        b.f.e.t.signature.impl.XadesTSignatureBuilder
+  . renamed       b.f.e.t.signature.impl.CmsSignatureBuilder                        rename of the CadesSignatureBuilder
+  . added         b.f.e.t.signature.impl.DomUtils                                   utility class used for 'fast' DOM object manipulation
+  . added         b.f.e.t.signature.impl.SignatureUtils                             utility class containing helper methods for the common signature operations
+  . added         b.f.e.t.signature.impl.extractor.*                                package containing helper methods to extrat the correct signing certificate from the keyInfo
+  . added         b.f.e.t.signature.impl.tsa.*                                      package with the extract logic for generating a correct timestamp for a signature
+  . added         b.f.e.t.signature.impl.xades.*                                    package with the logic to add the needed information on a signature for XADES_BES en XADES_T
+  . improvement                                                                     uniformisation of all connector versions
+
+3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+3.4.0-beta-10 release
+  . bug-fix       b.f.e.t.signature.impl.AbstractXadesSignatureBuilder              certificate is only added ones to the certificate chain
+
+3.4.0-beta-9 release
+  . improvement   b.f.e.t.signature.SignatureBuilder                                adding support verifying an encapsulated signature
+  . added         b.f.e.t.signature.domain.CadesOption                              adding new options to indicate if the signature should be encapsulated.
+  . added         b.f.e.t.signature.domain.XadesOption                              adding new options to indicate if the signature should be encapsulated.
+  . added         b.f.e.t.signature.domain.SignatureVerificationError               adding error when there is no signature
+  . improvement   b.f.e.t.signature.impl.*                                          refactoring in order to use the eHealth revocation policy
+                                                                                    adding flag if hte signature should be encapsulated
+
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+3.4.0-beta-7 release
+  . N/A
+
+3.4.0-beta-6 release
+  . internal ehealth release (not published or distributed)
+
+3.4.0 beta-5 release
+  . improvement   b.f.e.t.signature.impl.AbstractSignatureBuilder                     improved logging statement
+
+3.4.0 beta-4 release
+  . improvement   b.f.e.t.signature.domain.SignatureVerificationResult                adding serializable
+
+3.4.0 beta-3 release
+  . N/A
+
+3.4.0 beta-2 release
+  . bug-fix       b.f.e.t.signature.impl.XadesTSignatureBuilder                       adding UnsignedSignatureProperties element around TimestampToken
+
+3.4.0 beta-1 release
+  . upgrade to latest version of IKVM (7.4.5256)
+
+
+3.4.0 beta-0 release
+. adding        b.f.e.t.signature.domain.CadesOption                                adding new configuration properties
+. adding        b.f.e.t.signature.domain.SignatureVerificationError                 adding new error values XADES_ENCAPSULATED_TIMESTAMP_NOT_VERIFIED
+. adding        b.f.e.t.signature.domain.XadesOption                                adding new configuration properties for XadesT signature
+. adding        b.f.e.t.signature.impl.AbstractXadesSignatureBuilder                adding new abstract methods for XadesT signature
+. improvement   b.f.e.t.signature.impl.CadesSignatureBuilder                        internal refactoring avoiding deprecatec bouncycastle classes.
+. improvement   b.f.e.t.signature.impl.XadesSignatureBuilder                        adding new abstract methods
+. improvement   b.f.e.t.signature.impl.XadesTSignatureBuilder                       adding support for XadesT signature
+
+
+3.3.0 beta-3 release
+. bug-fix      b.f.e.t.signature.impl.AbstractXadesSignatureBuilder                 changed the URI format for ds:References (needed for DMG)
+
+
+3.3.0 beta-2 release
+. adding       b.f.e.t.signature.domain.CadesOption                                 adding Properties that can be used in the Cades-Bes signature
+. adding       b.f.e.t.signature.impl.AbstractSignatureBuilder                      adding abstract class regrouping common logic for all SignatureBuilders
+. improvement  b.f.e.t.signature.impl.CadesSignatureBuilder                         adding possiblity to specify the signature digest default SHA-1
+                                                                                    minor refactoring don't specify the SecurityProvider to use if possible.
+. improvement  b.f.e.t.signature.impl.XadesSignatureBuilder                         minor refactoring using AbstractSignatureBuilder
+. improvement  b.f.e.t.signature.impl.XadesTSignatureBuilder                        minor refactoring using AbstractSignatureBuilder                  
+
+
+3.3.0 beta-1 release
+. improvement                                                                      adding support for Xades-Bes signature
+. improvement                                                                      adding support for Xades-Bes verification
+. improvement                                                                      adding support for Xades-T verification
+. improvement                                                                      adding support for Cades-Bes verification
+. adding                                                                           basic implementation for urn:nippin:xml:sig:transform:optional-deflate
+
+
+3.2.0 beta release
+. improvement                                                                      adding support for Cades-Bes signature

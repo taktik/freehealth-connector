@@ -41,6 +41,7 @@ class QualityType private constructor(val quality: String, val identifierType: I
         val AUDIOLOGIST_NIHII: QualityType
         val AUDIOLOGIST_SSIN: QualityType
         val CONSORTIUM_CBE: QualityType
+        val CITIZEN: QualityType
         val CTRL_ORGANISM_EHP: QualityType
         val DENTIST_NIHII: QualityType
         val DENTIST_SSIN: QualityType
@@ -172,6 +173,7 @@ class QualityType private constructor(val quality: String, val identifierType: I
             return entry.key as T
         }
 
+
         init {
             AMBULANCE_RESCUER_NIHII = QualityType("AMBULANCE_RESCUER", IdentifierType.NIHII)
             AMBULANCE_RESCUER_SSIN = QualityType("AMBULANCE_RESCUER", IdentifierType.SSIN)
@@ -182,6 +184,7 @@ class QualityType private constructor(val quality: String, val identifierType: I
             AUDIOLOGIST_NIHII = QualityType("AUDIOLOGIST", IdentifierType.NIHII)
             AUDIOLOGIST_SSIN = QualityType("AUDIOLOGIST", IdentifierType.SSIN)
             CONSORTIUM_CBE = QualityType("CONSORTIUM", IdentifierType.CBE_CONSORTIUM)
+            CITIZEN = QualityType("CITIZEN", IdentifierType.SSIN)
             CTRL_ORGANISM_EHP = QualityType("CTRL_ORGANISM", IdentifierType.EHP_CTRL_ORGANISM)
             DENTIST_NIHII = QualityType("DENTIST", IdentifierType.NIHII)
             DENTIST_SSIN = QualityType("DENTIST", IdentifierType.SSIN)

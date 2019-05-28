@@ -1,0 +1,51 @@
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:simplify="http://jaxb2-commons.dev.java.net/basic/simplify" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  jaxb:extensionBindingPrefixes="xjc simplify" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.1">
+
+
+
+  <jaxb:bindings schemaLocation="../../../generated-resources/ehealth-kmehr/XSD/kmehr-1_28.xsd">
+    <jaxb:schemaBindings>
+      <jaxb:package name="be.fgov.ehealth.standards.kmehr.schema.v1" />
+    </jaxb:schemaBindings>
+    <jaxb:bindings node="//xsd:complexType[@name='transactionType']/xsd:sequence/xsd:choice/xsd:element[@name='heading']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+    <jaxb:bindings node="//xsd:complexType[@name='transactionType']/xsd:sequence/xsd:choice/xsd:element[@name='item']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+    <jaxb:bindings node="//xsd:complexType[@name='transactionType']/xsd:sequence/xsd:choice/xsd:element[@name='text']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+    <jaxb:bindings node="//xsd:complexType[@name='transactionType']/xsd:sequence/xsd:choice/xsd:element[@name='text-with-layout']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+    <jaxb:bindings node="//xsd:complexType[@name='transactionType']/xsd:sequence/xsd:choice/xsd:element[@name='lnk']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+    <jaxb:bindings node="//xsd:complexType[@name='headingType']/xsd:sequence/xsd:choice/xsd:element[@name='item']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+    <jaxb:bindings node="//xsd:complexType[@name='headingType']/xsd:sequence/xsd:choice/xsd:element[@name='text']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+    <jaxb:bindings node="//xsd:complexType[@name='headingType']/xsd:sequence/xsd:choice/xsd:element[@name='heading']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+    <jaxb:bindings node="//xsd:complexType[@name='headingType']/xsd:sequence/xsd:choice/xsd:element[@name='lnk']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+    <!--<jaxb:bindings node="//xsd:element[@name='regimen']/xsd:complexType/xsd:sequence/xsd:choice/xsd:element[@name='daynumber']">
+      <simplify:as-element-property />
+    </jaxb:bindings>-->
+    <jaxb:bindings node="//xsd:complexType[@name='compoundprescriptionType']/xsd:sequence/xsd:choice/xsd:element[@name='compound']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+    <!-- <jaxb:bindings node="//xsd:complexType[@name='kmehrmessageType']/xsd:sequence/xsd:choice/xsd:sequence/xsd:element[@name='Signature']"> -->
+    <!-- <simplify:as-element-property /> -->
+    <!-- </jaxb:bindings> -->
+   <!--  <jaxb:bindings node="//xsd:complexType[@name='contentType']/xsd:sequence/xsd:choice/xsd:choice/xsd:sequence/xsd:choice/xsd:element[@name='medicinalproduct']/xsd:complexType">
+      <jaxb:class name="MedicinalProductContentType" />
+    </jaxb:bindings> -->
+  </jaxb:bindings>
+
+</jaxb:bindings>

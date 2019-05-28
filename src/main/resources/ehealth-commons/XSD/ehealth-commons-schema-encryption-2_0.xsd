@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2013 sp1 (x64) (http://www.altova.com) by SMALS (SMALS) -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:enc="urn:be:fgov:ehealth:commons:enc:v2" xmlns:core="urn:be:fgov:ehealth:commons:core:v2" xmlns:swaref="http://ws-i.org/profiles/basic/1.1/xsd" targetNamespace="urn:be:fgov:ehealth:commons:enc:v2" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
-	<xs:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="ehealth-commons-schema-core-2_0.xsd"/>
-	<xs:import namespace="http://ws-i.org/profiles/basic/1.1/xsd" schemaLocation="../../external/XSD/swaref.xsd"/>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:enc="urn:be:fgov:ehealth:commons:enc:v2" xmlns:core="urn:be:fgov:ehealth:commons:core:v2" xmlns:swaref="http://ws-i.org/profiles/basic/1.1/xsd"
+		   targetNamespace="urn:be:fgov:ehealth:commons:enc:v2" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
+	<xs:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="ehealth-commons-schema-core-2_0.xsd" />
+	<xs:import namespace="http://ws-i.org/profiles/basic/1.1/xsd" schemaLocation="../../external/XSD/swaref.xsd" />
+	<xs:attribute name="Algorithm" type="xs:anyURI">
+		<xs:annotation>
+			<xs:documentation>Algorithm used for the encryption</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
 	<xs:element name="CipherData" type="enc:CipherDataType">
 		<xs:annotation>
 			<xs:documentation>Contains the encrypted content</xs:documentation>
@@ -13,8 +19,8 @@
 			<xs:documentation>Contains the encrypted content type</xs:documentation>
 		</xs:annotation>
 		<xs:choice>
-			<xs:element ref="enc:CipherValue"/>
-			<xs:element ref="enc:CipherReference"/>
+			<xs:element ref="enc:CipherValue" />
+			<xs:element ref="enc:CipherReference" />
 		</xs:choice>
 	</xs:complexType>
 	<xs:element name="CipherReference" type="enc:CipherReferenceType">
@@ -45,10 +51,15 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:simpleContent>
-				<xs:extension base="xs:base64Binary"/>
+				<xs:extension base="xs:base64Binary" />
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
+	<xs:attribute name="ContentType">
+		<xs:annotation>
+			<xs:documentation>Functional content of(e.g. kmerh,ssin,...)</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
 	<xs:element name="Digest" type="enc:DigestType">
 		<xs:annotation>
 			<xs:documentation>Contains the digest value used to secure the attachment</xs:documentation>
@@ -58,7 +69,7 @@
 		<xs:annotation>
 			<xs:documentation>Type of the digest value used to secure the attachment</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name="algorithm" type="xs:string" use="required">
+		<xs:attribute ref="enc:Algorithm" use="required">
 			<xs:annotation>
 				<xs:documentation>Algorithm userd for Digest Calculation</xs:documentation>
 			</xs:annotation>
@@ -74,19 +85,19 @@
 			<xs:documentation>Contains encrypted data type to send an encrypted message</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="enc:CipherData"/>
+			<xs:element ref="enc:CipherData" />
 		</xs:sequence>
 		<xs:attribute name="Id" type="xs:ID">
 			<xs:annotation>
 				<xs:documentation>Unique identifier of a message</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="MimeType" type="xs:string">
+		<xs:attribute ref="enc:MimeType">
 			<xs:annotation>
 				<xs:documentation>Format of the sealed content (e.g. application/pkcs7,...)</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="ContentType" type="xs:string">
+		<xs:attribute ref="enc:ContentType">
 			<xs:annotation>
 				<xs:documentation>Functional content (e.g. kmerh,ssin,...)</xs:documentation>
 			</xs:annotation>
@@ -106,7 +117,7 @@
 		<xs:annotation>
 			<xs:documentation>Endpoint type of the encryption method</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name="Algorithm"  type="xs:string" use="required"/>
+		<xs:attribute ref="enc:Algorithm" use="required" />
 	</xs:complexType>
 	<xs:element name="EncryptionPolicy">
 		<xs:annotation>
@@ -114,9 +125,9 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="enc:KeyInfo"/>
+				<xs:element ref="enc:KeyInfo" />
 			</xs:sequence>
-			<xs:attribute name="MimeType"  type="xs:string" use="required"/>
+			<xs:attribute ref="enc:MimeType" use="required" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="ETKSearchCriteria" type="enc:ETKSearchCriteriaType">
@@ -129,7 +140,7 @@
 			<xs:documentation>Contains the search criteria type to find the token used for the encryption</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="core:Id" maxOccurs="unbounded"/>
+			<xs:element ref="core:Id" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:element name="Key" type="enc:KeyType">
@@ -147,7 +158,7 @@
 			<xs:documentation>Contains the information type about the key used for the encryption</xs:documentation>
 		</xs:annotation>
 		<xs:choice>
-			<xs:element ref="enc:ETKSearchCriteria"/>
+			<xs:element ref="enc:ETKSearchCriteria" />
 			<xs:element ref="enc:EncryptedKey">
 				<xs:annotation>
 					<xs:documentation>Contains the encrypted Key</xs:documentation>
@@ -174,6 +185,11 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
+	<xs:attribute name="MimeType">
+		<xs:annotation>
+			<xs:documentation>MimeType of the content (e.g. For a CMS message: application/pkcs7,...)</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
 	<xs:element name="URI" type="swaref:swaRef">
 		<xs:annotation>
 			<xs:documentation>Link of the attachment</xs:documentation>

@@ -1,0 +1,34 @@
+<wst:RequestSecurityToken xmlns:wst="http://docs.oasis-open.org/ws-sx/ws-trust/200512" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsa="http://www.w3.org/2005/08/addressing"
+  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:auth="http://docs.oasis-open.org/wsfed/authorization/200706"
+  Context="context-${uuid}">
+  <wst:TokenType>http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1</wst:TokenType>
+  <wst:RequestType>http://docs.oasis-open.org/ws-sx/ws-trust/200512/Issue</wst:RequestType>
+  <wst:Claims Dialect="http://docs.oasis-open.org/wsfed/authorization/200706/authclaims"></wst:Claims>
+  <wst:Lifetime>
+    <wsu:Created>${NotBefore}</wsu:Created>
+    <wsu:Expires>${NotOnOrAfter}</wsu:Expires>
+  </wst:Lifetime>
+  <wst:OnBehalfOf>
+    <wsse:SecurityTokenReference>
+      <wsse:Embedded wsu:Id="token-${uuid}">
+        <saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion" xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          AssertionID="assertion-${uuid}" IssueInstant="${NotBefore}" Issuer="${issuer}" MajorVersion="1" MinorVersion="1">
+          <saml:Conditions NotBefore="${NotBefore}" NotOnOrAfter="${NotOnOrAfter}" />
+          <saml:AuthenticationStatement AuthenticationInstant="${NotBefore}" AuthenticationMethod="${authenticationMethod}">
+            <saml:Subject>
+              <saml:NameIdentifier Format="${nameid.format}" NameQualifier="${nameid.qualifier}">${nameid.value}</saml:NameIdentifier>
+            </saml:Subject>
+          </saml:AuthenticationStatement>
+          <saml:AttributeStatement>
+            <saml:Subject>
+              <saml:NameIdentifier Format="${nameid.format}" NameQualifier="${nameid.qualifier}">${nameid.value}</saml:NameIdentifier>
+            </saml:Subject>
+          </saml:AttributeStatement>
+        </saml:Assertion>
+      </wsse:Embedded>
+    </wsse:SecurityTokenReference>
+  </wst:OnBehalfOf>
+  <wst:Issuer>
+    <wsa:Address>${issuer}</wsa:Address>
+  </wst:Issuer>
+</wst:RequestSecurityToken>

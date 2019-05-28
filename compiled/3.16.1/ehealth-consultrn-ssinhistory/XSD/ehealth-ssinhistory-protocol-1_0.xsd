@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2"
+xmlns="urn:be:fgov:ehealth:consultrn:ssinhistory:protocol:v1"
+xmlns:histcore="urn:be:fgov:ehealth:consultrn:ssinhistory:core:v1"
+xmlns:ns1="urn:be:fgov:ehealth:commons:protocol:v2"
+targetNamespace="urn:be:fgov:ehealth:consultrn:ssinhistory:protocol:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD Consultrn SsinHistory
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.3-SNAPSHOT
+ Build-Time: 20170327-1010 
+ </xs:appinfo>
+ </xs:annotation>
+	<xs:annotation/>
+	<xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:consultrn:ssinhistory:core:v1" schemaLocation="ehealth-ssinhistory-core-1_0.xsd"/>
+	<!-- | Request Elements. -->
+	<xs:element name="ConsultCurrentSsinRequest" type="ConsultSsinRequestType">
+		<xs:annotation>
+			<xs:documentation>Request to get the current inss for an individual</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ConsultRelatedSsinsRequest" type="ConsultSsinRequestType">
+		<xs:annotation>
+			<xs:documentation>Request to get the current and related inss for an individual</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- | Response Elements. -->
+	<xs:element name="ConsultCurrentSsinResponse" type="ConsultCurrentSsinResponseType">
+		<xs:annotation>
+			<xs:documentation>Response that give the current ssin for an individual</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ConsultRelatedSsinsResponse" type="ConsultRelatedSsinsResponseType">
+		<xs:annotation>
+			<xs:documentation>Response that give the current and the related ssin  for an individual</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- | Request Types. -->
+	<xs:complexType name="ConsultSsinRequestType">
+		<xs:annotation>
+			<xs:documentation>Request type</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="protocol:RequestType">
+				<xs:sequence>
+					<xs:element name="Ssin" type="xs:string"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- | Response Types. -->
+	<xs:complexType name="ConsultCurrentSsinResponseType">
+		<xs:annotation>
+			<xs:documentation>Response type for full ssin history for a single ssin</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="protocol:StatusResponseType">
+				<xs:sequence>
+					<xs:element name="Ssin" type="histcore:SsinStatusType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ConsultRelatedSsinsResponseType">
+		<xs:annotation>
+			<xs:documentation>Response type for full ssin history for a single ssin</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ConsultCurrentSsinResponseType">
+				<xs:sequence>
+					<xs:element name="RelatedSsins" type="histcore:RelatedSsinsType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:bcp:protocol:v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" elementFormDefault="qualified" attributeFormDefault="unqualified"
+  targetNamespace="urn:be:fgov:ehealth:bcp:protocol:v1">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-bcp
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.0
+ Build-Time: 20161122-1418 
+ </xs:appinfo>
+ </xs:annotation>
+  <xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../external/XSD/xmldsig-core-schema.xsd" />
+  <xs:element name="ServiceList">
+    <xs:annotation>
+      <xs:documentation>Service list containing all the service of the eHealth Platform</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Service" type="ServiceType" maxOccurs="unbounded" />
+        <xs:element ref="ds:Signature" />
+      </xs:sequence>
+      <xs:attribute name="Id" type="xs:ID" use="required" />
+      <xs:attribute name="IssueInstant" type="xs:dateTime" use="required" />
+      <xs:attribute name="Environment" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="StatusType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ACTIVE" />
+      <xs:enumeration value="INACTIVE" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="ServiceType">
+    <xs:sequence>
+      <xs:element name="Endpoint" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:anyURI">
+              <xs:attribute name="Status" type="StatusType" use="required" />
+              <xs:attribute name="Order" type="xs:integer" use="required" />
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:string" use="required" />
+    <xs:attribute name="Name" type="xs:string" use="required" />
+  </xs:complexType>
+</xs:schema>
