@@ -1292,7 +1292,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     standard =
                         StandardType().apply {
                             cd =
-                                CDSTANDARD().apply { s = "CD-STANDARD"; sv = "1.26"; value = "20160901" }
+                                CDSTANDARD().apply { s = "CD-STANDARD"; sv = "1.26"; value = "20180601" }
                         }
                     ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                     date = refDateTime; time = refDateTime
@@ -1789,7 +1789,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     standard =
                         StandardType().apply {
                             cd =
-                                CDSTANDARD().apply { s = "CD-STANDARD"; sv = "1.26"; value = "20160901" }
+                                CDSTANDARD().apply { s = "CD-STANDARD"; sv = "1.26"; value = "20180601" }
                         }
                     ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                     date = refDateTime; time = refDateTime
