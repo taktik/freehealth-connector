@@ -1,0 +1,14 @@
+<jaxb:bindings
+        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+        xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+        xmlns:simplify="http://jaxb2-commons.dev.java.net/basic/simplify"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.1"
+        jaxb:extensionBindingPrefixes="xjc simplify" >
+
+  <jaxb:bindings schemaLocation="../../../../target/generated-resources/external/XSD/xenc-schema.xsd">
+    <jaxb:schemaBindings>
+      <jaxb:package name="org.w3._2001._04.xmlenc" />
+    </jaxb:schemaBindings>
+  </jaxb:bindings>
+</jaxb:bindings>

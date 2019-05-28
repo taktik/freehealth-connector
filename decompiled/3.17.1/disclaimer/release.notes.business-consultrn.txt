@@ -1,0 +1,18 @@
+**********************************************************
+* eHealth Business consultrn               RELEASE NOTES *
+**********************************************************
+3.17.1 release (april 2019)
+ . bug-fix      Fixes sd validation issue for the registerPerson operation:
+                Dates defined with xsd type string in the ManagePerson webservice were defined as org.joda.time.DateTime in the
+                business connector jaxb data model, causing xsd validation errors on the service provider side (= xsd validation error on the request).
+                Fixed by updating the business connector jaxb model with the latest xsd version for the ManagePerson webservice. 
+                This is linked to the this change in the ManagePerson cookbook v1.1:
+                        - 1.1	10/07/2018	eHealth platform	Adaptation Birthdate value that could be incomplete in some case
+
+3.17.0 internal release (april 2019)
+ 
+3.15.1 release (april 2018)
+ . initial release  (includes identifyPerson, phoneticSearch and managePerson.registerPerson)
+ 
+3.15.0 release (april 2018)
+ . internal release

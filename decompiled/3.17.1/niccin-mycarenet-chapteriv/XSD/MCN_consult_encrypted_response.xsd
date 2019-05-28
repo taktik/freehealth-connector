@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<schema xmlns:tns="urn:be:cin:io:unsealed:medicalAdvisorAgreement:consult:v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd" elementFormDefault="qualified" targetNamespace="urn:be:cin:io:unsealed:medicalAdvisorAgreement:consult:v1" xmlns="http://www.w3.org/2001/XMLSchema">
+    <element name="Response" type="tns:ResponseType" />
+     <complexType name="ResponseType">
+        <sequence>
+            <element name="TimestampReply" type="base64Binary" />
+            <element name="KmehrResponse" type="base64Binary" />
+        </sequence>
+    </complexType>
+</schema>

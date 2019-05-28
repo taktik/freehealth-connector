@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:cin:mycarenet:1.0:carenet:types" xmlns:map="urn:cin:mycarenet:mappings" xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="urn:be:cin:mycarenet:1.0:carenet:types" elementFormDefault="qualified">
+	<xsd:include schemaLocation="MyCareNet_XXXXXX_Types.xsd"/>
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd"/>
+	<xsd:simpleType name="NurseReferenceType">
+		<xsd:restriction base="AlphanumericalType">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="DecisionReferenceType">
+		<xsd:restriction base="xsd:string">
+			<xsd:length value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="DecisionType">
+		<xsd:annotation>
+			<xsd:documentation>
+			     The Decision type is used to express the result of a decision done 
+			     by the Consultant Doctor.
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Reference" type="DecisionReferenceType">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="4109xx">338</map:field>
+							<map:field msgList="4209xx">317</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Reason" type="RejectionReasonType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="4109xx">346</map:field>
+							<map:field msgList="4209xx">318</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Justification" type="String_150" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="result" type="DecisionResultType" use="required">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<map:mappings>
+						<map:field msgList="4109xx">335</map:field>
+						<map:field msgList="4209xx">315</map:field>
+					</map:mappings>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:simpleType name="DecisionResultType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="agreement"/>
+			<xsd:enumeration value="partialAgreement"/>
+			<xsd:enumeration value="onlyMedicalAgreement"/>
+			<xsd:enumeration value="onlyMedicalAgreementWithoutSmallRisks"/>
+			<xsd:enumeration value="rejection"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RejectionReasonType">
+		<xsd:annotation>
+			<xsd:documentation>
+			     The rejection reason is composed of a 3 length string unchecked by the XML Schema.
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:length value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RequestTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="new"/>
+			<xsd:enumeration value="extention"/>
+			<xsd:enumeration value="modification"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- 4XXXXX Elements (MedAdmin) -->
+	<xsd:element name="MedAdminRequestList" type="MedAdminRequestListType"/>
+	<xsd:element name="MedAdminResponseList" type="MedAdminResponseListType"/>
+	<xsd:complexType name="MedAdminRequestListType">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element ref="SingleNurseContractualCareRequest"/>
+			<xsd:element ref="SinglePalliativeCareRequest"/>
+			<xsd:element ref="SingleSpecificTechnicalCareRequest"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="MedAdminResponseListType">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element ref="SingleNurseContractualCareResponse"/>
+			<xsd:element ref="SingleNurseContractualCareUpdate"/>
+			<xsd:element ref="SinglePalliativeCareResponse"/>
+			<xsd:element ref="SingleSpecificTechnicalCareResponse"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<!-- 410XXX Elements (NurseContractualCare) -->
+	<xsd:element name="SingleNurseContractualCareRequest" type="SingleNurseContractualCareRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+			     The SingleNurseContractualCareRequest element contains all the 
+                 information for a new, a modification or extension of a contractual
+                 care request done by a nurse. Message type: 410000
+            </xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="NurseContractualCareRequestDetail" type="NurseContractualCareRequestDetailType"/>
+	<xsd:element name="SingleNurseContractualCareResponse" type="SingleNurseContractualCareResponseType">
+		<xsd:annotation>
+			<xsd:documentation>
+			     The SinleNurseContractualCareResponse element is the response made by the OA to a 
+                 request done by a nurse for contractal care. Message type: 410900 or 410999
+            </xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="NurseContractualCareResponseDetail" type="NurseContractualCareResponseDetailType"/>
+	<xsd:element name="SingleNurseContractualCareUpdate" type="SingleNurseContractualCareUpdateType">
+		<xsd:annotation>
+			<xsd:documentation>
+			     The SingleNurseContractualCareUpdate element is the response 
+                 made by the OA after a new validation of an existing contractal 
+                 care. Message type: 410908
+            </xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="NurseContractualCareUpdateDetail" type="NurseContractualCareUpdateDetailType"/>
+	<!-- 410XXX Types (NurseContractualCare) -->
+	<xsd:complexType name="SingleNurseContractualCareRequestType">
+		<xsd:sequence>
+			<xsd:element name="CareReceiverId" type="ExtCareReceiverStrictIdType">
+				<xsd:annotation>
+					<xsd:documentation>
+			     The CareReceiverId contains the identification of the care receiver.			     
+                 </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element ref="NurseContractualCareRequestDetail"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="MessageHeader"/>
+	</xsd:complexType>
+	<xsd:complexType name="NurseContractualCareDetailType">
+		<xsd:annotation>
+			<xsd:documentation>
+			     The NurseContractualCareDetailType element contains all the data
+			     needed to specify a Contractual Care.
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DecisionReference" type="DecisionReferenceType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">308</map:field>
+							<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCareUpdateDetail/newValue">316</map:field>
+							<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCarePreviousDetail">307</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ReferenceProviderModification" type="xsd:boolean" default="false" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">309</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ContractualType" type="ContractualTypeType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">306</map:field>
+							<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCareUpdateDetail/newValue">314</map:field>
+							<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCarePreviousDetail">311</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TreatmentPeriod" type="PeriodLengthType"/>
+			<xsd:element name="CareDaysByWeek" type="NbrOfDayInAWeek" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">314</map:field>
+							<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCareUpdateDetail/newValue">325</map:field>
+							<!-- This field has no mapping for a 410908 message at location SingleNurseContractualCareUpdate/NurseContractualCarePreviousDetail -->
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="VisitByDay" type="VisitByDayType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">317</map:field>
+							<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCareUpdateDetail/newValue">328</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Toilets" type="ToiletsType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">316</map:field>
+							<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCareUpdateDetail/newValue">327</map:field>
+							<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCarePreviousDetail">321</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Katz" type="KatzType" minOccurs="0"/>
+			<xsd:element name="CarePlace" type="CarePlaceType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="NurseContractualCareRequestDetailType">
+		<xsd:sequence>
+			<xsd:element name="NurseReference" type="NurseReferenceType">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">304</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Requester" type="NihiiType">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">305</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ContractualCareDetail" type="NurseContractualCareDetailType"/>
+		</xsd:sequence>
+		<xsd:attribute name="type" type="RequestTypeType" use="required">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<map:mappings>
+						<map:field msgList="410000 410900">307</map:field>
+					</map:mappings>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="SingleNurseContractualCareResponseType">
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:sequence>
+					<xsd:element name="CareReceiverId" type="ExtCareReceiverStrictIdType"/>
+					<xsd:element name="MessageFault" type="MessageFaultType"/>
+				</xsd:sequence>
+				<xsd:sequence>
+					<xsd:element name="CareReceiverDetail" type="ExtCareReceiverDetailType"/>
+					<xsd:element ref="NurseContractualCareResponseDetail"/>
+				</xsd:sequence>
+			</xsd:choice>
+			<xsd:element ref="NurseContractualCareRequestDetail"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="MessageHeader"/>
+	</xsd:complexType>
+	<xsd:complexType name="NurseContractualCareResponseDetailType">
+		<xsd:sequence>
+			<xsd:element name="ConsultantDoctor" type="NihiiType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="4109xx">334</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Decision" type="DecisionType"/>
+			<xsd:element name="TreatmentPeriod" type="PeriodType" minOccurs="0"/>
+			<xsd:element name="PaliatifPatient" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="4109xx">339</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SingleNurseContractualCareUpdateType">
+		<xsd:sequence>
+			<xsd:element name="CareReceiverDetail" type="ExtCareReceiverDetailType"/>
+			<xsd:element ref="NurseContractualCareUpdateDetail"/>
+			<xsd:element name="NurseContractualCarePreviousDetail" type="NurseContractualCareDetailType"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="MessageHeader"/>
+	</xsd:complexType>
+	<xsd:complexType name="NurseContractualCareUpdateDetailType">
+		<xsd:sequence>
+			<xsd:element name="ConsultantDoctor" type="NihiiType">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410908">308</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Provider" type="NihiiType">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410908">306</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="VisitDate" type="xsd:date" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 4109xx">312</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="newValue" type="NurseContractualCareDetailType"/>
+			<xsd:element name="PaliatifPatient" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410908">329</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="type" type="MessageNatureType" use="required">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<map:mappings>
+						<map:field msgList="410908">309</map:field>
+					</map:mappings>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:simpleType name="ContractualTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="A"/>
+			<xsd:enumeration value="B"/>
+			<xsd:enumeration value="C"/>
+			<xsd:enumeration value="toilet"/>
+			<xsd:enumeration value="nomenclature"/>
+			<!-- Value only valid with the return, added here for re-usablity -->
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="VisitByDayType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[1-2]{1}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="ToiletsType">
+		<xsd:simpleContent>
+			<xsd:extension base="NbrOfDayInAWeek">
+				<xsd:attribute name="Frequency" type="ToiletsFrequencyType" use="required">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<map:mappings>
+								<map:field msgList="410000 410900">315</map:field>
+								<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCareUpdateDetail/newValue">326</map:field>
+								<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCarePreviousDetail">320</map:field>
+							</map:mappings>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:simpleType name="ToiletsFrequencyType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="day"/>
+			<xsd:enumeration value="week"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="KatzScoreType">
+		<xsd:restriction base="KatzScoreElement">
+			<xsd:length value="6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="KatzScoreElement">
+		<xsd:list>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:integer">
+					<xsd:minExclusive value="0"/>
+					<xsd:maxExclusive value="5"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:list>
+	</xsd:simpleType>
+	<xsd:complexType name="DementiaType">
+		<xsd:sequence>
+			<xsd:element name="Doctor" type="NihiiType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">321</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="type" type="DementiaTypeType" use="required">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<map:mappings>
+						<map:field msgList="410000 410900">320</map:field>
+						<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCareUpdateDetail/newValue">324</map:field>
+						<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCarePreviousDetail">319</map:field>
+					</map:mappings>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:simpleType name="DementiaTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="light"/>
+			<xsd:enumeration value="medium"/>
+			<xsd:enumeration value="serious"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="KatzType">
+		<xsd:sequence>
+			<xsd:element name="KatzScore" type="KatzScoreType">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">318</map:field>
+							<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCareUpdateDetail/newValue">322</map:field>
+							<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCarePreviousDetail">317</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ContinenceDetails" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">319</map:field>
+							<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCareUpdateDetail/newValue">323</map:field>
+							<map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCarePreviousDetail">318</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Dementia" type="DementiaType" minOccurs="0"/>
+			<xsd:element name="Prescripter" type="NihiiType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">322</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CarePlaceType">
+		<xsd:sequence>
+			<xsd:element name="CarePlaceName" type="String_25">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">323</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CarePlaceAdress" type="String_25">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">324</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CarePlacePostalCode" type="PostalCodeType">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="410000 410900">325</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="MessageNatureType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="visit"/>
+			<xsd:enumeration value="agreementClosure"/>
+			<xsd:enumeration value="newProvider"/>
+			<xsd:enumeration value="decisionModification"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- 420XXX Elements (PalliativeCare) -->
+	<xsd:element name="SinglePalliativeCareRequest" type="SinglePalliativeCareRequestType"/>
+	<xsd:element name="PalliativeCareDetail" type="PalliativeCareDetailType"/>
+	<xsd:element name="SinglePalliativeCareResponse" type="SinglePalliativeCareResponseType"/>
+	<xsd:element name="PalliativeCareResponseDetail" type="PalliativeCareResponseDetailType"/>
+	<!-- 420XXX Types (PalliativeCare) -->
+	<xsd:complexType name="SinglePalliativeCareRequestType">
+		<xsd:sequence>
+			<xsd:element name="CareReceiverId" type="ExtCareReceiverStrictIdType"/>
+			<xsd:element ref="PalliativeCareDetail"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="MessageHeader"/>
+	</xsd:complexType>
+	<xsd:complexType name="PalliativeCareDetailType">
+		<xsd:sequence>
+			<xsd:element name="NurseReference" type="NurseReferenceType">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="420000 4209xx">304</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Requester" type="NihiiType">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="420000 4209xx">305</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PeriodStart" type="xsd:date">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="420000 4209xx">306</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Group" type="PalliativeCareGroupType"/>
+			<xsd:element name="UsualDoctor" type="NihiiType">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="420000 4209xx">309</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CareProvider" type="PalliativeCareCareProviderType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SinglePalliativeCareResponseType">
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:sequence>
+					<xsd:element name="CareReceiverId" type="ExtCareReceiverStrictIdType"/>
+					<xsd:element name="MessageFault" type="MessageFaultType"/>
+				</xsd:sequence>
+				<xsd:sequence>
+					<xsd:element name="CareReceiverDetail" type="ExtCareReceiverDetailType"/>
+					<xsd:element ref="PalliativeCareResponseDetail"/>
+				</xsd:sequence>
+			</xsd:choice>
+			<xsd:element ref="PalliativeCareDetail"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="MessageHeader"/>
+	</xsd:complexType>
+	<xsd:complexType name="PalliativeCareResponseDetailType">
+		<xsd:sequence>
+			<xsd:element name="ConsultantDoctor" type="NihiiType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="4209xx">314</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Decision" type="DecisionType"/>
+			<xsd:element name="InvoiceStartDate" type="xsd:date" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="4209xx">316</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PalliativeCareCareProviderType">
+		<xsd:sequence>
+			<xsd:element name="Nurse" type="NihiiType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="420000 4209xx">310</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="MultidisciplinaryTeam" type="NihiiType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="420000 4209xx">311</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PalliativeCareGroupType">
+		<xsd:sequence>
+			<xsd:element name="Responsible" type="NihiiType">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="420000 4209xx">307</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ThirdPartyPayer" type="NihiiType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<map:mappings>
+							<map:field msgList="420000 4209xx">308</map:field>
+						</map:mappings>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- 430XXX Elements (SpecificTechnicalCare) -->
+	<xsd:element name="SingleSpecificTechnicalCareRequest" type="SingleSpecificTechnicalCareRequestType"/>
+	<xsd:element name="SpecificTechnicalCareDetail" type="SpecificTechnicalCareDetailType"/>
+	<xsd:element name="SingleSpecificTechnicalCareResponse" type="SingleSpecificTechnicalCareResponseType"/>
+	<xsd:element name="SpecificTechnicalResponseCareDetail" type="SpecificTechnicalCareResponseDetailType"/>
+	<!-- 430XXX Types (SpecificTechnicalCare) -->
+	<xsd:complexType name="SingleSpecificTechnicalCareRequestType">
+		<xsd:sequence>
+			<xsd:element name="CareReceiverId" type="ExtCareReceiverStrictIdType"/>
+			<xsd:element ref="SpecificTechnicalCareDetail"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="MessageHeader"/>
+	</xsd:complexType>
+	<xsd:complexType name="SpecificTechnicalCareDetailType">
+		<xsd:sequence>
+			<xsd:element name="NurseReference" type="NurseReferenceType"/>
+			<xsd:element name="Requester" type="NihiiType"/>
+			<xsd:element name="TreatmentPeriod" type="PeriodType"/>
+			<xsd:element name="Prescriber" type="NihiiType"/>
+			<xsd:element name="AdministeredProduct" type="FillerType"/>
+		</xsd:sequence>
+		<xsd:attribute name="type" type="SpecificTechnicalCareTypeType" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="SingleSpecificTechnicalCareResponseType">
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:sequence>
+					<xsd:element name="CareReceiverId" type="ExtCareReceiverStrictIdType"/>
+					<xsd:element ref="SpecificTechnicalCareDetail"/>
+					<xsd:element name="MessageFault" type="MessageFaultType"/>
+				</xsd:sequence>
+				<xsd:sequence>
+					<xsd:element name="CareReceiverDetail" type="ExtCareReceiverDetailType"/>
+					<xsd:element ref="SpecificTechnicalResponseCareDetail"/>
+				</xsd:sequence>
+			</xsd:choice>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="MessageHeader"/>
+	</xsd:complexType>
+	<xsd:complexType name="SpecificTechnicalCareResponseDetailType">
+		<xsd:sequence>
+			<xsd:element name="NurseReference" type="NurseReferenceType"/>
+			<xsd:element name="MessageName" type="MessageNameType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SpecificTechnicalCareTreatmentType">
+		<xsd:sequence>
+			<xsd:element name="Reason" type="String_150" minOccurs="0"/>
+			<xsd:element name="Frequency" type="String_50" minOccurs="0"/>
+			<xsd:element name="Product" type="String_150" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="type" type="SpecificTechnicalCareTypeType" use="required"/>
+	</xsd:complexType>
+	<xsd:simpleType name="SpecificTechnicalCareTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="perfusion"/>
+			<xsd:enumeration value="parenteral"/>
+			<xsd:enumeration value="catheter"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="ResponseDetailType">
+		<xsd:sequence>
+			<xsd:element name="ConsultantDoctor" type="NihiiType"/>
+			<xsd:element name="Decision" type="DecisionType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

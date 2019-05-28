@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:dics:core:v4:actual:common" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:dics:core:v4:core" targetNamespace="urn:be:fgov:ehealth:dics:core:v4:actual:common" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.9">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD DICS
+ Specification-Version: 4.0
+ Implementation-Version: 4.0.2
+ Build-Time: 20171128-1027 
+ </xs:appinfo>
+ </xs:annotation>
+	<xs:import namespace="urn:be:fgov:ehealth:dics:core:v4:core" schemaLocation="ehealth-dics-core-SamCommonItems-4_0.xsd"/>
+	<xs:complexType name="DmppKeyType">
+		<xs:attribute name="DeliveryEnvironment" type="core:DeliveryEnvironmentType" use="required">
+			<xs:annotation>
+				<xs:documentation>Type of environment in which a medicinal product is delivered. 
+Possible values :
+-	‘P’ for Public, 
+-	‘A’ for Ambulatory,
+-	‘H’ for Hospital, 
+-	‘R’ For Residential care</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Code" type="core:DmppCodeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Code number used to uniquely identify a package or a group of packages being delivered in a given environment and reimbursed according to the same rules.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="CodeType" type="core:DmppCodeTypeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Type of the mentioned code, among the following:
+-	‘CNK’: Code National – Nationale Kode . This code is attributed by the APB  (“Association Pharmaceutique Belge”) to identify unequivocally one medicinal product package, or by the NIHDI for identifying tarification units, which meet to the same reimbursement criteria.
+-	‘PSEUDO’: Pseudo-code used for the flat-pricing of drugs in certain environments such as radiopharmaca in hospitals.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="RealActualIngredientKeyType">
+		<xs:attribute name="Rank" type="core:PositiveShortType" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="PackAmountType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="Unit" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>An optional reference to a unit type for amounts in a specific unit (e.g. ml for a pack containing a mixture of 150 ml total fluid)</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="RealActualIngredientEquivalentKeyType">
+		<xs:attribute name="SequenceNr" type="core:PositiveShortType" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="AmppComponentKeyType">
+		<xs:attribute name="AmpcSequenceNr" type="core:PositiveShortType">
+			<xs:annotation>
+				<xs:documentation>An AMPP Component is the packaging of exactly one AMP Component when the type of this packaging is not a device. 
+When the AMPP Component is of type ‘device’, it has no AMP Component.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="SequenceNr" type="core:PositiveShortType" use="required">
+			<xs:annotation>
+				<xs:documentation>Number determined by the provider for distinguishing an AMPPC from another. In case of many AMPPCs under an AMPP, the order has no significance.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="DerogationImportKeyType">
+		<xs:attribute name="SequenceNr" type="core:PositiveShortType" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="AmppComponentEquivalentKeyType">
+		<xs:attribute name="SequenceNr" type="core:PositiveShortType" use="required">
+			<xs:annotation>
+				<xs:documentation>Number determined by the provider for distinguishing an AMPPC Equivalent Specification from another. In case of many AMPPC Equivalent Specifications under an AMPPC, the order gives the priority of use of the equivalent specification from the most important (lowest value) to the least important (highest value).</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:simpleType name="AmpCodeType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="AmpStatusType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="MedicineTypeType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="DividableType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="ScoredType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="CrushableType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="ContainsAlcoholType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="ModifiedReleaseTypeType">
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+	<xs:simpleType name="SpecificDrugDeviceType">
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+	<xs:simpleType name="ParallelCircuitType">
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+	<xs:simpleType name="SpeciallyRegulatedType">
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+	<xs:simpleType name="ReimbursementCodeType">
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+	<xs:simpleType name="ContentTypeType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:group name="DmppFields">
+		<xs:sequence>
+			<xs:element name="Price" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Price in Euro of the AMPP in this environment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Cheap" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This product is considered by NIHDI as cheap.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Cheapest" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This product is considered by NIHDI as the cheapest on the market.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:group>
+	<xs:group name="DmppReimbursementFields">
+		<xs:sequence>
+			<xs:element name="Reimbursable" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>By default, a DMPP is not reimbursed, even if an existing reimbursement context references the same CNK.
+The NIHDI must set this flag explicitly to True if the DMPP is Reimbursable.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:group>
+</xs:schema>

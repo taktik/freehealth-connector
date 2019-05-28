@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<schema xmlns:tns="urn:be:cin:types:v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd" elementFormDefault="qualified" targetNamespace="urn:be:cin:types:v1" xmlns="http://www.w3.org/2001/XMLSchema">
+    <import schemaLocation="../../external/XSD/xml.xsd" namespace="http://www.w3.org/XML/1998/namespace" />
+	<import schemaLocation="../../external/XSD/oasis-sstc-saml-schema-assertion-1.1.xsd" namespace="urn:oasis:names:tc:SAML:1.0:assertion" />
+	
+    <simpleType name="IoList">
+        <list itemType="tns:Io" />
+    </simpleType>
+    <simpleType name="Io">
+        <restriction base="string">
+            <enumeration value="1" />
+            <enumeration value="2" />
+            <enumeration value="3" />
+            <enumeration value="4" />
+            <enumeration value="5" />
+            <enumeration value="6" />
+            <enumeration value="9" />
+        </restriction>
+    </simpleType>
+    <simpleType name="SsinType">
+        <restriction base="string">
+            <length value="11" />
+        </restriction>
+    </simpleType>
+    <simpleType name="MutualityType">
+        <restriction base="string">
+            <length value="3" />
+        </restriction>
+    </simpleType>
+    <simpleType name="RegNrWithMutType">
+        <restriction base="string">
+            <maxLength value="13" />
+        </restriction>
+    </simpleType>
+    <simpleType name="FaultCodeType">
+        <restriction base="string">
+            <enumeration value="AUDIT_NOT_FOUND">
+                <annotation>
+                    <documentation xml:lang="en">The given audit number does not exist within the system.
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="EID_STATUS_INVALID">
+                <annotation>
+                    <documentation xml:lang="en">The care provider certificate is found to be invalid.</documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="FILE_NOT_FOUND">
+                <annotation>
+                    <documentation xml:lang="en">The file sequence number does not exist within the system.
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="GENERIC_ERROR">
+                <annotation>
+                    <documentation xml:lang="en">Generic error.</documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="RECEIVE_ERROR">
+                <annotation>
+                    <documentation xml:lang="en">The system was unable to queue the post for further processing.
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="SCHEMA_ERROR">
+                <annotation>
+                    <documentation xml:lang="en">The structure of the document is not correct (package error).
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="UNAUTHORIZED">
+                <annotation>
+                    <documentation xml:lang="en">The care provider was not authorized by Be-Health.</documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="UNKNOWN_SESSION_KEY">
+                <annotation>
+                    <documentation xml:lang="en">The session key used to authenticate is unknown by the system.
+                        This is possible when the session key was not registered via the XKMS service or if the session
+                        key as expired.
+                    </documentation>
+                </annotation>
+            </enumeration>
+        </restriction>
+    </simpleType>
+    <complexType name="StringLangType">
+        <simpleContent>
+            <extension base="string">
+                <attribute ref="xml:lang" />
+            </extension>
+        </simpleContent>
+    </complexType>
+    <complexType name="DetailType">
+        <sequence>
+            <element name="DetailCode" type="string">
+                <annotation>
+                    <documentation xml:lang="en">Contains a detail code.</documentation>
+                </annotation>
+            </element>
+            <element name="DetailSource" type="string" />
+            <element name="Location" type="string" minOccurs="0">
+                <annotation>
+                    <documentation xml:lang="en">Contains the location of the fault. This could be an XPath expression.
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="Message" type="tns:StringLangType" minOccurs="0">
+                <annotation>
+                    <documentation xml:lang="en">Contains a human-readable message.</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="FaultType">
+        <sequence>
+            <element name="FaultCode" type="string" />
+            <element name="FaultSource" type="string">
+                <annotation>
+                    <documentation xml:lang="en">Contains the name of the subsystem that caused the error event to
+                        occur.
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="Message" type="tns:StringLangType">
+                <annotation>
+                    <documentation xml:lang="en">A human-readable error message.</documentation>
+                </annotation>
+            </element>
+            <element name="Details" type="tns:DetailsType" />
+        </sequence>
+    </complexType>
+    <complexType name="DetailsType">
+        <sequence>
+            <element name="Detail" type="tns:DetailType" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+    </complexType>
+    <complexType name="PeriodType">
+        <sequence>
+            <element name="Start" type="date" />
+            <element name="End" type="date" />
+        </sequence>
+    </complexType>
+    <complexType name="CareReceiverIdType">
+        <sequence>
+            <element name="Ssin" type="tns:SsinType" minOccurs="0" />
+            <element name="RegNrWithMut" type="tns:RegNrWithMutType" minOccurs="0" />
+            <element name="Mutuality" type="tns:MutualityType" minOccurs="0" />
+        </sequence>
+    </complexType>
+    <complexType name="SenderType">
+        <annotation>
+            <documentation>
+				Who was the legal entity sending the request.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="SamlTicket" type="tns:SamlTokenType" />
+        </sequence>
+    </complexType>
+	
+    <complexType name="SamlTokenType">
+        <sequence>
+            <element ref="saml:Assertion" />
+        </sequence>
+    </complexType>
+	
+	
+</schema>

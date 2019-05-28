@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>be.fgov.ehealth.connector</groupId>
+    <artifactId>connector-utilities-master</artifactId>
+    <version>3.17.1</version>
+  </parent>
+
+  <artifactId>connector-utilities-timestamping</artifactId>
+  <name>${project.artifactId}</name>
+  <description>Connector utilities timestamping</description>
+
+  <packaging>jar</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack xsds from xsd-connector</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>be.fgov.ehealth.xsd</groupId>
+                  <artifactId>xsd-timestamping</artifactId>
+                  <version>1.0.1</version>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>be.fgov.ehealth.xsd</groupId>
+                  <artifactId>xsd-timestamping</artifactId>
+                  <version>2.0.0</version>
+                </artifactItem>
+              </artifactItems>
+              <includes>**/*.xsd</includes>
+              <outputDirectory>target/generated-resources</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Generate Java Xml Bindings</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <schemaIncludes>
+            <include>**/ehealth-timestamping/**/*.xsd</include>
+          </schemaIncludes>
+          <bindingIncludes>
+            <include>bindingsupport-basic.xjb</include>
+          </bindingIncludes>
+          <bindingDirectory>${project.build.directory}/generated-resources/bindings/jaxb</bindingDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-core</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-common</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-external</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+</project>
