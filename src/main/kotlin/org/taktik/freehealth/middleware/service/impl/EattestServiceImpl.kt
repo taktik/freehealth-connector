@@ -197,7 +197,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             val kmehrMarshallHelper =
                 MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
             val requestXml = kmehrMarshallHelper.toXMLByteArray(sendTransactionRequest)
-            val requestXmlString = String(requestXml)
 
             val cancelAttestationRequest = CancelAttestationRequest().apply {
                 val encryptedKnownContent = EncryptedKnownContent()
@@ -407,7 +406,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             val kmehrMarshallHelper =
                 MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
             val requestXml = kmehrMarshallHelper.toXMLByteArray(sendTransactionRequest)
-            val requestXmlString = String(requestXml)
 
             val sendAttestationRequest = SendAttestationRequest().apply {
                 val encryptedKnownContent = EncryptedKnownContent()
@@ -604,7 +602,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             val kmehrMarshallHelper =
                 MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
             val requestXml = kmehrMarshallHelper.toXMLByteArray(sendTransactionRequest)
-            val requestXmlString = String(requestXml)
 
             val sendAttestationRequest = be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationRequest().apply {
                 val encryptedKnownContent = EncryptedKnownContent()
@@ -615,6 +612,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                 businessContent.value = requestXml
                 log.info("Request is: " + businessContent.value.toString(Charsets.UTF_8))
                 val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
+
                 val blob =
                     BlobBuilderFactory.getBlobBuilder("attest")
                         .build(
@@ -623,9 +621,9 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                             detailId,
                             "text/xml",
                             null as String?,
-                            "encryptedForKnownCINNIC"
+                            "encryptedForKnownBED"
                               )
-                blob.messageName = "E-ATTEST"
+                blob.messageName = "E-ATTEST-V2"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
                 val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword)
@@ -673,6 +671,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
             }
 
             val sendAttestationResponse = freehealthEattestService.sendAttestion(samlToken, sendAttestationRequest)
+
             val blobType = sendAttestationResponse.`return`.detail
             val blob = BlobMapper.mapBlobfromBlobType(blobType)
             val unsealedData =
