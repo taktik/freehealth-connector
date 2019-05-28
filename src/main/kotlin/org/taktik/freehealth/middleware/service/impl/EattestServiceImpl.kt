@@ -171,7 +171,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
 
         val now = DateTime.now().withMillisOfSecond(0)
         val refDateTime = dateTime(referenceDate) ?: now
-        val theDayBeforeRefDate = refDateTime.plusDays(-1)
 
         return extractEtk(credential)?.let {
             val sendTransactionRequest =
@@ -181,7 +180,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     hcpSsin,
                     hcpFirstName,
                     hcpLastName,
-                    hcpCbe,
                     patientSsin,
                     patientFirstName,
                     patientLastName,
@@ -383,7 +381,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
 
         val now = DateTime.now().withMillisOfSecond(0)
         val refDateTime = dateTime(referenceDate) ?: now
-        val theDayBeforeRefDate = refDateTime.plusDays(-1)
 
         return extractEtk(credential)?.let {
             val sendTransactionRequest =
@@ -1745,7 +1742,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        hcpCbe: String,
         patientSsin: String,
         patientFirstName: String,
         patientLastName: String,
@@ -1759,7 +1755,6 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         referenceDate: Int?) : SendTransactionRequest {
 
         val refDateTime = dateTime(referenceDate) ?: now
-        val theDayBeforeRefDate = refDateTime.plusDays(-1)
 
         return SendTransactionRequest().apply {
             messageProtocoleSchemaVersion = BigDecimal("1.25")
