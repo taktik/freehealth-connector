@@ -21,6 +21,8 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import ma.glasnost.orika.MapperFacade
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -29,28 +31,39 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.efact.InvoicesBatch
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EfactService
 import java.util.*
+import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/efact")
 class EfactController(val efactService: EfactService, val mapper: MapperFacade) {
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingTokenException::class)
+    @ResponseBody
+    fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
+
 
     @PostMapping("/batch")
     fun sendBatch(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam(required = false) isGuardPost: Boolean?,
         @RequestBody batch: InvoicesBatch
                  ) =
         efactService.sendBatch(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
-            batch = batch
-                              )
+            batch = batch,
+            isGuardPost = isGuardPost ?: false
+        )
 
     @PostMapping("/flat")
     fun makeFlatFile(
@@ -89,7 +102,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestParam ssin: String,
         @RequestParam firstName: String,
         @RequestParam lastName: String,
-        @RequestParam limit: Int?
+        @RequestParam limit: Int?,
+        @RequestParam isGuardPost: Boolean?
                     ) =
         efactService.loadMessages(
             keystoreId = keystoreId,
@@ -100,7 +114,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             hcpFirstName = firstName,
             hcpLastName = lastName,
             language = language,
-            limit = limit ?: Integer.MAX_VALUE
+            limit = limit ?: Integer.MAX_VALUE,
+            isGuardPost = isGuardPost ?: false
                                  )
 
     @PutMapping("/confirm/acks/{nihii}")
@@ -112,6 +127,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestParam ssin: String,
         @RequestParam firstName: String,
         @RequestParam lastName: String,
+        @RequestParam(required = false) isGuardPost: Boolean?,
         @RequestBody valueHashes: List<String>
                ) =
         efactService.confirmAcks(
@@ -122,8 +138,9 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             hcpSsin = ssin,
             hcpFirstName = firstName,
             hcpLastName = lastName,
-            valueHashes = valueHashes
-                                )
+            valueHashes = valueHashes,
+            isGuardPost = isGuardPost ?: false
+        )
 
     @PutMapping("/confirm/msgs/{nihii}")
     fun confirmMessages(
@@ -134,6 +151,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestParam ssin: String,
         @RequestParam firstName: String,
         @RequestParam lastName: String,
+        @RequestParam(required = false) isGuardPost: Boolean?,
         @RequestBody valueHashes: List<String>
     ) =
         efactService.confirmMessages(
@@ -144,6 +162,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             hcpSsin = ssin,
             hcpFirstName = firstName,
             hcpLastName = lastName,
-            valueHashes = valueHashes
+            valueHashes = valueHashes,
+            isGuardPost = isGuardPost ?: false
         )
 }

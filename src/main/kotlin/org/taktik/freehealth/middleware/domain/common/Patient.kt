@@ -55,8 +55,6 @@ class Patient : Person {
     var warning: String? = null
     var nationality: String? = null
 
-    var picture: ByteArray? = null
-
     //No guarantee of unicity
     var externalId: String? = null
 
@@ -156,9 +154,6 @@ class Patient : Person {
         if (this.nationality == null && other.nationality != null) {
             this.nationality = other.nationality
         }
-        if (this.picture == null && other.picture != null) {
-            this.picture = other.picture
-        }
         if (this.externalId == null && other.externalId != null) {
             this.externalId = other.externalId
         }
@@ -225,9 +220,6 @@ class Patient : Person {
         }
         if (other.nationality != null) {
             this.nationality = other.nationality
-        }
-        if (other.picture != null) {
-            this.picture = other.picture
         }
         if (other.externalId != null) {
             this.externalId = other.externalId

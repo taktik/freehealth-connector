@@ -37,6 +37,9 @@ interface EattestService {
         traineeSupervisorNihii: String?,
         traineeSupervisorFirstName: String?,
         traineeSupervisorLastName: String?,
+        guardPostNihii: String?,
+        guardPostSsin: String?,
+        guardPostName: String?,
         passPhrase: String,
         patientSsin: String,
         patientFirstName:String,
@@ -58,6 +61,9 @@ interface EattestService {
         traineeSupervisorNihii: String?,
         traineeSupervisorFirstName: String?,
         traineeSupervisorLastName: String?,
+        guardPostNihii: String?,
+        guardPostSsin: String?,
+        guardPostName: String?,
         passPhrase: String,
         patientSsin: String,
         patientFirstName:String,
@@ -86,7 +92,7 @@ interface EattestService {
         patientLastName: String,
         patientGender: String,
         referenceDate: Int?,
-        attest: String,
+        eAttestRef: String,
         reason: String
                     ): SendAttestResultWithResponse?
 }

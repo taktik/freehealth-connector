@@ -20,21 +20,32 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EattestService
 import java.util.*
+import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/eattest")
 class EattestController(val eattestService: EattestService) {
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingTokenException::class)
+    @ResponseBody
+    fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
+
     @PostMapping("/send/{patientSsin}/verbose")
     fun sendAttestWithResponse(
         @PathVariable patientSsin: String,
@@ -54,6 +65,9 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
         @RequestParam(required = false) traineeSupervisorLastName: String?,
+        @RequestParam(required = false) guardPostNihii: String?,
+        @RequestParam(required = false) guardPostSsin: String?,
+        @RequestParam(required = false) guardPostName: String?,
         @RequestBody attest: Eattest
     ) = eattestService.sendAttest(
         keystoreId,
@@ -67,6 +81,9 @@ class EattestController(val eattestService: EattestService) {
         traineeSupervisorNihii,
         traineeSupervisorFirstName,
         traineeSupervisorLastName,
+        guardPostNihii,
+        guardPostSsin,
+        guardPostName,
         passPhrase,
         patientSsin,
         patientFirstName,
@@ -95,6 +112,9 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
         @RequestParam(required = false) traineeSupervisorLastName: String?,
+        @RequestParam(required = false) guardPostNihii: String?,
+        @RequestParam(required = false) guardPostSsin: String?,
+        @RequestParam(required = false) guardPostName: String?,
         @RequestBody attest: Eattest
     ): SendAttestResult? = eattestService.sendAttest(
         keystoreId,
@@ -108,6 +128,9 @@ class EattestController(val eattestService: EattestService) {
         traineeSupervisorNihii,
         traineeSupervisorFirstName,
         traineeSupervisorLastName,
+        guardPostNihii,
+        guardPostSsin,
+        guardPostName,
         passPhrase,
         patientSsin,
         patientFirstName,

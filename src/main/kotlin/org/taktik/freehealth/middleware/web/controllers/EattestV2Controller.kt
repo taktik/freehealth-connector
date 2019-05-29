@@ -55,6 +55,9 @@ class EattestV2Controller(val eattestService: EattestService) {
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
         @RequestParam(required = false) traineeSupervisorLastName: String?,
+        @RequestParam(required = false) guardPostNihii: String?,
+        @RequestParam(required = false) guardPostSsin: String?,
+        @RequestParam(required = false) guardPostName: String?,
         @RequestBody attest: Eattest
     ) = eattestService.sendAttestV2(
         keystoreId,
@@ -68,6 +71,9 @@ class EattestV2Controller(val eattestService: EattestService) {
         traineeSupervisorNihii,
         traineeSupervisorFirstName,
         traineeSupervisorLastName,
+        guardPostNihii,
+        guardPostSsin,
+        guardPostName,
         passPhrase,
         patientSsin,
         patientFirstName,
@@ -96,6 +102,9 @@ class EattestV2Controller(val eattestService: EattestService) {
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
         @RequestParam(required = false) traineeSupervisorLastName: String?,
+        @RequestParam(required = false) guardPostNihii: String?,
+        @RequestParam(required = false) guardPostSsin: String?,
+        @RequestParam(required = false) guardPostName: String?,
         @RequestBody attest: Eattest
     ): SendAttestResult? = eattestService.sendAttestV2(
         keystoreId,
@@ -109,6 +118,9 @@ class EattestV2Controller(val eattestService: EattestService) {
         traineeSupervisorNihii,
         traineeSupervisorFirstName,
         traineeSupervisorLastName,
+        guardPostNihii,
+        guardPostSsin,
+        guardPostName,
         passPhrase,
         patientSsin,
         patientFirstName,
@@ -139,25 +151,26 @@ class EattestV2Controller(val eattestService: EattestService) {
         @RequestParam(required = false) traineeSupervisorLastName: String?,
         @RequestParam eAttestRef : String,
         @RequestParam reason : String
-                  ): SendAttestResult? = eattestService.cancelAttest(
-        keystoreId,
-        tokenId,
-        hcpNihii,
-        hcpSsin,
-        hcpFirstName,
-        hcpLastName,
-        hcpCbe,
-        traineeSupervisorSsin,
-        traineeSupervisorNihii,
-        traineeSupervisorFirstName,
-        traineeSupervisorLastName,
-        passPhrase,
-        patientSsin,
-        patientFirstName,
-        patientLastName,
-        patientGender,
-        null,
-        eAttestRef,
-        reason
-                                                                    )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
+                  ): SendAttestResult? =
+        eattestService.cancelAttest(
+            keystoreId,
+            tokenId,
+            hcpNihii,
+            hcpSsin,
+            hcpFirstName,
+            hcpLastName,
+            hcpCbe,
+            traineeSupervisorSsin,
+            traineeSupervisorNihii,
+            traineeSupervisorFirstName,
+            traineeSupervisorLastName,
+            passPhrase,
+            patientSsin,
+            patientFirstName,
+            patientLastName,
+            patientGender,
+            null,
+            eAttestRef,
+            reason
+                                   )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 }

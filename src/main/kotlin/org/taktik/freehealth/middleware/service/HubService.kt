@@ -139,7 +139,7 @@ interface HubService {
         from: Instant?,
         to: Instant?,
         hubPackageId: String?
-    ): List<TherapeuticLinkMessage>
+    ): TherapeuticLinkMessage
 
     fun getTransactionsList(
         endpoint: String,
