@@ -14,8 +14,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
-   name = "Blob",
-   propOrder = {"value"}
+        name = "Blob",
+        propOrder = {"value"}
 )
 public class Blob implements Serializable {
    private static final long serialVersionUID = 1L;
@@ -23,40 +23,48 @@ public class Blob implements Serializable {
    @XmlMimeType("application/octet-stream")
    protected DataHandler value;
    @XmlAttribute(
-      name = "ContentType",
-      required = true
+           name = "ContentType",
+           required = true
    )
    protected String contentType;
    @XmlAttribute(
-      name = "ContentEncoding"
+           name = "ContentEncoding"
    )
    protected String contentEncoding;
    @XmlAttribute(
-      name = "MessageName",
-      required = true
+           name = "ContentEncryption"
+   )
+   protected ContentEncryptionType contentEncryption;
+   @XmlAttribute(
+           name = "Etk"
+   )
+   protected byte[] etk;
+   @XmlAttribute(
+           name = "MessageName",
+           required = true
    )
    protected String messageName;
    @XmlAttribute(
-      name = "HashValue"
+           name = "HashValue"
    )
    protected byte[] hashValue;
    @XmlAttribute(
-      name = "Id"
+           name = "Id"
    )
    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
    @XmlSchemaType(
-      name = "NCName"
+           name = "NCName"
    )
    protected String id;
    @XmlAttribute(
-      name = "Reference"
+           name = "Reference"
    )
    protected String reference;
    @XmlAttribute(
-      name = "Issuer"
+           name = "Issuer"
    )
    @XmlSchemaType(
-      name = "anyURI"
+           name = "anyURI"
    )
    protected String issuer;
 
@@ -82,6 +90,22 @@ public class Blob implements Serializable {
 
    public void setContentEncoding(String value) {
       this.contentEncoding = value;
+   }
+
+   public ContentEncryptionType getContentEncryption() {
+      return this.contentEncryption;
+   }
+
+   public void setContentEncryption(ContentEncryptionType value) {
+      this.contentEncryption = value;
+   }
+
+   public byte[] getEtk() {
+      return this.etk;
+   }
+
+   public void setEtk(byte[] value) {
+      this.etk = value;
    }
 
    public String getMessageName() {

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="urn:be:cin:mycarenet:esb:common:v2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="urn:be:cin:mycarenet:esb:common:v2" elementFormDefault="qualified" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+	<xs:complexType name="SelfRefType">
+		<xs:annotation>
+			<xs:documentation>
+                In this version of the XSD, references are deactivated to avoid
+                the usage of attributes.
+            </xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:simpleType name="ValueRefString">
+		<xs:annotation>
+			<xs:documentation>
+                In this version of the XSD, references are deactivated to avoid
+                the usage of attributes.
+            </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+</xs:schema>

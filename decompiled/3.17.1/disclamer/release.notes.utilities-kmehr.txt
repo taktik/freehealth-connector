@@ -1,0 +1,21 @@
+**************************************************
+* eHealth Utilities Kmerh RELEASE NOTES          *
+**************************************************
+3.4.0-beta-9 release
+  .  change      moved from kmehr 1.8.1 to kmehr 1.14.0
+
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+3.4.0-beta-0 release
+  . improvement                                                                  upgrade to latest version kmerh
+  Caution: non backward compatible changes
+  . improvement    b.f.e.s.kmehr.schema.v1.Regimen                               adding custom binding daynumber/data/weekday/daytime/quantity
+                                                                                   every item has his own list 
+  . improvement b.f.e.s.kmehr.schema.v1.compoundprescriptionType                 adding custom binding magistraltext/galenicform/formularyreference/compound/quantity
+                                                                                   every item has his own list
+  . improvement b.f.e.s.kmehr.schema.v1.headingType                              adding custom binding heading/item/text/lnk
+                                                                                   every item has his own list
+              
+                                                                                          
+                                                                                              

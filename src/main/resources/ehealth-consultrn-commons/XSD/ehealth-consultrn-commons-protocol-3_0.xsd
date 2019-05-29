@@ -1,0 +1,33 @@
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="urn:be:fgov:ehealth:consultrn:commons:protocol:v3"
+  xmlns="urn:be:fgov:ehealth:consultrn:commons:protocol:v3"
+  xmlns:ehealth_prot="urn:be:fgov:ehealth:commons:protocol:v2" 
+  elementFormDefault="qualified" attributeFormDefault="unqualified"
+  version="3.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: ConsultRN XSD Common
+ Specification-Version: 3.0
+ Implementation-Version: 3.0.1
+ Build-Time: 20180201-1309 
+ </xs:appinfo>
+ </xs:annotation>
+  <xs:annotation>
+    <xs:appinfo></xs:appinfo>
+  </xs:annotation>
+  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd"/>
+  <xs:complexType name="ConsultRnRequestType">
+    <xs:annotation>
+      <xs:documentation>Standard structure of consultRN request</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="ehealth_prot:RequestType">
+        <xs:sequence>
+          <xs:element name="ApplicationID" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+</xs:schema>

@@ -1,0 +1,190 @@
+ <h2 style="background-color: #C0C0C0">
+      Conditions d'utilisation des certificats eHealth
+    </h2>
+    <br>
+
+    #if($name.naturalPerson)
+    Ce contrat est conclu entre eHealth et <b>$!identity.firstName $!identity.middleName $identity.name (NISS=$identity.nationalNumber)</b> d&#233;nomm&#233;  ci-apr&#232;s l'UTILISATEUR.&#65279;<br>
+    #else
+    Ce contrat est conclu entre eHealth et <b>$!identity.firstName $!identity.middleName $identity.name (NISS=$identity.nationalNumber)</b>, repr&#233;sentant l&#233;galement l'organisation <b>$name.name (${oids.get("CN").replace("\","").split(",")[0]})</b/>, d&#233;nomm&#233;  ci-apr&#232;s l'UTILISATEUR.&#65279;<br>
+    #end
+
+    <p>
+      <b>Conditions g&#233;n&#233;rales relatives au certificat eHealth</b>
+    </p>
+    <p>
+      Le certificat eHealth doit &#234;tre consid&#233;r&#233; comme un passeport num&#233;rique 
+      pour une personne physique, une personne morale ou une association de 
+      fait. Le certificat eHealth doit d&#232;s lors &#234;tre trait&#233; avec les 
+      pr&#233;cautions n&#233;cessaires, afin d&#8217;&#233;viter tout abus de cette identit&#233;.
+    </p>
+    <p>
+      Tous ceux qui demandent ou utilisent un certificat eHealth (d&#233;nomm&#233;s 
+      ci-apr&#232;s &#171; titulaires du certificat &#187;), tant &#224; titre personnel qu&#8217;au nom 
+      et pour le compte d&#8217;une personne morale ou d&#8217;une association de fait, 
+      sont soumis aux conditions suivantes:
+    </p>
+    <ul>
+      <li>
+        Le demandeur d&#8217;un certificat eHealth doit avoir connaissance de 
+        l&#8217;utilisation de certificats num&#233;riques et de l&#8217;Infrastructure Cl&#233;s 
+        Publiques (PKI). Si n&#233;cessaire, le demandeur doit se faire informer ou 
+        conseiller &#224; ce propos par des experts.
+      </li>
+      <li>
+        Le demandeur d'un certificat eHealth doit consulter, lire, comprendre 
+        et accepter le manuel &#171; Proc&#233;dure de demande de certificat eHealth &#187;.
+
+        <ul style="list-style-type: none">
+          <li>
+            &gt; Portail eHealth &gt; Support &gt; Services de base &gt; Gestion des acc&#232;s 
+            &gt; Certificats eHealth &gt; section download
+          </li>
+          <li>
+            &gt; <a href="https://www.ehealth.fgov.be/fr/support/services-de-base/certificats-ehealth">https://www.ehealth.fgov.be/fr/support/services-de-base/certificats-ehealth</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        Le demandeur qui est responsable des informations communiqu&#233;es 
+        (donn&#233;es et cl&#233;s qu'il introduit en vue de la certification) doit 
+        garantir que celles-ci sont compl&#232;tes et correctes.
+      </li>
+      <li>
+        Il est interdit de manipuler le certificat, de quelque mani&#232;re que ce 
+        soit.
+      </li>
+      <li>
+        Le titulaire du certificat ne peut utiliser les certificats eHealth 
+        que pour des finalit&#233;s l&#233;gales et licites, en conformit&#233; avec le 
+        r&#232;glement &#224; l&#8217;usage des utilisateurs de la Plate-forme eHealth (<a href="https://www.ehealth.fgov.be/fr/r%C3%A8glement-utilisateurs">https://www.ehealth.fgov.be/fr/r&#232;glement-utilisateurs</a> 
+        ).
+      </li>
+      <li>
+        Toute utilisation du certificat eHealth se limite, le cas &#233;ch&#233;ant, au 
+        champ d&#8217;application des d&#233;lib&#233;rations juridiques existantes. En cas 
+        d&#8217;extension, adaptation ou &#233;volution de la finalit&#233; ou port&#233;e de cette 
+        utilisation, il faut obligatoirement contacter la Plate-forme eHealth.
+      </li>
+      <li>
+        Le titulaire du certificat doit imm&#233;diatement informer la Plate-forme 
+        eHealth de toute modification aux informations qui ont d&#233;j&#224; &#233;t&#233; 
+        transmises &#224; la Plate-forme eHealth. Le titulaire du certificat doit, 
+        &#224; cet effet, contacter le centre de contact de la Plate-forme eHealth 
+        (02- 788 51 55) ou envoyer un courriel &#224; l'adresse suivante:<a href="mailto:support@ehealth.fgov.be">support@ehealth.fgov.be</a> 
+        ).
+      </li>
+      <li>
+        Le titulaire du certificat doit imm&#233;diatement cesser d&#8217;utiliser le 
+        certificat eHealth lorsque certaines informations enregistr&#233;es dans le 
+        certificat eHealth ne sont plus valides.
+      </li>
+      <li>
+        Le titulaire du certificat doit imm&#233;diatement cesser d&#8217;utiliser un 
+        certificat eHealth lorsque le certificat eHealth n&#8217;est plus valide, 
+        pour quelque raison que ce soit.
+      </li>
+      <li>
+        Lorsque le certificat eHealth n&#8217;est plus valide, le titulaire du 
+        certificat est tenu de supprimer imm&#233;diatement le certificat eHealth 
+        dans les diff&#233;rents appareils et/ou applications sur lesquels il a &#233;t&#233; 
+        install&#233;. Dans ce cas, le titulaire du certificat est oblig&#233; de 
+        r&#233;voquer imm&#233;diatement le certificat eHealth suivant la proc&#233;dure en 
+        vigueur.
+      </li>
+      <li>
+        Le titulaire du certificat est tenu de demander, en temps utile, avant 
+        l&#8217;expiration du certificat, un nouvel exemplaire suivant la proc&#233;dure 
+        en vigueur. La dur&#233;e de validit&#233; des certificats eHealth ne peut &#234;tre 
+        &#8220;prorog&#233;e&#8221;.
+      </li>
+      <li>
+        Le titulaire du certificat doit &#233;viter que la cl&#233; priv&#233;e aff&#233;rente au 
+        certificat eHealth ou le certificat eHealth m&#234;me soit compromis, se 
+        perde, soit rendue public, soit modifi&#233; ou utilis&#233;, d'une quelconque 
+        autre fa&#231;on, de mani&#232;re illicite.
+      </li>
+      <li>
+        Lors de l'utilisation du certificat et de la gestion de la cl&#233; priv&#233;e, 
+        le titulaire du certificat est tenu de respecter les mesures de 
+        s&#233;curit&#233; fix&#233;es par le service de s&#233;curit&#233; de la Plate-forme eHealth. 
+        Ces mesures de s&#233;curit&#233; peuvent &#234;tre consult&#233;es sur le portail de la 
+        Plate-forme eHealth.
+
+        <ul style="list-style-type: none">
+          <li>
+            &gt; Portail eHealth &gt; Support &gt; Services de base &gt; Gestion des acc&#232;s 
+            &gt; Certificats eHealth &gt; section download
+          </li>
+          <li>
+            &gt; <a href="https://www.ehealth.fgov.be/fr/support/services-de-base/certificats-ehealth">https://www.ehealth.fgov.be/fr/support/services-de-base/certificats-ehealth</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        Le titulaire du certificat est tenu de faire r&#233;voquer le certificat 
+        eHealth en cas de survenance d&#8217;un incident ou de pr&#233;somption 
+        d&#8217;incident qui, de quelque mani&#232;re que ce soit, a nui &#224; l&#8217;int&#233;grit&#233; du 
+        certificat eHealth ou de la cl&#233; priv&#233;e y aff&#233;rente. Plus pr&#233;cis&#233;ment 
+        la perte, le vol, la modification, la publication non autoris&#233;e ou 
+        toute autre compromission du certificat eHealth ou de la cl&#233; priv&#233;e y 
+        aff&#233;rente. Cela peut &#234;tre effectu&#233; en choisissant &quot;R&#233;vocation&quot; dans le 
+        menu principal de l'eHealth Certificate Manager. Si cette fonction de 
+        r&#233;vocation n'est pas disponible dans l'eHealth Certificate Manager, le 
+        titulaire du certificat peut envoyer, par mail, un formulaire de 
+        demande de r&#233;vocation rempli (demande de r&#233;vocation) &#224; l'adresse 
+        suivante: <a href="mailto:support@ehealth.fgov.be">support@ehealth.fgov.be</a>. 
+        Cette demande de r&#233;vocation doit &#234;tre r&#233;dig&#233;e et envoy&#233;e conform&#233;ment 
+        aux instructions fix&#233;es dans la proc&#233;dure de r&#233;vocation qui est 
+        disponible dans la biblioth&#232;que technique du portail eHealth.
+
+        <ul style="list-style-type: none">
+          <li>
+            &gt; Portail eHealth &gt; Support &gt; Services de base &gt; Gestion des acc&#232;s 
+            &gt; Certificats eHealth &gt; section download
+          </li>
+          <li>
+            &gt; <a href="https://www.ehealth.fgov.be/fr/support/services-de-base/certificats-ehealth">https://www.ehealth.fgov.be/fr/support/services-de-base/certificats-ehealth</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        Si le certificat eHealth ou la cl&#233; priv&#233;e y aff&#233;rente est compromis, 
+        le titulaire du certificat est tenu de cesser d'utiliser, 
+        imm&#233;diatement et de mani&#232;re d&#233;finitive, le certificat eHealth et la 
+        cl&#233; priv&#233;e y aff&#233;rente.
+      </li>
+      <li>
+        Seule la suppression compl&#232;te du certificat eHealth p&#233;rim&#233; ou 
+        compromis et l&#8217;installation d&#8217;un nouveau certificat eHealth, &#233;mis par 
+        ou au nom de la Plate-forme eHealth, sont autoris&#233;s. Le titulaire du 
+        certificat est tenu de s&#8217;abtenir de toute tentative de d&#233;tournement de 
+        cette directive.
+      </li>
+    </ul>
+    <p>
+      Le titulaire du certificat est responsable de leur utilisation, licite 
+      ou non, en ce compris de toute utilisation par des tiers.
+    </p>
+    <p>
+      Le titulaire du certificat demeure responsable des d&#233;g&#226;ts (directs ou 
+      indirects) caus&#233;s par l&#8217;utilisation (licite ou non) de son certificat 
+      ant&#233;rieure &#224; la d&#233;sactivation du certificat.
+    </p>
+    <p>
+      Sources:
+    </p>
+    <ul>
+      <li>
+        <a href="http://repository.eid.belgium.be/index.php?lang=fr">http://repository.eid.belgium.be/index.php?lang=fr</a>
+      </li>
+      <li>
+        <a href="http://fr.wikipedia.org/wiki/Certificat_%C3%A9lectronique">http://fr.wikipedia.org/wiki/Certificat_&#233;lectronique</a>
+      </li>
+      <li>
+        <a href="http://fr.wikipedia.org/wiki/Public_Key_Infrastructure">http://fr.wikipedia.org/wiki/Public_Key_Infrastructure</a>
+      </li>
+      <li>
+        <a href="https://www.ehealth.fgov.be/fr/support/services-de-base/certificats-ehealth">https://www.ehealth.fgov.be/fr/support/services-de-base/certificats-ehealth</a>
+      </li>
+    </ul>

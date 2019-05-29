@@ -22,6 +22,8 @@ package org.taktik.connector.business.eattest.impl
 
 import be.fgov.ehealth.mycarenet.attest.protocol.v1.SendAttestationRequest
 import be.fgov.ehealth.mycarenet.attest.protocol.v1.SendAttestationResponse
+import be.fgov.ehealth.mycarenet.attest.protocol.v2.CancelAttestationRequest
+import be.fgov.ehealth.mycarenet.attest.protocol.v2.CancelAttestationResponse
 import org.slf4j.LoggerFactory
 import org.taktik.connector.business.eattest.EattestService
 import org.taktik.connector.business.mycarenet.attest.service.ServiceFactory
@@ -34,6 +36,38 @@ import org.taktik.connector.technical.utils.impl.JaxbContextFactory
 import javax.xml.soap.SOAPException
 
 class EattestServiceImpl : EattestService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
+    private val log = LoggerFactory.getLogger(EattestServiceImpl::class.java)
+
+    override fun sendAttestion(token: SAMLToken, request: be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationRequest): be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationResponse {
+        try {
+            val service = org.taktik.connector.business.mycarenet.attestv2.service.ServiceFactory.getAttestPort(token)
+            service.setPayload(request as Any)
+            val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val response = xmlResponse.asObject(be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationResponse::class.java) as be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationResponse
+
+            response.soapRequest = xmlResponse.request
+            response.soapResponse = xmlResponse.soapMessage
+
+            return response
+        } catch (ex: SOAPException) {
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
+        }
+    }
+
+    override fun cancelAttestion(token: SAMLToken, request: CancelAttestationRequest): CancelAttestationResponse {
+        try {
+            val service = org.taktik.connector.business.mycarenet.attestv2.service.ServiceFactory.getAttestPort(token)
+            service.setPayload(request as Any)
+            val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val response = xmlResponse.asObject(be.fgov.ehealth.mycarenet.attest.protocol.v2.CancelAttestationResponse::class.java) as be.fgov.ehealth.mycarenet.attest.protocol.v2.CancelAttestationResponse
+
+            response.soapRequest = xmlResponse.request
+            response.soapResponse = xmlResponse.soapMessage
+
+            return response
+        } catch (ex: SOAPException) {
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
+        }    }
 
     @Throws(TechnicalConnectorException::class)
     override fun sendAttestion(token: SAMLToken, request: SendAttestationRequest): SendAttestationResponse {
@@ -57,7 +91,4 @@ class EattestServiceImpl : EattestService, ConfigurationModuleBootstrap.ModuleBo
         JaxbContextFactory.initJaxbContext(SendAttestationResponse::class.java)
     }
 
-    companion object {
-        private val LOG = LoggerFactory.getLogger(EattestServiceImpl::class.java)
-    }
 }

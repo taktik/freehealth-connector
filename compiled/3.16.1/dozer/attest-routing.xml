@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+  <mapping map-null="false" map-empty-string="false">
+    <class-a>be.ehealth.business.mycarenetdomaincommons.domain.Routing</class-a>
+    <class-b bean-factory="org.dozer.factory.JAXBBeanFactory">
+      be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType
+    </class-b>
+
+  </mapping>
+
+  <mapping map-null="false" map-empty-string="false">
+    <class-a>be.ehealth.business.mycarenetdomaincommons.domain.CareReceiverId</class-a>
+    <class-b bean-factory="org.dozer.factory.JAXBBeanFactory">
+      be.fgov.ehealth.mycarenet.commons.core.v3.CareReceiverIdType
+    </class-b>
+
+    <field>
+      <a>ssinNumber</a>
+      <b>ssin</b>
+    </field>
+
+    <field>
+      <a>registrationNumberWithMutuality</a>
+      <b>regNrWithMut</b>
+    </field>
+
+  </mapping>
+
+  <mapping map-null="false" map-empty-string="false">
+    <class-a>be.ehealth.business.mycarenetdomaincommons.domain.Period</class-a>
+    <class-b bean-factory="org.dozer.factory.JAXBBeanFactory">
+      be.fgov.ehealth.mycarenet.commons.core.v3.PeriodType
+    </class-b>
+
+    <field>
+      <a>begin</a>
+      <b>start</b>
+    </field>
+
+  </mapping>
+
+
+
+</mappings> 

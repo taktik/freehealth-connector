@@ -45,4 +45,48 @@ interface EattestService {
         referenceDate: Int?,
         attest: Eattest
     ): SendAttestResultWithResponse?
+
+    fun sendAttestV2(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        hcpCbe: String,
+        traineeSupervisorSsin: String?,
+        traineeSupervisorNihii: String?,
+        traineeSupervisorFirstName: String?,
+        traineeSupervisorLastName: String?,
+        passPhrase: String,
+        patientSsin: String,
+        patientFirstName:String,
+        patientLastName:String,
+        patientGender:String,
+        referenceDate: Int?,
+        attest: Eattest
+                  ): SendAttestResultWithResponse?
+
+
+    fun cancelAttest(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        hcpCbe: String,
+        traineeSupervisorSsin: String?,
+        traineeSupervisorNihii: String?,
+        traineeSupervisorFirstName: String?,
+        traineeSupervisorLastName: String?,
+        passPhrase: String,
+        patientSsin: String,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
+        referenceDate: Int?,
+        attest: String,
+        reason: String
+                    ): SendAttestResultWithResponse?
 }

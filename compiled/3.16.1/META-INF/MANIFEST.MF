@@ -1,0 +1,48 @@
+Manifest-Version: 1.0
+Implementation-Title: Connector Business civicsv2
+Maven-Artifact-Id: connector-business-civicsv2
+Implementation-Version: 3.16.1
+Archiver-Version: Plexus Archiver
+Built-By: smals-bed
+Build-Time: 20180921-1348
+CMDB-Catalog-Part: 
+Build-Jdk: 1.7.0_40
+Created-By: Apache Maven 3.1.1
+Specification-Version: 1.0.0
+Maven-Group-Id: be.fgov.ehealth.connector
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-civi
+ csv2/pom.properties
+SHA-256-Digest: IalA6cBmPlI0iuK2Zo/Sn0PLcMhhBqEayqB1WAp8Ya8=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-civi
+ csv2/pom.xml
+SHA-256-Digest: 3lxzyNzYn2Bj2vKlV8xi2MmrDI3rd00uAO24I+YzqWI=
+
+Name: be/ehealth/businessconnector/civicsv2/session/CivicsSessionServi
+ ce.class
+SHA-256-Digest: CoXSdyYnzXtjeSTkGkOzVoXI8/4ZkilggE/zmPaI4sc=
+
+Name: be/ehealth/businessconnector/civicsv2/session/CivicsSessionServi
+ ceFactory.class
+SHA-256-Digest: Ls6DoH3XZwt7OOCoo+1K+Jz88gombpMZj+gF03pQQmI=
+
+Name: be/ehealth/businessconnector/civicsv2/service/ServiceFactory.cla
+ ss
+SHA-256-Digest: goXx0tx5s7I/V1C+m/Vz9UJicSGdXKNezespYbDipVc=
+
+Name: be/ehealth/businessconnector/civicsv2/validator/XmlValidator.cla
+ ss
+SHA-256-Digest: YSdet1AQZ0uW025MD1iRd46cXeBjYLGYy2I/kbxpW9E=
+
+Name: be/ehealth/businessconnector/civicsv2/session/impl/CivicsSession
+ ServiceImpl.class
+SHA-256-Digest: Wyrx6mpfN4mVWPHnx05LOdNqmnkWPjSHbT2Bzyi46wA=
+
+Name: be/ehealth/businessconnector/civicsv2/session/impl/CivicsImpleme
+ ntationClassFactory.class
+SHA-256-Digest: wa4iDoNkr0V1zTUBvfgq7gcu8J+5ssWZbeH62z5i/Xg=
+
+Name: disclaimer/release.notes.business-civicsv2.txt
+SHA-256-Digest: LTioFLNgPuy6EQC1drdtJvEEGCwK1RULkcEMQH/0SRs=
+

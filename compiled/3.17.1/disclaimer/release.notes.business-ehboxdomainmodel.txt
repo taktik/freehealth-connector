@@ -1,0 +1,44 @@
+*****************************************************
+* eHealth Business ehbox domain model RELEASE NOTES *
+*****************************************************
+3.13.1 release (july 2017)
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017) 
+
+3.12.0 internal release (may 2017)
+
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . update                  using technical connector 3.11.0
+
+3.10.4 release (september 2016)
+  . using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  . internal release
+  
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+  . Improvement           Document is now serializable , except for the SigningValue( transient)
+
+  3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)  
+3.4.0-beta-9 release
+  .   change                  new kmehr version 1.14
+  .   using latest version of technical connector 3.4.0-beta-9 
+  .   Improvement             b.e.b.ehbox.api.domain.Addressee                   added check on required fields in constructor, now throws IllegalArgumentExeption early in the process instead of Nullpointer later
+3.4.0 beta release
+ . Improvement            b.e.b.ehbox.api.domain.Document                        use of ConnectorIOUtils to close a stream.
+ . Improvement            b.e.b.ehbox.api.domain.Addressee                    remove use of deprecated constants.
+ 
+3.3.1 beta release
+ .    BUGFIX                the method getAnnexList in now doesn't set the hasAnnex to true. the setting of this property should be done seperately.

@@ -27,6 +27,7 @@ class Eattest(var codes: List<EattestCode> = listOf()) : Serializable {
         var date: Int? = null,
         var riziv: String? = null,
         var quantity: Int = 1,
+        var justification: String? = null,
         var relativeService: String? = null,
         var reimbursement: Double? = null,
         var reglementarySupplement: Double? = null,

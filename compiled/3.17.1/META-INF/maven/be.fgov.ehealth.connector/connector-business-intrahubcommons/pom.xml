@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>connector-business-master</artifactId>
+        <groupId>be.fgov.ehealth.connector</groupId>
+        <version>3.17.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>connector-business-intrahubcommons</artifactId>
+    <name>Intrahub Commons (business)</name>
+    <description>Intrahub common for business connectors</description>
+
+    <!-- Packaging CAN NOT BE CHANGED -->
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-technical-core</artifactId>
+            <version>${version.technical}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-business-kmehrcommons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <!-- Configuration of profiles MUST BE CONFIGURED -->
+    <profiles>
+        <profile>
+            <id>no-dotnet</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack ikvm</id>
+                                <phase>disabled</phase>
+                            </execution>
+                            <execution>
+                                <id>unpack ddl</id>
+                                <phase>disabled</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>buildDll</id>
+                                <phase>disabled</phase>
+                            </execution>
+                            <execution>
+                                <id>buildCSPROJ</id>
+                                <phase>disabled</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>make-zip</id>
+                                <phase>disabled</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default testjar [.net]</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>test-jar</goal>
+                                </goals>
+                                <configuration>
+                                    <finalName>${project.build.finalName}-net</finalName>
+                                    <includes>
+                                        <include>**/*.java</include>
+                                        <include>**/*.class</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

@@ -250,4 +250,24 @@ class EhboxServiceImpl(val replyValidator: EhboxReplyValidator) : EhboxService {
             }
         }
     }
+
+    @Throws(ConnectorException::class)
+    override fun sendMessage2Ebox(token: SAMLToken, request: SendMessageRequest): SendMessageResponse {
+        try {
+            val service = ServiceFactory.getEh2EboxPublicationService(token)
+            service.setPayload(request as Any)
+            service.setSoapAction("urn:be:fgov:ehealth:ehbox:publication:protocol:v3:sendMessage")
+            val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val response = xmlResponse.asObject(SendMessageResponse::class.java) as SendMessageResponse
+            this.replyValidator.validateReplyStatus(response)
+            return response
+        } catch (ex: Exception) {
+            if (ex !is OoOPublicationException && ex !is TechnicalConnectorException) {
+                throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
+            } else {
+                throw ex as ConnectorException
+            }
+        }
+    }
+
 }
