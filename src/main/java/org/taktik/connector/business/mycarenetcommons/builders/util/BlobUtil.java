@@ -53,21 +53,28 @@ public class BlobUtil implements ConfigurationModuleBootstrap.ModuleBootstrapHoo
       return generateXades(blobForXades, credential, projectName);
    }
 
-   public static Base64Binary generateXades(BlobType inValue, Credential credential, String projectName) throws TechnicalConnectorException {
+   public static Base64Binary generateXades(be.fgov.ehealth.mycarenet.commons.core.v2.BlobType inValue, Credential credential, String projectName) throws TechnicalConnectorException {
+      return getBase64Xades(credential, projectName, inValue.getId(), inValue.getContentEncoding(), inValue.getContentType(), ConnectorXmlUtils.toByteArray(inValue));
+   }
+
+   public static Base64Binary generateXades(be.fgov.ehealth.mycarenet.commons.core.v3.BlobType inValue, Credential credential, String projectName) throws TechnicalConnectorException {
+      return getBase64Xades(credential, projectName, inValue.getId(), inValue.getContentEncoding(), inValue.getContentType(), ConnectorXmlUtils.toByteArray(inValue));
+   }
+
+   private static Base64Binary getBase64Xades(Credential credential, String projectName, String id, String contentEncoding, String contentType, byte[] bytes) throws TechnicalConnectorException {
       ConfigValidator props = ConfigFactory.getConfigValidator();
       String propValue = props.getProperty("mycarenet." + projectName + ".request.xadestype", "${mycarenet.default.request.xadestype}");
       if (!"xades".equals(propValue) && !"xadest".equals(propValue)) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, "Property mycarenet." + projectName + ".request.xadestype" + " with value " + propValue + " is not a supported value");
       } else {
          Map<String, Object> options = new HashMap<>();
-         options.put("baseURI", inValue.getId());
+         options.put("baseURI", id);
          List<String> transformList = new ArrayList<>();
          transformList.add("http://www.w3.org/2000/09/xmldsig#base64");
-         if ("deflate".equals(inValue.getContentEncoding())) {
+         if ("deflate".equals(contentEncoding)) {
             transformList.add("urn:nippin:xml:sig:transform:optional-deflate");
          }
-
-         if ("text/xml".equals(inValue.getContentType())) {
+         if ("text/xml".equals(contentType)) {
             transformList.add("http://www.w3.org/2001/10/xml-exc-c14n#");
          }
 
@@ -79,7 +86,7 @@ public class BlobUtil implements ConfigurationModuleBootstrap.ModuleBootstrapHoo
             xadesType = AdvancedElectronicSignatureEnumeration.XAdES;
          }
 
-         byte[] xadesValue = SignatureBuilderFactory.getSignatureBuilder(xadesType).sign(credential, ConnectorXmlUtils.toByteArray(inValue), options);
+         byte[] xadesValue = SignatureBuilderFactory.getSignatureBuilder(xadesType).sign(credential, bytes, options);
          return convertXadesToBinary(xadesValue);
       }
    }

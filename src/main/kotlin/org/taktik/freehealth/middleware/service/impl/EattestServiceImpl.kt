@@ -92,6 +92,7 @@ import org.springframework.stereotype.Service
 import org.taktik.connector.business.mycarenet.attest.domain.AttestBuilderResponse
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
 import org.taktik.connector.business.mycarenet.attest.mappers.BlobMapper
+import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.technical.config.ConfigFactory
@@ -261,6 +262,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                     this.referenceDate = refDateTime
                 }
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
+                this.xades = BlobUtil.generateXades(this.detail, credential, "eattest")
             }
 
             val cancelAttestationResponse = freehealthEattestService.cancelAttestion(samlToken, cancelAttestationRequest)
