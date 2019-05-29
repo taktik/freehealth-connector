@@ -20,7 +20,6 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

@@ -88,16 +88,16 @@ class TimeStampValidatorImpl : TimeStampValidator, ConfigurableImplementation {
 
     private fun getAliases(): List<String> {
         try {
-            return Collections.list(this.keyStore!!.aliases())
+            return this.keyStore?.aliases()?.toList() ?: listOf()
         } catch (var2: KeyStoreException) {
-            return ArrayList()
+            return listOf()
         }
 
     }
 
     @Throws(TechnicalConnectorException::class)
     override fun initialize(parameterMap: Map<String, Any>) {
-        this.setKeyStore(parameterMap["timestampvalidatior.keystore"] as KeyStore)
+        this.setKeyStore(parameterMap["timestampvalidator.keystore"] as KeyStore?)
         this.aliases = ArrayList()
         val aliasList = this.getAliases()
         if (aliasList != null) {
@@ -106,7 +106,7 @@ class TimeStampValidatorImpl : TimeStampValidator, ConfigurableImplementation {
 
     }
 
-    override fun setKeyStore(keyStore: KeyStore) {
+    override fun setKeyStore(keyStore: KeyStore?) {
         this.keyStore = keyStore
     }
 

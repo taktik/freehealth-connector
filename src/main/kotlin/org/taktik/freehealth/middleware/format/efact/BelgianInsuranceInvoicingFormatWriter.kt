@@ -377,7 +377,13 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         if (sender.isMedicalHouse) ws.write("14", sender.nihii)
         if (!sender.isMedicalHouse) ws.write("15", icd.doctorIdentificationNumber)
         //ws.write("16", if (sender.isMedicalHouse) 0 else if (icd.gnotionNihii == null || icd.gnotionNihii?.let { it.isEmpty() } == true) 1 else 4)
-        ws.write("16", if(sender.isMedicalHouse){0}else if(icd.gnotionNihii !== null || icd.gnotionNihii?.let { it?.isEmpty() } === false){4} else if (icd.internshipNihii !== null || icd.internshipNihii?.let { it?.isEmpty() } === false){5} else {1})
+        ws.write("16",
+                 when {
+                     sender.isMedicalHouse -> 0
+                     icd.gnotionNihii?.isNotEmpty() == true -> 4
+                     icd.internshipNihii?.isNotEmpty() == true -> 5
+                     else -> 1
+                 })
         ws.write("17", icd.relatedCode)
         ws.write("19",(if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
         ws.write("22",(if (icd.units >= 0) "+" else "-") + nf4.format(Math.abs(icd.units)))
@@ -392,7 +398,11 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("34", (icd.sideCode?: InvoicingSideCode.None).code)
         ws.write("35", sender.conventionCode)
         //ws.write("49",icd.gnotionNihii)
-        ws.write("49", if(icd.gnotionNihii !== null || icd.gnotionNihii.let{it?.isEmpty() === false}){icd.gnotionNihii}else if(icd.internshipNihii !== null || icd.internshipNihii.let{it?.isEmpty() === false}){icd.internshipNihii} else null)
+        ws.write("49", when {
+            icd.gnotionNihii?.isNotEmpty() == true -> icd.gnotionNihii
+            icd.internshipNihii?.isNotEmpty() == true -> icd.internshipNihii
+            else -> null
+        })
 
         ws.writeFieldsWithCheckSum()
         return recordNumber+1

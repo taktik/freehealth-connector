@@ -20,10 +20,7 @@
 
 package org.taktik.freehealth.middleware.service
 
-import be.fgov.ehealth.hubservices.core.v3.PutPatientConsentResponse
-import be.fgov.ehealth.hubservices.core.v3.PutTherapeuticLinkResponse
-import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
-import be.fgov.ehealth.hubservices.core.v3.TransactionIdType
+import be.fgov.ehealth.hubservices.core.v3.*
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
 import org.taktik.connector.business.therlink.domain.TherapeuticLinkMessage
@@ -251,4 +248,80 @@ interface HubService {
         sl: String,
         value: String
     ): Kmehrmessage?
+
+    fun getPatientAuditTrail(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String?,
+        breakTheGlassReason: String?,
+        from: Long?,
+        to: Long?,
+        authorNihii: String?,
+        authorSsin: String?,
+        isGlobal: Boolean,
+        sv: String?,
+        sl: String?,
+        value: String?,
+        hubPackageId: String?
+    ): GetPatientAuditTrailResponse
+
+    fun putAccessRight(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        sv: String, //trn to manage
+        sl: String, //trn to manage
+        value: String, //trn to manage
+        accessNihii: String?, //hcp to allow/disallow
+        accessSsin: String?, //hcp to allow/disallow
+        accessRight: String, //allow, disallow
+        hubPackageId: String?
+    ): PutAccessRightResponse
+
+    fun getAccessRight(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        sv: String, //trn to manage
+        sl: String, //trn to manage
+        value: String, //trn to manage
+        hubPackageId: String?
+    ): GetAccessRightResponse
+
+    fun revokeAccessRight(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        sv: String, //trn to manage
+        sl: String, //trn to manage
+        value: String, //trn to manage
+        accessNihii: String?, //hcp to allow/disallow
+        accessSsin: String?, //hcp to allow/disallow
+        hubPackageId: String?
+    ): RevokeAccessRightResponse
 }

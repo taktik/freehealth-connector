@@ -36,7 +36,12 @@ class TimeStampValidatorFactory private constructor() {
 
         @Throws(TechnicalConnectorException::class)
         private fun init(): Map<String, Any> {
-            val parameterMap = HashMap<String, Any>()
+            val config = ConfigFactory.getConfigValidatorFor("timestamp.signature.keystore.path", "timestamp.signature.keystore.pwd", "KEYSTORE_DIR")
+            val parameterMap = HashMap<String,Any>()
+            val keystorePath = config.getProperty("KEYSTORE_DIR") + config.getProperty("timestamp.signature.keystore.path")
+            val keyStoreManager = KeyStoreManager(keystorePath, config.getProperty("timestamp.signature.keystore.pwd").toCharArray())
+            val keyStore = keyStoreManager.keyStore
+            parameterMap.put("timestampvalidator.keystore", keyStore)
             return parameterMap
         }
 
