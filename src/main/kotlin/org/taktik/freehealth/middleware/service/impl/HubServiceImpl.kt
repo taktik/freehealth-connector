@@ -579,7 +579,7 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                     marshallerHelper.toObject(transaction)
             }).let { tr ->
             org.taktik.freehealth.middleware.domain.hub.PutTransactionResponse(
-                tr.transaction.ids,
+                tr.transaction?.ids,
                 tr.acknowledge.errors.map { e -> org.taktik.freehealth.middleware.domain.common.Error(e.cds.firstOrNull()?.value,  e.description.value, e.url, null, mapOf()) }
                                                                               )
         }
