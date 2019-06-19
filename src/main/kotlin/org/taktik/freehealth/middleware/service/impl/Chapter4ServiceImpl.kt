@@ -1124,8 +1124,8 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         civicsVersion: String?,
         paragraph: String?,
         reference: String?): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
-        val startDate = start?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) } ?: LocalDateTime.now().minus(12, ChronoUnit.MONTHS)
-        val endDate = end?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) } ?: startDate.plus(23, ChronoUnit.MONTHS)
+        val startDate = start?.let { FuzzyValues.getLocalDateTime(it) } ?: LocalDateTime.now().minus(12, ChronoUnit.MONTHS)
+        val endDate = end?.let { FuzzyValues.getLocalDateTime(it) } ?: startDate.plus(23, ChronoUnit.MONTHS)
 
         return getKmehrMessage(
             commonInput,

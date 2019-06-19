@@ -38,5 +38,6 @@
 	{"uid":"35","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[careproviderreference]","code":"100","locFr":"","locNl":"","msgFr":"Item obligatoire non complété","msgNl":""},
 	{"uid":"36","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[careproviderreference]","code":"157","locFr":"","locNl":"","msgFr":"Trop d‟accords dans la période consultée pour ce patient, veuillez préciser la demande.","msgNl":""},
 	{"uid":"37","path":"/kmehrrequest/kmehrmessage/folder/patient/id","code":"120","locFr":"","locNl":"","msgFr":"Le patient n'est pas connue de l'oa durant la période couverte par la recherche","msgNl":""},
-	{"uid":"38","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[chapter4reference]","code":"180","locFr":"","locNl":"","msgFr":"Le paragraphe est inconnu à la date de la demande","msgNl":""}
+	{"uid":"38","path":"/kmehrrequest/kmehrmessage/folder/transaction/item[chapter4reference]","code":"180","locFr":"","locNl":"","msgFr":"Le paragraphe est inconnu à la date de la demande","msgNl":""},
+	{"uid":"39","path":"/kmehrrequest/kmehrmessage/folder/patient/birthdate","code":"113","locFr":"","locNl":"","msgFr":"Date de naissance en conflit avec les données du patient","msgNl":""}
 ]
