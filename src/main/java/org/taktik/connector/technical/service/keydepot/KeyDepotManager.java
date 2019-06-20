@@ -7,13 +7,15 @@ import org.taktik.connector.technical.utils.IdentifierType;
 import java.util.Set;
 
 public interface KeyDepotManager {
-
    EncryptionToken getETK(Credential cred) throws TechnicalConnectorException;
+
    EncryptionToken getEtk(IdentifierType identifierType, Long identifierValue, String application) throws TechnicalConnectorException;
+
    Set<EncryptionToken> getEtkSet(IdentifierType identifierType, Long identifierValue, String application) throws TechnicalConnectorException;
 
+   void setKeyDepotService(KeyDepotService var1);
 
-   enum EncryptionTokenType {
+   public static enum EncryptionTokenType {
       HOLDER_OF_KEY,
       ENCRYPTION;
    }

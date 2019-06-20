@@ -129,7 +129,7 @@ public abstract class AbstractConsultationBuilder<T> {
          return data;
       } else {
          byte[] byteVal = ArrayUtils.clone(data);
-         if (ConfigFactory.getConfigValidator().getBooleanProperty("ehboxv3.try.to.base64decode.content", true).booleanValue()) {
+         if (ConfigFactory.getConfigValidator().getBooleanProperty("ehboxv3.try.to.base64decode.content", true)) {
             byteVal = ConnectorIOUtils.base64Decode(byteVal, false);
          }
 

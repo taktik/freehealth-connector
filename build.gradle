@@ -123,6 +123,9 @@ dependencies {
 
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
 	compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+	compile group: 'org.bouncycastle', name: 'bcmail-jdk15on', version: '1.54'
+	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.54'
+	compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.54'
 	compile('be.fedict.commons-eid:commons-eid-client:0.6.6')
 	compile('be.fedict.commons-eid:commons-eid-jca:0.6.6')
 	compile('be.fgov.ehealth.etee:etee-crypto-lib:2.1.1')
@@ -187,4 +190,12 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
 	classpath = configurations.ktlint
 	main = "com.github.shyiko.ktlint.Main"
 	args "-F", "src/**/*.kt"
+}
+
+apply plugin: 'idea'
+idea {
+	module {
+		downloadJavadoc = true // defaults to false
+		downloadSources = true
+	}
 }

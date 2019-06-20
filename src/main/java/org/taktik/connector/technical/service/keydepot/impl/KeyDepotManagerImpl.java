@@ -9,11 +9,9 @@ import org.taktik.connector.technical.service.etee.domain.EncryptionToken;
 import org.taktik.connector.technical.service.keydepot.KeyDepotManager;
 import org.taktik.connector.technical.service.keydepot.KeyDepotService;
 import org.taktik.connector.technical.service.sts.security.Credential;
-import org.taktik.connector.technical.session.Session;
-import org.taktik.connector.technical.session.SessionItem;
-import org.taktik.connector.technical.session.SessionServiceWithCache;
 import org.taktik.connector.technical.utils.CertificateParser;
 import org.taktik.connector.technical.utils.IdentifierType;
+import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.CacheInformation;
 import java.security.cert.X509Certificate;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,13 +20,13 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class KeyDepotManagerImpl implements KeyDepotManager, SessionServiceWithCache {
+public final class KeyDepotManagerImpl implements KeyDepotManager {
    private static final Logger LOG = LoggerFactory.getLogger(KeyDepotManagerImpl.class);
    private KeyDepotService service;
    private Cache<X509Certificate, EncryptionToken> cache;
 
    private KeyDepotManagerImpl() {
-      this.cache = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY);
+      this.cache = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY, "etkdepot-manager", CacheInformation.ExpiryType.NONE, null);
 
       try {
          this.service = ServiceFactory.getKeyDepotService();
@@ -36,8 +34,6 @@ public final class KeyDepotManagerImpl implements KeyDepotManager, SessionServic
          LOG.error(var2.getMessage(), var2);
          throw new IllegalArgumentException(var2);
       }
-
-      Session.getInstance().registerSessionService(this);
    }
 
    public static KeyDepotManager getInstance() {
@@ -92,8 +88,8 @@ public final class KeyDepotManagerImpl implements KeyDepotManager, SessionServic
    }
 
    public Set<EncryptionToken> getEtkSet(IdentifierType identifierType, Long identifierValue, String application) throws TechnicalConnectorException {
-      String identifier = identifierType.formatIdentifierValue(identifierValue.longValue());
-      Set<EncryptionToken> result = new HashSet();
+      String identifier = identifierType.formatIdentifierValue(identifierValue);
+      Set<EncryptionToken> result = new HashSet<>();
       result.addAll(this.service.getETKSet(identifierType, identifier, application));
       if (LOG.isDebugEnabled()) {
          StringBuilder keyBuilder = new StringBuilder();
@@ -112,40 +108,24 @@ public final class KeyDepotManagerImpl implements KeyDepotManager, SessionServic
       return result;
    }
 
+   public void setKeyDepotService(KeyDepotService service) {
+      this.service = service;
+      this.flushCache();
+   }
+
    public void flushCache() {
       this.cache.clear();
    }
 
    // $FF: synthetic method
-   KeyDepotManagerImpl(KeyDepotManagerImpl.SyntheticClass_1 x0) {
+   KeyDepotManagerImpl(Object x0) {
       this();
-   }
-
-   // $FF: synthetic class
-   static class SyntheticClass_1 {
-      // $FF: synthetic field
-      static final int[] $SwitchMap$be$ehealth$technicalconnector$service$keydepot$KeyDepotManager$EncryptionTokenType = new int[KeyDepotManager.EncryptionTokenType.values().length];
-
-      static {
-         try {
-            $SwitchMap$be$ehealth$technicalconnector$service$keydepot$KeyDepotManager$EncryptionTokenType[KeyDepotManager.EncryptionTokenType.ENCRYPTION.ordinal()] = 1;
-         } catch (NoSuchFieldError var2) {
-            ;
-         }
-
-         try {
-            $SwitchMap$be$ehealth$technicalconnector$service$keydepot$KeyDepotManager$EncryptionTokenType[KeyDepotManager.EncryptionTokenType.HOLDER_OF_KEY.ordinal()] = 2;
-         } catch (NoSuchFieldError var1) {
-            ;
-         }
-
-      }
    }
 
    private static enum KeyDepotManagerImplSingleton {
       INSTANCE;
 
-      private transient KeyDepotManager instance = new KeyDepotManagerImpl((KeyDepotManagerImpl.SyntheticClass_1)null);
+      private transient KeyDepotManager instance = new KeyDepotManagerImpl();
 
       public KeyDepotManager getKeyDepotManager() {
          return this.instance;

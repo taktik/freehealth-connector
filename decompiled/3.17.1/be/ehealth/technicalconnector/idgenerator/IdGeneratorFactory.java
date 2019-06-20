@@ -26,9 +26,6 @@ public final class IdGeneratorFactory {
    private static Map<String, IdGenerator> cachedInstance = new HashMap();
    private static Map<String, String> defaultGeneratorClasses = new HashMap();
 
-   private IdGeneratorFactory() {
-   }
-
    public static IdGenerator getIdGenerator() throws TechnicalConnectorException {
       return getIdGenerator("default");
    }

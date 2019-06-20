@@ -10,16 +10,16 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.mapper.Mapper;
 import org.taktik.connector.technical.mapper.MapperFactory;
-import org.taktik.connector.technical.session.Session;
-import org.taktik.connector.technical.session.SessionServiceWithCache;
 import be.fedict.commons.eid.client.BeIDCard;
 import be.fedict.commons.eid.client.FileType;
 import be.fedict.commons.eid.consumer.tlv.TlvParser;
+import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.CacheInformation;
 import org.apache.commons.lang.ArrayUtils;
+import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class BeIDInfo implements SessionServiceWithCache {
+public final class BeIDInfo {
    public static final String PROP_USE_CACHE = "org.taktik.connector.technical.beid.beidinfo.cache";
    private static final boolean PROP_USE_CACHE_DEFAULT_VALUE = false;
    private static final Logger LOG = LoggerFactory.getLogger(BeIDInfo.class);
@@ -49,7 +49,6 @@ public final class BeIDInfo implements SessionServiceWithCache {
       }
 
       beIDCard.close();
-      Session.getInstance().registerSessionService(this);
    }
 
    public static BeIDInfo getInstance() throws TechnicalConnectorException {
@@ -92,7 +91,7 @@ public final class BeIDInfo implements SessionServiceWithCache {
    }
 
    static {
-      cache = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY);
+      cache = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY, "beid-info", CacheInformation.ExpiryType.NONE, (Duration)null);
       mapper = MapperFactory.getMapper("dozer/commonseid.xml");
       config = ConfigFactory.getConfigValidator();
    }

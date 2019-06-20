@@ -5,7 +5,6 @@ import org.taktik.connector.technical.service.etee.Crypto;
 import org.taktik.connector.technical.service.kgss.domain.KeyResult;
 import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
-import org.taktik.connector.technical.session.SessionItem;
 import be.fgov.ehealth.etee.kgss._1_0.protocol.GetKeyRequestContent;
 import be.fgov.ehealth.etee.kgss._1_0.protocol.GetKeyResponseContent;
 import be.fgov.ehealth.etee.kgss._1_0.protocol.GetNewKeyRequestContent;

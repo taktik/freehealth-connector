@@ -44,34 +44,6 @@ public abstract class AbstractCommonBuilderImpl implements CommonBuilder {
       }
    }
 
-   /** @deprecated */
-   @Deprecated
-   public CommonInput createCommonInput(PackageInfo packageInfo, boolean isTest, String inputReference) throws TechnicalConnectorException {
-      Origin origin = this.createOrigin(packageInfo);
-      return new CommonInput(isTest, origin, inputReference);
-   }
-
-   public CommonInput createCommonInput(McnPackageInfo packageInfo, boolean isTest, String inputReference) throws TechnicalConnectorException {
-      Origin origin = this.createOrigin(packageInfo);
-      return new CommonInput(isTest, origin, inputReference);
-   }
-
-   /** @deprecated */
-   @Deprecated
-   public Origin createOrigin(PackageInfo packageInfo) throws TechnicalConnectorException {
-      Origin origin = new Origin(packageInfo, this.createCareProviderForOrigin());
-      origin.setSender(this.createSenderForOrigin());
-      origin.setSiteId(this.getSiteId());
-      return origin;
-   }
-
-   public Origin createOrigin(McnPackageInfo packageInfo) throws TechnicalConnectorException {
-      Origin origin = new Origin(packageInfo, this.createCareProviderForOrigin());
-      origin.setSender(this.createSenderForOrigin());
-      origin.setSiteId(this.getSiteId());
-      return origin;
-   }
-
    private String getSiteId() throws TechnicalConnectorException {
       if (this.projectName == null) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL, "projectName");

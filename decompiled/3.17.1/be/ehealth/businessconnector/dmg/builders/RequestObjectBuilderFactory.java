@@ -8,9 +8,6 @@ public final class RequestObjectBuilderFactory {
    public static final String DEFAULT_REQUESTBUILDER_CLASS = "be.ehealth.businessconnector.dmg.builders.impl.RequestObjectBuilderImpl";
    private static ConfigurableFactoryHelper<RequestObjectBuilder> helperFactoryrequestBuilder = new ConfigurableFactoryHelper("dmg.requestobjectbuilder.class", "be.ehealth.businessconnector.dmg.builders.impl.RequestObjectBuilderImpl");
 
-   private RequestObjectBuilderFactory() {
-   }
-
    public static RequestObjectBuilder getRequestObjectBuilder() throws TechnicalConnectorException {
       return (RequestObjectBuilder)helperFactoryrequestBuilder.getImplementation();
    }

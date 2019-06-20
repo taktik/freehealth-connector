@@ -8,9 +8,6 @@ public final class ResponseObjectBuilderFactory {
    public static final String DEFAULT_RESPONSEBUILDER_CLASS = "be.ehealth.businessconnector.dmg.builders.impl.ResponseObjectBuilderImpl";
    private static ConfigurableFactoryHelper<ResponseObjectBuilder> helperFactoryresponseBuilder = new ConfigurableFactoryHelper("dmg.responseobjectbuilder.class", "be.ehealth.businessconnector.dmg.builders.impl.ResponseObjectBuilderImpl");
 
-   private ResponseObjectBuilderFactory() {
-   }
-
    public static ResponseObjectBuilder getResponseObjectBuilder() throws TechnicalConnectorException {
       return (ResponseObjectBuilder)helperFactoryresponseBuilder.getImplementation();
    }

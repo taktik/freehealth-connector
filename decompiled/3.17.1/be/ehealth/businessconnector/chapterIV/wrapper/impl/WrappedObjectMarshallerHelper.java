@@ -9,9 +9,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 public final class WrappedObjectMarshallerHelper {
-   private WrappedObjectMarshallerHelper() {
-   }
-
    public static byte[] toXMLByteArray(WrappedXmlObject<?> wrappedXmlObject) {
       if (wrappedXmlObject != null && wrappedXmlObject.getXmlObject() != null) {
          try {

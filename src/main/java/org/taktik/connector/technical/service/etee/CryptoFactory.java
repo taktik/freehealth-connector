@@ -5,8 +5,6 @@ import org.taktik.connector.technical.config.Configuration;
 import org.taktik.connector.technical.exception.ConfigurationException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.Credential;
-import org.taktik.connector.technical.session.Session;
-import org.taktik.connector.technical.session.SessionItem;
 import org.taktik.connector.technical.utils.ConfigurableFactoryHelper;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
 import org.taktik.connector.technical.utils.KeyStoreManager;
@@ -112,11 +110,6 @@ public final class CryptoFactory {
 
    public static Crypto getCrypto(Credential encryption, Map<String, PrivateKey> decryptionKeys) throws TechnicalConnectorException {
       return getCrypto(encryption, decryptionKeys, "NONE");
-   }
-
-   public static Crypto getCryptoFromSession() throws TechnicalConnectorException {
-      SessionItem session = Session.getInstance().getSession();
-      return getCrypto(session.getEncryptionCredential(), session.getEncryptionPrivateKeys());
    }
 
    private static CertStore generateCertStore(String baseKey, KeyStore... stores) {

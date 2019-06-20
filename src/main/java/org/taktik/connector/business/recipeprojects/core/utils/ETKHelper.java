@@ -22,12 +22,10 @@ import org.apache.logging.log4j.Logger;
 
 import org.taktik.connector.business.recipeprojects.core.domain.KgssIdentifierType;
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException;
-import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleRuntimeException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.ServiceFactory;
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken;
 import org.taktik.connector.technical.service.keydepot.KeyDepotService;
-import org.taktik.connector.technical.service.keydepot.impl.KeyDepotServiceImpl;
 
 public class ETKHelper {
 
@@ -44,7 +42,7 @@ public class ETKHelper {
     public List<EncryptionToken> getKGSS_ETK() throws IntegrationModuleException {
         return getEtks(KgssIdentifierType.CBE, KGSS_ID, "KGSS");
     }
-    
+
     public List<EncryptionToken> getRecipe_ETK() throws IntegrationModuleException {
         return getEtks(KgssIdentifierType.CBE, RECIPE_ID, "");
     }
@@ -156,7 +154,7 @@ public class ETKHelper {
         paramGetEtkRequest.setSearchCriteria(paramSearchCriteriaType);
         return paramGetEtkRequest;
     }
-    
+
     public List<EncryptionToken> retrieveEtk(KgssIdentifierType identifierType, String identifierValue, String applicationName) throws IntegrationModuleException, GeneralSecurityException, TechnicalConnectorException {
 		/*
 		 * Create request

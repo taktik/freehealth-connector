@@ -1,10 +1,26 @@
 package be.fgov.ehealth.technicalconnector.ra.utils;
 
+import be.fgov.ehealth.technicalconnector.ra.domain.DistinguishedName;
+import org.apache.commons.lang3.ArrayUtils;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
+import org.joda.time.DateTime;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.utils.ConnectorCryptoUtils;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
-import be.fgov.ehealth.technicalconnector.ra.domain.DistinguishedName;
+
+import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -20,21 +36,6 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Date;
-import javax.security.auth.x500.X500Principal;
-import org.apache.commons.lang3.ArrayUtils;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.X509v3CertificateBuilder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
-import org.joda.time.DateTime;
 
 public class CertificateUtils {
    private static final String PROVIDER = "BC";
@@ -46,7 +47,7 @@ public class CertificateUtils {
 
       try {
          KeyPairGenerator kg = KeyPairGenerator.getInstance(authKeyAlgorithm);
-         kg.initialize(authKeySize.intValue(), new SecureRandom());
+         kg.initialize(authKeySize, new SecureRandom());
          return kg.generateKeyPair();
       } catch (NoSuchAlgorithmException var3) {
          throw new IllegalArgumentException(authKeyAlgorithm + " key algorithm is unknown to the security provider", var3);
@@ -61,10 +62,21 @@ public class CertificateUtils {
          JcaPKCS10CertificationRequestBuilder csrBuilder = new JcaPKCS10CertificationRequestBuilder(x500Principal, keyPair.getPublic());
          PKCS10CertificationRequest csr = csrBuilder.build((new JcaContentSignerBuilder(csrSignatureAlgorithm)).setProvider(new BouncyCastleProvider()).build(keyPair.getPrivate()));
          return csr.getEncoded();
-      } catch (OperatorCreationException var6) {
-         throw new IllegalArgumentException(var6);
-      } catch (IOException var7) {
-         throw new IllegalArgumentException(var7);
+      } catch (OperatorCreationException | IOException ex) {
+         throw new IllegalArgumentException(ex);
+      }
+   }
+
+   public static byte[] createCSR(String dn, KeyPair keyPair) {
+      String csrSignatureAlgorithm = RaPropertiesLoader.getProperty("csr.signature.algorithm");
+
+      try {
+         X500Principal x500Principal = new X500Principal(dn);
+         JcaPKCS10CertificationRequestBuilder csrBuilder = new JcaPKCS10CertificationRequestBuilder(x500Principal, keyPair.getPublic());
+         PKCS10CertificationRequest csr = csrBuilder.build((new JcaContentSignerBuilder(csrSignatureAlgorithm)).setProvider(new BouncyCastleProvider()).build(keyPair.getPrivate()));
+         return csr.getEncoded();
+      } catch (OperatorCreationException | IOException ex) {
+         throw new IllegalArgumentException(ex);
       }
    }
 
@@ -75,18 +87,13 @@ public class CertificateUtils {
          Date notBefore = cert.getNotBefore();
          Date notAfter = cert.getNotAfter();
          X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(principal, serialNr, notBefore, notAfter, principal, rqPubKey);
-         int keyUsageDetails = 16;
-         keyUsageDetails = keyUsageDetails + 32;
+         int keyUsageDetails = 16 + 32;
          builder.addExtension(Extension.keyUsage, true, new KeyUsage(keyUsageDetails));
          ContentSigner signer = (new JcaContentSignerBuilder(cert.getSigAlgName())).build(cred.getPrivateKey());
          X509CertificateHolder holder = builder.build(signer);
          return (new JcaX509CertificateConverter()).setProvider("BC").getCertificate(holder);
-      } catch (OperatorCreationException var11) {
-         throw new IllegalArgumentException(var11);
-      } catch (IOException var12) {
-         throw new IllegalArgumentException(var12);
-      } catch (CertificateException var13) {
-         throw new IllegalArgumentException(var13);
+      } catch (OperatorCreationException | IOException | CertificateException ex) {
+         throw new IllegalArgumentException(ex);
       }
    }
 
@@ -96,18 +103,13 @@ public class CertificateUtils {
          Date notBefore = (new DateTime()).minusDays(1).toDate();
          Date notAfter = (new DateTime()).minusDays(1).plusMinutes(1).toDate();
          X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(principal, BigInteger.ZERO, notBefore, notAfter, principal, pair.getPublic());
-         int keyUsageDetails = 16;
-         keyUsageDetails = keyUsageDetails + 32;
+         int keyUsageDetails = 16 + 32;
          builder.addExtension(Extension.keyUsage, true, new KeyUsage(keyUsageDetails));
          ContentSigner signer = (new JcaContentSignerBuilder(RaPropertiesLoader.getProperty("dummycert.signature.algorithm"))).build(pair.getPrivate());
          X509CertificateHolder holder = builder.build(signer);
          return (new JcaX509CertificateConverter()).setProvider("BC").getCertificate(holder);
-      } catch (OperatorCreationException var8) {
-         throw new IllegalArgumentException(var8);
-      } catch (IOException var9) {
-         throw new IllegalArgumentException(var9);
-      } catch (CertificateException var10) {
-         throw new IllegalArgumentException(var10);
+      } catch (OperatorCreationException | IOException | CertificateException ex) {
+         throw new IllegalArgumentException(ex);
       }
    }
 

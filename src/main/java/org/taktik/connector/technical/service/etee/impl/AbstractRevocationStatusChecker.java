@@ -3,21 +3,19 @@ package org.taktik.connector.technical.service.etee.impl;
 import org.taktik.connector.technical.cache.Cache;
 import org.taktik.connector.technical.cache.CacheFactory;
 import org.taktik.connector.technical.service.etee.RevocationStatusChecker;
-import org.taktik.connector.technical.session.Session;
-import org.taktik.connector.technical.session.SessionServiceWithCache;
+import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.CacheInformation;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractRevocationStatusChecker implements RevocationStatusChecker, SessionServiceWithCache {
+public abstract class AbstractRevocationStatusChecker implements RevocationStatusChecker {
    private static final Logger LOG = LoggerFactory.getLogger(AbstractRevocationStatusChecker.class);
    private Cache<X509Certificate, Boolean> cache;
 
    public AbstractRevocationStatusChecker() {
-      this.cache = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY);
-      Session.getInstance().registerSessionService(this);
+      this.cache = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY, "revocation-cache", CacheInformation.ExpiryType.NONE, null);
    }
 
    public boolean isRevoked(X509Certificate x509certificate) throws CertificateException {
@@ -40,7 +38,7 @@ public abstract class AbstractRevocationStatusChecker implements RevocationStatu
             this.cache.put(cert, isRevoked);
          }
 
-         return ((Boolean)this.cache.get(cert)).booleanValue();
+         return this.cache.get(cert);
       }
    }
 

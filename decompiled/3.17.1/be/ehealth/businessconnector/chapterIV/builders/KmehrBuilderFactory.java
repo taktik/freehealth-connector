@@ -8,9 +8,6 @@ public final class KmehrBuilderFactory {
    private static final String DEFAULT_PROVIDER = "be.ehealth.businessconnector.chapterIV.builders.impl.GenericKmehrBuilder";
    private static ConfigurableFactoryHelper<KmehrBuilder> helper = new ConfigurableFactoryHelper("chapterIV.kmehrbuilder.class", "be.ehealth.businessconnector.chapterIV.builders.impl.GenericKmehrBuilder");
 
-   private KmehrBuilderFactory() {
-   }
-
    public static KmehrBuilder getKmehrBuilder() throws TechnicalConnectorException {
       return (KmehrBuilder)helper.getImplementation();
    }

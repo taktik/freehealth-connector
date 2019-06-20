@@ -3,6 +3,7 @@ package be.fgov.ehealth.technicalconnector.bootstrap.bcp;
 import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.ConfigValidator;
 import org.taktik.connector.technical.exception.NoNextEndpointException;
+import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.CacheInformation;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.EndPointInformation;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,26 +30,41 @@ public final class EndpointDistributor {
    private Map<String, List<String>> service2AllEndpoints;
    private Map<String, String> service2ActiveEndpoint;
    private Map<String, String> service2DefaultEndpoint;
+   private Map<String, CacheInformation> service2CacheInformation;
 
    public static EndpointDistributor getInstance() {
       return EndpointDistributor.EndpointDistributorSingleton.INSTANCE.getEndpointDistributor();
    }
 
    private EndpointDistributor() {
-      this.url2Service = new HashMap();
-      this.service2AllEndpoints = new HashMap();
-      this.service2ActiveEndpoint = new HashMap();
-      this.service2DefaultEndpoint = new HashMap();
+      this.url2Service = new HashMap<>();
+      this.service2AllEndpoints = new HashMap<>();
+      this.service2ActiveEndpoint = new HashMap<>();
+      this.service2DefaultEndpoint = new HashMap<>();
+      this.service2CacheInformation = new HashMap<>();
+   }
+
+   public String getService(String currentEndpoint) {
+      return (String)this.url2Service.get(currentEndpoint);
    }
 
    public String getActiveEndpoint(String currentEndpoint) {
       return this.url2Service.containsKey(currentEndpoint) ? (String)this.service2ActiveEndpoint.get(this.url2Service.get(currentEndpoint)) : currentEndpoint;
    }
 
+   public boolean mustCache(String currentEndpoint) {
+      String service = (String)this.url2Service.get(currentEndpoint);
+      return StringUtils.isNotEmpty(service) && this.service2CacheInformation.containsKey(service);
+   }
+
+   public CacheInformation getCacheInformation(String currentEndpoint) {
+      return (CacheInformation)this.service2CacheInformation.get(this.url2Service.get(currentEndpoint));
+   }
+
    public void activatePolling() {
-      if (!this.polling && this.isBCPMode() && config.getBooleanProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.activated", Boolean.TRUE).booleanValue()) {
+      if (!this.polling && this.isBCPMode() && config.getBooleanProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.activated", Boolean.TRUE)) {
          this.timer = new Timer(true);
-         this.timer.schedule(new EndpointDistributor.StatusPollingTimerTask(), new Date(), TimeUnit.MILLISECONDS.convert(config.getLongProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.interval.minutes", 15L).longValue(), TimeUnit.MINUTES));
+         this.timer.schedule(new EndpointDistributor.StatusPollingTimerTask(), new Date(), TimeUnit.MILLISECONDS.convert(config.getLongProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.interval.minutes", 15L), TimeUnit.MINUTES));
       }
 
       this.polling = true;
@@ -95,7 +111,7 @@ public final class EndpointDistributor {
       }
    }
 
-   void update(EndPointInformation info) {
+   protected void update(EndPointInformation info) {
       Validate.notNull(info);
       if (!isBCPMode(info)) {
          this.polling = false;
@@ -108,9 +124,10 @@ public final class EndpointDistributor {
       this.service2ActiveEndpoint = info.getService2ActiveEndpoint();
       this.service2AllEndpoints = info.getService2AllEndpoints();
       this.service2DefaultEndpoint = info.getService2DefaultEndpoint();
+      this.service2CacheInformation = info.getService2CacheInformation();
    }
 
-   void reset() {
+   protected void reset() {
       this.url2Service = new HashMap();
       this.service2AllEndpoints = new HashMap();
       this.service2ActiveEndpoint = new HashMap();
@@ -135,12 +152,8 @@ public final class EndpointDistributor {
    }
 
    // $FF: synthetic method
-   EndpointDistributor(EndpointDistributor.SyntheticClass_1 x0) {
+   EndpointDistributor(Object x0) {
       this();
-   }
-
-   // $FF: synthetic class
-   static class SyntheticClass_1 {
    }
 
    private static class StatusPollingTimerTask extends TimerTask {
@@ -155,7 +168,7 @@ public final class EndpointDistributor {
       }
 
       // $FF: synthetic method
-      StatusPollingTimerTask(EndpointDistributor.SyntheticClass_1 x0) {
+      StatusPollingTimerTask(Object x0) {
          this();
       }
    }

@@ -64,7 +64,7 @@ class OcspRef extends Ref {
 
    private String getResponderIdByName() {
       RespID responderId = this.ocsp.getResponderId();
-      ResponderID responderIdAsASN1Object = responderId.toASN1Object();
+      ResponderID responderIdAsASN1Object = responderId.toASN1Primitive();
       DERTaggedObject derTaggedObject = (DERTaggedObject)responderIdAsASN1Object.toASN1Primitive();
       if (2 == derTaggedObject.getTagNo()) {
          return null;
@@ -76,7 +76,7 @@ class OcspRef extends Ref {
    }
 
    private byte[] getResponderIdByKey() {
-      ResponderID responderID = this.ocsp.getResponderId().toASN1Object();
+      ResponderID responderID = this.ocsp.getResponderId().toASN1Primitive();
       DERTaggedObject derTaggedObject = (DERTaggedObject)responderID.toASN1Primitive();
       if (2 == derTaggedObject.getTagNo()) {
          ASN1OctetString keyHashOctetString = (ASN1OctetString)derTaggedObject.getObject();

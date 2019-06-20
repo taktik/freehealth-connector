@@ -12,9 +12,6 @@ public final class ChapterIVJaxbUtils {
    private static MarshallerHelper<FolderType, FolderType> folderTypeMarshaller = new MarshallerHelper(FolderType.class, FolderType.class);
    private static MarshallerHelper<Kmehrresponse, Kmehrresponse> kmehrResponseMarshallerHelper = new MarshallerHelper(Kmehrresponse.class, Kmehrresponse.class);
 
-   private ChapterIVJaxbUtils() {
-   }
-
    /** @deprecated */
    @Deprecated
    public static FolderType parseFolderType(InputStream folderTypeXmlInputStream) throws TechnicalConnectorException {

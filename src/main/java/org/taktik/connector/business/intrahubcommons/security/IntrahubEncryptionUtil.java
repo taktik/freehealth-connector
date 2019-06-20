@@ -1,18 +1,18 @@
 package org.taktik.connector.business.intrahubcommons.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.taktik.connector.business.intrahubcommons.exception.IntraHubBusinessConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.etee.Crypto;
 import org.taktik.connector.technical.utils.MarshallerHelper;
-import org.taktik.connector.technical.utils.SessionUtil;
+import org.w3c.dom.Document;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.dom.DOMResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
 public class IntrahubEncryptionUtil {
    private static final Logger LOG = LoggerFactory.getLogger(IntrahubEncryptionUtil.class);
