@@ -123,7 +123,8 @@ class EhboxServiceImpl(val stsService: STSService) : EhboxService {
                 }
             }
         request.publicationId = UUID.randomUUID().toString().substring(0,12)
-        return freehealthEhboxService.sendMessage(samlToken, request).status?.code == "100"
+        val sendMessageResponse = freehealthEhboxService.sendMessage(samlToken, request)
+        return sendMessageResponse.status?.code == "100"
     }
 
     override fun loadMessages(
