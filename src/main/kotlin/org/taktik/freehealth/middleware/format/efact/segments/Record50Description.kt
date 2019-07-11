@@ -68,7 +68,7 @@ object Record50Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "43a,43b", "CodeImplantPartie1", null, "N", pos, 12)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "44,45", "LibelleDuProduitPartie1et2", null, "A", pos, 30)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "46", "NormePlafond", null, "N", pos, 1)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "47", "DateAccordPrestation", null, "N", pos, 8)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "47", "ValeurDeBasePrestation", null, "A", pos, 8)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "48", "Transplantation", null, "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "49", "identification de l'aide soignant", null, "N", pos, 12)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "50", "Reserve", null, "N", pos, 4)
