@@ -24,23 +24,32 @@ import com.google.gson.Gson
 import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
 import ma.glasnost.orika.MapperFacade
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.etarif.TarificationConsultationResult
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.TarificationService
 import java.time.LocalDateTime
 import java.util.*
+import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/tarif")
 class TarificationController(val tarificationService: TarificationService, val mapper: MapperFacade) {
-
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingTokenException::class)
+    @ResponseBody
+    fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
     private val ConsultTarifErrors =
         Gson().fromJson(
@@ -65,6 +74,8 @@ class TarificationController(val tarificationService: TarificationService, val m
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
         @RequestParam(required = false) traineeSupervisorLastName: String?,
+        @RequestParam(required = false) guardPostNihii: String?,
+        @RequestParam(required = false) guardPostSsin: String?,
         @RequestBody codes: List<String>
     ) = try { tarificationService.consultTarif(
         keystoreId = keystoreId,
@@ -82,7 +93,9 @@ class TarificationController(val tarificationService: TarificationService, val m
         traineeSupervisorSsin = traineeSupervisorSsin,
         traineeSupervisorNihii = traineeSupervisorNihii,
         traineeSupervisorFirstName = traineeSupervisorFirstName,
-        traineeSupervisorLastName = traineeSupervisorLastName).let { mapper.map(it, TarificationConsultationResult::class.java) } }
+        traineeSupervisorLastName = traineeSupervisorLastName,
+        guardPostNihii = guardPostNihii,
+        guardPostSsin = guardPostSsin).let { mapper.map(it, TarificationConsultationResult::class.java) } }
     catch (e: javax.xml.ws.soap.SOAPFaultException) {
          TarificationConsultationResult().apply {
              errors = extractError(e).toMutableList()

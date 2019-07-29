@@ -29,13 +29,13 @@ import be.fgov.ehealth.addressbook.protocol.v1.SearchProfessionalsRequest
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
-import org.taktik.connector.technical.validator.impl.SAMLSessionValidator
 import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.AddressType
 import org.taktik.freehealth.middleware.dto.HealthcareParty
 import org.taktik.freehealth.middleware.dto.Telecom
 import org.taktik.freehealth.middleware.dto.TelecomType
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.AddressbookService
 import org.taktik.freehealth.middleware.service.STSService
 import java.util.*
@@ -57,7 +57,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
     ): List<HealthcareParty> {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Addressbook operations")
         val searchProfessionals =
             freehealthTokenAddressbookService.searchProfessionals(samlToken, SearchProfessionalsRequest().apply {
                 firstName = queryFirstName; lastName = queryLastName; issueInstant = DateTime.now(); profession = type
@@ -87,7 +87,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
     ): List<HealthcareParty> {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Addressbook operations")
         val searchProfessionals =
             freehealthTokenAddressbookService.searchOrganizations(samlToken, SearchOrganizationsRequest().apply {
                 institutionName = name; issueInstant = DateTime.now(); institutionType = type
@@ -113,7 +113,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
     ): HealthcareParty {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Addressbook operations")
         val professionalContactInfo =
             freehealthTokenAddressbookService.getProfessionalContactInfo(
                 samlToken,
@@ -134,7 +134,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
     ): HealthcareParty {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Addressbook operations")
         val professionalContactInfo =
             freehealthTokenAddressbookService.getOrganizationContactInfo(
                 samlToken,

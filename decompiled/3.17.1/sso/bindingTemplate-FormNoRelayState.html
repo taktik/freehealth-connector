@@ -1,0 +1,41 @@
+<html>
+	<head>
+		<title>eHealth I.AM SSO</title>
+	</head>
+	<body>
+
+		<h1>eHealth I.AM SSO</h1>
+		
+		<p>
+		One moment please.<br/>
+		We are setting up Single Sign On with the eHealth I.AM Authentication Service.
+		</p>
+		
+		<script type="text/javascript">
+		<!--	
+		document.write("<p>You are automatically being redirected to the authentication service. ");
+		document.write("If the browser appears to be hung up after 15-20 seconds, try reloading ");
+		document.write("the page before contacting the technical support staff in charge of the ");
+		document.write("authentication service you are trying to access.</p>");
+		document.write("<h2>Redirecting...</h2>");
+		// -->
+		</script>
+		
+		<noscript>
+		<p>
+		<strong>Warning:</strong>Your browser is blocking a script. Please press the
+		<b>continue</b> button once to proceed.
+		</p>
+		</noscript>
+	
+		<form method="POST" action="${endpoint.idp.saml2.post}">
+			<!-- 			<input type="hidden" name="RelayState" value="${relayState}"/> -->
+			<input type="hidden" name="SAMLResponse" value="${SAMLResponse}"/>
+		<noscript>
+		<div>
+		<input type="submit" value="Continue"/>
+		</div>
+		</noscript>
+		</form>
+	</body>
+</html>

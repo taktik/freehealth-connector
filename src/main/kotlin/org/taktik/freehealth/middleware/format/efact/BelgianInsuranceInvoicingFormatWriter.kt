@@ -241,7 +241,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("4", fileVersion)
         ws.write("7", sendingNumber)
         ws.write("13", invoiceContent)
-        ws.write("14", sender.nihii)
+        ws.write("14", sender.nihii.toString().padEnd(11, '0'))
         ws.write("22", invoicingYear)
         ws.write("23", invoicingMonth)
         ws.write("25", formattedCreationDate)
@@ -302,7 +302,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
         ws.write("10", if (hospitalisedPatient) 1 else 3)
         ws.write("11", if (relatedInvoiceNumber == null) 0 else { if(!creditNote) 1 else 3 })
-        ws.write("14", sender.nihii)
+        ws.write("14", sender.nihii.toString().padEnd(11, '0'))
         ws.write("16", if (ignorePrescriptionDate) 1 else 0)
         ws.write("17", treatmentReason.code)
 
@@ -481,7 +481,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("11", eidItem.readType)
         ws.write("12", nf4.format(eidItem.readHour))
         ws.write("14", 0)
-        ws.write("15", invoiceSender.nihii)
+        ws.write("15", invoiceSender.nihii.toString().padEnd(11, '0'))
         ws.write("16", eidItem.readvalue)
 
         ws.writeFieldsWithCheckSum()
@@ -526,7 +526,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("8a", noSIS)
         ws.write("9", if (patient.gender == Gender.male) 1 else 2)
         ws.write("10", 3)
-        ws.write("14", sender.nihii)
+        ws.write("14", sender.nihii.toString().padEnd(11, '0'))
         ws.write("15", "+00000000000")
 
         //Silly rules for this field
@@ -573,7 +573,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("1", 90)
         ws.write("2", recordNumber)
         ws.write("7", sendingNumber)
-        ws.write("14", sender.nihii)
+        ws.write("14", sender.nihii.toString().padEnd(11, '0'))
         ws.write("15", "+00000000000")
         ws.write("19", (if ((amount ?: 0) >= 0) "+" else "-") + nf.format(Math.abs(amount!!)))
         ws.write("22", invoicingYear)

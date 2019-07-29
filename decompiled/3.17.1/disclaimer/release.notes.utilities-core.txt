@@ -1,0 +1,17 @@
+**************************************************
+* eHealth Technical Connector Core RELEASE NOTES *
+**************************************************
+3.14.0-beta-0 release (september 2017)
+
+3.13.1 release (july 2017)
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . remove      b.e.t.utils.XSDDateTimeConverter                        replaced with implementations of javax.xml.bind.annotation.adapters.XmlAdapter
+  . added       b.e.t.adapter.XmlDateAdapter                            XmlAdapter to marshal/unmarshal xsd:date
+  . added       b.e.t.adapter.XmlDateNoTzAdapter                        specialisation of b.e.t.adapter.XmlDateAdapter: marshals date without timezone (this non-standard and only aims to comply with carenet services)
+  . added       b.e.t.adapter.XmlDateTimeAdapter                        XmlAdapter to marshal/unmarshal xsd:dateTime
+  . added       b.e.t.adapter.XmlTimeAdapter                            XmlAdapter to marshal/unmarshal xsd:time
+
+3.12.0 internal release (mai 2017)

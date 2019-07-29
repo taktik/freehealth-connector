@@ -30,6 +30,7 @@ import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.TarificationService
 import org.w3c.dom.Element
@@ -71,16 +72,20 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                               traineeSupervisorNihii: String?,
                               traineeSupervisorFirstName: String?,
                               traineeSupervisorLastName: String?,
+                              guardPostNihii: String?,
+                              guardPostSsin: String?,
                               codes: List<String>): TarificationConsultationResult {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+                ?: throw MissingTokenException("Cannot obtain token for Tarif operations")
 
         try {
             val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
             val now = DateTime().withMillisOfSecond(0).withZone(null)
             val kmehrUUID = now.toString("YYYYddhhmmssSS")
-            val reqId = "$hcpNihii.$kmehrUUID"
+            val requestAuthorNihii = (guardPostNihii ?: hcpNihii).padEnd(11, '0')
+            val requestAuthorSsin = guardPostSsin ?: hcpSsin
+            val reqId = "${(guardPostNihii ?: hcpNihii).padEnd(11, '0')}.$kmehrUUID"
 
             //  The author is always the caller
             val author = AuthorType().apply {
@@ -109,7 +114,15 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
                 this.request = RequestType().apply {
                     id = IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = reqId }
-                    this.author = author
+                    this.author = AuthorType().apply {
+                        hcparties.add(HcpartyType().apply {
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  requestAuthorNihii })
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
+                            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = if (guardPostNihii?.isEmpty() != false) "persphysician" else "guardpost" })
+                            firstname = hcpFirstName
+                            familyname = hcpLastName
+                        })
+                    }
                     date = now; time = now
                 }
                 this.select = SelectRetrieveTransactionType().apply {
@@ -193,15 +206,17 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
-                                this.quality = "doctor"
+                                this.quality = if (guardPostNihii?.isEmpty() != false) "doctor" else "guardpost"
                                 this.value =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                        .apply { this.value = hcpNihii }
+                                        .apply { this.value = requestAuthorNihii }
                             }
-                            this.physicalPerson = be.fgov.ehealth.mycarenet.commons.core.v2.IdType().apply {
-                                this.ssin =
-                                    be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
-                                        .apply { this.value = hcpSsin }
+                            if (guardPostNihii?.isEmpty() != false) {
+                                this.physicalPerson = be.fgov.ehealth.mycarenet.commons.core.v2.IdType().apply {
+                                    this.ssin =
+                                        be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
+                                            .apply { this.value = hcpSsin }
+                                }
                             }
                         }
                     }

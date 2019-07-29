@@ -1,0 +1,613 @@
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="urn:be:fgov:ehealth:consultrn:commons:core:v3"
+  xmlns="urn:be:fgov:ehealth:consultrn:commons:core:v3"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace"
+  elementFormDefault="qualified" attributeFormDefault="unqualified"
+  version="3.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: ConsultRN XSD Common
+ Specification-Version: 3.0
+ Implementation-Version: 3.0.1
+ Build-Time: 20180201-1309 
+ </xs:appinfo>
+ </xs:annotation>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd" />
+  <xs:complexType name="PersonNameRequestType">
+    <xs:annotation>
+      <xs:documentation>The name group</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="LastName" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The last name</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FirstName" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The first name</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MiddleName" type="MiddleNameType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>List of middle names</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="StartDate" type="xs:date" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PersonNameResponseType">
+    <xs:annotation>
+      <xs:documentation>The name group</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="LastName" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The last name</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FirstName" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The first name</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MiddleName" type="MiddleNameType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>List of middle names</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="StartDate" type="xs:date" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MiddleNameType">
+    <xs:annotation>
+      <xs:documentation>The middle name</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="Order" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="NationalitiesType">
+    <xs:annotation>
+      <xs:documentation>List of nationalities</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Nationality" type="NationalityType" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="NationalityType">
+    <xs:annotation>
+      <xs:documentation>information about the nationality</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="NationalityCode" type="xs:string" />
+      <xs:element name="NationalityDescription" type="NameType" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="StartDate" type="xs:date" minOccurs="0" />
+      <xs:element name="EndDate" type="xs:date" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="BirthRequestType">
+    <xs:annotation>
+      <xs:documentation>information about the birth of a person</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="BirthDate" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>The birth date of a person</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="BirthPlace" type="WhereRequestType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The birth place of a person</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="BirthResponseType">
+    <xs:annotation>
+      <xs:documentation>information about the birth of a person</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="BirthDate" type="xs:date" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The birth date of a person</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="BirthPlace" type="WhereResponseType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The birth place of a person</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="DeceaseRequestType">
+    <xs:annotation>
+      <xs:documentation>information about the decease of a person</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="DeceaseDate" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>The decease date of a person</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DeceasePlace" type="WhereRequestType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The decease place of a person</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="DeceaseResponseType">
+    <xs:annotation>
+      <xs:documentation>information about the decease of a person</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="DeceaseDate" type="xs:date" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The decease date of a person</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DeceasePlace" type="WhereResponseType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The decease place of a person</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="WhereRequestType">
+    <xs:annotation>
+      <xs:documentation>City and country</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CountryCode" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Information about the country</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CountryName" type="NameType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Name of the country</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CityCode" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Information about the city</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CityName" type="NameType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Name of the City</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="WhereResponseType">
+    <xs:annotation>
+      <xs:documentation>City and country</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CountryCode" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Information about the country</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CountryName" type="NameType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Name of the country</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CityCode" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Information about the city</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CityName" type="NameType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Name of the City</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="NameType">
+    <xs:annotation>
+      <xs:documentation>Localized name.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="BaseNameType" />
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="BaseNameType">
+    <xs:annotation>
+      <xs:documentation>Localized string.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute ref="xml:lang" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="GenderType">
+    <xs:annotation>
+      <xs:documentation>information about the gender</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="GenderCode" type="xs:string" />
+      <xs:element name="StartDate" type="xs:date" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CivilStatesRequestType">
+    <xs:annotation>
+      <xs:documentation>information about the civilstates of a person (include information about the partner)</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CivilState" type="CivilStateRequestType" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CivilStateRequestType">
+    <xs:annotation>
+      <xs:documentation>information about the civilstate of a person (include information about the partner)</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CivilStateCode" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>the civilStateCode</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PartnerSsin" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Id of the partner</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Location" type="WhereRequestType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>location of the civil state act</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="StartDate" type="xs:date" />
+      <xs:element name="EndDate" type="xs:date" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CivilStatesResponseType">
+    <xs:annotation>
+      <xs:documentation>information about the civilstates of a person (include information about the partner)</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CivilState" type="CivilStateResponseType" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CivilStateResponseType">
+    <xs:annotation>
+      <xs:documentation>information about the civilstate of a person (include information about the partner)</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CivilStateCode" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>the civilStateCode</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CivilStateDescription" type="NameType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Description of the civil state</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Partner" type="PartnerType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Id of the partner</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Location" type="WhereResponseType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>location of the civil state act</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="StartDate" type="xs:date" minOccurs="0" />
+      <xs:element name="EndDate" type="xs:date" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PartnerType">
+    <xs:annotation>
+      <xs:documentation>Information about the partner</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:choice minOccurs="0">
+        <xs:element name="PartnerSsin" type="xs:string" />
+        <xs:element name="PartnerReference" type="xs:string" />
+      </xs:choice>
+      <xs:element name="PartnerBirthDate" type="xs:date" minOccurs="0" />
+      <xs:element name="PartnerName" type="PersonNameResponseType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ResidentialAddressRequestType">
+    <xs:annotation>
+      <xs:documentation>Residential address of a person</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="WhereRequestType">
+        <xs:sequence>
+          <xs:element name="PostalCode" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The postal code</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="StreetCode" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The street code</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="StreetName" type="NameType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>Name of the Street</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="HouseNumber" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The house number</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="BoxNumber" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The box number</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="StartDate" type="xs:date" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ResidentialAddressResponseType">
+    <xs:annotation>
+      <xs:documentation>Residential address of a person</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="WhereResponseType">
+        <xs:sequence>
+          <xs:element name="PostalCode" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The postal code</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="StreetCode" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The street code</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="StreetName" type="NameType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>Name of the Street</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="HouseNumber" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The house number</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="BoxNumber" type="xs:string" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The box number</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="StartDate" type="xs:date" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="TemporaryAddressType">
+    <xs:annotation>
+      <xs:documentation>Temporary address of a person</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CountryCode" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Information about the country</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CountryName" type="NameType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Name of the country</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="UnformattedAddress" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The actual address, in unformated form</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="StartDate" type="xs:date" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="DiplomaticInformationType">
+    <xs:annotation>
+      <xs:documentation>List of diplomatic information linked to a person</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="DiplomaticPost" type="DiplomaticPostType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Diplomatic post responsible for the diplomatic address</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DiplomaticAddress" type="TemporaryAddressType" minOccurs="0" />
+      <xs:element name="PostAddress" type="TemporaryAddressType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="DiplomaticPostType">
+    <xs:annotation>
+      <xs:documentation>Information about a diplomatic post</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CountryCode" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Information about the country</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CountryName" type="NameType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Name of the country</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DiplomaticPostCode" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Official code of the diplomatic post</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DiplomaticPostName" type="NameType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Name of the country</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AddressType">
+    <xs:annotation>
+      <xs:documentation>Type containing the different types of address</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:choice minOccurs="0">
+        <xs:element name="ResidentialAddress" type="ResidentialAddressResponseType" />
+        <xs:element name="DiplomaticInformation" type="DiplomaticInformationType" />
+      </xs:choice>
+      <xs:element name="TemporaryAddress" type="TemporaryAddressType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="NobilityTitleType">
+    <xs:annotation>
+      <xs:documentation>information about the nobility title of a person</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="NobilityTitleCode" type="xs:string" minOccurs="0" />
+      <xs:element name="NobilityTitleDescription" type="NameType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Description of the title</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PersonRequestType">
+    <xs:annotation>
+      <xs:documentation>information about the person (with SSIN)</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Name" type="PersonNameRequestType" />
+      <xs:element name="Nationalities" type="NationalitiesType" minOccurs="0" />
+      <xs:element name="Birth" type="BirthRequestType" />
+      <xs:element name="Decease" type="DeceaseRequestType" minOccurs="0" />
+      <xs:element name="Gender" type="GenderType" minOccurs="0" />
+      <xs:element name="CivilStates" type="CivilStatesRequestType" minOccurs="0" />
+      <xs:element name="ResidentialAddress" type="ResidentialAddressRequestType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PersonResponseType">
+    <xs:annotation>
+      <xs:documentation>information about the person (with SSIN)</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Ssin" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The NR, BIS or RAD number of the found person</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NobilityTitle" type="NobilityTitleType" minOccurs="0" />
+      <xs:element name="Name" type="PersonNameResponseType" minOccurs="0" />
+      <xs:element name="Nationalities" type="NationalitiesType" minOccurs="0" />
+      <xs:element name="Birth" type="BirthResponseType" minOccurs="0" />
+      <xs:element name="Decease" type="DeceaseResponseType" minOccurs="0" />
+      <xs:element name="Gender" type="GenderType" minOccurs="0" />
+      <xs:element name="CivilStates" type="CivilStatesResponseType" minOccurs="0" />
+      <xs:element name="Address" type="AddressType" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="register" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation>Element identifying the register which is the authentic source of the legal data of this person</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <!-- ................................................................................................................... -->
+  <xs:simpleType name="QualityCodeType">
+    <xs:annotation>
+      <xs:documentation>element containing a qualityCode</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string" />
+  </xs:simpleType>
+  <xs:complexType name="InscriptionType">
+    <xs:annotation>
+      <xs:documentation>all information about a link person-organisation</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="SSIN" type="EncodedSSINType">
+        <xs:annotation>
+          <xs:documentation>The SSIN</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Name" type="NameType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Name of the person (if filled, this must correspond to the ssin given)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="QualityCode" type="QualityCodeType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The quality code (identificatievraag, patiëntendossier,...)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Period" type="PeriodType">
+        <xs:annotation>
+          <xs:documentation>The period</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PeriodType">
+    <xs:annotation>
+      <xs:documentation>StartDate - EndDate</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="StartDate" type="xs:date" />
+      <xs:element name="EndDate" type="xs:date" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="EncodedSSINType">
+    <xs:annotation>
+      <xs:documentation>SSIN encoded</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="Encoded" type="xs:boolean" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:element name="BusinessAnomalies">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:documentation>Type defining the structure of the part of the response containing business Faults</xs:documentation>
+      </xs:annotation>
+      <xs:sequence>
+        <xs:element name="BusinessAnomaly" type="BusinessAnomalyType" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="BusinessAnomalyType">
+    <xs:annotation>
+      <xs:documentation>Type defining the structure of one business Faults</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Code" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Unique code referring to a description of this Fault </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Severity" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Severity of the fault (INFORMATION, WARNING, FATAL)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description">
+        <xs:annotation>
+          <xs:documentation>Some description of this Fault</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

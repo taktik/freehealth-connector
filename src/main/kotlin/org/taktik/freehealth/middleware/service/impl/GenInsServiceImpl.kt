@@ -44,6 +44,7 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.mapper.toInsurabilityInfoDto
 import org.taktik.freehealth.middleware.service.GenInsService
 import org.taktik.freehealth.middleware.service.STSService
@@ -87,9 +88,33 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
         endDate: Date?,
         hospitalized: Boolean
     ): InsurabilityInfoDto {
+        require(
+            hcpQuality.equals("doctor") ||
+                hcpQuality.equals("nurse") ||
+                hcpQuality.equals("physiotherapist") ||
+                hcpQuality.equals("dentist") ||
+                hcpQuality.equals("logopedist") ||
+                hcpQuality.equals("trussmaker") ||
+                hcpQuality.equals("orthopedist") ||
+                hcpQuality.equals("midwife") ||
+                hcpQuality.equals("optician") ||
+                hcpQuality.equals("podologist") ||
+                hcpQuality.equals("dietician") ||
+                hcpQuality.equals("hospital") ||
+                hcpQuality.equals("groupofnurses") ||
+                hcpQuality.equals("labo") ||
+                hcpQuality.equals("retirement") ||
+                hcpQuality.equals("otdpharmacy") ||
+                hcpQuality.equals("medicalhouse") ||
+                hcpQuality.equals("groupofdoctors") ||
+                hcpQuality.equals("psychiatrichouse") ||
+                hcpQuality.equals("guardpost") ||
+                hcpQuality.equals("ambulanceservice")
+        ) { "hcpQuality is invalid" }
+
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Genins operations")
+                ?: throw MissingTokenException("Cannot obtain token for Genins operations")
         assert(patientSsin != null || io != null && ioMembership != null)
 
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User

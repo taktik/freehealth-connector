@@ -43,6 +43,7 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.ws.ServiceFactory
 import org.taktik.connector.technical.ws.domain.GenericRequest
 import org.taktik.connector.technical.ws.domain.TokenType
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.ConsentService
 import org.taktik.freehealth.middleware.service.STSService
 import java.util.*
@@ -66,7 +67,7 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
     ): ConsentMessage {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Consent operations")
 
         val consentList = ArrayList<CDCONSENT>().apply {
             this.add(CDConsentBuilderUtil.createCDConsent("1.0", CDCONSENTvalues.RETROSPECTIVE))
@@ -122,7 +123,7 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
     ): ConsentMessage {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Consent operations")
 
         val consentList = ArrayList<CDCONSENT>().apply {
             this.add(CDConsentBuilderUtil.createCDConsent("1.0", CDCONSENTvalues.RETROSPECTIVE))
@@ -176,7 +177,7 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
     ): ConsentMessage {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for Consent operations")
 
         val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
 

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:idsupport:core:v2" xmlns:ccore="urn:be:fgov:ehealth:commons:core:v2" targetNamespace="urn:be:fgov:ehealth:idsupport:core:v2"
+  elementFormDefault="qualified" version="2.0">
+
+  <xsd:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-core-2_0.xsd" />
+
+  <xsd:element name="LegalContext" type="xsd:string" />
+  <xsd:element name="IdentificationData" type="IdentificationDataType" />
+  <xsd:element name="ProviderInfo" type="ProviderInfoType" />
+  <xsd:element name="ValidationResult" type="ValidationResultType" />
+
+  <xsd:complexType name="IdentificationDataType">
+    <xsd:annotation>
+      <xsd:documentation>List of identifiers: either SSIN of the person (National register, Register bis, num TER) , support Card number or Barcoded.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Id" type="ccore:IdType" maxOccurs="2" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="ProviderInfoType">
+    <xsd:annotation>
+      <xsd:documentation>Container for detailed information of provider on the status of the processed request.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Value" type="xsd:string" />
+      <xsd:element name="Code" type="xsd:string" />
+      <xsd:element name="Description" type="xsd:string" minOccurs="0" />
+      <xsd:element name="Information" type="ProviderInfoDetailType" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="ProviderInfoDetailType">
+    <xsd:annotation>
+      <xsd:documentation>Extra information detail returned by provider on the status of the processed request.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="FieldName" type="xsd:string" minOccurs="0" />
+      <xsd:element name="FieldValue" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="ValidationResultType">
+    <xsd:annotation>
+      <xsd:documentation>Result of id validation.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence minOccurs="0">
+      <xsd:element name="Id" type="ccore:IdType" minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="Card" type="xsd:string" minOccurs="0" />
+      <xsd:element name="IsValidCombination" type="xsd:string" />
+      <xsd:element name="Info" type="ValidationInfoType" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="ValidationInfoType">
+    <xsd:annotation>
+      <xsd:documentation>Detailed information on validation result.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="Date" type="xsd:date" />
+        <xsd:attribute name="Detail" type="xsd:string" />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+</xsd:schema>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xsd:schema xmlns:sea="urn:be:fgov:ehealth:seals:protocol:v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v1" xmlns:core="urn:be:fgov:ehealth:seals:core:v1"
+  targetNamespace="urn:be:fgov:ehealth:seals:protocol:v1" version="1.1" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title:   XSD 29. Seals
+      Specification-Version:  1.1
+      Implementation-Version: 1.1.2
+      Build-Time:             20140804-1625 
+    </xs:appinfo>
+  </xs:annotation>
+  <xsd:import namespace="urn:be:fgov:ehealth:commons:protocol:v1" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-1_7.xsd" />
+  <xsd:import namespace="urn:be:fgov:ehealth:seals:core:v1" schemaLocation="ehealth-seals-core-1_1.xsd" />
+  <xsd:element name="EncodeRequest" type="sea:EncodeRequestType" />
+  <xsd:complexType name="EncodeRequestType">
+    <xsd:annotation>
+      <xsd:documentation>Request message to encode data</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="protocol:RequestType">
+        <xsd:sequence>
+          <xsd:element name="ApplicationName" type="xsd:string" />
+          <xsd:element name="OriginalData" type="core:OriginalDataType" maxOccurs="unbounded" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="EncodeResponse" type="sea:EncodeResponseType" />
+  <xsd:complexType name="EncodeResponseType">
+    <xsd:annotation>
+      <xsd:documentation>Response message with encoded data</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="protocol:ResponseType">
+        <xsd:sequence minOccurs="0">
+          <xsd:element name="ApplicationName" type="xsd:string" />
+          <xsd:element name="Response" type="core:ChoiceEncodedDataErrorType" maxOccurs="unbounded" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="DecodeRequest" type="sea:DecodeRequestType" />
+  <xsd:complexType name="DecodeRequestType">
+    <xsd:annotation>
+      <xsd:documentation>Request message to decode data</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="protocol:RequestType">
+        <xsd:sequence>
+          <xsd:element name="ApplicationName" type="xsd:string" />
+          <xsd:element name="EncodedData" type="core:EncodedDataType" maxOccurs="unbounded" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="DecodeResponse" type="sea:DecodeResponseType" />
+  <xsd:complexType name="DecodeResponseType">
+    <xsd:annotation>
+      <xsd:documentation>Response message with decoded data</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="protocol:ResponseType">
+        <xsd:sequence minOccurs="0">
+          <xsd:element name="ApplicationName" type="xsd:string" />
+          <xsd:element name="Response" type="core:ChoiceDecodedDataErrorType" maxOccurs="unbounded" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

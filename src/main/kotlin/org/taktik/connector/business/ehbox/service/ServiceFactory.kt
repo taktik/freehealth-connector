@@ -76,4 +76,25 @@ object ServiceFactory {
         )
         return genReq
     }
+
+    @Throws(MalformedURLException::class, TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
+    fun getEh2EboxPublicationService(token: SAMLToken): GenericRequest {
+        val genReq = GenericRequest()
+        genReq.setEndpoint(
+            config.getProperty(
+                "endpoint.eh2ebox.publication.v3",
+                "\$uddi{uddi:ehealth-fgov-be:business:eh2eboxpublication:v3}"
+            )
+        )
+        genReq.setCredential(token, TokenType.SAML)
+        genReq.addDefaulHandlerChain()
+        genReq.addHandlerChain(
+            HandlerChainUtil.buildChainWithValidator(
+                "validation.incoming.ehbox.v3.message",
+                "/ehealth-ehbox/XSD/ehealth-ehBox-publication-schema-protocol-3_0.xsd"
+            )
+        )
+        return genReq
+    }
+
 }

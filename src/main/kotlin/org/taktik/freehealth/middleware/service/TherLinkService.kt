@@ -42,7 +42,7 @@ interface TherLinkService {
         endDate: Date?,
         type: String?,
         sign: Boolean?
-    ): List<TherapeuticLinkMessage>?
+    ): TherapeuticLinkMessage?
 
     fun getAllTherapeuticLinksWithQueryLink(
         keystoreId: UUID,
@@ -50,7 +50,7 @@ interface TherLinkService {
         passPhrase: String,
         queryLink: TherapeuticLink,
         sign: Boolean?
-    ): List<TherapeuticLinkMessage>?
+    ): TherapeuticLinkMessage?
 
     fun doesLinkExist(keystoreId: UUID, tokenId: UUID, passPhrase: String, therLink: TherapeuticLink): TherapeuticLink?
     fun registerTherapeuticLink(

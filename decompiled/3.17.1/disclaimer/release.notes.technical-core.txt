@@ -1,0 +1,829 @@
+**************************************************
+* eHealth Technical Connector Core RELEASE NOTES *
+**************************************************
+3.17.1 release (april 2019)
+   . bug-fix     b.e.t.session.renew.SlidingWindowRenewStrategy         Also reload session in the case session is expired and sliding window not scheduled
+   . bug-fix     b.e.t.bootstrap.tsl.TrustStoreUpdater                  Create temp file location correctly (independent on OS file separator) in TrustStoreUpdater.
+   . bug-fix     b.e.t.config.impl.ConfigurationModuleEhealthTime       Fix ConfigurationModuleEhealthTime to parse date with US format disregarding the system Locale.
+   . improvement b.e.t.cache.tests.session.SessionInitializer           Add protocol TLS properties for.Net tests in order to avoid SSLHandshakeException 
+   . bug-fix     b.e.t.ra.RaWalkThroughIntegrationTest                  CertraV2: fix test to avoid creation of dummy key/pair entry
+   . bug-fix     b.e.t.ws.GenericWsUserIntegrationTest                  Fix digest calculation
+   . bug-fix     b.e.t.service.sso.*                                    Using the correct endpoints for the Single Sign On (STS to IDP)
+   . improvement b.e.t.service.sso.*									Adding interface BrowserHandler. Implement this interface to provide custom browsing using the sso uri. 
+                                                                        See SingleSignOnServiceIntegrationTest for example. Default implementation is provided by class DefaultBrowserHandler.
+
+3.17.0 (april 2019)
+ . internal release
+ 
+3.16.0 release (oktober 2018)
+   . improvement b.e.t.cache.Cache                                  Adding properties that can be used to pass parameters for cache initialisation
+   . improvement b.e.t.cache.CacheFactory                           Introduction of new cache type (PERSISTENT)
+   . added       b.e.t.cache.impl.JSR107Cache                       Implementation of a PERSISTENT cache based on JSR107 and using EHCACHE as JSR107 provider
+   . bug-fix     b.e.t.cache.impl.HashMapCache                      Hashmap Cache is now implementation ConfigurableImplementation
+   . improvement b.e.t.beid.BeIDInfo                                Adding additional parameters to instantiate BeIDInfo cache
+   . improvement b.e.t.s.etee.impl.AbstractRevocationStatusChecker  Adding additional parameters to instantiate RevocationStatus cache
+   . improvement b.e.t.s.keydepot.impl.KeyDepotManagerImpl          Adding additional parameters to instantiate KeyDepotManager cache
+   . improvement b.e.t.s.kgss.impl.KgssManager                      Adding additional parameters to instantiate KgssManager cache
+   . improvement b.e.t.s.sts.security.impl.BeIDCredential           Adding additional parameters to instantiate BeIDCredential cache
+   . improvement b.e.t.config.impl.ConfigurationImpl                Introduction a system property to disable the load of the properties file
+   . added       b.e.t.config.impl.ConfigurationModuleEhealthTime   ConfigurationModule that logs the difference between the Local time and the eHealth time (accuracy of 1 second)
+   . improvement b.e.t.config.impl.ConfigurationModuleLoader        Adding new ConfigurationModuleEhealthTime in default modules list.
+   . added       b.e.t.handler.CacheFeederHandler                   SOAPHandler that allows to intercept the response and put it in a cache instance.
+   . added       b.e.t.session.renew.*                              Adding the functionality to renew a STS token when expired or following the SlidingWindow principle
+   . improvement b.e.t.session.impl.SessionManagerImpl              Externalisation of the renew  STS Token strategy
+                                                                    Adding additional parameters to instantiate SessionManagerKeyStore cache
+   . improvement b.e.t.shutdown.ShutdownRegistry                    ShutdownHookRegistery is a singeleton (enum based) and JVM shutdown hook is associated by default (can be desactivate through property)
+   . bug-fix     b.e.t.utils.KeyStoreManager                        Closing all created temporary streams
+   . added       b.e.t.utils.SOAPUtils                              Adding utility class to manipulated SOAP
+   . bug-fix     b.e.t.utils.SOAPFaultFactory                       Extending new class SOAPUtils for assuring backward comptability
+   . improvement b.e.t.ws.domain.HandlerLoader                      Adding CacheFeederHandler in the default handler list
+   . improvement b.e.t.ws.impl.AbstractWsSender                     Adding possibility to invoke a list of InvokeStrategies
+                                                                    Reversing handler chain when receiving a message
+                                                                    Errors occurs on inbound handlers change are wrapped in a TechnicalConnectorException
+   . added       b.e.t.ws.impl.strategy.InvokeStrategyContext       Object that contains the context that is passed through all the InvokeStragey classes.
+   . improvement b.e.t.ws.impl.strategy.InvokeStrategy              The InvokeStrategyContext is passed in the call
+   . added       b.e.t.ws.impl.strategy.CacheBaseInvokeStrategy     InvokeStrategy that is using a persistent-cache to obtain the result
+   . added       b.e.t.ws.impl.strategy.InvokeStrategyFactory       A factory that returns the list of InvokeStrategies that must be executed based on the given endpoint
+   . improvement b.e.t.ws.impl.strategy.RetryStrategy               Refactoring based on the new InvokeStrategy interface
+   . improvement b.e.t.ws.impl.strategy.NoRetryStrategy             Refactoring based on the new InvokeStrategy interface
+   . added       b.f.e.t.bootstrap.bcp.domain.CacheInformation      Object containing al the information needed for caching purposes
+   . improvement b.f.e.t.bootstrap.bcp.EndpointDistributor          Adding utility methods getService name based on the endpoint and the possiblity to obtain the CacheInformation
+   . improvement b.f.e.t.bootstrap.bcp.domain.EndPointInformation   Adding cache information for every endpoint
+   . added       b.f.e.t.bootstrap.utils.CacheHelper                Utility class used for interaction with the cache
+   . bug-fix :   b.e.t.service.sts.impl.STSServiceImpl              Close P12 InputStream             
+   . bug-fix     b.e.t.utils.KeyStoreManager                        Encode SAML request to UTF-8 even if system encoding is not UTF-8   
+
+3.16.0-beta-3 (june 2018)
+  . N/A
+
+3.16.0-beta-2 (june 2018)
+ . internal release
+
+3.16.0-beta-1 (june 2018)
+ . internal release
+
+3.15.1 release (april 2018)
+   . improvement b.e.t.config.UddiKeys                              Add ra v2 keys
+   . improvement uddi.uddi-default.properties                       Add default endpoints for dicsv4, consultrn, eh2ebox and mediprima uma
+   . bug-fix     b.e.t.config.impl.ConfigurationModuleLogging       Fix .Net logging unloading
+   . improvement                                                    Trim non password properties (activated when configuration.properties.trim property is set to true):     
+                                                                        - b.e.t.config.impl.ConfigurationImpl
+                                                                        - b.e.t.config.impl.RecursiveProperties
+                                                                        - b.e.t.config.impl.ConfigurationImpTest
+                                                                        - b.e.t.utils.ConnectorIOUtils
+   . improvement                                                    Cache OCSP config and refresh upon module reloading:
+                                                                    (Note that CryptoFactory.getOCSPOptions() method returns an UnmodifiableMap)
+                                                                        - b.e.t.config.impl.ConfigurationModuleLoader
+                                                                        - b.e.t.config.impl.ConfigurationModuleOCSP
+                                                                        - b.e.t.service.etee.CryptoFactory 
+                                                                        - b.e.t.service.etee.impl.ConnectorRevocationStatusCheckerIntegrationTest
+                                                                        - b.e.t.service.etee.impl.ConnectorRevocationStatusCheckerUserIntegrationTest
+                                                                        - b.e.t.utils.impl.OcspRevocationStatusCheckerUserIntegrationTest
+   . improvement b.e.t.handler.LoggingHandler                       Added X-CorrelationID
+ 
+
+3.15.0 release (april 2018)
+ . internal release   
+    
+3.14.2 release (february 2017)
+    . improvement b.e.t.handler.wss4j.WSSecHeaderGeneratorWss4jImpl
+    . improvement b.e.t.utils.ConnectorXmlUtils
+    . improvement b.e.t.exception.TechnicalConnectorExceptionValues
+    
+3.14.2-beta-1 release (november 2017)
+  . N/A
+
+3.14.2-beta-0 internal release (november 2017)
+
+3.14.1 (october 2017)
+  . improvement b.e.t.exception.TechnicalConnectorExceptionValues                 added INVALID_PROPERTY_VALUE to enum
+  
+3.14.0 (october 2017)
+  . improvement b.e.t.utils.ConnectorXmlUtils                                     added utility method <T> T toObject(String xml, Class<T> clazz)
+  
+
+3.14.0-beta-0 (september 2017)
+  . improvement b.e.t.handler.RequestContextHandler                               update javadoc
+  . improvement b.e.t.session.Session                                             added method getSAMLToken
+  . improvement b.e.t.exception.TechnicalConnectorExceptionValues                 added ERROR_SAX_EXCEPTION to enum
+
+
+3.13.1 release (july 2017)
+  . N/A
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . improvement b.e.t.beid.BeIDInfo                                               Use of the cache class instead of map to retrieve an existing BeIDInfo Instance.
+  . added       b.e.t.cache.*                                                     New factory, interface and implementation to encapsulate the use of a map as cache.
+  . improvement b.e.t.config.Configuration                                        New method isReloading.
+  . improvement b.e.t.cAonfig.UddiKeys                                             IdSupportV2 and DaasV1 added. Deprecation of IdSupport v1 (redirect to v2).
+  . improvement b.e.t.config.impl.ConfigValidatorImpl                             Override of the new method isReloading and returns true or false if the config is reloading.
+  . added       b.e.t.config.impl.AbstractConfigurationImpl                       New abstract class who implements Configuration and overrides some non specific methods.
+  . improvement b.e.t.config.impl.ConfigurationImpl                               Extends the new AbstractConfigurationImpl. Override the specific methods. Method getProperties deprecated.
+  . improvement b.e.t.config.impl.ConfigurationModuleBootstrap                    We also close the inputstream in the closeQuietly now at the end of the method processUrl.
+  . improvement b.e.t.config.impl.ConfigurationModuleLoader                       ConfigurationModuleTrustStore added to the loaded modules.
+  . improvement b.e.t.config.impl.ConfigurationModuleSSL                          Location of the truststore find in a property "truststore_location_original" with default value the property "truststore_location". Minor refactoring (improved logging)
+  . improvement b.e.t.config.impl.ConfigurationModuleSystemProps                  Use of StringBuilder to generate the oldValues. Check of the length of the splitted properties in the unload method.
+  . improvement b.e.t.config.impl.RecursiveProperties                             Creation of a personnalized hashmap and methods to create this one. This class will be used for the lookups.
+                                                                                  Modifications in the load method (the location will be transform as stream and send in a new load method where it ll be transform in a properties).
+  . deprecation b.e.t.config.util.domain.PackageInfo                              Replaced by McnPackageInfo
+  . deprecation b.e.t.config.util.ConfigUtil                                      Replaced by McnConfigUtil and BusinessConfigUtil. Minor refactoring to reduce the code in the retrievePackageInfo method.
+  . improvement b.e.t.exception.TechnicalConnectorExceptionValues                 New generic error added : ERROR_INPUT.
+  . added       b.e.t.handler.wss4j.WSSecHeaderGeneratorWss4jImpl                 New WS Security header generator based on WSS4J.
+  . improvement b.e.t.handler.AbstractWsSecurityHandler                           Use of the new WSSecHeaderGeneratorWss4jImpl instead of the old private class. No more WsSecurityException is throwned (replaced by a technicalConnectorException)
+  . improvement b.e.t.handler.CertificateCallback                                 Minor refactoring (due to modifications in AbstractWsSecurityHandler (Exceptions))
+  . improvement b.e.t.handler.HarFileCallback                                     Use of com.google.gson objects instead of org.json.simple objects.
+  . improvement b.e.t.handler.SAMLHolderOfKeyHandler                              Minor refactoring (due to modifications in AbstractWsSecurityHandler (Exceptions))
+  . improvement b.e.t.handler.SAMLSenderVouchesHandler                            Minor refactoring (due to modifications in AbstractWsSecurityHandler (Exceptions))
+  . improvement b.e.t.mapper.converter.DateTimeConverter                          GregorianCalendar treated instead of Calendar in the convert method.
+  . deleted     b.e.t.service.codage.CodageService
+  . deleted     b.e.t.service.codage.impl.CodageServiceImpl
+  . improvement b.e.t.service.etee.impl.AbstractRevocationStatusChecker           Use of the cache class instead of map to retrieve a cached X509 status
+  . bug-fix     b.e.t.service.keydepot.impl.KeyDepotManagerImpl                   Use of the cache class instead of map to retrieve a cached X509.
+                                                                                  Bug resolved in the getEtk method with holder of key credential returned instead of encryption credential and vice versa.
+  . improvement b.e.t.service.kgss.KgssManager                                    Use of the cache class instead of map to retrieve a cached KGSS key.
+  . bug-fix     b.e.t.service.sts.impl.AbstractSTSServiceImpl                     Now transformed to an UTC datetime before printing in the not before and not after variable in the processDefaultFields method.
+  . improvement b.e.t.service.sts.security.impl.BeIDCredential                    Use of the cache class instead of map to retrieve a cached BeIDCredential.
+  . improvement b.e.t.service.ServiceFactory                                      Drop of the getCodageService method.
+  . improvement b.e.t.service.session.impl.SessionManagerImpl                     Use of the cache class instead of map to retrieve a cached keystore.
+  . improvement b.e.t.utils.CertificateParser                                     Improve determination of the applicationId in eHealth certificate
+  . improvement b.e.t.utils.ConnectorXmlUtils                                     Added new method to obtain first matching element in node (getFirstElementByTagNameNS)
+                                                                                  Added new method to convert InputStream to JAXB object.
+                                                                                  Externalisation of DocumentBuilder instantation.
+  . improvement b.e.t.utils.MarshallHelper                                        Adding possibility to marshall JAXBElement
+                                                                                  Externalisation of DocumentBuilder instantation.
+  . improvement b.e.t.utils.SessionUtils                                          Adding method to extract matching attributes from SessionToken.
+  . refactoring b.e.t.utils.JaxbContextFactory                                    Jaxb Context based on Package is now a separate method on stead of implicit one through properties.
+  . improvement b.e.t.validator.ValidatorHelper                                   Improved ValdatorHandler creation.
+  . improvement b.e.t.ws.domain.GenericRequest                                    API improvements
+
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . bug-fix     b.e.t.beid.BeIDInfo                                               minor refactoring (dependency uniformisation)
+  . added       b.e.t.config.RecursiveProperties                                  properties implementation thats recusively lookup values in system, uddi or in the properties file itself
+  . added       b.e.t.config.ConfigurationModuleLoader                            class containing extracted logic from ConfigurationImpl for ConfigurationModule loading
+  . improvement b.e.t.config.ConfigurationImpl                                    minor refactoring due to RecursiveProperties and ConfigurationModule loader
+  . bug-fix     b.e.t.config.ConfigurationModuleProxy                             minor refactoring (improved logging)
+  . bug-fix     b.e.t.handler.AbstractWsSecurityHandler                           minor refactoring (due to new WSS4J version)
+  . bug-fix     b.e.t.handler.CertificateCallback                                 minor refactoring (due to new WSS4J version)
+  . bug-fix     b.e.t.handler.SAMLHolderOfKeyHandler                              minor refactoring (due to new WSS4J version), saml assertion will not be signed by the webservice consumer
+  . bug-fix     b.e.t.handler.SAMLSenderVouchesHandler                            minor refactoring (due to new WSS4J version)  
+  . bug-fix     b.e.t.handler.UserAgentHandler                                    minor refactoring (dependency uniformisation)
+  . bug-fix     b.e.t.handler.utils.WSSecurityCrypte                              minor refactoring (due to new WSS4J version)    
+  . improvement b.e.t.utils.ConnectorXmlUtils                                     minor refactoring (preventing resource leaking, isXml detection, ...)
+  . bug-fix     b.e.t.validator.impl.handler.XOPValidationHandler                 minor refactoring (dependency uniformisation)
+  . bug-fix     b.e.t.bootstrap.bcp.domain.EndPointInformation                    minor refactoring (dependency uniformisation)
+
+  
+  
+3.10.4 release (september 2016)
+  . added       b.e.t.config.impl.ConfigurationModuleEndpointDistributor          configuration module allowing to activate the endpoint distributor feature
+  . improvement b.e.t.config.impl.ConfigurationImpl                               ConfigurationModuleEndpointDistributor is configured as a default module
+  . improvement b.e.t.ws.domain.GenericRequest                                    payload cloned before returning
+  . bug-fix     b.e.t.ws.impl.strategy.InvokeStrategy                             GenericRequest is passed as parameter instead of request and handlerchain
+  . bug-fix     b.e.t.ws.impl.strategy.NoRetryInvokeStrategy                      implementing new interface
+  . bug-fix     b.e.t.ws.impl.strategy.RetryStrategy                              implementing new interface
+  . bug-fix     b.e.t.ws.impl.AbstractWsSender                                    using new InvokeStrategy interface
+
+3.10.3 release
+  . internal release  
+ 
+3.10.2 release (july 2016)
+  . N/A
+  
+3.10.1 release
+  . internal release 
+
+3.10.0 release (june 2016)
+  . improvement b.e.t.beid.domain.Identity                                        Methods returning org.joda.DateTime insteadof GregorianCalendar
+  . added       b.e.t.config.domain.Duration                                      domain object added for an amount of time
+  . added       b.e.t.config.Configuration                                        new methods added for (getDuration, hasDuration)
+  . added       b.e.t.config.impl.ConfigurationImpl                               implementing new method(s) required by the interface
+  . added       b.e.t.config.impl.ConfigValidatorImpl                             implementing new method(s) required by the interface
+  . improvement b.e.t.config.impl.ConfigurationImpl                               recursive lookup of the default value
+  . improvement b.e.t.config.impl.ConfigurationModuleBootstrap                    configuration module allowing to bootstrap modules at startup time and not at first use.
+  . improvement b.e.t.config.impl.ConfigurationModuleLog4j                        adding classname and line number in default logging pattern
+  . improvement b.e.t.config.impl.ConfigurationModuleTrustStore                   minor refactoring (using duration)
+  . added       b.e.t.exception.NoNextEndpointException                           exception used in the BCP framework
+  . added       b.e.t.exception.RetryNextEndpointException                        exception used in the BCP framework
+  . added       b.e.t.handler.AbstractSOAPHandler                                 abstract class regrouping the most common actions on a SOAPHandler
+  . added       b.e.t.handler.AbstractWsSecurityHandler                           abstract class facilitating the WS Security header generation
+  . improvement b.e.t.handler.CertificateCallback                                 refactoring using the *new* AbstractWsSecurityHandler
+  . improvement b.e.t.handler.ConnectionTimeOutHandler                            refactoring using the *new* AbstractSOAPHandler and the new duration methods
+  . deprecated  b.e.t.handler.ErrorCollectorHandler                               extends the b.e.t.validator.impl.handler.ErrorCollectorHandler
+  . improvement b.e.t.handler.HarFileHandler                                      refactoring using the *new* AbstractSOAPHandler
+  . improvement b.e.t.handler.LoggingHandler                                      refactoring using the *new* AbstractSOAPHandler
+                                                                                  improved logging handler (avoiding stream interruption)
+  . improvement b.e.t.handler.RequestContextHandler                               refactoring using the *new* AbstractSOAPHandler
+  . improvement b.e.t.handler.SAMLHolderOfKeyHandler                              refactoring using the *new* AbstractWsSecurityHandler
+  . improvement b.e.t.handler.SAMLSenderVouchesKeyHandler                         refactoring using the *new* AbstractWsSecurityHandler
+  . improvement b.e.t.handler.SchemaValidatorHandler                              refactoring using the *new* AbstractSOAPHandler
+  . improvement b.e.t.handler.SoapActionHandler                                   refactoring using the *new* AbstractSOAPHandler
+  . improvement b.e.t.handler.SOAPHeaderLoggerHandler                             refactoring using the *new* AbstractSOAPHandler
+  . improvement b.e.t.handler.UnsupportedCallbackHandler                          refactoring using the *new* AbstractSOAPHandler
+  . improvement b.e.t.handler.UserAgentHandler                                    new SOAP handler allowing to set the User-Agent in the mime header
+  . improvement b.e.t.handler.WsAddressingHandlerV200508                          refactoring using the *new* AbstractSOAPHandler
+  . added       b.e.t.idgenerator.impl.NanoTimeGenerator                          id generator based on System.nanoTime
+  . added       b.e.t.idgenerator.impl.TimeBasedUniqueKeyGenerator                id generator that generates unique ids in time based on System.nanoTime and System.currentTimeMillis
+  . improvement b.e.t.idgenerator.IdGeneratorFactory                              2 new generators added by default
+  . improvement b.e.t.service.ServiceFactory                                      adding possibility to overload default implementation through the config file
+  . improvement b.e.t.service.etee.CertificateChecker                             methods added to allow certificate validation based on the provided DateTime
+  . improvement b.e.t.service.etee.CryptoFactory                                  align default properties to default properties of the ETEE cryptolib
+  . improvement b.e.t.service.etee.RevocationStatusChecker                        methods added to allow to verify if a certificate is revoked on the provided DateTime
+  . improvement b.e.t.service.etee.impl.AbstractRevocationStatusChecker           implementing new method(s) required by the interface
+  . improvement b.e.t.service.etee.impl.ConnectorCertificateChecker               implementing new method(s) required by the interface
+  . improvement b.e.t.service.etee.impl.ConnectorCRLRevocationStatusChecker       implementing new method(s) required by the abstract class
+  . improvement b.e.t.service.etee.impl.ConnectorMockRevocationStatusChecker      implementing new method(s) required by the abstract class
+  . improvement b.e.t.service.etee.impl.ConnectorOCSPRevocationStatusChecker      implementing new method(s) required by the abstract class
+  . improvement b.e.t.service.etee.impl.ConnectorRevocationStatusChecker          implementing new method(s) required by the interface
+  . improvement b.e.t.service.keydepot.impl.KeyDepotServiceImpl                   adding feature to bootstrap the KeyDepot at start-up time
+  . improvement b.e.t.service.keydepot.impl.KgssMessageBuilderImpl                adding feature to bootstrap the KgssMessageBuilder at start-up time
+  . improvement b.e.t.service.keydepot.impl.KgssServiceImpl                       adding feature to bootstrap the KgssService at start-up time
+  . improvement b.e.t.service.sts.security.impl.beid.impl.PinPadPanelImpl         minor refactoring (avoiding code duplication)
+  . improvement b.e.t.service.sts.security.impl.pkcs11.SunPKCS11ProviderAdaptor   minor refactoring (avoiding code duplication)
+  . improvement b.e.t.service.sts.security.ExtendedCredential                     add method to obtain certificate path
+  . added       b.e.t.service.sts.security.impl.AbstractExtendedCredential        abstract class implementing some methods of ExtendedCredential (avoiding code duplication)
+  . improvement b.e.t.service.sts.security.impl.AbstractSAMLToken                 refactoring using the *new* AbstractExtendedCredential
+  . improvement b.e.t.service.sts.security.impl.BeidCredential                    refactoring using the *new* AbstractExtendedCredential
+  . improvement b.e.t.service.sts.security.impl.KeyPairCredential                 refactoring using the *new* AbstractExtendedCredential
+  . improvement b.e.t.service.sts.security.impl.KeyStoreCredential                refactoring using the *new* AbstractExtendedCredential
+  . added       b.e.t.service.sts.utils.SAMLConfigHelper                          utility class for SAMLAttributeDesignator and SAMLAttribute generation
+  . added       b.e.t.service.timestamp.impl.AbstractConsultationServiceImpl      abstract class regrouping code used by timestamp V1 and V2
+  . improvement b.e.t.service.timestamp.impl.ConsultServiceImpl                   refactoring using the *new* AbstractConsultationServiceImpl
+  . improvement b.e.t.service.timestamp.impl.ConsultServiceV2Impl                 refactoring using the *new* AbstractConsultationServiceImpl
+  . improvement b.e.t.session.impl.SessionManagerImpl                             refactoring using the *new* SAMLConfigHelper
+  . improvement b.e.t.utils.impl.AttachmentMarshallerImpl                         adding support for MTOM/XOP
+                                                                                  minor refactoring (code cleanup)
+  . improvement b.e.t.utils.impl.AttachmentUnmarshallerImpl                       minor refactoring (code cleanup)
+  . improvement b.e.t.utils.impl.JaxbContextFactory                               adding new method for cleaner boostrap at start-up time
+  . improvement b.e.t.utils.ConfigurableFactoryHelper                             minor refactoring (code cleanup)
+  . added       b.e.t.utils.ConfigurableImplementationHelper                      utility class to facilitate the use of ConfigurableFactoryHelper
+  . improvement b.e.t.utils.ConnectorCryptoUtils                                  minor refactoring (field accessors)
+  . improvement b.e.t.utils.ConnectorIOUtils                                      adding streaming support for (de)compressing
+  . improvement b.e.t.utils.ConnectorXMLUtils                                     minor refactoring (code cleanup)
+  . improvement b.e.t.utils.IdentifierType                                        minor refactoring (code cleanup)
+  . improvement b.e.t.utils.MarshallerHelper                                      adding support for MTOM/XOP
+  . added       b.e.t.utils.TemplateEngineUtils                                   adding utility for a TemplateEngine (e.g. Velocity)
+  . added       b.e.t.validator.impl.handler.ErrorCollectorHandler                handler that collects a the validation errors
+  . added       b.e.t.validator.impl.handler.XOPValidationHandler                 handler that detects XOP references and ignore validation error linked to XOP
+  . improvement b.e.t.validator.impl.TimeStampValidatorFactory                    minor refactoring (code cleanup)
+  . improvement b.e.t.validator.ValidatorHelper                                   adding support for MTOM/XOP
+                                                                                  refactoring (code cleanup)
+  . improvement b.e.t.ws.domain.GenericRequest                                    adding support for GenericFeatures (e.g. XOP feature)
+  . improvement b.e.t.ws.domain.GenericResponse                                   dumping SOAPFault into the logs
+  . added       b.e.t.ws.feature.GenericFeature                                   interface for defining a GenericFeature
+  . added       b.e.t.ws.feature.XOPFeature                                       implemenation to allow MTOM/XOP through the GenericRequest
+  . added       b.e.t.ws.impl.strategy.InvokeStrategy                             interface for defining the invoke strategy used by the GenericRequest
+  . added       b.e.t.ws.impl.strategy.NoRetryInvokeStrategy                      only the given endpoint will be used to invoke the service
+  . added       b.e.t.ws.impl.strategy.RetryStrategy                              all the alternative endpoints will be used before returning an error to the client
+  . improvement b.e.t.ws.impl.AbstractWsSender                                    adding support for InvokeStrategy and MTOM/XOP
+  . improvement                                                                   uniformisation of all connector versions
+
+3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+
+3.4.0-beta-10 release
+  . improvement b.e.t.config.impl.ConfigurationModule*                            Adding debug log statement when initialization/unloading
+  . improvement b.e.t.handler.SchemaValidatorHandler                              Dumping outbound message when outbound is invalid
+  . improvement b.e.t.service.etee.CryptoFactory                                  CA Certificate keystore is exposed to the connector
+  . improvement b.e.t.service.etee.impl.AbstractEndToEndCrypto                    Adding support for self signed certificates
+  . improvement b.e.t.service.etee.impl.ConnectorCertificateChecker               Using the new method on the crypto factory for obtaining CA certificate store
+  . bug-fix     b.e.t.service.etee.impl.ConnectorOCSPRevocationStatusChecker      Adding support for certificates without OCSP url						  
+  . improvement b.e.t.utils.ConnectorCryptoUtils                                  Added support for singlepartOperation and multipartOperation decryption 
+  . improvement b.e.t.utils.ConnectorIOUtils                                      Adding some debug log statements inside method getResourceAsStream()
+
+
+3.4.0-beta-9 release
+  . classpath updates
+      . bcmail-jdk16-1.46-jdk17051.jar            ->  bcmail-jdk15on-1.52.jar
+      . bcprov-jdk16-1.46-jdk17051.jar            ->  bcprov-jdk15on-1.52.jar
+      . commons-beanutils-1.8.3.jar               ->  commons-beanutils-1.9.1.jar
+      . commons-codec-1.8.jar                     ->  commons-codec-1.10.jar
+      . commons-compress-1.5.jar                  ->  commons-compress-1.9.jar
+      . commons-eid-client-0.5.1.jar              ->  commons-eid-client-0.6.4.jar 
+      . commons-eid-consumer-0.5.1.jar            ->  commons-eid-consumer-0.6.4.jar
+      . commons-eid-dialogs-0.5.1.jar             ->  commons-eid-dialogs-0.6.4.jar
+      . commons-eid-jca-0.5.1.jar                 ->  commons-eid-jca-0.6.4.jar
+      . commons-lang3-3.1.jar                     ->  commons-lang3-3.2.1.jar
+      . dozer-5.4.0.jar                           ->  dozer-5.5.1.jar
+      . etee-crypto-lib-2.0.1.jar                 ->  etee-crypto-lib-2.1.1.jar
+      . jcl-over-slf4j-1.6.6.jar                  ->  jcl-over-slf4j-1.7.12.jar
+      . joda-time-1.6.jar                         ->  joda-time-2.7.jar
+      . jul-to-slf4j-1.6.6.jar                    ->  jul-to-slf4j-1.7.12.jar
+      . json-simple-1.1.jar                       ->  json-simple-1.1.1.jar
+      . jul-to-slf4j-1.6.6.jar                    ->  jul-to-slf4j-1.7.12.jar
+      . slf4j-api-1.6.6.jar                       ->  slf4j-api-1.7.12.jar
+      . xmlsec-1.5.1.jar                          ->  xmlsec-1.5.8.jar
+      
+  . classpath removed
+      . bcprov-jdk16-1.46-jdk17051.jar
+      . xws-security-3.0.jar
+      
+  . classpath added
+      . bcpkix-jdk15on-1.52.jar
+      . commons-collections-3.2.1.jar
+      . commons-logging-1.1.1.jar
+      . wss4j-1.6.18.jar
+
+  . improvement b.e.t.beid.BeIDInfo                                               Prevent resource leaking (closing beidcard after mapping objects)
+  . improvement b.e.t.config.ConfigFactory                                        Cache refactoring (using set instead of List to cache config instances)
+  . adding      b.e.t.config.UddiKeys                                             Adding repository for all the key inside the UDDI that are used in the connector
+  . improvement b.e.t.config.impl.ConfigurationImpl                               Adding support for $uddi{xxx}, 2 default configuration modules are added ConfigurationModuleProperties, ConfigurationModuleTrustStore
+  . adding      b.e.t.config.impl.ConfigurationModuleProperties                   Module that logs all the current properties of the connector. 
+  . adding      b.e.t.config.impl.ConfigurationModuleTrustStore                   Module that uses the eHealth Trusted Service list to update the truststores.
+  . adding      b.e.t.exceptions.CredentialException                              Replaces the old CredentatialException.
+  . remove      b.e.t.exceptions.CredentatialException                            Removed the Exception
+  . adding      b.e.t.exceptions.InterruptedException                             Adding new checked Exception
+  . remove      b.e.t.handlers.AbstractXWSSSecurityHandler                        Not longer supported (XWSS helper)
+  . remove      b.e.t.handlers.CertificateCallbackHandler                         Not longer supported (XWSS helper)
+  . remove      b.e.t.handlers.IncomingXWSSSecurityHandler                        Not longer supported (XWSS helper)
+  . remove      b.e.t.handlers.OutgoingXWSSSecurityHandler                        Not longer supported (XWSS helper)
+  . remove      b.e.t.handlers.SAMLCallback                                       Not longer supported (XWSS helper)
+  . remove      b.e.t.handlers.SAMLCallbackHandler                                Not longer supported (XWSS helper)
+  . remove      b.e.t.handlers.SAMLSenderVouchesCallbackHandler                   Not longer supported (XWSS helper)
+  . added       b.e.t.handlers.SAMLHolderOfKeyHandler                             Added handler that ensure the WS Security policy HolderOfKey
+  . added       b.e.t.handlers.SAMLSenderVouchesHandler                           Added handler that ensure the WS Security policy SenderVouches
+  . added       b.e.t.handlers.utils.WSSecurityCrypto                             Connector Implementation of WSS4J Crypto class
+  . improvement b.e.t.handlers.CertificateCallback                                Modify the handler that is ensure the WS Security policy X509
+  . improvement b.e.t.handlers.LoggingHandler                                     minor refactoring for cleaner code
+  . improvement b.e.t.handlers.SchemaValidator                                    Added dump message when message validation failed.
+  . improvement b.e.t.service.ServiceFactory                                      Added helper for Timestamp Consultation V2
+  . added       b.e.t.service.etee.CertificateCheckerFactory                      Added a new factory for obtaining the implementation of CertificateChecker
+  . added       b.e.t.service.etee.RevocationStatusCheckerFactory                 Added a new factory for obtaining the implementation of RevocationStatusChecker
+  . improvement b.e.t.service.etee.CertifcateFactory                              Factory is deprecated and replaces by CertificateCheckerFactory
+  . improvement b.e.t.service.etee.RevocationFactory                              Factory is deprecated and replaces by RevocationStatusCheckerFactory
+  . improvement b.e.t.service.etee.CryptoFactory                                  OCSP options are exposed to the connector
+  . improvement b.e.t.service.etee.Crypto                                         Added new methods to obtain the UnsealResult so the caller can obtain the certifites used for signing.
+  . bug-fix     b.e.t.service.etee.domain.EncryptionToken                         Object is now serializable
+  . added       b.e.t.service.etee.domain.UnsealedData                            Object that is produced when verifying.unsealing data.
+  . added       b.e.t.service.etee.impl.AbstractEndToEndCrypto                    Abstract class regrouping all the EndToEnd methods that redirect to the real method call
+  . added       b.e.t.service.etee.impl.AbstractRevokactionStatusChecker          Abstract class regrouping the cache possibilities within the session.
+  . bug-fix     b.e.t.servcie.etee.impl.ConnectorCertificateChecker               minor refactoring for cleaner code
+  . bug-fix     b.e.t.service.etee.impl.ConnectorCRLRevocationStatusChecker       Using the CRL implementation of the cryptolib
+  . bug-fix     b.e.t.service.etee.impl.ConnectorOCSPRevocationStatusChecker      Using the OCSP implementation of the cryptolib
+  . bug-fix     b.e.t.service.etee.impl.ConnectorRevocationStatusChecker          Remove session cache
+  . improvement b.e.t.service.etee.impl.CryptoImpl                                Implement the new Crypto interface
+  . improvement b.e.t.service.keydepot.KeyDepotManager                            Adding method for obtaining the Encrytion Token based on EncryptionTokenType
+  . improvement b.e.t.service.keydepot.impl.KeyDepotManagerImpl                   Implementation of the new KeyDepotManager Interface
+  . improvement b.e.t.service.keydepot.impl.KeyDepotServiceImpl                   minor refactoring for cleaner code
+  . bug-fix     b.e.t.service.kgss.builders.impl.KgssMessageBuilderImpl           minor refactoring using the latest version of the Crypto interface
+  . improvement b.e.t.service.sso.impl.SingleSignOnServiceImpl                    Adding auto url discovery
+  . bug-fix     b.e.t.service.sts.impl.STSServiceImpl                             Fixing issue when renewing a SAML token
+  . bug-fix     b.e.t.service.sts.security.impl.beid.BeIDConnectorGui             Adding new methods that are required by commons-eid
+  . bug-fix     b.e.t.service.sts.security.impl.beid.BeIDConnectorExternalGui     Adding new methods required by the BeIDConnectorGui
+  . bug-fix     b.e.t.service.sts.security.impl.beid.BeIDConnectorGuiSwing        Adding new methods required by the BeIDConnectorGui
+  . added       b.e.t.service.timestamp.ConsultServiceV2                          Adding new service that came togheter with TSA v2
+  . improvement b.e.t.service.timestamp.TimestampUtil                             Obtaining a timestamp from TSAv1 or TSA v2 is transparent (fallback mechanism)
+  . added       b.e.t.service.timestamp.impl.ConsultServiceV2Impl                 Implementation of the new ConsultService v2
+  . bug-fix     b.e.t.service.ws.ServiceFactory                                   Correct creation of the SchemaValidator for IdSupport
+  . improvement b.e.t.session.impl.SessionManagerImpl                             Fixing issue with auto renew token (ServicesWithCache are flushed now)
+                                                                                  EncryptionToken are now prefetch from the ETK depot (the certificate obtained from the ETK should match one of the decryption key pairs.
+  . added       b.e.t.shutdown.*                                                  Packaging containing a interface and a registry for all the shutdown hooks.
+  . improvement b.e.t.utils.CertificateParser                                     minor refactoring using the latest version of BouncyCastle, added new method for obtaining directly the IdentifierType                                     
+  . improvement b.e.t.utils.ConnectorCryptoUtils                                  Added method for decrypting a value based on a given secret key 
+  . improvement b.e.t.utils.ConnectorIOUtils                                      Cleanup logging statements
+  . improvement b.e.t.utils.IdentifierType                                        minor refactoring for cleaner code
+  . improvement b.e.t.utils.MarshallerHelper                                      Determine QName for Object without @XMLRootElement bases on the XMLSchema annotation
+                                                                                  minor refactoring for cleaner code (Avoiding class recreation)
+  . improvement b.e.t.utils.PCSCUtils                                             minor refactoring for cleaner code (Avoiding casting)
+  . improvement b.e.t.utils.SecureString                                          minor refactoring for cleaner code                                                                                  
+  . improvement b.e.t.utils.impl.JaxbContextFactory                               minor refactoring for cleaner code (improved logging and caching)
+  . improvement b.e.t.validator.impl.TimeStampValidatorFactory                    All certificates in TSA keystore are used for timestamp validation (alias list not longer used)
+  . bug-fix     b.e.t.validator.impl.TimeStampValidatorImpl                       minor refactoring using the latest version of BouncyCastle
+  . improvement b.e.t.ws.domain.GenericRequest                                    minor refactoring in order to enable the fluent API
+  . bug-fix     b.e.t.ws.domain.GenericResponse                                   Object is not longer Serializable, due to unable to serialize SOAPMessage
+  . improvement b.e.t.ws.domain.HandlerChain                                      minor refactoring for cleaner API
+  . improvement b.e.t.ws.impl.AbstractWsSender                                    minor refactoring for cleaner code (Avoiding class recreation)
+  . improvement b.e.t.ws.impl.GenericWsSenderImpl                                 minor refactoring for cleaner code
+  
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+  
+3.4.0-beta-7 release
+  . revert      b.e.t.ws.domain.GenericRequest                                    minor refactoring in order to enable the fluent API. (non backward compatible change IKVM)
+	
+3.4.0-beta-6 release
+  . internal ehealth release (not published or distributed)
+
+3.4.0-beta-6 release
+  . improvement b.e.t.ws.domain.GenericRequest : fixed deprecated comment : parameter SecurityType is now TokenType
+  
+3.4.0-beta-5 release
+  . improvement b.e.t.*                                                           now throws InstantiationException when error occurs during instantiation instead of new RuntimeException()
+  . improvement b.e.t.beid.domain.Identity                                        minor refactoring for cleaner code (defencive copying of byte[])
+  . improvement b.e.t.config.ConfigFactory                                        added method getConfigValidatorFor(String... expectedProps) , no need to create a list with expected properties anymore
+  . bug-fix     b.e.t.config.ConfigFactory                                        fixing default location for .NET projects
+  . bug-fix     b.e.t.config.impl.ConfigurationModuleLoggingLog4j                 EHCONEXT-144    fixing incorrrect log location
+  . adding      b.e.t.config.impl.ConfigurationModuleServiceLoader                Configuration module that dumps the loaded Service with the ServiceLoader
+  . improvement b.e.t.config.impl.ConfigurationModuleSSL                          minor refactoring for cleaner code
+  . improvement be.e.t.config.util.ConfigUtil                                     adding utility method for .NET detection
+  . adding      b.e.t.enumeration.CrypoType
+  . adding      b.e.t.enumeration.SsoProfile                                      adding enumeration containing the supported sso profiles
+  . improvement b.e.t.exception.ConfigurationException                            adding constructor that takes only an java.lang.Exception
+  . adding      b.e.t.exception.InstantiationException                            runtime exception that is thrown when there is an error during instantiation of the connector.
+  . improvement b.e.t.handler.ErrorCollectorHandler                               minor refactoring for cleaner code
+  . improvement b.e.t.handler.HarFileHandler                                      minor refactoring for cleaner code
+  . bug-fix     b.e.t.handler.LoggingHandler                                      minor refactoring for cleaner code (avoiding memory leaks by closing the streams)
+  . bug-fix     b.e.t.handler.SchemaValidatorHandler                              minor refactoring for cleaner code (input validation)
+  . improvement b.e.t.idgenerator.XSIDGenerator                                   minor refactoring for cleaner code (scoping variables)
+  . improvement b.e.t.service.ServiceFactory                                      adding method for obtaining SingleSigneOnService
+  . improvement b.e.t.service.etee.Crypto                                         method added : seal(Set<EncryptionToken> paramEncryptionTokenSet, byte[] messageToEncrypt, SecretKey secretKey, String keyId) (known and unkown destination)
+  . bug-fix     b.e.t.service.etee.CryptoFactory                                  minor refactoring for cleaner code (avoiding method duplications)
+  . improvement b.e.t.service.etee.impl.ConnectorCRLRevocationStatusChecker       minor refactoring for cleaner code (avoiding nested ifs)
+  . bug-fix     b.e.t.service.etee.impl.CryptoImpl                                minor refactoring for cleaner code
+  . adding      b.e.t.service.sso.SingleSignOnService                             adding interface allowing the single sign on between eHealth SecureTokenService and eHealth IDP
+  . adding      b.e.t.service.sso.imple.SingleSigneOnService                      adding implementation for SingleSignOnService
+  . improvement b.e.t.sts.impl.STSServiceImpl                                     generateToken now throws TechnicalConnectorException when unexpected Exception occurs instead of RuntimeException 
+  . bug-fix     b.e.t.sts.impl.STSServiceWsTrustImpl                              replaced call to SAMLAttribute.getValue() with retrieval of first value in list getValues()
+  . adding      b.e.t.sts.security.ExtendedCredential                             adding ExtendedCredential interface for obtaing expiration date of the credential
+  . improvement b.e.t.sts.security.KeyStoreInfo                                   minor refactoring for cleaner code (defencive copying of byte[])
+  . improvement b.e.t.sts.security.impl.AbstractSAMLToken                         adding implementation for method getExpirationDateTime()
+  . improvement b.e.t.sts.security.impl.BeIDCredential                            adding implementation for method getExpirationDateTime()
+  . improvement b.e.t.sts.security.impl.KeyPairCredential                         adding implementation for method getExpirationDateTime()
+  . improvement b.e.t.sts.security.impl.KeyStoreCredential                        adding implementation for method getExpirationDateTime()
+                                                                                  minor refactoring for cleaner code
+  . bug-fix     b.e.t.session.AbstractSessionServiceFactory                       removed Cryptos as instance variables ,and added methods to check Session and retrieve Crypto from there
+  . improvement b.e.t.utils.ImplementationClassFactory                            other parameters needed for method createImplementationClass
+  . improvement b.e.t.session.Session                                             adding constants for Distributed Signing support
+  . improvement b.e.t.session.SessionManager                                      adding setKeyStore for Distributed Signing support
+  . improvement b.e.t.session.impl.SessionManagerImpl                             adding setKeyStroe for implementation for Distributed Signing support
+                                                                                  minor refactoring for cleaner code
+  . improvement b.e.t.utils.ConfigurableFactoryHelper                             refactored errorHandling for ConfigurableFactoryHelper.createAndConfigureImplementation
+  . improvement b.e.t.utils.ConnectorIOUtils                                      adding method for getting a resource as a String
+  . bug-fix     b.e.t.utils.ConnectorIOUtils                                      minor refactoring for cleaner code (avoiding memory leaks by closing the streams)
+  . bug-fix     b.e.t.utils.IdentifierType                                        returning the wrong IdentifierType when type is NIHII
+  . improvement b.e.t.utils.KeyStoreManager                                       adding new constructor.
+  . improvement b.e.t.utils.SessionUtil                                           added methods getEncryptionCrypto , getHolderOfKeyCrypto, getEncryptionCredential and getHolderOfKeyCredential  which validate the presence of the session and crypto and return the asked values it.
+  . improvement b.e.t.ws.domain.GenericRequest                                    minor refactoring in order to enable the fluent API.
+                                                                                  adding the support of a JAXBElement in the setPayload method.
+  . improvement b.e.t.ws.impl.AbstractWsSender                                    changing user-agent of the http message to ehealth Technical.
+  
+3.4.0-beta-4 release
+  . bug-fix     b.e.t.config.impl.ConfigurationModuleSSL                           improved logging when verifying SSL keystore
+  . improvement b.e.t.beid.BeIDInfo                                                adding new static constructors for obtaining a BeIDInfo without cache and without specifying a scope.
+  . improvement b.e.t.beid.BeIDCardFactory                                         using the ConfigurableFactoryHelper for more flexible use
+  . addding     b.e.t.beid.BeIDCardAdaptor                                         adding new interface for obtain a BeIDCard
+  . adding      b.e.t.beid.impl.CommonsEidAdaptor                                  implementation commons-eid for obtaining a BeIDCard
+  . adding      b.e.t.config.util.ConfigUtil                                       adding utility method for obtain the usedefault project property
+  . improvement b.e.t.generic.session.impl.GenericServiceImpl                      using the GenericRequest/GenericResponse send method
+  . improvement b.e.t.handler.CertifcateCallback                                   exposing default constructor (in orde to enable lazy loading)
+  . improvement b.e.t.handler.CertifcateCallbackHandler                            adding lazy key loading
+  . adding      b.e.t.idgenerator.IdGeneratorFactory                               adding id generator for xs:id 
+  . adding      b.e.t.idgenerator.impl.XSIDGenerator                               implementation id generatof compliant with the specification of a xs:id
+  . improvement b.e.t.service.sts.impl.STSServiceImpl                              internal refactory in order to allow other key types.
+  . adding      b.e.t.service.sts.security.SAMLToken                               adding new utility methods (getAssertionId, checkValidaty) on a SAMLToken
+  . adding      b.e.t.service.sts.security.impl.AbstractSAMLToken                  implementation of the new utility methods
+  . adding      b.e.t.service.sts.security.impl.KeyPairCredential                  adding a new credential type based on a keypair
+  . improvement b.e.t.service.sts.utils.SAMLHelper                                 implementation change using org.joda.DateTime instead of java.util.Calendar
+  . improvement b.e.t.servcie.ws.ServiceFactory                                    using the GenericRequest/GenericResponse send method
+  . improvement b.e.t.utils.ConnectorIOUtils                                       closing quietly an object is method close is present.
+  . improvement b.e.t.utils.ConnectorXMLUtils                                      adding method to transform a Node to String
+  . improvement b.e.t.validatior.impl.SAMLSessinValidator                          internal refactoring not longer depending on java.util.Calandar
+  . adding      b.e.t.ws.GenericWsSender                                           adding @deprecated annotation on the legacy methods
+  . adding      b.e.t.ws.domain.GenericRequest                                     adding new method to specify the handlerchain, security
+  . adding      b.e.t.ws.domain.HandlerChain                                       class that allows to specify the handlerchain
+  . adding      b.e.t.ws.domain.HandlerPosition                                    enumaration allowing to specify the position of a SOAPHandler
+  . adding      b.e.t.ws.domain.TokenType                                          enumeration allowing to specifiy the token type use for security
+  . removed     b.e.t.ws.impl.AbstractGenericServiceHandlerRegister                replaced with HandlerChain and HandlerPosition
+  . improvement b.e.t.ws.domain.GenericResponse                                    adding support for SOAPwithAttachments when not using an object (dom/string)
+  . improvement b.e.T.ws.impl.AbstractWsSender                                     internal refactoring for cleaner code base.
+  . improvement b.e.t.ws.impl.GenericWsSenderImpl                                  use of default handlerchain instead of hard coding the handlers.
+  . change        b.e.t.ws.domain.GenericRequest                                     removed Exception thrown when soapAction is not set , will just continue now
+
+3.4.0-beta-3 release
+  . bug-fix     b.e.t.session.impl.SessionManagerImpl                              fixing the possibility to start a session without encryption tokens
+  . bug-fix     b.e.t.service.sts.impl.STSServiceImpl                              fixing the renew method (filtering certifified attributes out of the list of identification attributes)
+  . improvement b.e.t.utils.KeyStoreManager                                        adding possibility to create a KeyStoreManager based on a java.security.KeyStore
+  . improvement b.e.t.service.sts.security.KeyStoreInfo                            adding constructor with minimal required fields
+  . improvement b.e.t.service.sts.security.impl.KeyStoreCredential                 adding constructor with java.security.Keystore, String alias, String pwd
+
+3.4.0-beta-2 release
+  . breaking    b.e.t.utils.CertificateParser                                      InvalidNameException is replaced by a TechnicalConnectorException
+  . improvement b.e.t.beid.BeIDCardFactory                                         improved error handling, code reorganisation avoiding unneccassary object creation.
+  . improvement b.e.t.beid.BeIDInfo                                                reducing code complexity (avoiding nested ifs)
+  . improvement b.e.t.beid.doamin.DocumentType                                     code cleanup (avoiding object creation)
+  . improvement b.e.t.config.ConfigFactory                                         adding possiblity to change property location at startup time (system property -Dbe.ehealth.technicalconnector.config.location={path.to.propfile}
+  . adding      b.e.t.config.Configuration                                         adding new method hasMatchingProperty(String rootkey)
+  . adding      b.e.t.config.impl.ConfigurationImpl                                adding implementation for hasMatchingProperty
+  . improvement b.e.t.config.impl.ConfigurationImpl                                code cleanup (private methond renaming)
+                                                                                   some configurationModules are loadable by default (ConfigurationModuleLogging, ConfigurationModuleClassloader, ConfigurationModuleVersion and ConfigurationModuleSecurityProvider)
+  . improvement b.e.t.config.impl.ConfigurationModuleClassloader                   module will only reset the classloader if .Net is detected.
+  . improvement b.e.t.config.impl.ConfigurationModuleLog4j                         adding possiblity to configure the log4j property file with an external configurtaion file (xml.properties )(more information see javadoc)
+  . improvement b.e.t.config.impl.ConfigurationModuleSecurityProvider              removed compile dependecy to commons-eid (provider is loaded with reflection) if commons-eid is not present at runtime an error will be logged.
+  . improvement b.e.t.config.impl.ConfigurationModuleSystemProps                   adding possiblity to have comma seperated values of a system property
+  . adding      b.e.t.config.impl.ConfigurationModuleVersion                       module that logs the contect of the classpath
+  . adding      b.e.t.config.impl.ConfigValidatorImpl                              adding implementation for hasMatchingProperty
+  . adding      b.e.t.exception.InvalidTimeStampException                          adding constructur without cause
+  . adding      b.e.t.exception.ResponseAPDUException                              exception used when using APDU commands to the smartcard
+  . adding      b.e.t.exception.SilentInstantiationException                       exception that can be swallowed by the implementation
+  . improvement b.e.t.handler.SAMLCallback                                         adding default constructor allowing lazy SAML token loading.
+  . improvement b.e.t.handler.SAMLCallbackHandler                                  adding default constructor allowing lazy SAML token loading.
+  . improvement b.e.t.mapper.MapperFactory                                         utility class hiding default constructor
+  . improvement b.e.t.service.condage.impl.CodageServiceImpl                       using ServiceFactory to obtain a GenericWsSender
+  . improvement b.e.t.service.keydepot.impl.KeyDepotManagerImpl                    code cleanup, improve log statements.
+  . improvement b.e.t.service.keydepot.impl.KeyDepotServiceImpl                    code cleanup for better maintenance
+  . improvement b.e.t.service.kgss.KgssManager                                     code cleanup, adding possibility to configure the KGSS key
+  . improvement b.e.t.service.kgss.builders.impl.KgssMessageBuilderImpl            code cleanup (avoid object recreation)
+  . improvement b.e.t.service.kgss.builders.impl.KgssServiceImpl                   code cleanup (avoid object recreation)
+  . improvement b.e.t.service.sts.SAMLTokenFactory                                 adding support for SenderVouches SAMLToken
+  . improvement b.e.t.service.sts.domain.SAMLAttribute                             adding support for multivalue attributes
+  . bug-fix     b.e.t.service.sts.impl.AbstractSTSService                          code cleanup (avoid NPE)
+  . improvement b.e.t.service.sts.impl.STSServiceImpl                              adding support for multivalue input attributes
+  . improvement b.e.t.service.sts.impl.STSServiceWsTrustImpl                       adding support for multivalue input attributes
+  . improvement b.e.t.service.sts.security.KeyStoreFactory                         code cleanup (improve javadoc, avoid object recreation)
+  . improvement b.e.t.service.sts.security.ProviderFactory                         code cleanup (improve javadoc, avoid object recreation)
+  . adding      b.e.t.service.sts.security.impl.AbstractSAMLToken                  adding abstract class regrouping logic for SAMLHolderOfKeyToken, SAMLSenderVouches)
+  . improvement b.e.t.servcie.sts.security.impl.SAMLSenderVouchesCredential        code cleanup by using AbstractSAMLToken
+  . adding      b.e.t.service.sts.security.impl.SAMLHolderOfKeyToken               adding class representing a SAML HolderOfKeyToken
+  . improvement b.e.t.service.sts.security.impl.SAMLTokenImpl                      deprected class replaced with SAMLHolderOfKeyToken
+  . improvement b.e.t.service.sts.utisl.SAMLConverter                              code cleanup (improved error handeling)
+  . improvement b.e.t.service.timestamp.TimestampUtil                              replacing the deprectad ConnectorIOUtils.base64Decode(byte[]) with the new ConnectorIOUtils.base64Decode(byte[], true);
+  . improvement b.e.t.service.timestamp.impl.AuthorityServiceImpl                  using ServiceFactory.getGenericWsSender() instead of direct implementation class
+  . improvement b.e.t.service.timestamp.impl.ConsultServiceImpl                    using ServiceFactory.getGenericWsSender() instead of direct implementation class
+  . improvement b.e.t.service.ws.ServiceFactory                                    cleanup code (method reorganisation)
+  . adding      b.e.t.session.AbstractSessionServiceCache                          abstract class with a default cache implemenation
+  . improvement b.e.t.session.impl.SessionManagerImpl                              code cleanup (method reorganisation, simplify code structure, improve error handeling) 
+  . improvement b.e.t.utils.ConfigurableFactoryHelper                              code cleanup (method reorganisation, simplify code structure, improve error handeling)
+  . added       b.e.t.utils.ConfigurableFactoryHelper                              possibilty to swallow the instanciating exceptions
+  . improvement b.e.t.utils.ConnectorIOUtils                                       adding the possibility the work recursively with base64Decode
+  . added       b.e.t.utils.ConnectorReflectionUtils                               utility class to work with java reflection (usefull for the .NET connector)
+  . added       b.e.t.validator.SessionValidator                                   adding method to validate a given SAMLToken
+  . added       b.e.t.validator.impl.SAMLSessionValidator                          adding method to validate a given SAMLToken
+  . improvement b.e.t.validator.impl.TimeStampValidatorImpl                        code cleanup (method reorganisation, improved error handeling)
+  . improvement b.e.t.ws.domain.GenericRequest                                     adding support for SAML SenderVouches
+  . improvement b.e.t.ws.impl.AbstractWsSender                                     code cleanup (method reorganisation, improved error handeling)
+  
+3.4.0-beta-1 release
+  . upgrade to latest version of IKVM (7.4.5256)
+    Windows 8.x: unable to instantiate a session with eID (.NET only) The message in the logs is begin exclusive failed()
+        Workaround for activating the patch:
+            java.lang.System.setProperty("os.name","Windows 8");
+
+3.4.0-beta-0 release
+  . breaking    b.e.t.exception.UnsealConnectorException                            returning a be.fgov.ehealth.etee.crypto.status.CryptoResult instead of a be.smals.ehealth.etee.crypto.decrypt.UnsealResult
+                                                                                        non backward compatible change: migrating from cryptolib v1 to cryptolib v2
+  . breaking    b.e.t.etee.domain.EncryptionToken                                    remove extends for EncryptionToken of cryptolib v1
+                                                                                      adding getEtk for convertion for connector to cryptolib v2
+  . changed        b.e.t.service.ServiceFactory                                        adding IdSupportService
+  . changed        b.e.t.service.etee.Crypto                                            adding properties used to configure the crypto lib
+                                                                                      deprecating Symmectric Crypto operation
+  . changed        b.e.t.service.etee.CryptoFactory                                    adding all new configuration possibilities for the new cryptolib. 
+                                                                                      adding new getInstance method to specify the OCSP policy to be used.
+  . changed        b.e.t.service.etee.RevocationStatusChecker                            remove extends for cryptolib v1 RevocationChecker, adding isRevoked method
+  . changed     b.e.t.service.etee.impl.CryptoImpl                                    implementation migrated from cryptolib v1 towards v2
+  . changed     b.e.t.service.sts.security.Credentials                                methods can throw a TechnicalConnectorException
+  . changed        b.e.t.service.sts.security.impl.BeIDCredential                        using BouncyCastle for public OIDs
+  . adding        b.e.t.config.ConfigurationModuleSystemProps                            Module allowing to set system properties                                    
+  . adding        b.e.t.exception.BeIDPinCodeException                                exception thrown when a wrong pincode is given (BeidConnectorExternalGui)
+  . adding        b.e.t.mapper.*                                                        adding framework to map object using the dozer framework
+  . adding         b.e.t.service.etee.impl.AbstractCrypto                                implementation of the deprecated methods of the Crypto interface
+  . adding         b.e.t.service.idsupport.*                                            adding IdSupportService
+  . adding        b.e.t.service.ws.ServiceFactory                                        adding IdSupport V2
+  . adding         b.e.t.service.sts.security.impl.beid.impl.BeIDConnectorExternalGui  signleton that can be used to replace the commons eid dialogs
+  . adding        b.e.t.utils.ConnectorExceptionUtils                                    adding the possibility to process the UnSealConnectorException by ignoring some errors.
+  . adding        b.e.t.utils.ConnectorIOUtils                                        adding method for base64 decoding
+  . adding         b.e.t.utils.ConnectorXMLUtils                                        adding methods for flatten and formatting an xml file
+  . adding         b.e.t.utils.PCSCUtils                                                helper method to verify a pincode without user interaction
+  . adding         b.e.t.utils.SecureString                                            implementation of .NET System.Security.SecureString class
+  . adding        b.e.t.validator.EhealthReplyValidator                                adding support voor ehealth commons v2 protocol
+  . adding        b.e.t.validator.impl.EhealthReplyValidatorImpl                        adding support voor ehealth commons v2 protocol
+  . bug-fix        b.e.t.beid.domain.Address                                            setData avoiding NullPointerException
+  . bug-fix        b.e.t.service.sts.impl.STSServiceImpl                                re-enable renewToken function    
+  . bug-fix        b.e.t.service.sts.impl.STSServiceWsTrustImpl                        remove duplicated claims, setting authentication method as recieved
+  . bug-fix        b.e.t.service.sts.security.KeyStoreInfo                                avoiding NullPointerException                                                                                
+  . improvement    b.e.t.beid.BeIDCardFactory                                            adding javadoc for property to change the beidcards gui
+  . improvement b.e.t.beid.BeIDInfo                                                    using the framework dozer for mapping the objects
+                                                                                      adding possibility to use caching for BeIDInfo objects
+  . improvement b.e.t.beid.domain.Identity                                            adding DateTime methods for setting a Date
+                                                                                      deprecating GregorianCalendar methods for setting a Date    
+                                                                                      setPhotoDigest/setData remove NPE                                                                                
+  . improvement b.e.t.config.Configuration                                            adding invalidate method for invalidation all the cached instances of the configuration
+                                                                                      adding a reload method for (un)loading the configurationmodules
+  . improvement b.e.t.config.ConfigurationModule                                    adding unload method for a ConfigurationModule
+  . improvement b.e.t.config.ConfigurationImpl                                      uniformisation of logged messages, correctly clossing opened inputStreams
+                                                                                      adding  invalidate method for unloading configurationmodules
+  .    improvement b.e.t.config.ConfigurationModule*                                    adding unload method for restoring the initial config
+  . improvement b.e.t.config.ConfigurationImpl                                        uniformisation of logged messages, improved validation method
+                                                                                      implementing invalidate and reload method
+  . improvement b.e.t.generic.session.impl.GenericServiceImpl                        using ServiceFactory for the creation of the GenericWsSender
+  . improvement    b.e.t.handler.ConnectionTimeOutHandler                                adding support for GenericWsSenderFramework
+  . improvement b.e.t.handler.HarFileHandler                                        correctly closing opened streams
+  . improvement b.e.t.handler.SchemaValidatorHelper                                    using foreach loop
+  . improvement b.e.t.idgenerator.IdGeneratorFactory                                adding properties for standards id generators
+                                                                                      adding method for registering new default generators
+  . improvement b.e.t.service.etee.impl.ConnectorCertificateChecker                    implementation migrated from cryptolib v1 towards v2
+  . improvement b.e.t.service.etee.impl.ConnectorOCSPRevocationStatusChecker        using implementation of cryptolib v2
+  . improvement b.e.t.service.keydepot.impl.KeyDepotManagerImpl                        changed singleton implementation towards enum singleton pattern.
+  . improvement b.e.t.service.keydepot.impl.KgssManager                                changed singleton implementation towards enum singleton pattern.
+                                                                                      using keydepotmanagerfactory for instantiating the keydepot
+  . improvement b.e.t.service.sts.SAMLTokenFactory                                    changed singleton implementation towards enum singleton pattern.      
+  . improvement b.e.t.service.sts.security.impl.SAMLSenderVouchesCredential            implementing all methods (remove UnsupportedOperationException)
+  . improvement b.e.t.service.sts.security.impl.pcks11.EidPinCallBackHandlerFactory    remove duplicated code (use of ConfigurableFactoryHelper)
+  . improvement b.e.t.service.sts.security.impl.pcks11.SunPKCS11ProviderAdaptor        using reflection to create sun.security.pkcs11.SunPKCS11
+  . improvement b.e.t.service.timestamp.TimestampUtil                                using ConnectorIOUtils for base64 decoding
+  . improvement    b.e.t.session.AbstracSessionServiceFactory                            improved implementation of singleton (avoiding deadlock)
+  . improvement b.e.t.session.Session                                                changed singleton implementation towards enum singleton pattern.
+  . improvement b.e.t.session.session.impl.SessionManagerImpl                        changed singleton implementation towards enum singleton pattern.
+                                                                                      adding encryptionkeys when using the eid.
+  . improvement b.e.t.utils.ByteArrayDataSoure                                        avoiding NullPointerException                                                                                     
+  . improvement b.e.t.utils.CertificateParser                                        adding support for the Belgium Identity Card
+  . improvement b.e.t.utils.ConfigurableFactoryHelper                                adding for classes with a private constructor and a static getInstance method
+  . improvement b.e.t.utils.ConnectorCryptoUtils                                    adding digest calculator based on the JCE standard 
+  . improvement    b.e.t.utils.ConnectorIOUtils                                        correctly closing opened streams, adding flag to bootstrap config when loading a resources
+  . improvement b.e.t.utils.ConnectorXMLUtils                                        every method is now supporting JAXB classes that are annotated with @XMLRootElement (deprecating NoRootElementRequired methods)
+  . improvement b.e.t.utils.KeyStoreManager                                            using cryptolib v2 implementation
+  . improvement b.e.t.utils.MarshallHelper                                            every method is now supporting JAXB classes that are annotated with @XMLRootElement (deprecating NoRootElementRequired methods)
+  . improvement b.e.t.validator.impl.TimeStampValidatorFactory                        code cleanup (remove unused logging)
+  . improvement b.e.t.validator.impl.TimeStampValidatorImpl                            using ConnectorCryptoUtils for Digest calculation, improve use of Bouncycastle (deprecated methods are not longer used)
+  . improvement b.e.t.ws.impl.AbstractWsSender                                        adding connection timeout support
+                                                                                                                                                                          
+  
+3.3.0 FINAL release
+  . no changes
+  
+  
+3.3.0-beta-3 release
+  . bug-fix        b.e.t.ws.domain.GenericResponse                                        Method asObject(T) works now with SOAP with attachements
+  . improvement b.e.t.ws.domain.GenericRequest                                        adding ConnectionTimeOutHandler, LoggingHandler as default handlers.
+  . improvement    b.e.t.utils.IdentifierType                                            Adding EHP as identifierType, some minor internal refactoring
+  . improvement b.e.t.config.impl.ConfigurationImpl                                    minor refactoring cleanup code (using ConfigurableFactoryHelper)
+  . improvement b.e.t.handler.AbstractXWSSSecurityHandler                            Improved errorhandling for beter support.
+  . improvement b.e.t.handler.ConnectionTimeOutHandler                                only adding property on outgoing message
+  . improvement b.e.t.handler.HarFileHandler                                        Changed default directory to system temp file 
+  . improvement b.e.t.handler.LoggingHandler                                        Removed MIMEparts from logging in case of SoapWithAttachements.
+  . improvement b.e.t.ws.impl.AbstractWsSender                                        Improved errorhandling for beter support.
+  . improvement b.e.t.service.etee.impl.ConnectorRevocationStatusChecker            refactoring using ConnectorCRLRevocationStatusChecker and ConnectorOCSPRevocationStatusChecker for determination if certificate is revoked.
+  . improvement b.e.t.service.etee.CryptoFactory                                    Adding new method to obtain an Crypto based on the session.
+  . improvement b.e.t.session.AbstractSessionServiceFactory                            internal cleanup of code, adding new method for getService and set deprecated old ones
+  . improvement b.e.t.beid.BeIDCardFactory                                            refactoring using ConfigurableFactoryHelper instead of custom implementation.
+  . improvement b.e.t.config.ConfigFactory                                            adding new method to obtain the ConfigValidator with expected properties
+  . improvement b.e.t.utils.ConnectorIOUtils                                        adding new method to close silently a stream.
+  . improvement b.e.t.validator.impl.TimeStampValidatorFactory                        adding support for ConfigurableImplementation
+  . adding        b.e.t.service.etee.impl.ConnectorCRLRevocationStatusChecker            Implementation of a CRL based RevocationStatusChecker (also support large CRL files)
+  . adding        b.e.t.service.etee.impl.ConnectorOCSPRevocationStatusChecker        Implementation of a OCSP based RevocationStatusChecker
+  . adding        b.e.t.service.etee.impl.ConnectorMockRevocationStatusChecker        Implementation of a MOCK RevocationStatusChecker (no real checks are done)
+  . adding         b.e.t.service.etee.impl.CryptoImpl                                    Cleanup errorhandeling, Constructor with params is deprecated
+  . adding         b.e.t.utils.impl.JaxbContextFactory                                    Adding support for array of classes, Context is now created on package level. 
+                                                                                      If you added manualy @RootElement annotated classes a jaxb.index file containing the name of the class MUST be added
+  
+    
+3.3.0-beta-2 release
+  . improvement    b.e.t.utils.ConnectorIOUtils                                        changed compressing with deflate                                                 
+                                                                                         now uses slightly different algorithm to be compatible with mycarenet : using Default_compression level with wrapping
+  . added        b.e.t.utils.ConnectorCryptoUtils                                    Methods added for generating a symmectric key.                                                                                 
+  . added        b.e.t.service.etee.CryptoFactory                                    adding a factory to obtain the Crypto Implementation     
+  . improvement    b.e.t.service.etee.impl.CryptoImpl                                    adding default constructor and init method used by the CryptoFactory                                                                                          
+  . improvement b.e.t.service.etee.impl.ConnectorRevocationStatusChecker            remove SecrurityProvider when calculating the digest.                                    
+  . improvement b.e.t.service.kgss.builders.impl.KgssMessageBuilderImpl                minor refactoring using CryptoFactory in stead direct CryptoImpl
+  . added        b.e.t.service.sts.security.Credential                                adding new method to obtain the keystore used by the Credential
+  . improvement b.e.t.service.sts.security.impl.BeIDCredential                        changed getKeyStore from private to public
+                                                                                      changed EID_AUTH_ALIAS from authentication to Authentication
+                                                                                      changed EID_SIGN_ALIAS from signature to Signature
+                                                                                      repaired broken method getCertificateChain (reason wrong aliases are used)
+  . improvement b.e.t.service.sts.security.impl.KeyStoreCredential                    adding new method getKeystore
+  . improvement b.e.t.service.sts.security.impl.SAMLSenderVouchesCredential            adding new method getKeystore which throws UnsupportedOperationException
+  . improvement b.e.t.service.sts.security.impl.SAMLTokenImpl                        adding new method getKeystore which throws UnsupportedOperationException
+  . improvement b.e.t.service.sts.security.impl.beid.BeIDKeyStoreAdaptor            adding new property to (des)activate AutoRecovery. Default is true.
+                                                                                      adding new property to (des)activate logoff. Default is false.
+                                                                                      adding new property to (des)activate CardReaderStickiness. Default is false.
+                                                                                     minor refactoring in order to trigger No Card Found earlier in the process.
+  . improvement b.e.t.service.kgss.builders.impl.KgssMessageBuilderImpl                minor refactoring using CryptoFactory in stead of CryptoImpl
+                                                                                      minor refactoring using ConnectorCryptoUtils in stead of inline generate Key code
+  . improvement b.e.t.session.AbstractSessionFactory                                minor refactoring using CryptoFactory in stead of CryptoImpl
+  . improvement b.e.t.session.impl.SessionItemImpl                                    minor refactoring using CryptoFactory in stead of CryptoImpl
+  . bug-fix        b.e.t.session.impl.SessionManagerImpl                                decryption key of hok keystore are also loaded with loadSession()
+  . added        b.e.t.service.keydepot.KeyDepotManagerFactory                        adding new factory to obtain the KeyDepotManager
+  . improvement b.e.t.service.keydepot.impl.KeyDepotManagerImpl                        adding session cache for the ETK of the HolderOfKey and the ETK used for Encryption
+            
+ 
+3.3.0-beta-1 release
+ . improvement                                                                      adding support for eid only session
+ . improvement                                                                        adding the posibility to specify another keystore for identification and holder of key
+ . improvement                                                                      Generic Sender is now supporting Xml Binary Optimazation (xop) and SOAP with Attachments (swa)
+ . improvement                                                                      cleanup classpath to reduce fingerprint (remove opensaml)
+ . bug-fix                                                                          IOUtils.compress is using GZIP and deflate
+ . improvement                                                                      cleanup classpath to reduce fingerprint (remove opensaml)
+    . upgrade                                                                         XmlSec 1.5   (for loading this version activate ConfigurationModuleXmlSec)
+    . upgrade                                                                         Apache Commons Lang v2.6
+    . upgrade                                                                          Commons eID v0.5.0
+    . adding                                                                          Apache Commons IO utils v2.4
+    . adding                                                                          Apache Commons Compress v1.5
+    . adding                                                                          Dozer v5.4.0
+    . remove                                                                          Opensaml
+
+
+3.2.0 beta release
+ . improvement   architecture changes                                               new IKVM version (7.4.4981 ehealth edition)
+ . improvement                                                                      generated DLL are stronged typed (needed for COM interface)
+ . improvement                                                                      no fat dll is generated but serveral dll easier for third parties to depends on the ehealth connector.
+ . improvement                                                                      refactoring generic sender in order to provide a more open and flexible implementation
+ . improvement  be.ehealth.technicalconnector.handler.SoapActionHandler             Handler that adds the soapaction to the HTTP request            
+ . improvement  be.ehealth.technicalconnector.handler.IncomingXWSSSecurityHandler   Handler that handles the incoming security handler (see javadoc for configuration details)
+ . improvement  be.ehealth.technicalconnector.handler.HarFileHandler                Handler that writes the in and out messages in a HAR file.            
+ . improvement  be.ehealth.technicalconnector.handler.WsAddressingHandlerV200508    Handler that adds the WsAddressing Headers to the outgoing messages.
+ . improvement  be.ehealth.technicalconnector.handler.ConnectionTimeOutHandler      Handler that you can use to specify the connection time-outs.
+ . improvement  be.ehealth.technicalconnector.handler.SOAPHeaderLoggerHandler       Handler that logs the SOAPHeaders in the log file. 
+ . improvement  be.ehealth.technicalconnector.utils.                                adding various utility methods
+ . bug-fix                                                                          The original unseal exception is added in the exception when there is a decrypter error.
+ . bug-fix                                                                          adding new EncryptionToken domain object in order to hide the eHealth ETEE classes.
+ . improvement                                                                      removed Thread.currentThread().setContextClassLoader(getClass().getClassLoader()) : now this is done in a module configured in property file for .net implementations
+
+                                                                                                           
+3.1.0 beta release
+ . improvement   *.properties                                                       removed unused property timestamp.signature.keystore.type from property file and code
+ . improvement   *.properties                                                       added property to set own implementation of beid card gui : beidcardgui.class
+ . improvement   truststore.jks                                                     updated certificate for integration STS
+ . improvement   be.ehealth.technicalconnector.service.ws.*                         StsService is now created with a configurable factory
+ . improvement                                                                      the gui to ask for the pincode is now created with a configurable Factory. see javadoc BeIDConnectorGuiFactory
+ . improvement                                                                      renamed IOUtils to ConnectorIoUtils to prevent nameconflicts with .NET code
+ . bug-fix                                                                          multiple nihii numbers in token are now allowed
+ . improvement                                                                      when a SOA error occurs the thrown exception is now a SoaErrorException which provides access to the returned jaxb object and the error
+ . improvement                                                                      when a configuration module has an invalid config , it can now throw an exception
+ . improvement                                                                      xml dates : we now accept all valid date formats for xs:date , but prints date ( without time ) without timezone 
+ . bug-fix                                                                          fix in xsd : kmehrMessageType was defined twice
+ . bug-fix                                                                          in SamlHelper : now ignores namespaces when retrieving properties ( needed after change in xml sts )
+ . adding                                                                           added utility method to validate timestamp ( TimeStampValidator ) and new InvalidTimeStampException which extends TechnicalConnectorException
+ . change        be.ehealth.technicalconnector.utils.*                              Crypto, RevocationFactory have been moved into be.ehealth.technicalconnector.service.etee
+ . adding                                                                           ConfigurationModuleSSLVerifier : new ConfigurationModule to bypass SSL
+ . adding        b.e.t.service.sts.security.impl.beid.impl.BeIDCardUI               new PIN pad GUI in which you can use your numpad directly to enter your PIN code in .NET too (property beidcardgui.class)
+ . improvement                                                                      commons-eid version upgrade to 0.4.0
+ . change                                                                           the method isValid() on ConfigValidator can now throw a TechnicalConnectorException if there are errors reading the property file.
+ 
+ 3.0.0 beta release
+ . improvement   architecture changes                                               change object creation is now done with factories, and its possible to provide custom implementation ( which should implement the required interface )                            .
+                                                                                    remove XSD and WSDL as external dependency. 
+ . improvement   be.ehealth.technicalconnector.beid.*                               adding some helper classes to read the content of the eID (using Fedict commons-eid lib)
+ . improvement   be.ehealth.technicalconnector.config.*                             adding framework to validate if the required properties are present in the configuration file
+                                                                                    adding the possibility to load on start up some configuration modules (see information in properties file for more info)
+ . improvement   be.ehealth.technicalconnector.exception.*                          refactoring the way of creating exception (removed ExceptionFactory)
+ . adding        be.ehealth.technicalconnector.idgeneration.*                       service that provides an unique id for the moment only an id based on DateTime is implemented.
+ . adding        be.ehealth.technicalconnector.service.sts.*                        adding support for the STS SAML Sender-Vouches profile             
+ . adding        be.ehealth.technicalconnector.service.sts.security.*               framework to work with eID based on the PKCS11 or PCSC technology (using Fedict commons-eid lib)                
+ . adding        be.ehealth.technicalconnector.session.*                            framework for creating and maintaining a session
+ . adding        be.ehealth.technicalconnector.utils.DateUtils                      Utility class to facilitate the use of joda time
+ . improvement   be.ehealth.technicalconnector.utils.IOUtils                        Utility class to facilitate the IO operations (some methods are added for the .NET support)
+ 
+
+2.0.7 FINAL release
+ . bug-fix      be.ehealth.technicalconnector.security.EIDReader                    remove nullpointer when no card is inserted
+ . bug-fix      be.ehealth.technicalconnector.utils.MarshallerHelper                adding property that default charset is UTF-8   
+
+2.0.5 FINAL release
+ . bug-fix  be.ehealth.businessconnector.ehboxV2.builders.SendMessageBuilder        remove nullpointer when no message doesn't contains freeText
+ . KNOWN ISSUES/LIMITATIONS
+    . SessionManagment.createSession only works on a 32-bit JVM (1.6.0 or higher). The 64-bit JVM doesn't contains sun.security.pkcs11.SunPKCS11 class.
+    
+2.0.4 TEMP release
+ . KNOWN ISSUES/LIMITATIONS
+    . SessionManagment.createSession only works on a 32-bit JVM (1.6.0 or higher). The 64-bit JVM doesn't contains sun.security.pkcs11.SunPKCS11 class.
+  
+2.0.3 TEMP release
+ . bug-fix      AuthProviderFactory                                                malformed classname 
+
+2.0.2 TEMP release
+ . improvement    IOUtils                                                          refactoring  of getResource* methods
+ . improvement    CertificateParser                                                use of ldapname and not own certificate parser
+ . improvement    ExceptionFactory                                                 remove BUNDLE field for creating error messages
+ . adding                                                                          runtime dependencies (XercesImpl and serializer)
+
+2.0.0 FINAL release
+ . adding errorCollector for XSD validation errors.
+
+2.0-beta3
+ . adding proxy support through properties
+ . adding logging support through properties
+ . bug-fix generic sender (avoid NAMESPACE_ERR when root element contains namespace prefix)
+ . remove test specific properties from be.ehealth.technicalconnector.properties and 
+    create new properties file (be.ehealth.technicalconnector.properties) with the test properties
+
+2.0-beta2
+ . adding SOAPaction parameter in GenericWsSender
+
+2.0-beta
+ . Updated binding library
+    /!\  It is not possible anymore to set a list directly by his direct setter. For example object.setList(List<?>)
+        This is replaced by object.getList().addAll(List<?>)
+ . CodageService is deprecated
+ . KgssIdentifierType is deprecated
+ . Integrating the Seals Service (evolution of the CodageService)
+ . Refactoring externalisation of config file: Config.get(configLocation) is deprecated.
+       This is replaced by Config.set(configLocation).
+ . Security configuration is integrated in the libary.
+ . AbstractConfiguration.getMatchingProperties(String) throws an IOException
+ . Removed public constructor for ConnectorException and TechnicalConnectorException. Every Exception is created by the ExceptionFactory.
+ . Minor refactoring (cleaner code base) 
+
+1.0.0 FINAL release
+ . externalisation of config file
+ . several performance fixes
+
+1.0-beta2
+ . bugfixing UTF-8 support 
+ . several minor fixes for clear error messages 
+
+1.0-beta
+ . initial version

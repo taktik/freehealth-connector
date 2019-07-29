@@ -15,12 +15,12 @@ import org.taktik.connector.business.domain.Error
 class TherapeuticLinkMessage : Serializable {
     var isComplete: Boolean = false
     var errors: List<Error> = ArrayList()
-    var therapeuticLink: TherapeuticLink? = null
+    var therapeuticLinks: List<TherapeuticLink> = ArrayList()
 
     constructor()
 
-    constructor(therapeuticLink: TherapeuticLink) {
-        this.therapeuticLink = therapeuticLink
+    constructor(therapeuticLinks: List<TherapeuticLink>) {
+        this.therapeuticLinks = therapeuticLinks
         this.isComplete = true
     }
 }

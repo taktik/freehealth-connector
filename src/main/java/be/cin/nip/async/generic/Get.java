@@ -10,31 +10,35 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
-   name = "",
-   propOrder = {"origin", "queryParameters", "msgQuery", "tAckQuery"}
+        name = "",
+        propOrder = {"origin", "replyToEtk", "queryParameters", "msgQuery", "tAckQuery"}
 )
 @XmlRootElement(
-   name = "get"
+        name = "get"
 )
 public class Get implements Serializable {
    private static final long serialVersionUID = 1L;
    @XmlElement(
-      name = "Origin",
-      required = true
+           name = "Origin",
+           required = true
    )
    protected OrigineType origin;
    @XmlElement(
-      name = "QueryParameters"
+           name = "Reply-to-etk"
+   )
+   protected byte[] replyToEtk;
+   @XmlElement(
+           name = "QueryParameters"
    )
    protected QueryParameters queryParameters;
    @XmlElement(
-      name = "MsgQuery",
-      required = true
+           name = "MsgQuery",
+           required = true
    )
    protected MsgQuery msgQuery;
    @XmlElement(
-      name = "TAckQuery",
-      required = true
+           name = "TAckQuery",
+           required = true
    )
    protected Query tAckQuery;
 
@@ -44,6 +48,14 @@ public class Get implements Serializable {
 
    public void setOrigin(OrigineType value) {
       this.origin = value;
+   }
+
+   public byte[] getReplyToEtk() {
+      return this.replyToEtk;
+   }
+
+   public void setReplyToEtk(byte[] value) {
+      this.replyToEtk = value;
    }
 
    public QueryParameters getQueryParameters() {

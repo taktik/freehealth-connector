@@ -68,6 +68,7 @@ import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.DmgService
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3._2005._05.xmlmime.Base64Binary
@@ -120,7 +121,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                                ): DmgRegistration {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for GMD operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
 
@@ -459,7 +460,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         assert(patientSsin != null || oa != null && regNrWithMut != null)
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for GMD operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
 
@@ -662,7 +663,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         assert(patientSsin != null || oa != null && regNrWithMut != null)
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for DMG operations")
+                ?: throw MissingTokenException("Cannot obtain token for DMG operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
 
@@ -828,7 +829,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         }
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for GMD operations")
 
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
         val confirm =
@@ -858,7 +859,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         }
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for GMD operations")
 
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
         val confirm =
@@ -884,7 +885,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                                ): DmgsList {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for GMD operations")
 
         val getHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
             messageID = URI(IdGeneratorFactory.getIdGenerator("uuid").generateId())
@@ -1046,7 +1047,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                                     ): GenAsyncResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+                ?: throw MissingTokenException("Cannot obtain token for GMD operations")
 
         val istest = config.getProperty("endpoint.dmg.notification.v1").contains("-acpt")
         val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)

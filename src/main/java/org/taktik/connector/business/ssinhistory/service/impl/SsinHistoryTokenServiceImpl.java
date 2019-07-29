@@ -41,9 +41,9 @@ public class SsinHistoryTokenServiceImpl implements SsinHistoryTokenService {
       try {
          this.sessionValidator.validateToken(token);
          GenericRequest service = TokenServiceFactory.getService(token);
-         service.setPayload((Object)request);
-         service.setSoapAction((String)soapActions.get(clazz));
-         T response = (T) ServiceFactory.getGenericWsSender().send(service).asObject(clazz);
+         service.setPayload(request);
+         service.setSoapAction(soapActions.get(clazz));
+         T response = ServiceFactory.getGenericWsSender().send(service).asObject(clazz);
          this.ehealthReplyValidator.validateReplyStatus(response);
          return response;
       } catch (SOAPException var6) {

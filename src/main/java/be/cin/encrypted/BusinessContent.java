@@ -29,6 +29,14 @@ public class BusinessContent implements Serializable {
       name = "ID"
    )
    protected String id;
+   @XmlAttribute(
+           name = "ContentType"
+   )
+   protected String contentType;
+   @XmlAttribute(
+           name = "ContentEncoding"
+   )
+   protected String contentEncoding;
 
    public byte[] getValue() {
       return this.value;
@@ -44,5 +52,21 @@ public class BusinessContent implements Serializable {
 
    public void setId(String value) {
       this.id = value;
+   }
+
+   public String getContentType() {
+      return this.contentType == null ? "application/octet-stream" : this.contentType;
+   }
+
+   public void setContentType(String value) {
+      this.contentType = value;
+   }
+
+   public String getContentEncoding() {
+      return this.contentEncoding == null ? "none" : this.contentEncoding;
+   }
+
+   public void setContentEncoding(String value) {
+      this.contentEncoding = value;
    }
 }

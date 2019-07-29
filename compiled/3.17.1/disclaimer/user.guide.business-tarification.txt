@@ -1,0 +1,73 @@
+example of code usage : 
+
+try {
+            //each project is identified 
+            final String projectName = "mcn.tarification";
+            // Instantiate builders
+            CommonBuilder mycarenetCommonBuilder = be.ehealth.business.mycarenetdomaincommons.builders.RequestBuilderFactory.getCommonBuilder(projectName);
+
+            String inputReference = IdGeneratorFactory.getIdGenerator("xsid").generateId(); // generate a unique identifier to identify your
+                                                                                            // message ( inputReference
+            //
+
+            // filling this request is out of scope of the connector, but some utility methods are available in
+            // be.ehealth.business.kmehrcommons.HcPartyUtil.
+            RetrieveTransactionRequest request = new RetrieveTransactionRequest();
+            // ...
+            request.getRequest().getAuthor().getHcparties().addAll(HcPartyUtil.createAuthorHcParties(projectName));
+            request.getSelect().getTransaction().getAuthor().getHcparties().addAll(HcPartyUtil.createAuthorHcParties(projectName));
+            String kmehrIdString = HcPartyUtil.createKmehrIdString(projectName, inputReference); // generates a kmehr id with the id of the
+                                                                                                 // author as first part , and the
+                                                                                                 // inputReference as second part , as
+                                                                                                 // required in spec
+            request.getRequest().getId().setValue(kmehrIdString); // just example , you should probably create the full id first
+            // ...
+
+
+            // the only input for the detail that is needed is the bytearray containing the businnes xml.
+            byte[] businessContent = ConnectorXmlUtils.toByteArray(request);
+            RequestBuilder requestBuilder = TarificationRequestBuilderFactory.getRequestObjectBuilder();
+            // there are 2 ways to create the request
+            // FIRST : with minimal input , only a minimal input is needed.
+            // create routing element : this will determine where to send the message , ( see documentation mycarenet and javadoc )
+            // Retrieve patient info from eid card, or create the Patient object in your own code
+            Patient patient = be.ehealth.business.common.util.EidUtils.readFromEidCard();
+            DateTime referenceDate = new DateTime(); // create the reference date for the request ( see documentation mycarenet )
+            Routing routing = mycarenetCommonBuilder.createRouting(patient, referenceDate); // more info :see javadoc
+            TarificationConsultationRequest consultationRequest = requestBuilder.buildConsultationRequest(routing, businessContent, inputReference);
+            TarificationSessionService service = TarificationSessionServiceFactory.getTarificationSession();
+            TarificationConsultationResponse consultTarificationResponse = service.consultTarification(consultationRequest);
+            // other option :
+
+            // there are utility methods , preconfigured for tarification to help extract the business response
+            BlobType detail = consultTarificationResponse.getReturn().getDetail();
+            // the blobtype can be mapped to a common domain class for the connector
+            Blob blob = SendRequestMapper.mapBlobTypeToBlob(detail);
+            // you can check the validity of the blob and retrieve the content ( deflated and decoded if needed )
+            byte[] content = RequestBuilderFactory.getBlobBuilder("mcn.tarification").checkAndRetrieveContent(blob);
+            // the content ( as bytearray ) can be converted to the jaxb object with a MarshallerHelper configured for that class
+            MarshallerHelper<RetrieveTransactionResponse, RetrieveTransactionResponse> helper = new MarshallerHelper<RetrieveTransactionResponse, RetrieveTransactionResponse>(RetrieveTransactionResponse.class, RetrieveTransactionResponse.class);
+            RetrieveTransactionResponse commonInputResponse = helper.toObject(content);
+            // this helper class has also some other useFull methods ( toString , ... )
+
+            // tarification contains a ResponseHelper class that will validate the xml of the response.
+            ResponseHelper.validateResponse(commonInputResponse);
+
+            // handle the potential errors
+            boolean isComplete = commonInputResponse.getAcknowledge().isIscomplete();
+            System.out.print("isComplete : " + isComplete);
+            List<ErrorMyCarenetType> errors = commonInputResponse.getAcknowledge().getErrors();
+            for (ErrorMyCarenetType errorMyCarenetType : errors) {
+                // show error to user??? the meaning of the error codes can be found in the mycarenet documentation
+                StringBuffer errorCodes = new StringBuffer();
+                for (CDERRORMYCARENET errorCode : errorMyCarenetType.getCds()) {
+                    errorCodes.append(" ").append(errorCode.getValue());
+                }
+                System.out.println("error : codes :" + errorCodes.toString() + ", description : " + errorMyCarenetType.getDescription().getValue());
+            }
+            Kmehrmessage kmehrmessage = commonInputResponse.getKmehrmessage();
+            // handle kmerhMessage
+
+        } catch (ConnectorException e) {
+            // handle these exceptions
+        }

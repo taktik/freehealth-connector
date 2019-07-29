@@ -1,0 +1,7 @@
+<xsd:schema xmlns:DT="http://www.ehealth.fgov.be/standards/kmehr/dt/v1" xmlns="http://www.ehealth.fgov.be/standards/kmehr/id/v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://www.ehealth.fgov.be/standards/kmehr/id/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.28">
+  <xsd:include schemaLocation="id-1_28.xsd" />
+
+  <xsd:element name="ID-KMEHR" type="ID-KMEHR" />
+
+</xsd:schema>
