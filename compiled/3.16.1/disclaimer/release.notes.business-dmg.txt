@@ -1,0 +1,105 @@
+**************************************************
+* eHealth Business DMG RELEASE NOTES             *
+**************************************************
+3.13.1 release (july 2017)
+  . improvement               moved some dependencies from mycarenetcommons to mycarenetdomaincommons
+                              Were modified as a result:
+                              dmg/doc/disclaimer/release.notes.business-dmg.txt
+                              dmg/src/main/java/be/ehealth/businessconnector/dmg/builders/RequestObjectBuilder.java
+                              dmg/src/main/java/be/ehealth/businessconnector/dmg/builders/impl/FillSendRequestParameter.java
+                              dmg/src/main/java/be/ehealth/businessconnector/dmg/builders/impl/RequestObjectBuilderImpl.java
+                              dmg/src/main/java/be/ehealth/businessconnector/dmg/builders/impl/ResponseObjectBuilderImpl.java
+                              dmg/src/main/java/be/ehealth/businessconnector/dmg/mappers/BlobMapper.java
+                              dmg/src/main/java/be/ehealth/businessconnector/dmg/mappers/CommonInputMapper.java
+                              dmg/src/main/java/be/ehealth/businessconnector/dmg/mappers/RequestObjectMapper.java
+                              dmg/src/main/java/be/ehealth/businessconnector/dmg/mappers/RoutingMapper.java
+                              dmg/src/main/resources/dozer/dmg-commoninput.xml
+                              dmg/src/main/resources/dozer/dmg-routing.xml
+                              dmg/src/test/java/be/ehealth/businessconnector/dmg/builders/CommonBuilderIntegrationTest.java
+                              dmg/src/test/java/be/ehealth/businessconnector/dmg/mappers/CommonInputMapperTest.java
+                              dmg/src/test/java/be/ehealth/businessconnector/dmg/mappers/RoutingMapperTest.java
+                              dmg/src/test/java/be/ehealth/businessconnector/dmg/session/DmgAsyncIntegrationTest.java
+                              dmg/src/test/java/be/ehealth/businessconnector/dmg/session/DmgConsultationIntegrationTest.java
+                              dmg/src/test/java/be/ehealth/businessconnector/dmg/util/DmgTestUtils.java
+                              dmg/src/test/net/be/ehealth/businessconnector/dmg/builders/CommonBuilderIntegrationTest.cs
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . improvement               using new McnPackageInfo class and corresponding utility methods
+  . improvement               now using HandlerChainUtil.buildChainWithValidator in ServiceFactory
+  . improvement               replaced deprecated methods of ConfigurableFactoryHelper and XadesOption 
+  . improvement               now using correct ServiceFactory method for async service instead of old deprecated constructor 
+  . improvement               Default values added for the endpoint and the input validation
+
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . update                  using technical connector 3.11.0
+
+3.10.4 release (september 2016)
+  . using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  . internal release
+  
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+  .   change                  added bootstrapping
+  .   change                  some minor checkstyle fixes
+  .   bugfix                  now always supports access to response object , even when its signed with expired certificate
+  .   bugfix                  issue with certificate checker fixed
+  .   change                  unit test added : creating dmg for doctor by intern  
+
+  3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)  
+3.4.0-beta-10 release
+  .   change      b.e.b.dmg.builders.impl.*Impl, b.e.b.dmg.mappers.*      interface adaptation : moved Blob mapper methods to its own class , deprecated RequestObjectBuilder 
+
+3.4.0-beta-9 release
+  .   change                  new kmehr version 1.14
+  .   using latest version of technical connector 3.4.0-beta-9 
+  
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+  
+3.4.0-beta-7 release
+  . using latest version of technical connector 3.4.0-beta-7
+	
+3.4.0 beta-6 release
+  . using latest version of technical connector 3.4.0-beta-6
+  
+3.4.0 beta-5 release
+ .    change                    using BlobBuilderFactory instead of RequestBuilderFactory to create BlobBuilder ( no impact on usage) 
+ .    change                    DmgServiceImplementationFactory is not providing Crypto's anymore ( no impact on usage)
+ .    change                    DmgReferences now registers and uses KmehrIdGenerator to create id ( no behaviour change, generates same type of id as before)
+ .    change                    now using factory to create GenericWsSender instead of constructor 
+ .    change                    refactored handling of xades value in requestObjectBuilder
+ .    improvement               replaced new GenericWsSenderImpl() with factory method in service
+ .    improvement               renamed single string variable references to referenceId 
+ 
+3.4.0-beta-4 release
+ . change                           DmgReferences is now Serializable and has equals and hashcode method
+ . change                           updated service to use new code to configure HandlerChain
+ 
+
+3.4.0 beta release
+ . change                            refactored calling of ConfigFactory
+ . improvement                        refactored the UUID factory to use an enum instead of a string value
+ . change                            patientInfo and referenceDate are now required parameters when building request
+ . change                            Blob is now mapped with generic mapper from business mycarenet commons project be.ehealth.business.SendRequestMapper.mapToBlob(be.cin.types.v1.Blob blob)
+ 
+
+3.3.0 beta release
+ .    change                            extracted commons package into seperate project : added dependency to this project
+ .    improvement                        logging standardized on sl4j 
+ .    improvement/change                now uses standard configuration for mycarenet CommonInput see javadoc be.ehealth.business.CommonBuilder for config parameters
+ 

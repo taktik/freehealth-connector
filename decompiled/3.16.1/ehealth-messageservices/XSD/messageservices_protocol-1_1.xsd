@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- CVS Version 1.13 -->
+<!-- edited with XMLSpy v2012 rel. 2 sp1 (x64) (http://www.altova.com) by smals (SMALS-MVM ASBL/VZW) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ehealth.fgov.be/messageservices/protocol/v1" xmlns:core="http://www.ehealth.fgov.be/messageservices/core/v1" targetNamespace="http://www.ehealth.fgov.be/messageservices/protocol/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
+	<xsd:import namespace="http://www.ehealth.fgov.be/messageservices/core/v1" schemaLocation="messageservices_core-1_1.xsd"/>
+	<!-- SendTransaction Service -->
+	<xsd:element name="SendTransactionRequest" type="core:SendTransactionRequestType"/>
+	<xsd:element name="SendTransactionResponse" type="core:SendTransactionResponseType"/>
+	<!-- RetrieveTransaction Service -->
+	<xsd:element name="RetrieveTransactionRequest" type="core:RetrieveTransactionRequestType"/>
+	<xsd:element name="RetrieveTransactionResponse" type="core:RetrieveTransactionResponseType"/>
+</xsd:schema>

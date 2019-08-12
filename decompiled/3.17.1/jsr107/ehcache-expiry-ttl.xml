@@ -1,0 +1,26 @@
+<config
+        xmlns='http://www.ehcache.org/v3'
+        xmlns:jsr107="http://www.ehcache.org/v3/jsr107">
+
+    <service>
+        <jsr107:defaults default-template="byValueTemplate" enable-management="false" enable-statistics="true"/>
+    </service>
+
+    <persistence directory="C:\\Users\\smals-bed/cache-data-2"/>
+
+    <cache-template name="byValueTemplate">
+        <key-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.String</key-type>
+        <value-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.String</value-type>
+        <expiry>
+            <ttl unit="millis">${expiry.ttl}</ttl>
+            <none/>
+        </expiry>
+
+        <resources>
+            <disk unit="MB" persistent="true">100</disk>
+        </resources>
+
+    </cache-template>
+
+
+</config>

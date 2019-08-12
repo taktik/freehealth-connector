@@ -52,7 +52,7 @@ final class FolderEncryptor {
    }
 
    private static String serializeFolders(NodeList folderNodes) throws TransformerException {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       TransformerFactory tf = TransformerFactory.newInstance();
       Transformer serializer = tf.newTransformer();
       serializer.setOutputProperty("omit-xml-declaration", "yes");

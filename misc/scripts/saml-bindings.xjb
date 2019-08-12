@@ -1,0 +1,30 @@
+<jxb:bindings version="2.1"
+              xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+              xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+              jxb:extensionBindingPrefixes="xjc">
+    <jxb:globalBindings>
+        <xjc:simple/>
+        <xjc:serializable uid="2"/>
+    </jxb:globalBindings>
+
+
+    <jxb:bindings schemaLocation="./SAMLwithCINextensions/Extensions.xsd">
+        <jxb:schemaBindings>
+            <jxb:package name="org.taktik.icure.cin.saml.extensions"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+
+    <jxb:bindings schemaLocation="./SAMLwithCINextensions/xenc-schema.xsd">
+        <jxb:schemaBindings>
+            <jxb:package name="org.taktik.icure.cin.saml.org.w3._2000._09.xmldsig_"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+
+    <jxb:bindings schemaLocation="./SAMLwithCINextensions/xenc-schema.xsd">
+        <jxb:schemaBindings>
+            <jxb:package name="org.taktik.icure.cin.saml.org.w3._2000._09.xmldsig_"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+
+</jxb:bindings>

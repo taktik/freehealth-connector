@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:genericinsurability:core:v1" targetNamespace="urn:be:fgov:ehealth:genericinsurability:core:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title:   XSD MyCarenet genins
+      Specification-Version:  1.1
+      Implementation-Version: 1.1.0
+      Build-Time:             20140717-1037 
+    </xs:appinfo>
+  </xs:annotation>
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd"/>
+	<!-- Core types -->
+	<!-- SingleInsurabilityRequestType -->
+	<xs:complexType name="SingleInsurabilityRequestType">
+		<xs:sequence>
+			<xs:element name="CareReceiverId" type="CareReceiverIdType">
+				<xs:annotation>
+					<xs:documentation>The identification of the care receiver.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InsurabilityRequestDetail" type="InsurabilityRequestDetailType">
+				<xs:annotation>
+					<xs:documentation>The date of the request</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attributeGroup ref="MessageHeader"/>
+	</xs:complexType>
+	<!-- CareReceiverIdType -->
+	<xs:complexType name="CareReceiverIdType">
+		<xs:sequence>
+			<xs:element name="Inss" type="InssType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The INSS number of the care receiver, optional when RegNrWithMut and Mutuality are provided. This is zone 300 in the flat file version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RegNrWithMut" type="RegNrWithMutType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The registration number of the care receiver with the insurance organisation. Optional if the INSS is provided. This is zone 302 in the flat file version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Mutuality" type="MutualityType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The insurance organisation code (single character). Optional if the INSS is provided. This is zone 301 in the flat file version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="InssType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{11}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MutualityType">
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+			<xs:pattern value="750|999|[1-69][0-9]{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RegNrWithMutType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="13"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- InsurabilityRequestDetailType -->
+	<xs:complexType name="InsurabilityRequestDetailType">
+		<xs:sequence>
+			<xs:element name="InsurabilityRequestType" type="InsurabilityRequestTypeType">
+				<xs:annotation>
+					<xs:documentation>Indication if the request is informational or intended for invoicing. Only informational is supported for the moment. This is zone 303 in the flat file version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Period" type="PeriodType">
+				<xs:annotation>
+					<xs:documentation>The period for which the insurability is requested. The end date is required!</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InsurabilityContactType" type="InsurabilityContactTypeType">
+				<xs:annotation>
+					<xs:documentation>Indication if the request is for ambulatory care or in a day clinic. This is zone 306 in the flat file version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InsurabilityReference" type="InsurabilityReferenceType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Optional reference with the insurablity request detail. Will be returned in the responce, but is not used by the system. This is zone 307 in the flat file version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="InsurabilityRequestTypeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="information"/>
+			<xs:enumeration value="invoicing"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="PeriodType">
+		<xs:sequence>
+			<xs:element name="PeriodStart" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The start date of the period This is zone 304 in the flat file version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PeriodEnd" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The end date of the period. This is zone 305 in the flat file version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="InsurabilityContactTypeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ambulatory_care"/>
+			<xs:enumeration value="hospitalized_for_day"/>
+			<xs:enumeration value="hospitalized_elsewhere"/>
+			<xs:enumeration value="other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="InsurabilityReferenceType">
+		<xs:restriction base="AlphanumericalType">
+			<xs:minLength value="0"/>
+			<xs:maxLength value="25"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AlphanumericalType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9A-ZÖËÜ '\.*+,-/:;=?()\]\[&lt;&gt;]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- SingleInsurabilityResponseType -->
+	<xs:complexType name="SingleInsurabilityResponseType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element name="CareReceiverId" type="CareReceiverIdType">
+						<xs:annotation>
+							<xs:documentation>The identification of the care receiver.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MessageFault" type="MessageFaultType" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Contains the error that occurred and a reference to the field that contains the error</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence>
+					<xs:element name="CareReceiverDetail" type="CareReceiverDetailType">
+						<xs:annotation>
+							<xs:documentation>Some detailed information about the care receiver.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="InsurabilityResponseDetail" type="InsurabilityResponseDetailType"/>
+				</xs:sequence>
+			</xs:choice>
+			<xs:element name="InsurabilityRequestDetail" type="InsurabilityRequestDetailType">
+				<xs:annotation>
+					<xs:documentation>The same data as the request.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attributeGroup ref="MessageHeader"/>
+	</xs:complexType>
+	<!-- MessageFaultType -->
+	<xs:complexType name="MessageFaultType">
+		<xs:sequence>
+			<xs:element name="FaultCode" type="FaultCodeType"/>
+			<xs:element name="FaultSource" type="xs:string"/>
+			<xs:element name="MultiIO" type="MultiIOType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains 2 or 3 IO's that where returned by the membership filter. If only 2 IO's are returned, an additional 0 is added. fi. if 2 and 6 are returned, the value should be 260 This is zone 308 in the flat file version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Message" type="MessageType"/>
+			<xs:element name="Details" type="DetailsType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="FaultCodeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INPUT_ERROR"/>
+			<xs:enumeration value="NO_IO_ERROR"/>
+			<xs:enumeration value="MULTIIO_ERROR"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="MessageType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute ref="xml:lang"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="DetailsType">
+		<xs:sequence>
+			<xs:element name="Detail" type="DetailType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DetailType">
+		<xs:sequence>
+			<xs:element name="DetailCode" type="xs:string"/>
+			<xs:element name="Location" type="xs:string" minOccurs="0"/>
+			<xs:element name="Message" type="MessageType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MultiIOType">
+		<xs:sequence>
+			<xs:element name="IO" type="InsuranceOrgInOneCharType" minOccurs="2" maxOccurs="3"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="InsuranceOrgInOneCharType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="9"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- CareReceiverDetailType -->
+	<xs:complexType name="CareReceiverDetailType">
+		<xs:sequence>
+			<xs:element name="Inss" type="InssType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Optional element that contains the INSS of a care receiver. Only omitted in rare cases (like newborns or foreingers).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FirstName" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The first name of the care receiver if available.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastName" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The last name of the care receiver</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Birthday" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date that the care receiver is born. Only optional in rare cases (e.g. new born, foreigners, ...).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Deceased" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The day the care receiver is deceased. Only provided if when the care receiver is deceased an the decease date is in the requested period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Sex" type="SexType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The sex of the care receiver.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="SexType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="male"/>
+			<xs:enumeration value="female"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- InsurabilityResponseDetailType -->
+	<xs:complexType name="InsurabilityResponseDetailType">
+		<xs:sequence>
+			<xs:element name="GeneralSituation" type="GeneralSituationType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Indicates if there is a specific situation concerning the insurability related to the period of the consultation
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Payment" type="PaymentType">
+				<xs:annotation>
+					<xs:documentation>Some information about the payment</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Hospitalized" type="HospitalizedType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Information about the hospitalized state of a patient. Only provided when the insurability contact type is set to &quot;hospitalized_elsewhere&quot;.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MedicalHouse" type="MedicalHouseType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Some informations about contacts with a medical house (during the requested period).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InsurabilityList" type="InsurabilityListType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>List of insurability information. There can be maximum 5 entries in the list. When there are more, then the list is truncated and that is indicated in the attribute of the element.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GeneralSituationType">
+		<xs:sequence minOccurs="0" maxOccurs="2">
+			<xs:element name="Transfer" type="TransferType"/>
+		</xs:sequence>
+		<xs:attribute name="Event" type="EventType" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="TransferType">
+		<xs:sequence minOccurs="0" maxOccurs="1">
+			<xs:element name="InsuranceOrg" type="InsuranceOrgType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The code of the insurance organisation to/from who the care receivers transfered.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransferDate" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>The date that the transfer took place.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Direction" type="TransferDirectionType" use="required"/>
+	</xs:complexType>
+	<xs:simpleType name="InsuranceOrgType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="000"/>
+			<xs:enumeration value="100"/>
+			<xs:enumeration value="200"/>
+			<xs:enumeration value="300"/>
+			<xs:enumeration value="400"/>
+			<xs:enumeration value="500"/>
+			<xs:enumeration value="600"/>
+			<xs:enumeration value="900"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TransferDirectionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="toOtherIo"/>
+			<xs:enumeration value="fromOtherIo"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EventType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="changeDuring"/>
+			<xs:enumeration value="multiple"/>
+			<xs:enumeration value="closedBefore"/>
+			<xs:enumeration value="startLater"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="PaymentType">
+		<xs:sequence>
+			<xs:element name="PaymentByIo" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>Indicates that the insurance organisation will directy pay the care provider (or not)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaxInvoiced" type="xs:gYear" minOccurs="0" maxOccurs="3">
+				<xs:annotation>
+					<xs:documentation>A list of up to 3 years where the max invoice limit for the care receiver was reached for the requested period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SpecialSocialCategory" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="HospitalizedType">
+		<xs:sequence>
+			<xs:element name="Hospital" type="HospitalType">
+				<xs:annotation>
+					<xs:documentation>The hospital where the care receiver is admitted.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AdmissionDate" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date the care receiver is admitted.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AdmissionService" type="AdmissionServiceType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The services that is provided by the hostital (indicated by the hospital element) to the care receiver.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="HospitalType">
+		<xs:restriction base="xs:string">
+			<xs:length value="12"/>
+			<xs:pattern value="[0-9]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AdmissionServiceType">
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+			<xs:pattern value="[0-9]{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="MedicalHouseType">
+		<xs:sequence>
+			<xs:element name="PeriodStart" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Required. The begin date of the contract with a medical house</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PeriodEnd" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>If present, it is the end date of the contract with a medical house</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Nurse" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>true if the contract with a medical house contains nurse care</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Medical" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>true if the contract with a medical house contains medical care</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Kine" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>true if the contract with a medical house contains kinesitherapy care</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="InsurabilityListType">
+		<xs:sequence>
+			<xs:element name="InsurabilityItem" type="InsurabilityItemType" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>And insurability item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Truncated" type="xs:boolean"/>
+	</xs:complexType>
+	<xs:complexType name="InsurabilityItemType">
+		<xs:sequence>
+			<xs:element name="RegNrWithMut" type="RegNrWithMutType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The registration number of the care receiver with the Mutuality</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Mutuality" type="MutualityType">
+				<xs:annotation>
+					<xs:documentation>The code of the insurance organisation </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Period" type="PeriodType">
+				<xs:annotation>
+					<xs:documentation>The period where the care receiver is covered by the insurance organisation (indicated in the Mutuality element).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CT1" type="CTType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The &quot;code titulaire 1&quot; required for invoicing.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CT2" type="CTType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The &quot;code titulaire 2&quot; required for invoicing.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PaymentApproval" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Element linked to insurablity request of the type &quot;invoicing&quot;. Not supported for the moment, will never be provided.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InsurabilityDate" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>The date of the information.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="CTType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Common types -->
+	<!-- CommonInputType -->
+	<xs:complexType name="CommonInputType">
+		<xs:annotation>
+			<xs:documentation>The "root"-type of the common input element.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Request" type="RequestType">
+				<xs:annotation>
+					<xs:documentation>Generic information about the request itself.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Origin" type="OriginType">
+				<xs:annotation>
+					<xs:documentation>Common input about the origin of the request.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InputReference" type="StringReferenceType" minOccurs="0"/>
+			<xs:element name="NIPReference" type="StringReferenceType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- RequestType -->
+	<xs:complexType name="RequestType">
+		<xs:annotation>
+			<xs:documentation>Information about the request.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="IsTest" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>Indicates if the message is a test message or not.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- OriginType -->
+	<xs:complexType name="OriginType">
+		<xs:annotation>
+			<xs:documentation>Information about the originator of the request.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Package" type="PackageType">
+				<xs:annotation>
+					<xs:documentation>The package that the originator used to send the request.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SiteID" type="ValueRefString" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CareProvider" type="CareProviderType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The care provider for which the request was sent. This is not necessary the party that sent the request, but it can be.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ValueRefString">
+		<xs:annotation>
+			<xs:documentation>Elements of this type do not require any content, instead it is also possible to refer to another element in the same document with the same values. The referencee should specify and id, and the referencer should specify a ref-attribute.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="ValueRef" type="xs:anyURI">
+					<xs:annotation>
+						<xs:documentation>A XPoiter reference to another element with the same type. When this is present, the content of the element should be empty.  MyCareNet will substitute the content of this element by the result of the XPointer. The XPointer should result in a node-set that is compliant with the type of this element. XPointer is a W3C standard that is commonly used to reference other elements.  This is for example used by the XMLDSig standard, although it only requires a sub-section to be implemented. See service catalogue for more information.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="CareProviderType">
+		<xs:annotation>
+			<xs:documentation>Information about a care provider. This is a person or institution that provides health care service to persons.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Nihii" type="NihiiType">
+				<xs:annotation>
+					<xs:documentation>The NIHII (FR:INAMI, NL:RIZIV) number of the care provider. This is always required.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PhysicalPerson" type="IdType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The physical person that is linked to the NIHII number provided. Should only be provided when the NIHII is linked a person. See service catalogue for more details.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Organization" type="IdType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The organization that is linked to the NIHII number provided. Should only be provided when the NIHII is linked an organization. See service catalogue for more details.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IdType">
+		<xs:annotation>
+			<xs:documentation>Enities that have a unique identification have this type. This identification is always issued by an authority. Only one of the child elements is required, the others are prohibited. In other words, this is actualy a xs:-choise, but this does not always translate so well in code. Therefore we decided to make it an sequence with all optional elements.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="AbstractIdType">
+				<xs:sequence>
+					<xs:element name="Nihii" type="NihiiType" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Identification issued by the NIHII. It uniquely specifies a care provider in his role.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Ssin" type="ValueRefString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Identification issued by the National Registry of Belgium. It uniquely specifies a physical person.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Cbe" type="ValueRefString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Identification issued by the CBE. It uniquely specifies an enterprise.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="NihiiType">
+		<xs:annotation>
+			<xs:documentation>The NIHII number with its meta-data.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="SelfRefType">
+				<xs:sequence>
+					<xs:element name="Quality" type="xs:string" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Meta-data that indicates to which type of care provider the NIHII number was assigned too. This element is required and can only be obmitted when the parent element references another element.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Value" type="ValueRefString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>The NIHII number itself. This element is required and can only be obmitted when the parent element references another element.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PackageType">
+		<xs:annotation>
+			<xs:documentation>Information about the software package that is connectedto MyCareNet.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="AbstractIdType">
+				<xs:sequence>
+					<xs:element name="License" type="LicenseType">
+						<xs:annotation>
+							<xs:documentation>Each software package provider receives a license when he is granted access to MyCareNet. The package must provide this license in this element.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AbstractIdType" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Everything that is an entity derives from this type. Enties are object that are distinguishable and have a name. This name isn't nesesary unique.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="SelfRefType">
+				<xs:sequence>
+					<xs:element name="Name" type="ValueRefString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Optional name of entity. If provided it is used in a pure informal way. It will be added to certain logs and might appear on some representations.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SelfRefType" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Elements of this base type do not require any content, instead it is also possible to refer to another element with the same type and same name. The referencee should specify and id, and the referencer should specify a ref-attribute.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="Id" type="xs:ID">
+			<xs:annotation>
+				<xs:documentation>The ID of an element.  Can be used by other elements with the same name and type to reference this element.  An ID should only be unique inside a document, in this case the SOAP message. In other words, each request can reuse the same ID values.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Ref" type="xs:anyURI">
+			<xs:annotation>
+				<xs:documentation> A XPoiter reference to another element with the same name and type. When this is present, the content of the element should be empty. MyCareNet will substitute the this element by the element it references. The XPointer should result in a single element with the same type the this element. See ValueRefString type for more information about XPointer.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="LicenseType">
+		<xs:annotation>
+			<xs:documentation>Information about the license of a package.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Username" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The user name of the license. This is a unique identifier of the package.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Password" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The password of the license. This is required to prove the identify of the package.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- StringReferenceType -->
+	<xs:simpleType name="StringReferenceType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="14"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- RecordCommonInputType -->
+	<xs:complexType name="RecordCommonInputType">
+		<xs:sequence>
+			<xs:element name="InputReference" type="Num14ReferenceType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- Num14ReferenceType -->
+	<xs:simpleType name="Num14ReferenceType">
+		<xs:restriction base="xs:decimal">
+			<xs:minInclusive value="0"/>
+			<xs:maxInclusive value="99999999999999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- CommonOutputType -->
+	<xs:complexType name="CommonOutputType">
+		<xs:annotation>
+			<xs:documentation>The "root"-type of the common output element.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="InputReference" type="StringReferenceType" minOccurs="0"/>
+			<xs:element name="NIPReference" type="StringReferenceType" minOccurs="0"/>
+			<xs:element name="OutputReference" type="StringReferenceType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- RecordCommonOutputType -->
+	<xs:complexType name="RecordCommonOutputType">
+		<xs:sequence>
+			<xs:element name="InputReference" type="Num14ReferenceType" minOccurs="0"/>
+			<xs:element name="OutputReference" type="Num14ReferenceType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- Attribute groups -->
+	<!-- MessageHeader -->
+	<xs:attributeGroup name="MessageHeader">
+		<xs:attribute name="MessageName" type="MessageNameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>The message name. For Insurability, the possible values are 801000, 801000ERR, 801001 and 801900. This is zone 201 in the flat file version.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Version" type="MessageVersionType" use="optional">
+			<xs:annotation>
+				<xs:documentation>The version number of the message. It defines the format of the child elements and should be 2 digits long. First version = 01 It is required. This is zone 201 in the flat file version.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Duplicate" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>A Boolean that indicates if the message is a duplicate. It is required. This is a part of zone 202 in the flat file version.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="TestFlag" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>A Boolean that indicates if the message is a test message. It is required. This is a part of zone 202 in the flat file version.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="SenderReference" type="MessageReferenceType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Contains the message reference of the sender. It is a numeric code of up to 14 characters. It is required. This is zone 204 in the flat file version.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ReceiverReference" type="MessageReferenceType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Should not be provided, only for return messages. This is zone 205 in the flat file version.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Synchronous" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>Determines if the message is received in Synchronous or Asynchronous flow.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:attributeGroup>
+	<xs:simpleType name="MessageNameType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="M801000"/>
+			<xs:enumeration value="M801000ERR"/>
+			<xs:enumeration value="M801001"/>
+			<xs:enumeration value="M801900"/>
+			<xs:enumeration value="M410000"/>
+			<xs:enumeration value="M410001"/>
+			<xs:enumeration value="M410000ERR"/>
+			<xs:enumeration value="M410900"/>
+			<xs:enumeration value="M410908"/>
+			<xs:enumeration value="M410999"/>
+			<xs:enumeration value="M420000"/>
+			<xs:enumeration value="M420001"/>
+			<xs:enumeration value="M420000ERR"/>
+			<xs:enumeration value="M420900"/>
+			<xs:enumeration value="M420999"/>
+			<xs:enumeration value="M430000"/>
+			<xs:enumeration value="M430001"/>
+			<xs:enumeration value="M430000ERR"/>
+			<xs:enumeration value="M891000"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MessageVersionType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MessageReferenceType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{1,14}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

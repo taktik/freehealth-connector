@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:mycarenet:memberdata:protocol:v1"
+           xmlns:protocol="urn:be:fgov:ehealth:mycarenet:commons:protocol:v3"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="urn:be:fgov:ehealth:mycarenet:memberdata:protocol:v1"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified"
+           version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD MyCareNet MemberData
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.0
+ Build-Time: 20180619-1014 
+ </xs:appinfo>
+ </xs:annotation>
+
+    <!-- core elements and types -->
+    <xs:import namespace="urn:be:fgov:ehealth:mycarenet:commons:protocol:v3"
+               schemaLocation="../../ehealth-mycarenetcommons/XSD/mycarenet-commons-protocol-3_0.xsd"/>
+
+    <!--eHealth commons protocol -->
+
+    <!-- We need to redefine a specific data type for member-data, otherwise the Jaxb plugin doesn't generate the Java object for elements MemberDataConsultationRequest and MemberDataConsultationResponse
+    as it consider the objects protocol:SendRequestType that already exists -->
+    <xs:complexType name="SendRequestMemberDataType">
+        <xs:annotation>
+            <xs:documentation>Specific synchronised request type for member-data.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="protocol:SendRequestType">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SendResponseMemberDataType">
+        <xs:annotation>
+            <xs:documentation>Generic synchronised response type. A SendResponseType contains a single Return element.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="protocol:SendResponseType">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!--eHealth commons protocol -->
+    <xs:element name="MemberDataConsultationRequest" type="SendRequestMemberDataType"/>
+    <xs:element name="MemberDataConsultationResponse" type="SendResponseMemberDataType"/>
+</xs:schema>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:addressbook:protocol:v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:addressbook:core:v1" xmlns:cprotocol="urn:be:fgov:ehealth:commons:protocol:v2" xmlns:aa="urn:be:fgov:ehealth:aa:complextype:v1" targetNamespace="urn:be:fgov:ehealth:addressbook:protocol:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD AddressBook
+ Specification-Version: 1.1
+ Implementation-Version: 1.1.1
+ Build-Time: 20160401-1738 
+ </xs:appinfo>
+ </xs:annotation>
+	<xs:import namespace="urn:be:fgov:ehealth:addressbook:core:v1" schemaLocation="ehealth-addressbook-core-1_1.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:aa:complextype:v1" schemaLocation="../../ehealth-iam/XSD/ehealth-iam-attributes-1_5.xsd"/>
+	<!-- Request and Response Elements of Protocol -->
+	<xs:element name="GetOrganizationContactInfoRequest" type="GetOrganizationContactInfoRequestType"/>
+	<xs:element name="GetOrganizationContactInfoResponse" type="GetOrganizationContactInfoResponseType"/>
+	<xs:element name="GetProfessionalContactInfoRequest" type="GetProfessionalContactInfoRequestType"/>
+	<xs:element name="GetProfessionalContactInfoResponse" type="GetProfessionalContactInfoResponseType"/>
+	<xs:element name="SearchOrganizationsRequest" type="SearchOrganizationsRequestType"/>
+	<xs:element name="SearchOrganizationsResponse" type="SearchOrganizationsResponseType"/>
+	<xs:element name="SearchProfessionalsRequest" type="SearchProfessionalsRequestType"/>
+	<xs:element name="SearchProfessionalsResponse" type="SearchProfessionalsResponseType"/>
+	<!-- Request and Response Types of Protocol -->
+	<xs:complexType name="GetOrganizationContactInfoRequestType">
+		<xs:annotation>
+			<xs:documentation>Find contact data for a specific healthcare organization </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="cprotocol:RequestType">
+				<xs:sequence>
+					<xs:choice>
+						<xs:element name="NIHII" type="core:NIHIIType">
+							<xs:annotation>
+								<xs:documentation>INAMI/RIZIV of the institution</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CBE" type="core:EnterpriseType">
+							<xs:annotation>
+								<xs:documentation>KBO/CBE of the institution</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EHP" type="core:EnterpriseType">
+							<xs:annotation>
+								<xs:documentation>EHP identifier of the institution</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:choice>
+					<xs:sequence minOccurs="0">
+						<xs:element name="InstitutionType" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Type / Quality of the institution</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetOrganizationContactInfoResponseType">
+		<xs:annotation>
+			<xs:documentation>Return healthcare organization contact data</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="cprotocol:StatusResponseType">
+				<xs:sequence>
+					<xs:element name="OrganizationContactInformation" type="core:OrganizationContactInformationType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetProfessionalContactInfoRequestType">
+		<xs:annotation>
+			<xs:documentation>Find contact data for a specific healthcare professional</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="cprotocol:RequestType">
+				<xs:choice>
+					<xs:element name="NIHII" type="core:NIHIIType">
+						<xs:annotation>
+							<xs:documentation>INAMI/RIZIV of the contact person</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SSIN" type="core:SSINType">
+						<xs:annotation>
+							<xs:documentation>NISS / INSZ of the contact person</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetProfessionalContactInfoResponseType">
+		<xs:annotation>
+			<xs:documentation>Return healthcare professional contact data</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="cprotocol:StatusResponseType">
+				<xs:sequence>
+					<xs:element name="IndividualContactInformation" type="core:IndividualContactInformationType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SearchOrganizationsRequestType">
+		<xs:annotation>
+			<xs:documentation>Search healthcare organizations based on one or more search criteria</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="cprotocol:PaginationRequestType">
+				<xs:sequence>
+					<xs:choice minOccurs="0">
+						<xs:element name="NIHII" type="core:NIHIIType">
+							<xs:annotation>
+								<xs:documentation>INAMI/RIZIV of the institution</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CBE" type="core:EnterpriseType">
+							<xs:annotation>
+								<xs:documentation>KBO/CBE of the institution</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EHP" type="core:EnterpriseType">
+							<xs:annotation>
+								<xs:documentation>EHP identifier of the institution</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:choice>
+					<xs:element name="InstitutionName" type="xs:string" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Name of the organization</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="InstitutionType" type="xs:string" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Type / Quality of the institution</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:choice minOccurs="0">
+						<xs:element name="City" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>City or Village of contact address</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ZipCode" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>Zipcode of contact address</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:choice>
+					<xs:element name="EMail" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SearchOrganizationsResponseType">
+		<xs:annotation>
+			<xs:documentation>Return all healthcare organizations that macth to a given set of criteria</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="cprotocol:PaginationStatusResponseType">
+				<xs:sequence>
+					<xs:element name="HealthCareOrganization" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="aa:HealthCareOrganizationTypeV2"/>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SearchProfessionalsRequestType">
+		<xs:annotation>
+			<xs:documentation>Search healthcare professionals based on one or more search criteria</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="cprotocol:PaginationRequestType">
+				<xs:sequence>
+					<xs:choice minOccurs="0">
+						<xs:element name="NIHII" type="core:NIHIIType">
+							<xs:annotation>
+								<xs:documentation>INAMI/RIZIV of the contact person</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SSIN" type="core:SSINType">
+							<xs:annotation>
+								<xs:documentation>NISS / INSZ of the contact person</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:choice>
+					<xs:element name="FirstName" type="xs:string" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Firstname of the contact person</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="LastName" type="xs:string" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Family name of the contact person</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Profession" type="xs:string" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Profession / Quality of the contact person</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:choice minOccurs="0">
+						<xs:element name="City" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>City or Village of contact address</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ZipCode" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>Zipcode of contact address</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:choice>
+					<xs:element name="EMail" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SearchProfessionalsResponseType">
+		<xs:annotation>
+			<xs:documentation>Return all healthcare professionals that macth to a given set of criteria</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="cprotocol:PaginationStatusResponseType">
+				<xs:sequence>
+					<xs:element ref="aa:HealthCareProfessional" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

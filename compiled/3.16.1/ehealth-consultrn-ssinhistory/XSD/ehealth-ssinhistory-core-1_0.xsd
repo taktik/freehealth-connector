@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:consultrn:ssinhistory:core:v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:ns1="urn:be:fgov:ehealth:consultrn:ssinhistory:core:v1" targetNamespace="urn:be:fgov:ehealth:consultrn:ssinhistory:core:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD Consultrn SsinHistory
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.3-SNAPSHOT
+ Build-Time: 20170327-1010 
+ </xs:appinfo>
+ </xs:annotation>
+  <xs:annotation />
+	<xs:complexType name="RelatedSsinsType">
+		<xs:annotation>
+			<xs:documentation>Related SSIN to the originally requested SSIN</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RelatedSsin" type="xs:string" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SsinStatusType">
+		<xs:annotation>
+			<xs:documentation>Status of an SSIN</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="Canceled" type="xs:boolean"/>
+				<xs:attribute name="Replaces" type="xs:string"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

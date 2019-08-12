@@ -1,0 +1,73 @@
+**********************************************************
+* eHealth Business MediPrima RELEASE NOTES               *
+**********************************************************
+3.16.1 release (october 2018)
+ . improvement       Validate target group orgpharmacy.
+                        The following additional saml attribute designator is required for Mediprima Consultation (see configuration file):
+                            urn:be:fgov:certified-namespace:ehealth,urn:be:fgov:ehealth:1.0:pharmacy:nihii-number:recognisedpharmacy:nihii11
+                        - Modified file/classes:
+                            be/ehealth/businessconnector/mediprima/service/ServiceFactory
+                            be/ehealth/businessconnector/mediprima/session/MediprimaConsultationIntegrationTest
+                         - Added files/classes:
+                             be/ehealth/businessconnector/mediprima/builder/ConsultCarmedInterventionRequestBuilder
+                             be/ehealth/businessconnector/mediprima/session/MediprimaConsultationOrgpharmacyIntegrationTest
+                             consultation/expected/orgpharmacy/scenario01Response.xml
+                             consultation/expected/orgpharmacy/scenario02Response.xml
+                             consultation/expected/orgpharmacy/scenario03Response.xml
+                             consultation/expected/orgpharmacy/scenario04Response.xml
+                             consultation/expected/orgpharmacy/scenario05Response.xml
+                             consultation/expected/orgpharmacy/scenario06Response.xml
+                             consultation/expected/orgpharmacy/scenario07aResponse.xml
+                             consultation/expected/orgpharmacy/scenario07bResponse.xml
+                             consultation/expected/orgpharmacy/scenario08Response.xml
+                             consultation/expected/orgpharmacy/scenario09Response.xml
+                             consultation/expected/orgpharmacy/scenario10Response.xml
+                             consultation/expected/orgpharmacy/scenario11Response.xml
+                             consultation/expected/orgpharmacy/scenario12Response.xml
+                             consultation/expected/orgpharmacy/scenario13Response.xml
+                             consultation/expected/orgpharmacy/scenario14Response.xml
+
+3.16.0 release (september 2018)
+ . internal release 
+  
+3.15.1 release (april 2018)
+ . improvement       Expected results updated for consultation integration tests examples.
+ 
+3.15.0 release (april 2018)
+ . internal release
+ 
+3.14.0 release (octobre 2017)
+  . Initial release            consultation, tarification and invoicing services
+  . configuration example for Vitalink acc:          
+  
+             ##############################################################################################################################################
+             # Configuration for mediprima consultation                                                                                               
+             ##############################################################################################################################################
+             validation.incoming.message.mediprima.consultation=true
+             
+             ##############################################################################################################################################
+             # Configuration for mediprima tarification                                                                                               
+             ##############################################################################################################################################
+             validation.incoming.message.mediprima.tarification=true
+             # same as mycarenet tarification
+             mycarenet.mcn.tarification.request.needxades=false
+             # same as mycarenet tarification
+             mycarenet.mcn.tarification.response.neededxadeslevel=none
+             
+             ##############################################################################################################################################
+             # Configuration for mediprima invoicing                                                                                               
+             ##############################################################################################################################################
+             # acc endpoint
+             endpoint.genericasync.mediprima.invoicing.v1=https://pilot.mycarenet.be:9443/nip/mycarenet-ws/async/generic/hcpfac_12
+             security.incoming.message.genasync.timestamp.created.ttl.mediprima.invoicing.v1=300
+             security.incoming.message.genasync.timestamp.expires.ttl.mediprima.invoicing.v1=300
+             #
+             #configure blob type for invoicing
+             mycarenet.blobbuilder.mediprima.invoicing.usedefaultproperties=false
+             mycarenet.blobbuilder.mediprima.invoicing.id=blob
+             mycarenet.blobbuilder.mediprima.invoicing.encodingtype=deflate
+             mycarenet.blobbuilder.mediprima.invoicing.contenttype=text/plain
+         
+         
+3.14.0-beta-0 release (september 2017)
+  . Initial release            consultation, tarification and invoicing services

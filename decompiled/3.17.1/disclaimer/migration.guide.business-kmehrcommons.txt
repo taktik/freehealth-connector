@@ -1,0 +1,84 @@
+************************************************************
+* eHealth Business Connector Kmerh Commons MIGRATION GUIDE *
+************************************************************
+
+3.4.0-beta-5 release
+                Id and code version is now configurable by properties
+                We can now precise for each id and cd a value, a sv and a sl
+                
+                WARNING :	Some keys has been changed to contains value in their name.
+                			id.local.type is replaced by id.local.sl
+                
+                example for the local id and cd :
+                	Before :
+					kmehr.default.software.id.local.type.1=application_ID
+                	kmehr.default.software.id.local.value.1=${software.id}
+                	
+                	After :
+                	kmehr.default.software.id.local.sl.1=application_ID
+                	kmehr.default.software.id.local.sv.1=1.0
+                	kmehr.default.software.id.local.value.1=${software.id}
+               
+                example for all the others cd and id (key changement) :
+                	Before :
+                	kmehr.default.identifier.id.inss=${user.inss}
+                	
+                	After :
+                	kmehr.default.identifier.id.inss.value=${user.inss}
+                	kmehr.default.identifier.id.inss.sv=1.0
+                	     	
+                	
+                	           
+
+
+3.3.0-beta-4 release
+        the kmehr commons can be used to fill the kmehr HcParties ( author, careprovider , ... ) 
+        what exactly to put in these is defined in the documentation of the webservice under the kmehr part 
+        
+        there is a default config , and per project a configuration can be made. 
+        
+        CONFIG DEFINITION : 
+        kmehr.{projectIdentifier}.hcpartylist = {hcParty1}, {hcParty2}
+        
+        for each hcParty , the properties are defined as follows 
+        kmehr.{projectIdentifier}.{hcParty}.id.inss=...
+                                           .id.idhcparty=..
+                                           .cd...
+           
+        in a project that uses the kmehr config you can define if you want to use the default or a project specific config
+        with the property kmehr.{projectIdentifier}.usedefaultproprerties=true
+        ( true is default value)
+        if you specifiy this , the config for the projectIdentifier default is used,
+        otherwise you should define the config for this project.
+        
+        its also possible to use the utility methods of HcPartyUtils which use specific configs.
+        check the javadoc on how to use these.
+                                           
+        examples : default config for pharmacy 
+                ##############################################################################################################################################
+                # default configuration of kmehr builder                                                                                                       #
+                #                                                                                                                                             #                    
+                #set kmehr.{projectName}.usedefaultproperties to false if you don't want to use these defaults                                                 #                                                                  #
+                ##############################################################################################################################################
+                kmehr.default.hcpartylist=software,pharmacy,pharmacistholder,identifier
+                
+                kmehr.default.software.id.local.type.1=application_ID
+                kmehr.default.software.id.local.value.1=${software.id}
+                kmehr.default.software.cd.cdhcparty=application
+                kmehr.default.software.name=${package.name}
+                
+                kmehr.default.pharmacy.id.idhcparty=${pharmacy.nihii}
+                kmehr.default.pharmacy.cd.cdhcparty=orgpharmacy
+                kmehr.default.pharmacy.id.name=${pharmacy.name}
+                
+                kmehr.default.pharmacistholder.id.inss=${pharmacy-holder.ssin}
+                kmehr.default.pharmacistholder.id.idhcparty=${pharmacy-holder.nihii}
+                kmehr.default.pharmacistholder.cd.cdhcparty=${main.kmehr.quality}
+                kmehr.default.pharmacistholder.firstname=${pharmacy-holder.firstname}
+                kmehr.default.pharmacistholder.lastname=${pharmacy-holder.lastname}
+                
+                kmehr.default.identifier.id.inss=${user.inss}
+                kmehr.default.identifier.id.idhcparty=${user.nihii}
+                kmehr.default.identifier.cd.cdhcparty=${main.kmehr.quality}
+                kmehr.default.identifier.firstname=${user.firstname}
+                kmehr.default.identifier.lastname=${user.lastname}

@@ -21,20 +21,6 @@
 package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.hubservices.core.v3.*
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESSschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONSENT
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONSENTschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONSENTvalues
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDCOUNTRY
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDCOUNTRYschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEX
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEXvalues
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDTHERAPEUTICLINK
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDTHERAPEUTICLINKschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
@@ -73,6 +59,8 @@ import org.taktik.freehealth.middleware.dto.common.KmehrId
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.HubService
 import org.taktik.freehealth.middleware.service.STSService
+import be.fgov.ehealth.hubservices.core.v3.GetPatientAuditTrailRequest
+import be.fgov.ehealth.standards.kmehr.cd.v1.*
 import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
@@ -320,8 +308,8 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                 })
         val errors = therapeuticLinkResponse.acknowledge.errors.map {
             Error().apply {
-                this.url = it.url;
-                this.descr = it.description.getValue();
+                this.url = it.url
+                this.descr = it.description.value
             }
         };
         val isComplete = therapeuticLinkResponse.acknowledge.isIscomplete();
@@ -331,15 +319,15 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
             this.errors = errors;
             this.therapeuticLinks = therapeuticLinkResponse.therapeuticlinklist?.therapeuticlinks?.map {
                 TherapeuticLink().apply {
-                    this.startDate = it.startdate.toLocalDate();
-                    this.endDate = it.enddate.toLocalDate();
-                    this.type = it.cd.value;
-                    this.comment = it.comment;
+                    this.startDate = it.startdate.toLocalDate()
+                    this.endDate = it.enddate.toLocalDate()
+                    this.type = it.cd.value
+                    this.comment = it.comment
                     this.hcParty = HcParty().apply {
-                        this.setIds(it.hcparty.ids);
+                        this.setIds(it.hcparty.ids)
                     }
                     this.patient = org.taktik.connector.business.common.domain.Patient().apply {
-                        this.inss = it.patient.ids.find { idpatient -> idpatient.s.equals("INSS") } ?.value;
+                        this.inss = it.patient.ids.find { idpatient -> idpatient.s.name == "INSS" } ?.value
                     }
                 }
             } ?: listOf()
@@ -801,15 +789,202 @@ class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : Hub
                         nis = nisCodesPerZip[hcpZip]
                     })
                 })
-                hcparties.add(HcpartyType().apply {
-                    ids.add(IDHCPARTY().apply {
-                        s = IDHCPARTYschemes.LOCAL; sl = "endusersoftwareinfo"; sv =
-                        "1.0"; value = hubPackageId ?: config.getProperty("hub.package.id") ?: "ACC_"
+                if(StringUtils.isNotEmpty(hubPackageId ?: config.getProperty("hub.package.id") ?: "ACC_")) {
+                    hcparties.add(HcpartyType().apply {
+                        ids.add(IDHCPARTY().apply {
+                            s = IDHCPARTYschemes.LOCAL; sl = "endusersoftwareinfo"; sv =
+                            "1.0"; value = hubPackageId ?: config.getProperty("hub.package.id") ?: "ACC_"
+                        })
+                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.1"; value = "application" })
                     })
-                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.1"; value = "application" })
-                })
+                }
             }
             breakTheGlassReason?.let { breaktheglass = it }
         }
+    }
+
+    override fun getPatientAuditTrail(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        ssin: String?,
+        breakTheGlassReason: String?,
+        from: Long?,
+        to: Long?,
+        authorNihii: String?,
+        authorSsin: String?,
+        isGlobal: Boolean,
+        sv: String?,
+        sl: String?,
+        value: String?,
+        hubPackageId: String?): GetPatientAuditTrailResponse {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        return freehealthHubService.getPatientAuditTrail(
+            endpoint,
+            samlToken,
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase,
+            GetPatientAuditTrailRequest().apply{
+                request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null,true)
+                select = SelectGetPatientAuditTrailType().apply {
+                    from?.let {begindate = DateTime(from) }
+                    to?.let { enddate = DateTime(to) }
+                    ssin?.let{ patient =
+                        PatientIdType().apply {
+                            ids.add(IDPATIENT().apply {
+                                this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin
+                            })
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(authorNihii) && StringUtils.isNotEmpty(authorSsin)) {
+                        hcparty =
+                            HCPartyIdType().apply {
+                            ids.add(IDHCPARTY().apply { this.s = IDHCPARTYschemes.ID_HCPARTY; this.sv = "1.0"; this.value = authorNihii })
+                            ids.add(IDHCPARTY().apply { this.s = IDHCPARTYschemes.INSS; this.sv = "1.0"; this.value = authorSsin })
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(sv) && StringUtils.isNotEmpty(sl) && StringUtils.isNotEmpty(sl)) {
+                        transaction = TransactionBaseType().apply {
+                            id =
+                                IDKMEHR().apply {
+                                    this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
+                                    sl; this.value = value
+                                }
+                        }
+                    }
+                    breakTheGlassReason?.let { breaktheglass = it }
+                }
+            }
+        )
+    }
+
+    override fun putAccessRight(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        sv: String, //trn to manage
+        sl: String, //trn to manage
+        value: String, //trn to manage
+        accessNihii: String?, //hcp to allow/disallow
+        accessSsin: String?, //hcp to allow/disallow
+        accessRight: String, //allow, disallow
+        hubPackageId: String?
+    ): PutAccessRightResponse {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        return freehealthHubService.putAccessRight(
+            endpoint,
+            samlToken,
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase,
+            PutAccessRightRequest().apply {
+                request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null,true)
+                accessright = AccessRightType().apply {
+                    if (StringUtils.isNotEmpty(accessNihii) && StringUtils.isNotEmpty(accessSsin)) {
+                        hcparty = be.fgov.ehealth.hubservices.core.v3.HcpartyType().apply {
+                            accessNihii?.let { ids.add(IDHCPARTY().apply { this.s = IDHCPARTYschemes.ID_HCPARTY; this.sv = "1.0"; this.value = it }) }
+                            accessSsin?.let { ids.add(IDHCPARTY().apply { this.s = IDHCPARTYschemes.INSS; this.sv = "1.0"; this.value = accessSsin }) }
+                        }
+                    }
+                    transaction = TransactionIdType().apply {
+                        this.ids.add(IDKMEHR().apply { this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl = sl; this.value = value })
+                    }
+                    cd = CDACCESSRIGHT().apply{ this.s = CDACCESSRIGHTschemes.CD_ACCESSRIGHT; this.sv = "1.0"; this.value = CDACCESSRIGHTvalues.fromValue(accessRight) }
+                }
+            }
+
+        )
+    }
+
+    override fun getAccessRight(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        sv: String, //trn to manage
+        sl: String, //trn to manage
+        value: String, //trn to manage
+        hubPackageId: String?
+    ): GetAccessRightResponse {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        return freehealthHubService.getAccessRight(
+            endpoint,
+            samlToken,
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase,
+            GetAccessRightRequest().apply {
+                request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null,true)
+                select = SelectGetAccessRightType().apply {
+                    transaction = TransactionIdType().apply {
+                        this.ids.add(IDKMEHR().apply { this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl = sl; this.value = value })
+                    }
+                }
+            }
+        )
+    }
+
+    override fun revokeAccessRight(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        sv: String, //trn to manage
+        sl: String, //trn to manage
+        value: String, //trn to manage
+        accessNihii: String?, //hcp to allow/disallow
+        accessSsin: String?, //hcp to allow/disallow
+        hubPackageId: String?
+    ): RevokeAccessRightResponse {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw IllegalArgumentException("Cannot obtain token for Hub operations")
+        return freehealthHubService.revokeAccessRight(
+            endpoint,
+            samlToken,
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase,
+            RevokeAccessRightRequest().apply {
+                request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null,true)
+                accessright = SelectRevokeAccessRightType().apply {
+                    transaction = TransactionIdType().apply {
+                        this.ids.add(IDKMEHR().apply { this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl = sl; this.value = value })
+                    }
+                    if (StringUtils.isNotEmpty(accessNihii) && StringUtils.isNotEmpty(accessSsin)) {
+                        hcparty = be.fgov.ehealth.hubservices.core.v3.HcpartyType().apply {
+                            accessNihii?.let { ids.add(IDHCPARTY().apply { this.s = IDHCPARTYschemes.ID_HCPARTY; this.sv = "1.0"; this.value = it }) }
+                            accessSsin?.let { ids.add(IDHCPARTY().apply { this.s = IDHCPARTYschemes.INSS; this.sv = "1.0"; this.value = accessSsin }) }
+                        }
+                    }
+                }
+            }
+
+        )
     }
 }

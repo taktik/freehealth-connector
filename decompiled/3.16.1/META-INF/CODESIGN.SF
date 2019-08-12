@@ -1,0 +1,41 @@
+Signature-Version: 1.0
+SHA-256-Digest-Manifest-Main-Attributes: DUmVSDGygNkl0Wd0+9XUYh+AaISNn
+ mqGo35FWt9oCDI=
+SHA-256-Digest-Manifest: 3vJye/oazHTSzN1B5HtOFKoeAZStwtdal37E41C0TU8=
+Created-By: 1.8.0_91 (Oracle Corporation)
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-civi
+ csv2/pom.properties
+SHA-256-Digest: PRWk19rFlna9rG3fWrkvTWfLLpELJYUOjuYWZLpnL9k=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-civi
+ csv2/pom.xml
+SHA-256-Digest: 7yrXLUlmnoHE7ts/xV9LwqDQx5DYaN0w53Arw0dqNuk=
+
+Name: be/ehealth/businessconnector/civicsv2/session/CivicsSessionServi
+ ce.class
+SHA-256-Digest: OnNW/p7/+KFV5ZjrWwU+BWByNAt1RBTMRsn0Ohw5eaQ=
+
+Name: be/ehealth/businessconnector/civicsv2/session/CivicsSessionServi
+ ceFactory.class
+SHA-256-Digest: trGaeR2xd9QS+FTYQnSEWOoob4wjarCbWuedFd5MoP8=
+
+Name: be/ehealth/businessconnector/civicsv2/service/ServiceFactory.cla
+ ss
+SHA-256-Digest: M+b7q8O9a1XMwmh+6YNf95QAMkuCztF5Z/gCaTO4YPM=
+
+Name: be/ehealth/businessconnector/civicsv2/validator/XmlValidator.cla
+ ss
+SHA-256-Digest: orQzEIyNjqjPBewzVf6m52XJ+v6ICw34JkXHVZCMFAI=
+
+Name: be/ehealth/businessconnector/civicsv2/session/impl/CivicsSession
+ ServiceImpl.class
+SHA-256-Digest: Mg9qKk1dCE9+gTDYNP/Ea71huIZcnshfGdos+YW+zWI=
+
+Name: be/ehealth/businessconnector/civicsv2/session/impl/CivicsImpleme
+ ntationClassFactory.class
+SHA-256-Digest: rWsZtoMTZyWSTkambEvZtf63/5pxYkF7qU3ECnDDwq8=
+
+Name: disclaimer/release.notes.business-civicsv2.txt
+SHA-256-Digest: KRWQCSpwb43VzX4WHFTy4gvFTtij2NU0LqvSKL1egYc=
+

@@ -13,29 +13,34 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
-   name = "QueryParameters",
-   propOrder = {"includeIOs", "excludeIOs"}
+        name = "QueryParameters",
+        propOrder = {"includeIOs", "excludeIOs", "tackMessageNames"}
 )
 public class QueryParameters implements Serializable {
    private static final long serialVersionUID = 1L;
    @XmlList
    @XmlElement(
-      required = true
+           required = true
    )
    @XmlSchemaType(
-      name = "anySimpleType"
+           name = "anySimpleType"
    )
    protected List<String> includeIOs;
    @XmlList
    @XmlElement(
-      required = true
+           required = true
    )
    @XmlSchemaType(
-      name = "anySimpleType"
+           name = "anySimpleType"
    )
    protected List<String> excludeIOs;
+   @XmlList
+   @XmlSchemaType(
+           name = "anySimpleType"
+   )
+   protected List<String> tackMessageNames;
    @XmlAttribute(
-      name = "Reference"
+           name = "Reference"
    )
    protected String reference;
 
@@ -53,6 +58,14 @@ public class QueryParameters implements Serializable {
       }
 
       return this.excludeIOs;
+   }
+
+   public List<String> getTackMessageNames() {
+      if (this.tackMessageNames == null) {
+         this.tackMessageNames = new ArrayList();
+      }
+
+      return this.tackMessageNames;
    }
 
    public String getReference() {
