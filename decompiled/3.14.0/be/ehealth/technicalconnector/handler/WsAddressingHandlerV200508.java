@@ -30,7 +30,7 @@ public class WsAddressingHandlerV200508 extends AbstractSOAPHandler {
 
    public boolean handleOutbound(SOAPMessageContext context) {
       Boolean wsAddressingUse = context.get("be.ehealth.technicalconnector.handler.WsAddressingHandlerV200508.use") == null ? Boolean.FALSE : (Boolean)context.get("be.ehealth.technicalconnector.handler.WsAddressingHandlerV200508.use");
-      if (wsAddressingUse.booleanValue()) {
+      if (wsAddressingUse) {
          try {
             WsAddressingHeader header = (WsAddressingHeader)context.get("be.ehealth.technicalconnector.handler.WsAddressingHandlerV200508");
             if (header == null) {

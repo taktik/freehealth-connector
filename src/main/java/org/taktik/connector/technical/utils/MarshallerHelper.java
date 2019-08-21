@@ -69,10 +69,10 @@ public class MarshallerHelper<X, Y> {
    }
 
    private void createMarshaller(Class<X> inUnmarshallClass, Class<Y> inMarshallClass, Boolean format, Boolean xop, int threshold) {
-      this.format = format.booleanValue();
+      this.format = format;
       this.unmarshallClass = inUnmarshallClass;
       this.marshallClass = inMarshallClass;
-      this.xop = xop.booleanValue();
+      this.xop = xop;
       this.threshold = threshold;
    }
 

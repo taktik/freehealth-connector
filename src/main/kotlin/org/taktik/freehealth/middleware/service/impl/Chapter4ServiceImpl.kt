@@ -347,7 +347,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                         ?.value
                 mutuality = folder.patient.insurancymembership?.id?.value
                 regNrWithMut =
-                    folder.patient.insurancymembership?.membership?.let { if (it is Element) it.textContent else null }
+                    folder.patient.insurancymembership?.membership
             }
 
             val recordCommonInput =
@@ -478,11 +478,11 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             agreementResponse.isAcknowledged = kmehrResponse.acknowledge != null && kmehrResponse.acknowledge.isIscomplete
             kmehrResponse.acknowledge?.let {
                 agreementResponse.warnings = it.warnings?.flatMap { errorType ->
-                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest().apply { kmehrmessage = v1Message }, this) }.toByteArray(),
                                  errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4AgreementWarnings, errorType.url)
                 }
                 agreementResponse.errors = it.errors?.flatMap { errorType ->
-                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest().apply { kmehrmessage = v1Message }, this) }.toByteArray(),
                                  errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4AgreementErrors, errorType.url)
                 }
             }
@@ -619,12 +619,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             agreementResponse.isAcknowledged = ack.isIscomplete
             agreementResponse.warnings =
                 ack.warnings.flatMap { errorType ->
-                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest().apply { kmehrmessage = v1Message }, this) }.toByteArray(),
                                  errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4ConsultationWarnings, errorType.url)
                 }
             agreementResponse.errors =
                 ack.errors.flatMap { errorType ->
-                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest().apply { kmehrmessage = v1Message }, this) }.toByteArray(),
                                  errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4ConsultationErrors, errorType.url)
                 }
             if (retrievedKmehrResponse.kmehrresponse.kmehrmessage != null) {
@@ -790,12 +790,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             agreementResponse.isAcknowledged = retrievedKmehrResponse.kmehrresponse.acknowledge.isIscomplete
             agreementResponse.warnings =
                 retrievedKmehrResponse.kmehrresponse.acknowledge.warnings.flatMap { errorType ->
-                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest().apply { kmehrmessage = v1Message }, this) }.toByteArray(),
                                  errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4AgreementWarnings, errorType.url)
                 }
             agreementResponse.errors =
                 retrievedKmehrResponse.kmehrresponse.acknowledge.errors.flatMap { errorType ->
-                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest().apply { kmehrmessage = v1Message }, this) }.toByteArray(),
                                  errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4AgreementErrors, errorType.url)
                 }
 

@@ -33,6 +33,10 @@ public class BlobType implements Serializable {
    )
    protected String contentEncryption;
    @XmlAttribute(
+      name = "Etk"
+   )
+   protected byte[] etk;
+   @XmlAttribute(
       name = "HashValue"
    )
    protected byte[] hashValue;
@@ -75,6 +79,14 @@ public class BlobType implements Serializable {
 
    public void setContentEncryption(String value) {
       this.contentEncryption = value;
+   }
+
+   public byte[] getEtk() {
+      return this.etk;
+   }
+
+   public void setEtk(byte[] value) {
+      this.etk = value;
    }
 
    public byte[] getHashValue() {

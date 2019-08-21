@@ -58,7 +58,11 @@ public enum CDVACCINEINDICATIONvalues {
    @XmlEnumValue("typhoid")
    TYPHOID("typhoid"),
    @XmlEnumValue("pandemics")
-   PANDEMICS("pandemics");
+   PANDEMICS("pandemics"),
+   @XmlEnumValue("herpeszoster")
+   HERPESZOSTER("herpeszoster"),
+   @XmlEnumValue("cholera")
+   CHOLERA("cholera");
 
    private final String value;
 

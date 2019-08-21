@@ -60,7 +60,7 @@ public class IncomingSecurityHandler extends AbstractSOAPHandler {
 
                   while(i$.hasNext()) {
                      WSSecurityEngineResult result = (WSSecurityEngineResult)i$.next();
-                     if (!((Boolean)result.get("validated-token")).booleanValue()) {
+                     if (!(Boolean) result.get("validated-token")) {
                         StringBuffer sb = new StringBuffer();
                         sb.append("Unable to validate incoming soap message. Action [");
                         sb.append(result.get("action"));

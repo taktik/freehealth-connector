@@ -35,7 +35,7 @@ public class Query implements Serializable {
    }
 
    public boolean isInclude() {
-      return this.include == null ? true : this.include.booleanValue();
+      return this.include == null ? true : this.include;
    }
 
    public void setInclude(Boolean value) {

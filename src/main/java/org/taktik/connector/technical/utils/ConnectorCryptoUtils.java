@@ -36,7 +36,7 @@ public final class ConnectorCryptoUtils {
 
    public static SecretKey generateKey() throws TechnicalConnectorException {
       Integer keySize = conf.getIntegerProperty("org.taktik.connector.technical.utils.connectorcryptoutils.default_keysize", Integer.valueOf(128));
-      return generateKey(keySize.intValue());
+      return generateKey(keySize);
    }
 
    public static SecretKey generateKey(int keySize) throws TechnicalConnectorException {

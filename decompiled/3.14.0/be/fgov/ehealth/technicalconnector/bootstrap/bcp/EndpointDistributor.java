@@ -46,7 +46,7 @@ public final class EndpointDistributor {
    }
 
    public void activatePolling() {
-      if (!this.polling && this.isBCPMode() && config.getBooleanProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.activated", Boolean.TRUE).booleanValue()) {
+      if (!this.polling && this.isBCPMode() && config.getBooleanProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.activated", Boolean.TRUE)) {
          this.timer = new Timer(true);
          this.timer.schedule(new EndpointDistributor.StatusPollingTimerTask(), new Date(), TimeUnit.MILLISECONDS.convert(config.getLongProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.interval.minutes", 15L).longValue(), TimeUnit.MINUTES));
       }
@@ -127,7 +127,7 @@ public final class EndpointDistributor {
 
    public static boolean update() {
       try {
-         return ((Boolean)MethodUtils.invokeStaticMethod(Class.forName("be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointUpdater"), "update", new Object[0])).booleanValue();
+         return ((Boolean)MethodUtils.invokeStaticMethod(Class.forName("be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointUpdater"), "update", new Object[0]));
       } catch (Exception var1) {
          LOG.error("Unable to update endpoints", var1);
          return false;

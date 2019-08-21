@@ -40,7 +40,7 @@ public abstract class AbstractRevocationStatusChecker implements RevocationStatu
             this.cache.put(cert, isRevoked);
          }
 
-         return ((Boolean)this.cache.get(cert)).booleanValue();
+         return ((Boolean)this.cache.get(cert));
       }
    }
 

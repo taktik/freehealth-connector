@@ -114,7 +114,6 @@ class ResponseBuilderImpl(private val crypto: Crypto, private val credential: Cr
         when (conversationType) {
             ConversationType.ADMISSION -> this.getBooleanPropertyDefaultingToTrue("validation.incoming.chapterIV.admission.message")
             ConversationType.CONSULT -> this.getBooleanPropertyDefaultingToTrue("validation.incoming.chapterIV.consultation.message")
-            else -> throw IllegalArgumentException("unhandled converstationType + [$conversationType]")
         }
 
     private fun getBooleanPropertyDefaultingToTrue(configProperty: String): Boolean {

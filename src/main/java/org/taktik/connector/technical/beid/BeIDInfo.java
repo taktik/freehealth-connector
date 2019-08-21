@@ -1,15 +1,17 @@
 package org.taktik.connector.technical.beid;
 
 import org.taktik.connector.technical.beid.domain.Address;
+import org.taktik.connector.technical.beid.domain.DocumentType;
+import org.taktik.connector.technical.beid.domain.Gender;
 import org.taktik.connector.technical.beid.domain.Identity;
+import org.taktik.connector.technical.beid.domain.SpecialOrganisation;
+import org.taktik.connector.technical.beid.domain.SpecialStatus;
 import org.taktik.connector.technical.cache.Cache;
 import org.taktik.connector.technical.cache.CacheFactory;
 import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.ConfigValidator;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
-import org.taktik.connector.technical.mapper.Mapper;
-import org.taktik.connector.technical.mapper.MapperFactory;
 import be.fedict.commons.eid.client.BeIDCard;
 import be.fedict.commons.eid.client.FileType;
 import be.fedict.commons.eid.consumer.tlv.TlvParser;
@@ -27,7 +29,6 @@ public final class BeIDInfo {
    private Address address;
    private Identity identity;
    private byte[] photo;
-   private static Mapper mapper;
    private static ConfigValidator config;
 
    private BeIDInfo() throws TechnicalConnectorException {
@@ -37,15 +38,15 @@ public final class BeIDInfo {
          LOG.debug("processing identity file");
          byte[] identityFile = beIDCard.readFile(FileType.Identity);
          be.fedict.commons.eid.consumer.Identity identityFedict = (be.fedict.commons.eid.consumer.Identity)TlvParser.parse(identityFile, be.fedict.commons.eid.consumer.Identity.class);
-         this.identity = (Identity)mapper.map(identityFedict, Identity.class);
+         this.identity = this.mapIdentityFedict(identityFedict);
          LOG.debug("processing address file");
          byte[] addressFile = beIDCard.readFile(FileType.Address);
          be.fedict.commons.eid.consumer.Address addressFedict = (be.fedict.commons.eid.consumer.Address)TlvParser.parse(addressFile, be.fedict.commons.eid.consumer.Address.class);
-         this.address = (Address)mapper.map(addressFedict, Address.class);
+         this.address = this.mapAddressFedict(addressFedict);
          LOG.debug("processing photo file");
          this.photo = beIDCard.readFile(FileType.Photo);
-      } catch (Exception var6) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.BEID_ERROR, var6, new Object[]{var6.getMessage()});
+      } catch (Exception ex) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.BEID_ERROR, ex, ex.getMessage());
       }
 
       beIDCard.close();
@@ -56,7 +57,7 @@ public final class BeIDInfo {
    }
 
    public static BeIDInfo getInstance(String scope) throws TechnicalConnectorException {
-      boolean useCache = config.getBooleanProperty("org.taktik.connector.technical.beid.beidinfo.cache", false).booleanValue();
+      boolean useCache = config.getBooleanProperty("org.taktik.connector.technical.beid.beidinfo.cache", false);
       return getInstance(scope, useCache);
    }
 
@@ -90,9 +91,47 @@ public final class BeIDInfo {
       cache.clear();
    }
 
+   private Address mapAddressFedict(be.fedict.commons.eid.consumer.Address addressFedict) {
+      Address addr = new Address();
+
+      addr.setStreetAndNumber(addressFedict.getStreetAndNumber());
+      addr.setZip(addressFedict.getZip());
+      addr.setMunicipality(addressFedict.getMunicipality());
+      addr.setData(addressFedict.getData());
+
+      return addr;
+   }
+
+   private Identity mapIdentityFedict(be.fedict.commons.eid.consumer.Identity identityFedict) {
+      Identity id = new Identity();
+
+      id.setCardNumber(identityFedict.getCardNumber());
+      id.setChipNumber(identityFedict.getChipNumber());
+      id.setCardValidityDateBegin(identityFedict.getCardValidityDateBegin());
+      id.setCardValidityDateEnd(identityFedict.getCardValidityDateEnd());
+      id.setCardDeliveryMunicipality(identityFedict.getCardDeliveryMunicipality());
+      id.setNationalNumber(identityFedict.getNationalNumber());
+      id.setName(identityFedict.getName());
+      id.setFirstName(identityFedict.getFirstName());
+      id.setMiddleName(identityFedict.getMiddleName());
+      id.setNationality(identityFedict.getNationality());
+      id.setPlaceOfBirth(identityFedict.getPlaceOfBirth());
+      id.setDateOfBirth(identityFedict.getDateOfBirth());
+      id.setGender(Gender.valueOf(identityFedict.getGender().name()));
+      id.setNobleCondition(identityFedict.getNobleCondition());
+      id.setDocumentType(DocumentType.valueOf(identityFedict.getDocumentType().name()));
+      id.setSpecialStatus(SpecialStatus.valueOf(identityFedict.getSpecialStatus().name()));
+      id.setPhotoDigest(identityFedict.getPhotoDigest());
+      id.setDuplicate(identityFedict.getDuplicate());
+      id.setSpecialOrganisation(SpecialOrganisation.valueOf(identityFedict.getSpecialOrganisation().name()));
+      id.setIsMemberOfFamily(identityFedict.isMemberOfFamily());
+      id.setData(identityFedict.getData());
+
+      return id;
+   }
+
    static {
       cache = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY, "beid-info", CacheInformation.ExpiryType.NONE, (Duration)null);
-      mapper = MapperFactory.getMapper("dozer/commonseid.xml");
       config = ConfigFactory.getConfigValidator();
    }
 }

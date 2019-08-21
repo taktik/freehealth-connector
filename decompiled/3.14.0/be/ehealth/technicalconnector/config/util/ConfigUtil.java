@@ -37,10 +37,10 @@ public final class ConfigUtil {
    public static boolean retrieveBooleanProjectProperty(String prefix, String projectName, String suffix, boolean defaultValue) {
       ConfigValidator props = ConfigFactory.getConfigValidator();
       boolean result;
-      if (props.getBooleanProperty(prefix + projectName + ".usedefaultproperties", true).booleanValue()) {
-         result = props.getBooleanProperty(prefix + "default" + suffix, defaultValue).booleanValue();
+      if (props.getBooleanProperty(prefix + projectName + ".usedefaultproperties", true)) {
+         result = props.getBooleanProperty(prefix + "default" + suffix, defaultValue);
       } else {
-         result = props.getBooleanProperty(prefix + projectName + suffix, defaultValue).booleanValue();
+         result = props.getBooleanProperty(prefix + projectName + suffix, defaultValue);
       }
 
       LOG.debug("retrieveBooleanProjectProperty for " + prefix + "." + projectName + "." + suffix + " : returning " + result);

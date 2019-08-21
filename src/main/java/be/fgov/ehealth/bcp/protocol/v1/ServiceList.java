@@ -1,5 +1,6 @@
 package be.fgov.ehealth.bcp.protocol.v1;
 
+import org.taktik.connector.technical.adapter.XmlDateTimeAdapter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.joda.time.DateTime;
-import org.taktik.connector.technical.adapter.XmlDateTimeAdapter;
 import org.w3._2000._09.xmldsig.Signature;
 
 @XmlAccessorType(XmlAccessType.FIELD)

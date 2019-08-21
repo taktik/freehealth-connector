@@ -45,7 +45,7 @@ public class CreatePrescriptionParam extends PartyIdentification {
    }
 
    public boolean isFeedbackRequested() {
-      return this.feedbackRequested.booleanValue();
+      return this.feedbackRequested;
    }
 
    public void setFeedbackRequested(boolean feedbackRequested) {

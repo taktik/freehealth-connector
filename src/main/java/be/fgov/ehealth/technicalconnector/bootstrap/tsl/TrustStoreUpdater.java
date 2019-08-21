@@ -103,11 +103,9 @@ public final class TrustStoreUpdater {
       try {
          ConnectorIOUtils.getResourceAsStream(location);
          return location;
-      } catch (TechnicalConnectorException var3) {
-         location = config.getProperty("KEYSTORE_DIR") + config.getProperty(key);
-         LOG.error("Trying to obtain location by adding ${KEYSTORE_DIR} [" + location + "] Reason " + ExceptionUtils.getRootCauseMessage(var3));
-         ConnectorIOUtils.getResourceAsStream(location);
-         return location;
+      } catch (TechnicalConnectorException ex) {
+         LOG.error("Cannot access location location [" + location + "] Reason " + ExceptionUtils.getRootCauseMessage(ex));
+         throw ex;
       }
    }
 
@@ -138,6 +136,7 @@ public final class TrustStoreUpdater {
       } else {
          LOG.warn("Invalid TSL file on [" + tslEndpoint + "], skipping update");
       }
+
    }
 
    private static enum TrustedServiceType {

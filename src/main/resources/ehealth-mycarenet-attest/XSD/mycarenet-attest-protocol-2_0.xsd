@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:mycarenet:attest:protocol:v2" xmlns:protocol="urn:be:fgov:ehealth:mycarenet:commons:protocol:v3" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" targetNamespace="urn:be:fgov:ehealth:mycarenet:attest:protocol:v2" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD MCN  eAttest
+ Specification-Version: 2.0
+ Implementation-Version: 2.0.0
+ Build-Time: 20190226-1435 
+ </xs:appinfo>
+ </xs:annotation>
+	<!-- core elements and types -->
+	<xs:import namespace="urn:be:fgov:ehealth:mycarenet:commons:protocol:v3" schemaLocation="../../ehealth-mycarenetcommons/XSD/mycarenet-commons-protocol-3_0.xsd"/>
+	<!--eHealth commons protocol -->
+	<xs:element name="SendAttestationRequest" type="protocol:SendRequestType"/>
+	<xs:element name="SendAttestationResponse" type="protocol:SendResponseType"/>
+
+	<xs:element name="CancelAttestationRequest" type="protocol:SendRequestType"/>
+	<xs:element name="CancelAttestationResponse" type="protocol:SendResponseType"/>
+</xs:schema>

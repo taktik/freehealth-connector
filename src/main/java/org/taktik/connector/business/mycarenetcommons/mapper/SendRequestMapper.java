@@ -38,7 +38,7 @@ public final class SendRequestMapper implements ConfigurationModuleBootstrap.Mod
       CommonInputType inputType = new CommonInputType();
       inputType.setOrigin(getOrigin(commonInput));
       inputType.setInputReference(commonInput.getInputReference());
-      inputType.setRequest(getRequestType(commonInput.isTest().booleanValue()));
+      inputType.setRequest(getRequestType(commonInput.isTest()));
       return inputType;
    }
 

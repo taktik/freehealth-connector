@@ -27,5 +27,4 @@ public class SendResponseType extends ResponseType implements Serializable {
    public void setReturn(ResponseReturnType value) {
       this._return = value;
    }
-
 }

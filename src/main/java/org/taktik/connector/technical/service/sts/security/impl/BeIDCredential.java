@@ -47,7 +47,7 @@ public final class BeIDCredential extends AbstractExtendedCredential {
 
    public static BeIDCredential getInstance(String scope, String aliasName) throws TechnicalConnectorException {
       String key = scope + "-" + aliasName;
-      boolean useCache = config.getBooleanProperty("org.taktik.connector.technical.service.sts.security.impl.beidcredential.cache", Boolean.FALSE).booleanValue();
+      boolean useCache = config.getBooleanProperty("org.taktik.connector.technical.service.sts.security.impl.beidcredential.cache", Boolean.FALSE);
       if (useCache && instancesMap.containsKey(key)) {
          LOG.debug("Returning cached instance.");
          return (BeIDCredential)instancesMap.get(key);

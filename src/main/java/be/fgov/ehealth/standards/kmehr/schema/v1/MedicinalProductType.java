@@ -29,7 +29,7 @@ public class MedicinalProductType implements Serializable {
       required = true
    )
    protected String intendedname;
-   protected Object deliveredname;
+   protected String deliveredname;
 
    public List<CDDRUGCNK> getIntendedcds() {
       if (this.intendedcds == null) {
@@ -55,11 +55,11 @@ public class MedicinalProductType implements Serializable {
       this.intendedname = value;
    }
 
-   public Object getDeliveredname() {
+   public String getDeliveredname() {
       return this.deliveredname;
    }
 
-   public void setDeliveredname(Object value) {
+   public void setDeliveredname(String value) {
       this.deliveredname = value;
    }
 }

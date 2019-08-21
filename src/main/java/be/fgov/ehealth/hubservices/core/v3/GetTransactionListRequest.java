@@ -21,17 +21,17 @@ public class GetTransactionListRequest implements Serializable {
    @XmlElement(
       required = true
    )
-   protected RequestType request;
+   protected RequestListType request;
    @XmlElement(
       required = true
    )
    protected SelectGetTransactionListType select;
 
-   public RequestType getRequest() {
+   public RequestListType getRequest() {
       return this.request;
    }
 
-   public void setRequest(RequestType value) {
+   public void setRequest(RequestListType value) {
       this.request = value;
    }
 

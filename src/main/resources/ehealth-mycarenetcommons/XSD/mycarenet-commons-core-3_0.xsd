@@ -297,7 +297,6 @@
 				<xs:attribute name="ContentType" type="xs:string" use="required"/>
 				<xs:attribute name="ContentEncoding" type="xs:string" default="deflate"/>
 				<xs:attribute name="ContentEncryption" type="xs:string" use="optional"/>
-				<xs:attribute name="Etk" type="xs:base64Binary" use="optional"/>
 				<xs:attribute name="HashValue" type="xs:base64Binary"/>
 				<xs:attribute name="Id" type="xs:NCName"/>
 			</xs:extension>

@@ -36,7 +36,9 @@ public enum CDPARAMETERvalues {
    @XmlEnumValue("katz")
    KATZ("katz"),
    @XmlEnumValue("belrai")
-   BELRAI("belrai");
+   BELRAI("belrai"),
+   @XmlEnumValue("bloodsugar")
+   BLOODSUGAR("bloodsugar");
 
    private final String value;
 

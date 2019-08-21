@@ -67,7 +67,7 @@ public class SchemaValidatorHandler extends AbstractSOAPHandler {
    private boolean isXOPEnabled(SOAPMessageContext context) {
       boolean xopEnabled = false;
       if (context.containsKey("http://www.w3.org/2004/08/soap/features/http-optimization")) {
-         xopEnabled = ((Boolean)context.get("http://www.w3.org/2004/08/soap/features/http-optimization")).booleanValue();
+         xopEnabled = (Boolean) context.get("http://www.w3.org/2004/08/soap/features/http-optimization");
       }
 
       return xopEnabled;

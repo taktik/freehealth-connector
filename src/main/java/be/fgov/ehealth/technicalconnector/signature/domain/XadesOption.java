@@ -20,4 +20,7 @@ public final class XadesOption {
    public static final String ENCAPSULATE = "encapsulate";
    public static final String ENCAPSULATE_XPATH = "encapsulate-xpath";
    public static final String ENCAPSULATE_TRANSFORMER = "encapsulate-transformer";
+
+   private XadesOption() {
+   }
 }

@@ -19,7 +19,7 @@ import sun.security.action.GetPropertyAction;
 public class GopherClient extends NetworkClient implements Runnable {
    /** @deprecated */
    @Deprecated
-   public static boolean useGopherProxy = ((Boolean)AccessController.doPrivileged(new GetBooleanAction("gopherProxySet"))).booleanValue();
+   public static boolean useGopherProxy = ((Boolean)AccessController.doPrivileged(new GetBooleanAction("gopherProxySet")));
    /** @deprecated */
    @Deprecated
    public static String gopherProxyHost = (String)AccessController.doPrivileged(new GetPropertyAction("gopherProxyHost"));
@@ -37,7 +37,7 @@ public class GopherClient extends NetworkClient implements Runnable {
    }
 
    public static boolean getUseGopherProxy() {
-      return ((Boolean)AccessController.doPrivileged(new GetBooleanAction("gopherProxySet"))).booleanValue();
+      return ((Boolean)AccessController.doPrivileged(new GetBooleanAction("gopherProxySet")));
    }
 
    public static String getGopherProxyHost() {

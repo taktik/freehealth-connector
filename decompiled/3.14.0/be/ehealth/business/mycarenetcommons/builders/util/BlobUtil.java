@@ -31,7 +31,7 @@ public class BlobUtil implements ConfigurationModuleBootstrap.ModuleBootstrapHoo
       } else {
          ConfigValidator props = ConfigFactory.getConfigValidator();
          Boolean defaultValue = props.getBooleanProperty("${mycarenet.default.request.needxades}", false);
-         if (props.getBooleanProperty("mycarenet." + projectName + ".request.needxades", defaultValue).booleanValue()) {
+         if (props.getBooleanProperty("mycarenet." + projectName + ".request.needxades", defaultValue)) {
             return ArrayUtils.isEmpty(furnishedXades) ? generateXades(inValue, projectName) : convertXadesToBinary(furnishedXades);
          } else {
             return null;

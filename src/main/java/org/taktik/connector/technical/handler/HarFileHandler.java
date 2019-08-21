@@ -42,7 +42,7 @@ public class HarFileHandler extends AbstractSOAPHandler {
 
    public boolean handleFault(SOAPMessageContext ctx) {
       Boolean outbound = (Boolean)ctx.get("javax.xml.ws.handler.message.outbound");
-      if (outbound.booleanValue()) {
+      if (outbound) {
          return false;
       } else {
          this.handleMessage(ctx);
@@ -78,10 +78,10 @@ public class HarFileHandler extends AbstractSOAPHandler {
          content.addProperty("text", soapenv);
          response.add("content", content);
          this.getEntry().add("response", response);
-         this.getEntry().get("timings").getAsJsonObject().addProperty("wait", this.recieved.longValue() - this.split.longValue());
+         this.getEntry().get("timings").getAsJsonObject().addProperty("wait", this.recieved - this.split);
          long end = System.currentTimeMillis();
-         this.getEntry().get("timings").getAsJsonObject().addProperty("receive", end - this.recieved.longValue());
-         this.getEntry().addProperty("time", end - this.start.longValue());
+         this.getEntry().get("timings").getAsJsonObject().addProperty("receive", end - this.recieved);
+         this.getEntry().addProperty("time", end - this.start);
          this.saveHar();
       } catch (Exception var8) {
          LOG.error(var8.getMessage(), var8);
@@ -107,7 +107,7 @@ public class HarFileHandler extends AbstractSOAPHandler {
          request.addProperty("time", "1");
          request.addProperty("bodySize", Integer.valueOf(-1));
          this.split = System.currentTimeMillis();
-         this.getEntry().get("timings").getAsJsonObject().addProperty("send", this.split.longValue() - this.start.longValue());
+         this.getEntry().get("timings").getAsJsonObject().addProperty("send", this.split - this.start);
          this.getEntry().add("request", request);
       } catch (Exception var4) {
          LOG.error(var4.getMessage(), var4);

@@ -18,7 +18,7 @@ public class TimeSignatureInstructionType extends UpdateSignatureInstructionType
    protected Boolean timeStampTheGivenSignature;
 
    public boolean isTimeStampTheGivenSignature() {
-      return this.timeStampTheGivenSignature == null ? false : this.timeStampTheGivenSignature.booleanValue();
+      return this.timeStampTheGivenSignature == null ? false : this.timeStampTheGivenSignature;
    }
 
    public void setTimeStampTheGivenSignature(Boolean value) {

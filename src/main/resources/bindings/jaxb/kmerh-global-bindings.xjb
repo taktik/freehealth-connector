@@ -7,7 +7,7 @@
     <jaxb:globalBindings localScoping="toplevel">
         <xjc:javaType adapter="be.ehealth.technicalconnector.adapter.XmlDateNoTzAdapter" name="org.joda.time.DateTime" xmlType="xsd:date" />
         <xjc:javaType adapter="org.taktik.connector.technical.adapter.XmlDateTimeAdapter" name="org.joda.time.DateTime" xmlType="xsd:dateTime" />
-        <xjc:javaType adapter="be.ehealth.technicalconnector.adapter.XmlTimeAdapter" name="org.joda.time.DateTime" xmlType="xsd:time" />
+        <xjc:javaType adapter="org.taktik.connector.technical.adapter.XmlTimeAdapter" name="org.joda.time.DateTime" xmlType="xsd:time" />
         <xjc:serializable uid='1' />
         <xjc:simple />
     </jaxb:globalBindings>

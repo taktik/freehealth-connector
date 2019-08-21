@@ -66,7 +66,7 @@ public class SignaturePlacement implements Serializable {
    }
 
    public boolean isCreateEnvelopedSignature() {
-      return this.createEnvelopedSignature == null ? true : this.createEnvelopedSignature.booleanValue();
+      return this.createEnvelopedSignature == null ? true : this.createEnvelopedSignature;
    }
 
    public void setCreateEnvelopedSignature(Boolean value) {
