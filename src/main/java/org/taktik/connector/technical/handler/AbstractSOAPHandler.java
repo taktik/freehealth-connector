@@ -40,7 +40,7 @@ public abstract class AbstractSOAPHandler implements SOAPHandler<SOAPMessageCont
       return new HashSet();
    }
 
-   protected static void dumpMessage(SOAPMessage msg, String mode, Logger log) {
+   public static void dumpMessage(SOAPMessage msg, String mode, Logger log) {
       if (msg != null) {
          try {
             String content = ConnectorXmlUtils.toString((Node)msg.getSOAPPart().getEnvelope());

@@ -26,7 +26,7 @@ class CertificateCallback : AbstractWsSecurityHandler {
     @Throws(TechnicalConnectorException::class)
     override fun addWSSecurity(context: SOAPMessageContext) {
 
-        this.buildSignature().on(context.message).withTimeStamp(60L, TimeUnit.SECONDS).withBinarySecurityToken(cred)
+        this.buildSignature().on(context.message).withTimeStamp(this.getTimeStampTTL(), TimeUnit.SECONDS).withBinarySecurityToken(cred)
             .sign(AbstractWsSecurityHandler.SignedParts.BODY, AbstractWsSecurityHandler.SignedParts.TIMESTAMP, AbstractWsSecurityHandler.SignedParts.BST)
     }
 

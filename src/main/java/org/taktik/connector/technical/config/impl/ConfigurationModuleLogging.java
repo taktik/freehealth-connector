@@ -1,5 +1,6 @@
 package org.taktik.connector.technical.config.impl;
 
+import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.Configuration;
 import org.taktik.connector.technical.config.ConfigurationModule;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
@@ -39,6 +40,7 @@ public final class ConfigurationModuleLogging implements ConfigurationModule {
    }
 
    public void unload() throws TechnicalConnectorException {
+      if (ConfigFactory.getConfigValidator().getBooleanProperty("connector.configurationmodule.logger.unload", false)) {
       LOG.debug("Unloading ConfigurationModule " + this.getClass().getName());
 
       try {
@@ -46,6 +48,7 @@ public final class ConfigurationModuleLogging implements ConfigurationModule {
          method.invoke(this.logger);
       } catch (Exception var2) {
          LOG.error(var2.getClass().getSimpleName() + ": " + var2.getMessage());
+      }
       }
 
    }

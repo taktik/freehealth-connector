@@ -50,6 +50,7 @@ import javax.xml.crypto.dsig.spec.SignatureMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.Source;
+import org.apache.commons.io.Charsets;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -214,7 +215,7 @@ public class STSServiceImpl extends AbstractSTSService {
          request = this.processDefaultFields(request, validity, nameIdentifier);
          request = this.processHolderOfKeyCredentials(hokCred, request);
          request = StringUtils.replace(request, "${authenticationMethod}", authmethod);
-         Element payload = ConnectorXmlUtils.toElement(request.getBytes());
+         Element payload = ConnectorXmlUtils.toElement(request.getBytes(Charsets.UTF_8));
          Document doc = payload.getOwnerDocument();
          this.addDesignators(designators, doc);
          this.processAttributes(attributes, doc);

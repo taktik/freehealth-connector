@@ -57,15 +57,15 @@ public class HarFileHandler extends AbstractSOAPHandler {
       try {
          String soapenv = this.getEnvelope(msg);
          JsonObject response = new JsonObject();
-         response.addProperty("status", Integer.valueOf(200));
+         response.addProperty("status", 200);
          response.addProperty("statusText", "OK");
          response.addProperty("httpVersion", "HTTP/1.1");
          response.add("headers", this.handleHeaders(msg.getMimeHeaders()));
          response.add("cookies", new JsonArray());
          JsonObject content = new JsonObject();
          content.addProperty("size", soapenv.getBytes().length);
-         response.addProperty("headersSize", Integer.valueOf(-1));
-         response.addProperty("bodySize", Integer.valueOf(-1));
+         response.addProperty("headersSize", -1);
+         response.addProperty("bodySize", -1);
          response.addProperty("redirectURL", "");
          content.addProperty("mimeType", "text/xml; charset=utf-8");
          if (msg.getMimeHeaders() != null) {
@@ -102,10 +102,10 @@ public class HarFileHandler extends AbstractSOAPHandler {
          request.add("headers", this.handleHeaders(msg.getMimeHeaders()));
          request.add("queryString", new JsonArray());
          request.add("cookies", new JsonArray());
-         request.addProperty("headersSize", Integer.valueOf(-1));
+         request.addProperty("headersSize", -1);
          request.add("postData", this.getPostData(msg));
          request.addProperty("time", "1");
-         request.addProperty("bodySize", Integer.valueOf(-1));
+         request.addProperty("bodySize", -1);
          this.split = System.currentTimeMillis();
          this.getEntry().get("timings").getAsJsonObject().addProperty("send", this.split - this.start);
          this.getEntry().add("request", request);
@@ -138,12 +138,12 @@ public class HarFileHandler extends AbstractSOAPHandler {
       String var3;
       try {
          message.writeTo(stream);
-         if (stream.size() < 1232896) {
-            var3 = stream.toString(Charset.UTF_8.getName());
+         if (stream.size() >= 1232896) {
+            var3 = "message to large to log";
             return var3;
          }
 
-         var3 = "message to large to log";
+         var3 = stream.toString(Charset.UTF_8.getName());
       } finally {
          ConnectorIOUtils.closeQuietly((Object)stream);
       }

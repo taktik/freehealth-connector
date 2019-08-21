@@ -1,5 +1,7 @@
 package org.taktik.connector.technical.handler;
 
+import org.taktik.connector.technical.config.ConfigFactory;
+import org.taktik.connector.technical.config.Configuration;
 import org.taktik.connector.technical.config.domain.Duration;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.handler.wss4j.WSSecHeaderGeneratorWss4jImpl;
@@ -14,6 +16,8 @@ import org.apache.commons.logging.Log;
 
 public abstract class AbstractWsSecurityHandler extends AbstractSOAPHandler {
    public static final String PROP_WSSECHEADER_GENERATOR = "org.taktik.connector.technical.handler.wssecurity";
+   private static final String PROP_SIGNATURE_TIMESTAMP_EXPIRES_TTL = "security.outgoing.message.timestamp.expires.ttl";
+   private static final Configuration config = ConfigFactory.getConfigValidator();
 
    public AbstractWsSecurityHandler.WSSecHeaderGeneratorStep0 buildSignature() throws TechnicalConnectorException {
       ConfigurableFactoryHelper<AbstractWsSecurityHandler.WSSecHeaderGeneratorStep0> helper = new ConfigurableFactoryHelper("org.taktik.connector.technical.handler.wssecurity", WSSecHeaderGeneratorWss4jImpl.class.getName());
@@ -34,6 +38,10 @@ public abstract class AbstractWsSecurityHandler extends AbstractSOAPHandler {
    protected abstract void addWSSecurity(SOAPMessageContext var1) throws TechnicalConnectorException;
 
    protected abstract Log getLogger();
+
+   protected long getTimeStampTTL() {
+      return config.getDurationProperty("security.outgoing.message.timestamp.expires.ttl", 60L, TimeUnit.SECONDS).convert(TimeUnit.SECONDS);
+   }
 
    public interface WSSecHeaderGeneratorStep4 {
       void sign(AbstractWsSecurityHandler.SignedParts... var1) throws TechnicalConnectorException;

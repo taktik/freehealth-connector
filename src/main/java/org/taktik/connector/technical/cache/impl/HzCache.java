@@ -3,15 +3,16 @@ package org.taktik.connector.technical.cache.impl;
 import org.taktik.connector.technical.cache.Cache;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.utils.ConfigurableImplementation;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class HashMapCache<K, V> implements Cache<K, V>, ConfigurableImplementation {
-   private static final String NAME = "HashMapCache";
+public class HzCache<K, V> implements Cache<K, V>, ConfigurableImplementation {
+   private static final String NAME = "HzCache";
    private HashMap<K, V> cache = new HashMap();
 
    public String getName() {
-      return "HashMapCache";
+      return "HzCache";
    }
 
    public V get(K key) {

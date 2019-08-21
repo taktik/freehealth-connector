@@ -7,6 +7,7 @@ import org.taktik.connector.technical.handler.AbstractWsSecurityHandler;
 import org.taktik.connector.technical.handler.utils.WSSecurityCrypto;
 import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
+import org.taktik.connector.technical.service.sts.security.impl.SAMLHolderOfKeyToken;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -78,7 +79,7 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
 
    public void sign(AbstractWsSecurityHandler.SignedParts... parts) throws TechnicalConnectorException {
       try {
-         if (StringUtils.isNotEmpty(this.assertionId)) {
+         if (this.cred instanceof SAMLHolderOfKeyToken && StringUtils.isNotEmpty(this.assertionId)) {
             this.sign.setSignatureAlgorithm("http://www.w3.org/2000/09/xmldsig#rsa-sha1");
             this.sign.setKeyIdentifierType(12);
             this.sign.setCustomTokenValueType("http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.0#SAMLAssertionID");
@@ -89,7 +90,7 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
 
          Crypto crypto = new WSSecurityCrypto(this.cred.getPrivateKey(), this.cred.getCertificate());
          this.sign.prepare(this.soapPart, crypto, this.wsSecHeader);
-         if (StringUtils.isEmpty(this.assertionId)) {
+         if (!(this.cred instanceof SAMLHolderOfKeyToken) || !StringUtils.isNotEmpty(this.assertionId)) {
             this.sign.appendBSTElementToHeader(this.wsSecHeader);
          }
 
@@ -129,38 +130,5 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
       }
 
       return signParts;
-   }
-
-   // $FF: synthetic class
-   static class SyntheticClass_1 {
-      // $FF: synthetic field
-      static final int[] $SwitchMap$be$ehealth$technicalconnector$handler$AbstractWsSecurityHandler$SignedParts = new int[AbstractWsSecurityHandler.SignedParts.values().length];
-
-      static {
-         try {
-            $SwitchMap$be$ehealth$technicalconnector$handler$AbstractWsSecurityHandler$SignedParts[AbstractWsSecurityHandler.SignedParts.TIMESTAMP.ordinal()] = 1;
-         } catch (NoSuchFieldError var4) {
-            ;
-         }
-
-         try {
-            $SwitchMap$be$ehealth$technicalconnector$handler$AbstractWsSecurityHandler$SignedParts[AbstractWsSecurityHandler.SignedParts.BODY.ordinal()] = 2;
-         } catch (NoSuchFieldError var3) {
-            ;
-         }
-
-         try {
-            $SwitchMap$be$ehealth$technicalconnector$handler$AbstractWsSecurityHandler$SignedParts[AbstractWsSecurityHandler.SignedParts.SAML_ASSERTION.ordinal()] = 3;
-         } catch (NoSuchFieldError var2) {
-            ;
-         }
-
-         try {
-            $SwitchMap$be$ehealth$technicalconnector$handler$AbstractWsSecurityHandler$SignedParts[AbstractWsSecurityHandler.SignedParts.BST.ordinal()] = 4;
-         } catch (NoSuchFieldError var1) {
-            ;
-         }
-
-      }
    }
 }

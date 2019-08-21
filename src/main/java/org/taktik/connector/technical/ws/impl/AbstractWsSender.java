@@ -10,6 +10,8 @@ import org.taktik.connector.technical.utils.ConnectorIOUtils;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import org.taktik.connector.technical.ws.domain.GenericResponse;
 import org.taktik.connector.technical.ws.impl.strategy.InvokeStrategy;
+import org.taktik.connector.technical.ws.impl.strategy.InvokeStrategyContext;
+import org.taktik.connector.technical.ws.impl.strategy.InvokeStrategyFactory;
 import org.taktik.connector.technical.ws.impl.strategy.NoRetryInvokeStrategy;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointDistributor;
 
@@ -22,6 +24,7 @@ import java.net.URLStreamHandler;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.activation.DataHandler;
@@ -36,6 +39,7 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 public abstract class AbstractWsSender {
@@ -47,57 +51,49 @@ public abstract class AbstractWsSender {
    private static ConfigurableFactoryHelper<InvokeStrategy> invokeStrategyHelper = new ConfigurableFactoryHelper("org.taktik.connector.technical.ws.genericsender.invokestrategy", NoRetryInvokeStrategy.class.getName());
 
    public GenericResponse send(GenericRequest genericRequest) throws TechnicalConnectorException {
-      InvokeStrategy strategy = (InvokeStrategy)invokeStrategyHelper.getImplementation();
-      log.debug("Using invoke strategy [" + strategy.getClass() + "]");
-      return strategy.invoke(genericRequest);
+      List<InvokeStrategy> strategies = InvokeStrategyFactory.getList((String)genericRequest.getRequestMap().get("javax.xml.ws.service.endpoint.address"));
+      InvokeStrategyContext ctx = new InvokeStrategyContext(genericRequest);
+      Iterator i$ = strategies.iterator();
+
+      while(i$.hasNext()) {
+         InvokeStrategy strategy = (InvokeStrategy)i$.next();
+         log.debug("Using invoke strategy [" + strategy.getClass() + "]");
+         if (strategy.invoke(ctx)) {
+            break;
+         }
+      }
+
+      if (ctx.hasException()) {
+         throw ctx.getException();
+      } else {
+         return ctx.getResponse();
+      }
    }
 
    protected GenericResponse call(GenericRequest genericRequest) throws TechnicalConnectorException {
-      SOAPMessageContext request = this.createSOAPMessageCtx(genericRequest);
-      request.putAll(genericRequest.getRequestMap());
-      request.put("javax.xml.ws.handler.message.outbound", true);
-      Handler<?>[] chain = genericRequest.getHandlerchain();
       SOAPConnection conn = null;
-      SOAPMessageContext reply;
+      Handler[] chain = genericRequest.getHandlerchain();
 
+      GenericResponse var6;
       try {
-         URL endpoint = generateEndpoint(request);
+         SOAPMessageContext request = this.createSOAPMessageCtx(genericRequest);
+         request.putAll(genericRequest.getRequestMap());
+         request.put("javax.xml.ws.handler.message.outbound", true);
          executeHandlers(chain, request);
-         SOAPMessage msgToSend = request.getMessage();
-
-         if (log.isDebugEnabled()) {
-            log.debug("Sending SOAP message: " + msgToSend);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            try {
-               msgToSend.writeTo(bos);
-               log.debug("SOAP message details " + new String(bos.toByteArray(), StandardCharsets.UTF_8));
-            } catch (IOException e) {
-               log.debug("Error while logging message", e);
-            }
-         }
          conn = scf.createConnection();
-         reply = createSOAPMessageCtx(conn.call(msgToSend, endpoint));
-      } catch (UnsupportedOperationException | SOAPException | MalformedURLException ex) {
-         throw translate(ex);
-      } finally {
-         ConnectorIOUtils.closeQuietly(conn);
-      }
-
+         SOAPMessageContext reply = createSOAPMessageCtx(conn.call(request.getMessage(), generateEndpoint(request)));
+         reply.putAll(genericRequest.getRequestMap());
       reply.put("javax.xml.ws.handler.message.outbound", false);
+         ArrayUtils.reverse(chain);
       executeHandlers(chain, reply);
-
-      if (log.isDebugEnabled()) {
-         log.debug("Received SOAP message: " + reply.getMessage());
-         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-         try {
-            reply.getMessage().writeTo(bos);
-            log.debug("SOAP message details " + new String(bos.toByteArray(), StandardCharsets.UTF_8));
-         } catch (IOException | SOAPException e) {
-            log.debug("Error while logging message", e);
-         }
+         var6 = new GenericResponse(reply.getMessage());
+      } catch (Exception var10) {
+         throw translate(var10);
+      } finally {
+         ConnectorIOUtils.closeQuietly((Object)conn);
       }
 
-      return new GenericResponse(reply.getMessage(), request.getMessage());
+      return var6;
    }
 
    private static SOAPMessageContext createSOAPMessageCtx(SOAPMessage msg) {
@@ -107,10 +103,12 @@ public abstract class AbstractWsSender {
    private static TechnicalConnectorException translate(Exception e) {
       if (e instanceof SOAPException) {
          return new RetryNextEndpointException(e);
+      } else if (e instanceof TechnicalConnectorException) {
+         return (TechnicalConnectorException)e;
       } else {
          Throwable reason = ExceptionUtils.getRootCause(e);
          log.error("Cannot send SOAP message. Reason [" + reason + "]", e);
-         return new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, e, new Object[]{reason});
+         return new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, reason, new Object[]{"Cannot send SOAP message"});
       }
    }
 
@@ -195,18 +193,13 @@ public abstract class AbstractWsSender {
    }
 
    static {
-      Object is = null;
-
       try {
          mf = MessageFactory.newInstance();
          scf = SOAPConnectionFactory.newInstance();
-      } catch (UnsupportedOperationException var6) {
-         throw new IllegalArgumentException(var6);
-      } catch (SOAPException var7) {
-         throw new IllegalArgumentException(var7);
-      } finally {
-         ConnectorIOUtils.closeQuietly(is);
+      } catch (UnsupportedOperationException var1) {
+         throw new IllegalArgumentException(var1);
+      } catch (SOAPException var2) {
+         throw new IllegalArgumentException(var2);
       }
-
    }
 }

@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.taktik.connector.business.therlink.domain.HasTherapeuticLinkMessage
 import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkDto
 import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkMessageDto
 import org.taktik.freehealth.middleware.exception.MissingTokenException
@@ -47,6 +48,41 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
     @ExceptionHandler(MissingTokenException::class)
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
+
+    @GetMapping("/check/{patientSsin}/{hcpNihii}")
+    fun hasTherapeuticLink(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @PathVariable hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @PathVariable patientSsin: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam(required = false) eidCardNumber: String?,
+        @RequestParam(required = false) isiCardNumber: String?,
+        @RequestParam(required = false) startDate: Date?,
+        @RequestParam(required = false) endDate: Date?,
+        @RequestParam(required = false) type: String?
+    ) = therLinkService.hasTherapeuticLink(
+    keystoreId = keystoreId,
+    tokenId = tokenId,
+    passPhrase = passPhrase,
+    hcpNihii = hcpNihii,
+    hcpSsin = hcpSsin,
+    hcpFirstName = hcpFirstName,
+    hcpLastName = hcpLastName,
+    patientSsin = patientSsin,
+    patientFirstName = patientFirstName,
+    patientLastName = patientLastName,
+    eidCardNumber = eidCardNumber,
+    isiCardNumber = isiCardNumber,
+    startDate = startDate,
+    endDate = endDate,
+    therLinkType = type
+    )
 
     @GetMapping("/{patientSsin}/{hcpNihii}")
     fun getAllTherapeuticLinks(

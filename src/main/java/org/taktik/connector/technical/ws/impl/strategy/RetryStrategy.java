@@ -18,7 +18,8 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
    private static final Logger LOG = LoggerFactory.getLogger(RetryStrategy.class);
    private static EndpointDistributor distributor = EndpointDistributor.getInstance();
 
-   public GenericResponse invoke(GenericRequest genericRequest) throws TechnicalConnectorException {
+   public boolean invoke(InvokeStrategyContext invokeStrategyContext) {
+      GenericRequest genericRequest = invokeStrategyContext.getRequest();
       RetryStrategy.RetryContext ctx = new RetryStrategy.RetryContext(this.getCurrentEndpoint(genericRequest));
       int alternatives = distributor.getAmountOfAlternatives(ctx.endpoint);
 
@@ -29,24 +30,27 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
             genericRequest.setEndpoint(activeEndpoint);
 
             try {
-               GenericResponse resp = super.call(genericRequest);
+               invokeStrategyContext.setResponse(super.call(genericRequest));
                if (ctx.alternativeActivated) {
                   LOG.debug("Activating status page polling!");
                   distributor.activatePolling();
                }
 
-               return resp;
-            } catch (RetryNextEndpointException var9) {
-               LOG.error("Unable to invoke endpoint [{}], activating next one.", activeEndpoint, var9);
+               return false;
+            } catch (RetryNextEndpointException var10) {
+               LOG.error("Unable to invoke endpoint [{}], activating next one.", activeEndpoint, var10);
 
                try {
                   distributor.activateNextEndPoint(activeEndpoint);
                   ctx.alternativeActivated = true;
-               } catch (NoNextEndpointException var8) {
-                  LOG.error("Unable to activate alternative", var8);
+               } catch (NoNextEndpointException var9) {
+                  LOG.error("Unable to activate alternative", var9);
                }
 
-               ctx.lastException = var9;
+               ctx.lastException = var10;
+            } catch (TechnicalConnectorException var11) {
+               invokeStrategyContext.setException(var11);
+               return true;
             }
          } else {
             LOG.debug("Endpoint [{}] already invoked, skipping it.", activeEndpoint);
@@ -54,9 +58,10 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
       }
 
       if (EndpointDistributor.update()) {
-         return this.invoke(genericRequest);
+         return this.invoke(invokeStrategyContext);
       } else {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ExceptionUtils.getRootCause(ctx.lastException), new Object[]{ExceptionUtils.getRootCauseMessage(ctx.lastException)});
+         invokeStrategyContext.setException(new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ExceptionUtils.getRootCause(ctx.lastException), new Object[]{ExceptionUtils.getRootCauseMessage(ctx.lastException)}));
+         return true;
       }
    }
 
