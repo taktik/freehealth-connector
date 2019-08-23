@@ -22,22 +22,18 @@ import org.slf4j.LoggerFactory;
 
 public final class KeyDepotManagerImpl implements KeyDepotManager {
    private static final Logger LOG = LoggerFactory.getLogger(KeyDepotManagerImpl.class);
-   private KeyDepotService service;
+   private static KeyDepotManagerImpl instance = null;
+
+   private KeyDepotService keyDepotService;
    private Cache<X509Certificate, EncryptionToken> cache;
 
-   private KeyDepotManagerImpl() {
+   private KeyDepotManagerImpl(KeyDepotService keyDepotService) {
       this.cache = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY, "etkdepot-manager", CacheInformation.ExpiryType.NONE, null);
-
-      try {
-         this.service = ServiceFactory.getKeyDepotService();
-      } catch (TechnicalConnectorException var2) {
-         LOG.error(var2.getMessage(), var2);
-         throw new IllegalArgumentException(var2);
-      }
+      this.keyDepotService = keyDepotService;
    }
 
-   public static KeyDepotManager getInstance() {
-      return KeyDepotManagerImpl.KeyDepotManagerImplSingleton.INSTANCE.getKeyDepotManager();
+   public static synchronized KeyDepotManager getInstance(KeyDepotService keyDepotService) {
+      return (instance == null) ? (instance = new KeyDepotManagerImpl(keyDepotService)) : instance;
    }
 
    @Override
@@ -67,13 +63,13 @@ public final class KeyDepotManagerImpl implements KeyDepotManager {
       if (identifierType != null && !StringUtils.isEmpty(identifierValue) && StringUtils.isNumeric(identifierValue)) {
          try {
             return this.getEtk(identifierType, Long.parseLong(identifierValue), application);
-         } catch (NumberFormatException var7) {
+         } catch (NumberFormatException numberFormatException) {
             LOG.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.getMessage());
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, var7, new Object[0]);
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, numberFormatException);
          }
       } else {
          LOG.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.getMessage());
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, new Object[0]);
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND);
       }
    }
 
@@ -90,7 +86,7 @@ public final class KeyDepotManagerImpl implements KeyDepotManager {
    public Set<EncryptionToken> getEtkSet(IdentifierType identifierType, Long identifierValue, String application) throws TechnicalConnectorException {
       String identifier = identifierType.formatIdentifierValue(identifierValue);
       Set<EncryptionToken> result = new HashSet<>();
-      result.addAll(this.service.getETKSet(identifierType, identifier, application));
+      result.addAll(this.keyDepotService.getETKSet(identifierType, identifier, application));
       if (LOG.isDebugEnabled()) {
          StringBuilder keyBuilder = new StringBuilder();
          keyBuilder.append(identifierType).append("/").append(identifierValue).append("/").append(application).append(" size [").append(result.size()).append("] with serialnr [");
@@ -109,26 +105,11 @@ public final class KeyDepotManagerImpl implements KeyDepotManager {
    }
 
    public void setKeyDepotService(KeyDepotService service) {
-      this.service = service;
+      this.keyDepotService = service;
       this.flushCache();
    }
 
    public void flushCache() {
       this.cache.clear();
-   }
-
-   // $FF: synthetic method
-   KeyDepotManagerImpl(Object x0) {
-      this();
-   }
-
-   private static enum KeyDepotManagerImplSingleton {
-      INSTANCE;
-
-      private transient KeyDepotManager instance = new KeyDepotManagerImpl();
-
-      public KeyDepotManager getKeyDepotManager() {
-         return this.instance;
-      }
    }
 }

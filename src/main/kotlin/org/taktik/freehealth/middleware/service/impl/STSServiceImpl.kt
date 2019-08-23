@@ -31,6 +31,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues.ERROR_CONFIG
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.sts.SAMLTokenFactory
 import org.taktik.connector.technical.service.sts.domain.SAMLAttribute
 import org.taktik.connector.technical.service.sts.domain.SAMLAttributeDesignator
@@ -58,12 +59,11 @@ import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 
 @Service
-class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, SamlTokenResult>) : STSService {
+class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, SamlTokenResult>, val keyDepotService: KeyDepotService) : STSService {
     private val log = LogFactory.getLog(this.javaClass)
+
     val freehealthStsService: org.taktik.connector.technical.service.sts.STSService =
         org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
-    val freehealthKeyDepotService: org.taktik.connector.technical.service.keydepot.KeyDepotService =
-        org.taktik.connector.technical.service.keydepot.impl.KeyDepotServiceImpl()
     val transformer = TransformerFactory.newInstance().newTransformer()
 
     override fun registerToken(tokenId: UUID, token: String) {
@@ -285,11 +285,11 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
 
     @Throws(TechnicalConnectorException::class)
     fun getEtk(identifierType: IdentifierType, identifierValue: Long, application: String): EncryptionToken {
-        return this.freehealthKeyDepotService.getETKSet(
+        return this.keyDepotService.getETKSet(
             identifierType,
             identifierType.formatIdentifierValue(identifierValue),
             application
-        )?.let { if (it.size == 1) it.iterator().next() else null } ?: throw TechnicalConnectorException(
+                                             )?.let { if (it.size == 1) it.iterator().next() else null } ?: throw TechnicalConnectorException(
             ERROR_ETK_NOTFOUND,
             arrayOfNulls<Any>(0)
         )

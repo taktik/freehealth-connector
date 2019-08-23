@@ -6,7 +6,7 @@ import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import java.security.KeyStore
 
 interface KgssService {
-    fun remove(key: String): KeyResult
+    fun remove(key: String): KeyResult?
     fun containsKey(key: String): Boolean
     fun getNewKey(keystoreId: String, keyStore: KeyStore, passPhrase: String, allowedReaders: List<CredentialType>, myEtk: ByteArray): KeyResult
     fun flushCache()

@@ -9,6 +9,5 @@ import java.io.Serializable;
 import java.util.Set;
 
 public interface KeyDepotService extends Serializable {
-   GetEtkResponse getETK(GetEtkRequest var1) throws TechnicalConnectorException;
    Set<EncryptionToken> getETKSet(org.taktik.connector.technical.utils.IdentifierType identifierType, String identifierValue, String applicationId) throws TechnicalConnectorException;
 }

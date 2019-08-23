@@ -19,7 +19,7 @@
  */
 
 /*
- * 
+ *
  */
 package org.taktik.connector.business.recipe.common
 
@@ -41,6 +41,7 @@ import org.taktik.connector.business.recipeprojects.core.utils.MessageDumper
 import org.taktik.connector.business.recipeprojects.core.utils.PropertyHandler
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.kgss.impl.KgssServiceImpl
 import org.taktik.connector.technical.service.sts.security.SAMLToken
@@ -51,7 +52,7 @@ import java.security.Security
 import java.util.Arrays
 import java.util.regex.Pattern
 
-abstract class AbstractIntegrationModule {
+abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val ridPattern = Pattern.compile(RID_PATTERN)
 
@@ -107,12 +108,8 @@ abstract class AbstractIntegrationModule {
             log.info("Init the encryption - create symmKey")
             symmKey = encryptionUtils.generateSecretKey()
 
-            if (encryptionUtils.oldKeyStore != null) {
-                oldDataSealer = encryptionUtils.initOldSealing()
-                oldDataUnsealer = encryptionUtils.initOldUnSealing()
-            }
             log.info("Init the encryption - init etkHelper")
-            etkHelper = ETKHelper()
+            etkHelper = ETKHelper(keyDepotService)
         } catch (t: Throwable) {
             log.error("Exception occured when initializing the encryption util: ", t)
             Exceptionutils.errorHandler(t, "error.initialization")

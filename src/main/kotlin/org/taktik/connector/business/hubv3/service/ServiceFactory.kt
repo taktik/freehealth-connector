@@ -37,9 +37,6 @@ import java.security.KeyStore
 object ServiceFactory {
     internal val INTRAHUB_PROTOCOL = "/ehealth-hubservices/XSD/hubservices_protocol-3_2.xsd"
 
-    val intraHubService: HubTokenService
-        get() = HubTokenServiceImpl()
-
     @Throws(TechnicalConnectorException::class)
     fun getIntraHubPort(
         endPoint: String,
@@ -63,25 +60,5 @@ object ServiceFactory {
                 )
             )
         })
-        //return GenericRequest().setEndpoint(endPoint).setSoapAction(soapAction).setCredential(token, TokenType.SAML).addDefaulHandlerChain().addHandlerChain(addHubServiceHandlerChain(keystore, passPhrase, HandlerChainUtil.buildChainWithValidator("validation.incoming.intrahubv3.message", "/ehealth-hubservices/XSD/hubservices_protocol-3_2.xsd")))
-    }
-
-    @Throws(TechnicalConnectorException::class)
-    private fun addHubServiceHandlerChain(keystore: KeyStore, passPhrase: String, chain: HandlerChain): HandlerChain {
-
-        chain.register(
-            HandlerPosition.BEFORE,
-            HubDecryptionHandler(
-                CryptoFactory.getCrypto(
-                    KeyStoreCredential(
-                        keystore,
-                        "authentication",
-                        passPhrase
-                    ), KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
-                )
-            )
-        )
-
-        return chain
     }
 }

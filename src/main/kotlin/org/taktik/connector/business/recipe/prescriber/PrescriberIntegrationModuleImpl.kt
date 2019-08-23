@@ -45,6 +45,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.kgss.impl.KgssServiceImpl
 import org.taktik.connector.technical.service.sts.security.SAMLToken
@@ -55,7 +56,7 @@ import java.io.ByteArrayInputStream
 import java.security.KeyStore
 import java.util.*
 
-class PrescriberIntegrationModuleImpl(val stsService: STSService) : AbstractIntegrationModule(), PrescriberIntegrationModule {
+class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotService: KeyDepotService) : AbstractIntegrationModule(keyDepotService), PrescriberIntegrationModule {
     private val log = LoggerFactory.getLogger(PrescriberIntegrationModuleImpl::class.java)
     private val keyCache = HashMap<String, KeyResult>()
     /**

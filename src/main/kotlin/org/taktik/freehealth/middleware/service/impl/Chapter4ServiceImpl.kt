@@ -24,7 +24,6 @@ import org.taktik.connector.business.chapterIV.exception.ChapterIVBusinessConnec
 import org.taktik.connector.business.chapterIV.exception.ChapterIVBusinessConnectorExceptionValues
 import org.taktik.connector.business.chapterIV.utils.ACLUtils
 import org.taktik.connector.business.chapterIV.utils.FolderTypeUtils
-import org.taktik.connector.business.chapterIV.utils.KeyDepotHelper
 import org.taktik.connector.business.chapterIV.validators.Chapter4XmlValidator
 import org.taktik.connector.business.chapterIV.validators.impl.Chapter4XmlValidatorImpl
 import org.taktik.connector.business.chapterIV.wrapper.Chap4MedicalAdvisorAgreementRequestWrapper
@@ -56,8 +55,8 @@ import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.CONSULTATIONENDDATE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.CONSULTATIONSTARTDATE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.DECISIONREFERENCE
-import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.REFUSALJUSTIFICATION
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.IOREQUESTREFERENCE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.REFUSALJUSTIFICATION
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.REQUESTTYPE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.RESPONSETYPE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.UNITNUMBER
@@ -104,10 +103,12 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
-import org.taktik.connector.technical.service.keydepot.KeyDepotManagerFactory
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
+import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
+import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.freehealth.middleware.dao.User
@@ -115,9 +116,9 @@ import org.taktik.freehealth.middleware.domain.common.messages.AbstractMessage
 import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
 import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
-import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.Chapter4Service
 import org.taktik.freehealth.middleware.service.STSService
@@ -150,7 +151,7 @@ import javax.xml.xpath.XPathExpressionException
 import javax.xml.xpath.XPathFactory
 
 @Service
-class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic, val kgssService: KgssServiceImpl) : Chapter4Service {
+class Chapter4ServiceImpl(private val stsService: STSService, private val drugsLogic: DrugsLogic, private val kgssService: KgssServiceImpl, private val keyDepotService: KeyDepotService) : Chapter4Service {
     private val freehealthChapter4Service: org.taktik.connector.business.chapterIV.service.ChapterIVService =
         org.taktik.connector.business.chapterIV.service.impl.ChapterIVServiceImpl(EhealthReplyValidatorImpl())
 
@@ -158,6 +159,11 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     private var consultMessages: List<AbstractMessage> = ArrayList()
     private val chapter4XmlValidator: Chapter4XmlValidator = Chapter4XmlValidatorImpl()
     private val config = ConfigFactory.getConfigValidator(emptyList())
+    private var configValidator = ConfigFactory.getConfigValidator(listOf(
+        "chapterIV.keydepot.application",
+        "chapterIV.keydepot.identifiertype",
+        "chapterIV.keydepot.identifiersubtype",
+        "chapterIV.keydepot.identifiervalue"))
 
     val chapter4ConsultationWarnings =
         Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/Chapter4ConsultationWarnings.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
@@ -231,7 +237,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                               subTypeName: String,
                               credential: Credential): KeyResult {
         val acl = ACLUtils.createAclChapterIV(subTypeName)
-        val etk = KeyDepotManagerFactory.getKeyDepotManager().getETK(credential)
+        val etk = KeyDepotManagerImpl.getInstance(keyDepotService).getETK(credential)
         if (etk == null) {
             throw IllegalArgumentException("EncryptionETK is undefined")
         } else {
@@ -286,7 +292,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                                                  message: Kmehrmessage,
                                                  xmlObjectFactory: XmlObjectFactory): UnsealedRequestWrapper<*> {
         val request = xmlObjectFactory.createUnsealedRequest()
-        request.etkHcp = KeyDepotManagerFactory.getKeyDepotManager().getETK(credential).etk.encoded
+        request.etkHcp =  KeyDepotManagerImpl.getInstance(keyDepotService).getETK(credential).etk.encoded
         request.kmehrRequest = this.createAndValidateKmehrRequestXmlByteArray(message)
         //this.chapter4XmlValidator.validate(request.xmlObject)
         return request
@@ -302,7 +308,16 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     private fun marshallAndEncryptSealedRequest(crypto: Crypto, request: SealedRequestWrapper<*>): SecuredContentType {
         val marshalledContent = WrappedObjectMarshallerHelper.toXMLByteArray(request)
         log.debug("securedContent : $marshalledContent")
-        val sealedKnown = crypto.seal(KeyDepotHelper.chapterIVEncryptionToken, marshalledContent)
+        val identifierTypeString = configValidator!!.getProperty("chapterIV.keydepot.identifiertype")
+        val identifierSubTypeString = configValidator!!.getProperty("chapterIV.keydepot.identifiersubtype")
+        val identifierSource = 48
+        val identifier = IdentifierType.lookup(identifierTypeString, null as String?, identifierSource)
+        val sealedKnown = crypto.seal(if (identifier == null) {
+            throw IllegalStateException("invalid configuration : identifier with type ]$identifierTypeString[ and subtype ]$identifierSubTypeString[ for source ETKDEPOT not found")
+        } else {
+            KeyDepotManagerImpl.getInstance(keyDepotService)
+                .getEtk(identifier, configValidator!!.getLongProperty("chapterIV.keydepot.identifiervalue", 0L), configValidator!!.getProperty("chapterIV.keydepot.application"))
+        }, marshalledContent)
         val securedContent = SecuredContentType()
         securedContent.securedContent = sealedKnown
         return securedContent

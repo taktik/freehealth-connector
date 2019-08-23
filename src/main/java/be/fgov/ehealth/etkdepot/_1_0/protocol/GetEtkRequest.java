@@ -2,6 +2,7 @@ package be.fgov.ehealth.etkdepot._1_0.protocol;
 
 import be.fgov.ehealth.commons._1_0.protocol.RequestType;
 import java.io.Serializable;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,5 +31,18 @@ public class GetEtkRequest extends RequestType implements Serializable {
 
    public void setSearchCriteria(SearchCriteriaType value) {
       this.searchCriteria = value;
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      GetEtkRequest that = (GetEtkRequest) o;
+      return Objects.equals(searchCriteria, that.searchCriteria);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(searchCriteria);
    }
 }

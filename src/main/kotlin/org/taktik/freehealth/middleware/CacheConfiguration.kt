@@ -21,12 +21,17 @@
 
 package org.taktik.freehealth.middleware
 
+import com.hazelcast.core.IMap
+import org.apache.commons.lang3.tuple.Triple
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.taktik.connector.technical.service.etee.domain.EncryptionToken
+import org.taktik.connector.technical.service.keydepot.impl.KeyDepotServiceImpl
+import org.taktik.connector.technical.utils.IdentifierType
 
 @Configuration
 class CacheConfiguration {
     @Bean fun cacheManager() = ConcurrentMapCacheManager().apply {  }
-    @Bean fun kgssKeyCache() = cacheManager().getCache("KGSS")
+    @Bean fun keyDepotService(etksMap: IMap<Triple<IdentifierType, String, String>, Set<EncryptionToken>>) = KeyDepotServiceImpl(etksMap)
 }

@@ -89,10 +89,15 @@ import javax.xml.ws.WebServiceException
 import org.slf4j.LoggerFactory
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
+import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
+import org.taktik.connector.technical.utils.IdentifierType
 import java.security.KeyStore
 
-class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
+class HubTokenServiceImpl(private val keyDepotService: KeyDepotService) : HubTokenService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
+
+    val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
 
     @Throws(TechnicalConnectorException::class)
     override fun declareTransaction(
@@ -135,7 +140,8 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
                 request,
                 getCrypto(keystore, passPhrase),
                 hubId,
-                hubApplication
+                hubApplication,
+                keyDepotManager.getEtk(IdentifierType.EHP, hubId, hubApplication ?: "")
             ),
             PutTransactionResponse::class.java
         )
@@ -560,7 +566,8 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
                 request,
                 getCrypto(keystore, passPhrase),
                 hubId,
-                hubApplication
+                hubApplication,
+                keyDepotManager.getEtk(IdentifierType.EHP, hubId, hubApplication ?: "")
             ),
             PutTransactionSetResponse::class.java
         )

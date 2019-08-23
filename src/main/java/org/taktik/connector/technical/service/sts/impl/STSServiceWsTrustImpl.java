@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import javax.validation.constraints.NotNull;
 import javax.xml.soap.SOAPException;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +32,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class STSServiceWsTrustImpl extends AbstractSTSService implements STSService {
-   public Element getToken(Credential headerCredentials, Credential bodyCredentials, List<SAMLAttribute> attributes, List<SAMLAttributeDesignator> designators, String authenticationMethod, String nameQualifier, String value, String subjectConfirmationMethod, int validity) throws TechnicalConnectorException {
+   public Element getToken(@NotNull Credential headerCredentials, @NotNull Credential bodyCredentials, List<SAMLAttribute> attributes, List<SAMLAttributeDesignator> designators, String authenticationMethod, String nameQualifier, String value, String subjectConfirmationMethod, int validity) throws TechnicalConnectorException {
       try {
          Element issuePayload = null;
          if ("urn:oasis:names:tc:SAML:1.0:cm:holder-of-key".equals(subjectConfirmationMethod)) {
@@ -53,7 +54,7 @@ public class STSServiceWsTrustImpl extends AbstractSTSService implements STSServ
       }
    }
 
-   public Element getToken(Credential headerCredentials, Credential bodyCredentials, List<SAMLAttribute> attributes, List<SAMLAttributeDesignator> designators, String subjectConfirmationMethod, int validity) throws TechnicalConnectorException {
+   public Element getToken(@NotNull Credential headerCredentials, @NotNull Credential bodyCredentials, List<SAMLAttribute> attributes, List<SAMLAttributeDesignator> designators, String subjectConfirmationMethod, int validity) throws TechnicalConnectorException {
       return this.getToken(headerCredentials, bodyCredentials, attributes, designators, (String)null, (String)null, (String)null, subjectConfirmationMethod, validity);
    }
 

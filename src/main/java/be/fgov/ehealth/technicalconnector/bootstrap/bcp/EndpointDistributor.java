@@ -1,5 +1,7 @@
 package be.fgov.ehealth.technicalconnector.bootstrap.bcp;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.ConfigValidator;
 import org.taktik.connector.technical.exception.NoNextEndpointException;
@@ -14,7 +16,6 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.reflect.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ public final class EndpointDistributor {
    public static final String PROP_POLLING_INTERVAL = "be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.interval.minutes";
    public static final String PROP_POLLING_ACTIVATED = "be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.activated";
    private static final long DEFAULT_POLLING_INTERVAL = 15L;
-   private static final Logger LOG = LoggerFactory.getLogger(EndpointDistributor.class);
+   private static final Log log = LogFactory.getLog(EndpointDistributor.class);
    private static ConfigValidator config = ConfigFactory.getConfigValidator();
    private boolean polling;
    private Timer timer;
@@ -75,11 +76,11 @@ public final class EndpointDistributor {
    }
 
    public void activateNextEndPoint(String currentEndpoint) throws NoNextEndpointException {
-      LOG.debug("Trying to activate next endpoint for [{}]", currentEndpoint);
+      log.debug("Trying to activate next endpoint for " + currentEndpoint);
       if (this.url2Service.containsKey(currentEndpoint)) {
-         String serviceKey = (String)this.url2Service.get(currentEndpoint);
-         String nextEndpoint = next(currentEndpoint, (List)this.service2AllEndpoints.get(serviceKey));
-         LOG.info("Activating new endpoint [{}] for [{}]", nextEndpoint, serviceKey);
+         String serviceKey = this.url2Service.get(currentEndpoint);
+         String nextEndpoint = next(currentEndpoint, this.service2AllEndpoints.get(serviceKey));
+         log.info("Activating new endpoint " + nextEndpoint + " for " + serviceKey);
          this.service2ActiveEndpoint.put(serviceKey, nextEndpoint);
       } else {
          throw new NoNextEndpointException("Unable to activate alternative for [" + currentEndpoint + "]");
@@ -88,8 +89,8 @@ public final class EndpointDistributor {
 
    public int getAmountOfAlternatives(String currentEndpoint) {
       if (this.url2Service.containsKey(currentEndpoint)) {
-         String serviceKey = (String)this.url2Service.get(currentEndpoint);
-         return ((List)this.service2AllEndpoints.get(serviceKey)).size();
+         String serviceKey = this.url2Service.get(currentEndpoint);
+         return this.service2AllEndpoints.get(serviceKey).size();
       } else {
          return 1;
       }
@@ -144,32 +145,22 @@ public final class EndpointDistributor {
 
    public static boolean update() {
       try {
-         return (Boolean) MethodUtils.invokeStaticMethod(Class.forName("be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointUpdater"), "update", new Object[0]);
+         return EndpointUpdater.update();
       } catch (Exception ex) {
-         LOG.error("Unable to update endpoints", ex);
+         log.error("Unable to update endpoints", ex);
          return false;
       }
    }
 
-   // $FF: synthetic method
-   EndpointDistributor(Object x0) {
-      this();
-   }
-
    private static class StatusPollingTimerTask extends TimerTask {
-      private static final Logger LOG = LoggerFactory.getLogger(EndpointDistributor.StatusPollingTimerTask.class);
+      private static final Log log = LogFactory.getLog(StatusPollingTimerTask.class);
 
       private StatusPollingTimerTask() {
       }
 
       public void run() {
-         LOG.debug("Update endpoints through Timer");
+         log.debug("Update endpoints through Timer");
          EndpointDistributor.update();
-      }
-
-      // $FF: synthetic method
-      StatusPollingTimerTask(Object x0) {
-         this();
       }
    }
 

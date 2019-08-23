@@ -2,8 +2,6 @@ package org.taktik.connector.technical.service.sts.security.impl;
 
 import org.taktik.connector.technical.exception.CredentialException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
-import org.taktik.connector.technical.service.sts.security.KeyStoreInfo;
-import org.taktik.connector.technical.utils.KeyStoreManager;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -26,21 +24,6 @@ public class KeyStoreCredential extends AbstractExtendedCredential {
       this.pwd = password == null ? ArrayUtils.EMPTY_CHAR_ARRAY : password.toCharArray();
       this.alias = alias;
       this.keystore = keystore;
-   }
-
-   public KeyStoreCredential(KeyStoreInfo keyStoreInfo) throws TechnicalConnectorException {
-      KeyStoreManager keyStoreManager = new KeyStoreManager(keyStoreInfo);
-      this.keystore = keyStoreManager.getKeyStore();
-      this.alias = keyStoreManager.getKeyStoreInfo().getAlias();
-      this.pwd = keyStoreManager.getKeyStoreInfo().getPrivateKeyPassword();
-   }
-
-   public KeyStoreCredential(String keystorePath, String alias, String password) throws TechnicalConnectorException {
-      this(new KeyStoreInfo(keystorePath, password.toCharArray(), alias, password.toCharArray()));
-   }
-
-   public KeyStoreCredential(String keystorePath, String pwdKeystore, String privateKeyAlias, String pwdPrivateKey) throws TechnicalConnectorException {
-      this(new KeyStoreInfo(keystorePath, pwdKeystore.toCharArray(), privateKeyAlias, pwdPrivateKey.toCharArray()));
    }
 
    public String getIssuer() {

@@ -50,7 +50,6 @@ public final class CryptoFactory {
    public static final String OCSP_CONNECTION_USER_INTERACTION = "be.fgov.ehealth.etee.crypto.policies.OCSPOption.CONNECTION_USER_INTERACTION";
    private static final String PROP_CAKEYSTORE_PATH = "CAKEYSTORE_LOCATION";
    private static final String PROP_CAKEYSTORE_PASSWORD = "CAKEYSTORE_PASSWORD";
-   private static final String PROP_KEYSTORE_DIR = "KEYSTORE_DIR";
    private static Configuration configuration = ConfigFactory.getConfigValidator();
    private static ConfigurableFactoryHelper<Crypto> helper = new ConfigurableFactoryHelper("crypto.classname", "org.taktik.connector.technical.service.etee.impl.CryptoImpl");
 
@@ -92,7 +91,7 @@ public final class CryptoFactory {
          char[] pwd = configuration.getProperty(password, "").toCharArray();
          String path = configuration.getProperty(key, "");
          if (StringUtils.isNotBlank(path)) {
-            String keystorePath = configuration.getProperty("KEYSTORE_DIR", "") + path;
+            String keystorePath = path;
 
             try {
                KeyStoreManager ocspKeyStoreManager = new KeyStoreManager(keystorePath, pwd);

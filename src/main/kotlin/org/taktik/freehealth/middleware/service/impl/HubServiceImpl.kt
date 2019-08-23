@@ -61,16 +61,17 @@ import org.taktik.freehealth.middleware.service.HubService
 import org.taktik.freehealth.middleware.service.STSService
 import be.fgov.ehealth.hubservices.core.v3.GetPatientAuditTrailRequest
 import be.fgov.ehealth.standards.kmehr.cd.v1.*
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.HashSet
 
 @Service
-class HubServiceImpl(val stsService: STSService, val mapper: MapperFacade) : HubService {
+class HubServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService, val mapper: MapperFacade) : HubService {
     private val config = ConfigFactory.getConfigValidator(listOf())
     private val freehealthHubService: org.taktik.connector.business.hubv3.service.HubTokenService =
-        org.taktik.connector.business.hubv3.service.impl.HubTokenServiceImpl()
+        org.taktik.connector.business.hubv3.service.impl.HubTokenServiceImpl(keyDepotService)
     private val nisCodesPerZip =
         Gson().fromJson<Map<String, String>>(
             this.javaClass.getResourceAsStream("/NisCodes.json").bufferedReader(Charsets.UTF_8),

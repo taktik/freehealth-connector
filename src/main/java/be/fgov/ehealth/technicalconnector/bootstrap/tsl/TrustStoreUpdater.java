@@ -73,8 +73,8 @@ public final class TrustStoreUpdater {
          shaCacheLocation = config.getProperty("truststoreupdater.local.cache", System.getProperty("java.io.tmpdir").replaceAll("[/\\\\]?$","") + File.separator + TrustStoreUpdater.class.getCanonicalName() + ".properties");
          is = ConnectorIOUtils.getResourceAsStream(shaCacheLocation);
          shaCache.load(is);
-      } catch (Exception var5) {
-         LOG.warn("Unable to load sha cache", var5);
+      } catch (Exception ex) {
+         LOG.warn("Unable to load sha cache");
       } finally {
          ConnectorIOUtils.closeQuietly((Object)is);
       }

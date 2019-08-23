@@ -29,7 +29,8 @@ import org.taktik.connector.business.ehbox.v3.builders.impl.ConsultationMessageB
 import org.taktik.connector.business.ehbox.v3.builders.impl.SendMessageBuilderImpl
 import org.taktik.connector.business.ehbox.v3.exception.EhboxCryptoException
 import org.taktik.connector.business.ehbox.v3.validator.impl.EhboxReplyValidatorImpl
-import org.taktik.connector.technical.service.keydepot.KeyDepotManagerFactory
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
+import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.freehealth.middleware.dto.ehbox.AltKeystore
 import org.taktik.freehealth.middleware.dto.ehbox.BoxInfo
@@ -40,15 +41,15 @@ import org.taktik.freehealth.middleware.mapper.toDocumentMessage
 import org.taktik.freehealth.middleware.mapper.toMessageDto
 import org.taktik.freehealth.middleware.service.EhboxService
 import org.taktik.freehealth.middleware.service.STSService
-import java.util.*
+import java.util.UUID
 
 @Service
-class EhboxServiceImpl(val stsService: STSService) : EhboxService {
+class EhboxServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : EhboxService {
 
     private val freehealthEhboxService: org.taktik.connector.business.ehbox.service.EhboxService =
         org.taktik.connector.business.ehbox.service.impl.EhboxServiceImpl(EhboxReplyValidatorImpl())
     private val consultationMessageBuilder = ConsultationMessageBuilderImpl()
-    private val sendMessageBuilder = SendMessageBuilderImpl(KeyDepotManagerFactory.getKeyDepotManager())
+    private val sendMessageBuilder = SendMessageBuilderImpl( KeyDepotManagerImpl.getInstance(keyDepotService))
 
 
     /**
