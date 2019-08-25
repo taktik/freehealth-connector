@@ -45,6 +45,7 @@ import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.kgss.impl.KgssServiceImpl
 import org.taktik.connector.technical.service.sts.security.SAMLToken
+import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import java.io.File
 import java.security.Key
 import java.security.KeyStore
@@ -238,9 +239,9 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
     }
 
     @Throws(IntegrationModuleException::class)
-    protected fun getKeyFromKgss(keystore: KeyStore, samlToken: SAMLToken, passPhrase: String, keyId: String, myEtk: ByteArray): KeyResult? {
+    protected fun getKeyFromKgss(credential: KeyStoreCredential, samlToken: SAMLToken, keyId: String, myEtk: ByteArray): KeyResult? {
         return try {
-            kgssService.retrieveKeyFromKgss(keystore, samlToken, passPhrase, keyId.toByteArray(Charsets.UTF_8), myEtk, etkHelper!!.kgsS_ETK[0].encoded);
+            kgssService.retrieveKeyFromKgss(credential, samlToken, keyId.toByteArray(Charsets.UTF_8), myEtk, etkHelper!!.kgsS_ETK[0].encoded)
         } catch (t: Throwable) {
             log.error("Exception in getKeyFromKgss abstractIntegrationModule: ", t)
             null

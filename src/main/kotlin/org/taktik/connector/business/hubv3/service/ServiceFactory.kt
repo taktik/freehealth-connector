@@ -33,14 +33,14 @@ import org.apache.commons.lang.Validate
 import org.taktik.connector.technical.service.etee.CryptoFactory
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import java.security.KeyStore
+import java.util.UUID
 
 object ServiceFactory {
-    internal val INTRAHUB_PROTOCOL = "/ehealth-hubservices/XSD/hubservices_protocol-3_2.xsd"
-
     @Throws(TechnicalConnectorException::class)
     fun getIntraHubPort(
         endPoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         soapAction: String
@@ -54,7 +54,7 @@ object ServiceFactory {
                 HandlerPosition.BEFORE,
                 HubDecryptionHandler(
                     CryptoFactory.getCrypto(
-                        KeyStoreCredential(keystore, "authentication", passPhrase),
+                        KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase),
                         KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
                     )
                 )

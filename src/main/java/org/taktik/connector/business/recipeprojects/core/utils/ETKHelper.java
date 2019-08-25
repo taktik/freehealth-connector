@@ -1,29 +1,16 @@
 package org.taktik.connector.business.recipeprojects.core.utils;
 
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateNotYetValidException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import be.fgov.ehealth.etkdepot._1_0.protocol.ErrorType;
-import be.fgov.ehealth.etkdepot._1_0.protocol.GetEtkRequest;
-import be.fgov.ehealth.etkdepot._1_0.protocol.GetEtkResponse;
-import be.fgov.ehealth.etkdepot._1_0.protocol.IdentifierType;
-import be.fgov.ehealth.etkdepot._1_0.protocol.MatchingEtk;
-import be.fgov.ehealth.etkdepot._1_0.protocol.SearchCriteriaType;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.taktik.connector.business.recipeprojects.core.domain.KgssIdentifierType;
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
-import org.taktik.connector.technical.service.ServiceFactory;
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken;
 import org.taktik.connector.technical.service.keydepot.KeyDepotService;
 
@@ -55,7 +42,7 @@ public class ETKHelper {
 
     private List<EncryptionToken> getEtks(KgssIdentifierType identifierType, String identifierValue, String application) throws IntegrationModuleException {
         try {
-            return new ArrayList<>(this.keyDepotService.getETKSet(org.taktik.connector.technical.utils.IdentifierType.valueOf(identifierType.name()), identifierValue, application));
+            return new ArrayList<>(this.keyDepotService.getETKSet(org.taktik.connector.technical.utils.IdentifierType.valueOf(identifierType.name()), identifierValue, application, null, false));
         } catch (TechnicalConnectorException e) {
             throw new IntegrationModuleException(e);
         }

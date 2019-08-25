@@ -231,13 +231,13 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
         this.inputReference = commonReference
     }
 
-    private fun getUnknownKey(keystoreId: String,
+    private fun getUnknownKey(keystoreId: UUID,
                               keyStore: KeyStore,
                               passPhrase: String,
                               subTypeName: String,
                               credential: Credential): KeyResult {
         val acl = ACLUtils.createAclChapterIV(subTypeName)
-        val etk = KeyDepotManagerImpl.getInstance(keyDepotService).getETK(credential)
+        val etk = KeyDepotManagerImpl.getInstance(keyDepotService).getETK(credential, keystoreId)
         if (etk == null) {
             throw IllegalArgumentException("EncryptionETK is undefined")
         } else {
@@ -247,7 +247,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
         }
     }
 
-    private fun createAndValidateSealedRequest(keystoreId: String,
+    private fun createAndValidateSealedRequest(keystoreId: UUID,
                                                keyStore: KeyStore,
                                                passPhrase: String,
                                                crypto: Crypto, credential: Credential, message: Kmehrmessage,
@@ -259,7 +259,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
             val request = xmlObjectFactory.createSealedRequest()
             request.agreementStartDate = agreementStartDate
             request.careReceiver = this.mapToCinCareReceiverIdType(careReceiver)
-            request.sealedContent = this.getSealedContent(crypto, credential, message, e, xmlObjectFactory)
+            request.sealedContent = this.getSealedContent(crypto, keystoreId, credential, message, e, xmlObjectFactory)
             request.unsealKeyId = e.keyId
 //            this.chapter4XmlValidator.validate(request.xmlObject)
 
@@ -280,19 +280,21 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
     }
 
     private fun getSealedContent(crypto: Crypto,
+                                 keystoreId: UUID,
                                  credential: Credential,
                                  message: Kmehrmessage,
                                  unknownKey: KeyResult,
                                  xmlObjectFactory: XmlObjectFactory): ByteArray {
-        val request = this.createAndValidateUnsealedRequest(credential, message, xmlObjectFactory)
+        val request = this.createAndValidateUnsealedRequest(keystoreId, credential, message, xmlObjectFactory)
         return crypto.seal(WrappedObjectMarshallerHelper.toXMLByteArray(request), unknownKey.secretKey, unknownKey.keyId)
     }
 
-    private fun createAndValidateUnsealedRequest(credential: Credential,
+    private fun createAndValidateUnsealedRequest(keystoreId: UUID,
+                                                 credential: Credential,
                                                  message: Kmehrmessage,
                                                  xmlObjectFactory: XmlObjectFactory): UnsealedRequestWrapper<*> {
         val request = xmlObjectFactory.createUnsealedRequest()
-        request.etkHcp =  KeyDepotManagerImpl.getInstance(keyDepotService).getETK(credential).etk.encoded
+        request.etkHcp =  KeyDepotManagerImpl.getInstance(keyDepotService).getETK(credential, keystoreId).etk.encoded
         request.kmehrRequest = this.createAndValidateKmehrRequestXmlByteArray(message)
         //this.chapter4XmlValidator.validate(request.xmlObject)
         return request
@@ -305,7 +307,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
         return kmehrMarshallHelper.toXMLByteArray(kmehrrequest)
     }
 
-    private fun marshallAndEncryptSealedRequest(crypto: Crypto, request: SealedRequestWrapper<*>): SecuredContentType {
+    private fun marshallAndEncryptSealedRequest(keystoreId: UUID, crypto: Crypto, request: SealedRequestWrapper<*>): SecuredContentType {
         val marshalledContent = WrappedObjectMarshallerHelper.toXMLByteArray(request)
         log.debug("securedContent : $marshalledContent")
         val identifierTypeString = configValidator!!.getProperty("chapterIV.keydepot.identifiertype")
@@ -316,14 +318,14 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
             throw IllegalStateException("invalid configuration : identifier with type ]$identifierTypeString[ and subtype ]$identifierSubTypeString[ for source ETKDEPOT not found")
         } else {
             KeyDepotManagerImpl.getInstance(keyDepotService)
-                .getEtk(identifier, configValidator!!.getLongProperty("chapterIV.keydepot.identifiervalue", 0L), configValidator!!.getProperty("chapterIV.keydepot.application"))
+                .getEtk(identifier, configValidator!!.getLongProperty("chapterIV.keydepot.identifiervalue", 0L), configValidator!!.getProperty("chapterIV.keydepot.application"), keystoreId)
         }, marshalledContent)
         val securedContent = SecuredContentType()
         securedContent.securedContent = sealedKnown
         return securedContent
     }
 
-    private fun buildAndValidateAgreementRequest(crypto: Crypto, xmlObjectFactory: XmlObjectFactory,
+    private fun buildAndValidateAgreementRequest(keystoreId: UUID, crypto: Crypto, xmlObjectFactory: XmlObjectFactory,
                                                  careReceiver: CareReceiverIdType,
                                                  recordCommonInput: RecordCommonInputType,
                                                  commonInput: CommonInputType,
@@ -332,12 +334,12 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
         agreementRequest.careReceiver = careReceiver
         agreementRequest.recordCommonInput = recordCommonInput
         agreementRequest.commonInput = commonInput
-        agreementRequest.request = this.marshallAndEncryptSealedRequest(crypto, sealedRequest)
+        agreementRequest.request = this.marshallAndEncryptSealedRequest(keystoreId, crypto, sealedRequest)
         //this.chapter4XmlValidator.validate(agreementRequest.xmlObject)
         return agreementRequest
     }
 
-    private fun createAgreementRequest(keystoreId: String,
+    private fun createAgreementRequest(keystoreId: UUID,
                                        keyStore: KeyStore,
                                        passPhrase: String,
                                        crypto: Crypto,
@@ -372,7 +374,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
             val sealedRequest =
                 this.createAndValidateSealedRequest(keystoreId, keyStore, passPhrase, crypto, credential, message, careReceiver, xmlObjectFactory, agreementStartDate)
             val resultWrapper =
-                this.buildAndValidateAgreementRequest(crypto, xmlObjectFactory, careReceiver, recordCommonInput, commonInput, sealedRequest)
+                this.buildAndValidateAgreementRequest(keystoreId, crypto, xmlObjectFactory, careReceiver, recordCommonInput, commonInput, sealedRequest)
             val result = hashMapOf(
                 "references" to references,
                 "folder" to folder,
@@ -416,7 +418,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
                 ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -440,7 +442,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
 
         val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
         val request =
-            createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
+            createAgreementRequest(keystoreId, keystore, passPhrase, crypto, credential, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
                 ?: DateTime()).askChap4MedicalAdvisorAgreementRequest
 
         val response = try {
@@ -547,7 +549,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
                 ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -575,7 +577,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
 
         val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
         val request =
-            createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, ConsultationXmlObjectFactory(), agreementStartDate
+            createAgreementRequest(keystoreId, keystore, passPhrase, crypto, credential, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, ConsultationXmlObjectFactory(), agreementStartDate
                 ?: DateTime()).consultChap4MedicalAdvisorAgreementRequest
 
         val response = try {
@@ -731,7 +733,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
                 ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -751,7 +753,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
 
         val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
         val request =
-            createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii,
+            createAgreementRequest(keystoreId, keystore, passPhrase, crypto, credential, hcpNihii,
                                    hcpSsin, hcpFirstName, hcpLastName,
                                    v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
                                        ?: DateTime()).askChap4MedicalAdvisorAgreementRequest

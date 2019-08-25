@@ -97,6 +97,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             freehealthHubService.getHCPartyConsent(
                 endpoint,
                 samlToken,
+                keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetHCPartyConsentRequest().apply {
@@ -135,6 +136,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             freehealthHubService.getPatientConsent(
                 endpoint,
                 samlToken,
+                keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetPatientConsentRequest().apply {
@@ -182,6 +184,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         return freehealthHubService.putPatientConsent(
                 endpoint,
                 samlToken,
+                keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 PutPatientConsentRequest().apply {
@@ -228,6 +231,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         return freehealthHubService.putTherapeuticLink(
                 endpoint,
                 samlToken,
+                keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 PutTherapeuticLinkRequest().apply {
@@ -281,6 +285,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             freehealthHubService.getTherapeuticLink(
                 endpoint,
                 samlToken,
+                keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetTherapeuticLinkRequest().apply {
@@ -359,6 +364,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             freehealthHubService.putPatient(
                 endpoint,
                 samlToken,
+                keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 PutPatientRequest().apply {
@@ -419,6 +425,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             freehealthHubService.getPatient(
                 endpoint,
                 samlToken,
+                keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetPatientRequest().apply {
@@ -468,6 +475,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             freehealthHubService.getTransaction(
                 endpoint,
                 samlToken,
+                keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetTransactionRequest().apply {
@@ -517,6 +525,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             freehealthHubService.revokeTransaction(
             endpoint,
             samlToken,
+            keystoreId,
             stsService.getKeyStore(keystoreId, passPhrase)!!,
             passPhrase,
             RevokeTransactionRequest().apply {
@@ -571,6 +580,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             hubId,
             hubApplication,
             samlToken,
+            keystoreId,
             stsService.getKeyStore(keystoreId, passPhrase)!!,
             passPhrase,
             PutTransactionRequest().apply {
@@ -606,6 +616,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             freehealthHubService.getTransactionList(
                 endpoint,
                 samlToken,
+                keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetTransactionListRequest().apply {
@@ -683,6 +694,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             freehealthHubService.getTransactionSet(
                 endpoint,
                 samlToken,
+                keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetTransactionSetRequest().apply {
@@ -733,6 +745,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             hubId,
             hubApplication,
             samlToken,
+            keystoreId,
             stsService.getKeyStore(keystoreId, passPhrase)!!,
             passPhrase,
             PutTransactionSetRequest().apply {
@@ -831,6 +844,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         return freehealthHubService.getPatientAuditTrail(
             endpoint,
             samlToken,
+            keystoreId,
             stsService.getKeyStore(keystoreId, passPhrase)!!,
             passPhrase,
             GetPatientAuditTrailRequest().apply{
@@ -891,6 +905,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         return freehealthHubService.putAccessRight(
             endpoint,
             samlToken,
+            keystoreId,
             stsService.getKeyStore(keystoreId, passPhrase)!!,
             passPhrase,
             PutAccessRightRequest().apply {
@@ -933,6 +948,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         return freehealthHubService.getAccessRight(
             endpoint,
             samlToken,
+            keystoreId,
             stsService.getKeyStore(keystoreId, passPhrase)!!,
             passPhrase,
             GetAccessRightRequest().apply {
@@ -969,6 +985,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         return freehealthHubService.revokeAccessRight(
             endpoint,
             samlToken,
+            keystoreId,
             stsService.getKeyStore(keystoreId, passPhrase)!!,
             passPhrase,
             RevokeAccessRightRequest().apply {

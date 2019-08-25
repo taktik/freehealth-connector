@@ -5,10 +5,10 @@ import be.fgov.ehealth.etkdepot._1_0.protocol.GetEtkResponse;
 import be.fgov.ehealth.etkdepot._1_0.protocol.MatchingEtk;
 import be.fgov.ehealth.etkdepot._1_0.protocol.SearchCriteriaType;
 import com.hazelcast.core.IMap;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.taktik.connector.technical.config.impl.ConfigurationModuleBootstrap;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.taktik.connector.technical.utils.IdentifierType.ETKDEPOT;
 
@@ -34,10 +35,12 @@ public class KeyDepotServiceImpl implements KeyDepotService, ConfigurationModule
    private static final long serialVersionUID = 1L;
    private static final Logger LOG = LoggerFactory.getLogger(KeyDepotServiceImpl.class);
 
-   private IMap<Triple<IdentifierType,String,String>, Set<EncryptionToken>> etksCache;
+   private IMap<Triple<IdentifierType,String,String>, Set<EncryptionToken>> etksMap;
+   private IMap<Pair<UUID, Triple<IdentifierType, String, String>>, Set<EncryptionToken>> longLivedEtksMap;
 
-   public KeyDepotServiceImpl(IMap<Triple<IdentifierType,String,String>, Set<EncryptionToken>> etksCache) {
-      this.etksCache = etksCache;
+   public KeyDepotServiceImpl(IMap<Triple<IdentifierType,String,String>, Set<EncryptionToken>> etksMap, IMap<Pair<UUID, Triple<IdentifierType, String, String>>, Set<EncryptionToken>> longLivedEtksMap) {
+      this.etksMap = etksMap;
+      this.longLivedEtksMap = longLivedEtksMap;
    }
 
    private GetEtkResponse getETK(SearchCriteriaType searchCriteria) throws TechnicalConnectorException {
@@ -73,13 +76,20 @@ public class KeyDepotServiceImpl implements KeyDepotService, ConfigurationModule
       return searchCriteria;
    }
 
-   public Set<EncryptionToken> getETKSet(IdentifierType identifierType, String identifierValue, String applicationId) throws TechnicalConnectorException {
+   @Override
+   public Set<EncryptionToken> getETKSet(org.taktik.connector.technical.utils.IdentifierType identifierType, String identifierValue, String applicationId, UUID longLivedCacheKey, boolean isOwnEtk) throws TechnicalConnectorException {
       Date now = new Date();
 
       Triple<IdentifierType, String, String> key = Triple.of(identifierType, identifierValue, applicationId);
-      Set<EncryptionToken> cachedResult = etksCache.get(key);
+      Set<EncryptionToken> cachedResult = longLivedCacheKey != null ? longLivedEtksMap.get(Pair.of(longLivedCacheKey, key)) : null;
+      if (cachedResult == null) {
+         cachedResult = etksMap.get(key);
+         if (isOwnEtk && longLivedCacheKey != null) {
+            longLivedEtksMap.put(Pair.of(longLivedCacheKey, key), cachedResult);
+         }
+      }
 
-      if (cachedResult == null || cachedResult.stream().allMatch(tok -> tok.getCertificate().getNotAfter().after(now))) {
+      if (cachedResult == null || !cachedResult.stream().allMatch(tok -> tok.getCertificate().getNotAfter().after(now))) {
          Set<EncryptionToken> result = new HashSet<>();
          SearchCriteriaType searchCriteria = this.generatedSearchCriteria(identifierType.getType(ETKDEPOT), identifierValue, applicationId);
          GetEtkResponse response = this.getETK(searchCriteria);
@@ -94,7 +104,11 @@ public class KeyDepotServiceImpl implements KeyDepotService, ConfigurationModule
             unableToFindEtk(searchCriteria);
          }
 
-         etksCache.put(key, result);
+         if (isOwnEtk && longLivedCacheKey != null) {
+            longLivedEtksMap.put(Pair.of(longLivedCacheKey, key), result);
+         } else {
+            etksMap.put(key, result);
+         }
 
          return result;
       }

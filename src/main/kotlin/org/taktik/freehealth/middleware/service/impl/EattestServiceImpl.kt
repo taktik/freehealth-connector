@@ -167,7 +167,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -368,7 +368,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                 ?: throw MissingTokenException("Cannot obtain token for Eattest operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -590,7 +590,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                 ?: throw MissingTokenException("Cannot obtain token for Eattest operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -2092,7 +2092,8 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
             KeyDepotManagerImpl.getInstance(keyDepotService).getEtkSet(
                 IdentifierType.CBE,
                 820563481L,
-                "MYCARENET"
+                "MYCARENET",
+                null
                                                                  ),
             encryptedKnowContent
                           )
@@ -2119,14 +2120,14 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
         if (parser.identifier != null && !StringUtils.isEmpty(parser.id) && StringUtils.isNumeric(parser.id)) {
             try {
                 return KeyDepotManagerImpl.getInstance(keyDepotService)
-                    .getEtk(parser.identifier, java.lang.Long.parseLong(parser.id), parser.application)
+                    .getEtk(parser.identifier, java.lang.Long.parseLong(parser.id), parser.application, cred.keystoreId)
             } catch (ex: NumberFormatException) {
                 log.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.message)
                 throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, ex)
             }
         } else {
             log.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.message)
-            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, *arrayOfNulls(0))
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND)
         }
     }
 }

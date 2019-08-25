@@ -39,7 +39,6 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.service.sts.utils.SAMLHelper
 import org.taktik.connector.technical.utils.CertificateParser
-import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import org.taktik.freehealth.middleware.dto.CertificateInfo
 import org.taktik.freehealth.middleware.service.STSService
@@ -84,7 +83,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             transformer.transform(StreamSource(StringReader(it.token)), result)
             return result.node?.firstChild?.let {el ->
                 SAMLTokenFactory.getInstance()
-                    .createSamlToken(el as Element, KeyStoreCredential(keyStore, "authentication", passPhrase))
+                    .createSamlToken(el as Element, KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase))
             }
         }
     }
@@ -98,7 +97,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         extraDesignators: List<Pair<String, String>>
     ): SamlTokenResult? {
         val keyStore = getKeyStore(keystoreId, passPhrase)
-        val credential = KeyStoreCredential(keyStore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keyStore, passPhrase.toCharArray())
         val etk = getHolderOfKeysEtk(credential, nihiiOrSsin)
         if (!hokPrivateKeys.containsKey(etk?.certificate?.serialNumber?.toString(10))) {
@@ -228,7 +227,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
 
     override fun getKeystoreInfo(keystoreId: UUID, passPhrase: String): CertificateInfo {
         val keyStore = getKeyStore(keystoreId, passPhrase)
-        val credential = KeyStoreCredential(keyStore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase)
         val parser = CertificateParser(credential.certificate)
 
         return CertificateInfo(parser.validity, parser.type, parser.id, parser.application, parser.owner)
@@ -247,7 +246,16 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             val identifierValue = parser.id
             val application = parser.application
 
-            this.getEtk(identifierType, java.lang.Long.parseLong(identifierValue), application)
+            this.keyDepotService.getETKSet(
+                identifierType,
+                identifierType.formatIdentifierValue(java.lang.Long.parseLong(identifierValue)),
+                application,
+                credential.keystoreId,
+                true
+                                          )?.let { if (it.size == 1) it.iterator().next() else null } ?: throw TechnicalConnectorException(
+                ERROR_ETK_NOTFOUND,
+                arrayOfNulls<Any>(0)
+                                                                                                                                          )
         } catch (e:java.lang.IllegalStateException) {
             log.info("Invalid certificate: ${parser.id} : ${parser.identifier} : ${parser.application} - nihii/ssin: ${nihiiOrSsin ?: ""}")
             null
@@ -281,18 +289,6 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
 
     override fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore? {
         return keystoreCache.get(Pair(keystoreId, passPhrase))
-    }
-
-    @Throws(TechnicalConnectorException::class)
-    fun getEtk(identifierType: IdentifierType, identifierValue: Long, application: String): EncryptionToken {
-        return this.keyDepotService.getETKSet(
-            identifierType,
-            identifierType.formatIdentifierValue(identifierValue),
-            application
-                                             )?.let { if (it.size == 1) it.iterator().next() else null } ?: throw TechnicalConnectorException(
-            ERROR_ETK_NOTFOUND,
-            arrayOfNulls<Any>(0)
-        )
     }
 
     override fun checkIfKeystoreExist(keystoreId: UUID): Boolean{

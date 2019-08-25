@@ -32,6 +32,7 @@ import org.taktik.connector.business.ehbox.v3.validator.impl.EhboxReplyValidator
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.SAMLToken
+import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.freehealth.middleware.dto.ehbox.AltKeystore
 import org.taktik.freehealth.middleware.dto.ehbox.BoxInfo
 import org.taktik.freehealth.middleware.dto.ehbox.DocumentMessage
@@ -93,10 +94,9 @@ class EhboxServiceImpl(private val stsService: STSService, private val keyDepotS
         }
         val msg = freehealthEhboxService.getFullMessage(samlToken, messageRequest)
         return try { consultationMessageBuilder.buildFullMessage(
-            stsService.getKeyStore(keystoreId, passPhrase)!!,
-            passPhrase, msg).toMessageDto() ?: ErrorMessage(title = "Unknown error") } catch (e:EhboxCryptoException) {
+            KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase), msg).toMessageDto() ?: ErrorMessage(title = "Unknown error") } catch (e:EhboxCryptoException) {
             alternateKeystores?.mapFirstNotNull {
-                try { it.uuid?.let { uuid -> it.passPhrase?.let { pass -> consultationMessageBuilder.buildFullMessage(stsService.getKeyStore(uuid, pass)!!, pass, msg).toMessageDto() }}} catch(_: EhboxCryptoException) { null }
+                try { it.uuid?.let { uuid -> it.passPhrase?.let { pass -> consultationMessageBuilder.buildFullMessage(KeyStoreCredential(uuid, stsService.getKeyStore(uuid, pass)!!, "authentication", pass), msg).toMessageDto() }}} catch(_: EhboxCryptoException) { null }
             } ?: ErrorMessage(title = "Impossible to decrypt message using provided Keystores")
         }
     }
@@ -113,6 +113,7 @@ class EhboxServiceImpl(private val stsService: STSService, private val keyDepotS
         val samlToken = getSamlToken(tokenId, keystoreId, passPhrase)
         val request =
             sendMessageBuilder.buildMessage(
+                keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 message.toDocumentMessage()
@@ -148,11 +149,10 @@ class EhboxServiceImpl(private val stsService: STSService, private val keyDepotS
             val response = freehealthEhboxService.getMessageList(samlToken, messagesListRequest)
             result.addAll(response.messages.mapNotNull { msg ->
                 try { consultationMessageBuilder.buildMessage(
-                    stsService.getKeyStore(keystoreId, passPhrase)!!,
-                    passPhrase, msg
+                    KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase), msg
                 ).toMessageDto() } catch (e:EhboxCryptoException) {
                     alternateKeystores?.mapFirstNotNull {
-                        try { it.uuid?.let { uuid -> it.passPhrase?.let { pass -> consultationMessageBuilder.buildMessage(stsService.getKeyStore(uuid, pass)!!, pass, msg).toMessageDto() }}} catch(_: EhboxCryptoException) { null }
+                        try { it.uuid?.let { uuid -> it.passPhrase?.let { pass -> consultationMessageBuilder.buildMessage(KeyStoreCredential(uuid, stsService.getKeyStore(uuid, pass)!!, "authentication", pass), msg).toMessageDto() }}} catch(_: EhboxCryptoException) { null }
                     } ?: ErrorMessage(title = "Impossible to decrypt message using provided Keystores")
                 }
             })

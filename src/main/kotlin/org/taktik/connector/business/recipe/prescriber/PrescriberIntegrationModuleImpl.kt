@@ -78,7 +78,10 @@ class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotServic
      * @throws IntegrationModuleException the integration module exception
      */
     @Throws(IntegrationModuleException::class)
-    private fun getNewKey(keystore: KeyStore, samlToken: SAMLToken, passPhrase: String, nihii: String, patientId: String, prescriptionType: String): KeyResult? {
+    private fun getNewKey(credential: KeyStoreCredential,
+        nihii: String,
+        patientId: String,
+        prescriptionType: String): KeyResult? {
         var key: KeyResult? = null
 
         val cacheId = "($patientId#$prescriptionType)"
@@ -86,8 +89,7 @@ class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotServic
             key = keyCache[cacheId]
             keyCache.remove(cacheId)
         } else {
-            val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-            key = getNewKeyFromKgss(keystore, samlToken, passPhrase, prescriptionType, nihii, null, patientId, stsService.getHolderOfKeysEtk(credential, null)!!.encoded)
+            key = getNewKeyFromKgss(credential, prescriptionType, nihii, null, patientId, stsService.getHolderOfKeysEtk(credential, nihii)!!.encoded)
         }
         return key
     }
@@ -137,7 +139,7 @@ class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotServic
             val etkRecipes = etkHelper!!.recipe_ETK
 
             // create sealed prescription
-            val key = getNewKey(keystore, samlToken , passPhrase, nihii, patientId, prescriptionType)
+            val key = getNewKey(credential, nihii, patientId, prescriptionType)
             val message = getCrypto(credential).seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, null, KeyResult(key?.secretKey, key?.keyId), IOUtils.compress(prescription))
 
             // create sealed content
@@ -297,7 +299,7 @@ class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotServic
 
             // unseal WS response
             val result = helper.unsealWithSymmKey(response.securedGetPrescriptionForPrescriberResponse.securedContent, symmKey)
-            getKeyFromKgss(keystore, samlToken, passPhrase, result.encryptionKeyId, stsService.getHolderOfKeysEtk(credential, null)!!.encoded)?.let { key ->
+            getKeyFromKgss(credential, samlToken, result.encryptionKeyId, stsService.getHolderOfKeysEtk(credential, nihii)!!.encoded)?.let { key ->
                 result.prescription = IOUtils.decompress(getCrypto(credential).unseal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, key, result.prescription).contentAsByte)
             }
 
@@ -598,13 +600,13 @@ class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotServic
 
 
     @Throws(IntegrationModuleException::class)
-    protected fun getNewKeyFromKgss(keystore: KeyStore, samlToken: SAMLToken, passPhrase: String, prescriptionType: String, prescriberId: String, executorId: String?, patientId: String, myEtk: ByteArray): KeyResult? {
+    protected fun getNewKeyFromKgss(credential: KeyStoreCredential, prescriptionType: String, prescriberId: String, executorId: String?, patientId: String, myEtk: ByteArray): KeyResult? {
         val etkKgss = etkHelper!!.kgsS_ETK[0]
         val credentialTypes = propertyHandler.getMatchingProperties("kgss.createPrescription.ACL." + prescriptionType)
 
         var keyResult: KeyResult? = null
         try {
-            keyResult = kgssService.retrieveNewKey(keystore, samlToken, passPhrase, etkKgss.encoded, credentialTypes, prescriberId, executorId, patientId, myEtk);
+            keyResult = kgssService.retrieveNewKey(credential, etkKgss.encoded, credentialTypes, prescriberId, executorId, patientId, myEtk);
         } catch (t: Throwable) {
             Exceptionutils.errorHandler(t)
         }
@@ -619,7 +621,7 @@ class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotServic
     }
 
     private fun getCrypto(credential: KeyStoreCredential) : Crypto {
-        val hokPrivateKeys = KeyManager.getDecryptionKeys(credential.keyStore, credential.pwd)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(credential.keyStore, credential.password)
         return CryptoFactory.getCrypto(credential, hokPrivateKeys)
     }
 

@@ -45,7 +45,7 @@ interface STSService {
     fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken?
     fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore?
     fun checkIfKeystoreExist(keystoreId: UUID): Boolean
-    fun getHolderOfKeysEtk(credential: KeyStoreCredential, nihiiOrSsin: String? = null): EncryptionToken?
+    fun getHolderOfKeysEtk(credential: KeyStoreCredential, nihiiOrSsin: String?): EncryptionToken?
     fun checkTokenValid(tokenId: UUID): Boolean
     fun getKeystoreInfo(keystoreId: UUID, passPhrase: String): CertificateInfo
 }

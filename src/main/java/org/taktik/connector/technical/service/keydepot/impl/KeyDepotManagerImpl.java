@@ -4,7 +4,6 @@ import org.taktik.connector.technical.cache.Cache;
 import org.taktik.connector.technical.cache.CacheFactory;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
-import org.taktik.connector.technical.service.ServiceFactory;
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken;
 import org.taktik.connector.technical.service.keydepot.KeyDepotManager;
 import org.taktik.connector.technical.service.keydepot.KeyDepotService;
@@ -16,9 +15,13 @@ import java.security.cert.X509Certificate;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
 
 public final class KeyDepotManagerImpl implements KeyDepotManager {
    private static final Logger LOG = LoggerFactory.getLogger(KeyDepotManagerImpl.class);
@@ -37,15 +40,15 @@ public final class KeyDepotManagerImpl implements KeyDepotManager {
    }
 
    @Override
-   public EncryptionToken getETK(Credential cred) throws TechnicalConnectorException {
-      return this.getEncryptionToken(cred);
+   public EncryptionToken getETK(Credential cred, @Nullable UUID keystoreId) throws TechnicalConnectorException {
+      return this.getEncryptionToken(cred, keystoreId);
    }
 
-   private EncryptionToken getEncryptionToken(Credential cred) throws TechnicalConnectorException {
+   private EncryptionToken getEncryptionToken(Credential cred, @Nullable UUID keystoreId) throws TechnicalConnectorException {
       if (cred != null) {
          X509Certificate cert = cred.getCertificate();
          if (!this.cache.containsKey(cert)) {
-            this.cache.put(cert, this.getEtkBasedOnX509(cert));
+            this.cache.put(cert, this.getEtkBasedOnX509(cert, keystoreId));
          }
 
          return this.cache.get(cert);
@@ -55,14 +58,14 @@ public final class KeyDepotManagerImpl implements KeyDepotManager {
       }
    }
 
-   private EncryptionToken getEtkBasedOnX509(X509Certificate cert) throws TechnicalConnectorException {
+   private EncryptionToken getEtkBasedOnX509(X509Certificate cert, @Nullable UUID keystoreId) throws TechnicalConnectorException {
       CertificateParser parser = new CertificateParser(cert);
       IdentifierType identifierType = parser.getIdentifier();
       String identifierValue = parser.getId();
       String application = parser.getApplication();
       if (identifierType != null && !StringUtils.isEmpty(identifierValue) && StringUtils.isNumeric(identifierValue)) {
          try {
-            return this.getEtk(identifierType, Long.parseLong(identifierValue), application);
+            return this.getEtk(identifierType, Long.parseLong(identifierValue), application, keystoreId);
          } catch (NumberFormatException numberFormatException) {
             LOG.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.getMessage());
             throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, numberFormatException);
@@ -73,20 +76,22 @@ public final class KeyDepotManagerImpl implements KeyDepotManager {
       }
    }
 
-   public EncryptionToken getEtk(IdentifierType identifierType, Long identifierValue, String application) throws TechnicalConnectorException {
-      Set<EncryptionToken> etkSet = this.getEtkSet(identifierType, identifierValue, application);
+   @Override
+   public EncryptionToken getEtk(IdentifierType identifierType, Long identifierValue, String application, @Nullable UUID keystoreId) throws TechnicalConnectorException {
+      Set<EncryptionToken> etkSet = this.getEtkSet(identifierType, identifierValue, application, keystoreId);
       if (etkSet.size() != 1) {
          LOG.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.getMessage());
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, new Object[0]);
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND);
       } else {
          return etkSet.iterator().next();
       }
    }
 
-   public Set<EncryptionToken> getEtkSet(IdentifierType identifierType, Long identifierValue, String application) throws TechnicalConnectorException {
+   @Override
+   public Set<EncryptionToken> getEtkSet(IdentifierType identifierType, Long identifierValue, String application, @Nullable UUID keystoreId) throws TechnicalConnectorException {
       String identifier = identifierType.formatIdentifierValue(identifierValue);
       Set<EncryptionToken> result = new HashSet<>();
-      result.addAll(this.keyDepotService.getETKSet(identifierType, identifier, application));
+      result.addAll(this.keyDepotService.getETKSet(identifierType, identifier, application, keystoreId, false));
       if (LOG.isDebugEnabled()) {
          StringBuilder keyBuilder = new StringBuilder();
          keyBuilder.append(identifierType).append("/").append(identifierValue).append("/").append(application).append(" size [").append(result.size()).append("] with serialnr [");

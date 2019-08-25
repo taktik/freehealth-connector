@@ -13,9 +13,10 @@ import org.taktik.connector.technical.service.kgss.KgssService
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.utils.IdentifierType
 import java.security.KeyStore
+import java.util.UUID
 
 @Service
-class KgssServiceImpl constructor(private val kgssMap : IMap<String, KeyResult>, private val keyDepotService: KeyDepotService) : org.taktik.freehealth.middleware.service.KgssService {
+class KgssServiceImpl constructor(private val kgssMap : IMap<UUID, KeyResult>, private val keyDepotService: KeyDepotService) : org.taktik.freehealth.middleware.service.KgssService {
     private val service: KgssService
     private val log = LoggerFactory.getLogger(KgssServiceImpl::class.java)
 
@@ -23,24 +24,24 @@ class KgssServiceImpl constructor(private val kgssMap : IMap<String, KeyResult>,
         this.service = org.taktik.connector.technical.service.kgss.impl.KgssServiceImpl()
     }
 
-    override fun remove(key: String): KeyResult? {
+    override fun remove(key: UUID): KeyResult? {
         log.debug("removing key from cache: $key")
         val result = this.kgssMap.get(key)
         this.kgssMap.evict(key)
         return result
     }
 
-    override fun containsKey(key: String): Boolean {
+    override fun containsKey(key: UUID): Boolean {
         return this.kgssMap.get(key) != null
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getNewKey(keystoreId: String, keyStore: KeyStore, passPhrase: String, allowedReaders: List<CredentialType>, myEtk: ByteArray): KeyResult {
-        return this.kgssMap.computeIfAbsent(keystoreId) { getNewKeyFromKgss(keyStore, passPhrase, allowedReaders, myEtk) }
+    override fun getNewKey(keystoreId: UUID, keyStore: KeyStore, passPhrase: String, allowedReaders: List<CredentialType>, myEtk: ByteArray): KeyResult {
+        return this.kgssMap.computeIfAbsent(keystoreId) { getNewKeyFromKgss(keystoreId, keyStore, passPhrase, allowedReaders, myEtk) }
     }
 
     @Throws(TechnicalConnectorException::class)
-    fun getNewKeyFromKgss(keyStore: KeyStore, passPhrase: String, allowedReaders: List<CredentialType>, myEtk: ByteArray): KeyResult {
+    fun getNewKeyFromKgss(keystoreId: UUID, keyStore: KeyStore, passPhrase: String, allowedReaders: List<CredentialType>, myEtk: ByteArray): KeyResult {
         val req = GetNewKeyRequestContent()
         req.etk = myEtk
         req.allowedReaders.addAll(allowedReaders)
@@ -51,7 +52,7 @@ class KgssServiceImpl constructor(private val kgssMap : IMap<String, KeyResult>,
         val id = config.getLongProperty("org.taktik.connector.technical.service.kgss.identifier.value", 809394427L)
         val appId = config.getProperty("org.taktik.connector.technical.service.kgss.identifier.applicationid", "KGSS")
 
-        return this.service.getNewKey(req, keyStore, passPhrase,  KeyDepotManagerImpl.getInstance(keyDepotService).getEtk(idType, id, appId).encoded)
+        return this.service.getNewKey(req, keystoreId, keyStore, passPhrase,  KeyDepotManagerImpl.getInstance(keyDepotService).getEtk(idType, id, appId, keystoreId).encoded)
     }
 
     override fun flushCache() {
