@@ -48,9 +48,10 @@ import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.domain.consent.Consent
-import org.taktik.freehealth.middleware.domain.hub.HcPartyConsent
+import org.taktik.freehealth.middleware.dto.hub.HcPartyConsentDto
 import org.taktik.freehealth.middleware.domain.common.Patient
-import org.taktik.freehealth.middleware.domain.hub.TransactionSummary
+import org.taktik.freehealth.middleware.domain.hub.PutTransactionResponse
+import org.taktik.freehealth.middleware.dto.hub.TransactionSummaryDto
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.common.AuthorDto
 import org.taktik.freehealth.middleware.dto.common.Gender
@@ -89,7 +90,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         hcpSsin: String,
         hcpZip: String,
         hubPackageId: String?
-    ): HcPartyConsent? {
+    ): HcPartyConsentDto? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Hub operations")
@@ -110,7 +111,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                     }
                 })
         return hcPartyConsent.consent?.let {
-            mapper.map(it, HcPartyConsent::class.java)?.apply {
+            mapper.map(it, HcPartyConsentDto::class.java)?.apply {
                 hubId = it.author.hcparties.firstOrNull()?.ids?.find { id -> id.s == IDHCPARTYschemes.ID_HCPARTY }?.value
             }
         }
@@ -570,7 +571,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         ssin: String,
         transaction: ByteArray,
         hubPackageId: String?
-    ): TransactionIdType {
+    ): PutTransactionResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Hub operations")
@@ -587,7 +588,12 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                 request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null, true)
                 kmehrmessage =
                     marshallerHelper.toObject(transaction)
-            }).transaction
+            }).let { tr ->
+            org.taktik.freehealth.middleware.domain.hub.PutTransactionResponse(
+                tr.transaction?.ids,
+                tr.acknowledge.errors.map { e -> org.taktik.freehealth.middleware.domain.common.Error(e.cds.firstOrNull()?.value,  e.description.value, e.url, null, mapOf()) }
+                                                                              )
+        }
     }
 
     override fun getTransactionsList(
@@ -608,7 +614,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         authorNihii: String?,
         authorSsin: String?,
         isGlobal: Boolean
-    ): List<TransactionSummary> {
+    ): List<TransactionSummaryDto> {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Hub operations")
@@ -654,7 +660,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                 })
 
         return transactionList.kmehrheader?.folder?.transactions?.map {
-            TransactionSummary().apply {
+            TransactionSummaryDto().apply {
                 author = mapper.map(it.author, AuthorDto::class.java)
                 ids = it.ids.map { KmehrId().apply { s = it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value } }
                 cds = it.cds.map { KmehrCd().apply { s = it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value } }

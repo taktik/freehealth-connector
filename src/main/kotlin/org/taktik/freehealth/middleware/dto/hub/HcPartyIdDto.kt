@@ -18,24 +18,9 @@
  *
  */
 
-package org.taktik.freehealth.middleware.domain.hub
+package org.taktik.freehealth.middleware.dto.hub
 
-import org.taktik.freehealth.middleware.dto.common.AuthorDto
-import org.taktik.freehealth.middleware.dto.hub.HcPartyIdDto
-
+import org.taktik.freehealth.middleware.dto.common.KmehrId
 import java.io.Serializable
 
-/**
- * Created with IntelliJ IDEA.
- * User: aduchate
- * Date: 10/12/12
- * Time: 20:44
- * To change this template use File | Settings | File Templates.
- */
-class HcPartyConsent(
-    var hcparty: HcPartyIdDto? = null,
-    var signdate: Long? = null,
-    var revokedate: Long? = null,
-    var author: AuthorDto? = null,
-    var hubId: String? = null
-) : Serializable
+class HcPartyIdDto(var ids: List<KmehrId> = mutableListOf()) : Serializable
