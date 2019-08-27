@@ -53,10 +53,8 @@ public abstract class AbstractWsSender {
    public GenericResponse send(GenericRequest genericRequest) throws TechnicalConnectorException {
       List<InvokeStrategy> strategies = InvokeStrategyFactory.getList((String)genericRequest.getRequestMap().get("javax.xml.ws.service.endpoint.address"));
       InvokeStrategyContext ctx = new InvokeStrategyContext(genericRequest);
-      Iterator i$ = strategies.iterator();
 
-      while(i$.hasNext()) {
-         InvokeStrategy strategy = (InvokeStrategy)i$.next();
+      for (InvokeStrategy strategy : strategies) {
          log.debug("Using invoke strategy [" + strategy.getClass() + "]");
          if (strategy.invoke(ctx)) {
             break;

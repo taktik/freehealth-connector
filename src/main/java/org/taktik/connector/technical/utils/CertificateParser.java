@@ -25,7 +25,6 @@ public class CertificateParser {
    private static final String COMMON_NAME_ATTRIBUTE_TYPE = "CN";
    private static final String SERIALNUMBER_OID_ATTRIBUTE_TYPE;
    private static final String NO_VALUE = "";
-   private Long validity;
    private String type;
    private String id;
    private String application;
@@ -144,10 +143,6 @@ public class CertificateParser {
 
    public final String getId() {
       return this.id;
-   }
-
-   public Long getValidity() {
-      return validity;
    }
 
    static {

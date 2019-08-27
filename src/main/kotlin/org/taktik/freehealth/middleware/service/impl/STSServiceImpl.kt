@@ -72,7 +72,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val assertion = document.documentElement
 
         tokensMap[tokenId] =
-            SamlTokenResult(tokenId, token, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
+            SamlTokenResult(tokenId, token, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
         log.info("tokensMap size: ${tokensMap.size}")
     }
 
@@ -80,7 +80,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         return tokensMap[tokenId]?.let {
             val keyStore = getKeyStore(keystoreId, passPhrase)
             val result = DOMResult()
-            transformer.transform(StreamSource(StringReader(it.token)), result)
+            transformer.transform(StreamSource(StringReader(it.token!!)), result)
             return result.node?.firstChild?.let {el ->
                 SAMLTokenFactory.getInstance()
                     .createSamlToken(el as Element, KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase))
@@ -94,8 +94,27 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         passPhrase: String,
         medicalHouse: Boolean,
         guardPost: Boolean,
+        tokenId: UUID?,
         extraDesignators: List<Pair<String, String>>
     ): SamlTokenResult? {
+        val now = System.currentTimeMillis()
+
+        val currentToken = tokenId?.let { id -> tokensMap[id]}
+        val isStillRecommendedForUse = currentToken?.let {
+            val valid = it.validity
+            val ts = it.timestamp
+
+            if (valid == null || ts == null) {
+                false
+            } else {
+                val totalValidity = valid - ts
+                val remainingValidity = valid - now
+                remainingValidity > 0 && totalValidity > 0 && remainingValidity / totalValidity > 1 / 2
+            }
+        } ?: false
+
+        if (isStillRecommendedForUse) return currentToken
+
         val keyStore = getKeyStore(keystoreId, passPhrase)
         val credential = KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keyStore, passPhrase.toCharArray())
@@ -214,14 +233,14 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             val samlToken = result.writer.toString()
 
             val samlTokenResult =
-                SamlTokenResult(randomUUID, samlToken, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
+                SamlTokenResult(randomUUID, samlToken, now, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
             tokensMap[randomUUID] = samlTokenResult
             log.info("tokensMap size: ${tokensMap.size}")
 
             samlTokenResult
         } catch(e:TechnicalConnectorException) {
             log.info("STS token request failure: ${e.errorCode} : ${e.message} : ${e.stackTrace}")
-            null
+            currentToken
         }
     }
 
@@ -230,7 +249,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val credential = KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase)
         val parser = CertificateParser(credential.certificate)
 
-        return CertificateInfo(parser.validity, parser.type, parser.id, parser.application, parser.owner)
+        return CertificateInfo(credential.certificate.notAfter.time, parser.type, parser.id, parser.application, parser.owner)
     }
 
     override fun checkTokenValid(tokenId: UUID): Boolean {

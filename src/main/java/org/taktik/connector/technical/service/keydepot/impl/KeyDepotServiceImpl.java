@@ -84,7 +84,7 @@ public class KeyDepotServiceImpl implements KeyDepotService, ConfigurationModule
       Set<EncryptionToken> cachedResult = longLivedCacheKey != null ? longLivedEtksMap.get(Pair.of(longLivedCacheKey, key)) : null;
       if (cachedResult == null) {
          cachedResult = etksMap.get(key);
-         if (isOwnEtk && longLivedCacheKey != null) {
+         if (cachedResult != null &&   isOwnEtk && longLivedCacheKey != null) {
             longLivedEtksMap.put(Pair.of(longLivedCacheKey, key), cachedResult);
          }
       }

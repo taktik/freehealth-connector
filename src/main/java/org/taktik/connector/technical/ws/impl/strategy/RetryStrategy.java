@@ -37,8 +37,8 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
                }
 
                return false;
-            } catch (RetryNextEndpointException var10) {
-               LOG.error("Unable to invoke endpoint [{}], activating next one.", activeEndpoint, var10);
+            } catch (RetryNextEndpointException retryException) {
+               LOG.error("Unable to invoke endpoint [{}], activating next one.", activeEndpoint, retryException);
 
                try {
                   distributor.activateNextEndPoint(activeEndpoint);
@@ -47,7 +47,7 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
                   LOG.error("Unable to activate alternative", var9);
                }
 
-               ctx.lastException = var10;
+               ctx.lastException = retryException;
             } catch (TechnicalConnectorException var11) {
                invokeStrategyContext.setException(var11);
                return true;

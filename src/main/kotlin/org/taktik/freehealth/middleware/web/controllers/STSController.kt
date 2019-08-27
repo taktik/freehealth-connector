@@ -40,15 +40,15 @@ class STSController(private val stsService: STSService) {
     val log = LoggerFactory.getLogger(this.javaClass)
 
     @PostMapping("/keystore")
-    fun uploadKeystore(@RequestParam file: MultipartFile) = stsService.uploadKeystore(file).let { UUIDType(it) }
+    fun uploadKeystore(@RequestParam file: MultipartFile) = UUIDType(stsService.uploadKeystore(file))
 
     @GetMapping("/keystore/{keystoreId}/info")
     fun getKeystoreInfo(@PathVariable(name = "keystoreId") keystoreId:UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String) = stsService.getKeystoreInfo(keystoreId, passPhrase)
 
 
     @GetMapping("/token")
-    fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestParam(required = false) isMedicalHouse: Boolean?, @RequestParam(required = false) isGuardPost: Boolean?) =
-        stsService.requestToken(keystoreId, ssin, passPhrase, isMedicalHouse ?: false, isGuardPost ?: false)
+    fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestParam(required = false) isMedicalHouse: Boolean?, @RequestParam(required = false) isGuardPost: Boolean?, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?) =
+        stsService.requestToken(keystoreId, ssin, passPhrase, isMedicalHouse ?: false, isGuardPost ?: false, previousTokenId)
 
     @PostMapping("/token")
     fun registerToken(@RequestBody token: String, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID) {

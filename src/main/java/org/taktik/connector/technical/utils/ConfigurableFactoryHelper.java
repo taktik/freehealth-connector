@@ -35,24 +35,24 @@ public class ConfigurableFactoryHelper<T> {
    }
 
    private T createAndConfigureImplementation(String headerClassName, Map<String, Object> configParameters, boolean silent) throws TechnicalConnectorException {
-      Object providerObject = null;
+      T providerObject;
 
       try {
-         Class provider = Class.forName(headerClassName);
+         Class<T> provider = (Class<T>) Class.forName(headerClassName);
 
          try {
             providerObject = provider.newInstance();
          } catch (IllegalAccessException var9) {
             LOG.debug("Default constructor is not public. Trying to invoke getInstance().");
             Method method = provider.getMethod("getInstance");
-            providerObject = method.invoke(provider);
+            providerObject = (T) method.invoke(provider);
          }
 
          if (providerObject != null) {
-            this.init((T) providerObject, configParameters, silent);
+            this.init(providerObject, configParameters, silent);
          }
 
-         return (T) providerObject;
+         return providerObject;
       } catch (Exception var10) {
          if (!silent) {
             throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HEADER_INSTANCIATION, var10, new Object[]{headerClassName});
