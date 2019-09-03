@@ -18,10 +18,9 @@
  *
  */
 
-package org.taktik.freehealth.middleware.domain.hub
+package org.taktik.freehealth.middleware.dto.hub
 
 import org.taktik.freehealth.middleware.dto.common.AuthorDto
-import org.taktik.freehealth.middleware.dto.hub.HcPartyIdDto
 
 import java.io.Serializable
 
@@ -32,10 +31,10 @@ import java.io.Serializable
  * Time: 20:44
  * To change this template use File | Settings | File Templates.
  */
-class HcPartyConsent(
+class HcPartyConsentDto(
     var hcparty: HcPartyIdDto? = null,
     var signdate: Long? = null,
     var revokedate: Long? = null,
     var author: AuthorDto? = null,
     var hubId: String? = null
-) : Serializable
+                       ) : Serializable
