@@ -84,6 +84,7 @@ import be.fgov.ehealth.hubservices.core.v3.RevokeTherapeuticLinkRequest
 import be.fgov.ehealth.hubservices.core.v3.RevokeTherapeuticLinkResponse
 import be.fgov.ehealth.hubservices.core.v3.RevokeTransactionRequest
 import be.fgov.ehealth.hubservices.core.v3.RevokeTransactionResponse
+import org.apache.commons.logging.LogFactory
 import javax.xml.soap.SOAPException
 import javax.xml.ws.WebServiceException
 import org.slf4j.LoggerFactory
@@ -92,6 +93,7 @@ import org.taktik.connector.technical.service.etee.CryptoFactory
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
+import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
 import java.security.KeyStore
 import java.util.UUID
@@ -99,6 +101,7 @@ import java.util.UUID
 class HubTokenServiceImpl(private val keyDepotService: KeyDepotService) : HubTokenService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
 
     val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
+    val log = LogFactory.getLog(this::class.java)
 
     @Throws(TechnicalConnectorException::class)
     override fun declareTransaction(
@@ -604,6 +607,7 @@ class HubTokenServiceImpl(private val keyDepotService: KeyDepotService) : HubTok
         passPhrase: String,
         request: PutTransactionSetRequest
     ): PutTransactionSetResponse {
+        log.debug(ConnectorXmlUtils.toString(request))
         return this.executeOperation(
             token,
             endpoint,
@@ -679,6 +683,7 @@ class HubTokenServiceImpl(private val keyDepotService: KeyDepotService) : HubTok
             val service =
                 ServiceFactory.getIntraHubPort(endpoint, token, keystoreId, keystore, passPhrase, operation).setPayload(request)
             val genericResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            log.debug(ConnectorXmlUtils.toString(genericResponse.soapMessage))
             return genericResponse.asObject(clazz)
         } catch (ex: SOAPException) {
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
