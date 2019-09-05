@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.joda.time.DateTime;
+import org.taktik.connector.technical.adapter.XmlDateNoTzAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
@@ -22,7 +23,7 @@ public class PeriodType implements Serializable {
       required = true,
       type = String.class
    )
-   @XmlJavaTypeAdapter(XmlDateAdapter.class)
+   @XmlJavaTypeAdapter(XmlDateNoTzAdapter.class)
    @XmlSchemaType(
       name = "date"
    )
@@ -31,7 +32,7 @@ public class PeriodType implements Serializable {
       name = "EndDate",
       type = String.class
    )
-   @XmlJavaTypeAdapter(XmlDateAdapter.class)
+   @XmlJavaTypeAdapter(XmlDateNoTzAdapter.class)
    @XmlSchemaType(
       name = "date"
    )

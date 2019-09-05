@@ -45,7 +45,6 @@ class STSController(private val stsService: STSService) {
     @GetMapping("/keystore/{keystoreId}/info")
     fun getKeystoreInfo(@PathVariable(name = "keystoreId") keystoreId:UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String) = stsService.getKeystoreInfo(keystoreId, passPhrase)
 
-
     @GetMapping("/token")
     fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestParam(required = false) isMedicalHouse: Boolean?, @RequestParam(required = false) isGuardPost: Boolean?, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?) =
         stsService.requestToken(keystoreId, ssin, passPhrase, isMedicalHouse ?: false, isGuardPost ?: false, previousTokenId)

@@ -25,11 +25,9 @@ import org.slf4j.LoggerFactory;
 
 public class ConsultrnServiceImpl implements ConsultrnService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
    private static final Logger LOG = LoggerFactory.getLogger(ConsultrnServiceImpl.class);
-   private SessionValidator sessionValidator;
    private EhealthReplyValidator replyValidator;
 
-   public ConsultrnServiceImpl(SessionValidator sessionValidator, EhealthReplyValidator replyValidator) {
-      this.sessionValidator = sessionValidator;
+   public ConsultrnServiceImpl(EhealthReplyValidator replyValidator) {
       this.replyValidator = replyValidator;
    }
 
@@ -39,25 +37,25 @@ public class ConsultrnServiceImpl implements ConsultrnService, ConfigurationModu
 
    public SearchBySSINReply search(SAMLToken token, SearchBySSINRequest request) throws ConsultrnIdentifyPersonException, TechnicalConnectorException {
       try {
-         return (SearchBySSINReply)EhealthServiceHelper.callEhealthService_1_0(token, ServiceFactory.getConsultrnIdentifyPersonService(token), request, SearchBySSINReply.class, this.sessionValidator, this.replyValidator);
-      } catch (SoaErrorException var4) {
-         throw new ConsultrnIdentifyPersonException((SearchBySSINReply)var4.getResponseTypeV1_0());
+         return EhealthServiceHelper.callEhealthService_1_0(token, ServiceFactory.getConsultrnIdentifyPersonService(token), request, SearchBySSINReply.class, this.replyValidator);
+      } catch (SoaErrorException ex) {
+         throw new ConsultrnIdentifyPersonException((SearchBySSINReply)ex.getResponseTypeV1_0());
       }
    }
 
    public SearchPhoneticReply search(SAMLToken token, SearchPhoneticRequest request) throws ConsultrnPhoneticSearchException, TechnicalConnectorException {
       try {
-         return (SearchPhoneticReply)EhealthServiceHelper.callEhealthService_1_0(token, ServiceFactory.getConsultrnPhoneticSearchService(token), request, SearchPhoneticReply.class, this.sessionValidator, this.replyValidator);
-      } catch (SoaErrorException var4) {
-         throw new ConsultrnPhoneticSearchException((SearchPhoneticReply)var4.getResponseTypeV1_0());
+         return EhealthServiceHelper.callEhealthService_1_0(token, ServiceFactory.getConsultrnPhoneticSearchService(token), request, SearchPhoneticReply.class, this.replyValidator);
+      } catch (SoaErrorException ex) {
+         throw new ConsultrnPhoneticSearchException((SearchPhoneticReply)ex.getResponseTypeV1_0());
       }
    }
 
    public RegisterPersonResponse registerPerson(SAMLToken token, RegisterPersonRequest request) throws TechnicalConnectorException, ConsultrnRegisterPersonException, ConsultrnRegisterExistingPersonException {
       try {
-         return (RegisterPersonResponse)EhealthServiceHelper.callEhealthServiceV2(token, ServiceFactory.getConsultrnManagePersonService(token, "urn:be:fgov:ehealth:consultrn:manageperson:protocol:v2:RegisterPerson"), request, RegisterPersonResponse.class, this.sessionValidator, this.replyValidator);
-      } catch (SoaErrorException var5) {
-         RegisterPersonResponse response = (RegisterPersonResponse)var5.getResponseTypeV2();
+         return EhealthServiceHelper.callEhealthServiceV2(token, ServiceFactory.getConsultrnManagePersonService(token, "urn:be:fgov:ehealth:consultrn:manageperson:protocol:v2:RegisterPerson"), request, RegisterPersonResponse.class, this.replyValidator);
+      } catch (SoaErrorException ex) {
+         RegisterPersonResponse response = (RegisterPersonResponse)ex.getResponseTypeV2();
          if (response.getResult() != null && response.getResult().getExistingPersons() != null) {
             throw new ConsultrnRegisterExistingPersonException(response);
          } else {

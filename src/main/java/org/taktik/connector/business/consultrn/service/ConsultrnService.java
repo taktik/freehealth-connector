@@ -14,9 +14,9 @@ import be.fgov.ehealth.consultrn.protocol.v2.RegisterPersonRequest;
 import be.fgov.ehealth.consultrn.protocol.v2.RegisterPersonResponse;
 
 public interface ConsultrnService {
-   SearchBySSINReply search(SAMLToken var1, SearchBySSINRequest var2) throws TechnicalConnectorException, ConsultrnIdentifyPersonException;
+   SearchBySSINReply search(SAMLToken samlToken, SearchBySSINRequest var2) throws TechnicalConnectorException, ConsultrnIdentifyPersonException;
 
-   SearchPhoneticReply search(SAMLToken var1, SearchPhoneticRequest var2) throws TechnicalConnectorException, ConsultrnPhoneticSearchException;
+   SearchPhoneticReply search(SAMLToken samlToken, SearchPhoneticRequest var2) throws TechnicalConnectorException, ConsultrnPhoneticSearchException;
 
-   RegisterPersonResponse registerPerson(SAMLToken var1, RegisterPersonRequest var2) throws TechnicalConnectorException, ConsultrnRegisterPersonException, ConsultrnRegisterExistingPersonException;
+   RegisterPersonResponse registerPerson(SAMLToken samlToken, RegisterPersonRequest var2) throws TechnicalConnectorException, ConsultrnRegisterPersonException, ConsultrnRegisterExistingPersonException;
 }

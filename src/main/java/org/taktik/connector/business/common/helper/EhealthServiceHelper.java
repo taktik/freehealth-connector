@@ -22,44 +22,41 @@ public final class EhealthServiceHelper {
    private EhealthServiceHelper() {
    }
 
-   public static <T extends ResponseType> T callEhealthServiceV1(SAMLToken token, GenericRequest service, Object request, Class<T> clazz, SessionValidator sessionValidator, EhealthReplyValidator ehealthReplyValidator) throws TechnicalConnectorException {
+   public static <T extends ResponseType> T callEhealthServiceV1(SAMLToken token, GenericRequest service, Object request, Class<T> clazz, EhealthReplyValidator ehealthReplyValidator) throws TechnicalConnectorException {
       try {
-         sessionValidator.validateToken(token);
          service.setPayload(request);
-         T response = (T)ServiceFactory.getGenericWsSender().send(service).asObject(clazz);
+         T response = ServiceFactory.getGenericWsSender().send(service).asObject(clazz);
          ehealthReplyValidator.validateReplyStatus(response);
          return response;
-      } catch (SOAPException var7) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var7, new Object[]{var7.getMessage()});
+      } catch (SOAPException ex) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.getMessage());
       }
    }
 
-   public static <T extends be.fgov.ehealth.commons._1_0.protocol.ResponseType> T callEhealthService_1_0(SAMLToken token, GenericRequest service, Object request, Class<T> clazz, SessionValidator sessionValidator, EhealthReplyValidator ehealthReplyValidator) throws TechnicalConnectorException {
+   public static <T extends be.fgov.ehealth.commons._1_0.protocol.ResponseType> T callEhealthService_1_0(SAMLToken token, GenericRequest service, Object request, Class<T> clazz, EhealthReplyValidator ehealthReplyValidator) throws TechnicalConnectorException {
       try {
-         sessionValidator.validateToken(token);
          service.setPayload(request);
-         T response = (T)ServiceFactory.getGenericWsSender().send(service).asObject(clazz);
+         T response = ServiceFactory.getGenericWsSender().send(service).asObject(clazz);
          ehealthReplyValidator.validateReplyStatus(response);
          return response;
-      } catch (SOAPException var7) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var7, new Object[]{var7.getMessage()});
+      } catch (SOAPException ex) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.getMessage());
       }
    }
 
-   public static <T extends StatusResponseType> T callEhealthServiceV2(SAMLToken token, GenericRequest service, Object request, Class<T> clazz, SessionValidator sessionValidator, EhealthReplyValidator ehealthReplyValidator) throws TechnicalConnectorException {
+   public static <T extends StatusResponseType> T callEhealthServiceV2(SAMLToken token, GenericRequest service, Object request, Class<T> clazz, EhealthReplyValidator ehealthReplyValidator) throws TechnicalConnectorException {
       try {
-         sessionValidator.validateToken(token);
          service.setPayload(request);
-         T response = (T)ServiceFactory.getGenericWsSender().send(service).asObject(clazz);
+         T response = ServiceFactory.getGenericWsSender().send(service).asObject(clazz);
          ehealthReplyValidator.validateReplyStatus(response);
          return response;
-      } catch (SOAPException var7) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var7, new Object[]{var7.getMessage()});
+      } catch (SOAPException ex) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.getMessage());
       }
    }
 
    public static <T> List<T> toList(StatusDetail statusDetail, Class<T> clazz) {
-      List<T> list = new ArrayList();
+      List<T> list = new ArrayList<>();
       if (statusDetail != null && CollectionUtils.isNotEmpty(statusDetail.getAnies())) {
          Iterator i$ = statusDetail.getAnies().iterator();
 
