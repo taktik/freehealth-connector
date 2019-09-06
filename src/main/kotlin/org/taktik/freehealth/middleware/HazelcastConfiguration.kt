@@ -36,6 +36,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
+import org.taktik.connector.technical.service.kgss.domain.SerializableKeyResult
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import java.util.UUID
@@ -121,9 +122,9 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
     }
 
     @Bean
-    fun kgssMap(hazelcastInstance: HazelcastInstance): IMap<UUID, KeyResult> {
-        return hazelcastInstance.getMap<UUID, KeyResult>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KGSS").apply {
-            this.addEntryListener(EntryEvictedListener<Triple<IdentifierType, String, String>, Set<EncryptionToken>> {
+    fun kgssMap(hazelcastInstance: HazelcastInstance): IMap<UUID, SerializableKeyResult> {
+        return hazelcastInstance.getMap<UUID, SerializableKeyResult>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KGSS").apply {
+            this.addEntryListener(EntryEvictedListener<UUID, SerializableKeyResult> {
                 log.warn("ETK ${it.key} evicted")
             }, false)
         }

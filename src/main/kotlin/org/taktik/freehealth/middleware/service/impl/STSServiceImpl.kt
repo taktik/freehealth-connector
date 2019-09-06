@@ -63,7 +63,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
 
     val freehealthStsService: org.taktik.connector.technical.service.sts.STSService =
         org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
-    val transformer = TransformerFactory.newInstance().newTransformer()
+    val transformerFactory = TransformerFactory.newInstance()
 
     override fun registerToken(tokenId: UUID, token: String) {
         val factory = DocumentBuilderFactory.newInstance()
@@ -80,7 +80,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         return tokensMap[tokenId]?.let {
             val keyStore = getKeyStore(keystoreId, passPhrase)
             val result = DOMResult()
-            transformer.transform(StreamSource(StringReader(it.token!!)), result)
+            transformerFactory.newTransformer().transform(StreamSource(StringReader(it.token!!)), result)
             return result.node?.firstChild?.let {el ->
                 SAMLTokenFactory.getInstance()
                     .createSamlToken(el as Element, KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase))
@@ -228,7 +228,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
 
             //Serialize
             val result = StreamResult(StringWriter())
-            transformer.transform(DOMSource(assertion), result)
+            transformerFactory.newTransformer().transform(DOMSource(assertion), result)
             val randomUUID = UUID.randomUUID()
             val samlToken = result.writer.toString()
 

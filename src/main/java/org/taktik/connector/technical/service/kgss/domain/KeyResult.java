@@ -26,4 +26,8 @@ public class KeyResult {
    public void setKeyId(String keyId) {
       this.keyId = keyId;
    }
+
+   public SerializableKeyResult toSerializableKeyResult() {
+      return new SerializableKeyResult(this.secretKey.getEncoded(), this.keyId);
+   }
 }
