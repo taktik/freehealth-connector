@@ -89,11 +89,9 @@ public class CryptoImpl extends AbstractEndToEndCrypto {
    private static Set<be.fgov.ehealth.etee.crypto.encrypt.EncryptionToken> convertoToEncryptionToken(Set<EncryptionToken> paramEncryptionTokenSet) {
       Set<be.fgov.ehealth.etee.crypto.encrypt.EncryptionToken> sealedSet = null;
       if (paramEncryptionTokenSet != null) {
-         sealedSet = new HashSet();
-         Iterator i$ = paramEncryptionTokenSet.iterator();
+         sealedSet = new HashSet<>();
 
-         while(i$.hasNext()) {
-            EncryptionToken etk = (EncryptionToken)i$.next();
+         for (EncryptionToken etk : paramEncryptionTokenSet) {
             sealedSet.add(etk.getEtk());
          }
       }

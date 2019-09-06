@@ -45,7 +45,7 @@ import org.taktik.freehealth.middleware.service.STSService
 import java.util.UUID
 
 @Service
-class EhboxServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : EhboxService {
+class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyDepotService) : EhboxService {
 
     private val freehealthEhboxService: org.taktik.connector.business.ehbox.service.EhboxService =
         org.taktik.connector.business.ehbox.service.impl.EhboxServiceImpl(EhboxReplyValidatorImpl())

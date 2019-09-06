@@ -458,24 +458,24 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun getETKForAddressee(addressee: Addressee, keystoreId: UUID): Set<EncryptionToken> {
-        if ("ALL" != addressee.id) {
+        return if ("ALL" != addressee.id) {
             val etkSet =
                 this.keydepotManager.getEtkSet(
                     addressee.identifierTypeHelper,
                     addressee.idAsLong,
                     addressee.applicationId,
                     keystoreId
-                )
-            return if (etkSet.isEmpty()) {
+                                              )
+            if (etkSet.isEmpty()) {
                 throw TechnicalConnectorException(
                     TechnicalConnectorExceptionValues.ERROR_GENERAL,
                     "could not retrieve Etk for known addressee " + addressee
-                )
+                                                 )
             } else {
                 etkSet
             }
         } else {
-            return HashSet()
+            HashSet()
         }
     }
 
