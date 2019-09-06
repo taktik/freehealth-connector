@@ -241,9 +241,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
         if (etk == null) {
             throw IllegalArgumentException("EncryptionETK is undefined")
         } else {
-            val systemETK =
-                etk.etk.encoded
-            return kgssService.getNewKey(keystoreId, keyStore, passPhrase, acl, systemETK)
+            return kgssService.getNewKey(keystoreId, keyStore, passPhrase, acl, etk.etk.encoded)
         }
     }
 

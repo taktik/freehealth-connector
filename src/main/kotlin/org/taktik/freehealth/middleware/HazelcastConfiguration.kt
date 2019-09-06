@@ -125,7 +125,7 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
     fun kgssMap(hazelcastInstance: HazelcastInstance): IMap<UUID, SerializableKeyResult> {
         return hazelcastInstance.getMap<UUID, SerializableKeyResult>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KGSS").apply {
             this.addEntryListener(EntryEvictedListener<UUID, SerializableKeyResult> {
-                log.warn("ETK ${it.key} evicted")
+                log.warn("KGSS ${it.key} evicted")
             }, false)
         }
     }
