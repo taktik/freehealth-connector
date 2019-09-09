@@ -11,7 +11,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.taktik.freehealth.middleware.web.ExceptionHandlers
 
 @Configuration
-@EnableWebMvc
 @EnableGlobalMethodSecurity(jsr250Enabled = true)
 @ComponentScan
 class WebMvcConfigurer : WebMvcConfigurer {

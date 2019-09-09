@@ -109,7 +109,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             } else {
                 val totalValidity = valid - ts
                 val remainingValidity = valid - now
-                remainingValidity > 0 && totalValidity > 0 && remainingValidity / totalValidity > 1 / 2
+                remainingValidity > 0 && totalValidity > 0 && remainingValidity.toDouble() / totalValidity.toDouble() > 0.5
             }
         } ?: false
 
