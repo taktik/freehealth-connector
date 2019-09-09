@@ -5,8 +5,8 @@
  <xs:appinfo>
  Implementation-Title: XSD MCN  eAttest
  Specification-Version: 1.0
- Implementation-Version: 1.0.1-SNAPSHOT
- Build-Time: 20170524-1412 
+ Implementation-Version: 1.0.1
+ Build-Time: 20170524-1413 
  </xs:appinfo>
  </xs:annotation>
 	<!-- core elements and types -->

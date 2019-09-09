@@ -5,8 +5,6 @@ import org.taktik.connector.technical.config.Configuration;
 import org.taktik.connector.technical.exception.ConfigurationException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.Credential;
-import org.taktik.connector.technical.session.Session;
-import org.taktik.connector.technical.session.SessionItem;
 import org.taktik.connector.technical.utils.ConfigurableFactoryHelper;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
 import org.taktik.connector.technical.utils.KeyStoreManager;
@@ -24,6 +22,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,9 +50,11 @@ public final class CryptoFactory {
    public static final String OCSP_CONNECTION_USER_INTERACTION = "be.fgov.ehealth.etee.crypto.policies.OCSPOption.CONNECTION_USER_INTERACTION";
    private static final String PROP_CAKEYSTORE_PATH = "CAKEYSTORE_LOCATION";
    private static final String PROP_CAKEYSTORE_PASSWORD = "CAKEYSTORE_PASSWORD";
-   private static final String PROP_KEYSTORE_DIR = "KEYSTORE_DIR";
    private static Configuration configuration = ConfigFactory.getConfigValidator();
    private static ConfigurableFactoryHelper<Crypto> helper = new ConfigurableFactoryHelper("crypto.classname", "org.taktik.connector.technical.service.etee.impl.CryptoImpl");
+
+   private CryptoFactory() {
+   }
 
    public static Crypto getCrypto(Credential encryption, Map<String, PrivateKey> decryptionKeys, String oCSPPolicy) throws TechnicalConnectorException {
       Map<String, Object> configParameters = new HashMap();
@@ -61,7 +62,7 @@ public final class CryptoFactory {
       configParameters.put("dataunsealer.pkmap", decryptionKeys);
       configParameters.put("cryptolib.ocsp.policy", OCSPPolicy.valueOf(oCSPPolicy));
       Map<SigningOption, Object> signingOptions = new HashMap();
-      signingOptions.put(SigningOption.SIGNING_TIME_EXPIRATION, configuration.getIntegerProperty("be.fgov.ehealth.etee.crypto.policies.SigningOption.SIGNING_TIME_EXPIRATION", Integer.valueOf(5)));
+      signingOptions.put(SigningOption.SIGNING_TIME_EXPIRATION, configuration.getIntegerProperty("be.fgov.ehealth.etee.crypto.policies.SigningOption.SIGNING_TIME_EXPIRATION", 5));
       signingOptions.put(SigningOption.CLOCK_SKEW, configuration.getLongProperty("be.fgov.ehealth.etee.crypto.policies.SigningOption.CLOCK_SKEW", 300000L));
       signingOptions.put(SigningOption.SIGNING_TIME_TRUST_IMPLICIT, configuration.getBooleanProperty("be.fgov.ehealth.etee.crypto.policies.SigningOption.SIGNING_TIME_TRUST_IMPLICIT", Boolean.FALSE));
       signingOptions.put(SigningOption.TSA_TRUST_STORE, getKeyStore("timestamp.signature.keystore.path", "timestamp.signature.keystore.pwd"));
@@ -72,11 +73,12 @@ public final class CryptoFactory {
    }
 
    public static Map<OCSPOption, Object> getOCSPOptions() throws TechnicalConnectorException {
-      return CryptoFactory.OCSPOptionHolder.ocspOptionMap;
+      return CryptoFactory.OCSPOptionHolder.load();
    }
 
-   public static void resetOCSPOptions() {
-      CryptoFactory.OCSPOptionHolder.init();
+   public static void resetOCSPOptions() throws TechnicalConnectorException {
+      CryptoFactory.OCSPOptionHolder.invalidate();
+      CryptoFactory.OCSPOptionHolder.load();
    }
 
    public static KeyStore getCaCertificateStore() {
@@ -89,7 +91,7 @@ public final class CryptoFactory {
          char[] pwd = configuration.getProperty(password, "").toCharArray();
          String path = configuration.getProperty(key, "");
          if (StringUtils.isNotBlank(path)) {
-            String keystorePath = configuration.getProperty("KEYSTORE_DIR", "") + path;
+            String keystorePath = path;
 
             try {
                KeyStoreManager ocspKeyStoreManager = new KeyStoreManager(keystorePath, pwd);
@@ -112,11 +114,6 @@ public final class CryptoFactory {
 
    public static Crypto getCrypto(Credential encryption, Map<String, PrivateKey> decryptionKeys) throws TechnicalConnectorException {
       return getCrypto(encryption, decryptionKeys, "NONE");
-   }
-
-   public static Crypto getCryptoFromSession() throws TechnicalConnectorException {
-      SessionItem session = Session.getInstance().getSession();
-      return getCrypto(session.getEncryptionCredential(), session.getEncryptionPrivateKeys());
    }
 
    private static CertStore generateCertStore(String baseKey, KeyStore... stores) {
@@ -193,25 +190,26 @@ public final class CryptoFactory {
    private static class OCSPOptionHolder {
       private static Map<OCSPOption, Object> ocspOptionMap;
 
-      public static void init() {
-         ocspOptionMap = new HashMap();
-         ocspOptionMap.put(OCSPOption.OCSP_URI, CryptoFactory.configuration.getProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.OCSP_URI"));
+      public static synchronized Map<OCSPOption, Object> load() {
+         if (ocspOptionMap == null) {
+            Map<OCSPOption, Object> map = new HashMap();
+            map.put(OCSPOption.OCSP_URI, CryptoFactory.configuration.getProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.OCSP_URI"));
          KeyStore trustStore = CryptoFactory.getCaCertificateStore();
-         ocspOptionMap.put(OCSPOption.TRUST_STORE, trustStore);
-         ocspOptionMap.put(OCSPOption.CERT_STORE, CryptoFactory.generateCertStore("be.fgov.ehealth.etee.crypto.policies.OCSPOption.CERT_STORE", trustStore));
-         ocspOptionMap.put(OCSPOption.INJECT_RESPONSE, CryptoFactory.configuration.getBooleanProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.INJECT_RESPONSE", Boolean.FALSE));
-         ocspOptionMap.put(OCSPOption.CLOCK_SKEW, CryptoFactory.configuration.getLongProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.CLOCK_SKEW", 300000L));
-         ocspOptionMap.put(OCSPOption.CONNECTION_TIMEOUT, CryptoFactory.configuration.getIntegerProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.CONNECTION_TIMEOUT", Integer.valueOf(3000)));
-         ocspOptionMap.put(OCSPOption.READ_TIMEOUT, CryptoFactory.configuration.getIntegerProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.READ_TIMEOUT", Integer.valueOf(3000)));
-         ocspOptionMap.put(OCSPOption.CONNECTION_USER_INTERACTION, CryptoFactory.configuration.getBooleanProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.CONNECTION_USER_INTERACTION", Boolean.FALSE));
+            map.put(OCSPOption.TRUST_STORE, trustStore);
+            map.put(OCSPOption.CERT_STORE, CryptoFactory.generateCertStore("be.fgov.ehealth.etee.crypto.policies.OCSPOption.CERT_STORE", trustStore));
+            map.put(OCSPOption.INJECT_RESPONSE, CryptoFactory.configuration.getBooleanProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.INJECT_RESPONSE", Boolean.FALSE));
+            map.put(OCSPOption.CLOCK_SKEW, CryptoFactory.configuration.getLongProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.CLOCK_SKEW", 300000L));
+            map.put(OCSPOption.CONNECTION_TIMEOUT, CryptoFactory.configuration.getIntegerProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.CONNECTION_TIMEOUT", 3000));
+            map.put(OCSPOption.READ_TIMEOUT, CryptoFactory.configuration.getIntegerProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.READ_TIMEOUT", 3000));
+            map.put(OCSPOption.CONNECTION_USER_INTERACTION, CryptoFactory.configuration.getBooleanProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.CONNECTION_USER_INTERACTION", Boolean.FALSE));
+            ocspOptionMap = Collections.unmodifiableMap(map);
       }
 
-      public static Map<OCSPOption, Object> getOcspOptionMap() {
          return ocspOptionMap;
       }
 
-      static {
-         init();
+      public static synchronized void invalidate() {
+         ocspOptionMap = null;
       }
    }
 }

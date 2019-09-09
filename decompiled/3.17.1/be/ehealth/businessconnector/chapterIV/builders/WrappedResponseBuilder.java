@@ -11,9 +11,6 @@ import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementResponse
 import be.fgov.ehealth.chap4.protocol.v1.ConsultChap4MedicalAdvisorAgreementResponse;
 
 public final class WrappedResponseBuilder {
-   private WrappedResponseBuilder() {
-   }
-
    public static Chap4MedicalAdvisorAgreementResponseWrapper<ConsultChap4MedicalAdvisorAgreementResponse> wrap(ConsultChap4MedicalAdvisorAgreementResponse agreementResponse) {
       return new ConsultChap4MedicalAdvisorAgreementResponseWrapperImpl(agreementResponse);
    }

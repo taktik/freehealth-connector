@@ -129,7 +129,7 @@ public class CmsSignatureBuilder extends AbstractSignatureBuilder implements Sig
             generator.addCertificates(new JcaCertStore(Arrays.asList(certificateChain)));
          }
 
-         boolean encapsulate = ((Boolean)SignatureUtils.getOption("encapsulate", optionMap, Boolean.FALSE)).booleanValue();
+         boolean encapsulate = ((Boolean)SignatureUtils.getOption("encapsulate", optionMap, Boolean.FALSE));
          return generator.generate(content, encapsulate).getEncoded();
       } catch (Exception var14) {
          LOG.error(var14.getMessage(), var14);

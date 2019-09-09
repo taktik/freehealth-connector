@@ -20,38 +20,30 @@
 
 package org.taktik.connector.business.ehbox.v3.builders.impl
 
+import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetFullMessageResponse
 import org.taktik.connector.business.ehbox.api.domain.Message
 import org.taktik.connector.business.ehbox.api.domain.exception.EhboxBusinessConnectorException
 import org.taktik.connector.business.ehbox.v3.builders.ConsultationMessageBuilder
 import org.taktik.connector.technical.exception.TechnicalConnectorException
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetFullMessageResponse
-
-import java.security.KeyStore
+import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 
 class ConsultationMessageBuilderImpl : ConsultationMessageBuilder {
-    private val fullBuilder: ConsultationFullMessageBuilder
-    private val reducedBuilder: ConsultationReducedMessageBuilder
-
-    init {
-        this.fullBuilder = ConsultationFullMessageBuilder()
-        this.reducedBuilder = ConsultationReducedMessageBuilder()
-    }
+    private val fullBuilder: ConsultationFullMessageBuilder = ConsultationFullMessageBuilder()
+    private val reducedBuilder: ConsultationReducedMessageBuilder = ConsultationReducedMessageBuilder()
 
     @Throws(EhboxBusinessConnectorException::class, TechnicalConnectorException::class)
     override fun buildFullMessage(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         msg: GetFullMessageResponse
     ): Message<GetFullMessageResponse> {
-        return this.fullBuilder.buildFullMessage(keystore, passPhrase, msg)
+        return this.fullBuilder.buildFullMessage(credential, msg)
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     override fun buildMessage(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         msg: be.fgov.ehealth.ehbox.consultation.protocol.v3.Message
     ): Message<be.fgov.ehealth.ehbox.consultation.protocol.v3.Message> {
-        return this.reducedBuilder.buildMessage(keystore, passPhrase, msg)
+        return this.reducedBuilder.buildMessage(credential, msg)
     }
 }

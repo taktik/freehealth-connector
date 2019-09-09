@@ -84,9 +84,9 @@ public final class IdentifierType implements Serializable {
          LOG.debug("\t## " + MessageFormat.format(errorValue.getMessage(), "mapping is empty"));
          throw new TechnicalConnectorException(errorValue, "mapping is empty");
       } else {
-         String typeETK = (String)mapping.get(ETKDEPOT);
-         String typeEhbox = (String)mapping.get(EHBOX);
-         String typeRecipe = (String)mapping.get(RECIPE);
+         String typeETK = mapping.get(ETKDEPOT);
+         String typeEhbox = mapping.get(EHBOX);
+         String typeRecipe = mapping.get(RECIPE);
          int actualMapSize = mapping.size();
          validateMapping(typeETK, typeEhbox, typeRecipe, actualMapSize);
          return getIdentifierType(typeETK, typeEhbox, typeRecipe, expectedLength);
@@ -101,10 +101,10 @@ public final class IdentifierType implements Serializable {
          predefinedTypes.put(typeETK.replace("-", "_"), identifier);
          return identifier;
       } else if (identifierTypes.containsKey(EHBOX) && identifierTypes.containsKey(ETKDEPOT)) {
-         if (!((IdentifierType)identifierTypes.get(ETKDEPOT)).equals(identifierTypes.get(EHBOX)) || identifierTypes.containsKey(RECIPE) && !((IdentifierType)identifierTypes.get(ETKDEPOT)).equals(identifierTypes.get(RECIPE))) {
+         if (!identifierTypes.get(ETKDEPOT).equals(identifierTypes.get(EHBOX)) || identifierTypes.containsKey(RECIPE) && !identifierTypes.get(ETKDEPOT).equals(identifierTypes.get(RECIPE))) {
             throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.INVALID_MAPPING, "Multiple IdentifierTypes matches the mapping.");
          } else {
-            return (IdentifierType)identifierTypes.get(ETKDEPOT);
+            return identifierTypes.get(ETKDEPOT);
          }
       } else {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.INVALID_MAPPING, "Required Fields are empty.");
@@ -153,29 +153,27 @@ public final class IdentifierType implements Serializable {
       Iterator i$ = predefinedTypes.values().iterator();
 
       while(true) {
-         while(true) {
-            IdentifierType identifierType;
-            String idenType;
-            String idenSubType;
+         IdentifierType identifierType;
+         String idenType;
+         String idenSubType;
+         do {
             do {
-               do {
-                  if (!i$.hasNext()) {
-                     return returnValue;
-                  }
-
-                  identifierType = (IdentifierType)i$.next();
-                  idenType = identifierType.getType(source);
-                  idenSubType = identifierType.getSubType(source);
-               } while(idenType == null);
-            } while(!idenType.equalsIgnoreCase(type));
-
-            if (idenSubType != null && subType != null) {
-               if (idenSubType.equalsIgnoreCase(subType)) {
-                  returnValue = identifierType;
+               if (!i$.hasNext()) {
+                  return returnValue;
                }
-            } else if (subType == null && idenSubType == null) {
+
+               identifierType = (IdentifierType)i$.next();
+               idenType = identifierType.getType(source);
+               idenSubType = identifierType.getSubType(source);
+            } while(idenType == null);
+         } while(!idenType.equalsIgnoreCase(type));
+
+         if (idenSubType != null && subType != null) {
+            if (idenSubType.equalsIgnoreCase(subType)) {
                returnValue = identifierType;
             }
+         } else if (subType == null && idenSubType == null) {
+            returnValue = identifierType;
          }
       }
    }
@@ -240,11 +238,11 @@ public final class IdentifierType implements Serializable {
    }
 
    public String name() {
-      return (String)getKeyByValue(predefinedTypes, this);
+      return getKeyByValue(predefinedTypes, this);
    }
 
    public static IdentifierType valueOf(String key) {
-      return (IdentifierType)predefinedTypes.get(key);
+      return predefinedTypes.get(key);
    }
 
    private static <T, E> T getKeyByValue(Map<T, E> map, E value) {

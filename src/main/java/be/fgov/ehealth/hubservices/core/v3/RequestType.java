@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.joda.time.DateTime;
@@ -19,6 +20,7 @@ import org.joda.time.DateTime;
    name = "RequestType",
    propOrder = {"id", "author", "date", "time", "maxrows", "breaktheglass"}
 )
+@XmlSeeAlso({RequestListType.class})
 public class RequestType implements Serializable {
    private static final long serialVersionUID = 1L;
    @XmlElement(

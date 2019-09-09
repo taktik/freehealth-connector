@@ -2,13 +2,13 @@ package be.fgov.ehealth.commons.core.v1;
 
 import org.taktik.connector.technical.adapter.XmlDateAdapter;
 import java.io.Serializable;
+import java.util.Calendar;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.joda.time.DateTime;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
@@ -26,7 +26,7 @@ public class PeriodType implements Serializable {
    @XmlSchemaType(
       name = "date"
    )
-   protected DateTime beginDate;
+   protected Calendar beginDate;
    @XmlElement(
       name = "EndDate",
       type = String.class
@@ -35,21 +35,21 @@ public class PeriodType implements Serializable {
    @XmlSchemaType(
       name = "date"
    )
-   protected DateTime endDate;
+   protected Calendar endDate;
 
-   public DateTime getBeginDate() {
+   public Calendar getBeginDate() {
       return this.beginDate;
    }
 
-   public void setBeginDate(DateTime value) {
+   public void setBeginDate(Calendar value) {
       this.beginDate = value;
    }
 
-   public DateTime getEndDate() {
+   public Calendar getEndDate() {
       return this.endDate;
    }
 
-   public void setEndDate(DateTime value) {
+   public void setEndDate(Calendar value) {
       this.endDate = value;
    }
 }

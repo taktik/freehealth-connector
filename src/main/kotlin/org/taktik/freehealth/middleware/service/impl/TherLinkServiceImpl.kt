@@ -54,6 +54,15 @@ import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.TherLinkService
 import java.util.*
+import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
+import org.taktik.connector.technical.exception.TechnicalConnectorException
+import java.net.MalformedURLException
+import be.fgov.ehealth.hubservices.core.v2.HasTherapeuticLinkResponse
+import org.taktik.connector.business.therlink.domain.HasTherapeuticLinkMessage
+import org.taktik.connector.business.therlink.domain.requests.HasTherapeuticLinkRequest
+import org.taktik.connector.business.therlink.exception.TherLinkBusinessConnectorException
+import javax.xml.soap.SOAPException
+
 
 @Service
 class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService {
@@ -121,8 +130,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Therlink operations")
 
-        val query = GetTherapeuticLinkRequest(DateTime.now(),getNihii(queryLink.hcParty)!!, Author().apply { hcParties.add(queryLink.hcParty) }, queryLink, 100, proof)
-
+        val query = GetTherapeuticLinkRequest(DateTime.now(),getNihii(queryLink.hcParty)!!, Author().apply { hcParties.add(queryLink.hcParty!!) }, queryLink, 100, proof)
 
         val rawResponse =
             org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender()
@@ -167,6 +175,77 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         false
     )?.let { if (it.isComplete) it.therapeuticLinks?.firstOrNull() else null }
 
+    @Throws(TechnicalConnectorException::class, TherLinkBusinessConnectorException::class)
+    override fun hasTherapeuticLink(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientSsin: String,
+        patientFirstName: String,
+        patientLastName: String,
+        eidCardNumber: String?,
+        isiCardNumber: String?,
+        startDate: Date?,
+        endDate: Date?,
+        therLinkType: String?
+        ): HasTherapeuticLinkMessage? {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
+
+
+        try {
+            val response: HasTherapeuticLinkResponse =
+            org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender()
+                .send(getTherLinkPort(samlToken).apply {
+                    setPayload(requestObjectMapper.mapHasTherapeuticLinkRequest(HasTherapeuticLinkRequest(
+                        DateTime(),
+                        hcpNihii,
+                        makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
+                        makeTherapeuticLink(
+                            therLinkType ?: "gpconsultation",
+                            makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
+                            makePatient(patientSsin, eidCardNumber, isiCardNumber, patientFirstName, patientLastName),
+                            startDate?.let { DateTime(it.time) }, //Maybe not supported
+                            endDate?.let { DateTime(it.time) }, //Maybe not supported
+                            null
+                                           )
+                                                                                                         ))
+                              )
+                    setSoapAction("urn:be:fgov:ehealth:therlink:protocol:v1:HasTherapeuticLink")
+                }).asObject(HasTherapeuticLinkResponse::class.java)
+
+            return HasTherapeuticLinkMessage().apply {
+                isComplete = response.acknowledge.isIscomplete
+                if (isComplete) {
+                    result = response.isValue
+                } else {
+                    errors =
+                        responseObjectMapper.mapAcknowledge(response.acknowledge)
+                            .listOfErrors.filter { it.errorCode != "NIP.META.TlServiceBean" }
+                            .map {
+                                org.taktik.connector.business.domain.Error(
+                                    it.errorCode,
+                                    null,
+                                    it.errorDescription,
+                                    mapOf()
+                                                                          )
+                            }
+                }
+            }
+        } catch (urlException: MalformedURLException) {
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.MALFORMED_URL, urlException.message)
+        } catch (soapException: SOAPException) {
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, soapException, soapException.message)
+        }
+
+    }
+
+
     override fun registerTherapeuticLink(
         keystoreId: UUID,
         tokenId: UUID,
@@ -186,6 +265,8 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         comment: String?,
         sign: Boolean?
                                         ): TherapeuticLinkMessage {
+
+
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
@@ -293,6 +374,10 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         therLink: TherapeuticLink,
         sign: Boolean?
                            ): TherapeuticLinkMessage {
+
+        val patient = requireNotNull(therLink.patient)
+        val hcParty = requireNotNull(therLink.hcParty)
+
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
@@ -300,23 +385,23 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         val mapRevokeTherapeuticLinkRequest = requestObjectMapper.mapRevokeTherapeuticLinkRequest(
             RevokeTherapeuticLinkRequest(
                 DateTime(),
-                getNihii(therLink.hcParty)!!,
+                getNihii(hcParty)!!,
                 makeAuthor(
-                    getNihii(therLink.hcParty),
-                    getSsin(therLink.hcParty),
-                    therLink.hcParty.firstName,
-                    therLink.hcParty.familyName
+                    getNihii(hcParty),
+                    getSsin(hcParty),
+                    hcParty.firstName,
+                    hcParty.familyName
                           ),
                 makeTherapeuticLink(
                     therLink.type!!,
-                    therLink.hcParty,
-                    therLink.patient,
+                    hcParty,
+                    patient,
                     therLink.startDate?.toDateTime(LocalTime.MIDNIGHT) ?: DateTime(),
                     therLink.endDate?.toDateTime(LocalTime.MIDNIGHT),
                     therLink.comment
                                    ),
                 makeProof(
-                    sign ?: false, therLink.patient, therLink.hcParty
+                    sign ?: false, patient, hcParty
                          )
                                         )
                                                                                                  )
@@ -348,12 +433,12 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
     }
 
     @Suppress("DEPRECATION")
-    private fun getSsin(hcParty: HcParty) =
-        hcParty.ids.find { id -> IDHCPARTYschemes.INSS == id.s }?.value ?: hcParty.inss
+    private fun getSsin(hcParty: HcParty?) =
+        hcParty?.ids?.find { id -> IDHCPARTYschemes.INSS == id.s }?.value ?: hcParty?.inss
 
     @Suppress("DEPRECATION")
-    private fun getNihii(hcParty: HcParty) =
-        hcParty.ids.find { id -> IDHCPARTYschemes.ID_HCPARTY == id.s }?.value ?: hcParty.nihii
+    private fun getNihii(hcParty: HcParty?) =
+        hcParty?.ids?.find { id -> IDHCPARTYschemes.ID_HCPARTY == id.s }?.value ?: hcParty?.nihii
 
     private fun makeProofForEidSigning(patient: Patient, hcp: HcParty, signature: BeIDCredential): Proof {
         val proof = Proof(ProofTypeValues.EIDSIGNING.value)
@@ -395,7 +480,10 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         return author
     }*/
 
-    private fun makeProof(sign: Boolean, patient: Patient, hcParty: HcParty): Proof? {
+    private fun makeProof(sign: Boolean, patient: Patient?, hcParty: HcParty?): Proof? {
+        requireNotNull(patient)
+        requireNotNull(hcParty)
+
         Proof(ProofTypeValues.EIDREADING.value).apply { binaryProof = null }
         return when {
             sign -> makeProofForEidSigning(

@@ -7,9 +7,6 @@ import java.util.List;
 import org.dozer.DozerBeanMapper;
 
 public final class CommonInputMapper {
-   private CommonInputMapper() {
-   }
-
    public static CommonInputType mapCommonInputType(CommonInput input) {
       List<String> myMappingFiles = new ArrayList();
       myMappingFiles.add("dozer/dmg-commoninput.xml");

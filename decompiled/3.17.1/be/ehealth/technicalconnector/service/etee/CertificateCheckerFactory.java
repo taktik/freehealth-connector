@@ -14,9 +14,6 @@ public final class CertificateCheckerFactory {
    private static Configuration config = ConfigFactory.getConfigValidator();
    private static ConfigurableFactoryHelper<CertificateChecker> helper = new ConfigurableFactoryHelper("crypto.certificatechecker.classname", "be.ehealth.technicalconnector.service.etee.impl.ConnectorCertificateChecker");
 
-   protected CertificateCheckerFactory() {
-   }
-
    public static CertificateChecker getCertificateChecker() throws TechnicalConnectorException {
       return (CertificateChecker)helper.getImplementation();
    }

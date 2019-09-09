@@ -52,7 +52,9 @@ public enum CDMEDIATYPEvalues {
    @XmlEnumValue("kmb/transaction")
    KMB_TRANSACTION("kmb/transaction"),
    @XmlEnumValue("image/dicom")
-   IMAGE_DICOM("image/dicom");
+   IMAGE_DICOM("image/dicom"),
+   @XmlEnumValue("application/hl7-sda+xml")
+   APPLICATION_HL_7_SDA_XML("application/hl7-sda+xml");
 
    private final String value;
 

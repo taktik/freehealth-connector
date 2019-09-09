@@ -15,7 +15,7 @@ public class SoapActionHandler extends AbstractSOAPHandler {
       try {
          boolean hasSoapAction = false;
          if (context.containsKey("javax.xml.ws.soap.http.soapaction.use")) {
-            hasSoapAction = ((Boolean)context.get("javax.xml.ws.soap.http.soapaction.use")).booleanValue();
+            hasSoapAction = (Boolean) context.get("javax.xml.ws.soap.http.soapaction.use");
          }
 
          if (hasSoapAction) {

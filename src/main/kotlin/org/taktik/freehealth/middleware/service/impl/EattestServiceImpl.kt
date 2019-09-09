@@ -102,7 +102,7 @@ import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
-import org.taktik.connector.technical.service.keydepot.KeyDepotManagerFactory
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
@@ -111,12 +111,12 @@ import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
-import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
-import org.taktik.freehealth.middleware.dto.eattest.EattestAcknowledgeType
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
+import org.taktik.freehealth.middleware.dto.eattest.EattestAcknowledgeType
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResultWithResponse
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EattestService
 import org.taktik.freehealth.middleware.service.STSService
@@ -127,7 +127,9 @@ import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
 import java.io.StringWriter
 import java.math.BigDecimal
-import java.util.*
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.UUID
 import javax.xml.bind.JAXBContext
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
@@ -140,7 +142,7 @@ import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
 @Service
-class EattestServiceImpl(private val stsService: STSService) : EattestService {
+class EattestServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : EattestService {
     override fun cancelAttest(keystoreId: UUID,
         tokenId: UUID,
         hcpNihii: String,
@@ -165,7 +167,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -366,7 +368,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                 ?: throw MissingTokenException("Cannot obtain token for Eattest operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -588,7 +590,7 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
                 ?: throw MissingTokenException("Cannot obtain token for Eattest operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -2087,10 +2089,11 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         val encryptedKnowContent = builder.sign(credential, content.toByteArray(charset("UTF-8")), options)
         return crypto.seal(
             Crypto.SigningPolicySelector.WITH_NON_REPUDIATION,
-            KeyDepotManagerFactory.getKeyDepotManager().getEtkSet(
+            KeyDepotManagerImpl.getInstance(keyDepotService).getEtkSet(
                 IdentifierType.CBE,
                 820563481L,
-                "MYCARENET"
+                "MYCARENET",
+                null
                                                                  ),
             encryptedKnowContent
                           )
@@ -2116,15 +2119,15 @@ class EattestServiceImpl(private val stsService: STSService) : EattestService {
         val parser = CertificateParser(cred.certificate)
         if (parser.identifier != null && !StringUtils.isEmpty(parser.id) && StringUtils.isNumeric(parser.id)) {
             try {
-                return KeyDepotManagerImpl.getInstance()
-                    .getEtk(parser.identifier, java.lang.Long.parseLong(parser.id), parser.application)
+                return KeyDepotManagerImpl.getInstance(keyDepotService)
+                    .getEtk(parser.identifier, java.lang.Long.parseLong(parser.id), parser.application, cred.keystoreId)
             } catch (ex: NumberFormatException) {
                 log.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.message)
                 throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, ex)
             }
         } else {
             log.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.message)
-            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, *arrayOfNulls(0))
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND)
         }
     }
 }

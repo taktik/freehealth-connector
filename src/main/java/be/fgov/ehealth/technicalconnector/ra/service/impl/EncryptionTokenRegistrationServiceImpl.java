@@ -2,54 +2,50 @@ package be.fgov.ehealth.technicalconnector.ra.service.impl;
 
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.Credential;
-import org.taktik.connector.technical.utils.ConfigurableImplementation;
-import be.fgov.ehealth.etkra.protocol.v1.ActivateETKRequest;
-import be.fgov.ehealth.etkra.protocol.v1.ActivateETKResponse;
-import be.fgov.ehealth.etkra.protocol.v1.CompleteEtkRegistrationRequest;
-import be.fgov.ehealth.etkra.protocol.v1.CompleteEtkRegistrationResponse;
-import be.fgov.ehealth.etkra.protocol.v1.StartEtkRegistrationRequest;
-import be.fgov.ehealth.etkra.protocol.v1.StartEtkRegistrationResponse;
+import be.fgov.ehealth.commons.protocol.v2.StatusResponseType;
+import be.fgov.ehealth.etkra.protocol.v2.ActivateETKRequest;
+import be.fgov.ehealth.etkra.protocol.v2.ActivateETKResponse;
+import be.fgov.ehealth.etkra.protocol.v2.CompleteETKRegistrationRequest;
+import be.fgov.ehealth.etkra.protocol.v2.CompleteETKRegistrationResponse;
+import be.fgov.ehealth.etkra.protocol.v2.StartETKRegistrationRequest;
+import be.fgov.ehealth.etkra.protocol.v2.StartETKRegistrationResponse;
 import be.fgov.ehealth.technicalconnector.ra.domain.Result;
+import be.fgov.ehealth.technicalconnector.ra.exceptions.RaException;
 import be.fgov.ehealth.technicalconnector.ra.service.EncryptionTokenRegistrationService;
 import be.fgov.ehealth.technicalconnector.ra.utils.CertificateUtils;
 import be.fgov.ehealth.technicalconnector.ra.utils.RaUtils;
 import java.security.PublicKey;
-import java.util.Map;
 
-public class EncryptionTokenRegistrationServiceImpl implements EncryptionTokenRegistrationService, ConfigurableImplementation {
-   private Credential cred;
-
-   public byte[] registerPublicKey(PublicKey key) throws TechnicalConnectorException {
-      StartEtkRegistrationRequest req = new StartEtkRegistrationRequest();
-      req.setPublicEncryptionKey(RaUtils.transform(this.cred, key.getEncoded()));
-      Result<StartEtkRegistrationResponse> resp = RaUtils.invokeEtkRa(req, "urn:be:fgov:ehealth:etee:etkra:registerpublickey", StartEtkRegistrationResponse.class);
-      return ((StartEtkRegistrationResponse)resp.getResult()).getChallenge();
+public class EncryptionTokenRegistrationServiceImpl implements EncryptionTokenRegistrationService {
+   public Result<byte[]> startETKRegistration(PublicKey key, Credential credential) throws TechnicalConnectorException {
+      StartETKRegistrationRequest req = new StartETKRegistrationRequest();
+      RaUtils.setCommonAttributes(req);
+      req.setPublicEncryptionKey(key.getEncoded());
+      Result<StartETKRegistrationResponse> resp = RaUtils.invokeEtkRa(RaUtils.sign(req, req.getId(), credential), "urn:be:fgov:ehealth:etee:etkra:protocol:v2:startETKRegistration", StartETKRegistrationResponse.class);
+      return new Result(((StartETKRegistrationResponse)resp.getResult()).getChallenge(), (StatusResponseType)resp.getResult());
    }
 
-   public Result<Void> registerToken(byte[] etk) throws TechnicalConnectorException {
+   public Result<Void> completeETKRegistration(byte[] etk, Credential credential) throws TechnicalConnectorException {
       CertificateUtils.toX509Certificate(etk);
-      CompleteEtkRegistrationRequest complete = new CompleteEtkRegistrationRequest();
-      complete.setToBeRegistered(RaUtils.transform(this.cred, etk));
-      Result<CompleteEtkRegistrationResponse> response = RaUtils.invokeEtkRa(complete, "urn:be:fgov:ehealth:etee:etkra:registertoken", CompleteEtkRegistrationResponse.class);
+      CompleteETKRegistrationRequest req = new CompleteETKRegistrationRequest();
+      RaUtils.setCommonAttributes(req);
+      req.setToBeRegistered(etk);
+      Result<CompleteETKRegistrationResponse> response = RaUtils.invokeEtkRa(RaUtils.sign(req, req.getId(), credential), "urn:be:fgov:ehealth:etee:etkra:protocol:v2:completeETKregistration", CompleteETKRegistrationResponse.class);
       if (response.hasStatusError()) {
-         new Result("Unable to complete ETK Registration", response.getCause());
+         throw new RaException("Unable to complete ETK Registration", response.getCause(), (StatusResponseType)response.getResult());
+      } else {
+         return new Result((Void)null);
       }
-
-      return new Result((Void)null);
    }
 
-   public Result<Void> activateToken() throws TechnicalConnectorException {
+   public Result<Void> activateToken(Credential credential) throws TechnicalConnectorException {
       ActivateETKRequest req = new ActivateETKRequest();
-      req.setSignedRequest(RaUtils.transform(this.cred, "ACTIVATE".getBytes()));
-      Result<ActivateETKResponse> response = RaUtils.invokeEtkRa(req, "urn:be:fgov:ehealth:etee:etkra:activatetoken", ActivateETKResponse.class);
+      RaUtils.setCommonAttributes(req);
+      Result<ActivateETKResponse> response = RaUtils.invokeEtkRa(RaUtils.sign(req, req.getId(), credential), "urn:be:fgov:ehealth:etee:etkra:protocol:v2:activateETK", ActivateETKResponse.class);
       if (response.hasStatusError()) {
-         new Result("Unable to activate ETK", response.getCause());
+         throw new RaException("Unable to activate ETK", response.getCause(), (StatusResponseType)response.getResult());
+      } else {
+         return new Result((Void)null);
       }
-
-      return new Result((Void)null);
-   }
-
-   public void initialize(Map<String, Object> parameterMap) throws TechnicalConnectorException {
-      this.cred = (Credential)parameterMap.get("credential");
    }
 }

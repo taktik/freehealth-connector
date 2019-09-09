@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 sp1 (x64) (http://www.altova.com) by SMALS (SMALS) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:commons:core:v2" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2" targetNamespace="urn:be:fgov:ehealth:commons:protocol:v2"
   elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
   <xs:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="ehealth-commons-schema-core-2_0.xsd" />

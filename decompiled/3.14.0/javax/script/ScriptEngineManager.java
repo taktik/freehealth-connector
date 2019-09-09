@@ -73,7 +73,7 @@ public class ScriptEngineManager {
          }
       } catch (ServiceConfigurationError var4) {
          System.err.println("Can't find ScriptEngineFactory providers: " + var4.getMessage());
-         if (DEBUG.booleanValue()) {
+         if (DEBUG) {
             var4.printStackTrace();
          }
 
@@ -87,7 +87,7 @@ public class ScriptEngineManager {
                this.engineSpis.add(fact);
             } catch (ServiceConfigurationError var5) {
                System.err.println("ScriptEngineManager providers.next(): " + var5.getMessage());
-               if (DEBUG.booleanValue()) {
+               if (DEBUG) {
                   var5.printStackTrace();
                }
             }
@@ -95,7 +95,7 @@ public class ScriptEngineManager {
 
       } catch (ServiceConfigurationError var6) {
          System.err.println("ScriptEngineManager providers.hasNext(): " + var6.getMessage());
-         if (DEBUG.booleanValue()) {
+         if (DEBUG) {
             var6.printStackTrace();
          }
 
@@ -135,7 +135,7 @@ public class ScriptEngineManager {
                engine.setBindings(this.getBindings(), 200);
                return engine;
             } catch (Exception var11) {
-               if (DEBUG.booleanValue()) {
+               if (DEBUG) {
                   var11.printStackTrace();
                }
             }
@@ -152,7 +152,7 @@ public class ScriptEngineManager {
                try {
                   names = spi.getNames();
                } catch (Exception var10) {
-                  if (DEBUG.booleanValue()) {
+                  if (DEBUG) {
                      var10.printStackTrace();
                   }
                }
@@ -178,7 +178,7 @@ public class ScriptEngineManager {
                      engine.setBindings(this.getBindings(), 200);
                      return engine;
                   } catch (Exception var9) {
-                     if (DEBUG.booleanValue()) {
+                     if (DEBUG) {
                         var9.printStackTrace();
                      }
                   }
@@ -203,7 +203,7 @@ public class ScriptEngineManager {
                engine.setBindings(this.getBindings(), 200);
                return engine;
             } catch (Exception var11) {
-               if (DEBUG.booleanValue()) {
+               if (DEBUG) {
                   var11.printStackTrace();
                }
             }
@@ -220,7 +220,7 @@ public class ScriptEngineManager {
                try {
                   exts = spi.getExtensions();
                } catch (Exception var10) {
-                  if (DEBUG.booleanValue()) {
+                  if (DEBUG) {
                      var10.printStackTrace();
                   }
                }
@@ -246,7 +246,7 @@ public class ScriptEngineManager {
                      engine.setBindings(this.getBindings(), 200);
                      return engine;
                   } catch (Exception var9) {
-                     if (DEBUG.booleanValue()) {
+                     if (DEBUG) {
                         var9.printStackTrace();
                      }
                   }
@@ -271,7 +271,7 @@ public class ScriptEngineManager {
                engine.setBindings(this.getBindings(), 200);
                return engine;
             } catch (Exception var11) {
-               if (DEBUG.booleanValue()) {
+               if (DEBUG) {
                   var11.printStackTrace();
                }
             }
@@ -288,7 +288,7 @@ public class ScriptEngineManager {
                try {
                   types = spi.getMimeTypes();
                } catch (Exception var10) {
-                  if (DEBUG.booleanValue()) {
+                  if (DEBUG) {
                      var10.printStackTrace();
                   }
                }
@@ -314,7 +314,7 @@ public class ScriptEngineManager {
                      engine.setBindings(this.getBindings(), 200);
                      return engine;
                   } catch (Exception var9) {
-                     if (DEBUG.booleanValue()) {
+                     if (DEBUG) {
                         var9.printStackTrace();
                      }
                   }
@@ -370,7 +370,7 @@ public class ScriptEngineManager {
             try {
                sm.checkPermission(SecurityConstants.GET_CLASSLOADER_PERMISSION);
             } catch (SecurityException var5) {
-               if (DEBUG.booleanValue()) {
+               if (DEBUG) {
                   var5.printStackTrace();
                }
 

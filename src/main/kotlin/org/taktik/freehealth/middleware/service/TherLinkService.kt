@@ -20,8 +20,10 @@
 
 package org.taktik.freehealth.middleware.service
 
+import org.taktik.connector.business.therlink.domain.HasTherapeuticLinkMessage
 import org.taktik.connector.business.therlink.domain.TherapeuticLinkMessage
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
+import org.taktik.connector.technical.exception.TechnicalConnectorException
 import java.util.*
 
 interface TherLinkService {
@@ -100,4 +102,20 @@ interface TherLinkService {
         therLink: TherapeuticLink,
         sign: Boolean?
     ): TherapeuticLinkMessage
+
+    fun hasTherapeuticLink(keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        patientSsin: String,
+        patientFirstName: String,
+        patientLastName: String,
+        eidCardNumber: String?,
+        isiCardNumber: String?,
+        startDate: Date?,
+        endDate: Date?,
+        therLinkType: String?): HasTherapeuticLinkMessage?
 }

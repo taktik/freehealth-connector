@@ -125,8 +125,7 @@ abstract class AbstractConsultationBuilder<T>() {
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     protected fun handleAndDecryptIfNeeded(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         data: ByteArray,
         encrypted: Boolean,
         container: AbstractConsultationBuilder.ExceptionContainer<T>
@@ -141,8 +140,7 @@ abstract class AbstractConsultationBuilder<T>() {
 
             if (encrypted) {
                 try {
-                    val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-                    val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+                    val hokPrivateKeys = KeyManager.getDecryptionKeys(credential.keyStore, credential.password)
                     val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
                     byteVal = crypto.unseal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, byteVal).contentAsByte
                 } catch (unsealConnectorException: UnsealConnectorException) {

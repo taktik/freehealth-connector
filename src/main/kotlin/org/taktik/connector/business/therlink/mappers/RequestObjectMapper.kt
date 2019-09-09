@@ -3,6 +3,7 @@ package org.taktik.connector.business.therlink.mappers
 import be.fgov.ehealth.hubservices.core.v2.AuthorWithPatientAndPersonType
 import be.fgov.ehealth.hubservices.core.v2.GetTherapeuticLinkSelectType
 import be.fgov.ehealth.hubservices.core.v2.HCPartyIdType
+import be.fgov.ehealth.hubservices.core.v2.HasTherapeuticLinkSelectType
 import be.fgov.ehealth.hubservices.core.v2.PatientIdType
 import be.fgov.ehealth.hubservices.core.v2.ProofType
 import be.fgov.ehealth.hubservices.core.v2.RequestType
@@ -38,6 +39,7 @@ import org.taktik.connector.business.therlink.domain.TherapeuticLink
 import org.taktik.connector.business.therlink.domain.TherapeuticLinkRequestType
 import org.taktik.connector.business.therlink.domain.jaxb.Therapeuticlink
 import org.taktik.connector.business.therlink.domain.requests.GetTherapeuticLinkRequest
+import org.taktik.connector.business.therlink.domain.requests.HasTherapeuticLinkRequest
 import org.taktik.connector.business.therlink.domain.requests.PutTherapeuticLinkRequest
 import org.taktik.connector.business.therlink.domain.requests.RevokeTherapeuticLinkRequest
 import org.taktik.connector.technical.utils.MarshallerHelper
@@ -57,6 +59,11 @@ class RequestObjectMapper {
         be.fgov.ehealth.hubservices.core.v2.RevokeTherapeuticLinkRequest::class.java
     )
 
+    fun mapHasTherapeuticLinkToXML(request: HasTherapeuticLinkRequest) = this.generateXML(
+        this.mapHasTherapeuticLinkRequest(request),
+        be.fgov.ehealth.hubservices.core.v2.HasTherapeuticLinkRequest::class.java
+    )
+
     fun mapGetTherapeuticLinkToXml(request: GetTherapeuticLinkRequest) = this.generateXML(
         this.mapGetTherapeuticLinkRequest(request),
         be.fgov.ehealth.hubservices.core.v2.GetTherapeuticLinkRequest::class.java
@@ -67,6 +74,17 @@ class RequestObjectMapper {
             this.request = mapRequest(request.dateTime, request.id, request.author, 0)
             this.therapeuticlink = mapTherapeuticLinkType(request.link)
             this.prooves.addAll(mapProoves(request.proofs))
+        }
+
+    fun mapHasTherapeuticLinkRequest(request: HasTherapeuticLinkRequest) =
+        be.fgov.ehealth.hubservices.core.v2.HasTherapeuticLinkRequest().apply {
+            this.request =
+                mapRequest(
+                    request.dateTime,
+                    request.id,
+                    request.author,
+                    0)
+            request.link?.let { select = mapHasTherapeuticLinkSelectType(it) }
         }
 
     fun mapGetTherapeuticLinkRequest(request: GetTherapeuticLinkRequest) =
@@ -124,12 +142,19 @@ class RequestObjectMapper {
                 })
             }
             it.status?.let { therapeuticlinkstatus = it.toString().toLowerCase(Locale.getDefault()) }
-            patientsAndHcparties.add(mapPatient(it.patient))
-            patientsAndHcparties.add(mapHcPartyIdType(it.hcParty))
+            it.patient?.let { patientsAndHcparties.add(mapPatient(it)) }
+            it.hcParty?.let { patientsAndHcparties.add(mapHcPartyIdType(it)) }
         }
     }
 
-    private fun mapRequest(date: DateTime, id: String, author: Author, maxRows: Int) = RequestType().apply {
+    private fun mapHasTherapeuticLinkSelectType(link: TherapeuticLink): HasTherapeuticLinkSelectType {
+        return HasTherapeuticLinkSelectType().apply {
+            link.patient?.let { patient = mapPatient(it) }
+            link.hcParty?.let { hcparty = mapHcPartyIdType(it) }
+        }
+    }
+
+   private fun mapRequest(date: DateTime, id: String, author: Author, maxRows: Int) = RequestType().apply {
         this.id = IDKMEHR().apply {
             s = IDKMEHRschemes.ID_KMEHR
             sv = "1.0"
@@ -189,8 +214,9 @@ class RequestObjectMapper {
             comment = it.comment
             enddate = it.endDate?.let { it.toDateTime(LocalTime.MIDNIGHT) }
             startdate = it.startDate?.let { it.toDateTime(LocalTime.MIDNIGHT) }
-            hcparties.add(mapHcPartyIdType(it.hcParty))
-            patient = mapPatient(it.patient)
+
+            it.patient?.let { patient = mapPatient(it) }
+            it.hcParty?.let { hcparties.add(mapHcPartyIdType(it)) }
         }
     }
 
@@ -204,8 +230,8 @@ class RequestObjectMapper {
             comment = therLink.comment
             enddate = therLink.endDate?.toDateTimeAtCurrentTime()
             startdate = therLink.startDate?.toDateTimeAtCurrentTime()
-            patient = mapPatient(therLink.patient)
-            hcparties.add(mapHcPartyIdType(therLink.hcParty))
+            therLink.patient?.let { patient = mapPatient(it) }
+            therLink.hcParty?.let { hcparties.add(mapHcPartyIdType(it)) }
         }
         return generateXML(therLinkRoot, Therapeuticlink::class.java)
     }

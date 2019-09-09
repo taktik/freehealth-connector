@@ -29,6 +29,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.utils.ConnectorIOUtils
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.Message
 import be.fgov.ehealth.ehbox.core.v3.ContentInfoType
+import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 
 import java.security.KeyStore
 
@@ -36,8 +37,7 @@ class ConsultationReducedMessageBuilder : AbstractConsultationBuilder<Message>()
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     fun buildMessage(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         response: Message
     ): org.taktik.connector.business.ehbox.api.domain.Message<Message> {
         val message = this.createMessage(response.contentSpecification, response, response.messageId, null)
@@ -45,7 +45,7 @@ class ConsultationReducedMessageBuilder : AbstractConsultationBuilder<Message>()
         this.processMessageInfo(response.messageInfo, message)
         this.processContentSpecification(response.contentSpecification, message)
         this.processContentInfo(response.contentInfo, message)
-        this.processContent(keystore, passPhrase, response.contentInfo, message, container)
+        this.processContent(credential, response.contentInfo, message, container)
         this.processCustomMetas(response.customMetas, message)
         this.processDestination(response, message)
         this.processSender(response.sender, response.contentSpecification, message)
@@ -64,8 +64,7 @@ class ConsultationReducedMessageBuilder : AbstractConsultationBuilder<Message>()
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processContent(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         response: ContentInfoType,
         message: org.taktik.connector.business.ehbox.api.domain.Message<Message>,
         container: AbstractConsultationBuilder.ExceptionContainer<Message>
@@ -77,7 +76,7 @@ class ConsultationReducedMessageBuilder : AbstractConsultationBuilder<Message>()
             documentMessage.document = document
 
             if(response.encryptableINSSPatient != null){
-                val decodedInss = this.handleAndDecryptIfNeeded(keystore, passPhrase, response.encryptableINSSPatient, documentMessage.isEncrypted, container)
+                val decodedInss = this.handleAndDecryptIfNeeded(credential, response.encryptableINSSPatient, documentMessage.isEncrypted, container)
                 if (decodedInss != null) {
                     documentMessage.patientInss = ConnectorIOUtils.toString(decodedInss, Charset.UTF_8)
                 }

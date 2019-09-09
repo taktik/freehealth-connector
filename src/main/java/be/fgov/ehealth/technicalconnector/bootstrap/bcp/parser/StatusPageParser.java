@@ -4,92 +4,138 @@ import org.taktik.connector.technical.enumeration.Charset;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
+import be.fgov.ehealth.bcp.protocol.v1.Endpoint;
+import be.fgov.ehealth.bcp.protocol.v1.StatusType;
+import be.fgov.ehealth.bcp.protocol.v2.Service;
+import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.CacheInformation;
+import org.apache.commons.io.IOUtils;
+import org.joda.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.EndPointInformation;
 import java.io.ByteArrayInputStream;
-import java.util.Map;
-import java.util.TreeMap;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import org.apache.commons.lang.ArrayUtils;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 
 public final class StatusPageParser {
-   private static final String NS_BCP = "urn:be:fgov:ehealth:bcp:protocol:v1";
-   private static final QName QNAME_SERVICE = new QName("urn:be:fgov:ehealth:bcp:protocol:v1", "Service");
-   private static final QName QNAME_ENDPOINT = new QName("urn:be:fgov:ehealth:bcp:protocol:v1", "Endpoint");
+   private static final Logger LOG = LoggerFactory.getLogger(StatusPageParser.class);
+   private static final String URI_BCP_V2 = "urn:be:fgov:ehealth:bcp:protocol:v2";
+   private static final String URI_BCP_V1 = "urn:be:fgov:ehealth:bcp:protocol:v1";
 
    private StatusPageParser() {
       throw new UnsupportedOperationException();
    }
 
    public static EndPointInformation parse(String xml) throws TechnicalConnectorException {
+      EndPointInformation info = new EndPointInformation();
       ByteArrayInputStream is = new ByteArrayInputStream(ConnectorIOUtils.toBytes(xml, Charset.UTF_8));
 
       try {
-         SAXParserFactory factory = SAXParserFactory.newInstance();
-         factory.setNamespaceAware(true);
-         SAXParser saxParser = factory.newSAXParser();
-         StatusPageParser.SaxHandler handler = new StatusPageParser.SaxHandler();
-         saxParser.parse(is, handler);
-         return handler.getInfo();
-      } catch (Exception var5) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_TECHNICAL, var5, new Object[0]);
+         XMLInputFactory xmlif = XMLInputFactory.newInstance();
+         XMLStreamReader xmlr = xmlif.createXMLStreamReader(is);
+         JAXBContext jaxbContext = JAXBContext.newInstance(Service.class, be.fgov.ehealth.bcp.protocol.v1.Service.class);
+         Unmarshaller um = jaxbContext.createUnmarshaller();
+         xmlr.nextTag();
+         xmlr.require(1, null, "ServiceList");
+
+         while(xmlr.getEventType() != 8) {
+            if (xmlr.getEventType() == 1) {
+               if (xmlr.getLocalName().equals("Service") && xmlr.getNamespaceURI().equals("urn:be:fgov:ehealth:bcp:protocol:v2")) {
+                  xmlr.require(1, "urn:be:fgov:ehealth:bcp:protocol:v2", "Service");
+                  Service service = (Service)um.unmarshal(xmlr);
+                  add(info, service);
+               } else if (xmlr.getLocalName().equals("Service") && xmlr.getNamespaceURI().equals("urn:be:fgov:ehealth:bcp:protocol:v1")) {
+                  xmlr.require(1, "urn:be:fgov:ehealth:bcp:protocol:v1", "Service");
+                  be.fgov.ehealth.bcp.protocol.v1.Service service = (be.fgov.ehealth.bcp.protocol.v1.Service)um.unmarshal(xmlr);
+                  add(info, service);
+               } else {
+                  xmlr.next();
+               }
+            } else {
+               xmlr.next();
+            }
+         }
+
+         return info;
+      } catch (Exception ex) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_TECHNICAL, ex);
       }
    }
 
-   static class SaxHandler extends DefaultHandler {
-      private EndPointInformation info = new EndPointInformation();
-      private String serviceName;
-      private String activeEndpoint;
-      private String defaultEnpoint;
-      private Map<Integer, String> endpoints = new TreeMap();
-      private Integer order;
-      private boolean active;
-      private String endpoint;
+   private static void add(EndPointInformation info, be.fgov.ehealth.bcp.protocol.v1.Service service) {
+      List<String> endpoints = new ArrayList<>();
+      String defaultEndpoint = null;
+      String activeEndpoint = null;
+      List<Endpoint> endpointList = service.getEndpoints();
 
-      public EndPointInformation getInfo() {
-         return this.info;
-      }
-
-      public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-         if ("urn:be:fgov:ehealth:bcp:protocol:v1".equals(uri)) {
-            if (localName.equals(StatusPageParser.QNAME_SERVICE.getLocalPart())) {
-               this.serviceName = attributes.getValue("", "Id");
-               this.endpoints.clear();
-            } else if (localName.equals(StatusPageParser.QNAME_ENDPOINT.getLocalPart())) {
-               this.order = Integer.parseInt(attributes.getValue("", "Order"));
-               this.active = "ACTIVE".equals(attributes.getValue("", "Status"));
-            }
+      for (Endpoint endpoint : endpointList) {
+         endpoints.add(endpoint.getValue());
+         if (endpoint.getStatus() == StatusType.ACTIVE) {
+            activeEndpoint = endpoint.getValue();
          }
 
+         if (endpoint.getOrder().toString(10).equals("0")) {
+            defaultEndpoint = endpoint.getValue();
+         }
       }
 
-      public void characters(char[] ch, int start, int length) throws SAXException {
-         this.endpoint = (new String(ArrayUtils.clone(ch), start, length)).trim();
-      }
+      LOG.debug("Adding info to register {} activeURL {}, defaultURL {}, cache NO", service.getId(), activeEndpoint, defaultEndpoint);
+      info.register(service.getId(), activeEndpoint, defaultEndpoint, endpoints, null);
+   }
 
-      public void endElement(String uri, String localName, String qName) throws SAXException {
-         if ("urn:be:fgov:ehealth:bcp:protocol:v1".equals(uri)) {
-            if (localName.equals(StatusPageParser.QNAME_SERVICE.getLocalPart())) {
-               this.info.register(this.serviceName, this.activeEndpoint, this.defaultEnpoint, this.endpoints.values());
-               this.activeEndpoint = null;
-            } else if (localName.equals(StatusPageParser.QNAME_ENDPOINT.getLocalPart())) {
-               this.endpoints.put(this.order, this.endpoint);
-               if (this.active) {
-                  this.activeEndpoint = this.endpoint;
-               }
+   private static void add(EndPointInformation info, Service service) {
+      List<String> endpoints = new ArrayList<>();
+      String defaultEndpoint = null;
+      String activeEndpoint = null;
+      List<be.fgov.ehealth.bcp.protocol.v2.Endpoint> endpointList = service.getEndpointList().getEndpoints();
 
-               if (this.order.equals(Integer.valueOf(0))) {
-                  this.defaultEnpoint = this.endpoint;
-               }
-
-               this.active = false;
-            }
+      for (be.fgov.ehealth.bcp.protocol.v2.Endpoint endpoint : endpointList) {
+         endpoints.add(endpoint.getValue());
+         if (endpoint.getStatus() == be.fgov.ehealth.bcp.protocol.v2.StatusType.ACTIVE) {
+            activeEndpoint = endpoint.getValue();
          }
 
+         if (endpoint.getOrder().toString(10).equals("0")) {
+            defaultEndpoint = endpoint.getValue();
+         }
       }
+
+      CacheInformation.CacheType cacheType = CacheInformation.CacheType.valueOf(service.getCache().getStrategy());
+      CacheInformation.ExpiryType expiryType = CacheInformation.ExpiryType.valueOf(service.getCache().getExpiry().getType().toUpperCase());
+      CacheInformation.KeyTransformType keyTransformType = CacheInformation.KeyTransformType.valueOf(service.getCache().getKey().getTranform().toUpperCase());
+      String keyTranformLocation = null;
+      if (service.getCache().getKey().isInline()) {
+         try {
+            File file = File.createTempFile(service.getId().replaceAll(":", "_"), ".xslt");
+            file.deleteOnExit();
+            FileWriter fw = new FileWriter(file);
+            IOUtils.write(service.getCache().getKey().getValue(), fw);
+            fw.flush();
+            fw.close();
+            keyTranformLocation = file.getAbsolutePath();
+         } catch (IOException var13) {
+            LOG.debug("Unable to create inline XSLT file.", var13);
+         }
+      } else {
+         keyTranformLocation = service.getCache().getKey().getValue();
+      }
+
+      Duration duration = null;
+      javax.xml.datatype.Duration xmlDuration = service.getCache().getExpiry().getDuration();
+      if (xmlDuration != null) {
+         duration = new Duration(xmlDuration.getTimeInMillis(Calendar.getInstance()));
+      }
+
+      CacheInformation cacheInformation = new CacheInformation(service.getId(), cacheType, keyTransformType, keyTranformLocation, expiryType, duration);
+      LOG.debug("Adding info to register {} with cache{}", service.getId(), cacheInformation);
+      info.register(service.getId(), activeEndpoint, defaultEndpoint, endpoints, cacheInformation);
    }
 }

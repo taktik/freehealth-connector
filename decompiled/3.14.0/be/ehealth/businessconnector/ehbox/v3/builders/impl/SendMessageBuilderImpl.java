@@ -135,15 +135,15 @@ public class SendMessageBuilderImpl implements SendMessageBuilder {
       contentSpecification.setIsEncrypted(isDocumentEncrypted);
       contentSpecification.setIsImportant(isImportant);
       if (publicationReceipt != null) {
-         contentSpecification.setPublicationReceipt(publicationReceipt.booleanValue());
+         contentSpecification.setPublicationReceipt(publicationReceipt);
       }
 
       if (readReceipt != null) {
-         contentSpecification.setReadReceipt(readReceipt.booleanValue());
+         contentSpecification.setReadReceipt(readReceipt);
       }
 
       if (receivedReceipt != null) {
-         contentSpecification.setReceivedReceipt(receivedReceipt.booleanValue());
+         contentSpecification.setReceivedReceipt(receivedReceipt);
       }
 
       contentSpecification.setContentType(contentTypeString);
@@ -245,7 +245,7 @@ public class SendMessageBuilderImpl implements SendMessageBuilder {
 
    private void processPatientInss(Set<EncryptionToken> destinationEtkSet, PublicationContentType contentType, String patientInss, Boolean isEncrypted) throws IOException, TechnicalConnectorException, EhboxBusinessConnectorException, UnsupportedEncodingException {
       if (patientInss != null) {
-         contentType.setEncryptableINSSPatient(this.encode(ConnectorIOUtils.toBytes(patientInss, Charset.UTF_8), isEncrypted.booleanValue(), destinationEtkSet));
+         contentType.setEncryptableINSSPatient(this.encode(ConnectorIOUtils.toBytes(patientInss, Charset.UTF_8), isEncrypted, destinationEtkSet));
       }
 
    }

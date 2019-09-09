@@ -12,7 +12,9 @@ public enum CDDRUGCNKschemes {
    @XmlEnumValue("CD-DRUG-CNK")
    CD_DRUG_CNK("CD-DRUG-CNK"),
    @XmlEnumValue("CD-CNK-CLUSTER")
-   CD_CNK_CLUSTER("CD-CNK-CLUSTER");
+   CD_CNK_CLUSTER("CD-CNK-CLUSTER"),
+   @XmlEnumValue("CD-AMP")
+   CD_AMP("CD-AMP");
 
    private final String value;
 

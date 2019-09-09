@@ -16,37 +16,6 @@ import org.taktik.connector.business.mycarenetdomaincommons.domain.Origin;
 import org.taktik.connector.technical.config.util.domain.PackageInfo;
 
 public final class CommonInputMapper {
-   public static CommonInput mapCommonInputType(org.taktik.connector.business.mycarenetdomaincommons.domain.CommonInput input) {
-//      List<String> myMappingFiles = new ArrayList();
-//      myMappingFiles.add("dozer/genasync-commoninput.xml");
-//      DozerBeanMapper mapper = new DozerBeanMapper();
-//      mapper.setMappingFiles(myMappingFiles);
-//      CommonInput destObject = new CommonInput();
-//      mapper.map(input, destObject);
-      //TODO replace Dozer
-      return new CommonInput();
-   }
-
-   public static OrigineType mapOrigin(Origin origin) {
-      OrigineType result = new OrigineType();
-      CareProvider careProvider = origin.getCareProvider();
-      if (careProvider != null) {
-         result.setCareProvider(mapCareProvider(careProvider));
-      }
-
-      McnPackageInfo packageInfo = origin.getMcnPackageInfo();
-      if (packageInfo != null) {
-         result.setPackage(mapMcnPackage(packageInfo));
-      }
-
-      String siteId = origin.getSiteId();
-      if (siteId != null) {
-         result.setSiteID(createValueRefString(siteId));
-      }
-
-      return result;
-   }
-
    /** @deprecated */
    @Deprecated
    static PackageType mapPackage(PackageInfo packageInfo) {

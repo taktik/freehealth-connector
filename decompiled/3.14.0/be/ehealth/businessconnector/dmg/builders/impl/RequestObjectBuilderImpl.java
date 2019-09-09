@@ -115,7 +115,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder, Configura
    }
 
    public final ConsultGlobalMedicalFileRequest buildSendConsultRequest(boolean isTest, String referenceId, Patient patientInfo, DateTime referenceDate, Blob blob, byte[] xades) throws TechnicalConnectorException, DmgBusinessConnectorException, InstantiationException {
-      if (blob != null && blob.getContent() != null && ConfigFactory.getConfigValidator().getBooleanProperty("be.ehealth.businessconnector.dmg.builders.impl.dumpMessages", false).booleanValue()) {
+      if (blob != null && blob.getContent() != null && ConfigFactory.getConfigValidator().getBooleanProperty("be.ehealth.businessconnector.dmg.builders.impl.dumpMessages", false)) {
          LOG.debug("RequestObjectBuilder : called with blob content: " + new String(blob.getContent()));
       }
 
@@ -133,7 +133,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder, Configura
       req.setSelect(request);
       MarshallerHelper<RetrieveTransactionRequest, RetrieveTransactionRequest> kmehrRequestMarshaller = new MarshallerHelper(RetrieveTransactionRequest.class, RetrieveTransactionRequest.class);
       byte[] xmlByteArray = kmehrRequestMarshaller.toXMLByteArray(req);
-      if (xmlByteArray != null && ConfigFactory.getConfigValidator().getBooleanProperty("be.ehealth.businessconnector.dmg.builders.impl.dumpMessages", false).booleanValue()) {
+      if (xmlByteArray != null && ConfigFactory.getConfigValidator().getBooleanProperty("be.ehealth.businessconnector.dmg.builders.impl.dumpMessages", false)) {
          LOG.debug("RequestObjectBuilder : created blob content: " + new String(xmlByteArray));
       }
 
@@ -159,7 +159,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder, Configura
       request.setKmehrmessage(msg);
       MarshallerHelper<SendTransactionRequest, SendTransactionRequest> kmehrRequestMarshaller = new MarshallerHelper(SendTransactionRequest.class, SendTransactionRequest.class);
       byte[] xmlByteArray = kmehrRequestMarshaller.toXMLByteArray(request);
-      if (xmlByteArray != null && ConfigFactory.getConfigValidator().getBooleanProperty("be.ehealth.businessconnector.dmg.builders.impl.dumpMessages", false).booleanValue()) {
+      if (xmlByteArray != null && ConfigFactory.getConfigValidator().getBooleanProperty("be.ehealth.businessconnector.dmg.builders.impl.dumpMessages", false)) {
          LOG.debug("RequestObjectBuilder : created blob content: " + new String(xmlByteArray));
       }
 

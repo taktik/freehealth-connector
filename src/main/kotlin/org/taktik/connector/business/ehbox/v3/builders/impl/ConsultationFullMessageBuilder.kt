@@ -40,6 +40,7 @@ import org.taktik.connector.technical.enumeration.Charset
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.exception.UnsealConnectorException
+import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorIOUtils
 import org.taktik.connector.technical.utils.IdentifierType
 
@@ -52,8 +53,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
 
     @Throws(EhboxBusinessConnectorException::class, TechnicalConnectorException::class)
     fun buildFullMessage(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         response: GetFullMessageResponse
     ): Message<GetFullMessageResponse> {
         val receivedMsg = response.message
@@ -68,14 +68,13 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
         this.processMessageInfo(response.messageInfo, message)
         this.processSender(response.sender, null, message)
         this.processDestinationContext(receivedMsg.destinationContexts, message)
-        this.processContentContext(keystore, passPhrase, receivedMsg.contentContext, message, container)
+        this.processContentContext(credential, receivedMsg.contentContext, message, container)
         return container.getMessage()
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processContentContext(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         context: ContentContextType,
         message: Message<GetFullMessageResponse>,
         container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
@@ -83,7 +82,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
         this.processContentSpecification(context.contentSpecification, message)
         this.processCustomMetas(context.customMetas, message)
         if (message is DocumentMessage<*>) {
-            this.processDocument(keystore, passPhrase, context.content, message, container)
+            this.processDocument(credential, context.content, message, container)
         } else if (message is AcknowledgeMessage<*>) {
             this.processAcknowledge(context.content, message)
         } else if (message is ErrorMessage<*>) {
@@ -120,21 +119,20 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processDocument(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         response: ConsultationContentType,
         message: Message<*>,
         container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
     ) {
         val documentMessage = message as DocumentMessage<*>
-        this.processINSSPatient(keystore, passPhrase, response.encryptableINSSPatient, documentMessage, container)
-        this.processFreeText(keystore, passPhrase, response.freeInformations, documentMessage, container)
-        this.processMainDocument(keystore, passPhrase, response.document, documentMessage, container)
+        this.processINSSPatient(credential, response.encryptableINSSPatient, documentMessage, container)
+        this.processFreeText(credential, response.freeInformations, documentMessage, container)
+        this.processMainDocument(credential, response.document, documentMessage, container)
         if (!response.annices.isEmpty()) {
             documentMessage.isHasAnnex = true
 
             for (annexType in response.annices) {
-                this.processAnnex(keystore, passPhrase, documentMessage, annexType, container)
+                this.processAnnex(credential, documentMessage, annexType, container)
             }
         }
     }
@@ -157,8 +155,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processAnnex(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         documentMessage: DocumentMessage<*>,
         annexType: ConsultationAnnexType,
         container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
@@ -168,8 +165,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
         annex.mimeType = annexType.mimeType
         val annexTitle =
             this.handleAndDecryptIfNeeded(
-                keystore,
-                passPhrase,
+                credential,
                 annexType.encryptableTitle,
                 documentMessage.isEncrypted,
                 container
@@ -184,8 +180,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
             if (annexHandler != null) {
                 annex.setContent(
                     this.base64decoding(
-                        keystore,
-                        passPhrase,
+                        credential,
                         annexHandler,
                         documentMessage.isEncrypted,
                         container
@@ -195,8 +190,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
         } else if (annexType.encryptableTextContent != null) {
             annex.setContent(
                 this.handleAndDecryptIfNeeded(
-                    keystore,
-                    passPhrase,
+                    credential,
                     annexType.encryptableTextContent,
                     documentMessage.isEncrypted,
                     container
@@ -209,8 +203,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processMainDocument(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         response: ConsultationDocumentType,
         documentMessage: DocumentMessage<*>,
         container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
@@ -226,8 +219,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
                 try {
                     document.setContent(
                         this.base64decoding(
-                            keystore,
-                            passPhrase,
+                            credential,
                             responseHandler,
                             documentMessage.isEncrypted,
                             container
@@ -240,8 +232,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
         } else if (response.encryptableTextContent != null) {
             document.setContent(
                 this.handleAndDecryptIfNeeded(
-                    keystore,
-                    passPhrase,
+                    credential,
                     response.encryptableTextContent,
                     documentMessage.isEncrypted,
                     container
@@ -254,8 +245,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processINSSPatient(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         encryptableINSSPatient: ByteArray?,
         documentMessage: DocumentMessage<*>,
         container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
@@ -263,7 +253,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
         if (encryptableINSSPatient != null) {
             val encrypted = documentMessage.isEncrypted
             val patientInss =
-                this.handleAndDecryptIfNeeded(keystore, passPhrase, encryptableINSSPatient, encrypted, container)
+                this.handleAndDecryptIfNeeded(credential, encryptableINSSPatient, encrypted, container)
             if (patientInss != null) {
                 documentMessage.patientInss = ConnectorIOUtils.toString(patientInss, Charset.UTF_8)
                 documentMessage.isEncrypted = encrypted
@@ -273,8 +263,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processFreeText(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         response: FreeInformationsType?,
         documentMessage: DocumentMessage<*>,
         container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
@@ -282,8 +271,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
         if (response != null) {
             val freeText =
                 this.handleAndDecryptIfNeeded(
-                    keystore,
-                    passPhrase,
+                    credential,
                     response.encryptableFreeText,
                     documentMessage.isEncrypted,
                     container
@@ -299,16 +287,14 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
                 for (row in table.rows) {
                     val decryptedKeyBytes =
                         this.handleAndDecryptIfNeeded(
-                            keystore,
-                            passPhrase,
+                            credential,
                             row.encryptableLeftCell,
                             documentMessage.isEncrypted,
                             container
                         )
                     val decryptedValueBytes =
                         this.handleAndDecryptIfNeeded(
-                            keystore,
-                            passPhrase,
+                            credential,
                             row.encryptableRightCell,
                             documentMessage.isEncrypted,
                             container
@@ -323,8 +309,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun base64decoding(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         dataHandler: DataHandler,
         encrypted: Boolean,
         container: AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>
@@ -338,7 +323,7 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
             if (ArrayUtils.isEmpty(byteVal)) {
                 return null
             }
-            result = this.handleAndDecryptIfNeeded(keystore, passPhrase, byteVal, encrypted, container)
+            result = this.handleAndDecryptIfNeeded(credential, byteVal, encrypted, container)
         } catch (ex: IOException) {
             throw TechnicalConnectorException(
                 TechnicalConnectorExceptionValues.ERROR_GENERAL,

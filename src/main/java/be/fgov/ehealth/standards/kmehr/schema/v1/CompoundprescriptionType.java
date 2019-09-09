@@ -16,14 +16,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
    name = "compoundprescriptionType",
-   propOrder = {"quantity", "formularyreference", "compound", "magistraltext", "galenicform", "mixedContent"}
+   propOrder = {"compound", "magistraltext", "galenicform", "quantity", "formularyreference", "mixedContent"}
 )
 public class CompoundprescriptionType implements Serializable {
    private static final long serialVersionUID = 1L;
-   protected List<QuantityType> quantity;
    protected List<CompoundType> compound;
    protected List<TextType> magistraltext;
    protected List<GalenicformType> galenicform;
+   protected List<QuantityType> quantity;
    protected List<FormularyreferenceType> formularyreference;
    @XmlMixed
    protected List<String> mixedContent;
@@ -35,14 +35,6 @@ public class CompoundprescriptionType implements Serializable {
       name = "language"
    )
    protected String l;
-
-   public List<QuantityType> getQuantity() {
-      if (this.quantity == null) {
-         this.quantity = new ArrayList();
-      }
-
-      return this.quantity;
-   }
 
    public List<CompoundType> getCompound() {
       if (this.compound == null) {
@@ -66,6 +58,14 @@ public class CompoundprescriptionType implements Serializable {
       }
 
       return this.galenicform;
+   }
+
+   public List<QuantityType> getQuantity() {
+      if (this.quantity == null) {
+         this.quantity = new ArrayList();
+      }
+
+      return this.quantity;
    }
 
    public List<FormularyreferenceType> getFormularyreference() {

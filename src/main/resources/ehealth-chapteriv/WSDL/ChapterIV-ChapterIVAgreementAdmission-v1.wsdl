@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:chiv="urn:be:fgov:ehealth:chap4:protocol:v1"
+    xmlns:err="urn:be:fgov:ehealth:errors:soa:v1"
+    xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    name="Chap4AgreementAdmissionWebservice"
+    targetNamespace="urn:be:fgov:ehealth:chap4:protocol:v1"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:documentation>Version 1.0</wsdl:documentation>
+    <wsdl:types>
+        <xsd:schema>
+            <xsd:import
+                namespace="urn:be:fgov:ehealth:chap4:protocol:v1"
+                schemaLocation="../XSD/chap4services_protocol-1_0.xsd" />
+            <xsd:import
+                namespace="urn:be:fgov:ehealth:errors:soa:v1"
+                schemaLocation="../../ehealth-errors/XSD/ehealth-errors-schema-soa-1_1.xsd" />
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="AskChap4MedicalAdvisorAgreementRequest">
+        <wsdl:part
+            element="chiv:AskChap4MedicalAdvisorAgreementRequest"
+            name="body" />
+    </wsdl:message>
+    <wsdl:message name="AskChap4MedicalAdvisorAgreementResponse">
+        <wsdl:part
+            element="chiv:AskChap4MedicalAdvisorAgreementResponse"
+            name="body" />
+    </wsdl:message>
+    <wsdl:message name="SystemError">
+        <wsdl:part
+            element="err:SystemError"
+            name="fault" />
+    </wsdl:message>
+    <wsdl:portType name="Chap4AgreementAdmissionPortType">
+        <wsdl:operation name="askChap4MedicalAdvisorAgreement">
+            <wsdl:input message="chiv:AskChap4MedicalAdvisorAgreementRequest" />
+            <wsdl:output message="chiv:AskChap4MedicalAdvisorAgreementResponse" />
+            <wsdl:fault
+                message="chiv:SystemError"
+                name="SystemError" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding
+        name="Chap4AgreementAdmissionSoapBinding"
+        type="chiv:Chap4AgreementAdmissionPortType">
+        <soap11:binding
+            style="document"
+            transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="askChap4MedicalAdvisorAgreement">
+            <soap11:operation
+                soapAction="urn:be:fgov:ehealth:chap4:protocol:v1:AskChap4MedicalAdvisorAgreement"
+                style="document" />
+            <wsdl:input>
+                <soap11:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap11:body use="literal" />
+            </wsdl:output>
+            <wsdl:fault name="SystemError">
+                <soap11:fault
+                    name="SystemError"
+                    use="literal" />
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Chap4AgreementAdmissionService">
+        <wsdl:port
+            binding="chiv:Chap4AgreementAdmissionSoapBinding"
+            name="Chap4AgreementAdmissionServiceSOAP11">
+            <soap11:address
+                location="https://services.ehealth.fgov.be/ChapterIV/ChapterIVAgreementAdmission/v1" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

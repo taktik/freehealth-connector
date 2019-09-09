@@ -2,8 +2,6 @@ package org.taktik.connector.technical.service.sts.security.impl;
 
 import org.taktik.connector.technical.exception.CredentialException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
-import org.taktik.connector.technical.service.sts.security.KeyStoreInfo;
-import org.taktik.connector.technical.utils.KeyStoreManager;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -12,35 +10,28 @@ import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.UUID;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class KeyStoreCredential extends AbstractExtendedCredential {
    private static final Logger LOG = LoggerFactory.getLogger(KeyStoreCredential.class);
-   private KeyStore keystore;
+   private KeyStore keyStore;
    private String alias;
-   private char[] pwd;
+   private UUID keystoreId;
+   private char[] password;
 
-   public KeyStoreCredential(KeyStore keystore, String alias, String password) throws TechnicalConnectorException {
-      this.pwd = password == null ? ArrayUtils.EMPTY_CHAR_ARRAY : password.toCharArray();
+   public KeyStoreCredential(UUID keystoreId, KeyStore keyStore, String alias, String password) throws TechnicalConnectorException {
+      this.keystoreId = keystoreId;
+      this.password = password == null ? ArrayUtils.EMPTY_CHAR_ARRAY : password.toCharArray();
       this.alias = alias;
-      this.keystore = keystore;
+      this.keyStore = keyStore;
    }
 
-   public KeyStoreCredential(KeyStoreInfo keyStoreInfo) throws TechnicalConnectorException {
-      KeyStoreManager keyStoreManager = new KeyStoreManager(keyStoreInfo);
-      this.keystore = keyStoreManager.getKeyStore();
-      this.alias = keyStoreManager.getKeyStoreInfo().getAlias();
-      this.pwd = keyStoreManager.getKeyStoreInfo().getPrivateKeyPassword();
-   }
-
-   public KeyStoreCredential(String keystorePath, String alias, String password) throws TechnicalConnectorException {
-      this(new KeyStoreInfo(keystorePath, password.toCharArray(), alias, password.toCharArray()));
-   }
-
-   public KeyStoreCredential(String keystorePath, String pwdKeystore, String privateKeyAlias, String pwdPrivateKey) throws TechnicalConnectorException {
-      this(new KeyStoreInfo(keystorePath, pwdKeystore.toCharArray(), privateKeyAlias, pwdPrivateKey.toCharArray()));
+   public UUID getKeystoreId() {
+      return keystoreId;
    }
 
    public String getIssuer() {
@@ -57,35 +48,29 @@ public class KeyStoreCredential extends AbstractExtendedCredential {
 
    public PrivateKey getPrivateKey() {
       try {
-         return (PrivateKey)this.keystore.getKey(this.alias, this.pwd);
-      } catch (UnrecoverableKeyException var2) {
-         LOG.error(var2.getMessage(), var2.getCause());
-         return null;
-      } catch (KeyStoreException var3) {
-         LOG.error(var3.getMessage(), var3.getCause());
-         return null;
-      } catch (NoSuchAlgorithmException var4) {
-         LOG.error(var4.getMessage(), var4.getCause());
+         return (PrivateKey)this.keyStore.getKey(this.alias, this.password);
+      } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException ex) {
+         LOG.error(ex.getMessage(), ex.getCause());
          return null;
       }
    }
 
    public X509Certificate getCertificate() {
       try {
-         return (X509Certificate)this.keystore.getCertificate(this.alias);
-      } catch (KeyStoreException var2) {
-         LOG.error(var2.getMessage(), var2.getCause());
+         return (X509Certificate)this.keyStore.getCertificate(this.alias);
+      } catch (KeyStoreException ex) {
+         LOG.error(ex.getMessage(), ex.getCause());
          return null;
       }
    }
 
    public String getProviderName() {
-      return this.keystore.getProvider().getName();
+      return this.keyStore.getProvider().getName();
    }
 
    public Certificate[] getCertificateChain() {
       try {
-         return this.keystore.getCertificateChain(this.alias);
+         return this.keyStore.getCertificateChain(this.alias);
       } catch (KeyStoreException var2) {
          LOG.error(var2.getMessage());
          throw new CredentialException(var2);
@@ -93,10 +78,10 @@ public class KeyStoreCredential extends AbstractExtendedCredential {
    }
 
    public KeyStore getKeyStore() throws TechnicalConnectorException {
-      return this.keystore;
+      return this.keyStore;
    }
 
-   public char[] getPwd() {
-      return pwd;
+   public char[] getPassword() {
+      return password;
    }
 }

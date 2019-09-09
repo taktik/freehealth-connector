@@ -40,7 +40,11 @@ public final class DistinguishedName implements Serializable {
    private String basename;
 
    public DistinguishedName() throws TechnicalConnectorException {
-      this(getIdentity().getNationalNumber(), getIdentity().getFirstName() + " " + getIdentity().getName(), IdentifierType.SSIN, (String)null);
+      this(getIdentity().getNationalNumber(), getIdentity().getFirstName() + " " + getIdentity().getName(), (IdentifierType)IdentifierType.SSIN, (String)null);
+   }
+
+   public DistinguishedName(String id, String name, String firstName, IdentifierType type) {
+      this(id, name + " " + firstName, (IdentifierType)type, (String)null);
    }
 
    public DistinguishedName(X500Principal principal) throws TechnicalConnectorException {
@@ -74,7 +78,7 @@ public final class DistinguishedName implements Serializable {
    }
 
    public DistinguishedName(Organization org, String applicationId) {
-      this(((Organization)notNull(org)).getId(), ((Organization)notNull(org)).getName(), (IdentifierType)notNull(org.getType()), applicationId);
+      this(((Organization)notNull(org)).getId(), (String)notNull(org.getName()), (IdentifierType)notNull(org.getType()), applicationId);
    }
 
    private DistinguishedName(String id, String name, IdentifierType type, String applicationId) {

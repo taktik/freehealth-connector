@@ -42,7 +42,41 @@ public enum CDITEMMYCARENETvalues {
    @XmlEnumValue("mediprimanumber")
    MEDIPRIMANUMBER("mediprimanumber"),
    @XmlEnumValue("pswc")
-   PSWC("pswc");
+   PSWC("pswc"),
+   @XmlEnumValue("treatmentreason")
+   TREATMENTREASON("treatmentreason"),
+   @XmlEnumValue("agreementenddate")
+   AGREEMENTENDDATE("agreementenddate"),
+   @XmlEnumValue("agreementstartdate")
+   AGREEMENTSTARTDATE("agreementstartdate"),
+   @XmlEnumValue("agreementtype")
+   AGREEMENTTYPE("agreementtype"),
+   @XmlEnumValue("consultationenddate")
+   CONSULTATIONENDDATE("consultationenddate"),
+   @XmlEnumValue("consultationstartdate")
+   CONSULTATIONSTARTDATE("consultationstartdate"),
+   @XmlEnumValue("authorisationtype")
+   AUTHORISATIONTYPE("authorisationtype"),
+   @XmlEnumValue("decisionreference")
+   DECISIONREFERENCE("decisionreference"),
+   @XmlEnumValue("orphandrugdeliveryplace")
+   ORPHANDRUGDELIVERYPLACE("orphandrugdeliveryplace"),
+   @XmlEnumValue("refusaljustification")
+   REFUSALJUSTIFICATION("refusaljustification"),
+   @XmlEnumValue("reststrength")
+   RESTSTRENGTH("reststrength"),
+   @XmlEnumValue("restunitnumber")
+   RESTUNITNUMBER("restunitnumber"),
+   @XmlEnumValue("legalbasis")
+   LEGALBASIS("legalbasis"),
+   @XmlEnumValue("legalunitnumber")
+   LEGALUNITNUMBER("legalunitnumber"),
+   @XmlEnumValue("legalstrength")
+   LEGALSTRENGTH("legalstrength"),
+   @XmlEnumValue("istrialperiod")
+   ISTRIALPERIOD("istrialperiod"),
+   @XmlEnumValue("closurejustification")
+   CLOSUREJUSTIFICATION("closurejustification");
 
    private final String value;
 

@@ -21,7 +21,6 @@ public final class BuilderFactory implements SessionServiceWithCache {
    public static SendMessageBuilder getSendMessageBuilder() throws TechnicalConnectorException {
       init();
       if (sendMessageBuilder == null) {
-         Object var0 = mutexSendBuilder;
          synchronized(mutexSendBuilder) {
             if (sendMessageBuilder == null) {
                sendMessageBuilder = new SendMessageBuilderImpl(KeyDepotManagerFactory.getKeyDepotManager());
@@ -35,7 +34,6 @@ public final class BuilderFactory implements SessionServiceWithCache {
    public static ConsultationMessageBuilder getConsultationMessageBuilder() throws TechnicalConnectorException {
       init();
       if (consultationMessageBuilder == null) {
-         Object var0 = mutexConsBuilder;
          synchronized(mutexConsBuilder) {
             if (consultationMessageBuilder == null) {
                consultationMessageBuilder = new ConsultationMessageBuilderImpl();
@@ -49,7 +47,6 @@ public final class BuilderFactory implements SessionServiceWithCache {
    public static RequestBuilder getRequestBuilder() throws TechnicalConnectorException {
       init();
       if (requestBuilder == null) {
-         Object var0 = mutexReqBuilder;
          synchronized(mutexReqBuilder) {
             if (requestBuilder == null) {
                requestBuilder = new RequestBuilderImpl();
@@ -62,7 +59,6 @@ public final class BuilderFactory implements SessionServiceWithCache {
 
    private static void init() {
       if (instance == null) {
-         Object var0 = mutexBuilderFactory;
          synchronized(mutexBuilderFactory) {
             if (instance == null) {
                instance = new BuilderFactory();

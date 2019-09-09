@@ -224,7 +224,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         requireNotNull(tokenId) { "Token id cannot be null" }
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
 
         val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
 

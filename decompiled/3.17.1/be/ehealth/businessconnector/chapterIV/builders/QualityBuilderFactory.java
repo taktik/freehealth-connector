@@ -10,9 +10,6 @@ public final class QualityBuilderFactory {
    private static final String DEFAULT_PROVIDER = "be.ehealth.businessconnector.chapterIV.builders.impl.QualityBuilderPersPhysician";
    private static ConfigurableFactoryHelper<QualityBuilder> helper = new ConfigurableFactoryHelper("chapterIV.qualitybuilder.class", "be.ehealth.businessconnector.chapterIV.builders.impl.QualityBuilderPersPhysician", QualityBuilder.class);
 
-   private QualityBuilderFactory() {
-   }
-
    public static QualityBuilder getQualityBuilder() throws TechnicalConnectorException {
       return (QualityBuilder)helper.getImplementation();
    }

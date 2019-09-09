@@ -4,14 +4,6 @@ import javax.xml.bind.annotation.XmlRegistry;
 
 @XmlRegistry
 public class ObjectFactory {
-   public IdentifierType createIdentifierType() {
-      return new IdentifierType();
-   }
-
-   public PeriodType createPeriodType() {
-      return new PeriodType();
-   }
-
    public LocalisedString createLocalisedString() {
       return new LocalisedString();
    }
@@ -24,15 +16,23 @@ public class ObjectFactory {
       return new AddressType();
    }
 
-   public StreetType createStreetType() {
-      return new StreetType();
+   public PeriodType createPeriodType() {
+      return new PeriodType();
    }
 
-   public MunicipalityType createMunicipalityType() {
-      return new MunicipalityType();
+   public IdentifierType createIdentifierType() {
+      return new IdentifierType();
    }
 
-   public CountryType createCountryType() {
-      return new CountryType();
+   public Street createStreet() {
+      return new Street();
+   }
+
+   public Municipality createMunicipality() {
+      return new Municipality();
+   }
+
+   public Country createCountry() {
+      return new Country();
    }
 }

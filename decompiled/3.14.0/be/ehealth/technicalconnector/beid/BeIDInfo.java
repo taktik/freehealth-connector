@@ -57,7 +57,7 @@ public final class BeIDInfo implements SessionServiceWithCache {
    }
 
    public static BeIDInfo getInstance(String scope) throws TechnicalConnectorException {
-      boolean useCache = config.getBooleanProperty("be.ehealth.technicalconnector.beid.beidinfo.cache", false).booleanValue();
+      boolean useCache = config.getBooleanProperty("be.ehealth.technicalconnector.beid.beidinfo.cache", false);
       return getInstance(scope, useCache);
    }
 

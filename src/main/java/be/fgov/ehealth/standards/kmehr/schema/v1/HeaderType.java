@@ -19,7 +19,7 @@ import org.joda.time.DateTime;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
    name = "headerType",
-   propOrder = {"confidentiality", "standard", "ids", "date", "time", "sender", "recipients", "urgency", "acknowledgment", "texts", "lnks"}
+   propOrder = {"confidentiality", "standard", "ids", "date", "time", "sender", "recipients", "urgency", "acknowledgment", "texts", "lnks", "expirationdate", "externalsource"}
 )
 public class HeaderType implements Serializable {
    private static final long serialVersionUID = 1L;
@@ -70,6 +70,15 @@ public class HeaderType implements Serializable {
       name = "lnk"
    )
    protected List<LnkType> lnks;
+   @XmlElement(
+      type = String.class
+   )
+   @XmlJavaTypeAdapter(XmlDateNoTzAdapter.class)
+   @XmlSchemaType(
+      name = "date"
+   )
+   protected DateTime expirationdate;
+   protected Externalsource externalsource;
 
    public ConfidentialityType getConfidentiality() {
       return this.confidentiality;
@@ -157,5 +166,21 @@ public class HeaderType implements Serializable {
       }
 
       return this.lnks;
+   }
+
+   public DateTime getExpirationdate() {
+      return this.expirationdate;
+   }
+
+   public void setExpirationdate(DateTime value) {
+      this.expirationdate = value;
+   }
+
+   public Externalsource getExternalsource() {
+      return this.externalsource;
+   }
+
+   public void setExternalsource(Externalsource value) {
+      this.externalsource = value;
    }
 }

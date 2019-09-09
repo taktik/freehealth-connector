@@ -8,6 +8,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.Key;
 
+import javax.crypto.Cipher;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -44,7 +45,6 @@ public class MarshallerHelper<X, Y> {
         } catch (IOException e) {
             throw new IllegalArgumentException("IOException " + e);
         }
-
     }
 
     @SuppressWarnings("unchecked")
@@ -78,51 +78,16 @@ public class MarshallerHelper<X, Y> {
         return stringWriter.toString();
     }
 
-    @SuppressWarnings("unchecked")
-    public X unmarsh(String data) throws JAXBException {
-        return (X) unmarshaller.unmarshal(new StringReader(data));
-    }
-
-    @SuppressWarnings("unchecked")
-    public X unmarsh(byte[] data) throws IntegrationModuleException {
-        try {
-            return (X) unmarshaller.unmarshal(new ByteArrayInputStream(data));
-        } catch (JAXBException e) {
-            throw new IntegrationModuleException(I18nHelper.getLabel("error.single.message.validation"), e);
-        }
-
-    }
-
-    @SuppressWarnings("unchecked")
-    public X unmarshSystemConfiguration(byte[] data) throws IntegrationModuleException {
-        try {
-            return (X) unmarshaller.unmarshal(new ByteArrayInputStream(data));
-        } catch (JAXBException e) {
-            throw new IntegrationModuleException(I18nHelper.getLabel("error.systemconfiguration.validation"), e);
-        }
-
-    }
-
-    @SuppressWarnings("unchecked")
-    public X unmarshProductFilter(byte[] data) throws IntegrationModuleException {
-        try {
-            return (X) unmarshaller.unmarshal(new ByteArrayInputStream(data));
-        } catch (JAXBException e) {
-            throw new IntegrationModuleException(I18nHelper.getLabel("error.productFilter.validation"), e);
-        }
-
-    }
-
     public X unsealWithSymmKey(byte[] data, Key symmKey) {
-        data = EncryptionUtils.unsealWithSymmKey(symmKey, data);
+        byte[] result = null;
+
+        try {
+            Cipher cipher = Cipher.getInstance("DESede");
+            cipher.init(Cipher.DECRYPT_MODE, symmKey);
+            result = cipher.doFinal(data);
+        } catch (Exception e) {
+        }
+        data = result;
         return toObject(data);
-    }
-
-    public byte[] unsealWithKey(byte[] data, Key symmKey) {
-        return EncryptionUtils.unsealWithSymmKey(symmKey, data);
-    }
-
-    public void wrtiePrescriptionToFile(byte[] unsealByteWithSymmKeyDecodeAndDecompress, String archivingPath) throws IOException {
-        FileUtils.writeByteArrayToFile(new File(archivingPath), unsealByteWithSymmKeyDecodeAndDecompress);
     }
 }

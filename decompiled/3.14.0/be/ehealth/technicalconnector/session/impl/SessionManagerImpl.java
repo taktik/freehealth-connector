@@ -186,7 +186,7 @@ public final class SessionManagerImpl implements SessionManager {
       }
 
       try {
-         if (!valid && this.session.getHeaderCredential() != null && this.config.getBooleanProperty("sessionmanager.activate.autorenew", false).booleanValue()) {
+         if (!valid && this.session.getHeaderCredential() != null && this.config.getBooleanProperty("sessionmanager.activate.autorenew", false)) {
             Object var10 = mutex;
             synchronized(mutex) {
                if (!valid) {
@@ -214,7 +214,7 @@ public final class SessionManagerImpl implements SessionManager {
       } else if (pwd == null && eidonly) {
          this.session.setHeaderCredential(BeIDCredential.getInstance("session", "Authentication"));
       } else {
-         if (pwd == null && !this.config.getBooleanProperty("sessionmanager.identification.emptypassword", false).booleanValue()) {
+         if (pwd == null && !this.config.getBooleanProperty("sessionmanager.identification.emptypassword", false)) {
             return;
          }
 
@@ -246,7 +246,7 @@ public final class SessionManagerImpl implements SessionManager {
          this.session.setHolderOfKeyCredential(authCredential);
          this.session.setHolderOfKeyPrivateKeys(authPK);
       } else {
-         if (pwd == null && !this.config.getBooleanProperty("sessionmanager.holderofkey.emptypassword", false).booleanValue()) {
+         if (pwd == null && !this.config.getBooleanProperty("sessionmanager.holderofkey.emptypassword", false)) {
             return;
          }
 
@@ -276,7 +276,7 @@ public final class SessionManagerImpl implements SessionManager {
    }
 
    private static void fetchEtk(KeyDepotManager.EncryptionTokenType type, Map<String, PrivateKey> privateKeys, Configuration config) throws TechnicalConnectorException {
-      if (config.getBooleanProperty("sessionmanager.fetch.etk", Boolean.TRUE).booleanValue()) {
+      if (config.getBooleanProperty("sessionmanager.fetch.etk", Boolean.TRUE)) {
          EncryptionToken etk = null;
 
          try {
@@ -310,7 +310,7 @@ public final class SessionManagerImpl implements SessionManager {
          this.session.setEncryptionCredential(authCredential);
          this.session.setEncryptionPrivateKeys(authPK);
       } else {
-         if (pwd == null && !this.config.getBooleanProperty("sessionmanager.encryption.emptypassword", false).booleanValue()) {
+         if (pwd == null && !this.config.getBooleanProperty("sessionmanager.encryption.emptypassword", false)) {
             return;
          }
 
@@ -360,7 +360,7 @@ public final class SessionManagerImpl implements SessionManager {
    }
 
    private void populateConfigWithEidFields() throws TechnicalConnectorException {
-      if (!this.config.getBooleanProperty("sessionmanager.disable.eiddiscovery", false).booleanValue()) {
+      if (!this.config.getBooleanProperty("sessionmanager.disable.eiddiscovery", false)) {
          String userInss = this.config.getProperty("user.inss");
          if (StringUtils.isEmpty(userInss)) {
             String ssin = (new CertificateParser(BeIDCredential.getInstance("session", "Authentication").getCertificate())).getId();

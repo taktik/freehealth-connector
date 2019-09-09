@@ -13,10 +13,14 @@ import org.slf4j.LoggerFactory;
 
 public final class ConfigurationImpl extends AbstractConfigurationImpl {
    public static final String SYSPROP_MODULE_LOADING = "org.taktik.connector.technical.config.modules.load";
+   public static final String SYSPROP_CONFIG_LOADING = "org.taktik.connector.technical.config.load";
    private static volatile ConfigurationImpl instance;
    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationImpl.class);
    private boolean reloadAction;
    private Properties properties;
+
+   private ConfigurationImpl() {
+   }
 
    public static synchronized void reset() {
       instance = null;
@@ -38,9 +42,8 @@ public final class ConfigurationImpl extends AbstractConfigurationImpl {
 
    private void init() {
       if (this.properties == null) {
-         this.properties = new RecursiveProperties();
-
          try {
+	        this.properties = new RecursiveProperties();
             this.load(ConfigFactory.getConfigLocation(), this.properties);
          } catch (TechnicalConnectorException var2) {
             LOG.error("Loading properties failed", var2);
@@ -50,6 +53,7 @@ public final class ConfigurationImpl extends AbstractConfigurationImpl {
    }
 
    private void load(String file, Properties props) {
+      if (!"false".equals(System.getProperty("org.taktik.connector.technical.config.load", "true"))) {
       InputStream is = null;
 
       try {
@@ -78,6 +82,7 @@ public final class ConfigurationImpl extends AbstractConfigurationImpl {
          ConnectorIOUtils.closeQuietly((Object)is);
       }
 
+   }
    }
 
    /** @deprecated */
@@ -116,7 +121,16 @@ public final class ConfigurationImpl extends AbstractConfigurationImpl {
    }
 
    public String getProperty(String key, String defaultValue) {
-      return this.getProperties().getProperty(key, defaultValue);
+      String value = this.getProperties().getProperty(key, defaultValue);
+      return key == null || !this.endpointToTrim(key) && !this.elseToTrim(key) ? value : StringUtils.trim(value);
+   }
+
+   public boolean endpointToTrim(String key) {
+      return !key.toLowerCase().contains("password") && "true".equals(this.getProperties().getProperty("configuration.properties.trim", "false").trim());
+   }
+
+   public boolean elseToTrim(String key) {
+      return key.toLowerCase().startsWith("endpoint") && "true".equals(this.getProperties().getProperty("remove.trail.withspaces", "true").trim());
    }
 
    /** @deprecated */

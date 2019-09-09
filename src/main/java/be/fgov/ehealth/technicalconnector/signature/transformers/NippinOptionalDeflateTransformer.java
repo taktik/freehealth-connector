@@ -33,7 +33,7 @@ public class NippinOptionalDeflateTransformer extends TransformSpi {
          } else if (!input.isOctetStream() && !input.isNodeSet()) {
             try {
                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-               dbf.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", Boolean.TRUE.booleanValue());
+               dbf.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", Boolean.TRUE);
                Document doc = dbf.newDocumentBuilder().parse(input.getOctetStream());
                Element rootNode = doc.getDocumentElement();
                StringBuilder sb = new StringBuilder();

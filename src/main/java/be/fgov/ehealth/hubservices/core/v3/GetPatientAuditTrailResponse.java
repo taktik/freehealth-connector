@@ -21,18 +21,18 @@ public class GetPatientAuditTrailResponse implements Serializable {
    @XmlElement(
       required = true
    )
-   protected ResponseType response;
+   protected ResponseListType response;
    @XmlElement(
       required = true
    )
    protected AcknowledgeType acknowledge;
    protected TransactionAccessListType transactionaccesslist;
 
-   public ResponseType getResponse() {
+   public ResponseListType getResponse() {
       return this.response;
    }
 
-   public void setResponse(ResponseType value) {
+   public void setResponse(ResponseListType value) {
       this.response = value;
    }
 

@@ -2,126 +2,144 @@ package be.fgov.ehealth.technicalconnector.ra.utils;
 
 import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.ConfigValidator;
+import org.taktik.connector.technical.enumeration.Charset;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
-import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
+import org.taktik.connector.technical.idgenerator.IdGeneratorFactory;
 import org.taktik.connector.technical.service.sts.security.Credential;
-import org.taktik.connector.technical.utils.MarshallerHelper;
+import org.taktik.connector.technical.utils.ConnectorIOUtils;
+import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import org.taktik.connector.technical.ws.ServiceFactory;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
-import be.fgov.ehealth.certra.protocol.v1.ErrorType;
-import be.fgov.ehealth.certra.protocol.v1.RaResponseType;
+import be.fgov.ehealth.commons.protocol.v2.RequestType;
+import be.fgov.ehealth.commons.protocol.v2.ResponseType;
+import be.fgov.ehealth.commons.protocol.v2.StatusResponseType;
+import be.fgov.ehealth.etee.commons.core.v2.EteeErrorType;
+import be.fgov.ehealth.etee.commons.core.v2.EteeStatusDetail;
 import be.fgov.ehealth.technicalconnector.ra.domain.Result;
 import be.fgov.ehealth.technicalconnector.ra.exceptions.RaException;
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration;
+import be.fgov.ehealth.technicalconnector.signature.SignatureBuilder;
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory;
-import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import javax.xml.soap.SOAPException;
-import org.apache.commons.lang.StringUtils;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
 
 public class RaUtils {
-   public static final String SOAPACTION_CERTRA_GEN_CERT = "urn:be:fgov:ehealth:etee:certra:generatecertificate";
-   public static final String SOAPACTION_CERTRA_GET_CERT = "urn:be:fgov:ehealth:etee:certra:getcertificate";
-   public static final String SOAPACTION_CERTRA_QUAL = "urn:be:fgov:ehealth:etee:certra:getehactorqualities";
-   public static final String SOAPACTION_CERTRA_APPLICATIONIDS = "urn:be:fgov:ehealth:etee:certra:getexistingapplicationids";
-   public static final String SOAPACTION_CERTRA_RENEW_CERT = "urn:be:fgov:ehealth:etee:certra:renewcertificate";
-   public static final String SOAPACTION_CERTRA_REVOCABLES = "urn:be:fgov:ehealth:etee:certra:getrevocablecertificates";
-   public static final String SOAPACTION_CERTRA_REVOKE = "urn:be:fgov:ehealth:etee:certra:revokecertificate";
-   public static final String SOAPACTION_ETKRA_REGISTER_PK = "urn:be:fgov:ehealth:etee:etkra:registerpublickey";
-   public static final String SOAPACTION_ETKRA_REGISTER_TOKEN = "urn:be:fgov:ehealth:etee:etkra:registertoken";
-   public static final String SOAPACTION_ETKRA_ACTIVATE_TOKEN = "urn:be:fgov:ehealth:etee:etkra:activatetoken";
+   public static final String SOAPACTION_CERTRA_GEN_CERT = "urn:be:fgov:ehealth:etee:certra:protocol:v2:generatecertificate";
+   public static final String SOAPACTION_CERTRA_GET_CERT = "urn:be:fgov:ehealth:etee:certra:protocol:v2:getcertificate";
+   public static final String SOAPACTION_CERTRA_QUAL = "urn:be:fgov:ehealth:certra:protocol:v2:getActorQualities";
+   public static final String SOAPACTION_CERTRA_APPLICATIONIDS = "urn:be:fgov:ehealth:etee:certra:protocol:v2:getexistingapplicationids";
+   public static final String SOAPACTION_CERTRA_GET_CERTIFICATE_INFO = "urn:be:fgov:ehealth:etee:certra:protocol:v2:getCertificateInfoForAuthenticationCertificate";
+   public static final String SOAPACTION_CERTRA_REVOKE = "urn:be:fgov:ehealth:etee:certra:protocol:v2:revoke";
+   public static final String SOAPACTION_ETKRA_START_REGISTRATION = "urn:be:fgov:ehealth:etee:etkra:protocol:v2:startETKRegistration";
+   public static final String SOAPACTION_ETKRA_COMPLETE_ETK_REGISTRATION = "urn:be:fgov:ehealth:etee:etkra:protocol:v2:completeETKregistration";
+   public static final String SOAPACTION_ETKRA_ACTIVATE_ETK = "urn:be:fgov:ehealth:etee:etkra:protocol:v2:activateETK";
+   public static final String SOAPACTION_CERTRA_GEN_CONTRACT = "urn:be:fgov:ehealth:certra:protocol:v2:generateContract";
+   public static final String SOAPACTION_CERTRA_ORGANIZATION_TYPES = "urn:be:fgov:ehealth:certra:protocol:v2:getGenericOrganizationTypes";
+   public static final String SOAPACTION_CERTRA_GET_CERTIFICATE_INFO_FOR_CITIZEN = "urn:be:fgov:ehealth:certra:protocol:v2:getCertificateInfoForCitizen";
+   public static final String SOAPACTION_CERTRA_GENERATE_REVOCATION_CONTRACT = "urn:be:fgov:ehealth:certra:protocol:v2:generateRevocationContract";
+   public static final String SOAPACTION_CERTRA_SUBMIT_CSR_FOREIGNER = "urn:be:fgov:ehealth:certra:protocol:v2:submitCSRForForeigner";
    private static final Logger LOG = LoggerFactory.getLogger(RaUtils.class);
    private static final String ENDPOINT_ETEE_CERTRA = "endpoint.etee.certra";
    private static final String ENDPOINT_ETEE_ETKRA = "endpoint.etee.etkra";
+   public static final String URN_BE_FGOV_EHEALTH_2_0_STATUS_SUCCESS = "urn:be:fgov:ehealth:2.0:status:Success";
    private static ConfigValidator config = ConfigFactory.getConfigValidator();
 
-   public static <T> byte[] transform(Credential cred, T object, Class<T> clazz) throws TechnicalConnectorException {
-      MarshallerHelper<T, T> helper = new MarshallerHelper(clazz, clazz);
-      return transform(cred, helper.toXMLByteArray(object));
+   public static <T extends ResponseType> Result<T> invokeCertRa(String payload, String soapAction, Class<T> clazz) throws RaException {
+      Result<T> result = invokeRa(payload, soapAction, config.getProperty("endpoint.etee.certra", "$uddi{uddi:ehealth-fgov-be:business:certra:v2}"), clazz);
+      return handleResultStatusCode(result);
    }
 
-   public static <T> byte[] transform(Credential cred, byte[] data) throws TechnicalConnectorException {
+   private static <T extends ResponseType> Result<T> handleResultStatusCode(Result<T> result) throws RaException {
+      if (result.getResult() instanceof StatusResponseType) {
+         StatusResponseType statusResponseType = (StatusResponseType)result.getResult();
+         String statusCode = statusResponseType.getStatus().getStatusCode().getValue();
+         if (!"urn:be:fgov:ehealth:2.0:status:Success".equals(statusCode)) {
+            if (getErrorCodes(statusResponseType).contains("CERT_NOT_YET_DELIVERED")) {
+               return new Result<>((new DateTime()).plusSeconds(10));
+            }
+
+            return new Result<>("(CertRA) " + statusResponseType.getStatus().getStatusMessage(), statusResponseType);
+         }
+      }
+
+      return result;
+   }
+
+   public static <T extends StatusResponseType> Result<T> invokeEtkRa(String payload, String soapAction, Class<T> clazz) throws TechnicalConnectorException {
+      Result<T> result = invokeRa(payload, soapAction, config.getProperty("endpoint.etee.etkra", "$uddi{uddi:ehealth-fgov-be:business:etkra:v2}"), clazz);
+      return getResult(result);
+   }
+
+   public static String sign(Object payload, String payloadId, Credential credential) throws TechnicalConnectorException {
+      SignatureBuilder builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XML);
       Map<String, Object> options = new HashMap();
-      options.put("signatureAlgorithm", RaPropertiesLoader.getProperty("csr.signature.algorithm"));
-      options.put("encapsulate", Boolean.TRUE);
-      return SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.CAdES).sign(cred, data, options);
-   }
-
-   public static <T> T transform(byte[] signedContent, Class<T> clazz) throws TechnicalConnectorException {
-      try {
-         CMSSignedData s = new CMSSignedData(signedContent);
-         CMSProcessableByteArray cpb = (CMSProcessableByteArray)s.getSignedContent();
-         byte[] unsignedContent = (byte[])((byte[])cpb.getContent());
-         MarshallerHelper<T, T> helper = new MarshallerHelper(clazz, clazz);
-         return helper.toObject(unsignedContent);
-      } catch (CMSException var6) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CRYPTO, var6, new Object[0]);
+      List<String> tranforms = new ArrayList();
+      tranforms.add("http://www.w3.org/2001/10/xml-exc-c14n#");
+      options.put("transformerList", tranforms);
+      options.put("baseURI", payloadId);
+      options.put("encapsulate", true);
+      byte[] toSign = ConnectorXmlUtils.toByteArray(payload);
+      byte[] signed = builder.sign(credential, toSign, options);
+      String signedString = ConnectorIOUtils.toString(signed, Charset.UTF_8);
+      if (LOG.isDebugEnabled()) {
+         LOG.debug("Signed request " + signedString);
       }
+
+      return signedString;
    }
 
-   public static <T extends RaResponseType> Result<T> invokeCertRa(Object payload, String soapAction, Class<T> clazz) throws RaException {
-      Result<T> result = invokeRa(payload, soapAction, config.getProperty("endpoint.etee.certra", "$uddi{uddi:ehealth-fgov-be:business:certra:v1}"), clazz);
-      if (!result.hasStatusError() && !((RaResponseType)result.getResult()).getErrors().isEmpty()) {
-         Iterator i$ = ((RaResponseType)result.getResult()).getErrors().iterator();
-         if (i$.hasNext()) {
-            ErrorType error = (ErrorType)i$.next();
-            if ("CERT_NOT_YET_DELIVERED".equals(error.getCode())) {
-               return new Result((new DateTime()).plusSeconds(10));
-            }
+   public static void setCommonAttributes(RequestType payload) throws TechnicalConnectorException {
+      payload.setId(generateRequestId());
+      payload.setIssueInstant(DateTime.now());
+   }
 
-            if (StringUtils.startsWith(error.getCode(), "AUTH_CERT_NOT_YET_VALID")) {
-               String between = StringUtils.substringBetween(error.getCode(), "[", "]");
-               if (between == null) {
-                  between = "";
-               }
+   public static void setIssueInstant(RequestType payload) throws TechnicalConnectorException {
+      payload.setIssueInstant(DateTime.now());
+   }
 
-               Object[] vars = between.split(",");
-               String msg = MessageFormat.format(error.getMessage(), vars);
-               LOG.info(msg);
-               return new Result(DateTimeFormat.forPattern("dd/MM/YYYY HH:mm").parseDateTime(vars[0].toString()).plusMinutes(1));
-            }
+   public static String generateRequestId() throws TechnicalConnectorException {
+      return "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId();
+   }
 
-            return new Result("(CertRA) " + error.getMessage(), (Throwable)null);
+   public static List<String> getErrorCodes(StatusResponseType statusResponseType) {
+      List<String> errorCodes = new ArrayList<>();
+
+      for (Object object : statusResponseType.getStatus().getStatusDetail().getAnies()) {
+         EteeStatusDetail eteeStatusDetail = ConnectorXmlUtils.toObject(ConnectorXmlUtils.toByteArray((Node) object), EteeStatusDetail.class);
+
+         for (EteeErrorType eteeErrorType : eteeStatusDetail.getErrors()) {
+            errorCodes.add(eteeErrorType.getCode());
          }
       }
 
-      return result;
+      return errorCodes;
    }
 
-   public static <T extends be.fgov.ehealth.etkra.protocol.v1.RaResponseType> Result<T> invokeEtkRa(Object payload, String soapAction, Class<T> clazz) throws TechnicalConnectorException {
-      Result<T> result = invokeRa(payload, soapAction, config.getProperty("endpoint.etee.etkra", "$uddi{uddi:ehealth-fgov-be:business:etkra:v1}"), clazz);
-      if (!result.hasStatusError() && !((be.fgov.ehealth.etkra.protocol.v1.RaResponseType)result.getResult()).getErrors().isEmpty()) {
-         Iterator i$ = ((be.fgov.ehealth.etkra.protocol.v1.RaResponseType)result.getResult()).getErrors().iterator();
-         if (i$.hasNext()) {
-            be.fgov.ehealth.etkra.protocol.v1.ErrorType error = (be.fgov.ehealth.etkra.protocol.v1.ErrorType)i$.next();
-            return new Result("(EtkRA) " + error.getMessage(), (Throwable)null);
-         }
-      }
-
-      return result;
+   private static <T extends StatusResponseType> Result<T> getResult(Result<T> result) throws RaException {
+      StatusResponseType statusResponseType = (StatusResponseType)result.getResult();
+      String statusCode = statusResponseType.getStatus().getStatusCode().getValue();
+      return !"urn:be:fgov:ehealth:2.0:status:Success".equals(statusCode) ? new Result<>("(EtkRA) " + statusResponseType.getStatus().getStatusMessage(), statusResponseType) : result;
    }
 
-   private static <T> Result<T> invokeRa(Object payload, String soapAction, String endpoint, Class<T> clazz) {
+   private static <T> Result<T> invokeRa(String payload, String soapAction, String endpoint, Class<T> clazz) {
       try {
          GenericRequest request = new GenericRequest();
          request.setPayload(payload);
          request.setEndpoint(endpoint);
          request.setSoapAction(soapAction);
          request.setDefaultHandlerChain();
-         return new Result(ServiceFactory.getGenericWsSender().send(request).asObject(clazz));
-      } catch (SOAPException var5) {
-         return new Result("", var5);
-      } catch (TechnicalConnectorException var6) {
-         return new Result("", var6);
+         return new Result<>(ServiceFactory.getGenericWsSender().send(request).asObject(clazz));
+      } catch (SOAPException soapEx) {
+         return new Result<>("", soapEx);
+      } catch (TechnicalConnectorException tex) {
+         return new Result<>("", tex);
       }
    }
 }

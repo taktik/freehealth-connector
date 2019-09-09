@@ -45,6 +45,10 @@ public class ObjectFactory {
       return new ConsentType();
    }
 
+   public ConsentWithStatusType createConsentWithStatusType() {
+      return new ConsentWithStatusType();
+   }
+
    public ConsentHCPartyType createConsentHCPartyType() {
       return new ConsentHCPartyType();
    }
@@ -127,6 +131,10 @@ public class ObjectFactory {
 
    public SelectRequestPublicationType createSelectRequestPublicationType() {
       return new SelectRequestPublicationType();
+   }
+
+   public HasTherapeuticLinkSelectType createHasTherapeuticLinkSelectType() {
+      return new HasTherapeuticLinkSelectType();
    }
 
    public DeclareTransactionRequest createDeclareTransactionRequest() {
@@ -213,6 +221,14 @@ public class ObjectFactory {
       return new RevokePatientConsentResponse();
    }
 
+   public GetPatientConsentStatusRequest createGetPatientConsentStatusRequest() {
+      return new GetPatientConsentStatusRequest();
+   }
+
+   public GetPatientConsentStatusResponse createGetPatientConsentStatusResponse() {
+      return new GetPatientConsentStatusResponse();
+   }
+
    public PutHCPartyRequest createPutHCPartyRequest() {
       return new PutHCPartyRequest();
    }
@@ -283,6 +299,14 @@ public class ObjectFactory {
 
    public RevokeTherapeuticLinkResponse createRevokeTherapeuticLinkResponse() {
       return new RevokeTherapeuticLinkResponse();
+   }
+
+   public HasTherapeuticLinkRequest createHasTherapeuticLinkRequest() {
+      return new HasTherapeuticLinkRequest();
+   }
+
+   public HasTherapeuticLinkResponse createHasTherapeuticLinkResponse() {
+      return new HasTherapeuticLinkResponse();
    }
 
    public PutAccessRightRequest createPutAccessRightRequest() {
@@ -359,6 +383,58 @@ public class ObjectFactory {
 
    public BasicConsentType createBasicConsentType() {
       return new BasicConsentType();
+   }
+
+   public PutTherapeuticExclusionRequest createPutTherapeuticExclusionRequest() {
+      return new PutTherapeuticExclusionRequest();
+   }
+
+   public PutTherapeuticExclusionResponse createPutTherapeuticExclusionResponse() {
+      return new PutTherapeuticExclusionResponse();
+   }
+
+   public GetTherapeuticExclusionRequest createGetTherapeuticExclusionRequest() {
+      return new GetTherapeuticExclusionRequest();
+   }
+
+   public GetTherapeuticExclusionResponse createGetTherapeuticExclusionResponse() {
+      return new GetTherapeuticExclusionResponse();
+   }
+
+   public GetTherapeuticExclusionHistoryRequest createGetTherapeuticExclusionHistoryRequest() {
+      return new GetTherapeuticExclusionHistoryRequest();
+   }
+
+   public GetTherapeuticExclusionHistoryResponse createGetTherapeuticExclusionHistoryResponse() {
+      return new GetTherapeuticExclusionHistoryResponse();
+   }
+
+   public TherapeuticExclusionListType createTherapeuticExclusionListType() {
+      return new TherapeuticExclusionListType();
+   }
+
+   public TherapeuticExclusionWithOperationContext createTherapeuticExclusionWithOperationContext() {
+      return new TherapeuticExclusionWithOperationContext();
+   }
+
+   public RevokeTherapeuticExclusionRequest createRevokeTherapeuticExclusionRequest() {
+      return new RevokeTherapeuticExclusionRequest();
+   }
+
+   public RevokeTherapeuticExclusionResponse createRevokeTherapeuticExclusionResponse() {
+      return new RevokeTherapeuticExclusionResponse();
+   }
+
+   public TherapeuticExclusionType createTherapeuticExclusionType() {
+      return new TherapeuticExclusionType();
+   }
+
+   public TherapeuticExclusionHistorySelectType createTherapeuticExclusionHistorySelectType() {
+      return new TherapeuticExclusionHistorySelectType();
+   }
+
+   public TherapeuticExclusionSelectType createTherapeuticExclusionSelectType() {
+      return new TherapeuticExclusionSelectType();
    }
 
    public Therapeuticlinkrequest createTherapeuticlinkrequest() {

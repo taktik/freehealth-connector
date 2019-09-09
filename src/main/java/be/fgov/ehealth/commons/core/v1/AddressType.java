@@ -17,7 +17,7 @@ public class AddressType implements Serializable {
       name = "Street",
       required = true
    )
-   protected StreetType street;
+   protected Street street;
    @XmlElement(
       name = "HouseNumber"
    )
@@ -30,17 +30,17 @@ public class AddressType implements Serializable {
       name = "Municipality",
       required = true
    )
-   protected MunicipalityType municipality;
+   protected Municipality municipality;
    @XmlElement(
       name = "Country"
    )
-   protected CountryType country;
+   protected Country country;
 
-   public StreetType getStreet() {
+   public Street getStreet() {
       return this.street;
    }
 
-   public void setStreet(StreetType value) {
+   public void setStreet(Street value) {
       this.street = value;
    }
 
@@ -60,19 +60,19 @@ public class AddressType implements Serializable {
       this.postBox = value;
    }
 
-   public MunicipalityType getMunicipality() {
+   public Municipality getMunicipality() {
       return this.municipality;
    }
 
-   public void setMunicipality(MunicipalityType value) {
+   public void setMunicipality(Municipality value) {
       this.municipality = value;
    }
 
-   public CountryType getCountry() {
+   public Country getCountry() {
       return this.country;
    }
 
-   public void setCountry(CountryType value) {
+   public void setCountry(Country value) {
       this.country = value;
    }
 }
