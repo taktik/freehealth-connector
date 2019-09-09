@@ -49,9 +49,9 @@ public final class SignatureBuilderFactory {
          List<SignatureBuilder> builderList = configHelper.getImplementations();
          if (builderList.isEmpty()) {
             LOG.warn("No Signature Builders configured reason: no valid config. Instantiating with default builders");
-            processBuilder(new XmlSignatureBuilder(AdvancedElectronicSignatureEnumeration.XML, new XadesSpecification[0]));
-            processBuilder(new XmlSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES, new XadesSpecification[]{new XadesBesSpecification()}));
-            processBuilder(new XmlSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T, new XadesSpecification[]{new XadesBesSpecification(), new XadesTSpecification()}));
+            processBuilder(new XmlSignatureBuilder(AdvancedElectronicSignatureEnumeration.XML));
+            processBuilder(new XmlSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES, new XadesBesSpecification()));
+            processBuilder(new XmlSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T, new XadesBesSpecification(), new XadesTSpecification()));
             processBuilder(new CmsSignatureBuilder(AdvancedElectronicSignatureEnumeration.CAdES));
          }
 

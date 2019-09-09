@@ -35,9 +35,9 @@ public class XadesTSpecification implements XadesSpecification {
    public void addOptionalBeforeSignatureParts(SignedPropertiesBuilder signedProps, XMLSignature sig, Credential signing, String uuid, Map<String, Object> options) throws TechnicalConnectorException {
    }
 
-   public void addOptionalAfterSignatureParts(UnsignedPropertiesBuilder unsignedProps, XMLSignature sig, String uuid, Map<String, Object> options) throws TechnicalConnectorException {
-      String c14nMethod = (String)SignatureUtils.getOption("SignatureTimeStampCanonicalizationMethodURI", options, "http://www.w3.org/2001/10/xml-exc-c14n#");
-      byte[] tsToken = this.generateSignatureTimestamp(sig, options, c14nMethod);
+   public void addOptionalAfterSignatureParts(UnsignedPropertiesBuilder unsignedProps, XMLSignature sig, Credential credential, String uuid, Map<String, Object> options) throws TechnicalConnectorException {
+      String c14nMethod = SignatureUtils.getOption("SignatureTimeStampCanonicalizationMethodURI", options, "http://www.w3.org/2001/10/xml-exc-c14n#");
+      byte[] tsToken = this.generateSignatureTimestamp(sig, options, c14nMethod, credential);
       unsignedProps.addSignatureTimestamp(tsToken, c14nMethod);
    }
 
@@ -45,10 +45,10 @@ public class XadesTSpecification implements XadesSpecification {
       this.verifySignatureTimeStamp(result, sigElement);
    }
 
-   private byte[] generateSignatureTimestamp(XMLSignature sig, Map<String, Object> options, String c14nMethodValue) throws TechnicalConnectorException {
+   private byte[] generateSignatureTimestamp(XMLSignature sig, Map<String, Object> options, String c14nMethodValue, Credential credential) throws TechnicalConnectorException {
       byte[] digest = this.generateTimestampDigest(sig.getElement(), c14nMethodValue);
-      String digestAlgoUri = (String)SignatureUtils.getOption("SignatureTimestampAlgorithmURI", options, "http://www.w3.org/2001/04/xmlenc#sha256");
-      return TimestampGeneratorFactory.getInstance(options).generate(sig.getId(), digestAlgoUri, digest);
+      String digestAlgoUri = SignatureUtils.getOption("SignatureTimestampAlgorithmURI", options, "http://www.w3.org/2001/04/xmlenc#sha256");
+      return TimestampGeneratorFactory.getInstance(options).generate(sig.getId(), credential, digestAlgoUri, digest);
    }
 
    private void verifySignatureTimeStamp(SignatureVerificationResult result, Element baseElement) {

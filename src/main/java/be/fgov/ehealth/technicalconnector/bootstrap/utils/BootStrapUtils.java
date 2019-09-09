@@ -86,14 +86,12 @@ public final class BootStrapUtils {
 
             fos = new FileOutputStream(file);
             store.store(fos, pwd);
-            return;
          }
       } catch (Exception var12) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_IOEXCEPTION, var12, new Object[]{location});
       } finally {
          ConnectorIOUtils.closeQuietly((Object)fos);
       }
-
    }
 
    private static String getAlias(int i, X509Certificate cert) {

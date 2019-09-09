@@ -100,12 +100,20 @@ public class ObjectFactory {
       return new RequestType();
    }
 
+   public RequestListType createRequestListType() {
+      return new RequestListType();
+   }
+
    public AcknowledgeType createAcknowledgeType() {
       return new AcknowledgeType();
    }
 
    public ResponseType createResponseType() {
       return new ResponseType();
+   }
+
+   public ResponseListType createResponseListType() {
+      return new ResponseListType();
    }
 
    public TherapeuticLinkListType createTherapeuticLinkListType() {
@@ -160,12 +168,20 @@ public class ObjectFactory {
       return new DeclareTransactionResponse();
    }
 
-   public PutTransactionRequestType createPutTransactionRequestType() {
-      return new PutTransactionRequestType();
+   public PutTransactionRequest createPutTransactionRequest() {
+      return new PutTransactionRequest();
    }
 
-   public PutTransactionResponseType createPutTransactionResponseType() {
-      return new PutTransactionResponseType();
+   public PutTransactionSetRequest createPutTransactionSetRequest() {
+      return new PutTransactionSetRequest();
+   }
+
+   public PutTransactionResponse createPutTransactionResponse() {
+      return new PutTransactionResponse();
+   }
+
+   public PutTransactionSetResponse createPutTransactionSetResponse() {
+      return new PutTransactionSetResponse();
    }
 
    public GetTransactionListRequest createGetTransactionListRequest() {
@@ -176,12 +192,20 @@ public class ObjectFactory {
       return new GetTransactionListResponse();
    }
 
-   public GetTransactionRequestType createGetTransactionRequestType() {
-      return new GetTransactionRequestType();
+   public GetTransactionRequest createGetTransactionRequest() {
+      return new GetTransactionRequest();
    }
 
-   public GetTransactionResponseType createGetTransactionResponseType() {
-      return new GetTransactionResponseType();
+   public GetTransactionSetRequest createGetTransactionSetRequest() {
+      return new GetTransactionSetRequest();
+   }
+
+   public GetTransactionResponse createGetTransactionResponse() {
+      return new GetTransactionResponse();
+   }
+
+   public GetTransactionSetResponse createGetTransactionSetResponse() {
+      return new GetTransactionSetResponse();
    }
 
    public RevokeTransactionRequest createRevokeTransactionRequest() {
@@ -350,6 +374,14 @@ public class ObjectFactory {
 
    public TransactionWithSpecificTime createTransactionWithSpecificTime() {
       return new TransactionWithSpecificTime();
+   }
+
+   public Paginationrequestinfo createPaginationrequestinfo() {
+      return new Paginationrequestinfo();
+   }
+
+   public Paginationresponseinfo createPaginationresponseinfo() {
+      return new Paginationresponseinfo();
    }
 
    public Criteria createCriteria() {

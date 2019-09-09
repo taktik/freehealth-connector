@@ -28,13 +28,13 @@ import org.w3c.dom.NodeList;
 public class XadesBesSpecification implements XadesSpecification {
    private static final Logger LOG = LoggerFactory.getLogger(XadesBesSpecification.class);
 
-   public void addOptionalBeforeSignatureParts(SignedPropertiesBuilder signedProps, XMLSignature sig, Credential signing, String uuid, Map<String, Object> options) throws TechnicalConnectorException {
+   public void addOptionalBeforeSignatureParts(SignedPropertiesBuilder signedProps, XMLSignature sig, Credential credential, String uuid, Map<String, Object> options) throws TechnicalConnectorException {
       signedProps.setId(uuid);
-      signedProps.setSigningCert(signing.getCertificate());
+      signedProps.setSigningCert(credential.getCertificate());
       signedProps.setSigningTime(new DateTime());
    }
 
-   public void addOptionalAfterSignatureParts(UnsignedPropertiesBuilder unsignedProps, XMLSignature sig, String uuid, Map<String, Object> options) throws TechnicalConnectorException {
+   public void addOptionalAfterSignatureParts(UnsignedPropertiesBuilder unsignedProps, XMLSignature sig, Credential credential, String uuid, Map<String, Object> options) throws TechnicalConnectorException {
    }
 
    public void verify(SignatureVerificationResult result, Element sigElement) {

@@ -4,16 +4,21 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken;
 import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.utils.IdentifierType;
+
+import javax.annotation.Nullable;
 import java.util.Set;
+import java.util.UUID;
 
 public interface KeyDepotManager {
+   EncryptionToken getETK(Credential cred, @Nullable UUID keystoreId) throws TechnicalConnectorException;
 
-   EncryptionToken getETK(Credential cred) throws TechnicalConnectorException;
-   EncryptionToken getEtk(IdentifierType identifierType, Long identifierValue, String application) throws TechnicalConnectorException;
-   Set<EncryptionToken> getEtkSet(IdentifierType identifierType, Long identifierValue, String application) throws TechnicalConnectorException;
+   EncryptionToken getEtk(IdentifierType identifierType, Long identifierValue, String application, @Nullable UUID keystoreId) throws TechnicalConnectorException;
 
+   Set<EncryptionToken> getEtkSet(IdentifierType identifierType, Long identifierValue, String application, @Nullable UUID keystoreId) throws TechnicalConnectorException;
 
-   enum EncryptionTokenType {
+   void setKeyDepotService(KeyDepotService var1);
+
+   public static enum EncryptionTokenType {
       HOLDER_OF_KEY,
       ENCRYPTION;
    }

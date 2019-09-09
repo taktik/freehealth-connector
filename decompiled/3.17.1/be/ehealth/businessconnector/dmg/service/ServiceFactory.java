@@ -23,9 +23,6 @@ public final class ServiceFactory {
    private static Configuration config = ConfigFactory.getConfigValidator();
    static final String[] DMG_XSD = new String[]{"/ehealth-gmf/XSD/gmf_services_protocol-1_1.xsd"};
 
-   private ServiceFactory() {
-   }
-
    public static GenericRequest getConsultationService(SAMLToken token) throws TechnicalConnectorException {
       GenericRequest genReq = new GenericRequest();
       genReq.setEndpoint(config.getProperty("endpoint.dmg.consultation.v1", "$uddi{uddi:ehealth-fgov-be:business:globalmedicalfileconsultation:v1}"));

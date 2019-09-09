@@ -20,18 +20,21 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import be.fgov.ehealth.hubservices.core.v3.*
+import be.fgov.ehealth.hubservices.core.v3.GetAccessRightResponse
+import be.fgov.ehealth.hubservices.core.v3.GetPatientAuditTrailResponse
+import be.fgov.ehealth.hubservices.core.v3.PutAccessRightResponse
+import be.fgov.ehealth.hubservices.core.v3.PutTransactionSetResponse
+import be.fgov.ehealth.hubservices.core.v3.RevokeAccessRightResponse
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import ma.glasnost.orika.MapperFacade
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
-import org.taktik.connector.business.therlink.domain.TherapeuticLink
-import org.taktik.connector.business.therlink.domain.TherapeuticLinkMessage
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.domain.consent.Consent
-import org.taktik.freehealth.middleware.domain.hub.TransactionSummary
+import org.taktik.freehealth.middleware.dto.hub.TransactionSummaryDto
 import org.taktik.freehealth.middleware.dto.common.Gender
+import org.taktik.freehealth.middleware.dto.hub.PutTransactionResponseDto
 import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkMessageDto
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.HubService
@@ -274,7 +277,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) authorSsin: String?,
         @RequestParam(required = false) isGlobal: Boolean?,
         @RequestParam(required = false) breakTheGlassReason: String?
-    ): List<TransactionSummary> {
+    ): List<TransactionSummaryDto> {
         return hubService.getTransactionsList(
             endpoint = endpoint,
             keystoreId = keystoreId,
@@ -428,7 +431,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) hubApplication: String?,
         @PathVariable patientSsin: String,
         @RequestBody message: ByteArray
-    ): TransactionIdType {
+    ): PutTransactionResponseDto {
         return hubService.putTransaction(
             endpoint = endpoint,
             hubId = hubId,
@@ -444,7 +447,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
             hcpZip = hcpZip,
             ssin = patientSsin,
             transaction = message
-        )
+        ).let { mapper.map(it, PutTransactionResponseDto::class.java) }
     }
 
     @GetMapping("/ts/{ssin}/{sv}/{sl}", produces = [MediaType.APPLICATION_XML_VALUE])
@@ -577,7 +580,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) sv: String?,
         @RequestParam(required = false) sl: String?,
         @RequestParam(required = false) id: String?
-    ):GetPatientAuditTrailResponse = hubService.getPatientAuditTrail(
+    ): GetPatientAuditTrailResponse = hubService.getPatientAuditTrail(
         endpoint = endpoint,
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -598,7 +601,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         sl = sl,
         value = id,
         hubPackageId = hubPackageId
-    )
+                                                                     )
 
     @PostMapping("/access", consumes = [MediaType.APPLICATION_XML_VALUE])
     fun putAccessRight(
@@ -635,7 +638,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         accessRight = accessRight,
         accessSsin = accessSsin,
         hubPackageId = hubPackageId
-    )
+                                                         )
 
     @GetMapping("/access")
     fun getAccessRight(
@@ -666,7 +669,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         sl = sl,
         value = value,
         hubPackageId = hubPackageId
-    )
+                                                         )
 
     @DeleteMapping("/access")
     fun revokeAccessRight(
@@ -701,5 +704,5 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         accessNihii = accessNihii,
         accessSsin = accessSsin,
         hubPackageId = hubPackageId
-    )
+                                                               )
 }

@@ -11,7 +11,7 @@ class SAMLHolderOfKeyHandler(private val token: SAMLToken) : AbstractWsSecurityH
 
     @Throws(TechnicalConnectorException::class)
     override fun addWSSecurity(context: SOAPMessageContext) {
-        this.buildSignature().on(context.message).withTimeStamp(60L, TimeUnit.SECONDS).withSAMLToken(token)
+        this.buildSignature().on(context.message).withTimeStamp(this.getTimeStampTTL(), TimeUnit.SECONDS).withSAMLToken(token)
             .sign(AbstractWsSecurityHandler.SignedParts.BODY, AbstractWsSecurityHandler.SignedParts.TIMESTAMP)
     }
 

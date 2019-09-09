@@ -80,7 +80,7 @@ public class ConfigurationModuleSecurityProvider implements ConfigurationModule 
                } else if (StringUtils.isNumeric(position)) {
                   Integer positionId = Integer.parseInt(position);
                   LOG.debug("Inserting provider " + provider.getName() + " at position " + positionId + ".");
-                  Security.insertProviderAt(provider, positionId.intValue());
+                  Security.insertProviderAt(provider, positionId);
                } else {
                   LOG.warn("Unsupported position value [" + position + "]");
                }

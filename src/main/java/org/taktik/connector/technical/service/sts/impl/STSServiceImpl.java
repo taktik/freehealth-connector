@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import javax.validation.constraints.NotNull;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.Reference;
@@ -50,6 +51,7 @@ import javax.xml.crypto.dsig.spec.SignatureMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.Source;
+import org.apache.commons.io.Charsets;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -76,7 +78,7 @@ public class STSServiceImpl extends AbstractSTSService {
    private static final String JSR105PROVIDER_CLASSNAME_DEFAULT = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
    private static XMLSignatureFactory xmlSignatureFactory;
 
-   public Element getToken(Credential headerCredentials, Credential bodyCredentials, List<SAMLAttribute> attributes, List<SAMLAttributeDesignator> designators, String authenticationMethod, String nameQualifier, String value, String subjectConfirmationMethod, int validity) throws TechnicalConnectorException {
+   public Element getToken(@NotNull Credential headerCredentials, @NotNull Credential bodyCredentials, List<SAMLAttribute> attributes, List<SAMLAttributeDesignator> designators, String authenticationMethod, String nameQualifier, String value, String subjectConfirmationMethod, int validity) throws TechnicalConnectorException {
       try {
          SAMLNameIdentifier nameIdentifier = this.generateNameIdentifier(headerCredentials, nameQualifier, value);
          String requestTemplate = "";
@@ -127,7 +129,7 @@ public class STSServiceImpl extends AbstractSTSService {
       }
    }
 
-   public Element getToken(Credential headerCredentials, Credential bodyCredentials, List<SAMLAttribute> attributes, List<SAMLAttributeDesignator> designators, String subjectConfirmationMethod, int validity) throws TechnicalConnectorException {
+   public Element getToken(@NotNull Credential headerCredentials, @NotNull Credential bodyCredentials, List<SAMLAttribute> attributes, List<SAMLAttributeDesignator> designators, String subjectConfirmationMethod, int validity) throws TechnicalConnectorException {
       return this.getToken(headerCredentials, bodyCredentials, attributes, designators, null, null, null, subjectConfirmationMethod, validity);
    }
 
@@ -214,7 +216,7 @@ public class STSServiceImpl extends AbstractSTSService {
          request = this.processDefaultFields(request, validity, nameIdentifier);
          request = this.processHolderOfKeyCredentials(hokCred, request);
          request = StringUtils.replace(request, "${authenticationMethod}", authmethod);
-         Element payload = ConnectorXmlUtils.toElement(request.getBytes());
+         Element payload = ConnectorXmlUtils.toElement(request.getBytes(Charsets.UTF_8));
          Document doc = payload.getOwnerDocument();
          this.addDesignators(designators, doc);
          this.processAttributes(attributes, doc);

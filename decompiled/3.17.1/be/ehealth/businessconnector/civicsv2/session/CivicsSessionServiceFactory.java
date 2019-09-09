@@ -6,9 +6,6 @@ import be.ehealth.technicalconnector.exception.ConnectorException;
 import be.ehealth.technicalconnector.session.AbstractSessionServiceFactory;
 
 public final class CivicsSessionServiceFactory extends AbstractSessionServiceFactory {
-   private CivicsSessionServiceFactory() {
-   }
-
    public static CivicsSessionService getCivicsSession() throws ConnectorException {
       return (CivicsSessionService)getService(CivicsSessionServiceImpl.class, new CivicsImplementationClassFactory(), new String[0]);
    }

@@ -28,7 +28,7 @@ public abstract class AbstractConfigurationImpl implements Configuration {
    }
 
    public Duration getDurationProperty(String key, Long defaultValue, TimeUnit defaultTimeUnit) {
-      long duration = this.getLongProperty(key + ".duration", defaultValue).longValue();
+      long duration = this.getLongProperty(key + ".duration", defaultValue);
       String timeUnit = this.getProperty(key + ".timeunit", defaultTimeUnit.name());
       return new Duration(duration, TimeUnit.valueOf(timeUnit));
    }

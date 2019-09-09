@@ -45,7 +45,7 @@ public class ConfigValidatorImpl implements ConfigValidator {
 
    public final Configuration getConfig() throws TechnicalConnectorException {
       this.init();
-      if (this.valid.booleanValue()) {
+      if (this.valid) {
          return this.config;
       } else {
          StringBuilder sb = new StringBuilder("Could not find properties. ");
@@ -89,7 +89,7 @@ public class ConfigValidatorImpl implements ConfigValidator {
 
    public final boolean isValid() throws TechnicalConnectorException {
       this.init();
-      return this.valid.booleanValue();
+      return this.valid;
    }
 
    public final void invalidateCache() {
@@ -107,7 +107,7 @@ public class ConfigValidatorImpl implements ConfigValidator {
    }
 
    private Object processException(Exception e) {
-      if (this.config.getBooleanProperty("be.ehealth.technicalconnector.config.impl.ConfigValidatorImpl.throwErrorOnInvalidconfig", PROP_VALIDATOR_ACTIVATOR_DEFAULT).booleanValue()) {
+      if (this.config.getBooleanProperty("be.ehealth.technicalconnector.config.impl.ConfigValidatorImpl.throwErrorOnInvalidconfig", PROP_VALIDATOR_ACTIVATOR_DEFAULT)) {
          LOG.error("No Valid config", e);
          throw new ConfigurationException("No Valid config. Reason[" + e.getMessage() + "]");
       } else {
@@ -152,7 +152,7 @@ public class ConfigValidatorImpl implements ConfigValidator {
       try {
          return this.getConfig().hasDurationProperty(key);
       } catch (TechnicalConnectorException var3) {
-         return ((Boolean)this.processException(var3)).booleanValue();
+         return ((Boolean)this.processException(var3));
       }
    }
 
@@ -243,7 +243,7 @@ public class ConfigValidatorImpl implements ConfigValidator {
       try {
          return this.getConfig().isReloading();
       } catch (TechnicalConnectorException var2) {
-         return ((Boolean)this.processException(var2)).booleanValue();
+         return ((Boolean)this.processException(var2));
       }
    }
 

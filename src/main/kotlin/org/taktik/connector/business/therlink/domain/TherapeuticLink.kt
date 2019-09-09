@@ -10,8 +10,8 @@ import org.joda.time.LocalDate
 import org.taktik.connector.business.common.domain.Patient
 
 open class TherapeuticLink(
-    var patient: Patient = Patient(),
-    var hcParty: HcParty = HcParty(),
+    var patient: Patient? = null,
+    var hcParty: HcParty? = null,
     var type: String? = null
 ) : Serializable {
     var startDate: LocalDate? = null

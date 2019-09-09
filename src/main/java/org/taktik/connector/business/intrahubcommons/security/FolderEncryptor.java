@@ -1,42 +1,40 @@
 package org.taktik.connector.business.intrahubcommons.security;
 
-import org.taktik.connector.technical.config.ConfigFactory;
-import org.taktik.connector.technical.config.Configuration;
+import org.bouncycastle.util.encoders.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.taktik.connector.technical.enumeration.Charset;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.etee.Crypto;
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken;
-import org.taktik.connector.technical.service.keydepot.KeyDepotManagerFactory;
-import org.taktik.connector.technical.utils.IdentifierType;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.bouncycastle.util.encoders.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-final class FolderEncryptor {
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+
+public final class FolderEncryptor {
    private static final String KMERH_NAMESPACE = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1";
    private static final String FOLDER_NODE = "folder";
    private static final String BASE64_ENCRYPTED_DATA = "Base64EncryptedData";
    private static final Logger LOG = LoggerFactory.getLogger(FolderEncryptor.class.getName());
 
-   public static Document encryptFolder(Document doc, Crypto crypto, Long hubId, String hubApplication) throws TechnicalConnectorException {
+
+   public static Document encryptFolder(Document doc, Crypto crypto, Long hubId, String hubApplication, EncryptionToken hubEtk) throws TechnicalConnectorException {
       NodeList folderNodes = doc.getElementsByTagNameNS("http://www.ehealth.fgov.be/standards/kmehr/schema/v1", "folder");
       if (folderNodes.getLength() > 0) {
          Node kmerhmessage = folderNodes.item(0).getParentNode();
 
          try {
             String folders = serializeFolders(folderNodes);
-            String encryptedMessageString = sealFolders(crypto, folders, hubId, hubApplication);
+            String encryptedMessageString = sealFolders(crypto, folders, hubId, hubApplication, hubEtk);
             removeNodes(kmerhmessage, folderNodes);
             kmerhmessage.appendChild(createBase64EncryptedData(doc, encryptedMessageString));
          } catch (UnsupportedEncodingException var8) {
@@ -88,17 +86,9 @@ final class FolderEncryptor {
 
    }
 
-   private static String sealFolders(Crypto crypto, String folders, Long hubId, String hubApplication) throws TechnicalConnectorException, UnsupportedEncodingException {
-      byte[] encryptedMessage = crypto.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, getHubEtk(hubId, hubApplication), folders.getBytes(Charset.UTF_8.getName()));
+   private static String sealFolders(Crypto crypto, String folders, Long hubId, String hubApplication, EncryptionToken hubEtk) throws TechnicalConnectorException, UnsupportedEncodingException {
+      byte[] encryptedMessage = crypto.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, hubEtk, folders.getBytes(Charset.UTF_8.getName()));
       encryptedMessage = Base64.encode(encryptedMessage);
       return new String(encryptedMessage);
-   }
-
-   private static EncryptionToken getHubEtk(Long hubId, String hubApplication) throws TechnicalConnectorException {
-      if (hubApplication == null) {
-         hubApplication = "";
-      }
-
-      return KeyDepotManagerFactory.getKeyDepotManager().getEtk(IdentifierType.EHP, hubId, hubApplication);
    }
 }

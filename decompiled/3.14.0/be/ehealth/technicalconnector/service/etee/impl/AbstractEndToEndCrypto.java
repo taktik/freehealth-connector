@@ -65,7 +65,7 @@ public abstract class AbstractEndToEndCrypto extends AbstractCrypto {
    }
 
    protected void dumpMessage(byte[] paramArrayOfByte, String msg) {
-      if (config.getBooleanProperty("be.ehealth.technicalconnector.service.etee.cryptoimpl.dump_messages", Boolean.FALSE).booleanValue()) {
+      if (config.getBooleanProperty("be.ehealth.technicalconnector.service.etee.cryptoimpl.dump_messages", Boolean.FALSE)) {
          int maxNumberOfBytesToLog = config.getIntegerProperty("be.ehealth.technicalconnector.service.etee.cryptoimpl.dump_first_chars", Integer.valueOf(50)).intValue();
          String stringToLog;
          if (paramArrayOfByte.length < maxNumberOfBytesToLog) {

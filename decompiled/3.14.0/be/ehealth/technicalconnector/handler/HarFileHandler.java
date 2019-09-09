@@ -42,7 +42,7 @@ public class HarFileHandler extends AbstractSOAPHandler {
 
    public boolean handleFault(SOAPMessageContext ctx) {
       Boolean outbound = (Boolean)ctx.get("javax.xml.ws.handler.message.outbound");
-      if (outbound.booleanValue()) {
+      if (outbound) {
          return false;
       } else {
          this.handleMessage(ctx);

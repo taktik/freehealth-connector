@@ -73,8 +73,8 @@ public final class TrustStoreUpdater {
          shaCacheLocation = config.getProperty("truststoreupdater.local.cache", System.getProperty("java.io.tmpdir").replaceAll("[/\\\\]?$","") + File.separator + TrustStoreUpdater.class.getCanonicalName() + ".properties");
          is = ConnectorIOUtils.getResourceAsStream(shaCacheLocation);
          shaCache.load(is);
-      } catch (Exception var5) {
-         LOG.warn("Unable to load sha cache", var5);
+      } catch (Exception ex) {
+         LOG.warn("Unable to load sha cache");
       } finally {
          ConnectorIOUtils.closeQuietly((Object)is);
       }
@@ -103,11 +103,9 @@ public final class TrustStoreUpdater {
       try {
          ConnectorIOUtils.getResourceAsStream(location);
          return location;
-      } catch (TechnicalConnectorException var3) {
-         location = config.getProperty("KEYSTORE_DIR") + config.getProperty(key);
-         LOG.error("Trying to obtain location by adding ${KEYSTORE_DIR} [" + location + "] Reason " + ExceptionUtils.getRootCauseMessage(var3));
-         ConnectorIOUtils.getResourceAsStream(location);
-         return location;
+      } catch (TechnicalConnectorException ex) {
+         LOG.error("Cannot access location location [" + location + "] Reason " + ExceptionUtils.getRootCauseMessage(ex));
+         throw ex;
       }
    }
 
@@ -138,6 +136,7 @@ public final class TrustStoreUpdater {
       } else {
          LOG.warn("Invalid TSL file on [" + tslEndpoint + "], skipping update");
       }
+
    }
 
    private static enum TrustedServiceType {

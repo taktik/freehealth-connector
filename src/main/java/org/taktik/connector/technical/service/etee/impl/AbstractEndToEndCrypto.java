@@ -80,8 +80,8 @@ public abstract class AbstractEndToEndCrypto extends AbstractCrypto {
    }
 
    protected void dumpMessage(byte[] paramArrayOfByte, String msg) {
-      if (config.getBooleanProperty("org.taktik.connector.technical.service.etee.cryptoimpl.dump_messages", Boolean.FALSE).booleanValue()) {
-         int maxNumberOfBytesToLog = config.getIntegerProperty("org.taktik.connector.technical.service.etee.cryptoimpl.dump_first_chars", Integer.valueOf(50)).intValue();
+      if (config.getBooleanProperty("org.taktik.connector.technical.service.etee.cryptoimpl.dump_messages", Boolean.FALSE)) {
+         int maxNumberOfBytesToLog = config.getIntegerProperty("org.taktik.connector.technical.service.etee.cryptoimpl.dump_first_chars", Integer.valueOf(50));
          String stringToLog;
          if (paramArrayOfByte.length < maxNumberOfBytesToLog) {
             stringToLog = new String(paramArrayOfByte);

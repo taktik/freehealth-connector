@@ -25,6 +25,8 @@ public enum CDTRANSACTIONschemes {
    CD_TRANSACTION_TYPE("CD-TRANSACTION-TYPE"),
    @XmlEnumValue("CD-HUBSERVICE")
    CD_HUBSERVICE("CD-HUBSERVICE"),
+   @XmlEnumValue("CD-DIARY")
+   CD_DIARY("CD-DIARY"),
    LOCAL("LOCAL");
 
    private final String value;

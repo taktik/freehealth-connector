@@ -4,8 +4,8 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory;
 import org.taktik.connector.technical.service.idsupport.IdSupportService;
+import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.service.ws.ServiceFactory;
-import org.taktik.connector.technical.session.AbstractSessionServiceWithCache;
 import org.taktik.connector.technical.validator.EhealthReplyValidator;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import be.fgov.ehealth.commons.core.v2.Id;
@@ -17,34 +17,34 @@ import java.util.Arrays;
 import javax.xml.soap.SOAPException;
 import org.joda.time.DateTime;
 
-public class IdSupportServiceImpl extends AbstractSessionServiceWithCache implements IdSupportService {
+public class IdSupportServiceImpl implements IdSupportService {
    private EhealthReplyValidator validator;
 
    public IdSupportServiceImpl(EhealthReplyValidator validator) {
       this.validator = validator;
    }
 
-   public VerifyIdResponse verifyId(VerifyIdRequest request) throws TechnicalConnectorException {
-      return this.verifyIdAndGenerateToken(request);
+   public VerifyIdResponse verifyId(VerifyIdRequest request, SAMLToken samlToken) throws TechnicalConnectorException {
+      return this.verifyIdAndGenerateToken(request, samlToken);
    }
 
-   public VerifyIdResponse verifyId(String legalContext, Id ssin, Id cardNumber) throws TechnicalConnectorException {
-      return this.verifyId(legalContext, identificationData(ssin, cardNumber));
+   public VerifyIdResponse verifyId(String legalContext, Id ssin, Id cardNumber, SAMLToken samlToken) throws TechnicalConnectorException {
+      return this.verifyId(legalContext, identificationData(ssin, cardNumber), samlToken);
    }
 
-   public VerifyIdResponse verifyId(String legalContext, Id barcode) throws TechnicalConnectorException {
-      return this.verifyId(legalContext, identificationData(barcode));
+   public VerifyIdResponse verifyId(String legalContext, Id barcode, SAMLToken samlToken) throws TechnicalConnectorException {
+      return this.verifyId(legalContext, identificationData(barcode), samlToken);
    }
 
-   private VerifyIdResponse verifyId(String legalContext, IdentificationData identificationData) throws TechnicalConnectorException {
+   private VerifyIdResponse verifyId(String legalContext, IdentificationData identificationData, SAMLToken samlToken) throws TechnicalConnectorException {
       VerifyIdRequest request = getBasicRequest(legalContext, "ID_" + IdGeneratorFactory.getIdGenerator("uuid").generateId());
       request.setIdentificationData(identificationData);
-      return this.verifyId(request);
+      return this.verifyId(request, samlToken);
    }
 
-   private VerifyIdResponse verifyIdAndGenerateToken(VerifyIdRequest verifyIdRequest) throws TechnicalConnectorException {
+   private VerifyIdResponse verifyIdAndGenerateToken(VerifyIdRequest verifyIdRequest, SAMLToken samlToken) throws TechnicalConnectorException {
       try {
-         GenericRequest genericRequest = ServiceFactory.getIdSupportV2Service(this.getSamlToken());
+         GenericRequest genericRequest = ServiceFactory.getIdSupportV2Service(samlToken);
          genericRequest.setPayload((Object)verifyIdRequest);
          VerifyIdResponse response = (VerifyIdResponse)org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(genericRequest).asObject(VerifyIdResponse.class);
          this.validator.validateReplyStatus((StatusResponseType)response);

@@ -33,7 +33,7 @@ public final class RequestBuilderFactory {
       } else {
          String useDefaultProperties = "mycarenet." + projectName + ".usedefaultproperties";
          ConfigValidator props = ConfigFactory.getConfigValidator();
-         if (props.getBooleanProperty(useDefaultProperties, true).booleanValue()) {
+         if (props.getBooleanProperty(useDefaultProperties, true)) {
             verifiedProjectName = "default";
          }
 

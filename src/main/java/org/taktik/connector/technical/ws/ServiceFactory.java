@@ -14,6 +14,6 @@ public final class ServiceFactory {
    }
 
    public static GenericWsSender getGenericWsSender() throws TechnicalConnectorException {
-      return (GenericWsSender)factory.getImplementation(new HashMap(), false);
+      return factory.getImplementation(new HashMap(), false);
    }
 }

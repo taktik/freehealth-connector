@@ -7,9 +7,6 @@ import java.util.List;
 import org.dozer.DozerBeanMapper;
 
 public final class RoutingMapper {
-   private RoutingMapper() {
-   }
-
    public static RoutingType mapRoutingType(Routing input) {
       List<String> myMappingFiles = new ArrayList();
       myMappingFiles.add("dozer/dmg-routing.xml");

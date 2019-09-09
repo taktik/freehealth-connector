@@ -11,7 +11,7 @@ class SAMLSenderVouchesHandler(private var token: SAMLSenderVouchesCredential) :
 
     @Throws(TechnicalConnectorException::class)
     override fun addWSSecurity(context: SOAPMessageContext) {
-        this.buildSignature().on(context.message).withTimeStamp(60L, TimeUnit.SECONDS)
+        this.buildSignature().on(context.message).withTimeStamp(this.getTimeStampTTL(), TimeUnit.SECONDS)
             .withBinarySecurityToken(this.token).withSAMLToken(this.token)
             .sign(AbstractWsSecurityHandler.SignedParts.BODY, AbstractWsSecurityHandler.SignedParts.TIMESTAMP)
     }

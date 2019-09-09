@@ -24,13 +24,13 @@ import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
 import org.w3c.dom.Element;
 
 public class XadesCSpecification implements XadesSpecification {
-   public void addOptionalBeforeSignatureParts(SignedPropertiesBuilder signedProps, XMLSignature sig, Credential signing, String uuid, Map<String, Object> options) throws TechnicalConnectorException {
+   public void addOptionalBeforeSignatureParts(SignedPropertiesBuilder signedProps, XMLSignature sig, Credential credential, String uuid, Map<String, Object> options) throws TechnicalConnectorException {
    }
 
-   public void addOptionalAfterSignatureParts(UnsignedPropertiesBuilder unsignedProps, XMLSignature sig, String uuid, Map<String, Object> options) throws TechnicalConnectorException {
+   public void addOptionalAfterSignatureParts(UnsignedPropertiesBuilder unsignedProps, XMLSignature sig, Credential credential, String uuid, Map<String, Object> options) throws TechnicalConnectorException {
       try {
          X509Certificate signing = sig.getKeyInfo().getX509Certificate();
-         OCSPData ocsp = (OCSPData)OCSPCheckerBuilder.newBuilder().addOCSPPolicy(OCSPPolicy.RECEIVER_MANDATORY).build().validate(signing).getData();
+         OCSPData ocsp = OCSPCheckerBuilder.newBuilder().addOCSPPolicy(OCSPPolicy.RECEIVER_MANDATORY).build().validate(signing).getData();
          unsignedProps.addCertificate(signing);
          Iterator i$ = ocsp.getCrls().iterator();
 
@@ -41,7 +41,7 @@ public class XadesCSpecification implements XadesSpecification {
 
          unsignedProps.addOCSPRef(this.convertToOCSPResp(ocsp));
       } catch (Exception var9) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var9, new Object[]{"Unable to add optional Signature parts"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var9, "Unable to add optional Signature parts");
       }
    }
 

@@ -3,6 +3,10 @@ package org.taktik.connector.technical.cache;
 import java.util.Map;
 
 public interface Cache<K, V> {
+   String CACHE_NAME = "cacheName";
+   String CACHE_EXPIRY_TYPE = "cacheExpiryType";
+   String CACHE_EXPIRY_DURATION = "cacheExpiryDuration";
+
    String getName();
 
    V get(K var1);

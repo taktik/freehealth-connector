@@ -2,7 +2,6 @@ package org.taktik.connector.technical.utils;
 
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
-import org.taktik.connector.technical.service.sts.security.KeyStoreInfo;
 import be.fgov.ehealth.etee.crypto.utils.KeyManager;
 import be.fgov.ehealth.etee.crypto.utils.KeyManager.KeyStoreOpeningException;
 import java.io.IOException;
@@ -13,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class KeyStoreManager {
-   private KeyStoreInfo keyStoreInfo;
    private KeyStore keyStore;
    private static final Logger LOG = LoggerFactory.getLogger(KeyStoreManager.class);
 
@@ -21,16 +19,6 @@ public class KeyStoreManager {
    @Deprecated
    public KeyStoreManager(KeyStore keyStore) {
       this.keyStore = keyStore;
-   }
-
-   public KeyStoreManager(KeyStore keyStore, KeyStoreInfo keyStoreInfo) {
-      this.keyStore = keyStore;
-      this.keyStoreInfo = keyStoreInfo;
-   }
-
-   public KeyStoreManager(KeyStoreInfo keyStoreInfo) throws TechnicalConnectorException {
-      this.keyStoreInfo = keyStoreInfo;
-      this.keyStore = this.getKeyStore(keyStoreInfo.getKeystorePath(), keyStoreInfo.getKeystorePassword());
    }
 
    public KeyStoreManager(String pathKeystore, char[] keyStorePassword) throws TechnicalConnectorException {
@@ -76,7 +64,4 @@ public class KeyStoreManager {
       return this.keyStore;
    }
 
-   public final KeyStoreInfo getKeyStoreInfo() {
-      return this.keyStoreInfo;
-   }
 }

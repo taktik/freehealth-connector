@@ -22,7 +22,9 @@ public enum CDINCAPACITYvalues {
    @XmlEnumValue("travel")
    TRAVEL("travel"),
    @XmlEnumValue("vote")
-   VOTE("vote");
+   VOTE("vote"),
+   @XmlEnumValue("heavyphysicalactivity")
+   HEAVYPHYSICALACTIVITY("heavyphysicalactivity");
 
    private final String value;
 

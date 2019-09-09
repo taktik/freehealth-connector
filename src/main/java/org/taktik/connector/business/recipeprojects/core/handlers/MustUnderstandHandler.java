@@ -36,9 +36,9 @@ public class MustUnderstandHandler implements SOAPHandler<SOAPMessageContext> {
 	public boolean handleMessage(SOAPMessageContext cxt) {
 		Boolean outbound = (Boolean) cxt.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
-		if (outbound.booleanValue()) {
+		if (outbound) {
 			SOAPMessage message = cxt.getMessage();
-			
+
 			try {
 				SOAPHeader header = message.getSOAPHeader();
 				if(header != null) {
@@ -48,7 +48,7 @@ public class MustUnderstandHandler implements SOAPHandler<SOAPMessageContext> {
 						el.removeAttributeNS(message.getSOAPPart().getEnvelope().getNamespaceURI(), "mustUnderstand");
 						LOG.debug("Recipe hook: The mustunderstand in security header has succesfully been removed");
 					}
-					
+
 					message.saveChanges();
 				}
 			} catch (SOAPException e) {

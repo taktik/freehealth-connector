@@ -24,7 +24,25 @@ public enum CDTRANSACTIONMYCARENETvalues {
    @XmlEnumValue("cgd")
    CGD("cgd"),
    @XmlEnumValue("mea")
-   MEA("mea");
+   MEA("mea"),
+   @XmlEnumValue("cgacancellation")
+   CGACANCELLATION("cgacancellation"),
+   @XmlEnumValue("maa")
+   MAA("maa"),
+   @XmlEnumValue("maaextension")
+   MAAEXTENSION("maaextension"),
+   @XmlEnumValue("maaappendix")
+   MAAAPPENDIX("maaappendix"),
+   @XmlEnumValue("maacancellation")
+   MAACANCELLATION("maacancellation"),
+   @XmlEnumValue("maaclosure")
+   MAACLOSURE("maaclosure"),
+   @XmlEnumValue("maaagreement")
+   MAAAGREEMENT("maaagreement"),
+   @XmlEnumValue("maarefusal")
+   MAAREFUSAL("maarefusal"),
+   @XmlEnumValue("maaintreatment")
+   MAAINTREATMENT("maaintreatment");
 
    private final String value;
 

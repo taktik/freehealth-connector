@@ -22,10 +22,6 @@ public class Regimen implements Serializable {
    namespace = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1",
    type = JAXBElement.class
 ), @XmlElementRef(
-   name = "daynumber",
-   namespace = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1",
-   type = JAXBElement.class
-), @XmlElementRef(
    name = "quantity",
    namespace = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1",
    type = JAXBElement.class
@@ -35,6 +31,10 @@ public class Regimen implements Serializable {
    type = JAXBElement.class
 ), @XmlElementRef(
    name = "date",
+   namespace = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1",
+   type = JAXBElement.class
+), @XmlElementRef(
+   name = "daynumber",
    namespace = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1",
    type = JAXBElement.class
 )})

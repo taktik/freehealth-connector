@@ -13,13 +13,15 @@ import org.slf4j.LoggerFactory;
 public class NoRetryInvokeStrategy extends AbstractWsSender implements InvokeStrategy {
    private static final Logger LOG = LoggerFactory.getLogger(NoRetryInvokeStrategy.class);
 
-   public GenericResponse invoke(GenericRequest genericRequest) throws TechnicalConnectorException {
+   public boolean invoke(InvokeStrategyContext ctx) {
       try {
-         return super.call(genericRequest);
-      } catch (RetryNextEndpointException var4) {
+         ctx.setResponse(super.call(ctx.getRequest()));
+         return true;
+      } catch (TechnicalConnectorException var4) {
          Throwable reason = ExceptionUtils.getRootCause(var4);
          LOG.error("Cannot send SOAP message. Reason [" + reason + "]", var4);
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var4, new Object[]{reason});
+         ctx.setException(new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ExceptionUtils.getRootCause(var4), new Object[]{ExceptionUtils.getRootCauseMessage(var4)}));
+         return false;
       }
    }
 }

@@ -16,9 +16,6 @@ public final class KeyDepotHelper {
    private static final String CH4_APPLICATION_PROPERTY = "chapterIV.keydepot.application";
    private static ConfigValidator configValidator;
 
-   private KeyDepotHelper() {
-   }
-
    public static EncryptionToken getChapterIVEncryptionToken() throws TechnicalConnectorException {
       String identifierTypeString = configValidator.getProperty("chapterIV.keydepot.identifiertype");
       String identifierSubTypeString = configValidator.getProperty("chapterIV.keydepot.identifiersubtype");

@@ -13,7 +13,7 @@ public final class EncryptionTokenBuilder {
       throw new UnsupportedOperationException();
    }
 
-   static class Steps implements EncryptionTokenBuilder.KeyPairStep, EncryptionTokenBuilder.ChallengeStep, EncryptionTokenBuilder.BuildStep {
+   static class Steps implements KeyPairStep, ChallengeStep, BuildStep {
       private KeyPair pair;
       private byte[] challenge;
       private Credential cred;
@@ -22,13 +22,13 @@ public final class EncryptionTokenBuilder {
          this.cred = cred;
       }
 
-      public EncryptionTokenBuilder.ChallengeStep withKeyPair(KeyPair pair) {
+      public ChallengeStep withKeyPair(KeyPair pair) {
          Validate.notNull(pair);
          this.pair = pair;
          return this;
       }
 
-      public EncryptionTokenBuilder.BuildStep withChallenge(byte[] challenge) {
+      public BuildStep withChallenge(byte[] challenge) {
          Validate.isTrue(ArrayUtils.isNotEmpty(challenge));
          this.challenge = ArrayUtils.clone(challenge);
          return this;
@@ -44,26 +44,26 @@ public final class EncryptionTokenBuilder {
    }
 
    public interface ChallengeStep {
-      EncryptionTokenBuilder.BuildStep withChallenge(byte[] var1);
+      BuildStep withChallenge(byte[] var1);
    }
 
    public interface KeyPairStep {
-      EncryptionTokenBuilder.ChallengeStep withKeyPair(KeyPair var1);
+      ChallengeStep withKeyPair(KeyPair var1);
    }
 
-   static class EncryptionTokenBuilderSteps implements EncryptionTokenBuilder.EncryptionTokenBuilderStep {
+   static class EncryptionTokenBuilderSteps implements EncryptionTokenBuilderStep {
       private Credential cred;
 
       public EncryptionTokenBuilderSteps(Credential cred) {
          this.cred = cred;
       }
 
-      public EncryptionTokenBuilder.KeyPairStep create() {
-         return new EncryptionTokenBuilder.Steps(this.cred);
+      public KeyPairStep create() {
+         return new Steps(this.cred);
       }
    }
 
    public interface EncryptionTokenBuilderStep {
-      EncryptionTokenBuilder.KeyPairStep create();
+      KeyPairStep create();
    }
 }

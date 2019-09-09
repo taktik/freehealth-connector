@@ -1,6 +1,7 @@
 package be.fgov.ehealth.etkdepot._1_0.protocol;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -50,5 +51,20 @@ public class IdentifierType implements Serializable {
 
    public void setApplicationID(String value) {
       this.applicationID = value;
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      IdentifierType that = (IdentifierType) o;
+      return Objects.equals(type, that.type) &&
+              Objects.equals(value, that.value) &&
+              Objects.equals(applicationID, that.applicationID);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(type, value, applicationID);
    }
 }

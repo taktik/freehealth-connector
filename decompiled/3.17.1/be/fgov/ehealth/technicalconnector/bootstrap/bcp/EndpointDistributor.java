@@ -144,7 +144,7 @@ public final class EndpointDistributor {
 
    public static boolean update() {
       try {
-         return (Boolean)MethodUtils.invokeStaticMethod(Class.forName("be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointUpdater"), "update", new Object[0]);
+         return EndpointUpdater.update();
       } catch (Exception var1) {
          LOG.error("Unable to update endpoints", var1);
          return false;

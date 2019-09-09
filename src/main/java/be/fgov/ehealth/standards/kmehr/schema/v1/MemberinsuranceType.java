@@ -21,7 +21,7 @@ public class MemberinsuranceType implements Serializable {
    @XmlElement(
       required = true
    )
-   protected Object membership;
+   protected String membership;
 
    public IDINSURANCE getId() {
       return this.id;
@@ -31,11 +31,11 @@ public class MemberinsuranceType implements Serializable {
       this.id = value;
    }
 
-   public Object getMembership() {
+   public String getMembership() {
       return this.membership;
    }
 
-   public void setMembership(Object value) {
+   public void setMembership(String value) {
       this.membership = value;
    }
 }

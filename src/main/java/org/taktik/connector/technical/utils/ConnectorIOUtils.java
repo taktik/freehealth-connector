@@ -423,6 +423,45 @@ public final class ConnectorIOUtils {
       return result;
    }
 
+   public static File createTempFile(String name) throws TechnicalConnectorException {
+      if (name != null && !name.isEmpty()) {
+         String tempDirectory = System.getProperty("java.io.tmpdir");
+         if (tempDirectory != null && !tempDirectory.isEmpty()) {
+            File tempFile = new File(tempDirectory, name);
+
+            try {
+               tempFile.createNewFile();
+               return tempFile;
+            } catch (IOException var4) {
+               LOG.error("IOException while creating temporary file {0}", tempFile.getPath());
+               throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_IOEXCEPTION, new Object[]{var4.getMessage(), var4, "creating temporary file" + tempFile.getPath()});
+            }
+         } else {
+            LOG.error("The property 'java.io.tmpdir' not found in the system properties");
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"The property 'java.io.tmpdir' not found in the system properties"});
+         }
+      } else {
+         LOG.error("The name given for the tempFile is empty");
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL, new Object[]{"The name given for the tempFile is empty"});
+      }
+   }
+
+   public static String getTempFileLocation(String name) throws TechnicalConnectorException {
+      if (name != null && !name.isEmpty()) {
+         String tempDirectory = System.getProperty("java.io.tmpdir");
+         if (tempDirectory != null && !tempDirectory.isEmpty()) {
+            File tempFile = new File(tempDirectory, name);
+            return tempFile.getPath();
+         } else {
+            LOG.error("The property 'java.io.tmpdir' not found in the system properties");
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"The property 'java.io.tmpdir' not found in the system properties"});
+         }
+      } else {
+         LOG.error("The name given for the tempFile is empty");
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL, new Object[]{"The name given for the tempFile is empty"});
+      }
+   }
+
    private static class AutoDeleteFileInputStream extends FileInputStream {
       private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorIOUtils.AutoDeleteFileInputStream.class);
       private File file;

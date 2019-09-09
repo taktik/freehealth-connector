@@ -258,7 +258,7 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
         addHandlerChain(
             HandlerChainUtil.buildChainWithValidator(
                 "validation.incoming.wsconsent.message",
-                "/ehealth-hubservices/XSD/hubservices_protocol-2_2.xsd"
+                "/ehealth-hubservices/XSD/hubservices_protocol-2_3.xsd"
             )
         )
         addDefaulHandlerChain()

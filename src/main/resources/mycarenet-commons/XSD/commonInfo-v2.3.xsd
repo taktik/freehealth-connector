@@ -9,90 +9,9 @@
       Version 2.3: Added routing.
     </xs:documentation>
   </xs:annotation>
-  <!-- <xs:include schemaLocation="commonInfo-v2.0-Ref.xsd" /> -->
-  <xs:import schemaLocation="commonTypes-v1.2.xsd" namespace="urn:be:cin:types:v1" />
-
-  <xs:complexType name="SelfRefType" abstract="true">
-    <xs:annotation>
-      <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
-        Elements of this base type do not require any content, instead
-        it is also possible to refer to another element with the same
-        type and same name.
-        The referencee should specify and id, and the
-        referencer should specify a ref-attribute.
-      </xs:documentation>
-    </xs:annotation>
-    <xs:sequence>
-
-    </xs:sequence>
-    <xs:attribute name="Id" type="xs:ID">
-      <xs:annotation>
-        <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
-          The ID of an element. Can be used by other elements with the
-          same name and type to reference this element. An ID should only be
-          unique inside a document, in this case the SOAP message.
-          In other words, each request can reuse the same ID values.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="Ref" type="xs:anyURI">
-      <xs:annotation>
-        <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
-          <p>
-            A XPoiter reference to another element with the same name and type.
-            When this is present, the content of the element should be
-            empty. MyCareNet will substitute the this element by the element
-            it references.
-            <br />
-            The XPointer should result in a single element with the same
-            type the this element.
-          </p>
-          <p>
-            See ValueRefString type for more information about XPointer.
-          </p>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-
-  <xs:complexType name="ValueRefString">
-    <xs:annotation>
-      <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
-        Elements of this type do not require any content, instead
-        it is also possible to refer to another element in
-        the same document with the same values.
-        The referencee should specify and id, and the
-        referencer should specify a ref-attribute.
-      </xs:documentation>
-    </xs:annotation>
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute name="ValueRef" type="xs:anyURI">
-          <xs:annotation>
-            <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
-              <p>
-                A XPoiter reference to another element with the same type.
-                When this is present, the content of the element should be
-                empty. MyCareNet will substitute the content of this element by
-                the result of the XPointer.
-                <br />
-                The XPointer should result in a node-set that is compliant with
-                the type of this element.
-              </p>
-              <p>
-                XPointer is a W3C standard that is commonly used to reference
-                other elements. This is for example used by the XMLDSig
-                standard, although it only requires a sub-section to be
-                implemented. See service catalogue for more information.
-              </p>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
-
+  <xs:include schemaLocation="commonInfo-ref-v2.0.xsd" />
   <!-- xs:include schemaLocation="commonInfo-v2.0-Basic.xsd"/ -->
+  <xs:import schemaLocation="commonTypes-v1.3.xsd" namespace="urn:be:cin:types:v1" />
   <xs:element name="CommonInput" type="CommonInputType" />
   <xs:complexType name="CommonInputType">
     <xs:annotation>
@@ -277,8 +196,7 @@
               is an organization.
               When not present in the SAML-ticket this information is treated
               as information. This data in
-              this element should
-              correspond
+              this element should correspond
               to one or multiple of the following attributes:
             </p>
             <ol xmlns="http://www.w3.org/1999/xhtml">

@@ -16,7 +16,7 @@ class ConsentBuilderImpl : ConsentBuilder {
         signdate: DateTime?,
         revokedate: DateTime?,
         author: AuthorWithPatientAndPersonType
-    ) = ConsentType().apply {
+                             ) = ConsentType().apply {
         this.author = author
         this.patient = patient
         this.revokedate = revokedate
@@ -37,5 +37,5 @@ class ConsentBuilderImpl : ConsentBuilder {
         consent: List<CDCONSENT>,
         signdate: DateTime,
         author: AuthorWithPatientAndPersonType
-    ) = this.createConsent(patient, consent, signdate, null, author)
+                                 ) = this.createConsent(patient, consent, signdate, null, author)
 }

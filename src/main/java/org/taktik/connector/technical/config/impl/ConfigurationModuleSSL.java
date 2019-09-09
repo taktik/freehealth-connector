@@ -32,7 +32,7 @@ public final class ConfigurationModuleSSL implements ConfigurationModule {
    private static final String TRUSTSTORE_LOCATION = "truststore_location";
    private static final String TRUSTSTORE_LOCATION_ORIGINAL = "truststore_location_original";
    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationModuleSSL.class);
-   private Map<String, String> oldValues = new HashMap();
+   private Map<String, String> oldValues = new HashMap<>();
 
    public void init(Configuration config) throws TechnicalConnectorException {
       if (this.isValid(config)) {
@@ -80,9 +80,9 @@ public final class ConfigurationModuleSSL implements ConfigurationModule {
             }
          } catch (Exception var16) {
             LOG.warn(var16.getClass().getSimpleName() + ":" + var16.getMessage());
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, var16, new Object[]{var16.getMessage()});
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, var16, var16.getMessage());
          } finally {
-            ConnectorIOUtils.closeQuietly((Object)is);
+            ConnectorIOUtils.closeQuietly(is);
          }
 
       }
@@ -106,13 +106,13 @@ public final class ConfigurationModuleSSL implements ConfigurationModule {
       }
 
       if (keyStoreDir != null && trustStoreName != null) {
-         String trustStoreLocation = config.getProperty("KEYSTORE_DIR") + trustStoreName;
+         String trustStoreLocation = trustStoreName;
          trustStoreLocation = this.getTrustStoreLocation(trustStoreLocation);
          if (trustStoreLocation != null) {
             valid = true;
             config.setProperty("truststore_location", trustStoreLocation);
             if (!trustStoreLocation.equals(config.getProperty("truststore_location"))) {
-               throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"could not update configuration parameter truststore_location : config still returns old location ]" + config.getProperty("truststore_location") + "[ after update to location ]" + trustStoreLocation + "["});
+               throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, "could not update configuration parameter truststore_location : config still returns old location ]" + config.getProperty("truststore_location") + "[ after update to location ]" + trustStoreLocation + "[");
             }
          }
       }
@@ -129,7 +129,7 @@ public final class ConfigurationModuleSSL implements ConfigurationModule {
          is = ConnectorIOUtils.getResourceAsStream(trustStoreLocation);
          LOG.debug("ConfigurationModuleSSL.getTrustStoreLocation: loading file on location [" + trustStoreLocation + "]");
          if (is == null) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"trustStore file doesn't exist or is not a file on location [" + trustStoreLocation + "] and resourceFilePath [" + trustStoreLocation + "]"});
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, "trustStore file doesn't exist or is not a file on location [" + trustStoreLocation + "] and resourceFilePath [" + trustStoreLocation + "]");
          }
 
          LOG.debug("Creating new temp trustStore");
