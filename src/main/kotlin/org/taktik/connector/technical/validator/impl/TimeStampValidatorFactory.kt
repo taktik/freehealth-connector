@@ -18,7 +18,6 @@ class TimeStampValidatorFactory private constructor() {
     companion object {
         private val TIMESTAMP_SIGNATURE_KEYSTORE_PWD = "timestamp.signature.keystore.pwd"
         private val TIMESTAMP_SIGNATURE_KEYSTORE_PATH = "timestamp.signature.keystore.path"
-        private val PROP_KEYSTORE_DIR = "KEYSTORE_DIR"
         private val PROP_TIMESTAMPVALIDATOR_FACTORY = "timestamp.validator.factory"
         private val PROP_DEFAULT_TIMESTAMPVALIDATOR_FACTORY = "org.taktik.connector.technical.validator.impl.TimeStampValidatorImpl"
         private var validatorInstance: TimeStampValidator? = null
@@ -36,9 +35,9 @@ class TimeStampValidatorFactory private constructor() {
 
         @Throws(TechnicalConnectorException::class)
         private fun init(): Map<String, Any> {
-            val config = ConfigFactory.getConfigValidatorFor("timestamp.signature.keystore.path", "timestamp.signature.keystore.pwd", "KEYSTORE_DIR")
+            val config = ConfigFactory.getConfigValidatorFor("timestamp.signature.keystore.path", "timestamp.signature.keystore.pwd")
             val parameterMap = HashMap<String,Any>()
-            val keystorePath = config.getProperty("KEYSTORE_DIR") + config.getProperty("timestamp.signature.keystore.path")
+            val keystorePath = config.getProperty("timestamp.signature.keystore.path")
             val keyStoreManager = KeyStoreManager(keystorePath, config.getProperty("timestamp.signature.keystore.pwd").toCharArray())
             val keyStore = keyStoreManager.keyStore
             parameterMap.put("timestampvalidator.keystore", keyStore)

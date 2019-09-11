@@ -11,6 +11,8 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.dto.HealthcareParty
@@ -31,7 +33,7 @@ class AddressbookControllerTest : EhealthTest() {
     @Test
     fun searchHcp() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val searchHcp = this.restTemplate.getForObject("http://localhost:$port/ab/search/hcp/Duch*?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", String::class.java, passPhrase)
+        val searchHcp = this.restTemplate.exchange("http://localhost:$port/ab/search/hcp/Duch*", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
         Assertions.assertThat(searchHcp != null && searchHcp.length>2 && searchHcp.startsWith("["))
         val hcps: List<HealthcareParty> = gson.fromJson(searchHcp, object : TypeToken<ArrayList<HealthcareParty>>() {}.getType())
         Assertions.assertThat(20).isLessThan(hcps.size)
@@ -41,7 +43,7 @@ class AddressbookControllerTest : EhealthTest() {
     @Test
     fun searchOrg() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val searchOrg = this.restTemplate.getForObject("http://localhost:$port/ab/search/org/*clinique*?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", String::class.java, passPhrase)
+        val searchOrg = this.restTemplate.exchange("http://localhost:$port/ab/search/org/*clinique*", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
         Assertions.assertThat(searchOrg != null && searchOrg.length>2 && searchOrg.startsWith("["))
         val hcps: List<HealthcareParty> = gson.fromJson(searchOrg, object : TypeToken<ArrayList<HealthcareParty>>() {}.getType())
         Assertions.assertThat(10).isLessThan(hcps.size)
@@ -51,7 +53,7 @@ class AddressbookControllerTest : EhealthTest() {
     @Test
     fun getHcpByNihii() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getHcp = this.restTemplate.getForObject("http://localhost:$port/ab/hcp/nihii/10032669001?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", String::class.java, passPhrase)
+        val getHcp = this.restTemplate.exchange("http://localhost:$port/ab/hcp/nihii/10032669001", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
         Assertions.assertThat(getHcp != null && getHcp.length>2 && getHcp.startsWith("{"))
         val hcp = gson.fromJson(getHcp, HealthcareParty::class.java)
         Assertions.assertThat("DUCHATEAU").isEqualToIgnoringCase(hcp.lastName)
@@ -61,7 +63,7 @@ class AddressbookControllerTest : EhealthTest() {
     @Test
     fun getHcpBySsin() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getHcp = this.restTemplate.getForObject("http://localhost:$port/ab/hcp/ssin/74010414733?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", String::class.java, passPhrase)
+        val getHcp = this.restTemplate.exchange("http://localhost:$port/ab/hcp/ssin/74010414733", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
         Assertions.assertThat(getHcp != null && getHcp.length>2 && getHcp.startsWith("{"))
         val hcp = gson.fromJson(getHcp, HealthcareParty::class.java)
         Assertions.assertThat("DUCHATEAU").isEqualToIgnoringCase(hcp.lastName)
@@ -72,10 +74,10 @@ class AddressbookControllerTest : EhealthTest() {
     @Test
     fun getOrgByHce() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getOrg = this.restTemplate.getForObject("http://localhost:$port/ab/org/nihii/71072393?keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", String::class.java, passPhrase)
+        val getOrg = this.restTemplate.exchange("http://localhost:$port/ab/org/nihii/71072393",HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
         Assertions.assertThat(getOrg != null && getOrg.length>2 && getOrg.startsWith("{"))
         val hcp = gson.fromJson(getOrg, HealthcareParty::class.java)
-        Assertions.assertThat("Clinique Ste-Anne St-Remi").isEqualToIgnoringCase(hcp.name)
+        Assertions.assertThat("CENTRE HOSPITALIER INTERREGIONAL EDITH CAVELL").isEqualToIgnoringCase(hcp.name)
         Assertions.assertThat("HOSPITAL").isEqualToIgnoringCase(hcp.type)
         Assertions.assertThat("71072393").isEqualToIgnoringCase(hcp.ehp)
     }

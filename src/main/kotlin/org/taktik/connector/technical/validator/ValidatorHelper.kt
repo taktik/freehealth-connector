@@ -139,10 +139,10 @@ class ValidatorHelper private constructor() {
             if (collector.hasExceptions("ERROR", "FATAL")) {
                 val sb = StringBuilder()
                 val validationErrors = collector.getExceptionList("ERROR", "FATAL")
-                val `i$` = validationErrors.iterator()
+                val iterator = validationErrors.iterator()
 
-                while (`i$`.hasNext()) {
-                    val exception = `i$`.next() as String
+                while (iterator.hasNext()) {
+                    val exception = iterator.next() as String
                     LOG.error(exception)
                     sb.append(exception)
                     sb.append(", ")

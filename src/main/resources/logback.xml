@@ -8,4 +8,5 @@
 	<logger name="org.taktik.connector.technical.ws.impl" level="WARN" />
 	<logger name="be.fgov.ehealth.etee.crypto" level="WARN" />
 	<logger name="org.taktik.connector.business.hubv3.service" level="DEBUG" />
+	<logger name="org.taktik.connector.technical.validator" level="DEBUG" />
 </configuration>

@@ -427,10 +427,7 @@ class Chapter4ControllerTest : EhealthTest() {
         val paragraph = paragraphDesc.first().paragraphName
 
         val results = getNisses(0)[2].let {
-            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?keystoreIdhcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -438,16 +435,13 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&civicsVersion=$civic" +
                 "&verses=${"1007"}" +
                 "&incomplete=false"+
-                "&start=$sixMonth",{},AgreementResponse::class.java)
+                "&start=$sixMonth", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
         }
         Assertions.assertThat(results!!.errors).isNull()
         Assertions.assertThat(results!!.transactions[0].end).isGreaterThan(results!!.transactions[0].start)
 
         val results2 = getNisses(0)[2].let {
-            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?keystoreIdhcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -455,16 +449,13 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&civicsVersion=$civic" +
                 "&verses=${"1007"}" +
                 "&incomplete=false"+
-                "&start=$threeMonth",{},AgreementResponse::class.java)
+                "&start=$threeMonth", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
         }
         Assertions.assertThat(results2!!.errors).isNotEmpty.isNotNull
         Assertions.assertThat(results2!!.errors).isEqualTo(401)
 
         val results3 = getNisses(0)[2].let {
-            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"extension"}/$paragraph?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"extension"}/$paragraph?keystoreIdhcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -473,14 +464,11 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&verses=${"1008"}" +
                 "&incomplete=false"+
                 "&start=${Instant.parse("${results.transactions[0].end}").plus(5,ChronoUnit.DAYS).toEpochMilli()}"+
-                "&decisionReference=${results.transactions[0].decisionReference}",{},AgreementResponse::class.java)
+                "&decisionReference=${results.transactions[0].decisionReference}", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
         }
 
         val results4 = getNisses(0)[2].let {
-            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"extension"}/$paragraph?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"extension"}/$paragraph?keystoreIdhcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -490,14 +478,11 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&incomplete=false"+
                 "&start=${Instant.parse("${results.transactions[0].end}").plus(1,ChronoUnit.DAYS).toEpochMilli()}"+
                 "&end=${Instant.parse("${results.transactions[0].end}").plus(1,ChronoUnit.DAYS).plus(6,ChronoUnit.MONTHS).toEpochMilli()}" +
-                "&decisionReference=${results.transactions[0].decisionReference}",{},AgreementResponse::class.java)
+                "&decisionReference=${results.transactions[0].decisionReference}", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
         }
 
         val results5 = getNisses(0)[2].let{
-            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"extension"}/$paragraph?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"extension"}/$paragraph?keystoreIdhcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -506,7 +491,7 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&verses=${"1008"}" +
                 "&incomplete=true"+
                 "&start=${Instant.parse("${results.transactions[0].end}").plus(1,ChronoUnit.DAYS).toEpochMilli()}"+
-                "&decisionReference=${results.transactions[0].decisionReference}",{},AgreementResponse::class.java)
+                "&decisionReference=${results.transactions[0].decisionReference}", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
         }
 
         val results6 = getNisses(0)[2].let {
@@ -543,10 +528,7 @@ class Chapter4ControllerTest : EhealthTest() {
         val paragraph = paragraphDesc.first().paragraphName
 
         val results = getNisses(1)[2].let {
-            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?keystoreIdhcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -554,7 +536,7 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&civicsVersion=$civic" +
                 "&verses=${"11897"}" +
                 "&incomplete=false"+
-                "&start=$now",{},AgreementResponse::class.java)
+                "&start=$now", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
         }
 
         println("scenario 10 \n====================")
@@ -577,10 +559,7 @@ class Chapter4ControllerTest : EhealthTest() {
         val paragraph = paragraphDesc.first().paragraphName
 
         val resultsRequest = getNisses(2)[2].let {
-            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?keystoreIdhcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -588,7 +567,7 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&civicsVersion=$civic" +
                 "&verses=${"154"}" +
                 "&incomplete=true"+
-                "&start=$threeDays",{},AgreementResponse::class.java)
+                "&start=$threeDays", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
         }
         Assertions.assertThat(resultsRequest!!.errors).isNull()
         Assertions.assertThat(resultsRequest!!.transactions[0].decisionReference).isNotEmpty().isNotNull()
@@ -625,10 +604,7 @@ class Chapter4ControllerTest : EhealthTest() {
         val paragraph = paragraphDesc.first().paragraphName
 
         val resultsRequest = getNisses(3)[2].let {
-            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?keystoreIdhcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -636,14 +612,11 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&civicsVersion=$civic" +
                 "&verses=${"11897"}" +
                 "&incomplete=false"+
-                "&start=$now",{},AgreementResponse::class.java)
+                "&start=$now", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
         }
 
         val resultsRequest2 = getNisses(3)[2].let {
-            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"complimentaryannexe"}/$paragraph?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"complimentaryannexe"}/$paragraph?keystoreIdhcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -652,14 +625,11 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&verses=${"11897"}" +
                 "&incomplete=false"+
                 "&start=$now"+
-                "&ioRequestReference=${resultsRequest!!.transactions[0].ioRequestReference},",{},AgreementResponse::class.java)
+                "&ioRequestReference=${resultsRequest!!.transactions[0].ioRequestReference},", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
         }
 
         val resultsRequest3 = getNisses(3)[2].let {
-            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"complimentaryannexe"}/$paragraph?keystoreId=$keystoreId" +
-                "&tokenId=$tokenId" +
-                "&passPhrase=$passPhrase" +
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"complimentaryannexe"}/$paragraph?keystoreIdhcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
@@ -668,7 +638,7 @@ class Chapter4ControllerTest : EhealthTest() {
                 "&verses=${"11897"}" +
                 "&incomplete=true"+
                 "&start=$now"+
-                "&ioRequestReference=${resultsRequest!!.transactions[0].ioRequestReference},",{},AgreementResponse::class.java)
+                "&ioRequestReference=${resultsRequest!!.transactions[0].ioRequestReference},", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
         }
 
         println("scenario 12 \n====================")
@@ -791,10 +761,7 @@ class Chapter4ControllerTest : EhealthTest() {
 //        Assertions.assertThat(results!!.transactions[0].end).isAfter(results!!.transactions[0].start)
 //
 //        val results2 = getNisses(0)[2].let {
-//            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?keystoreId=$keystoreId" +
-//                "&tokenId=$tokenId" +
-//                "&passPhrase=$passPhrase" +
-//                "&hcpNihii=$nihii1" +
+//            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"newrequest"}/$paragraph?hcpNihii=$nihii1" +
 //                "&hcpSsin=$ssin1" +
 //                "&hcpFirstName=$firstName1" +
 //                "&hcpLastName=$lastName1" +
@@ -802,16 +769,13 @@ class Chapter4ControllerTest : EhealthTest() {
 //                "&civicsVersion=$civic" +
 //                "&verses=${"1007"}" +
 //                "&incomplete=false"+
-//                "&start=$threeMonth",{},AgreementResponse::class.java)
+//                "&start=$threeMonth", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
 //        }
 //        Assertions.assertThat(results2!!.errors).isNotEmpty.isNotNull
 //        Assertions.assertThat(results2!!.errors).isEqualTo(401)
 //
 //        val results3 = getNisses(0)[2].let {
-//            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"extension"}/$paragraph?keystoreId=$keystoreId" +
-//                "&tokenId=$tokenId" +
-//                "&passPhrase=$passPhrase" +
-//                "&hcpNihii=$nihii1" +
+//            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"extension"}/$paragraph?hcpNihii=$nihii1" +
 //                "&hcpSsin=$ssin1" +
 //                "&hcpFirstName=$firstName1" +
 //                "&hcpLastName=$lastName1" +
@@ -820,14 +784,11 @@ class Chapter4ControllerTest : EhealthTest() {
 //                "&verses=${"1008"}" +
 //                "&incomplete=false"+
 //                "&start=${Instant.parse("${results.transactions[0].end}").plus(5,ChronoUnit.DAYS).toEpochMilli()}"+
-//                "&decisionReference=${results.transactions[0].decisionReference}",{},AgreementResponse::class.java)
+//                "&decisionReference=${results.transactions[0].decisionReference}", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
 //        }
 //
 //        val results4 = getNisses(0)[2].let {
-//            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"extension"}/$paragraph?keystoreId=$keystoreId" +
-//                "&tokenId=$tokenId" +
-//                "&passPhrase=$passPhrase" +
-//                "&hcpNihii=$nihii1" +
+//            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"extension"}/$paragraph?hcpNihii=$nihii1" +
 //                "&hcpSsin=$ssin1" +
 //                "&hcpFirstName=$firstName1" +
 //                "&hcpLastName=$lastName1" +
@@ -837,14 +798,11 @@ class Chapter4ControllerTest : EhealthTest() {
 //                "&incomplete=false"+
 //                "&start=${Instant.parse("${results.transactions[0].end}").plus(1,ChronoUnit.DAYS).toEpochMilli()}"+
 //                "&end=${Instant.parse("${results.transactions[0].end}").plus(1,ChronoUnit.DAYS).plus(6,ChronoUnit.MONTHS).toEpochMilli()}" +
-//                "&decisionReference=${results.transactions[0].decisionReference}",{},AgreementResponse::class.java)
+//                "&decisionReference=${results.transactions[0].decisionReference}", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
 //        }
 //
 //        val results5 = getNisses(0)[2].let{
-//            this.restTemplate.postForObject("http://localhost:$port/chap4/new/$it/$civic/${"extension"}/$paragraph?keystoreId=$keystoreId" +
-//                "&tokenId=$tokenId" +
-//                "&passPhrase=$passPhrase" +
-//                "&hcpNihii=$nihii1" +
+//            this.restTemplate.exchange("http://localhost:$port/chap4/new/$it/$civic/${"extension"}/$paragraph?hcpNihii=$nihii1" +
 //                "&hcpSsin=$ssin1" +
 //                "&hcpFirstName=$firstName1" +
 //                "&hcpLastName=$lastName1" +
@@ -853,7 +811,7 @@ class Chapter4ControllerTest : EhealthTest() {
 //                "&verses=${"1008"}" +
 //                "&incomplete=true"+
 //                "&start=${Instant.parse("${results.transactions[0].end}").plus(1,ChronoUnit.DAYS).toEpochMilli()}"+
-//                "&decisionReference=${results.transactions[0].decisionReference}",{},AgreementResponse::class.java)
+//                "&decisionReference=${results.transactions[0].decisionReference}", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),AgreementResponse::class.java).body
 //        }
 //
 //        val results6 = getNisses(0)[2].let {
