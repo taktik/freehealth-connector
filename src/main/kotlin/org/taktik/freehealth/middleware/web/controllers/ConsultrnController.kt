@@ -48,7 +48,7 @@ class ConsultrnController(val consultRnService: ConsultRnService) {
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @GetMapping("/{ssin}")
+    @GetMapping("/{ssin}", produces = ["application/json"])
     fun identify(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -57,7 +57,7 @@ class ConsultrnController(val consultRnService: ConsultRnService) {
                 ) = consultRnService.identify(keystoreId, tokenId, passPhrase, ssin)
 
 
-    @GetMapping("/{dateOfBirth}/{lastName}")
+    @GetMapping("/{dateOfBirth}/{lastName}", produces = ["application/json"])
     fun search(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -72,7 +72,7 @@ class ConsultrnController(val consultRnService: ConsultRnService) {
               ) = consultRnService.search(keystoreId, tokenId, passPhrase, dateOfBirth, lastName, firstName, middleName, gender ?: "UNKNOWN", tolerance ?: 0, limit ?: 20)
 
 
-    @PostMapping("")
+    @PostMapping("", produces = ["application/json"])
     fun registerPerson(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
