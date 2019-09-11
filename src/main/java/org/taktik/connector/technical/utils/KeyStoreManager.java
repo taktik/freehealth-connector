@@ -43,20 +43,16 @@ public class KeyStoreManager {
          } else {
             errorValue = TechnicalConnectorExceptionValues.ERROR_KEYSTORE_LOAD;
             LOG.debug(MessageFormat.format(errorValue.getMessage(), "<empty>"));
-            throw new TechnicalConnectorException(errorValue, new Object[]{"<empty>"});
+            throw new TechnicalConnectorException(errorValue, "<empty>");
          }
       } catch (KeyStoreOpeningException var6) {
          errorValue = TechnicalConnectorExceptionValues.ERROR_KEYSTORE_PASSWORD;
          LOG.debug(MessageFormat.format(errorValue.getMessage(), pathKeystore));
-         throw new TechnicalConnectorException(errorValue, var6, new Object[]{pathKeystore});
-      } catch (CertificateException var7) {
+         throw new TechnicalConnectorException(errorValue, var6, pathKeystore);
+      } catch (CertificateException | IOException var7) {
          errorValue = TechnicalConnectorExceptionValues.ERROR_KEYSTORE_LOAD;
          LOG.debug(MessageFormat.format(errorValue.getMessage(), pathKeystore));
-         throw new TechnicalConnectorException(errorValue, var7, new Object[]{pathKeystore});
-      } catch (IOException var8) {
-         errorValue = TechnicalConnectorExceptionValues.ERROR_KEYSTORE_LOAD;
-         LOG.debug(MessageFormat.format(errorValue.getMessage(), pathKeystore));
-         throw new TechnicalConnectorException(errorValue, var8, new Object[]{pathKeystore});
+         throw new TechnicalConnectorException(errorValue, var7, pathKeystore);
       }
    }
 

@@ -9,6 +9,8 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
@@ -35,7 +37,7 @@ class STSControllerTest : EhealthTest() {
         val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("${ssin1}.acc-p12").path, port, restTemplate!!)
         val ssin = ssin1
         val passPhrase = password1
-        val res = this.restTemplate.getForObject("http://localhost:$port/sts/token/$keystoreId?passPhrase={passPhrase}&ssin=$ssin", String::class.java, passPhrase)
+        val res = this.restTemplate.exchange("http://localhost:$port/sts/token?ssin=$ssin", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, null, passPhrase)), String::class.java).body
         assertThat(res != null)
         val saml = gson.fromJson(res, SamlTokenResult::class.java)
         assertThat(saml.tokenId).isNotNull()

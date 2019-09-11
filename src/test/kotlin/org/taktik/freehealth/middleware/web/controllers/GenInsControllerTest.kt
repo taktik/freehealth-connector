@@ -267,18 +267,15 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(0).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpName=$name1" +
                 "&date=${Instant.parse("2017-01-15T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"doctor"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"doctor"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
-        genIns.map{
+        genIns.forEach {
             Assertions.assertThat(it.paymentByIo).isFalse()
         }
 
@@ -290,14 +287,11 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(1).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpName=$name1" +
                 "&date=${Instant.parse("2017-01-15T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"doctor"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"doctor"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -314,14 +308,11 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(2).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpName=$name1" +
                 "&date=${Instant.parse("2017-01-15T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"doctor"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"doctor"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -338,14 +329,11 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(3).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpName=$name1" +
                 "&date=${Instant.parse("2017-01-15T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"doctor"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"doctor"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -364,14 +352,11 @@ class GenInsControllerTest : EhealthTest() {
         var index=0;
 
         val genIns = getNisses(4).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/${io[index++]}/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/genins/${io[index++]}/$it?hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpName=$name1" +
                 "&date=${Instant.parse("2017-01-15T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"doctor"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"doctor"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase).body
 
         }
 
@@ -388,14 +373,11 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(5).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpName=$name1" +
                 "&date=${Instant.parse("2017-01-15T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"doctor"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"doctor"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -412,14 +394,11 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(6).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii1" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpName=$name1" +
                 "&date=${Instant.parse("2017-01-15T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"doctor"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"doctor"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -438,15 +417,12 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(7).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -464,15 +440,12 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(8).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -490,15 +463,12 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(9).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -517,15 +487,12 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(10).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -543,15 +510,12 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(11).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -569,15 +533,12 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(12).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -594,15 +555,12 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(13).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -619,15 +577,12 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(14).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -644,15 +599,12 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(15).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -669,15 +621,12 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(16).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -696,15 +645,12 @@ class GenInsControllerTest : EhealthTest() {
         var index=0;
 
         val genIns = getNisses(17).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/${io[index++]}/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/${io[index++]}/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -721,15 +667,12 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(18).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
@@ -749,15 +692,12 @@ class GenInsControllerTest : EhealthTest() {
 
 
         val genIns = getNisses(19).map{
-            this.restTemplate.getForObject("http://localhost:$port/genins/$it?keystoreId=$keystoreId"+
-                "&tokenId=$tokenId"+
-                "&hcpNihii=$nihii3" +
+            this.restTemplate.exchange("http://localhost:$port/genins/$it?hcpNihii=$nihii3" +
                 "&hcpSsin=$ssin3" +
                 "&hcpName=$name3" +
                 "&date=${Instant.parse("2016-01-01T00:00:00.00Z").toEpochMilli()}"+
                 "&endDate=${Instant.parse("2016-12-31T00:00:00.00Z").toEpochMilli()}"+
-                "&hcpQuality=${"medicalhouse"}" +
-                "&passPhrase={passPhrase}", InsurabilityInfoDto::class.java, passPhrase)
+                "&hcpQuality=${"medicalhouse"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java).body
 
         }
 
