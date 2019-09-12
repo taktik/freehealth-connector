@@ -30,6 +30,7 @@ import org.taktik.freehealth.middleware.service.AddressbookService
 import ch.qos.logback.classic.LoggerContext
 import org.apache.commons.logging.LogFactory
 import org.slf4j.LoggerFactory
+import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
 import org.taktik.freehealth.middleware.dao.User
 
@@ -39,7 +40,7 @@ import org.taktik.freehealth.middleware.dao.User
 class AdminController(val addressbookService: AddressbookService) {
     private val log = LogFactory.getLog(this.javaClass)
 
-    @PostMapping("/loglevel/{loglevel}")
+    @PostMapping("/loglevel/{loglevel}", produces = [MediaType.TEXT_PLAIN_VALUE])
     @Throws(Exception::class)
     fun loglevel(@PathVariable("loglevel") logLevel: String, @RequestParam(value = "package") packageName: String): String {
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User

@@ -21,6 +21,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -43,7 +44,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
     @ExceptionHandler(MissingTokenException::class)
     @ResponseBody fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @GetMapping("/search/hcp/{lastName}")
+    @GetMapping("/search/hcp/{lastName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun searchHcp(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -55,7 +56,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, lastName, firstName, type ?: "PHYSICIAN"
     )
 
-    @GetMapping("/search/org/{name}")
+    @GetMapping("/search/org/{name}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun searchOrg(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -66,7 +67,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, name, type ?: "HOSPITAL"
     )
 
-    @GetMapping("/hcp/nihii/{nihii}")
+    @GetMapping("/hcp/nihii/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getHcpByNihii(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -77,7 +78,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, nihii, null, language ?: "fr"
     )
 
-    @GetMapping("/hcp/ssin/{ssin}")
+    @GetMapping("/hcp/ssin/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getHcpBySsin(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -88,7 +89,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, null, ssin, language ?: "fr"
     )
 
-    @GetMapping("/org/nihii/{nihii}")
+    @GetMapping("/org/nihii/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getOrgByNihii(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -99,7 +100,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, null, null, nihii, language ?: "fr"
     )
 
-    @GetMapping("/org/cbe/{cbe}")
+    @GetMapping("/org/cbe/{cbe}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getOrgByCbe(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -110,7 +111,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, null, cbe, null, language ?: "fr"
     )
 
-    @GetMapping("/org/ehp/{ehp}")
+    @GetMapping("/org/ehp/{ehp}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getOrgByEhp(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
