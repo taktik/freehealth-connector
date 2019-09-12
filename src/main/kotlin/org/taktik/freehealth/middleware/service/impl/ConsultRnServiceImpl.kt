@@ -2,6 +2,7 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.commons._1_0.core.PeriodType
 import be.fgov.ehealth.consultrn._1_0.core.EncodedSSINType
+import be.fgov.ehealth.consultrn._1_0.core.ErrorType
 import be.fgov.ehealth.consultrn._1_0.core.GenderEnumType
 import be.fgov.ehealth.consultrn._1_0.core.GenderType
 import be.fgov.ehealth.consultrn._1_0.core.InscriptionType
@@ -25,6 +26,9 @@ import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.springframework.stereotype.Service
+import org.taktik.connector.business.consultrn.exception.identifyperson.ConsultrnIdentifyPersonException
+import org.taktik.connector.business.consultrn.exception.manageperson.ConsultrnRegisterPersonException
+import org.taktik.connector.business.consultrn.exception.phoneticsearch.ConsultrnPhoneticSearchException
 import org.taktik.connector.business.consultrn.service.impl.ConsultrnServiceImpl
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.freehealth.middleware.dto.consultrn.PersonMid
@@ -43,7 +47,7 @@ class ConsultRnServiceImpl(private val stsService: STSService) : ConsultRnServic
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for GMD operations")
 
-        return backingService.search(samlToken, SearchBySSINRequest().apply {
+        return try { backingService.search(samlToken, SearchBySSINRequest().apply {
             applicationID = "0"
             inscription = InscriptionType().apply {
                 this.ssin = EncodedSSINType().apply {
@@ -57,7 +61,9 @@ class ConsultRnServiceImpl(private val stsService: STSService) : ConsultRnServic
                     endDate = begin.plusYears(2)
                 }
             }
-        })
+        }) } catch (ex: ConsultrnIdentifyPersonException) {
+            ex.searchBySSINReply
+        }
     }
 
     override fun search(keystoreId: UUID,
@@ -74,7 +80,7 @@ class ConsultRnServiceImpl(private val stsService: STSService) : ConsultRnServic
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for GMD operations")
 
-        return backingService.search(samlToken, SearchPhoneticRequest().apply {
+        return try { backingService.search(samlToken, SearchPhoneticRequest().apply {
             applicationID = "0"
             phoneticCriteria = PhoneticCriteriaType().apply {
                 this.lastName = lastName
@@ -85,7 +91,9 @@ class ConsultRnServiceImpl(private val stsService: STSService) : ConsultRnServic
                 this.maximum = limit.toBigInteger()
                 this.tolerance = tolerance.toBigInteger()
             }
-        })
+        }) } catch (ex: ConsultrnPhoneticSearchException) {
+            ex.searchPhoneticReply
+        }
     }
 
     override fun registerPerson(
@@ -98,35 +106,52 @@ class ConsultRnServiceImpl(private val stsService: STSService) : ConsultRnServic
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for GMD operations")
 
-        return backingService.registerPerson(samlToken, RegisterPersonRequest().apply {
-            id = "ID${System.currentTimeMillis()}"
-            applicationID = "0"
-            issueInstant = DateTime.now()
-            person = PersonRequestType().apply {
-                name = PersonNameRequestType().apply {
-                    this.lastName = mid.lastName
-                    this.firstName = mid.firstName
-                }
-                birth = BirthRequestType().apply {
-                    birthDate = mid.dateOfBirth.toString().replace(Regex("(....)(..)(..)"),"$1-$2-$3")
-                    birthPlace = mid.birthPlace?.let {
-                        WhereRequestType().apply {
+        return try {
+            backingService.registerPerson(samlToken, RegisterPersonRequest().apply {
+                id = "ID${System.currentTimeMillis()}"
+                applicationID = "0"
+                issueInstant = DateTime.now()
+                person = PersonRequestType().apply {
+                    name = PersonNameRequestType().apply {
+                        this.lastName = mid.lastName
+                        this.firstName = mid.firstName
+                    }
+                    birth = BirthRequestType().apply {
+                        birthDate = mid.dateOfBirth.toString().replace(Regex("(....)(..)(..)"), "$1-$2-$3")
+                        birthPlace = mid.birthPlace?.let {
+                            WhereRequestType().apply {
+                                countryCode = it.countryCode
+                                cityCode = it.cityCode
+                                it.cityName?.let { cityNames.add(NameType().apply { value = it }) }
+                            }
+                        }
+                    }
+                    mid.nationalityCode?.let { nationalities =
+                        NationalitiesType().apply {
+                            nationalities.add(NationalityType().apply {
+                                nationalityCode =
+                                    it
+                            })
+                        }
+                    }
+                    this.gender =
+                        mid.gender?.let {
+                            be.fgov.ehealth.consultrn.commons.core.v3.GenderType()
+                                .apply { genderCode = it.substring(0, 1).toUpperCase() }
+                        }
+                    this.residentialAddress = mid.residentialAddress?.let {
+                        ResidentialAddressRequestType().apply {
                             countryCode = it.countryCode
                             cityCode = it.cityCode
-                            it.cityName?.let { cityNames.add( NameType().apply { value = it }) }
+                            postalCode = it.postalCode
+                            it.cityName?.let { cityNames.add(NameType().apply { value = it }) }
+                            it.streetName?.let { streetNames.add(NameType().apply { value = it }) }
                         }
                     }
                 }
-                mid.nationalityCode?.let { nationalities = NationalitiesType().apply { nationalities.add(NationalityType().apply { nationalityCode = it }) } }
-                this.gender = mid.gender?.let { be.fgov.ehealth.consultrn.commons.core.v3.GenderType().apply { genderCode = it.substring(0,1).toUpperCase() } }
-                this.residentialAddress = mid.residentialAddress?.let { ResidentialAddressRequestType().apply {
-                    countryCode = it.countryCode
-                    cityCode = it.cityCode
-                    postalCode = it.postalCode
-                    it.cityName?.let { cityNames.add(NameType().apply { value = it })}
-                    it.streetName?.let { streetNames.add(NameType().apply { value = it })}
-                } }
-            }
-        })
+            })
+        } catch (ex: ConsultrnRegisterPersonException) {
+            ex.registerPersonResponse
+        }
     }
 }
