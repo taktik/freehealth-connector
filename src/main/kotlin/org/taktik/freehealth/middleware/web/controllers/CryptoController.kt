@@ -48,7 +48,7 @@ class CryptoController(val cryptoService: CryptoService) {
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @PostMapping("/encrypt/{identifier}/{id}", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
+    @PostMapping("/encrypt/{identifier}/{id}", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun encrypt(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
@@ -58,7 +58,7 @@ class CryptoController(val cryptoService: CryptoService) {
         @RequestBody plainData: ByteArray
                ) = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId ?: "" }, plainData)
 
-    @PostMapping("/encryptFile/{identifier}/{id}")
+    @PostMapping("/encryptFile/{identifier}/{id}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun encryptFile(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
@@ -69,14 +69,14 @@ class CryptoController(val cryptoService: CryptoService) {
                ) = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId ?: "" }, plainData.bytes)
 
 
-    @PostMapping("/decrypt", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
+    @PostMapping("/decrypt", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun decrypt(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestBody encryptedData: ByteArray
                ) = cryptoService.decrypt(keystoreId, passPhrase, encryptedData)
 
-    @PostMapping("/decryptFile")
+    @PostMapping("/decryptFile", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun decryptFile(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,

@@ -50,7 +50,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
     @ExceptionHandler(MissingTokenException::class)
     @ResponseBody fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @PostMapping("/patient/{lastName}/{patientSsin}")
+    @PostMapping("/patient/{lastName}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun putPatient(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -85,7 +85,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         dateOfBirth = FuzzyValues.getLocalDateTime(dateOfBirth)!!
     )
 
-    @GetMapping("/patient/{patientSsin}")
+    @GetMapping("/patient/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPatient(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -112,7 +112,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         patientSsin = patientSsin
     )
 
-    @GetMapping("/hcpconsent/{hcpNihii}")
+    @GetMapping("/hcpconsent/{hcpNihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getHcpConsent(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -137,7 +137,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpZip = hcpZip
     )
 
-    @PostMapping("/consent/{patientSsin}")
+    @PostMapping("/consent/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerPatientConsent(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -166,7 +166,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         patientEidCardNumber = patientEidCardNumber
     )
 
-    @GetMapping("/consent/{patientSsin}")
+    @GetMapping("/consent/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPatientConsent(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -193,7 +193,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         patientSsin = patientSsin
     )
 
-    @PostMapping("/therlink/{hcpNihii}/{patientSsin}")
+    @PostMapping("/therlink/{hcpNihii}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerTherapeuticLink(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -222,7 +222,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         patientEidCardNumber = patientEidCardNumber
     )
 
-    @GetMapping("/therlink/{hcpNihii}/{patientSsin}")
+    @GetMapping("/therlink/{hcpNihii}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getTherapeuticLinks(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -258,7 +258,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
     }
 
 
-    @GetMapping("/list/{patientSsin}")
+    @GetMapping("/list/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getTransactionsList(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -341,7 +341,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         }
     }
 
-    @GetMapping("/t/{ssin}/{sv}/{sl}/kmehr")
+    @GetMapping("/t/{ssin}/{sv}/{sl}/kmehr", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getTransactionMessage(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -415,7 +415,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         )
     }
 
-    @PostMapping("/t/{hubId}/{patientSsin}", consumes = [MediaType.APPLICATION_XML_VALUE])
+    @PostMapping("/t/{hubId}/{patientSsin}", consumes = [MediaType.APPLICATION_XML_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun putTransaction(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -490,7 +490,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         ).toXMLByteArray(it).toString(Charsets.UTF_8)
     }
 
-    @GetMapping("/ts/{ssin}/{sv}/{sl}/kmehr")
+    @GetMapping("/ts/{ssin}/{sv}/{sl}/kmehr", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getTransactionSetMessage(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -525,7 +525,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         value = id
     )
 
-    @PostMapping("/ts/{hubId}/{patientSsin}", consumes = [MediaType.APPLICATION_XML_VALUE])
+    @PostMapping("/ts/{hubId}/{patientSsin}", consumes = [MediaType.APPLICATION_XML_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun putTransactionSet(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -558,7 +558,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         transaction = message
     )
 
-    @GetMapping("/trail")
+    @GetMapping("/trail", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPatientAuditTrail(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -603,7 +603,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hubPackageId = hubPackageId
                                                                      )
 
-    @PostMapping("/access", consumes = [MediaType.APPLICATION_XML_VALUE])
+    @PostMapping("/access", consumes = [MediaType.APPLICATION_XML_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun putAccessRight(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -640,7 +640,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hubPackageId = hubPackageId
                                                          )
 
-    @GetMapping("/access")
+    @GetMapping("/access", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getAccessRight(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId")keystoreId: UUID,

@@ -61,7 +61,7 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
 
     val log = LoggerFactory.getLogger(this .javaClass)
 
-    @GetMapping("/sam/docpreviews/{chapterName}/{paragraphName}")
+    @GetMapping("/sam/docpreviews/{chapterName}/{paragraphName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getAddedDocuments(
         @PathVariable chapterName: String,
         @PathVariable paragraphName: String): List<AddedDocumentPreview> =
@@ -85,38 +85,38 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         }
     }
 
-    @GetMapping("/sam/search/{searchString}/{language}")
+    @GetMapping("/sam/search/{searchString}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun findParagraphs(
         @PathVariable searchString: String,
         @PathVariable language: String): List<ParagraphPreview> =
         chapter4Service.findParagraphs(searchString, language)
 
-    @GetMapping("/sam/bycnk/{cnk}/{language}")
+    @GetMapping("/sam/bycnk/{cnk}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun findParagraphsWithCnk(
         @PathVariable cnk: Long,
         @PathVariable language: String): List<ParagraphPreview> =
         chapter4Service.findParagraphsWithCnk(cnk, language)
 
-    @GetMapping("/sam/mpps/{chapterName}/{paragraphName}")
+    @GetMapping("/sam/mpps/{chapterName}/{paragraphName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getMppsForParagraph(
         @PathVariable chapterName: String,
         @PathVariable paragraphName: String) : List<MppPreview> =
         chapter4Service.getMppsForParagraph(chapterName, paragraphName)
 
-    @GetMapping("/sam/vtms/{chapterName}/{paragraphName}/{language}")
+    @GetMapping("/sam/vtms/{chapterName}/{paragraphName}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getVtmNamesForParagraph(
         @PathVariable chapterName: String,
         @PathVariable paragraphName: String,
         @PathVariable language: String) : List<String> =
         chapter4Service.getVtmNamesForParagraph(chapterName, paragraphName, language)
 
-    @GetMapping("/sam/info/{chapterName}/{paragraphName}")
+    @GetMapping("/sam/info/{chapterName}/{paragraphName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getParagraphInfos(
         @PathVariable chapterName: String,
         @PathVariable paragraphName: String) : ParagraphInfos? =
         chapter4Service.getParagraphInfos(chapterName, paragraphName)
 
-    @GetMapping("/consult/{patientSsin}")
+    @GetMapping("/consult/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun agreementRequestsConsultation(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -153,7 +153,7 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         end = end,
         reference = reference)
 
-    @PostMapping("/new/{patientSsin}/{civicsVersion}/{requestType}/{paragraph}")
+    @PostMapping("/new/{patientSsin}/{civicsVersion}/{requestType}/{paragraph}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun requestAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
                          @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
                          @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,

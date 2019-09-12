@@ -21,6 +21,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
@@ -53,7 +54,7 @@ class RecipeController(val recipeService: RecipeService) {
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @PostMapping("")
+    @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun createPrescription(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody prescription: PrescriptionRequest): Prescription =
         recipeService.createPrescription(
             keystoreId = keystoreId,
@@ -73,7 +74,7 @@ class RecipeController(val recipeService: RecipeService) {
             deliveryDate = prescription.deliveryDate?.let {FuzzyValues.getLocalDateTime(it)}
         )
 
-    @GetMapping("")
+    @GetMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listOpenPrescriptions(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Prescription> =
         recipeService.listOpenPrescriptions(
             keystoreId = keystoreId,
@@ -85,7 +86,7 @@ class RecipeController(val recipeService: RecipeService) {
             passPhrase = passPhrase
         )
 
-    @GetMapping("/patient")
+    @GetMapping("/patient", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listOpenPrescriptionsByPatient(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam patientId: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Prescription> =
         recipeService.listOpenPrescriptions(
             keystoreId = keystoreId,
@@ -98,7 +99,7 @@ class RecipeController(val recipeService: RecipeService) {
             patientId = patientId
         )
 
-    @PostMapping("/notify/{rid}")
+    @PostMapping("/notify/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendNotification(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -153,7 +154,7 @@ class RecipeController(val recipeService: RecipeService) {
             feedbackFlag = feedbackFlag
         )
 
-    @GetMapping("/all/feedbacks")
+    @GetMapping("/all/feedbacks", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listFeedbacks(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Feedback> =
         recipeService.listFeedbacks(
             keystoreId = keystoreId,
@@ -165,13 +166,13 @@ class RecipeController(val recipeService: RecipeService) {
             passPhrase = passPhrase
         )
 
-    @GetMapping("/gal/{galId}")
+    @GetMapping("/gal/{galId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getGalToAdministrationUnit(@PathVariable galId: String): Code? = recipeService.getGalToAdministrationUnit(galId)
 
-    @GetMapping("/{rid}")
+    @GetMapping("/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPrescription(@PathVariable rid: String): PrescriptionFullWithFeedback? = recipeService.getPrescription(rid)
 
-    @GetMapping("/prescription/{rid}")
+    @GetMapping("/prescription/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPrescriptionMessage(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @PathVariable rid: String): org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage? =
         recipeService.getPrescriptionMessage(keystoreId = keystoreId,
             tokenId = tokenId,
