@@ -21,6 +21,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import org.slf4j.LoggerFactory
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -39,25 +40,25 @@ import java.util.*
 class STSController(private val stsService: STSService) {
     val log = LoggerFactory.getLogger(this.javaClass)
 
-    @PostMapping("/keystore")
+    @PostMapping("/keystore", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun uploadKeystore(@RequestParam file: MultipartFile) = UUIDType(stsService.uploadKeystore(file))
 
-    @GetMapping("/keystore/{keystoreId}/info")
+    @GetMapping("/keystore/{keystoreId}/info", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getKeystoreInfo(@PathVariable(name = "keystoreId") keystoreId:UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String) = stsService.getKeystoreInfo(keystoreId, passPhrase)
 
-    @GetMapping("/token")
+    @GetMapping("/token", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestParam(required = false) isMedicalHouse: Boolean?, @RequestParam(required = false) isGuardPost: Boolean?, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?) =
         stsService.requestToken(keystoreId, ssin, passPhrase, isMedicalHouse ?: false, isGuardPost ?: false, previousTokenId)
 
-    @PostMapping("/token")
+    @PostMapping("/token", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerToken(@RequestBody token: String, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID) {
         stsService.registerToken(tokenId, token)
     }
 
-    @GetMapping("/keystore/check")
+    @GetMapping("/keystore/check", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun checkKeystoreExist(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID) = stsService.checkIfKeystoreExist(keystoreId)
 
-    @GetMapping("/token/check")
+    @GetMapping("/token/check", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun checkTokenValid(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID) = stsService.checkTokenValid(tokenId)
 
 }

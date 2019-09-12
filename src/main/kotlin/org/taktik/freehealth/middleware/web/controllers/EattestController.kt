@@ -21,6 +21,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -46,7 +47,7 @@ class EattestController(val eattestService: EattestService) {
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @PostMapping("/send/{patientSsin}/verbose")
+    @PostMapping("/send/{patientSsin}/verbose", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendAttestWithResponse(
         @PathVariable patientSsin: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -93,7 +94,7 @@ class EattestController(val eattestService: EattestService) {
         attest
     )
 
-    @PostMapping("/send/{patientSsin}")
+    @PostMapping("/send/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendAttest(
         @PathVariable patientSsin: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

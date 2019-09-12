@@ -2,6 +2,7 @@ package org.taktik.freehealth.middleware.web.controllers
 
 import ma.glasnost.orika.MapperFacade
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.common.GenAsyncResponse
-import org.taktik.freehealth.middleware.dto.dmg.DmgAcknowledge
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.DmgService
 import java.util.*
@@ -28,11 +28,11 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @PostMapping("/register/{oa}")
+    @PostMapping("/register/{oa}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerDoctor(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @PathVariable oa: String, @RequestParam bic: String, @RequestParam iban: String) =
         dmgService.registerDoctor(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, oa = oa, bic = bic, iban = iban)
 
-    @GetMapping("")
+    @GetMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun consultDmg(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: String,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: String,
@@ -52,7 +52,7 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
             mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgConsultation::class.java)
         }
 
-    @PostMapping("/notify/{nomenclature}")
+    @PostMapping("/notify/{nomenclature}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun notifyDmg(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -80,7 +80,7 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
             mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgNotification::class.java)
         }
 
-    @PostMapping("/reqlist")
+    @PostMapping("/reqlist", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun postDmgsListRequest(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -95,17 +95,17 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
         dmgService.postDmgsListRequest(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, oa = oa, requestDate = requestDate?.let { Date(requestDate) }
             ?: Date()).let { mapper.map(it, GenAsyncResponse::class.java)}
 
-    @PostMapping("/messages")
+    @PostMapping("/messages", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getDmgMessages(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestBody messageNames: List<String>?) =
         dmgService.getDmgMessages(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, messageNames = messageNames).let {
             mapper.map(it, org.taktik.freehealth.middleware.dto.dmg.DmgsList::class.java)
         }
 
-    @PostMapping("/confirm/messages")
+    @PostMapping("/confirm/messages", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmDmgMessages(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestBody dmgMessagesHashes: List<String>) =
         dmgService.confirmDmgMessages(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, dmgMessagesHashes = dmgMessagesHashes)
 
-    @PostMapping("/confirm/acks")
+    @PostMapping("/confirm/acks", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmAcks(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @RequestBody dmgAcksHashes: List<String>) =
         dmgService.confirmAcks(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, dmgAcksHashes = dmgAcksHashes)
 }
