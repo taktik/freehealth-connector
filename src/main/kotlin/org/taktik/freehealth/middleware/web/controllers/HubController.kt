@@ -316,7 +316,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @PathVariable sv: String,
         @PathVariable sl: String,
         @RequestParam id: String
-    ): String? {
+    ): Kmehrmessage? {
         return hubService.getTransaction(
             endpoint = endpoint,
             keystoreId = keystoreId,
@@ -333,12 +333,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
             sv = sv,
             sl = sl,
             value = id
-        )?.let {
-            MarshallerHelper(
-                Kmehrmessage::class.java,
-                Kmehrmessage::class.java
-            ).toXMLByteArray(it).toString(Charsets.UTF_8)
-        }
+        )
     }
 
     @GetMapping("/t/{ssin}/{sv}/{sl}/kmehr", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -467,7 +462,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @PathVariable sv: String,
         @PathVariable sl: String,
         @RequestParam id: String
-    ): String? = hubService.getTransactionSet(
+    ): Kmehrmessage? = hubService.getTransactionSet(
         endpoint = endpoint,
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -483,12 +478,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         sv = sv,
         sl = sl,
         value = id
-    )?.let {
-        MarshallerHelper(
-            Kmehrmessage::class.java,
-            Kmehrmessage::class.java
-        ).toXMLByteArray(it).toString(Charsets.UTF_8)
-    }
+    )
 
     @GetMapping("/ts/{ssin}/{sv}/{sl}/kmehr", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getTransactionSetMessage(
