@@ -1,5 +1,6 @@
 package org.taktik.connector.technical.validator.impl
 
+import org.apache.commons.lang.mutable.Mutable
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.validator.ValidatorHelper
@@ -27,6 +28,6 @@ open class XMLValidatorImpl : XMLValidator {
     }
 
     companion object {
-        val XSD_FILE_LOCATION_FOR_CLASS_MAP: Map<Class<*>, String> = HashMap()
+        val XSD_FILE_LOCATION_FOR_CLASS_MAP: MutableMap<Class<*>, String> = HashMap()
     }
 }
