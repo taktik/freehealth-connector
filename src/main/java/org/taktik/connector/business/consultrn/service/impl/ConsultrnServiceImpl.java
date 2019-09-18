@@ -61,7 +61,7 @@ public class ConsultrnServiceImpl implements ConsultrnService, ConfigurationModu
       } catch (SoaErrorException ex) {
          RegisterPersonResponse response = (RegisterPersonResponse)ex.getResponseTypeV2();
          if (response.getResult() != null && response.getResult().getExistingPersons() != null) {
-            throw new ConsultrnRegisterExistingPersonException(response);
+            return response;
          } else {
             throw new ConsultrnRegisterPersonException(response);
          }
