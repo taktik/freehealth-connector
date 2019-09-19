@@ -636,6 +636,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                 })
                             }
                         transaction = TransactionWithPeriodType().apply {
+                            if(isGlobal) { searchtype = LocalSearchType.GLOBAL }
                             from?.let { begindate = DateTime(from) }
                             to?.let { enddate = DateTime(to) }
                             if (!StringUtils.isEmpty(authorNihii) || !StringUtils.isEmpty(authorSsin)) {
