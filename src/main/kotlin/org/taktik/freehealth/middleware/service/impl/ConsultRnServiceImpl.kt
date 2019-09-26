@@ -77,6 +77,8 @@ class ConsultRnServiceImpl(private val stsService: STSService) : ConsultRnServic
                 ?: throw MissingTokenException("Cannot obtain token for GMD operations")
 
         return historyService.consultCurrentSsin(samlToken, ConsultCurrentSsinRequest().apply {
+            id = "ID${System.currentTimeMillis()}"
+            issueInstant = DateTime.now()
             this.ssin = ssin
         })
     }
