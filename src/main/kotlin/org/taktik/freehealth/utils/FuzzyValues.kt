@@ -175,7 +175,7 @@ object FuzzyValues {
         }
     }
 
-    fun getXMLGregorianCalendarFromFuzzyLong(date : Long?) : XMLGregorianCalendarImpl? {
+    fun getXMLGregorianCalendarFromFuzzyLong(date : Long? = null) : XMLGregorianCalendarImpl? {
         return date?.let {
             if (it%10000000000 == 0L) it/10000000000 else if (it%100000000 == 0L) it/100000000 else if (it<99991231 && it%10000 == 0L) it/10000 else if (it<99991231 && it%100 == 0L) it/100 else it /*normalize*/
         }?.let { d ->

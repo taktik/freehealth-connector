@@ -40,7 +40,6 @@
     <element name="EncryptedID" type="saml:EncryptedElementType"/>
     <element name="Issuer" type="saml:NameIDType"/>
     <element name="AssertionIDRef" type="NCName"/>
-    <element name="AssertionURIRef" type="anyURI"/>
     <element name="Assertion" type="saml:AssertionType"/>
     <complexType name="AssertionType">
         <sequence>
@@ -156,7 +155,6 @@
     <complexType name="AdviceType">
         <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="saml:AssertionIDRef"/>
-            <element ref="saml:AssertionURIRef"/>
             <element ref="saml:Assertion"/>
             <element ref="saml:EncryptedAssertion"/>
             <any namespace="##other" processContents="lax"/>
@@ -239,7 +237,6 @@
     <complexType name="EvidenceType">
         <choice maxOccurs="unbounded">
             <element ref="saml:AssertionIDRef"/>
-            <element ref="saml:AssertionURIRef"/>
             <element ref="saml:Assertion"/>
             <element ref="saml:EncryptedAssertion"/>
         </choice>

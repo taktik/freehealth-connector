@@ -149,7 +149,7 @@ class HubTokenServiceImpl(private val keyDepotService: KeyDepotService) : HubTok
                 getCrypto(keystoreId, keystore, passPhrase),
                 hubId,
                 hubApplication,
-                keyDepotManager.getEtk(IdentifierType.EHP, hubId, hubApplication ?: "", keystoreId)
+                keyDepotManager.getEtk(IdentifierType.EHP, hubId, hubApplication ?: "", keystoreId, false)
             ),
             PutTransactionResponse::class.java
         )
@@ -620,7 +620,7 @@ class HubTokenServiceImpl(private val keyDepotService: KeyDepotService) : HubTok
                 getCrypto(keystoreId, keystore, passPhrase),
                 hubId,
                 hubApplication,
-                keyDepotManager.getEtk(IdentifierType.EHP, hubId, hubApplication ?: "", keystoreId)
+                keyDepotManager.getEtk(IdentifierType.EHP, hubId, hubApplication ?: "", keystoreId, false)
             ),
             PutTransactionSetResponse::class.java
         )

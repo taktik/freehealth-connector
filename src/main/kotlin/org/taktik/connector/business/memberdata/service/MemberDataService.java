@@ -1,4 +1,4 @@
-package org.taktik.connector.business.memberdata;
+package org.taktik.connector.business.memberdata.service;
 
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;

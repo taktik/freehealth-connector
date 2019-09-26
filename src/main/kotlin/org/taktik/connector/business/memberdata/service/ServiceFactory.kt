@@ -1,4 +1,4 @@
-package org.taktik.connector.business.memberdata
+package org.taktik.connector.business.memberdata.service
 
 import org.apache.commons.lang.Validate
 import org.taktik.connector.technical.config.ConfigFactory
