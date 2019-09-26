@@ -21,15 +21,18 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 import org.taktik.connector.business.ehbox.api.domain.Addressee
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.freehealth.middleware.exception.MissingTokenException
@@ -45,21 +48,38 @@ class CryptoController(val cryptoService: CryptoService) {
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @PostMapping("/encrypt/{identifier}/{id}/{applicationId}")
+    @PostMapping("/encrypt/{identifier}/{id}", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun encrypt(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable(value = "identifier") identifier: String,
         @PathVariable(value = "id") id: String,
-        @PathVariable(value = "applicationId") applicationId: String,
+        @RequestParam(value = "applicationId", required = false) applicationId: String?,
         @RequestBody plainData: ByteArray
-               ) = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId }, plainData)
+               ) = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId ?: "" }, plainData)
 
-    @PostMapping("/decrypt")
+    @PostMapping("/encryptFile/{identifier}/{id}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun encryptFile(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @PathVariable(value = "identifier") identifier: String,
+        @PathVariable(value = "id") id: String,
+        @RequestParam(value = "applicationId", required = false) applicationId: String?,
+        @RequestParam plainData: MultipartFile
+               ) = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId ?: "" }, plainData.bytes)
+
+
+    @PostMapping("/decrypt", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun decrypt(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestBody encryptedData: ByteArray
                ) = cryptoService.decrypt(keystoreId, passPhrase, encryptedData)
 
+    @PostMapping("/decryptFile", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun decryptFile(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestBody encryptedData: MultipartFile
+               ) = cryptoService.decrypt(keystoreId, passPhrase, encryptedData.bytes)
 }

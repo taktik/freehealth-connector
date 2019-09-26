@@ -74,10 +74,10 @@ open class EhealthTest {
         return keystoreId
     }
 
-    protected fun register(restTemplate: TestRestTemplate, port: Int, ssin: String, passPhrase: String): Triple<UUID?, String, String> {
+    protected fun register(restTemplate: TestRestTemplate, port: Int, ssin: String, passPhrase: String, prevTokenId: String? = null): Triple<UUID?, String, String> {
         val keystoreId = uploadKeystore((MyTestsConfiguration::class).java.getResource("$ssin.acc-p12").path, port, restTemplate)
-        val res = restTemplate.exchange("http://localhost:$port/sts/token?ssin=$ssin", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, null, passPhrase)), SamlTokenResult::class.java, passPhrase)
-        val tokenId = res.body?.let { it.tokenId }
+        val res = restTemplate.exchange("http://localhost:$port/sts/token?ssin=$ssin", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, prevTokenId, passPhrase)), SamlTokenResult::class.java, passPhrase)
+        val tokenId = res.body?.tokenId
         return Triple(keystoreId, tokenId.toString(), passPhrase)
     }
 

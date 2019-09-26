@@ -20,8 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import org.bouncycastle.asn1.isismtt.x509.DeclarationOfMajority.dateOfBirth
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -48,7 +48,7 @@ class ConsultrnController(val consultRnService: ConsultRnService) {
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @GetMapping("/{ssin}")
+    @GetMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun identify(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -57,7 +57,7 @@ class ConsultrnController(val consultRnService: ConsultRnService) {
                 ) = consultRnService.identify(keystoreId, tokenId, passPhrase, ssin)
 
 
-    @GetMapping("/{dateOfBirth}/{lastName}")
+    @GetMapping("/{dateOfBirth}/{lastName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun search(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -72,7 +72,7 @@ class ConsultrnController(val consultRnService: ConsultRnService) {
               ) = consultRnService.search(keystoreId, tokenId, passPhrase, dateOfBirth, lastName, firstName, middleName, gender ?: "UNKNOWN", tolerance ?: 0, limit ?: 20)
 
 
-    @PostMapping("")
+    @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerPerson(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,

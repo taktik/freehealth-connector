@@ -41,6 +41,8 @@ import org.taktik.connector.technical.service.sts.utils.SAMLHelper
 import org.taktik.connector.technical.utils.CertificateParser
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import org.taktik.freehealth.middleware.dto.CertificateInfo
+import org.taktik.freehealth.middleware.exception.MissingKeystoreException
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
@@ -109,7 +111,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             } else {
                 val totalValidity = valid - ts
                 val remainingValidity = valid - now
-                remainingValidity > 0 && totalValidity > 0 && remainingValidity / totalValidity > 1 / 2
+                remainingValidity > 0 && totalValidity > 0 && remainingValidity.toDouble() / totalValidity.toDouble() > 0.5
             }
         } ?: false
 
@@ -301,7 +303,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         override fun load(key: Pair<UUID, String>): KeyStore {
             val keyStoreData =
                 keystoresMap[key.first]
-                    ?: throw(IllegalArgumentException("Missing Keystore, please upload a keystore and use the returned keystoreId"))
+                    ?: throw(MissingKeystoreException("Missing Keystore, please upload a keystore and use the returned keystoreId"))
             return KeyManager.getKeyStore(keyStoreData.inputStream(), "PKCS12", key.second.toCharArray())
         }
     })
