@@ -1,5 +1,6 @@
 package org.taktik.connector.business.mycarenet.attest.exception;
 
+import org.taktik.connector.business.mycarenet.attestv2.exception.AttestBusinessConnectorExceptionValues;
 import org.taktik.connector.technical.exception.ConnectorException;
 import java.text.MessageFormat;
 

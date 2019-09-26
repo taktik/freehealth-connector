@@ -9,7 +9,6 @@ import org.taktik.connector.technical.service.keydepot.KeyDepotManager
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
-import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.freehealth.middleware.service.CryptoService
 import org.taktik.freehealth.middleware.service.STSService
 import java.util.UUID
@@ -30,7 +29,8 @@ class CryptoServiceImpl(val stsService: STSService, keyDepotService: KeyDepotSer
             addressee.identifierTypeHelper,
             addressee.idAsLong,
             addressee.applicationId,
-            keystoreId
+            keystoreId,
+            false
                                                       ) + this.keyDepotManager.getETK(credential, keystoreId)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)

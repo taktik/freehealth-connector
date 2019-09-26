@@ -61,7 +61,6 @@ import javax.activation.DataHandler
 import org.bouncycastle.cms.CMSException
 import org.bouncycastle.util.encoders.Base64
 import org.slf4j.LoggerFactory
-import org.taktik.connector.technical.service.sts.security.Credential
 import java.util.UUID
 
 class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : SendMessageBuilder {
@@ -464,7 +463,8 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
                     addressee.identifierTypeHelper,
                     addressee.idAsLong,
                     addressee.applicationId,
-                    keystoreId
+                    keystoreId,
+                    false
                                               )
             if (etkSet.isEmpty()) {
                 throw TechnicalConnectorException(
