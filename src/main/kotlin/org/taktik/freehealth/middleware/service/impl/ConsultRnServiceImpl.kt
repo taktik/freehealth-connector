@@ -22,6 +22,8 @@ import be.fgov.ehealth.consultrn.commons.core.v3.ResidentialAddressRequestType
 import be.fgov.ehealth.consultrn.commons.core.v3.WhereRequestType
 import be.fgov.ehealth.consultrn.protocol.v2.RegisterPersonRequest
 import be.fgov.ehealth.consultrn.protocol.v2.RegisterPersonResponse
+import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinRequest
+import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinResponse
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -30,6 +32,8 @@ import org.taktik.connector.business.consultrn.exception.identifyperson.Consultr
 import org.taktik.connector.business.consultrn.exception.manageperson.ConsultrnRegisterPersonException
 import org.taktik.connector.business.consultrn.exception.phoneticsearch.ConsultrnPhoneticSearchException
 import org.taktik.connector.business.consultrn.service.impl.ConsultrnServiceImpl
+import org.taktik.connector.business.ssinhistory.service.impl.SsinHistoryTokenServiceImpl
+import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.freehealth.middleware.dto.consultrn.PersonMid
 import org.taktik.freehealth.middleware.exception.MissingTokenException
@@ -41,6 +45,7 @@ import java.util.UUID
 class ConsultRnServiceImpl(private val stsService: STSService) : ConsultRnService {
     private val log = LogFactory.getLog(this.javaClass)
     val backingService = ConsultrnServiceImpl(EhealthReplyValidatorImpl())
+    val historyService = SsinHistoryTokenServiceImpl(EhealthReplyValidatorImpl())
 
     override fun identify(keystoreId: UUID, tokenId: UUID, passPhrase: String, ssin: String): SearchBySSINReply {
         val samlToken =
@@ -64,6 +69,18 @@ class ConsultRnServiceImpl(private val stsService: STSService) : ConsultRnServic
         }) } catch (ex: ConsultrnIdentifyPersonException) {
             ex.searchBySSINReply
         }
+    }
+
+    override fun history(keystoreId: UUID, tokenId: UUID, passPhrase: String, ssin: String): ConsultCurrentSsinResponse {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for GMD operations")
+
+        return historyService.consultCurrentSsin(samlToken, ConsultCurrentSsinRequest().apply {
+            id = "ID${System.currentTimeMillis()}"
+            issueInstant = DateTime.now()
+            this.ssin = ssin
+        })
     }
 
     override fun search(keystoreId: UUID,

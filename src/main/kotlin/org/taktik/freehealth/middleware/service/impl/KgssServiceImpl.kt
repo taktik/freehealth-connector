@@ -53,7 +53,7 @@ class KgssServiceImpl constructor(private val kgssMap : IMap<UUID, SerializableK
         val id = config.getLongProperty("org.taktik.connector.technical.service.kgss.identifier.value", 809394427L)
         val appId = config.getProperty("org.taktik.connector.technical.service.kgss.identifier.applicationid", "KGSS")
 
-        return this.service.getNewKey(req, keystoreId, keyStore, passPhrase,  KeyDepotManagerImpl.getInstance(keyDepotService).getEtk(idType, id, appId, keystoreId).encoded)
+        return this.service.getNewKey(req, keystoreId, keyStore, passPhrase,  KeyDepotManagerImpl.getInstance(keyDepotService).getEtk(idType, id, appId, keystoreId, false).encoded)
     }
 
     override fun flushCache() {

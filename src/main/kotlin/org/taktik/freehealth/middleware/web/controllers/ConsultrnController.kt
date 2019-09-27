@@ -56,6 +56,13 @@ class ConsultrnController(val consultRnService: ConsultRnService) {
         @PathVariable(value = "ssin") ssin: String
                 ) = consultRnService.identify(keystoreId, tokenId, passPhrase, ssin)
 
+    @GetMapping("/history/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun history(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @PathVariable(value = "ssin") ssin: String
+                ) = consultRnService.history(keystoreId, tokenId, passPhrase, ssin)
 
     @GetMapping("/{dateOfBirth}/{lastName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun search(
