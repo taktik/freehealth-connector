@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import ma.glasnost.orika.MapperFacade
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.consultrn.PersonMid
+import org.taktik.freehealth.middleware.dto.consultrn.SearchPhoneticReplyDto
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.ConsultRnService
 import java.util.UUID
@@ -42,7 +44,7 @@ import javax.websocket.server.PathParam
 
 @RestController
 @RequestMapping("/consultrn")
-class ConsultrnController(val consultRnService: ConsultRnService) {
+class ConsultrnController(val consultRnService: ConsultRnService, val mapper: MapperFacade) {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(MissingTokenException::class)
     @ResponseBody
@@ -76,7 +78,9 @@ class ConsultrnController(val consultRnService: ConsultRnService) {
         @RequestParam(required = false) gender: String?,
         @RequestParam(required = false) tolerance: Int?,
         @RequestParam(required = false) limit: Int?
-              ) = consultRnService.search(keystoreId, tokenId, passPhrase, dateOfBirth, lastName, firstName, middleName, gender ?: "UNKNOWN", tolerance ?: 0, limit ?: 20)
+              ) = consultRnService.search(keystoreId, tokenId, passPhrase, dateOfBirth, lastName, firstName, middleName, gender ?: "UNKNOWN", tolerance ?: 0, limit ?: 20).let {
+        mapper.map(it, SearchPhoneticReplyDto::class.java)
+    }
 
 
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
