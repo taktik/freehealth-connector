@@ -1,222 +1,228 @@
-package org.taktik.connector.business.mycarenetcommons.mapper.v3;
+package org.taktik.connector.business.mycarenetcommons.mapper.v3
 
-import org.taktik.connector.business.mycarenetdomaincommons.domain.Blob;
-import org.taktik.connector.business.mycarenetdomaincommons.domain.CareProvider;
-import org.taktik.connector.business.mycarenetdomaincommons.domain.CareReceiverId;
-import org.taktik.connector.business.mycarenetdomaincommons.domain.CommonInput;
-import org.taktik.connector.business.mycarenetdomaincommons.domain.Identification;
-import org.taktik.connector.business.mycarenetdomaincommons.domain.McnPackageInfo;
-import org.taktik.connector.business.mycarenetdomaincommons.domain.Nihii;
-import org.taktik.connector.business.mycarenetdomaincommons.domain.Party;
-import org.taktik.connector.business.mycarenetdomaincommons.domain.Period;
-import org.taktik.connector.business.mycarenetdomaincommons.domain.Routing;
-import org.taktik.connector.technical.config.impl.ConfigurationModuleBootstrap;
-import org.taktik.connector.technical.exception.TechnicalConnectorException;
-import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
-import org.taktik.connector.technical.utils.ByteArrayDatasource;
-import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
-import be.fgov.ehealth.mycarenet.commons.core.v3.BlobType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.CareProviderType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.CareReceiverIdType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.IdType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.LicenseType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.NihiiType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.OriginType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.PartyType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.PeriodType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString;
-import java.io.IOException;
-import javax.activation.DataHandler;
-import org.apache.commons.io.IOUtils;
+import org.taktik.connector.business.mycarenetdomaincommons.domain.Blob
+import org.taktik.connector.business.mycarenetdomaincommons.domain.CareProvider
+import org.taktik.connector.business.mycarenetdomaincommons.domain.CareReceiverId
+import org.taktik.connector.business.mycarenetdomaincommons.domain.CommonInput
+import org.taktik.connector.business.mycarenetdomaincommons.domain.Identification
+import org.taktik.connector.business.mycarenetdomaincommons.domain.McnPackageInfo
+import org.taktik.connector.business.mycarenetdomaincommons.domain.Nihii
+import org.taktik.connector.business.mycarenetdomaincommons.domain.Party
+import org.taktik.connector.business.mycarenetdomaincommons.domain.Period
+import org.taktik.connector.business.mycarenetdomaincommons.domain.Routing
+import org.taktik.connector.technical.config.impl.ConfigurationModuleBootstrap
+import org.taktik.connector.technical.exception.TechnicalConnectorException
+import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
+import org.taktik.connector.technical.utils.ByteArrayDatasource
+import org.taktik.connector.technical.utils.impl.JaxbContextFactory
+import be.fgov.ehealth.mycarenet.commons.core.v3.BlobType
+import be.fgov.ehealth.mycarenet.commons.core.v3.CareProviderType
+import be.fgov.ehealth.mycarenet.commons.core.v3.CareReceiverIdType
+import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType
+import be.fgov.ehealth.mycarenet.commons.core.v3.IdType
+import be.fgov.ehealth.mycarenet.commons.core.v3.LicenseType
+import be.fgov.ehealth.mycarenet.commons.core.v3.NihiiType
+import be.fgov.ehealth.mycarenet.commons.core.v3.OriginType
+import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
+import be.fgov.ehealth.mycarenet.commons.core.v3.PartyType
+import be.fgov.ehealth.mycarenet.commons.core.v3.PeriodType
+import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType
+import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType
+import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
+import java.io.IOException
+import javax.activation.DataHandler
+import org.apache.commons.io.IOUtils
 
-public final class SendRequestMapper implements ConfigurationModuleBootstrap.ModuleBootstrapHook {
-   public static CommonInputType mapCommonInput(CommonInput commonInput) {
-      CommonInputType inputType = new CommonInputType();
-      inputType.setOrigin(getOrigin(commonInput));
-      inputType.setInputReference(commonInput.getInputReference());
-      inputType.setRequest(getRequestType(commonInput.isTest()));
-      return inputType;
-   }
+class SendRequestMapper : ConfigurationModuleBootstrap.ModuleBootstrapHook {
 
-   public static RoutingType mapRouting(Routing inRouting) {
-      RoutingType routing = new RoutingType();
-      routing.setCareReceiver(getCareReceiver(inRouting.getCareReceiver()));
-      routing.setPeriod(getPeriod(inRouting.getPeriod()));
-      routing.setReferenceDate(inRouting.getReferenceDate());
-      return routing;
-   }
+    override fun bootstrap() {
+        JaxbContextFactory.initJaxbContext(BlobType::class.java)
+        JaxbContextFactory.initJaxbContext(CareProviderType::class.java)
+        JaxbContextFactory.initJaxbContext(CareReceiverIdType::class.java)
+        JaxbContextFactory.initJaxbContext(CommonInputType::class.java)
+        JaxbContextFactory.initJaxbContext(IdType::class.java)
+        JaxbContextFactory.initJaxbContext(LicenseType::class.java)
+        JaxbContextFactory.initJaxbContext(NihiiType::class.java)
+        JaxbContextFactory.initJaxbContext(OriginType::class.java)
+        JaxbContextFactory.initJaxbContext(PackageType::class.java)
+        JaxbContextFactory.initJaxbContext(PartyType::class.java)
+        JaxbContextFactory.initJaxbContext(PeriodType::class.java)
+        JaxbContextFactory.initJaxbContext(RequestType::class.java)
+        JaxbContextFactory.initJaxbContext(RoutingType::class.java)
+        JaxbContextFactory.initJaxbContext(ValueRefString::class.java)
+    }
 
-   public static BlobType mapBlobToBlobType(Blob inBlob) {
-      BlobType blob = new BlobType();
-      blob.setId(inBlob.getId());
-      blob.setValue(inBlob.getContent());
-      blob.setHashValue(inBlob.getHashValue());
-      blob.setContentEncoding(inBlob.getContentEncoding());
-      blob.setContentType(inBlob.getContentType());
-      blob.setContentEncryption(inBlob.getContentEncryption());
-      return blob;
-   }
+    companion object {
+        fun mapCommonInput(commonInput: CommonInput): CommonInputType {
+            val inputType = CommonInputType()
+            inputType.origin = getOrigin(commonInput)
+            inputType.inputReference = commonInput.inputReference
+            inputType.request = getRequestType(commonInput.isTest!!)
+            return inputType
+        }
 
-   public static Blob mapBlobTypeToBlob(BlobType inBlob) {
-      Blob blob = new Blob();
-      blob.setId(inBlob.getId());
-      blob.setContent(inBlob.getValue());
-      blob.setHashValue(inBlob.getHashValue());
-      blob.setContentEncoding(inBlob.getContentEncoding());
-      blob.setContentType(inBlob.getContentType());
-      return blob;
-   }
+        fun mapRouting(inRouting: Routing): RoutingType {
+            val routing = RoutingType()
+            routing.careReceiver = getCareReceiver(inRouting.careReceiver)
+            routing.period = getPeriod(inRouting.period)
+            routing.referenceDate = inRouting.referenceDate
+            return routing
+        }
 
-   private static OriginType getOrigin(CommonInput commonInput) {
-      OriginType origin = new OriginType();
-      origin.setCareProvider(getCareprovider(commonInput.getOrigin().getCareProvider()));
-      origin.setPackage(getPackage(commonInput.getOrigin().getMcnPackageInfo()));
-      origin.setSender(getParty(commonInput.getOrigin().getSender()));
-      return origin;
-   }
+        fun mapBlobToBlobType(inBlob: Blob): BlobType {
+            val blob = BlobType()
+            blob.id = inBlob.id
+            blob.value = inBlob.content
+            blob.hashValue = inBlob.hashValue
+            blob.contentEncoding = inBlob.contentEncoding
+            blob.contentType = inBlob.contentType
+            blob.contentEncryption = inBlob.contentEncryption
+            return blob
+        }
 
-   private static CareProviderType getCareprovider(CareProvider inProvider) {
-      CareProviderType careProvider = new CareProviderType();
-      careProvider.setNihii(getNihii(inProvider.getNihii()));
-      careProvider.setOrganization(getIdType(inProvider.getOrganization()));
-      careProvider.setPhysicalPerson(getIdType(inProvider.getPhysicalPerson()));
-      return careProvider;
-   }
+        fun mapBlobTypeToBlob(inBlob: BlobType): Blob {
+            val blob = Blob()
+            blob.id = inBlob.id
+            blob.content = inBlob.value
+            blob.hashValue = inBlob.hashValue
+            blob.contentEncoding = inBlob.contentEncoding
+            blob.contentType = inBlob.contentType
+            return blob
+        }
 
-   private static RequestType getRequestType(boolean isTest) {
-      RequestType requestType = new RequestType();
-      requestType.setIsTest(isTest);
-      return requestType;
-   }
+        private fun getOrigin(commonInput: CommonInput): OriginType {
+            val origin = OriginType()
+            origin.careProvider = getCareprovider(commonInput.origin.careProvider)
+            origin.setPackage(getPackage(commonInput.origin.mcnPackageInfo))
+            origin.sender = getParty(commonInput.origin.sender)
+            return origin
+        }
 
-   private static CareReceiverIdType getCareReceiver(CareReceiverId inCareReceiver) {
-      CareReceiverIdType careReceiver = new CareReceiverIdType();
-      careReceiver.setMutuality(inCareReceiver.getMutuality());
-      careReceiver.setRegNrWithMut(inCareReceiver.getRegistrationNumberWithMutuality());
-      careReceiver.setSsin(inCareReceiver.getSsinNumber());
-      return careReceiver;
-   }
+        private fun getCareprovider(inProvider: CareProvider): CareProviderType {
+            val careProvider = CareProviderType()
+            careProvider.nihii = getNihii(inProvider.nihii)
+            careProvider.organization = getIdType(inProvider.organization)
+            careProvider.physicalPerson = getIdType(inProvider.physicalPerson)
+            return careProvider
+        }
 
-   private static PackageType getPackage(McnPackageInfo info) {
-      PackageType type = new PackageType();
-      type.setName(getValueRef(info.getPackageName(), (String)null));
-      type.setLicense(getLicense(info.getUserName(), info.getPassword()));
-      return type;
-   }
+        private fun getRequestType(isTest: Boolean): RequestType {
+            val requestType = RequestType()
+            requestType.isIsTest = isTest
+            return requestType
+        }
 
-   private static NihiiType getNihii(Nihii inNihii) {
-      NihiiType nihii = null;
-      if (inNihii != null) {
-         nihii = new NihiiType();
-         nihii.setValue(getValueRef(inNihii.getValue(), (String)null));
-         nihii.setQuality(inNihii.getQuality());
-      }
+        private fun getCareReceiver(inCareReceiver: CareReceiverId): CareReceiverIdType {
+            val careReceiver = CareReceiverIdType()
+            careReceiver.mutuality = inCareReceiver.mutuality
+            careReceiver.regNrWithMut = inCareReceiver.registrationNumberWithMutuality
+            careReceiver.ssin = inCareReceiver.ssinNumber
+            return careReceiver
+        }
 
-      return nihii;
-   }
+        private fun getPackage(info: McnPackageInfo): PackageType {
+            val type = PackageType()
+            type.name = getValueRef(info.packageName, null as String?)
+            type.license = getLicense(info.userName, info.password)
+            return type
+        }
 
-   private static IdType getIdType(Identification id) {
-      IdType idType = null;
-      if (id != null) {
-         idType = new IdType();
-         idType.setCbe(getValueRef(id.getCbe(), (String)null));
-         idType.setName(getValueRef(id.getName(), (String)null));
-         idType.setSsin(getValueRef(id.getSsin(), (String)null));
-         idType.setNihii(getNihii(id.getNihii()));
-      }
+        private fun getNihii(inNihii: Nihii?): NihiiType? {
+            var nihii: NihiiType? = null
+            if (inNihii != null) {
+                nihii = NihiiType()
+                nihii.value = getValueRef(inNihii.value, null as String?)
+                nihii.quality = inNihii.quality
+            }
 
-      return idType;
-   }
+            return nihii
+        }
 
-   private static ValueRefString getValueRef(String value, String reference) {
-      ValueRefString valueRef = null;
-      if (value != null) {
-         valueRef = new ValueRefString();
-         valueRef.setValue(value);
-         valueRef.setValueRef(reference);
-      }
+        private fun getIdType(id: Identification?): IdType? {
+            var idType: IdType? = null
+            if (id != null) {
+                idType = IdType()
+                idType.cbe = getValueRef(id.cbe, null as String?)
+                idType.name = getValueRef(id.name, null as String?)
+                idType.ssin = getValueRef(id.ssin, null as String?)
+                idType.nihii = getNihii(id.nihii)
+            }
 
-      return valueRef;
-   }
+            return idType
+        }
 
-   private static LicenseType getLicense(String userName, String password) {
-      LicenseType license = new LicenseType();
-      license.setUsername(userName);
-      license.setPassword(password);
-      return license;
-   }
+        private fun getValueRef(value: String?, reference: String?): ValueRefString? {
+            var valueRef: ValueRefString? = null
+            if (value != null) {
+                valueRef = ValueRefString()
+                valueRef.value = value
+                valueRef.valueRef = reference
+            }
 
-   private static PartyType getParty(Party inParty) {
-      PartyType party = new PartyType();
-      party.setOrganization(getIdType(inParty.getOrganization()));
-      party.setPhysicalPerson(getIdType(inParty.getPhysicalPerson()));
-      return party;
-   }
+            return valueRef
+        }
 
-   private static PeriodType getPeriod(Period inPeriod) {
-      PeriodType period = null;
-      if (inPeriod != null) {
-         period = new PeriodType();
-         period.setStart(inPeriod.getBegin());
-         period.setEnd(inPeriod.getEnd());
-      }
+        private fun getLicense(userName: String, password: String): LicenseType {
+            val license = LicenseType()
+            license.username = userName
+            license.password = password
+            return license
+        }
 
-      return period;
-   }
+        private fun getParty(inParty: Party): PartyType {
+            val party = PartyType()
+            party.organization = getIdType(inParty.organization)
+            party.physicalPerson = getIdType(inParty.physicalPerson)
+            return party
+        }
 
-   public static Blob mapToBlob(be.cin.types.v1.Blob blob) throws TechnicalConnectorException {
-      Blob result = new Blob();
-      result.setContent(convertToByteArray(blob.getValue()));
-      result.setId(blob.getId());
-      result.setContentEncoding(blob.getContentEncoding());
-      result.setHashValue(blob.getHashValue());
-      result.setContentType(blob.getContentType());
-      return result;
-   }
+        private fun getPeriod(inPeriod: Period?): PeriodType? {
+            var period: PeriodType? = null
+            if (inPeriod != null) {
+                period = PeriodType()
+                period.start = inPeriod.begin
+                period.end = inPeriod.end
+            }
 
-   public static be.cin.types.v1.Blob mapBlobToCinBlob(Blob blob) {
-      be.cin.types.v1.Blob result = new be.cin.types.v1.Blob();
-      ByteArrayDatasource rawData = new ByteArrayDatasource(blob.getContent());
-      DataHandler dh = new DataHandler(rawData);
-      result.setValue(dh);
-      result.setMessageName(blob.getMessageName());
-      result.setId(blob.getId());
-      result.setContentEncoding(blob.getContentEncoding());
-      result.setHashValue(blob.getHashValue());
-      result.setContentType(blob.getContentType());
-      return result;
-   }
+            return period
+        }
 
-   private static byte[] convertToByteArray(DataHandler value) throws TechnicalConnectorException {
-      if (value == null) {
-         return new byte[0];
-      } else {
-         try {
-            return IOUtils.toByteArray(value.getInputStream());
-         } catch (IOException var2) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.UNKNOWN_ERROR, new Object[]{"IoException while converting dataHandler to byteArray", var2});
-         }
-      }
-   }
+        @Throws(TechnicalConnectorException::class)
+        fun mapToBlob(blob: be.cin.types.v1.Blob): Blob {
+            val result = Blob()
+            result.content = convertToByteArray(blob.value)
+            result.id = blob.id
+            result.contentEncoding = blob.contentEncoding
+            result.hashValue = blob.hashValue
+            result.contentType = blob.contentType
+            return result
+        }
 
-   public void bootstrap() {
-      JaxbContextFactory.initJaxbContext(BlobType.class);
-      JaxbContextFactory.initJaxbContext(CareProviderType.class);
-      JaxbContextFactory.initJaxbContext(CareReceiverIdType.class);
-      JaxbContextFactory.initJaxbContext(CommonInputType.class);
-      JaxbContextFactory.initJaxbContext(IdType.class);
-      JaxbContextFactory.initJaxbContext(LicenseType.class);
-      JaxbContextFactory.initJaxbContext(NihiiType.class);
-      JaxbContextFactory.initJaxbContext(OriginType.class);
-      JaxbContextFactory.initJaxbContext(PackageType.class);
-      JaxbContextFactory.initJaxbContext(PartyType.class);
-      JaxbContextFactory.initJaxbContext(PeriodType.class);
-      JaxbContextFactory.initJaxbContext(RequestType.class);
-      JaxbContextFactory.initJaxbContext(RoutingType.class);
-      JaxbContextFactory.initJaxbContext(ValueRefString.class);
-   }
+        fun mapBlobToCinBlob(blob: Blob): be.cin.types.v1.Blob {
+            val result = be.cin.types.v1.Blob()
+            val rawData = ByteArrayDatasource(blob.content)
+            val dh = DataHandler(rawData)
+            result.value = dh
+            result.messageName = blob.messageName
+            result.id = blob.id
+            result.contentEncoding = blob.contentEncoding
+            result.hashValue = blob.hashValue
+            result.contentType = blob.contentType
+            return result
+        }
+
+        @Throws(TechnicalConnectorException::class)
+        private fun convertToByteArray(value: DataHandler?): ByteArray {
+            return if (value == null) {
+                ByteArray(0)
+            } else {
+                try {
+                    IOUtils.toByteArray(value.inputStream)
+                } catch (var2: IOException) {
+                    throw TechnicalConnectorException(TechnicalConnectorExceptionValues.UNKNOWN_ERROR, *arrayOf<Any>("IoException while converting dataHandler to byteArray", var2))
+                }
+
+            }
+        }
+    }
 }
