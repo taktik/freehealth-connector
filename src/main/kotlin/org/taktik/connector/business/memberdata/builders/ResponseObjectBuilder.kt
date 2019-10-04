@@ -9,5 +9,5 @@ import javax.xml.transform.TransformerConfigurationException
 
 interface ResponseObjectBuilder {
     @Throws(TechnicalConnectorException::class)
-    fun handleConsultationResponse(consultResponse: MemberDataConsultationResponse, crypto: Crypto) : MemberDataBuilderResponse
+    fun handleConsultationResponse(consultResponse: MemberDataConsultationResponse, crypto: Crypto) : MemberDataBuilderResponse?
 }

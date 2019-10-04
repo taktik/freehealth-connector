@@ -37,14 +37,22 @@ public final class TrustStoreUpdater {
    public static void launch() throws TechnicalConnectorException {
       init();
       BootStrapUtils.merge(location("be.fgov.ehealth.technicalconnector.bootstrap.tsl.keystore.location"), pwd("be.fgov.ehealth.technicalconnector.bootstrap.tsl.keystore.pwd"), location("CAKEYSTORE_LOCATION"), pwd("CAKEYSTORE_PASSWORD"));
-      //update("ssl", determineEndpoint(TrustStoreUpdater.TrustedServiceType.TRANSPORT), location("truststore_location"), pwd("truststore_password"), "http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", "http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
-      //store();
-      update("ca", determineEndpoint(TrustStoreUpdater.TrustedServiceType.PERSON), location("CAKEYSTORE_LOCATION"), pwd("CAKEYSTORE_PASSWORD"), "http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", "http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
-      store();
-      update("tsl", determineEndpoint(TrustStoreUpdater.TrustedServiceType.APPLICATION), location("be.fgov.ehealth.technicalconnector.bootstrap.tsl.keystore.location"), pwd("be.fgov.ehealth.technicalconnector.bootstrap.tsl.keystore.pwd"), "http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", "http://uri.etsi.org/TrstSvc/Svctype/CA/QC", "http://uri.etsi.org/TrstSvd/Svctype/TLIssuer");
-      store();
-      update("tsa", determineEndpoint(TrustStoreUpdater.TrustedServiceType.APPLICATION), location("timestamp.signature.keystore.path"), pwd("timestamp.signature.keystore.pwd"), "http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", "http://uri.etsi.org/TrstSvc/Svctype/CA/QC", "http://uri.etsi.org/TrstSvc/Svctype/TSA");
-      store();
+      if (config.getBooleanProperty("be.fgov.ehealth.technicalconnector.tsupdater.ssl", true)) {
+         update("ssl", determineEndpoint(TrustStoreUpdater.TrustedServiceType.TRANSPORT), location("truststore_location"), pwd("truststore_password"), "http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", "http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
+         store();
+      }
+      if (config.getBooleanProperty("be.fgov.ehealth.technicalconnector.tsupdater.ca", true)) {
+         update("ca", determineEndpoint(TrustStoreUpdater.TrustedServiceType.PERSON), location("CAKEYSTORE_LOCATION"), pwd("CAKEYSTORE_PASSWORD"), "http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", "http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
+         store();
+      }
+      if (config.getBooleanProperty("be.fgov.ehealth.technicalconnector.tsupdater.tsl", true)) {
+         update("tsl", determineEndpoint(TrustStoreUpdater.TrustedServiceType.APPLICATION), location("be.fgov.ehealth.technicalconnector.bootstrap.tsl.keystore.location"), pwd("be.fgov.ehealth.technicalconnector.bootstrap.tsl.keystore.pwd"), "http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", "http://uri.etsi.org/TrstSvc/Svctype/CA/QC", "http://uri.etsi.org/TrstSvd/Svctype/TLIssuer");
+         store();
+      }
+      if (config.getBooleanProperty("be.fgov.ehealth.technicalconnector.tsupdater.tsa", true)) {
+         update("tsa", determineEndpoint(TrustStoreUpdater.TrustedServiceType.APPLICATION), location("timestamp.signature.keystore.path"), pwd("timestamp.signature.keystore.pwd"), "http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", "http://uri.etsi.org/TrstSvc/Svctype/CA/QC", "http://uri.etsi.org/TrstSvc/Svctype/TSA");
+         store();
+      }
       BootStrapUtils.merge(location("be.fgov.ehealth.technicalconnector.bootstrap.tsl.keystore.location"), pwd("be.fgov.ehealth.technicalconnector.bootstrap.tsl.keystore.pwd"), location("CAKEYSTORE_LOCATION"), pwd("CAKEYSTORE_PASSWORD"));
       config.invalidate();
       config.reload();

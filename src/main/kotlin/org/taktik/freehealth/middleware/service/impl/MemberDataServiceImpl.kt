@@ -289,9 +289,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val consultMemberData = memberDataService.consultMemberData(samlToken, request)
 
-        return ResponseObjectBuilderImpl().handleConsultationResponse(consultMemberData, crypto).let {
+        return ResponseObjectBuilderImpl().handleConsultationResponse(consultMemberData, crypto)?.let {
             it.assertions
-        }
+        } ?: listOf()
     }
 
     private fun extractError(sendTransactionRequest: ByteArray, ec: String, errorUrl: String?): Set<MycarenetError> {
