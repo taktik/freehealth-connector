@@ -17,4 +17,4 @@ class ConsultRnPersonDataDto(var birth: BirthDeceaseType? = null,
     var nationality: NationalityType? = null,
     var civilstate: CivilStateType? = null,
     var decease: BirthDeceaseType? = null,
-    var address: AddressType? = null) : Serializable
+    var address: ConsultRnAddressDto? = null) : Serializable
