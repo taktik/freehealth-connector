@@ -1,12 +1,12 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.03.08 à 06:26:06 PM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.03.08 à 06:26:06 PM CET
 //
 
 
-package org.w3._2000._09.xmldsig_;
+package org.taktik.connector.business.domain.kmehr.v20161201.org.w3._2000._09.xmldsig_;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -18,9 +18,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Classe Java pour DSAKeyValueType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="DSAKeyValueType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DSAKeyValueType", propOrder = {
@@ -77,7 +77,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Obtient la valeur de la propriété p.
-     * 
+     *
      * @return
      *     possible object is
      *     byte[]
@@ -88,7 +88,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Définit la valeur de la propriété p.
-     * 
+     *
      * @param value
      *     allowed object is
      *     byte[]
@@ -99,7 +99,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Obtient la valeur de la propriété q.
-     * 
+     *
      * @return
      *     possible object is
      *     byte[]
@@ -110,7 +110,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Définit la valeur de la propriété q.
-     * 
+     *
      * @param value
      *     allowed object is
      *     byte[]
@@ -121,7 +121,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Obtient la valeur de la propriété g.
-     * 
+     *
      * @return
      *     possible object is
      *     byte[]
@@ -132,7 +132,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Définit la valeur de la propriété g.
-     * 
+     *
      * @param value
      *     allowed object is
      *     byte[]
@@ -143,7 +143,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Obtient la valeur de la propriété y.
-     * 
+     *
      * @return
      *     possible object is
      *     byte[]
@@ -154,7 +154,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Définit la valeur de la propriété y.
-     * 
+     *
      * @param value
      *     allowed object is
      *     byte[]
@@ -165,7 +165,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Obtient la valeur de la propriété j.
-     * 
+     *
      * @return
      *     possible object is
      *     byte[]
@@ -176,7 +176,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Définit la valeur de la propriété j.
-     * 
+     *
      * @param value
      *     allowed object is
      *     byte[]
@@ -187,7 +187,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Obtient la valeur de la propriété seed.
-     * 
+     *
      * @return
      *     possible object is
      *     byte[]
@@ -198,7 +198,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Définit la valeur de la propriété seed.
-     * 
+     *
      * @param value
      *     allowed object is
      *     byte[]
@@ -209,7 +209,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Obtient la valeur de la propriété pgenCounter.
-     * 
+     *
      * @return
      *     possible object is
      *     byte[]
@@ -220,7 +220,7 @@ public class DSAKeyValue implements Serializable
 
     /**
      * Définit la valeur de la propriété pgenCounter.
-     * 
+     *
      * @param value
      *     allowed object is
      *     byte[]
