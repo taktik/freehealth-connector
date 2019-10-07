@@ -2093,8 +2093,9 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                 IdentifierType.CBE,
                 820563481L,
                 "MYCARENET",
-                null
-                                                                 ),
+                null,
+                false
+                                                                      ),
             encryptedKnowContent
                           )
     }
@@ -2120,7 +2121,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
         if (parser.identifier != null && !StringUtils.isEmpty(parser.id) && StringUtils.isNumeric(parser.id)) {
             try {
                 return KeyDepotManagerImpl.getInstance(keyDepotService)
-                    .getEtk(parser.identifier, java.lang.Long.parseLong(parser.id), parser.application, cred.keystoreId)
+                    .getEtk(parser.identifier, java.lang.Long.parseLong(parser.id), parser.application, cred.keystoreId, false)
             } catch (ex: NumberFormatException) {
                 log.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.message)
                 throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, ex)

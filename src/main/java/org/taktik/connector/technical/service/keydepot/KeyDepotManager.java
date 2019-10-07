@@ -10,13 +10,15 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface KeyDepotManager {
-   EncryptionToken getETK(Credential cred, @Nullable UUID keystoreId) throws TechnicalConnectorException;
+   EncryptionToken getETK(Credential cred, UUID keystoreId) throws TechnicalConnectorException;
 
-   EncryptionToken getEtk(IdentifierType identifierType, Long identifierValue, String application, @Nullable UUID keystoreId) throws TechnicalConnectorException;
+   EncryptionToken getEtk(IdentifierType identifierType, Long identifierValue, String application, UUID keystoreId, boolean isOwnEtk) throws TechnicalConnectorException;
 
-   Set<EncryptionToken> getEtkSet(IdentifierType identifierType, Long identifierValue, String application, @Nullable UUID keystoreId) throws TechnicalConnectorException;
+   Set<EncryptionToken> getEtkSet(IdentifierType identifierType, Long identifierValue, String application, UUID keystoreId, boolean isOwnEtk) throws TechnicalConnectorException;
 
    void setKeyDepotService(KeyDepotService var1);
+
+   void flushCache();
 
    public static enum EncryptionTokenType {
       HOLDER_OF_KEY,

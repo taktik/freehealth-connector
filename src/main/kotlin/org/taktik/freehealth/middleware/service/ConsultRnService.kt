@@ -6,6 +6,7 @@ import be.fgov.ehealth.consultrn._1_0.protocol.SearchPhoneticReply
 import be.fgov.ehealth.consultrn._1_0.protocol.SearchPhoneticRequest
 import be.fgov.ehealth.consultrn.protocol.v2.RegisterPersonRequest
 import be.fgov.ehealth.consultrn.protocol.v2.RegisterPersonResponse
+import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinResponse
 import org.taktik.connector.business.consultrn.exception.identifyperson.ConsultrnIdentifyPersonException
 import org.taktik.connector.business.consultrn.exception.manageperson.ConsultrnRegisterExistingPersonException
 import org.taktik.connector.business.consultrn.exception.manageperson.ConsultrnRegisterPersonException
@@ -46,4 +47,5 @@ interface ConsultRnService {
         mid: PersonMid
                       ): RegisterPersonResponse
 
+    fun history(keystoreId: UUID, tokenId: UUID, passPhrase: String, ssin: String): ConsultCurrentSsinResponse
 }

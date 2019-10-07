@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.NameIDType;
-import org.w3._2000._09.xmldsig_.Signature;
+import org.taktik.icure.cin.saml.org.w3._2000._09.xmldsig_.Signature;
 
 
 /**

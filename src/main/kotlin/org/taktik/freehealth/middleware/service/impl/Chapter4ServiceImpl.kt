@@ -316,7 +316,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
             throw IllegalStateException("invalid configuration : identifier with type ]$identifierTypeString[ and subtype ]$identifierSubTypeString[ for source ETKDEPOT not found")
         } else {
             KeyDepotManagerImpl.getInstance(keyDepotService)
-                .getEtk(identifier, configValidator!!.getLongProperty("chapterIV.keydepot.identifiervalue", 0L), configValidator!!.getProperty("chapterIV.keydepot.application"), keystoreId)
+                .getEtk(identifier, configValidator!!.getLongProperty("chapterIV.keydepot.identifiervalue", 0L), configValidator!!.getProperty("chapterIV.keydepot.application"), keystoreId, false)
         }, marshalledContent)
         val securedContent = SecuredContentType()
         securedContent.securedContent = sealedKnown
