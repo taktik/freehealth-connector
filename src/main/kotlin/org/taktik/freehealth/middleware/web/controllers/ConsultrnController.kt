@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.consultrn.PersonMid
+import org.taktik.freehealth.middleware.dto.consultrn.SearchBySSINReplyDto
 import org.taktik.freehealth.middleware.dto.consultrn.SearchPhoneticReplyDto
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.ConsultRnService
@@ -56,7 +57,7 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable(value = "ssin") ssin: String
-                ) = consultRnService.identify(keystoreId, tokenId, passPhrase, ssin)
+                 ) = consultRnService.identify(keystoreId, tokenId, passPhrase, ssin).let { mapper.map(it, SearchBySSINReplyDto::class.java) }
 
     @GetMapping("/history/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun history(
