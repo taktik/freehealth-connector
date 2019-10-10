@@ -30,7 +30,7 @@ public class WsAddressingHandlerV200508 extends AbstractSOAPHandler {
 
    public boolean handleOutbound(SOAPMessageContext context) {
       Boolean wsAddressingUse = context.get("org.taktik.connector.technical.handler.WsAddressingHandlerV200508.use") == null ? Boolean.FALSE : (Boolean)context.get("org.taktik.connector.technical.handler.WsAddressingHandlerV200508.use");
-      if (wsAddressingUse.booleanValue()) {
+      if (wsAddressingUse) {
          try {
             WsAddressingHeader header = (WsAddressingHeader)context.get("org.taktik.connector.technical.handler.WsAddressingHandlerV200508");
             if (header == null) {

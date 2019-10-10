@@ -49,7 +49,7 @@ public final class BeIDCredential extends AbstractExtendedCredential implements 
 
    public static BeIDCredential getInstance(String scope, String aliasName) throws TechnicalConnectorException {
       String key = scope + "-" + aliasName;
-      boolean useCache = config.getBooleanProperty("be.ehealth.technicalconnector.service.sts.security.impl.beidcredential.cache", Boolean.FALSE).booleanValue();
+      boolean useCache = config.getBooleanProperty("be.ehealth.technicalconnector.service.sts.security.impl.beidcredential.cache", Boolean.FALSE);
       if (useCache && instancesMap.containsKey(key)) {
          LOG.debug("Returning cached instance.");
          return (BeIDCredential)instancesMap.get(key);

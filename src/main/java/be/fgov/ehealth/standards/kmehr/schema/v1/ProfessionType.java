@@ -1,5 +1,6 @@
 package be.fgov.ehealth.standards.kmehr.schema.v1;
 
+import be.fgov.ehealth.standards.kmehr.cd.v1.CDEMPLOYMENTSITUATION;
 import be.fgov.ehealth.standards.kmehr.dt.v1.TextType;
 import be.fgov.ehealth.standards.kmehr.id.v1.IDPROFESSION;
 import java.io.Serializable;
@@ -13,7 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
    name = "professionType",
-   propOrder = {"ids", "text"}
+   propOrder = {"ids", "cds", "text"}
 )
 public class ProfessionType implements Serializable {
    private static final long serialVersionUID = 1L;
@@ -21,6 +22,10 @@ public class ProfessionType implements Serializable {
       name = "id"
    )
    protected List<IDPROFESSION> ids;
+   @XmlElement(
+      name = "cd"
+   )
+   protected List<CDEMPLOYMENTSITUATION> cds;
    protected TextType text;
 
    public List<IDPROFESSION> getIds() {
@@ -29,6 +34,14 @@ public class ProfessionType implements Serializable {
       }
 
       return this.ids;
+   }
+
+   public List<CDEMPLOYMENTSITUATION> getCds() {
+      if (this.cds == null) {
+         this.cds = new ArrayList();
+      }
+
+      return this.cds;
    }
 
    public TextType getText() {

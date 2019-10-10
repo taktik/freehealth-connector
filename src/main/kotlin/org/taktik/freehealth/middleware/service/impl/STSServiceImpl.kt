@@ -31,6 +31,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues.ERROR_CONFIG
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.sts.SAMLTokenFactory
 import org.taktik.connector.technical.service.sts.domain.SAMLAttribute
 import org.taktik.connector.technical.service.sts.domain.SAMLAttributeDesignator
@@ -38,9 +39,10 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.service.sts.utils.SAMLHelper
 import org.taktik.connector.technical.utils.CertificateParser
-import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import org.taktik.freehealth.middleware.dto.CertificateInfo
+import org.taktik.freehealth.middleware.exception.MissingKeystoreException
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
@@ -58,13 +60,12 @@ import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 
 @Service
-class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, SamlTokenResult>) : STSService {
+class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, SamlTokenResult>, val keyDepotService: KeyDepotService) : STSService {
     private val log = LogFactory.getLog(this.javaClass)
+
     val freehealthStsService: org.taktik.connector.technical.service.sts.STSService =
         org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
-    val freehealthKeyDepotService: org.taktik.connector.technical.service.keydepot.KeyDepotService =
-        org.taktik.connector.technical.service.keydepot.impl.KeyDepotServiceImpl()
-    val transformer = TransformerFactory.newInstance().newTransformer()
+    val transformerFactory = TransformerFactory.newInstance()
 
     override fun registerToken(tokenId: UUID, token: String) {
         val factory = DocumentBuilderFactory.newInstance()
@@ -73,7 +74,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val assertion = document.documentElement
 
         tokensMap[tokenId] =
-            SamlTokenResult(tokenId, token, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
+            SamlTokenResult(tokenId, token, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
         log.info("tokensMap size: ${tokensMap.size}")
     }
 
@@ -81,10 +82,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         return tokensMap[tokenId]?.let {
             val keyStore = getKeyStore(keystoreId, passPhrase)
             val result = DOMResult()
-            transformer.transform(StreamSource(StringReader(it.token)), result)
+            transformerFactory.newTransformer().transform(StreamSource(StringReader(it.token!!)), result)
             return result.node?.firstChild?.let {el ->
                 SAMLTokenFactory.getInstance()
-                    .createSamlToken(el as Element, KeyStoreCredential(keyStore, "authentication", passPhrase))
+                    .createSamlToken(el as Element, KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase))
             }
         }
     }
@@ -95,10 +96,29 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         passPhrase: String,
         medicalHouse: Boolean,
         guardPost: Boolean,
+        tokenId: UUID?,
         extraDesignators: List<Pair<String, String>>
     ): SamlTokenResult? {
+        val now = System.currentTimeMillis()
+
+        val currentToken = tokenId?.let { id -> tokensMap[id]}
+        val isStillRecommendedForUse = currentToken?.let {
+            val valid = it.validity
+            val ts = it.timestamp
+
+            if (valid == null || ts == null) {
+                false
+            } else {
+                val totalValidity = valid - ts
+                val remainingValidity = valid - now
+                remainingValidity > 0 && totalValidity > 0 && remainingValidity.toDouble() / totalValidity.toDouble() > 0.5
+            }
+        } ?: false
+
+        if (isStillRecommendedForUse) return currentToken
+
         val keyStore = getKeyStore(keystoreId, passPhrase)
-        val credential = KeyStoreCredential(keyStore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keyStore, passPhrase.toCharArray())
         val etk = getHolderOfKeysEtk(credential, nihiiOrSsin)
         if (!hokPrivateKeys.containsKey(etk?.certificate?.serialNumber?.toString(10))) {
@@ -140,6 +160,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             ),
             SAMLAttributeDesignator(
                 "urn:be:fgov:ehealth:1.0:guardpost:nihii-number:recognisedguardpost:nihii11",
+                "urn:be:fgov:certified-namespace:ehealth"
+            ),
+            SAMLAttributeDesignator(
+                "urn:be:fgov:ehealth:1.0:guardpost:nihii-number:recognisedguardpost:boolean",
                 "urn:be:fgov:certified-namespace:ehealth"
             )
         )
@@ -206,27 +230,28 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
 
             //Serialize
             val result = StreamResult(StringWriter())
-            transformer.transform(DOMSource(assertion), result)
+            transformerFactory.newTransformer().transform(DOMSource(assertion), result)
             val randomUUID = UUID.randomUUID()
             val samlToken = result.writer.toString()
 
             val samlTokenResult =
-                SamlTokenResult(randomUUID, samlToken, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
+                SamlTokenResult(randomUUID, samlToken, now, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
             tokensMap[randomUUID] = samlTokenResult
             log.info("tokensMap size: ${tokensMap.size}")
 
             samlTokenResult
         } catch(e:TechnicalConnectorException) {
-            null
+            log.info("STS token request failure: ${e.errorCode} : ${e.message} : ${e.stackTrace}")
+            currentToken
         }
     }
 
     override fun getKeystoreInfo(keystoreId: UUID, passPhrase: String): CertificateInfo {
         val keyStore = getKeyStore(keystoreId, passPhrase)
-        val credential = KeyStoreCredential(keyStore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase)
         val parser = CertificateParser(credential.certificate)
 
-        return CertificateInfo(parser.validity, parser.type, parser.id, parser.application, parser.owner)
+        return CertificateInfo(credential.certificate.notAfter.time, parser.type, parser.id, parser.application, parser.owner)
     }
 
     override fun checkTokenValid(tokenId: UUID): Boolean {
@@ -242,7 +267,16 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             val identifierValue = parser.id
             val application = parser.application
 
-            this.getEtk(identifierType, java.lang.Long.parseLong(identifierValue), application)
+            this.keyDepotService.getETKSet(
+                identifierType,
+                identifierType.formatIdentifierValue(java.lang.Long.parseLong(identifierValue)),
+                application,
+                credential.keystoreId,
+                true
+                                          )?.let { if (it.size == 1) it.iterator().next() else null } ?: throw TechnicalConnectorException(
+                ERROR_ETK_NOTFOUND,
+                arrayOfNulls<Any>(0)
+                                                                                                                                          )
         } catch (e:java.lang.IllegalStateException) {
             log.info("Invalid certificate: ${parser.id} : ${parser.identifier} : ${parser.application} - nihii/ssin: ${nihiiOrSsin ?: ""}")
             null
@@ -269,25 +303,13 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         override fun load(key: Pair<UUID, String>): KeyStore {
             val keyStoreData =
                 keystoresMap[key.first]
-                    ?: throw(IllegalArgumentException("Missing Keystore, please upload a keystore and use the returned keystoreId"))
+                    ?: throw(MissingKeystoreException("Missing Keystore, please upload a keystore and use the returned keystoreId"))
             return KeyManager.getKeyStore(keyStoreData.inputStream(), "PKCS12", key.second.toCharArray())
         }
     })
 
     override fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore? {
         return keystoreCache.get(Pair(keystoreId, passPhrase))
-    }
-
-    @Throws(TechnicalConnectorException::class)
-    fun getEtk(identifierType: IdentifierType, identifierValue: Long, application: String): EncryptionToken {
-        return this.freehealthKeyDepotService.getETKSet(
-            identifierType,
-            identifierType.formatIdentifierValue(identifierValue),
-            application
-        )?.let { if (it.size == 1) it.iterator().next() else null } ?: throw TechnicalConnectorException(
-            ERROR_ETK_NOTFOUND,
-            arrayOfNulls<Any>(0)
-        )
     }
 
     override fun checkIfKeystoreExist(keystoreId: UUID): Boolean{

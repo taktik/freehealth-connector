@@ -48,7 +48,7 @@ public class IncludeObject implements Serializable {
    }
 
    public boolean isHasObjectTagsAndAttributesSet() {
-      return this.hasObjectTagsAndAttributesSet == null ? false : this.hasObjectTagsAndAttributesSet.booleanValue();
+      return this.hasObjectTagsAndAttributesSet == null ? false : this.hasObjectTagsAndAttributesSet;
    }
 
    public void setHasObjectTagsAndAttributesSet(Boolean value) {
@@ -64,7 +64,7 @@ public class IncludeObject implements Serializable {
    }
 
    public boolean isCreateReference() {
-      return this.createReference == null ? true : this.createReference.booleanValue();
+      return this.createReference == null ? true : this.createReference;
    }
 
    public void setCreateReference(Boolean value) {

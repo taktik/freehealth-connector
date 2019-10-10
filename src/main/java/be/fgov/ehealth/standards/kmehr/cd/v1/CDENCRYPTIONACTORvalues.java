@@ -16,7 +16,8 @@ public enum CDENCRYPTIONACTORvalues {
    NIHII_PHARMACY("NIHII-PHARMACY"),
    CBE("CBE"),
    INSS("INSS"),
-   EHP("EHP");
+   EHP("EHP"),
+   SSIN("SSIN");
 
    private final String value;
 

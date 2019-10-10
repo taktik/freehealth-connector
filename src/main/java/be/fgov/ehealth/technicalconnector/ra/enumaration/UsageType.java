@@ -1,17 +1,18 @@
 package be.fgov.ehealth.technicalconnector.ra.enumaration;
 
 public enum UsageType {
-   TIME_STAMPING(be.fgov.ehealth.etee.ra.csr._1_0.protocol.UsageType.TIMESTAMPING),
-   CONSULT_RN(be.fgov.ehealth.etee.ra.csr._1_0.protocol.UsageType.CONSULTATION_RN),
-   CODAGE(be.fgov.ehealth.etee.ra.csr._1_0.protocol.UsageType.CODAGE);
+   TIME_STAMPING("tsa"),
+   CONSULT_RN("consultrn"),
+   CODAGE("codage"),
+   OTHER("other");
 
-   private be.fgov.ehealth.etee.ra.csr._1_0.protocol.UsageType type;
+   private String serviceName;
 
-   private UsageType(be.fgov.ehealth.etee.ra.csr._1_0.protocol.UsageType type) {
-      this.type = type;
+   private UsageType(String serviceName) {
+      this.serviceName = serviceName;
    }
 
-   public be.fgov.ehealth.etee.ra.csr._1_0.protocol.UsageType getType() {
-      return this.type;
+   public String getServiceName() {
+      return this.serviceName;
    }
 }

@@ -12,9 +12,6 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 public final class FolderTypeUtils {
-   private FolderTypeUtils() {
-   }
-
    public static DateTime retrieveConsultationStartDateOrAgreementStartDate(FolderType folder) {
       if (folder != null) {
          List<ItemType> items = ((TransactionType)folder.getTransactions().get(0)).getItem();

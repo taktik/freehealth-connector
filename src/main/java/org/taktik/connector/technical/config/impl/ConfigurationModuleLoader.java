@@ -40,6 +40,8 @@ final class ConfigurationModuleLoader {
       modules.add(new ConfigurationModuleSecurityProvider());
       modules.add(new ConfigurationModuleTrustStore());
       modules.add(new ConfigurationModuleEndpointDistributor());
+      modules.add(new ConfigurationModuleOCSP());
+      modules.add(new ConfigurationModuleEhealthTime());
       modulesRegistry.clear();
 
       for (ConfigurationModule module : modules) {

@@ -27,7 +27,7 @@ import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementResponse
 import be.fgov.ehealth.chap4.protocol.v1.ConsultChap4MedicalAdvisorAgreementResponse
 import be.fgov.ehealth.commons.protocol.v1.ResponseType
 import be.fgov.ehealth.medicalagreement.core.v1.Kmehrresponse
-import org.apache.juli.logging.LogFactory
+import org.apache.commons.logging.LogFactory
 import java.io.IOException
 import java.util.ArrayList
 import org.bouncycastle.tsp.TSPAlgorithms
@@ -114,7 +114,6 @@ class ResponseBuilderImpl(private val crypto: Crypto, private val credential: Cr
         when (conversationType) {
             ConversationType.ADMISSION -> this.getBooleanPropertyDefaultingToTrue("validation.incoming.chapterIV.admission.message")
             ConversationType.CONSULT -> this.getBooleanPropertyDefaultingToTrue("validation.incoming.chapterIV.consultation.message")
-            else -> throw IllegalArgumentException("unhandled converstationType + [$conversationType]")
         }
 
     private fun getBooleanPropertyDefaultingToTrue(configProperty: String): Boolean {

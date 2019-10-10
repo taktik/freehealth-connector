@@ -116,7 +116,7 @@ public class ResponseObjectBuilderImpl implements ResponseObjectBuilder, Configu
       Serializable jaxbObject = null;
 
       try {
-         if (byteArray != null && ConfigFactory.getConfigValidator().getBooleanProperty("org.taktik.connector.business.dmg.builders.impl.dumpMessages", false).booleanValue()) {
+         if (byteArray != null && ConfigFactory.getConfigValidator().getBooleanProperty("org.taktik.connector.business.dmg.builders.impl.dumpMessages", false)) {
             LOG.debug("unmarshallByteContent: unmarshalling following xml : " + new String(byteArray));
          }
 

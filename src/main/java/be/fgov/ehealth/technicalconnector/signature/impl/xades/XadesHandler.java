@@ -65,7 +65,7 @@ public class XadesHandler {
 
          for(int i$ = 0; i$ < len$; ++i$) {
             XadesSpecification spec = arr$[i$];
-            spec.addOptionalAfterSignatureParts(unsignedProperties, this.sig, xadesUnsignedId, this.options);
+            spec.addOptionalAfterSignatureParts(unsignedProperties, this.sig, this.signatureCredential, xadesUnsignedId, this.options);
          }
 
          Document xadesUnsignedPropertiesDoc = unsignedProperties.buildAsDocument();

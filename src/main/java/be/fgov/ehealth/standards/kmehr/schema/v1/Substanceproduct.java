@@ -24,7 +24,7 @@ public class Substanceproduct implements Serializable {
       required = true
    )
    protected String intendedname;
-   protected Object deliveredname;
+   protected String deliveredname;
 
    public CDINNCLUSTER getIntendedcd() {
       return this.intendedcd;
@@ -50,11 +50,11 @@ public class Substanceproduct implements Serializable {
       this.intendedname = value;
    }
 
-   public Object getDeliveredname() {
+   public String getDeliveredname() {
       return this.deliveredname;
    }
 
-   public void setDeliveredname(Object value) {
+   public void setDeliveredname(String value) {
       this.deliveredname = value;
    }
 }

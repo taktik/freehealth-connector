@@ -17,9 +17,6 @@ public final class MapperFactory {
    private static ConfigurableFactoryHelper<Mapper> helper = new ConfigurableFactoryHelper(MapperDozerImpl.class.getName(), MapperDozerImpl.class.getName());
    private static Map<String, Mapper> cache = new HashMap();
 
-   private MapperFactory() {
-   }
-
    public static Mapper getMapper(String... mappingFiles) {
       Set<String> mappingSet = new TreeSet();
       mappingSet.addAll(Arrays.asList(mappingFiles));

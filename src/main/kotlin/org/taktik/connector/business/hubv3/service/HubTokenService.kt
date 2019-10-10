@@ -76,12 +76,14 @@ import be.fgov.ehealth.hubservices.core.v3.RevokeTherapeuticLinkResponse
 import be.fgov.ehealth.hubservices.core.v3.RevokeTransactionRequest
 import be.fgov.ehealth.hubservices.core.v3.RevokeTransactionResponse
 import java.security.KeyStore
+import java.util.UUID
 
 interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun declareTransaction(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: DeclareTransactionRequest
@@ -93,6 +95,7 @@ interface HubTokenService {
         hubId: Long,
         hubApplication: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutTransactionRequest
@@ -102,6 +105,7 @@ interface HubTokenService {
     fun revokeTransaction(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: RevokeTransactionRequest
@@ -111,6 +115,7 @@ interface HubTokenService {
     fun getTransactionList(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetTransactionListRequest
@@ -120,6 +125,7 @@ interface HubTokenService {
     fun getTransaction(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetTransactionRequest
@@ -129,6 +135,7 @@ interface HubTokenService {
     fun requestPublication(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: RequestPublicationRequest
@@ -138,6 +145,7 @@ interface HubTokenService {
     fun putHCParty(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutHCPartyRequest
@@ -147,6 +155,7 @@ interface HubTokenService {
     fun getHCParty(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetHCPartyRequest
@@ -156,6 +165,7 @@ interface HubTokenService {
     fun putPatient(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutPatientRequest
@@ -165,6 +175,7 @@ interface HubTokenService {
     fun getPatient(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetPatientRequest
@@ -174,6 +185,7 @@ interface HubTokenService {
     fun putHCPartyConsent(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutHCPartyConsentRequest
@@ -183,6 +195,7 @@ interface HubTokenService {
     fun getHCPartyConsent(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetHCPartyConsentRequest
@@ -192,6 +205,7 @@ interface HubTokenService {
     fun revokeHCPartyConsent(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: RevokeHCPartyConsentRequest
@@ -201,6 +215,7 @@ interface HubTokenService {
     fun putPatientConsent(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutPatientConsentRequest
@@ -210,6 +225,7 @@ interface HubTokenService {
     fun getPatientConsent(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetPatientConsentRequest
@@ -219,6 +235,7 @@ interface HubTokenService {
     fun revokePatientConsent(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: RevokePatientConsentRequest
@@ -228,6 +245,7 @@ interface HubTokenService {
     fun putTherapeuticLink(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutTherapeuticLinkRequest
@@ -237,6 +255,7 @@ interface HubTokenService {
     fun getTherapeuticLink(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetTherapeuticLinkRequest
@@ -246,6 +265,7 @@ interface HubTokenService {
     fun revokeTherapeuticLink(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: RevokeTherapeuticLinkRequest
@@ -255,6 +275,7 @@ interface HubTokenService {
     fun putAccessRight(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutAccessRightRequest
@@ -264,6 +285,7 @@ interface HubTokenService {
     fun getAccessRight(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetAccessRightRequest
@@ -273,6 +295,7 @@ interface HubTokenService {
     fun revokeAccessRight(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: RevokeAccessRightRequest
@@ -282,6 +305,7 @@ interface HubTokenService {
     fun getPatientAuditTrail(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetPatientAuditTrailRequest
@@ -293,6 +317,7 @@ interface HubTokenService {
         hubId: Long,
         hubApplication: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutTransactionSetRequest
@@ -302,6 +327,7 @@ interface HubTokenService {
     fun getTransactionSet(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetTransactionSetRequest
@@ -311,6 +337,7 @@ interface HubTokenService {
     fun getLatestUpdate(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetLatestUpdateRequest

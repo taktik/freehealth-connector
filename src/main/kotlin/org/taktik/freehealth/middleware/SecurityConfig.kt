@@ -69,22 +69,8 @@ class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: C
 	override fun configure(http: HttpSecurity?) {
         val authenticationManager = authenticationManager()
         val loginUrlAuthenticationEntryPoint = LoginUrlAuthenticationEntryPoint("/", mapOf("/api" to "api/login.html"))
-        val basicAuthenticationFilter = BasicAuthenticationFilter(authenticationManager)
-
-        val exceptionTranslationFilter = ExceptionTranslationFilter(loginUrlAuthenticationEntryPoint)
-
-        val usernamePasswordAuthenticationFilter = UsernamePasswordAuthenticationFilter().apply {
-            usernameParameter = "username"
-            passwordParameter = "password"
-            setAuthenticationManager(authenticationManager)
-            setAuthenticationSuccessHandler(AuthenticationSuccessHandler().apply { setDefaultTargetUrl("/"); setAlwaysUseDefaultTargetUrl(false) })
-            setAuthenticationFailureHandler(AuthenticationFailureHandler().apply { setDefaultFailureUrl("/error"); })
-            setRequiresAuthenticationRequestMatcher(AntPathRequestMatcher("/login"))
-            setPostOnly(true)
-        }
 
         http!!.csrf().disable().addFilterBefore(FilterChainProxy(listOf(
-            DefaultSecurityFilterChain(AntPathRequestMatcher("/api/**"), basicAuthenticationFilter, usernamePasswordAuthenticationFilter, exceptionTranslationFilter),
             DefaultSecurityFilterChain(AntPathRequestMatcher("/**"), BasicAuthenticationFilter(authenticationManager), ExceptionTranslationFilter(Http401UnauthorizedEntryPoint())))), FilterSecurityInterceptor::class.java)
 				.authorizeRequests()
 

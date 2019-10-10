@@ -341,7 +341,7 @@ public final class HcPartyUtil {
    private static String determineProjectNameToUse(String projectName) throws TechnicalConnectorException {
       Configuration config = ConfigFactory.getConfigValidator().getConfig();
       String finalProjectName = projectName;
-      if (config.getBooleanProperty("kmehr." + projectName + ".usedefaultproperties", true).booleanValue()) {
+      if (config.getBooleanProperty("kmehr." + projectName + ".usedefaultproperties", true)) {
          finalProjectName = "default";
       }
 

@@ -69,7 +69,7 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
    }
 
    private static List<String> getTransformerList(Map<String, Object> optionMap) {
-      boolean encapsulate = ((Boolean)SignatureUtils.getOption("encapsulate", optionMap, Boolean.FALSE)).booleanValue();
+      boolean encapsulate = ((Boolean)SignatureUtils.getOption("encapsulate", optionMap, Boolean.FALSE));
       List<String> transformerList = (List)SignatureUtils.getOption("transformerList", optionMap, new ArrayList());
       if (encapsulate && !transformerList.contains("http://www.w3.org/2000/09/xmldsig#enveloped-signature")) {
          transformerList.add(0, "http://www.w3.org/2000/09/xmldsig#enveloped-signature");
@@ -211,7 +211,7 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
 
    private void verifyManifest(SignatureVerificationResult result, Element sigElement, Map<String, Object> options) {
       Boolean followNestedManifest = (Boolean)SignatureUtils.getOption("followNestedManifest", options, Boolean.FALSE);
-      if (followNestedManifest.booleanValue()) {
+      if (followNestedManifest) {
          Element signedInfo = (Element)DomUtils.getMatchingChilds(sigElement, "http://www.w3.org/2000/09/xmldsig#", "SignedInfo").item(0);
          NodeList referencesList = DomUtils.getMatchingChilds(signedInfo, "http://www.w3.org/2000/09/xmldsig#", "Reference");
 
@@ -231,7 +231,7 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
          String uri = IdGeneratorFactory.getIdGenerator("uuid").generateId();
          XMLSignature xmlSignature = new XMLSignature(sigElement, uri);
          Boolean followNestedManifest = (Boolean)SignatureUtils.getOption("followNestedManifest", options, Boolean.FALSE);
-         xmlSignature.setFollowNestedManifests(followNestedManifest.booleanValue());
+         xmlSignature.setFollowNestedManifests(followNestedManifest);
          xmlSignature.addResourceResolver(new DocumentResolver(signedContent));
          KeyInfo keyInfo = xmlSignature.getKeyInfo();
          keyInfo.setSecureValidation(false);

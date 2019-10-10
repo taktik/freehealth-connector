@@ -1,10 +1,12 @@
 package org.taktik.connector.technical.cache.impl;
 
 import org.taktik.connector.technical.cache.Cache;
+import org.taktik.connector.technical.exception.TechnicalConnectorException;
+import org.taktik.connector.technical.utils.ConfigurableImplementation;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HashMapCache<K, V> implements Cache<K, V> {
+public class HashMapCache<K, V> implements Cache<K, V>, ConfigurableImplementation {
    private static final String NAME = "HashMapCache";
    private HashMap<K, V> cache = new HashMap();
 
@@ -34,5 +36,8 @@ public class HashMapCache<K, V> implements Cache<K, V> {
 
    public void putAll(Map<K, V> map) {
       this.cache.putAll(map);
+   }
+
+   public void initialize(Map<String, Object> parameterMap) throws TechnicalConnectorException {
    }
 }

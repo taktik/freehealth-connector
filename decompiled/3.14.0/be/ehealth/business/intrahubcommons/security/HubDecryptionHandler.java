@@ -29,7 +29,7 @@ public class HubDecryptionHandler implements SOAPHandler<SOAPMessageContext> {
          throw new IllegalArgumentException("The message cannot be handled since the SOAPMessageContext doesn't have a valid value");
       } else {
          Boolean outboundProperty = (Boolean)cxt.get("javax.xml.ws.handler.message.outbound");
-         if (!outboundProperty.booleanValue()) {
+         if (!outboundProperty) {
             this.handleDecryption(cxt);
          }
 

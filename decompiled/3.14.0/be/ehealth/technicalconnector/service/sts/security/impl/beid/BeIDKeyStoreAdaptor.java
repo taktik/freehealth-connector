@@ -22,9 +22,9 @@ public class BeIDKeyStoreAdaptor implements KeyStoreAdaptor {
       this.keyStore = KeyStore.getInstance("BeID");
       BeIDKeyStoreParameter keyStoreParameter = new BeIDKeyStoreParameter();
       keyStoreParameter.setBeIDCard(beIDCard);
-      keyStoreParameter.setAutoRecovery(conf.getBooleanProperty("be.ehealth.technicalconnector.service.sts.security.impl.beid.autorecovery", true).booleanValue());
-      keyStoreParameter.setLogoff(conf.getBooleanProperty("be.ehealth.technicalconnector.service.sts.security.impl.beid.logoff", false).booleanValue());
-      keyStoreParameter.setCardReaderStickiness(conf.getBooleanProperty("be.ehealth.technicalconnector.service.sts.security.impl.beid.cardreaderstickiness", false).booleanValue());
+      keyStoreParameter.setAutoRecovery(conf.getBooleanProperty("be.ehealth.technicalconnector.service.sts.security.impl.beid.autorecovery", true));
+      keyStoreParameter.setLogoff(conf.getBooleanProperty("be.ehealth.technicalconnector.service.sts.security.impl.beid.logoff", false));
+      keyStoreParameter.setCardReaderStickiness(conf.getBooleanProperty("be.ehealth.technicalconnector.service.sts.security.impl.beid.cardreaderstickiness", false));
 
       try {
          this.keyStore.load(keyStoreParameter);

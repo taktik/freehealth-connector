@@ -84,20 +84,30 @@ import be.fgov.ehealth.hubservices.core.v3.RevokeTherapeuticLinkRequest
 import be.fgov.ehealth.hubservices.core.v3.RevokeTherapeuticLinkResponse
 import be.fgov.ehealth.hubservices.core.v3.RevokeTransactionRequest
 import be.fgov.ehealth.hubservices.core.v3.RevokeTransactionResponse
+import org.apache.commons.logging.LogFactory
 import javax.xml.soap.SOAPException
 import javax.xml.ws.WebServiceException
 import org.slf4j.LoggerFactory
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
+import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
+import org.taktik.connector.technical.utils.ConnectorXmlUtils
+import org.taktik.connector.technical.utils.IdentifierType
 import java.security.KeyStore
+import java.util.UUID
 
-class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
+class HubTokenServiceImpl(private val keyDepotService: KeyDepotService) : HubTokenService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
+
+    val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
+    val log = LogFactory.getLog(this::class.java)
 
     @Throws(TechnicalConnectorException::class)
     override fun declareTransaction(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: DeclareTransactionRequest
@@ -105,6 +115,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:DeclareTransaction",
@@ -119,6 +130,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         hubId: Long,
         hubApplication: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutTransactionRequest
@@ -128,14 +140,16 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:PutTransaction",
             IntrahubEncryptionUtil.encryptFolder(
                 request,
-                getCrypto(keystore, passPhrase),
+                getCrypto(keystoreId, keystore, passPhrase),
                 hubId,
-                hubApplication
+                hubApplication,
+                keyDepotManager.getEtk(IdentifierType.EHP, hubId, hubApplication ?: "", keystoreId, false)
             ),
             PutTransactionResponse::class.java
         )
@@ -145,6 +159,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun revokeTransaction(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: RevokeTransactionRequest
@@ -152,6 +167,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokeTransaction",
@@ -164,6 +180,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun getTransactionList(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetTransactionListRequest
@@ -171,6 +188,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:GetTransactionList",
@@ -183,6 +201,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun getTransaction(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetTransactionRequest
@@ -190,6 +209,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:GetTransaction",
@@ -202,6 +222,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun requestPublication(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: RequestPublicationRequest
@@ -209,6 +230,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:RequestPublication",
@@ -221,6 +243,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun putHCParty(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutHCPartyRequest
@@ -228,6 +251,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:PutHCParty",
@@ -240,6 +264,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun getHCParty(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetHCPartyRequest
@@ -247,6 +272,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:GetHCParty",
@@ -259,6 +285,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun putPatient(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutPatientRequest
@@ -266,6 +293,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:PutPatient",
@@ -278,6 +306,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun getPatient(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetPatientRequest
@@ -285,6 +314,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:GetPatient",
@@ -297,6 +327,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun putHCPartyConsent(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutHCPartyConsentRequest
@@ -304,6 +335,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:PutHCPartyConsent",
@@ -316,6 +348,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun getHCPartyConsent(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetHCPartyConsentRequest
@@ -323,6 +356,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:GetHCPartyConsent",
@@ -335,6 +369,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun revokeHCPartyConsent(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: RevokeHCPartyConsentRequest
@@ -342,6 +377,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokeHCPartyConsent",
@@ -354,6 +390,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun putPatientConsent(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutPatientConsentRequest
@@ -361,6 +398,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:PutPatientConsent",
@@ -373,6 +411,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun getPatientConsent(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetPatientConsentRequest
@@ -380,6 +419,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:GetPatientConsent",
@@ -392,6 +432,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun revokePatientConsent(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: RevokePatientConsentRequest
@@ -399,6 +440,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokePatientConsent",
@@ -411,6 +453,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun putTherapeuticLink(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutTherapeuticLinkRequest
@@ -418,6 +461,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:PutTherapeuticLink",
@@ -430,6 +474,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun getTherapeuticLink(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetTherapeuticLinkRequest
@@ -437,6 +482,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:GetTherapeuticLink",
@@ -449,6 +495,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun revokeTherapeuticLink(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: RevokeTherapeuticLinkRequest
@@ -456,6 +503,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokeTherapeuticLink",
@@ -468,6 +516,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun putAccessRight(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutAccessRightRequest
@@ -475,6 +524,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:PutAccessRight",
@@ -487,6 +537,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun getAccessRight(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetAccessRightRequest
@@ -494,6 +545,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:GetAccessRight",
@@ -506,6 +558,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun revokeAccessRight(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: RevokeAccessRightRequest
@@ -513,6 +566,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:RevokeAccessRight",
@@ -525,6 +579,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun getPatientAuditTrail(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetPatientAuditTrailRequest
@@ -532,6 +587,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:GetPatientAuditTrail",
@@ -546,21 +602,25 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         hubId: Long,
         hubApplication: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: PutTransactionSetRequest
     ): PutTransactionSetResponse {
+        log.debug(ConnectorXmlUtils.toString(request))
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:PutTransactionSet",
             IntrahubEncryptionUtil.encryptFolder(
                 request,
-                getCrypto(keystore, passPhrase),
+                getCrypto(keystoreId, keystore, passPhrase),
                 hubId,
-                hubApplication
+                hubApplication,
+                keyDepotManager.getEtk(IdentifierType.EHP, hubId, hubApplication ?: "", keystoreId, false)
             ),
             PutTransactionSetResponse::class.java
         )
@@ -570,6 +630,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun getTransactionSet(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetTransactionSetRequest
@@ -577,6 +638,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:GetTransactionSet",
@@ -589,6 +651,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     override fun getLatestUpdate(
         endpoint: String,
         token: SAMLToken,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         request: GetLatestUpdateRequest
@@ -596,6 +659,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         return this.executeOperation(
             token,
             endpoint,
+            keystoreId,
             keystore,
             passPhrase,
             "urn:be:fgov:ehealth:intrahub:protocol:v3:GetLatestUpdate",
@@ -608,6 +672,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     private fun <T> executeOperation(
         token: SAMLToken,
         endpoint: String,
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         operation: String,
@@ -616,7 +681,7 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
     ): T {
         try {
             val service =
-                ServiceFactory.getIntraHubPort(endpoint, token, keystore, passPhrase, operation).setPayload(request)
+                ServiceFactory.getIntraHubPort(endpoint, token, keystoreId, keystore, passPhrase, operation).setPayload(request)
             val genericResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
             return genericResponse.asObject(clazz)
         } catch (ex: SOAPException) {
@@ -626,8 +691,8 @@ class HubTokenServiceImpl : HubTokenService, ConfigurationModuleBootstrap.Module
         }
     }
 
-    private fun getCrypto(keystore: KeyStore, passPhrase: String): Crypto {
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+    private fun getCrypto(keystoreId: UUID, keystore: KeyStore, passPhrase: String): Crypto {
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         return CryptoFactory.getCrypto(credential, hokPrivateKeys)
     }

@@ -16,9 +16,6 @@ public final class RequestObjectBuilderFactory {
    private static Configuration config = ConfigFactory.getConfigValidator();
    private static RequestObjectBuilder cachedBuilder;
 
-   private RequestObjectBuilderFactory() {
-   }
-
    public static RequestObjectBuilder getRequestObjectBuilder() throws TechnicalConnectorException, GenInsBusinessConnectorException, InstantiationException {
       if (cachedBuilder != null) {
          return cachedBuilder;

@@ -238,7 +238,17 @@ public enum CDHCPARTYvalues {
    @XmlEnumValue("persorthotist")
    PERSORTHOTIST("persorthotist"),
    @XmlEnumValue("perspatientdriver")
-   PERSPATIENTDRIVER("perspatientdriver");
+   PERSPATIENTDRIVER("perspatientdriver"),
+   @XmlEnumValue("perspharmacistclinicalbiologist")
+   PERSPHARMACISTCLINICALBIOLOGIST("perspharmacistclinicalbiologist"),
+   @XmlEnumValue("deptnursing")
+   DEPTNURSING("deptnursing"),
+   @XmlEnumValue("persoraldentalhygienist")
+   PERSORALDENTALHYGIENIST("persoraldentalhygienist"),
+   @XmlEnumValue("persclinicalpsychologist")
+   PERSCLINICALPSYCHOLOGIST("persclinicalpsychologist"),
+   @XmlEnumValue("persclinicalorthopedagogist")
+   PERSCLINICALORTHOPEDAGOGIST("persclinicalorthopedagogist");
 
    private final String value;
 

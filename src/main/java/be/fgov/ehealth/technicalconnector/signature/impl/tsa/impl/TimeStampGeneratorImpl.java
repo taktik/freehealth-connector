@@ -4,7 +4,6 @@ import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.service.sts.security.Credential;
-import org.taktik.connector.technical.session.Session;
 import org.taktik.connector.technical.utils.ConfigurableImplementation;
 import org.taktik.connector.technical.utils.ConnectorCryptoUtils;
 import org.taktik.connector.technical.ws.ServiceFactory;
@@ -26,8 +25,8 @@ public class TimeStampGeneratorImpl implements ConfigurableImplementation, Times
    private static final String SOAP_ACTION_TS_AUTHORITY_V2 = "urn:be:fgov:ehealth:timestamping:protocol:v2:stamp";
    private Map<String, Object> options;
 
-   public byte[] generate(String requestId, String digestAlgoUri, byte[] digest) throws TechnicalConnectorException {
-      SignResponse response = this.invoke(requestId, digestAlgoUri, digest);
+   public byte[] generate(String requestId, Credential credential, String digestAlgoUri, byte[] digest) throws TechnicalConnectorException {
+      SignResponse response = this.invoke(requestId, credential, digestAlgoUri, digest);
       if ("urn:oasis:names:tc:dss:1.0:resultmajor:Success".equals(response.getResult().getResultMajor())) {
          Timestamp ts = response.getSignatureObject().getTimestamp();
          if (ts.getOther() != null) {
@@ -36,47 +35,38 @@ public class TimeStampGeneratorImpl implements ConfigurableImplementation, Times
             return ts.getRFC3161TimeStampToken();
          }
       } else {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, new Object[]{response.getResult().getResultMajor() + " : minor result : " + response.getResult().getResultMinor() + " message: " + response.getResult().getResultMessage()});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, response.getResult().getResultMajor() + " : minor result : " + response.getResult().getResultMinor() + " message: " + response.getResult().getResultMessage());
       }
    }
 
-   private SignResponse invoke(String requestId, String digestAlgoUri, byte[] digest) throws TechnicalConnectorException {
+   private SignResponse invoke(String requestId, Credential credential, String digestAlgoUri, byte[] digest) throws TechnicalConnectorException {
       GenericRequest req = new GenericRequest();
-      req.setPayload((Object)this.generateSignRequest(requestId, digestAlgoUri, digest));
-      req.setCredential(this.getCredential(), TokenType.X509);
+      req.setPayload(this.generateSignRequest(requestId, digestAlgoUri, digest));
+      req.setCredential(credential, TokenType.X509);
       req.setEndpoint(this.determineEndpoint());
       req.setSoapAction("urn:be:fgov:ehealth:timestamping:protocol:v2:stamp");
       req.setDefaultHandlerChain();
 
       try {
-         return (SignResponse)ServiceFactory.getGenericWsSender().send(req).asObject(SignResponse.class);
+         return ServiceFactory.getGenericWsSender().send(req).asObject(SignResponse.class);
       } catch (Exception var6) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var6, new Object[]{"Unable to invoke TimestampAuthority"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var6, "Unable to invoke TimestampAuthority");
       }
    }
 
    private String determineEndpoint() throws TechnicalConnectorException {
-      String tsaEndpoint = (String)SignatureUtils.getOption("SignatureTimestampEndpointTimestampAuthority", this.options, ConfigFactory.getConfigValidator().getProperty("endpoint.ts.authority.v2", "$uddi{uddi:ehealth-fgov-be:business:timestampauthority:v2}"));
+      String tsaEndpoint = SignatureUtils.getOption("SignatureTimestampEndpointTimestampAuthority", this.options, ConfigFactory.getConfigValidator().getProperty("endpoint.ts.authority.v2", "$uddi{uddi:ehealth-fgov-be:business:timestampauthority:v2}"));
       if (tsaEndpoint != null && !tsaEndpoint.isEmpty()) {
          return tsaEndpoint;
       } else {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, new Object[]{"SignatureTimestampEndpointTimestampAuthorityis empty or property endpoint.ts.authority.v2 is not present in the properties."});
-      }
-   }
-
-   private Credential getCredential() throws TechnicalConnectorException {
-      Credential cred = (Credential)SignatureUtils.getOption("SignatureTimestampCredential", this.options, Session.getInstance().getSession().getHolderOfKeyCredential());
-      if (cred == null) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, new Object[]{"SignatureTimestampCredentialis empty or no active session."});
-      } else {
-         return cred;
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, "SignatureTimestampEndpointTimestampAuthorityis empty or property endpoint.ts.authority.v2 is not present in the properties.");
       }
    }
 
    private SignRequest generateSignRequest(String requestId, String digestAlgoURI, byte[] transformed) throws TechnicalConnectorException {
       SignRequest request = new SignRequest();
       request.setRequestID(requestId);
-      request.setProfile((String)SignatureUtils.getOption("SignatureTimestampProfile", this.options, "urn:ehealth:profiles:timestamping:2.1-cert"));
+      request.setProfile(SignatureUtils.getOption("SignatureTimestampProfile", this.options, "urn:ehealth:profiles:timestamping:2.1-cert"));
       InputDocuments inputDocuments = new InputDocuments();
       DocumentHash docHash = new DocumentHash();
       docHash.setDigestMethod(new DigestMethod());

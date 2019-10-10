@@ -98,7 +98,13 @@ public enum CDTRANSACTIONvalues {
    @XmlEnumValue("careplan")
    CAREPLAN("careplan"),
    @XmlEnumValue("applicationlink")
-   APPLICATIONLINK("applicationlink");
+   APPLICATIONLINK("applicationlink"),
+   @XmlEnumValue("diarynote")
+   DIARYNOTE("diarynote"),
+   @XmlEnumValue("mea")
+   MEA("mea"),
+   @XmlEnumValue("perinatal")
+   PERINATAL("perinatal");
 
    private final String value;
 

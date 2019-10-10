@@ -18,7 +18,7 @@ public abstract class AbstractSOAPHandler implements SOAPHandler<SOAPMessageCont
    private static final int BLOCK = 1024;
 
    public boolean handleMessage(SOAPMessageContext context) {
-      return ((Boolean)context.get("javax.xml.ws.handler.message.outbound")).booleanValue() ? this.handleOutbound(context) : this.handleInbound(context);
+      return ((Boolean)context.get("javax.xml.ws.handler.message.outbound")) ? this.handleOutbound(context) : this.handleInbound(context);
    }
 
    public boolean handleOutbound(SOAPMessageContext context) {

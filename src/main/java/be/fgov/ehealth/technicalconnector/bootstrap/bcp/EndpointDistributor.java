@@ -1,8 +1,11 @@
 package be.fgov.ehealth.technicalconnector.bootstrap.bcp;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.ConfigValidator;
 import org.taktik.connector.technical.exception.NoNextEndpointException;
+import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.CacheInformation;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.EndPointInformation;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,7 +16,6 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.reflect.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +23,7 @@ public final class EndpointDistributor {
    public static final String PROP_POLLING_INTERVAL = "be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.interval.minutes";
    public static final String PROP_POLLING_ACTIVATED = "be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.activated";
    private static final long DEFAULT_POLLING_INTERVAL = 15L;
-   private static final Logger LOG = LoggerFactory.getLogger(EndpointDistributor.class);
+   private static final Log log = LogFactory.getLog(EndpointDistributor.class);
    private static ConfigValidator config = ConfigFactory.getConfigValidator();
    private boolean polling;
    private Timer timer;
@@ -29,26 +31,41 @@ public final class EndpointDistributor {
    private Map<String, List<String>> service2AllEndpoints;
    private Map<String, String> service2ActiveEndpoint;
    private Map<String, String> service2DefaultEndpoint;
+   private Map<String, CacheInformation> service2CacheInformation;
 
    public static EndpointDistributor getInstance() {
       return EndpointDistributor.EndpointDistributorSingleton.INSTANCE.getEndpointDistributor();
    }
 
    private EndpointDistributor() {
-      this.url2Service = new HashMap();
-      this.service2AllEndpoints = new HashMap();
-      this.service2ActiveEndpoint = new HashMap();
-      this.service2DefaultEndpoint = new HashMap();
+      this.url2Service = new HashMap<>();
+      this.service2AllEndpoints = new HashMap<>();
+      this.service2ActiveEndpoint = new HashMap<>();
+      this.service2DefaultEndpoint = new HashMap<>();
+      this.service2CacheInformation = new HashMap<>();
+   }
+
+   public String getService(String currentEndpoint) {
+      return (String)this.url2Service.get(currentEndpoint);
    }
 
    public String getActiveEndpoint(String currentEndpoint) {
       return this.url2Service.containsKey(currentEndpoint) ? (String)this.service2ActiveEndpoint.get(this.url2Service.get(currentEndpoint)) : currentEndpoint;
    }
 
+   public boolean mustCache(String currentEndpoint) {
+      String service = (String)this.url2Service.get(currentEndpoint);
+      return StringUtils.isNotEmpty(service) && this.service2CacheInformation.containsKey(service);
+   }
+
+   public CacheInformation getCacheInformation(String currentEndpoint) {
+      return (CacheInformation)this.service2CacheInformation.get(this.url2Service.get(currentEndpoint));
+   }
+
    public void activatePolling() {
-      if (!this.polling && this.isBCPMode() && config.getBooleanProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.activated", Boolean.TRUE).booleanValue()) {
+      if (!this.polling && this.isBCPMode() && config.getBooleanProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.activated", Boolean.TRUE)) {
          this.timer = new Timer(true);
-         this.timer.schedule(new EndpointDistributor.StatusPollingTimerTask(), new Date(), TimeUnit.MILLISECONDS.convert(config.getLongProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.interval.minutes", 15L).longValue(), TimeUnit.MINUTES));
+         this.timer.schedule(new EndpointDistributor.StatusPollingTimerTask(), new Date(), TimeUnit.MILLISECONDS.convert(config.getLongProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.interval.minutes", 15L), TimeUnit.MINUTES));
       }
 
       this.polling = true;
@@ -59,11 +76,11 @@ public final class EndpointDistributor {
    }
 
    public void activateNextEndPoint(String currentEndpoint) throws NoNextEndpointException {
-      LOG.debug("Trying to activate next endpoint for [{}]", currentEndpoint);
+      log.debug("Trying to activate next endpoint for " + currentEndpoint);
       if (this.url2Service.containsKey(currentEndpoint)) {
-         String serviceKey = (String)this.url2Service.get(currentEndpoint);
-         String nextEndpoint = next(currentEndpoint, (List)this.service2AllEndpoints.get(serviceKey));
-         LOG.info("Activating new endpoint [{}] for [{}]", nextEndpoint, serviceKey);
+         String serviceKey = this.url2Service.get(currentEndpoint);
+         String nextEndpoint = next(currentEndpoint, this.service2AllEndpoints.get(serviceKey));
+         log.info("Activating new endpoint " + nextEndpoint + " for " + serviceKey);
          this.service2ActiveEndpoint.put(serviceKey, nextEndpoint);
       } else {
          throw new NoNextEndpointException("Unable to activate alternative for [" + currentEndpoint + "]");
@@ -72,8 +89,8 @@ public final class EndpointDistributor {
 
    public int getAmountOfAlternatives(String currentEndpoint) {
       if (this.url2Service.containsKey(currentEndpoint)) {
-         String serviceKey = (String)this.url2Service.get(currentEndpoint);
-         return ((List)this.service2AllEndpoints.get(serviceKey)).size();
+         String serviceKey = this.url2Service.get(currentEndpoint);
+         return this.service2AllEndpoints.get(serviceKey).size();
       } else {
          return 1;
       }
@@ -95,7 +112,7 @@ public final class EndpointDistributor {
       }
    }
 
-   void update(EndPointInformation info) {
+   protected void update(EndPointInformation info) {
       Validate.notNull(info);
       if (!isBCPMode(info)) {
          this.polling = false;
@@ -108,9 +125,10 @@ public final class EndpointDistributor {
       this.service2ActiveEndpoint = info.getService2ActiveEndpoint();
       this.service2AllEndpoints = info.getService2AllEndpoints();
       this.service2DefaultEndpoint = info.getService2DefaultEndpoint();
+      this.service2CacheInformation = info.getService2CacheInformation();
    }
 
-   void reset() {
+   protected void reset() {
       this.url2Service = new HashMap();
       this.service2AllEndpoints = new HashMap();
       this.service2ActiveEndpoint = new HashMap();
@@ -127,36 +145,22 @@ public final class EndpointDistributor {
 
    public static boolean update() {
       try {
-         return (Boolean) MethodUtils.invokeStaticMethod(Class.forName("be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointUpdater"), "update", new Object[0]);
+         return EndpointUpdater.update();
       } catch (Exception ex) {
-         LOG.error("Unable to update endpoints", ex);
+         log.error("Unable to update endpoints", ex);
          return false;
       }
    }
 
-   // $FF: synthetic method
-   EndpointDistributor(EndpointDistributor.SyntheticClass_1 x0) {
-      this();
-   }
-
-   // $FF: synthetic class
-   static class SyntheticClass_1 {
-   }
-
    private static class StatusPollingTimerTask extends TimerTask {
-      private static final Logger LOG = LoggerFactory.getLogger(EndpointDistributor.StatusPollingTimerTask.class);
+      private static final Log log = LogFactory.getLog(StatusPollingTimerTask.class);
 
       private StatusPollingTimerTask() {
       }
 
       public void run() {
-         LOG.debug("Update endpoints through Timer");
+         log.debug("Update endpoints through Timer");
          EndpointDistributor.update();
-      }
-
-      // $FF: synthetic method
-      StatusPollingTimerTask(EndpointDistributor.SyntheticClass_1 x0) {
-         this();
       }
    }
 

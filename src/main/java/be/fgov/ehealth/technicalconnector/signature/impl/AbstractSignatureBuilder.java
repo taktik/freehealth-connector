@@ -37,7 +37,7 @@ public class AbstractSignatureBuilder {
    }
 
    protected void validateChain(SignatureVerificationResult result, Map<String, Object> options) throws TechnicalConnectorException {
-      Integer duration = (Integer)SignatureUtils.getOption("SigningTimeClockSkewDuration", options, Integer.valueOf(5));
+      Integer duration = (Integer)SignatureUtils.getOption("SigningTimeClockSkewDuration", options, 5);
       TimeUnit timeUnit = (TimeUnit)SignatureUtils.getOption("SigningTimeClockSkewTimeUnit", options, TimeUnit.MINUTES);
       CertificateChecker certChecker = CertificateCheckerFactory.getCertificateChecker();
       Iterator i$ = result.getCertChain().iterator();
@@ -46,7 +46,7 @@ public class AbstractSignatureBuilder {
          X509Certificate cert = (X509Certificate)i$.next();
 
          try {
-            cert.checkValidity(result.getVerifiedSigningTime(duration.intValue(), timeUnit).toDate());
+            cert.checkValidity(result.getVerifiedSigningTime(duration, timeUnit).toDate());
          } catch (CertificateExpiredException var10) {
             result.getErrors().add(SignatureVerificationError.CERTIFICATE_EXPIRED);
          } catch (CertificateNotYetValidException var11) {
@@ -74,7 +74,7 @@ public class AbstractSignatureBuilder {
    private void validateEndCertificate(SignatureVerificationResult result, CertificateChecker certChecker, Integer duration, TimeUnit timeUnit) throws TechnicalConnectorException {
       try {
          X509Certificate cert = this.extractEndCertificate(result.getCertChain());
-         if (certChecker.isCertificateRevoked(cert, result.getVerifiedSigningTime(duration.intValue(), timeUnit))) {
+         if (certChecker.isCertificateRevoked(cert, result.getVerifiedSigningTime(duration, timeUnit))) {
             result.getErrors().add(SignatureVerificationError.CERTIFICATE_REVOKED);
          }
 

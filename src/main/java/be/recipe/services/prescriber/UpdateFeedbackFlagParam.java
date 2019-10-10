@@ -40,7 +40,7 @@ public class UpdateFeedbackFlagParam extends PartyIdentification {
    }
 
    public boolean isAllowFeedback() {
-      return this.allowFeedback.booleanValue();
+      return this.allowFeedback;
    }
 
    public void setAllowFeedback(boolean allowFeedback) {

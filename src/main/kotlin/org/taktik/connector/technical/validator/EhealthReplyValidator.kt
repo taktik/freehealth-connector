@@ -6,8 +6,11 @@ import be.fgov.ehealth.commons.protocol.v2.StatusResponseType
 
 interface EhealthReplyValidator {
     @Throws(SoaErrorException::class)
-    fun validateReplyStatus(var1: ResponseType): Boolean
+    fun validateReplyStatus(response: ResponseType): Boolean
 
     @Throws(SoaErrorException::class)
-    fun validateReplyStatus(var1: StatusResponseType): Boolean
+    fun validateReplyStatus(response: be.fgov.ehealth.commons._1_0.protocol.ResponseType): Boolean
+
+    @Throws(SoaErrorException::class)
+    fun validateReplyStatus(response: StatusResponseType): Boolean
 }

@@ -115,6 +115,7 @@ import org.taktik.connector.business.recipe.prescriber.PrescriberIntegrationModu
 import org.taktik.connector.business.recipe.utils.KmehrHelper
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.connector.technical.exception.ConnectorException
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.freehealth.middleware.dao.CodeDao
 import org.taktik.freehealth.middleware.domain.recipe.Duration
@@ -167,7 +168,7 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
  * To change this template use File | Settings | File Templates.
  */
 @Service
-class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: DrugsLogic, private val stsService: STSService) : RecipeService {
+class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: DrugsLogic, private val stsService: STSService, private val keyDepotService: KeyDepotService) : RecipeService {
     private val ridCache = CacheBuilder.newBuilder().build<String, GetPrescriptionForPrescriberResult>()
     private val icureName = "freehealth-connector"
     private val icureVersion = "1.0.0"
@@ -200,7 +201,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
 
     init {
         feedbacksCache = CacheBuilder.newBuilder().build<String, SortedSet<Feedback>>()
-        service = PrescriberIntegrationModuleImpl(stsService)
+        service = PrescriberIntegrationModuleImpl(stsService, keyDepotService)
     }
 
     @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
@@ -208,8 +209,8 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-        val service = PrescriberIntegrationModuleImpl(stsService)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val service = PrescriberIntegrationModuleImpl(stsService, keyDepotService)
         service.revokePrescription(samlToken, credential, hcpNihii, rid, reason)
     }
 
@@ -218,8 +219,8 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-        val service = PrescriberIntegrationModuleImpl(stsService)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val service = PrescriberIntegrationModuleImpl(stsService, keyDepotService)
         service.updateFeedbackFlag(samlToken, credential, hcpNihii, rid, feedbackFlag)
 
         ridCache.getIfPresent(rid)?.let {
@@ -232,8 +233,8 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-        val service = PrescriberIntegrationModuleImpl(stsService)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val service = PrescriberIntegrationModuleImpl(stsService, keyDepotService)
         val os = ByteArrayOutputStream()
         JAXBContext.newInstance(RecipeNotification::class.java).createMarshaller().marshal(RecipeNotification().apply { this.text = text; kmehrmessage = getPrescriptionMessage(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase, rid) }, os)
         val bytes = os.toByteArray()
@@ -246,8 +247,8 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
-        val service = PrescriberIntegrationModuleImpl(stsService)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val service = PrescriberIntegrationModuleImpl(stsService, keyDepotService)
         val p = service.getPrescription(samlToken, credential, keystore, passPhrase, hcpNihii, rid)
 
         return p?.prescription?.let { JAXBContext.newInstance(Kmehrmessage::class.java).createUnmarshaller().unmarshal(ByteArrayInputStream(it) as InputStream) as Kmehrmessage }
@@ -258,7 +259,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val feedbackItemList = service!!.listFeedback(samlToken, credential, hcpNihii, true)
         return feedbackItemList.map { Feedback(it.rid, Long.parseLong(it.sentBy), it.sentDate?.time, it.content?.toString(Charset.forName("UTF-8"))) }
     }
@@ -268,7 +269,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val ridList = service.listOpenPrescription(samlToken, credential, hcpNihii)
 
         val es = Executors.newFixedThreadPool(5)
@@ -301,7 +302,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val ridList = service.listOpenPrescription(samlToken, credential, hcpNihii, patientId)
 
         val es = Executors.newFixedThreadPool(5)
@@ -505,10 +506,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                             telecoms.add(TelecomType().apply {
                                 cds.add(CDTELECOM().apply { s = CD_ADDRESS; sv = versions["CD-ADDRESS"]; value = "work" })
                                 cds.add(CDTELECOM().apply { s = CD_TELECOM; sv = versions["CD-TELECOM"]; value = "phone" })
-                                telecomnumber = when {
-                                    address.telecoms.any { it.telecomType == mobile || it.telecomType == phone } -> address.telecoms.first { it.telecomType == mobile || it.telecomType == phone }.telecomNumber
-                                    else -> throw IllegalArgumentException("preferred address (${address.houseNumber} ${address.street}, ${address.city}, ${address.country}) for ${hcp.lastName} (${hcp.nihii}) has no phone contact")
-                                }
+                                telecomnumber = address.telecoms.find { (it.telecomType == mobile || it.telecomType == phone) && !it.telecomNumber.isNullOrBlank() }?.telecomNumber ?: "+3220000000"
                             })
                         })
                     }
@@ -804,7 +802,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val selectedType: String = inferPrescriptionType(medications, prescriptionType)
 
         val m = getKmehrPrescription(patient, hcp, medications, deliveryDate)
@@ -813,7 +811,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
         JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(m, os)
         val prescription = os.toByteArray()
 
-        val service = PrescriberIntegrationModuleImpl(stsService)
+        val service = PrescriberIntegrationModuleImpl(stsService, keyDepotService)
         try {
             kmehrHelper.assertValidKmehrPrescription(ByteArrayInputStream(prescription), selectedType)
             log.debug("prescription $selectedType XML:\n${String(prescription)}")

@@ -24,21 +24,20 @@ import org.taktik.connector.business.ehbox.api.domain.Message
 import org.taktik.connector.business.ehbox.api.domain.exception.EhboxBusinessConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetFullMessageResponse
+import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 
 import java.security.KeyStore
 
 interface ConsultationMessageBuilder {
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     fun buildMessage(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         msg: be.fgov.ehealth.ehbox.consultation.protocol.v3.Message
     ): Message<be.fgov.ehealth.ehbox.consultation.protocol.v3.Message>
 
     @Throws(EhboxBusinessConnectorException::class, TechnicalConnectorException::class)
     fun buildFullMessage(
-        keystore: KeyStore,
-        passPhrase: String,
+        credential: KeyStoreCredential,
         msg: GetFullMessageResponse
     ): Message<GetFullMessageResponse>
 }

@@ -30,16 +30,9 @@ import java.io.IOException
 import java.security.KeyStore
 
 import org.bouncycastle.cms.CMSException
+import java.util.UUID
 
 interface SendMessageBuilder {
-    @Throws(
-        IOException::class,
-        EhboxBusinessConnectorException::class,
-        TechnicalConnectorException::class,
-        CMSException::class
-    )
-    fun buildMessage(keystore: KeyStore, passPhrase: String, var1: DocumentMessage<Message>): SendMessageRequest
-
     @Throws(IOException::class, EhboxBusinessConnectorException::class, TechnicalConnectorException::class)
-    fun buildMessage(keystore: KeyStore, passPhrase: String, var1: NewsMessage<Message>): SendMessageRequest
+    fun buildMessage(keystoreId: UUID, keystore: KeyStore, passPhrase: String, document: DocumentMessage<Message>): SendMessageRequest
 }

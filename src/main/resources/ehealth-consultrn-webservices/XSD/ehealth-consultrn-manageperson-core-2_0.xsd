@@ -14,7 +14,7 @@
  Build-Time: 20170704-1243 
  </xs:appinfo>
   </xs:annotation>
- <xs:import namespace="urn:be:fgov:ehealth:consultrn:commons:core:v3" schemaLocation="../../ehealth-consultrn-commons/XSD/ehealth-consultrn-commons-core-3_0.xsd"/>
+ <xs:import namespace="urn:be:fgov:ehealth:consultrn:commons:core:v3" schemaLocation="../../ehealth-consultrn-commons/XSD/ehealth-consultrn-commons-core-3_1.xsd"/>
   <xs:complexType name="ResultType">
     <xs:annotation>
           <xs:documentation>Result returned by backend response</xs:documentation>

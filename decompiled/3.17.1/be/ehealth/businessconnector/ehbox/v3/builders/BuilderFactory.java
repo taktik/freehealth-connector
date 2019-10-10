@@ -18,9 +18,6 @@ public final class BuilderFactory implements SessionServiceWithCache {
    private static Object mutexReqBuilder = new Object();
    private static Object mutexBuilderFactory = new Object();
 
-   private BuilderFactory() {
-   }
-
    public static SendMessageBuilder getSendMessageBuilder() throws TechnicalConnectorException {
       init();
       if (sendMessageBuilder == null) {

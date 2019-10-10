@@ -61,7 +61,7 @@ import javax.activation.DataHandler
 import org.bouncycastle.cms.CMSException
 import org.bouncycastle.util.encoders.Base64
 import org.slf4j.LoggerFactory
-import org.taktik.connector.technical.service.sts.security.Credential
+import java.util.UUID
 
 class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : SendMessageBuilder {
 
@@ -72,15 +72,17 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
         CMSException::class
     )
     override fun buildMessage(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         document: DocumentMessage<Message>
     ): SendMessageRequest {
-        return this.buildCommonMessage(keystore, passPhrase, document)
+        return this.buildCommonMessage(keystoreId, keystore, passPhrase, document)
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class, IOException::class)
     private fun buildCommonMessage(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         document: org.taktik.connector.business.ehbox.api.domain.Message<Message>
@@ -90,13 +92,14 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
         val sendMessageRequest = SendMessageRequest()
         sendMessageRequest.publicationId = document.publicationId
         this.processSender(sendMessageRequest, document.sender)
-        this.processDestinations(keystore, passPhrase, document, sendMessageRequest, destinationEtkSet)
-        this.processContent(keystore, passPhrase, document, isDocumentEncrypted, sendMessageRequest, destinationEtkSet)
+        this.processDestinations(keystoreId, keystore, passPhrase, document, sendMessageRequest, destinationEtkSet)
+        this.processContent(keystoreId, keystore, passPhrase, document, isDocumentEncrypted, sendMessageRequest, destinationEtkSet)
         return sendMessageRequest
     }
 
     @Throws(IOException::class, TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processContent(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         document: org.taktik.connector.business.ehbox.api.domain.Message<Message>,
@@ -119,6 +122,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
         val documentMessage = document as DocumentMessage<Message>
         this.processCopyMailTo(documentMessage, sendMessageRequest)
         this.processPublicationContentTypeForDocumentMessage(
+            keystoreId,
             keystore,
             passPhrase,
             documentMessage,
@@ -143,6 +147,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
 
     @Throws(IOException::class, TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processPublicationDocument(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         message: DocumentMessage<Message>,
@@ -151,7 +156,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
     ) {
         val publicationDocumentType = PublicationDocumentType()
         val dataToSend =
-            this.encode(keystore, passPhrase, message.document!!.getContent(), message.isEncrypted, destinationEtkSet)
+            this.encode(keystoreId, keystore, passPhrase, message.document!!.getContent(), message.isEncrypted, destinationEtkSet)
         publicationDocumentType.digest = this.processDigest(dataToSend)
         publicationDocumentType.encryptableBinaryContent =
             DataHandler(ByteArrayDatasource(dataToSend, message.document!!.mimeType))
@@ -199,6 +204,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
 
     @Throws(IOException::class, TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processPublicationContentTypeForDocumentMessage(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         document: DocumentMessage<Message>,
@@ -208,6 +214,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
     ) {
         val contentType = PublicationContentType()
         this.processPublicationDocumentTypeForDocument(
+            keystoreId,
             keystore,
             passPhrase,
             document.document,
@@ -217,6 +224,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
             contentType
         )
         this.processFreeTextAndFreeInformationTable(
+            keystoreId,
             keystore,
             passPhrase,
             document.freeText,
@@ -227,6 +235,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
             contentType
         )
         this.processPatientInss(
+            keystoreId,
             keystore,
             passPhrase,
             destinationEtkSet,
@@ -235,6 +244,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
             isDocumentEncrypted
         )
         this.processAnnexes(
+            keystoreId,
             keystore,
             passPhrase,
             document.annexList,
@@ -242,12 +252,13 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
             destinationEtkSet,
             contentType
         )
-        this.processPublicationDocument(keystore, passPhrase, document, destinationEtkSet, contentType)
+        this.processPublicationDocument(keystoreId, keystore, passPhrase, document, destinationEtkSet, contentType)
         content.content = contentType
     }
 
     @Throws(IOException::class, TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processPublicationDocumentTypeForDocument(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         documentContent: Document?,
@@ -262,7 +273,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
             documentType.downloadFileName = documentContent.filename
             documentType.mimeType = documentContent.mimeType
             val dataToSend =
-                this.encode(keystore, passPhrase, documentContent.getContent(), isDocumentEncrypted, destinationEtkSet)
+                this.encode(keystoreId, keystore, passPhrase, documentContent.getContent(), isDocumentEncrypted, destinationEtkSet)
             documentType.digest = this.processDigest(dataToSend)
             documentType.encryptableBinaryContent =
                 DataHandler(ByteArrayDatasource(dataToSend, documentContent.mimeType))
@@ -273,6 +284,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
 
     @Throws(IOException::class, TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processFreeTextAndFreeInformationTable(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         freeText: String?,
@@ -292,6 +304,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
                 if (hasFreeText) {
                     freeInformation.encryptableFreeText =
                         this.encode(
+                            keystoreId,
                             keystore,
                             passPhrase,
                             ConnectorIOUtils.toBytes(freeText, Charset.UTF_8),
@@ -303,6 +316,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
                 if (hasFreeInformationTable) {
                     freeInformation.table =
                         this.fillEncryptableTable(
+                            keystoreId,
                             keystore,
                             passPhrase,
                             tableTitle,
@@ -319,6 +333,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
 
     @Throws(IOException::class, TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun fillEncryptableTable(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         tableTitle: String?,
@@ -332,9 +347,9 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
         for (rowKey in tableRows.keys) {
             val rowValue = tableRows[rowKey]
             val row = Row()
-            row.encryptableLeftCell = this.encode(keystore, passPhrase, rowKey, isDocumentEncrypted, destinationEtkSet)
+            row.encryptableLeftCell = this.encode(keystoreId, keystore, passPhrase, rowKey, isDocumentEncrypted, destinationEtkSet)
             row.encryptableRightCell =
-                this.encode(keystore, passPhrase, rowValue, isDocumentEncrypted, destinationEtkSet)
+                this.encode(keystoreId, keystore, passPhrase, rowValue, isDocumentEncrypted, destinationEtkSet)
             table.rows.add(row)
         }
 
@@ -352,6 +367,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
 
     @Throws(IOException::class, TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processAnnexes(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         annexList: List<Document>,
@@ -364,7 +380,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
             val annexType = PublicationAnnexType()
             annexType.downloadFileName = annex.filename
             val dataToSend =
-                this.encode(keystore, passPhrase, annex.getContent(), isDocumentEncrypted, destinationEtkSet)
+                this.encode(keystoreId, keystore, passPhrase, annex.getContent(), isDocumentEncrypted, destinationEtkSet)
             annexType.digest = this.processDigest(dataToSend)
             if (annex.getContent().isEmpty()) {
                 annexType.encryptableTextContent = annex.getContent()
@@ -373,7 +389,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
             }
 
             annexType.encryptableTitle =
-                this.encode(keystore, passPhrase, annex.title, isDocumentEncrypted, destinationEtkSet)
+                this.encode(keystoreId, keystore, passPhrase, annex.title, isDocumentEncrypted, destinationEtkSet)
             annexType.mimeType = annex.mimeType
             contentType.annices.add(annexType)
         }
@@ -381,6 +397,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
 
     @Throws(IOException::class, TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processPatientInss(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         destinationEtkSet: Set<EncryptionToken>,
@@ -391,6 +408,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
         if (patientInss != null) {
             contentType.encryptableINSSPatient =
                 this.encode(
+                    keystoreId,
                     keystore,
                     passPhrase,
                     ConnectorIOUtils.toBytes(patientInss, Charset.UTF_8),
@@ -402,6 +420,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun processDestinations(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         document: org.taktik.connector.business.ehbox.api.domain.Message<Message>,
@@ -413,10 +432,10 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
             val destination = this.buildDestination(addressee)
             sendMessageRequest.destinationContexts.add(destination)
             if (document.isEncrypted) {
-                val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+                val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
 
-                destinationEtkSet.addAll(this.getETKForAddressee(addressee))
-                destinationEtkSet.add(this.keydepotManager.getETK(credential))
+                destinationEtkSet.addAll(this.getETKForAddressee(addressee, keystoreId))
+                destinationEtkSet.add(this.keydepotManager.getETK(credential, keystoreId))
             }
         }
     }
@@ -437,34 +456,27 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
-    private fun getETKForAddressee(addressee: Addressee): Set<EncryptionToken> {
-        if ("ALL" != addressee.id) {
+    private fun getETKForAddressee(addressee: Addressee, keystoreId: UUID): Set<EncryptionToken> {
+        return if ("ALL" != addressee.id) {
             val etkSet =
                 this.keydepotManager.getEtkSet(
                     addressee.identifierTypeHelper,
                     addressee.idAsLong,
-                    addressee.applicationId
-                )
-            return if (etkSet.isEmpty()) {
+                    addressee.applicationId,
+                    keystoreId,
+                    false
+                                              )
+            if (etkSet.isEmpty()) {
                 throw TechnicalConnectorException(
                     TechnicalConnectorExceptionValues.ERROR_GENERAL,
                     "could not retrieve Etk for known addressee " + addressee
-                )
+                                                 )
             } else {
                 etkSet
             }
         } else {
-            return HashSet()
+            HashSet()
         }
-    }
-
-    @Throws(IOException::class, EhboxBusinessConnectorException::class, TechnicalConnectorException::class)
-    override fun buildMessage(
-        keystore: KeyStore,
-        passPhrase: String,
-        document: NewsMessage<Message>
-    ): SendMessageRequest {
-        return this.buildCommonMessage(keystore, passPhrase, document)
     }
 
     private fun buildDestination(addressee: Addressee): DestinationContextType {
@@ -487,6 +499,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun encode(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         content: ByteArray?,
@@ -495,7 +508,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
     ): ByteArray? {
         var byteVal: ByteArray? = null
         if (encrypted && content != null && content.size != 0) {
-            val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+            val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
             val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
             val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -509,13 +522,14 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
     private fun encode(
+        keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         content: String?,
         encrypted: Boolean,
         tokens: Set<EncryptionToken>
     ): ByteArray? {
-        return this.encode(keystore, passPhrase, ConnectorIOUtils.toBytes(content, Charset.UTF_8), encrypted, tokens)
+        return this.encode(keystoreId, keystore, passPhrase, ConnectorIOUtils.toBytes(content, Charset.UTF_8), encrypted, tokens)
     }
 
     companion object {

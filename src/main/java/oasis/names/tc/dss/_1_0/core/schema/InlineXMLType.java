@@ -35,7 +35,7 @@ public class InlineXMLType implements Serializable {
    }
 
    public boolean isIgnorePIs() {
-      return this.ignorePIs == null ? true : this.ignorePIs.booleanValue();
+      return this.ignorePIs == null ? true : this.ignorePIs;
    }
 
    public void setIgnorePIs(Boolean value) {
@@ -43,7 +43,7 @@ public class InlineXMLType implements Serializable {
    }
 
    public boolean isIgnoreComments() {
-      return this.ignoreComments == null ? true : this.ignoreComments.booleanValue();
+      return this.ignoreComments == null ? true : this.ignoreComments;
    }
 
    public void setIgnoreComments(Boolean value) {

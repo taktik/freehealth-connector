@@ -7,8 +7,7 @@ import org.taktik.connector.technical.config.ConfigValidator;
 import org.taktik.connector.technical.exception.CredentialException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.KeyStoreFactory;
-import org.taktik.connector.technical.session.Session;
-import org.taktik.connector.technical.session.SessionServiceWithCache;
+import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.CacheInformation;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
@@ -22,7 +21,7 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class BeIDCredential extends AbstractExtendedCredential implements SessionServiceWithCache {
+public final class BeIDCredential extends AbstractExtendedCredential {
    private static final Logger LOG = LoggerFactory.getLogger(BeIDCredential.class);
    private static Cache<String, BeIDCredential> instancesMap;
    private static ConfigValidator config;
@@ -44,12 +43,11 @@ public final class BeIDCredential extends AbstractExtendedCredential implements 
 
    private BeIDCredential(String alias) {
       this.eidAlias = alias;
-      Session.getInstance().registerSessionService(this);
    }
 
    public static BeIDCredential getInstance(String scope, String aliasName) throws TechnicalConnectorException {
       String key = scope + "-" + aliasName;
-      boolean useCache = config.getBooleanProperty("org.taktik.connector.technical.service.sts.security.impl.beidcredential.cache", Boolean.FALSE).booleanValue();
+      boolean useCache = config.getBooleanProperty("org.taktik.connector.technical.service.sts.security.impl.beidcredential.cache", Boolean.FALSE);
       if (useCache && instancesMap.containsKey(key)) {
          LOG.debug("Returning cached instance.");
          return (BeIDCredential)instancesMap.get(key);
@@ -186,7 +184,7 @@ public final class BeIDCredential extends AbstractExtendedCredential implements 
    }
 
    static {
-      instancesMap = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY);
+      instancesMap = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY, "beid-credential", CacheInformation.ExpiryType.NONE, null);
       config = ConfigFactory.getConfigValidator();
       OID_LASTNAME = BCStyle.SURNAME.getId();
       OID_GIVENNAME = BCStyle.GIVENNAME.getId();

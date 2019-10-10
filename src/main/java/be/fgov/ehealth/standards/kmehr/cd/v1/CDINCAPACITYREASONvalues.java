@@ -28,7 +28,9 @@ public enum CDINCAPACITYREASONvalues {
    @XmlEnumValue("workaccident")
    WORKACCIDENT("workaccident"),
    @XmlEnumValue("occupationaldisease")
-   OCCUPATIONALDISEASE("occupationaldisease");
+   OCCUPATIONALDISEASE("occupationaldisease"),
+   @XmlEnumValue("traveltofromworkaccident")
+   TRAVELTOFROMWORKACCIDENT("traveltofromworkaccident");
 
    private final String value;
 

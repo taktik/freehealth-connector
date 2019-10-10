@@ -24,7 +24,6 @@ import org.taktik.connector.business.chapterIV.exception.ChapterIVBusinessConnec
 import org.taktik.connector.business.chapterIV.exception.ChapterIVBusinessConnectorExceptionValues
 import org.taktik.connector.business.chapterIV.utils.ACLUtils
 import org.taktik.connector.business.chapterIV.utils.FolderTypeUtils
-import org.taktik.connector.business.chapterIV.utils.KeyDepotHelper
 import org.taktik.connector.business.chapterIV.validators.Chapter4XmlValidator
 import org.taktik.connector.business.chapterIV.validators.impl.Chapter4XmlValidatorImpl
 import org.taktik.connector.business.chapterIV.wrapper.Chap4MedicalAdvisorAgreementRequestWrapper
@@ -56,8 +55,8 @@ import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.CONSULTATIONENDDATE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.CONSULTATIONSTARTDATE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.DECISIONREFERENCE
-import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.REFUSALJUSTIFICATION
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.IOREQUESTREFERENCE
+import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.REFUSALJUSTIFICATION
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.REQUESTTYPE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.RESPONSETYPE
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMMAAvalues.UNITNUMBER
@@ -104,10 +103,12 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
-import org.taktik.connector.technical.service.keydepot.KeyDepotManagerFactory
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
+import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
+import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.freehealth.middleware.dao.User
@@ -115,9 +116,9 @@ import org.taktik.freehealth.middleware.domain.common.messages.AbstractMessage
 import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
 import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
-import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.Chapter4Service
 import org.taktik.freehealth.middleware.service.STSService
@@ -150,7 +151,7 @@ import javax.xml.xpath.XPathExpressionException
 import javax.xml.xpath.XPathFactory
 
 @Service
-class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic, val kgssService: KgssServiceImpl) : Chapter4Service {
+class Chapter4ServiceImpl(private val stsService: STSService, private val drugsLogic: DrugsLogic, private val kgssService: KgssServiceImpl, private val keyDepotService: KeyDepotService) : Chapter4Service {
     private val freehealthChapter4Service: org.taktik.connector.business.chapterIV.service.ChapterIVService =
         org.taktik.connector.business.chapterIV.service.impl.ChapterIVServiceImpl(EhealthReplyValidatorImpl())
 
@@ -158,6 +159,11 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     private var consultMessages: List<AbstractMessage> = ArrayList()
     private val chapter4XmlValidator: Chapter4XmlValidator = Chapter4XmlValidatorImpl()
     private val config = ConfigFactory.getConfigValidator(emptyList())
+    private var configValidator = ConfigFactory.getConfigValidator(listOf(
+        "chapterIV.keydepot.application",
+        "chapterIV.keydepot.identifiertype",
+        "chapterIV.keydepot.identifiersubtype",
+        "chapterIV.keydepot.identifiervalue"))
 
     val chapter4ConsultationWarnings =
         Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/Chapter4ConsultationWarnings.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
@@ -225,23 +231,21 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         this.inputReference = commonReference
     }
 
-    private fun getUnknownKey(keystoreId: String,
+    private fun getUnknownKey(keystoreId: UUID,
                               keyStore: KeyStore,
                               passPhrase: String,
                               subTypeName: String,
                               credential: Credential): KeyResult {
         val acl = ACLUtils.createAclChapterIV(subTypeName)
-        val etk = KeyDepotManagerFactory.getKeyDepotManager().getETK(credential)
+        val etk = KeyDepotManagerImpl.getInstance(keyDepotService).getETK(credential, keystoreId)
         if (etk == null) {
             throw IllegalArgumentException("EncryptionETK is undefined")
         } else {
-            val systemETK =
-                etk.etk.encoded
-            return kgssService.getNewKey(keystoreId, keyStore, passPhrase, acl, systemETK)
+            return kgssService.getNewKey(keystoreId, keyStore, passPhrase, acl, etk.etk.encoded)
         }
     }
 
-    private fun createAndValidateSealedRequest(keystoreId: String,
+    private fun createAndValidateSealedRequest(keystoreId: UUID,
                                                keyStore: KeyStore,
                                                passPhrase: String,
                                                crypto: Crypto, credential: Credential, message: Kmehrmessage,
@@ -253,7 +257,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             val request = xmlObjectFactory.createSealedRequest()
             request.agreementStartDate = agreementStartDate
             request.careReceiver = this.mapToCinCareReceiverIdType(careReceiver)
-            request.sealedContent = this.getSealedContent(crypto, credential, message, e, xmlObjectFactory)
+            request.sealedContent = this.getSealedContent(crypto, keystoreId, credential, message, e, xmlObjectFactory)
             request.unsealKeyId = e.keyId
 //            this.chapter4XmlValidator.validate(request.xmlObject)
 
@@ -274,19 +278,21 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
     }
 
     private fun getSealedContent(crypto: Crypto,
+                                 keystoreId: UUID,
                                  credential: Credential,
                                  message: Kmehrmessage,
                                  unknownKey: KeyResult,
                                  xmlObjectFactory: XmlObjectFactory): ByteArray {
-        val request = this.createAndValidateUnsealedRequest(credential, message, xmlObjectFactory)
+        val request = this.createAndValidateUnsealedRequest(keystoreId, credential, message, xmlObjectFactory)
         return crypto.seal(WrappedObjectMarshallerHelper.toXMLByteArray(request), unknownKey.secretKey, unknownKey.keyId)
     }
 
-    private fun createAndValidateUnsealedRequest(credential: Credential,
+    private fun createAndValidateUnsealedRequest(keystoreId: UUID,
+                                                 credential: Credential,
                                                  message: Kmehrmessage,
                                                  xmlObjectFactory: XmlObjectFactory): UnsealedRequestWrapper<*> {
         val request = xmlObjectFactory.createUnsealedRequest()
-        request.etkHcp = KeyDepotManagerFactory.getKeyDepotManager().getETK(credential).etk.encoded
+        request.etkHcp =  KeyDepotManagerImpl.getInstance(keyDepotService).getETK(credential, keystoreId).etk.encoded
         request.kmehrRequest = this.createAndValidateKmehrRequestXmlByteArray(message)
         //this.chapter4XmlValidator.validate(request.xmlObject)
         return request
@@ -299,16 +305,25 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         return kmehrMarshallHelper.toXMLByteArray(kmehrrequest)
     }
 
-    private fun marshallAndEncryptSealedRequest(crypto: Crypto, request: SealedRequestWrapper<*>): SecuredContentType {
+    private fun marshallAndEncryptSealedRequest(keystoreId: UUID, crypto: Crypto, request: SealedRequestWrapper<*>): SecuredContentType {
         val marshalledContent = WrappedObjectMarshallerHelper.toXMLByteArray(request)
         log.debug("securedContent : $marshalledContent")
-        val sealedKnown = crypto.seal(KeyDepotHelper.chapterIVEncryptionToken, marshalledContent)
+        val identifierTypeString = configValidator!!.getProperty("chapterIV.keydepot.identifiertype")
+        val identifierSubTypeString = configValidator!!.getProperty("chapterIV.keydepot.identifiersubtype")
+        val identifierSource = 48
+        val identifier = IdentifierType.lookup(identifierTypeString, null as String?, identifierSource)
+        val sealedKnown = crypto.seal(if (identifier == null) {
+            throw IllegalStateException("invalid configuration : identifier with type ]$identifierTypeString[ and subtype ]$identifierSubTypeString[ for source ETKDEPOT not found")
+        } else {
+            KeyDepotManagerImpl.getInstance(keyDepotService)
+                .getEtk(identifier, configValidator!!.getLongProperty("chapterIV.keydepot.identifiervalue", 0L), configValidator!!.getProperty("chapterIV.keydepot.application"), keystoreId, false)
+        }, marshalledContent)
         val securedContent = SecuredContentType()
         securedContent.securedContent = sealedKnown
         return securedContent
     }
 
-    private fun buildAndValidateAgreementRequest(crypto: Crypto, xmlObjectFactory: XmlObjectFactory,
+    private fun buildAndValidateAgreementRequest(keystoreId: UUID, crypto: Crypto, xmlObjectFactory: XmlObjectFactory,
                                                  careReceiver: CareReceiverIdType,
                                                  recordCommonInput: RecordCommonInputType,
                                                  commonInput: CommonInputType,
@@ -317,12 +332,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         agreementRequest.careReceiver = careReceiver
         agreementRequest.recordCommonInput = recordCommonInput
         agreementRequest.commonInput = commonInput
-        agreementRequest.request = this.marshallAndEncryptSealedRequest(crypto, sealedRequest)
+        agreementRequest.request = this.marshallAndEncryptSealedRequest(keystoreId, crypto, sealedRequest)
         //this.chapter4XmlValidator.validate(agreementRequest.xmlObject)
         return agreementRequest
     }
 
-    private fun createAgreementRequest(keystoreId: String,
+    private fun createAgreementRequest(keystoreId: UUID,
                                        keyStore: KeyStore,
                                        passPhrase: String,
                                        crypto: Crypto,
@@ -347,7 +362,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                         ?.value
                 mutuality = folder.patient.insurancymembership?.id?.value
                 regNrWithMut =
-                    folder.patient.insurancymembership?.membership?.let { if (it is Element) it.textContent else null }
+                    folder.patient.insurancymembership?.membership
             }
 
             val recordCommonInput =
@@ -357,7 +372,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             val sealedRequest =
                 this.createAndValidateSealedRequest(keystoreId, keyStore, passPhrase, crypto, credential, message, careReceiver, xmlObjectFactory, agreementStartDate)
             val resultWrapper =
-                this.buildAndValidateAgreementRequest(crypto, xmlObjectFactory, careReceiver, recordCommonInput, commonInput, sealedRequest)
+                this.buildAndValidateAgreementRequest(keystoreId, crypto, xmlObjectFactory, careReceiver, recordCommonInput, commonInput, sealedRequest)
             val result = hashMapOf(
                 "references" to references,
                 "folder" to folder,
@@ -401,7 +416,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                 ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -425,7 +440,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
 
         val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
         val request =
-            createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
+            createAgreementRequest(keystoreId, keystore, passPhrase, crypto, credential, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
                 ?: DateTime()).askChap4MedicalAdvisorAgreementRequest
 
         val response = try {
@@ -478,11 +493,11 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             agreementResponse.isAcknowledged = kmehrResponse.acknowledge != null && kmehrResponse.acknowledge.isIscomplete
             kmehrResponse.acknowledge?.let {
                 agreementResponse.warnings = it.warnings?.flatMap { errorType ->
-                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest().apply { kmehrmessage = v1Message }, this) }.toByteArray(),
                                  errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4AgreementWarnings, errorType.url)
                 }
                 agreementResponse.errors = it.errors?.flatMap { errorType ->
-                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest().apply { kmehrmessage = v1Message }, this) }.toByteArray(),
                                  errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4AgreementErrors, errorType.url)
                 }
             }
@@ -532,7 +547,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                 ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -560,7 +575,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
 
         val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
         val request =
-            createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, ConsultationXmlObjectFactory(), agreementStartDate
+            createAgreementRequest(keystoreId, keystore, passPhrase, crypto, credential, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, v1Message, isTest, references, ConsultationXmlObjectFactory(), agreementStartDate
                 ?: DateTime()).consultChap4MedicalAdvisorAgreementRequest
 
         val response = try {
@@ -619,12 +634,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             agreementResponse.isAcknowledged = ack.isIscomplete
             agreementResponse.warnings =
                 ack.warnings.flatMap { errorType ->
-                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest().apply { kmehrmessage = v1Message }, this) }.toByteArray(),
                                  errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4ConsultationWarnings, errorType.url)
                 }
             agreementResponse.errors =
                 ack.errors.flatMap { errorType ->
-                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest().apply { kmehrmessage = v1Message }, this) }.toByteArray(),
                                  errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4ConsultationErrors, errorType.url)
                 }
             if (retrievedKmehrResponse.kmehrresponse.kmehrmessage != null) {
@@ -716,7 +731,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
                 ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -736,7 +751,7 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
 
         val agreementStartDate = FolderTypeUtils.retrieveConsultationStartDateOrAgreementStartDate(v1Message.folders[0])
         val request =
-            createAgreementRequest(keystoreId.toString(), keystore, passPhrase, crypto, credential, hcpNihii,
+            createAgreementRequest(keystoreId, keystore, passPhrase, crypto, credential, hcpNihii,
                                    hcpSsin, hcpFirstName, hcpLastName,
                                    v1Message, isTest, references, AskXmlObjectFactory(), agreementStartDate
                                        ?: DateTime()).askChap4MedicalAdvisorAgreementRequest
@@ -790,12 +805,12 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
             agreementResponse.isAcknowledged = retrievedKmehrResponse.kmehrresponse.acknowledge.isIscomplete
             agreementResponse.warnings =
                 retrievedKmehrResponse.kmehrresponse.acknowledge.warnings.flatMap { errorType ->
-                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest().apply { kmehrmessage = v1Message }, this) }.toByteArray(),
                                  errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4AgreementWarnings, errorType.url)
                 }
             agreementResponse.errors =
                 retrievedKmehrResponse.kmehrresponse.acknowledge.errors.flatMap { errorType ->
-                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest(v1Message), this) }.toByteArray(),
+                    extractError(ByteArrayOutputStream().apply { JAXBContext.newInstance(Kmehrrequest::class.java).createMarshaller().marshal(Kmehrrequest().apply { kmehrmessage = v1Message }, this) }.toByteArray(),
                                  errorType.cds.find { it.s == CDERRORschemes.CD_ERROR }?.value ?: "000", chapter4AgreementErrors, errorType.url)
                 }
 
@@ -1124,8 +1139,8 @@ class Chapter4ServiceImpl(val stsService: STSService, val drugsLogic: DrugsLogic
         civicsVersion: String?,
         paragraph: String?,
         reference: String?): org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage {
-        val startDate = start?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) } ?: LocalDateTime.now().minus(12, ChronoUnit.MONTHS)
-        val endDate = end?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) } ?: startDate.plus(23, ChronoUnit.MONTHS)
+        val startDate = start?.let { FuzzyValues.getLocalDateTime(it) } ?: LocalDateTime.now().minus(12, ChronoUnit.MONTHS)
+        val endDate = end?.let { FuzzyValues.getLocalDateTime(it) } ?: startDate.plus(23, ChronoUnit.MONTHS)
 
         return getKmehrMessage(
             commonInput,

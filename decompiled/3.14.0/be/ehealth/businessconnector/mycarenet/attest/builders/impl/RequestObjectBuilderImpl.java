@@ -59,7 +59,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder, Configura
       businessContent.setValue(kmehrMarshallHelper.toXMLByteArray(request));
       encryptedKnownContent.setBusinessContent(businessContent);
       byte[] xmlByteArray = (new AttestEncryptionUtil()).handleEncryption(encryptedKnownContent, SessionUtil.getHolderOfKeyCrypto(), detailId);
-      if (xmlByteArray != null && ConfigFactory.getConfigValidator().getBooleanProperty("be.ehealth.businessconnector.attest.builders.impl.dumpMessages", false).booleanValue()) {
+      if (xmlByteArray != null && ConfigFactory.getConfigValidator().getBooleanProperty("be.ehealth.businessconnector.attest.builders.impl.dumpMessages", false)) {
          LOG.debug("RequestObjectBuilder : created blob content: " + new String(xmlByteArray));
       }
 

@@ -12,9 +12,9 @@ import org.w3c.dom.Element;
 public interface XadesSpecification {
    String XMLNS_XADES_1_3_2 = "http://uri.etsi.org/01903/v1.3.2#";
 
-   void addOptionalBeforeSignatureParts(SignedPropertiesBuilder var1, XMLSignature var2, Credential var3, String var4, Map<String, Object> var5) throws TechnicalConnectorException;
+   void addOptionalBeforeSignatureParts(SignedPropertiesBuilder unsignedProps, XMLSignature xmlSignature, Credential credential, String uuid, Map<String, Object> options) throws TechnicalConnectorException;
 
-   void addOptionalAfterSignatureParts(UnsignedPropertiesBuilder var1, XMLSignature var2, String var3, Map<String, Object> var4) throws TechnicalConnectorException;
+   void addOptionalAfterSignatureParts(UnsignedPropertiesBuilder unsignedProps, XMLSignature xmlSig, Credential credential, String uuid, Map<String, Object> options) throws TechnicalConnectorException;
 
    void verify(SignatureVerificationResult var1, Element var2);
 }

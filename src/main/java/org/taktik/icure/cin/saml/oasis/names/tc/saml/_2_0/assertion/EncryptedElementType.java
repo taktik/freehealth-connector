@@ -8,6 +8,9 @@
 
 package org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion;
 
+import org.taktik.icure.cin.saml.org.w3._2001._04.xmlenc_.EncryptedData;
+import org.taktik.icure.cin.saml.org.w3._2001._04.xmlenc_.EncryptedKey;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +18,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.w3._2001._04.xmlenc_.EncryptedData;
-import org.w3._2001._04.xmlenc_.EncryptedKey;
 
 
 /**

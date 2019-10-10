@@ -236,7 +236,7 @@ public class CommonIOUtils {
                            if (!StringUtils.isEmpty(fi)) {
                               version = fi.replace("v", "");
                               Integer tot = Integer.valueOf(version);
-                              if (tot.intValue() > oldTot.intValue()) {
+                              if (tot > oldTot) {
                                  if (fileList.size() > 0) {
                                     fileList.remove(0);
                                  }

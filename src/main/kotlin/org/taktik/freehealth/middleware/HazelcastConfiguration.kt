@@ -24,17 +24,22 @@ import com.hazelcast.config.Config
 import com.hazelcast.config.EvictionPolicy
 import com.hazelcast.config.MapConfig
 import com.hazelcast.config.MaxSizeConfig
-import com.hazelcast.core.EntryEvent
 import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.core.IMap
 import com.hazelcast.map.listener.EntryEvictedListener
+import org.apache.commons.lang3.tuple.Pair
+import org.apache.commons.lang3.tuple.Triple
 import org.apache.commons.logging.LogFactory
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
+import org.taktik.connector.technical.service.etee.domain.EncryptionToken
+import org.taktik.connector.technical.service.kgss.domain.KeyResult
+import org.taktik.connector.technical.service.kgss.domain.SerializableKeyResult
+import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
-import java.util.*
+import java.util.UUID
 
 @Component
 @ConfigurationProperties("icure.hazelcast")
@@ -61,10 +66,22 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
             evictionPolicy = EvictionPolicy.LRU
         })
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK").apply {
+            timeToLiveSeconds = 24*3600
+            maxSizeConfig = MaxSizeConfig(128, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
+            evictionPolicy = EvictionPolicy.LRU
+        })
+        addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.LONGLIVEDETK").apply {
+            timeToLiveSeconds = 3*365*24*3600
+            maxSizeConfig = MaxSizeConfig(512, MaxSizeConfig.MaxSizePolicy.USED_HEAP_SIZE)
+            evictionPolicy = EvictionPolicy.LRU
+        })
+        addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KGSS").apply {
             timeToLiveSeconds = 12*3600
             maxSizeConfig = MaxSizeConfig(128, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })
+
+
     }
 
     @Bean
@@ -87,10 +104,28 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
     }
 
     @Bean
-    fun etkCache(hazelcastInstance: HazelcastInstance): IMap<UUID, String> {
-        return hazelcastInstance.getMap<UUID, String>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK").apply {
-            this.addEntryListener(EntryEvictedListener<UUID, SamlTokenResult> {
+    fun etksMap(hazelcastInstance: HazelcastInstance): IMap<Triple<IdentifierType, String, String>, Set<EncryptionToken>> {
+        return hazelcastInstance.getMap<Triple<IdentifierType, String, String>, Set<EncryptionToken>>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK").apply {
+            this.addEntryListener(EntryEvictedListener<Triple<IdentifierType, String, String>, Set<EncryptionToken>> {
                 log.warn("ETK ${it.key} evicted")
+            }, false)
+        }
+    }
+
+    @Bean
+    fun longLivedEtksMap(hazelcastInstance: HazelcastInstance): IMap<org.apache.commons.lang3.tuple.Pair<UUID, Triple<IdentifierType, String, String>>, Set<EncryptionToken>> {
+        return hazelcastInstance.getMap<org.apache.commons.lang3.tuple.Pair<UUID, Triple<IdentifierType, String, String>>, Set<EncryptionToken>>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.LONGLIVEDETK").apply {
+            this.addEntryListener(EntryEvictedListener<org.apache.commons.lang3.tuple.Pair<UUID, Triple<IdentifierType, String, String>>, Set<EncryptionToken>> {
+                log.warn("ETK ${it.key} evicted")
+            }, false)
+        }
+    }
+
+    @Bean
+    fun kgssMap(hazelcastInstance: HazelcastInstance): IMap<UUID, SerializableKeyResult> {
+        return hazelcastInstance.getMap<UUID, SerializableKeyResult>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KGSS").apply {
+            this.addEntryListener(EntryEvictedListener<UUID, SerializableKeyResult> {
+                log.warn("KGSS ${it.key} evicted")
             }, false)
         }
     }

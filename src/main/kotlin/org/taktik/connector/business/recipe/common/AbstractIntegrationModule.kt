@@ -19,7 +19,7 @@
  */
 
 /*
- * 
+ *
  */
 package org.taktik.connector.business.recipe.common
 
@@ -41,9 +41,11 @@ import org.taktik.connector.business.recipeprojects.core.utils.MessageDumper
 import org.taktik.connector.business.recipeprojects.core.utils.PropertyHandler
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.kgss.impl.KgssServiceImpl
 import org.taktik.connector.technical.service.sts.security.SAMLToken
+import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import java.io.File
 import java.security.Key
 import java.security.KeyStore
@@ -51,7 +53,7 @@ import java.security.Security
 import java.util.Arrays
 import java.util.regex.Pattern
 
-abstract class AbstractIntegrationModule {
+abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val ridPattern = Pattern.compile(RID_PATTERN)
 
@@ -107,12 +109,8 @@ abstract class AbstractIntegrationModule {
             log.info("Init the encryption - create symmKey")
             symmKey = encryptionUtils.generateSecretKey()
 
-            if (encryptionUtils.oldKeyStore != null) {
-                oldDataSealer = encryptionUtils.initOldSealing()
-                oldDataUnsealer = encryptionUtils.initOldUnSealing()
-            }
             log.info("Init the encryption - init etkHelper")
-            etkHelper = ETKHelper()
+            etkHelper = ETKHelper(keyDepotService)
         } catch (t: Throwable) {
             log.error("Exception occured when initializing the encryption util: ", t)
             Exceptionutils.errorHandler(t, "error.initialization")
@@ -241,9 +239,9 @@ abstract class AbstractIntegrationModule {
     }
 
     @Throws(IntegrationModuleException::class)
-    protected fun getKeyFromKgss(keystore: KeyStore, samlToken: SAMLToken, passPhrase: String, keyId: String, myEtk: ByteArray): KeyResult? {
+    protected fun getKeyFromKgss(credential: KeyStoreCredential, samlToken: SAMLToken, keyId: String, myEtk: ByteArray): KeyResult? {
         return try {
-            kgssService.retrieveKeyFromKgss(keystore, samlToken, passPhrase, keyId.toByteArray(Charsets.UTF_8), myEtk, etkHelper!!.kgsS_ETK[0].encoded);
+            kgssService.retrieveKeyFromKgss(credential, samlToken, keyId.toByteArray(Charsets.UTF_8), myEtk, etkHelper!!.kgsS_ETK[0].encoded)
         } catch (t: Throwable) {
             log.error("Exception in getKeyFromKgss abstractIntegrationModule: ", t)
             null

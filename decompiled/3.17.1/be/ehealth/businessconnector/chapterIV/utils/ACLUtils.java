@@ -20,9 +20,6 @@ public final class ACLUtils {
    private static final Logger LOG = LoggerFactory.getLogger(ACLUtils.class);
    private static ConfigValidator config = ConfigFactory.getConfigValidator();
 
-   private ACLUtils() {
-   }
-
    public static List<CredentialType> createAclChapterIV(String subTypeName) throws TechnicalConnectorException {
       List<CredentialType> allowedReaders = new ArrayList();
       String rootKey = "chapterIV." + subTypeName + ".ACL";

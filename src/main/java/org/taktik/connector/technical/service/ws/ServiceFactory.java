@@ -29,7 +29,7 @@ public final class ServiceFactory {
    @Deprecated
    public static GenericRequest getCodageService(X509Certificate certificate, PrivateKey privateKey) throws TechnicalConnectorException {
       if (!config.containsKey("endpoint.codage")) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, new Object[]{"endpoint.codage"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, "endpoint.codage");
       } else {
          return getX509SecuredRequest(certificate, privateKey, config.getProperty("endpoint.codage"));
       }
@@ -37,7 +37,7 @@ public final class ServiceFactory {
 
    public static GenericRequest getSealsService(X509Certificate certificate, PrivateKey privateKey) throws TechnicalConnectorException {
       if (!config.containsKey("endpoint.seals.v1")) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, new Object[]{"endpoint.seals.v1"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, "endpoint.seals.v1");
       } else {
          return getX509SecuredRequest(certificate, privateKey, config.getProperty("endpoint.seals.v1"));
       }
@@ -45,7 +45,7 @@ public final class ServiceFactory {
 
    public static GenericRequest getETKService() throws TechnicalConnectorException {
       if (!config.containsKey("endpoint.etk")) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, new Object[]{"endpoint.etk"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, "endpoint.etk");
       } else {
          return getUnSecuredRequest(config.getProperty("endpoint.etk"));
       }
@@ -53,7 +53,7 @@ public final class ServiceFactory {
 
    public static GenericRequest getSTSService(X509Certificate certificate, PrivateKey privateKey) throws TechnicalConnectorException {
       if (!config.containsKey("endpoint.sts")) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, new Object[]{"endpoint.sts"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, "endpoint.sts");
       } else {
          return getX509SecuredRequest(certificate, privateKey, config.getProperty("endpoint.sts"));
       }
@@ -61,7 +61,7 @@ public final class ServiceFactory {
 
    public static GenericRequest getKGSSService() throws TechnicalConnectorException {
       if (!config.containsKey("endpoint.kgss")) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, new Object[]{"endpoint.kgss"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, "endpoint.kgss");
       } else {
          return getUnSecuredRequest(config.getProperty("endpoint.kgss"));
       }
@@ -69,7 +69,7 @@ public final class ServiceFactory {
 
    public static GenericRequest getKGSSServiceSecured(SAMLToken token) throws TechnicalConnectorException {
       if (!config.containsKey("endpoint.kgss")) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, new Object[]{"endpoint.kgss"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, "endpoint.kgss");
       } else {
          return getSAMLSecuredRequest(token, config.getProperty("endpoint.kgss"));
       }
@@ -77,7 +77,7 @@ public final class ServiceFactory {
 
    public static GenericRequest getTSAuthorityService(X509Certificate certificate, PrivateKey privateKey) throws TechnicalConnectorException {
       if (!config.containsKey("endpoint.ts.authority")) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, new Object[]{"endpoint.ts.authority"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, "endpoint.ts.authority");
       } else {
          return getX509SecuredRequest(certificate, privateKey, config.getProperty("endpoint.ts.authority"));
       }
@@ -85,7 +85,7 @@ public final class ServiceFactory {
 
    public static GenericRequest getTSConsultService(X509Certificate certificate, PrivateKey privateKey) throws TechnicalConnectorException {
       if (!config.containsKey("endpoint.ts.consult")) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, new Object[]{"endpoint.ts.consult"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, "endpoint.ts.consult");
       } else {
          return getX509SecuredRequest(certificate, privateKey, config.getProperty("endpoint.ts.consult"));
       }
@@ -93,12 +93,12 @@ public final class ServiceFactory {
 
    public static GenericRequest getIdSupportV2Service(SAMLToken token) throws TechnicalConnectorException {
       if (!config.containsKey("endpoint.idsupport.v2")) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, new Object[]{"endpoint.idsupport.v2"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROPERTY_MISSING, "endpoint.idsupport.v2");
       } else {
          GenericRequest request = getSAMLSecuredRequest(token, config.getProperty("endpoint.idsupport.v2"));
          request.setSoapAction("urn:be:fgov:ehealth:idsupport:protocol:v2:verifyId");
          HandlerChain handlers = new HandlerChain();
-         handlers.register(HandlerPosition.BEFORE, new SchemaValidatorHandler(3, new String[]{"/ehealth-idsupport/XSD/ehealth-idsupport-protocol-2_0.xsd"}));
+         handlers.register(HandlerPosition.BEFORE, new SchemaValidatorHandler(3, "/ehealth-idsupport/XSD/ehealth-idsupport-protocol-2_0.xsd"));
          request.setHandlerChain(handlers);
          return request;
       }

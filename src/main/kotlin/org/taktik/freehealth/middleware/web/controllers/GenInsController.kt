@@ -21,6 +21,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -44,7 +45,7 @@ class GenInsController(val genInsService: GenInsService) {
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @GetMapping("/{ssin}")
+    @GetMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getGeneralInsurability(
         @PathVariable ssin: String,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -74,7 +75,7 @@ class GenInsController(val genInsService: GenInsService) {
                                                   hospitalized = hospitalized ?: false)
     }
 
-    @GetMapping("/{io}/{ioMembership}")
+    @GetMapping("/{io}/{ioMembership}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getGeneralInsurabilityByMembership(
         @PathVariable io: String,
         @PathVariable ioMembership: String,

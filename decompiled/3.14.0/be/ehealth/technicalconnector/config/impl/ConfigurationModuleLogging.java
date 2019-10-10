@@ -18,7 +18,7 @@ public final class ConfigurationModuleLogging implements ConfigurationModule {
 
    public void init(Configuration config) {
       LOG.debug("Initializing ConfigurationModule " + this.getClass().getName());
-      if (!config.getBooleanProperty("connector.logger.enabled", true).booleanValue()) {
+      if (!config.getBooleanProperty("connector.logger.enabled", true)) {
          LOG.debug("ConfigurationModuleLogging is disabled.");
       } else if (config instanceof ConfigurationImpl) {
          ConfigurationImpl conf = (ConfigurationImpl)config;

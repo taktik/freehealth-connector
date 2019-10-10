@@ -9,9 +9,6 @@ public final class RequestBuilderFactory {
    public static final String DEFAULT_REQUESTBUILDER_CLASS = "be.ehealth.businessconnector.hubv3.builders.impl.RequestBuilderImpl";
    private static ConfigurableFactoryHelper<RequestBuilderImpl> helperFactoryRequestBuilder = new ConfigurableFactoryHelper("hubv3.requestbuilder.class", "be.ehealth.businessconnector.hubv3.builders.impl.RequestBuilderImpl");
 
-   private RequestBuilderFactory() {
-   }
-
    public static RequestBuilderImpl getRequestBuilder() throws TechnicalConnectorException {
       return (RequestBuilderImpl)helperFactoryRequestBuilder.getImplementation();
    }

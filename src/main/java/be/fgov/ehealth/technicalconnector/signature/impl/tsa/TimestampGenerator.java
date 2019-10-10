@@ -1,7 +1,8 @@
 package be.fgov.ehealth.technicalconnector.signature.impl.tsa;
 
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
+import org.taktik.connector.technical.service.sts.security.Credential;
 
 public interface TimestampGenerator {
-   byte[] generate(String var1, String var2, byte[] var3) throws TechnicalConnectorException;
+   byte[] generate(String requestId, Credential credential, String digestAlgoUri, byte[] digest) throws TechnicalConnectorException;
 }

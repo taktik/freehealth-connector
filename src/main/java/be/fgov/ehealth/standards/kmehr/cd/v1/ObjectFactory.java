@@ -635,4 +635,12 @@ public class ObjectFactory {
    public CDAUTONOMY createCDAUTONOMY() {
       return new CDAUTONOMY();
    }
+
+   public CDEMPLOYMENTSITUATION createCDEMPLOYMENTSITUATION() {
+      return new CDEMPLOYMENTSITUATION();
+   }
+
+   public CDEXTERNALSOURCE createCDEXTERNALSOURCE() {
+      return new CDEXTERNALSOURCE();
+   }
 }

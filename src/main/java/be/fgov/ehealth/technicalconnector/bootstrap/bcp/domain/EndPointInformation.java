@@ -11,10 +11,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
 public class EndPointInformation {
-   private Map<String, String> url2Service = new HashMap();
-   private Map<String, String> service2DefaultEndpoint = new HashMap();
-   private Map<String, List<String>> service2AllEndpoints = new HashMap();
-   private Map<String, String> service2ActiveEndpoint = new HashMap();
+   private Map<String, String> url2Service = new HashMap<>();
+   private Map<String, String> service2DefaultEndpoint = new HashMap<>();
+   private Map<String, List<String>> service2AllEndpoints = new HashMap<>();
+   private Map<String, String> service2ActiveEndpoint = new HashMap<>();
+   private Map<String, CacheInformation> service2cache = new HashMap<>();
 
    public Map<String, String> getService2ActiveEndpoint() {
       return this.service2ActiveEndpoint;
@@ -32,14 +33,18 @@ public class EndPointInformation {
       return Collections.unmodifiableMap(this.service2DefaultEndpoint);
    }
 
-   public void register(String serviceName, String activeEndpoint, String defaultEndpoint, Collection<String> endpoints) {
+   public Map<String, CacheInformation> getService2CacheInformation() {
+      return Collections.unmodifiableMap(this.service2cache);
+   }
+
+   public void register(String serviceName, String activeEndpoint, String defaultEndpoint, Collection<String> endpoints, CacheInformation cacheInformation) {
       Validate.isTrue(StringUtils.isNotBlank(defaultEndpoint));
       this.service2DefaultEndpoint.put(serviceName, defaultEndpoint);
       if (StringUtils.isNotBlank(activeEndpoint)) {
          this.service2ActiveEndpoint.put(serviceName, activeEndpoint);
       }
 
-      this.service2AllEndpoints.put(serviceName, new ArrayList(endpoints));
+      this.service2AllEndpoints.put(serviceName, new ArrayList<>(endpoints));
       Iterator i$ = endpoints.iterator();
 
       while(i$.hasNext()) {
@@ -47,5 +52,6 @@ public class EndPointInformation {
          this.url2Service.put(endpoint, serviceName);
       }
 
+      this.service2cache.put(serviceName, cacheInformation);
    }
 }

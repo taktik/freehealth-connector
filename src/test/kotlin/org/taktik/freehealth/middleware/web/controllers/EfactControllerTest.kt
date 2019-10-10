@@ -47,6 +47,8 @@ abstract class EfactAbstractTest : EhealthTest() {
     private var sendNumber = 805
 
     val phoneSender = "0479905510"
+    val bicSender = ""
+    val ibanSender = ""
 
     private val DMG_NIHIIS_FOR_NISS2: MutableMap<String, String> = HashMap()
     private val NISS1 = "NISS1"

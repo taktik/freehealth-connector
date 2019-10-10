@@ -16,7 +16,7 @@ public class Handler extends URLStreamHandler {
    public synchronized URLConnection openConnection(URL u) throws IOException {
       URLConnection uc = null;
       Boolean tmp = (Boolean)AccessController.doPrivileged(new GetBooleanAction("newdoc.localonly"));
-      boolean localonly = tmp.booleanValue();
+      boolean localonly = tmp;
       String docurl = (String)AccessController.doPrivileged(new GetPropertyAction("doc.url"));
       String file = u.getFile();
       URL ru;

@@ -23,6 +23,7 @@ package org.taktik.freehealth.middleware.web.controllers
 import be.fgov.ehealth.hubservices.core.v2.ConsentType
 import ma.glasnost.orika.MapperFacade
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -50,7 +51,7 @@ class ConsentController(val consentService: ConsentService, val mapper: MapperFa
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
 
-    @PostMapping("/{patientSsin}")
+    @PostMapping("/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerPatientConsent(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -79,7 +80,7 @@ class ConsentController(val consentService: ConsentService, val mapper: MapperFa
         isiCardNumber = isiCardNumber
     ).let { mapper.map(it, ConsentMessageDto::class.java) }
 
-    @GetMapping("/{patientSsin}")
+    @GetMapping("/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPatientConsent(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -104,7 +105,7 @@ class ConsentController(val consentService: ConsentService, val mapper: MapperFa
         patientLastName = patientLastName
     ).let { mapper.map(it, ConsentMessageDto::class.java) }
 
-    @PostMapping("/revoke/{patientSsin}")
+    @PostMapping("/revoke/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun revokePatientConsent(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
