@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.memberdata.builders.impl.ResponseObjectBuilderImpl
-import org.taktik.connector.business.memberdata.domain.MemberDataBuilderResponse
 import org.taktik.connector.business.memberdata.validators.impl.MemberDataXmlValidatorImpl
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
@@ -65,6 +64,7 @@ import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredenti
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.dto.memberdata.FacetDto
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MemberDataService
@@ -109,8 +109,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         ioMembership: String?,
         startDate: Date?,
         endDate: Date?,
-        hospitalized: Boolean
-    ): List<Assertion> {
+        hospitalized: Boolean,
+        facets: List<Facet>?
+                              ): List<Assertion> {
         val encryptRequest = false
         require(
             hcpQuality == "doctor" ||
@@ -218,11 +219,11 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 this.issueInstant = issueInstant
                 this.version = "2.0"
                 extensions = org.taktik.icure.cin.saml.extensions.ExtensionsType().apply {
-                    this.facets.add(Facet().apply {
+                    this.facets.addAll(facets ?: listOf(Facet().apply {
                         id = "urn:be:cin:nippin:insurability"
                         dimensions.add(Facet.Dimension().apply { id = "requestType"; value = "information" })
                         dimensions.add(Facet.Dimension().apply { id = "contactType"; value = "other" })
-                    })
+                    }))
                 }
                 issuer = NameIDType().apply {
                     this.format = "urn:be:cin:nippin:nihii11"
