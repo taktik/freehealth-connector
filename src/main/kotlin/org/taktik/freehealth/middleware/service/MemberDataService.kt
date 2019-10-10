@@ -20,10 +20,10 @@
 
 package org.taktik.freehealth.middleware.service
 
-import org.taktik.connector.business.memberdata.domain.MemberDataBuilderResponse
-import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
+import org.taktik.icure.cin.saml.extensions.Facet
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
-import java.util.*
+import java.util.Date
+import java.util.UUID
 
 interface MemberDataService {
     fun getMemberData(keystoreId: UUID,
@@ -38,5 +38,6 @@ interface MemberDataService {
         ioMembership: String?,
         startDate: Date?,
         endDate: Date?,
-        hospitalized: Boolean): List<Assertion>
+        hospitalized: Boolean? = null,
+        facets: List<Facet>? = null): List<Assertion>
 }
