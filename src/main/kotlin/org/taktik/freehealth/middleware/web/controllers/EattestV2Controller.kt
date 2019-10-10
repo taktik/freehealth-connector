@@ -176,5 +176,5 @@ class EattestV2Controller(val eattestService: EattestService) {
             null,
             eAttestRef,
             reason
-                                   )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
+       )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 }
