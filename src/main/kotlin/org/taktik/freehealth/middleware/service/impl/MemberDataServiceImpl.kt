@@ -109,7 +109,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         ioMembership: String?,
         startDate: Date?,
         endDate: Date?,
-        hospitalized: Boolean,
+        hospitalized: Boolean?,
         facets: List<Facet>?
                               ): List<Assertion> {
         val encryptRequest = false
@@ -222,7 +222,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     this.facets.addAll(facets ?: listOf(Facet().apply {
                         id = "urn:be:cin:nippin:insurability"
                         dimensions.add(Facet.Dimension().apply { id = "requestType"; value = "information" })
-                        dimensions.add(Facet.Dimension().apply { id = "contactType"; value = "other" })
+                        dimensions.add(Facet.Dimension().apply { id = "contactType"; value = if (hospitalized == true) "hospitalized" else "other" })
                     }))
                 }
                 issuer = NameIDType().apply {

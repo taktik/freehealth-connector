@@ -82,7 +82,6 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
                                                ioMembership = null,
                                                startDate = startDate,
                                                endDate = endDate?.let { Date(it) } ?: startDate.let { Date(it.time + 86400000) },
-                                               hospitalized = hospitalized ?: false,
                                                facets = facets.map { mapper.map(it, Facet::class.java) })
     }
 

@@ -38,6 +38,6 @@ interface MemberDataService {
         ioMembership: String?,
         startDate: Date?,
         endDate: Date?,
-        hospitalized: Boolean,
+        hospitalized: Boolean? = null,
         facets: List<Facet>? = null): List<Assertion>
 }
