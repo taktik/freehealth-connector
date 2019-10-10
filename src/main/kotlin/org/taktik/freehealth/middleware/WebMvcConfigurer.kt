@@ -1,6 +1,8 @@
 package org.taktik.freehealth.middleware
 
 import org.springframework.boot.autoconfigure.web.ResourceProperties
+import org.springframework.boot.autoconfigure.web.ServerProperties
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -16,6 +18,7 @@ import org.taktik.freehealth.middleware.web.ExceptionHandlers
 @EnableWebMvc
 @EnableGlobalMethodSecurity(jsr250Enabled = true)
 @ComponentScan
+@EnableConfigurationProperties(ServerProperties::class, ResourceProperties::class)
 class WebMvcConfigurer(val resourceProperties: ResourceProperties) : WebMvcConfigurer {
     private val SERVLET_LOCATIONS = arrayOf("/")
 

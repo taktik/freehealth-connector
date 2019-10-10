@@ -506,10 +506,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                             telecoms.add(TelecomType().apply {
                                 cds.add(CDTELECOM().apply { s = CD_ADDRESS; sv = versions["CD-ADDRESS"]; value = "work" })
                                 cds.add(CDTELECOM().apply { s = CD_TELECOM; sv = versions["CD-TELECOM"]; value = "phone" })
-                                telecomnumber = when {
-                                    address.telecoms.any { it.telecomType == mobile || it.telecomType == phone } -> address.telecoms.first { it.telecomType == mobile || it.telecomType == phone }.telecomNumber
-                                    else -> throw IllegalArgumentException("preferred address (${address.houseNumber} ${address.street}, ${address.city}, ${address.country}) for ${hcp.lastName} (${hcp.nihii}) has no phone contact")
-                                }
+                                telecomnumber = address.telecoms.find { (it.telecomType == mobile || it.telecomType == phone) && !it.telecomNumber.isNullOrBlank() }?.telecomNumber ?: "+3220000000"
                             })
                         })
                     }

@@ -23,10 +23,6 @@ import javax.xml.bind.annotation.XmlType;
 public class Advice implements Serializable {
    private static final long serialVersionUID = 1L;
    @XmlElementRefs({@XmlElementRef(
-   name = "AssertionURIRef",
-   namespace = "urn:oasis:names:tc:SAML:2.0:assertion",
-   type = JAXBElement.class
-), @XmlElementRef(
    name = "Assertion",
    namespace = "urn:oasis:names:tc:SAML:2.0:assertion",
    type = Assertion.class

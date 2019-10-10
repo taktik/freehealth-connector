@@ -8,6 +8,8 @@
 
 package org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion;
 
+import org.taktik.icure.cin.saml.org.w3._2000._09.xmldsig_.Signature;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.w3._2000._09.xmldsig_.Signature;
 
 
 /**

@@ -1,12 +1,12 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.03.08 à 06:26:06 PM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.03.08 à 06:26:06 PM CET
 //
 
 
-package org.w3._2001._04.xmlenc_;
+package org.taktik.connector.business.domain.kmehr.v20161201.org.w3._2001._04.xmlenc_;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -20,9 +20,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Classe Java pour CipherReferenceType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="CipherReferenceType">
  *   &lt;complexContent>
@@ -35,8 +35,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CipherReferenceType", propOrder = {
@@ -56,11 +56,11 @@ public class CipherReference
 
     /**
      * Obtient la valeur de la propriété transforms.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TransformsType }
-     *     
+     *
      */
     public TransformsType getTransforms() {
         return transforms;
@@ -68,11 +68,11 @@ public class CipherReference
 
     /**
      * Définit la valeur de la propriété transforms.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TransformsType }
-     *     
+     *
      */
     public void setTransforms(TransformsType value) {
         this.transforms = value;
@@ -80,11 +80,11 @@ public class CipherReference
 
     /**
      * Obtient la valeur de la propriété uri.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getURI() {
         return uri;
@@ -92,11 +92,11 @@ public class CipherReference
 
     /**
      * Définit la valeur de la propriété uri.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setURI(String value) {
         this.uri = value;

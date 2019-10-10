@@ -1,12 +1,12 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.03.08 à 06:26:06 PM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.03.08 à 06:26:06 PM CET
 //
 
 
-package org.w3._2000._09.xmldsig_;
+package org.taktik.connector.business.domain.kmehr.v20161201.org.w3._2000._09.xmldsig_;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -18,9 +18,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Classe Java pour X509IssuerSerialType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="X509IssuerSerialType">
  *   &lt;complexContent>
@@ -33,8 +33,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "X509IssuerSerialType", propOrder = {
@@ -53,11 +53,11 @@ public class X509IssuerSerialType
 
     /**
      * Obtient la valeur de la propriété x509IssuerName.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getX509IssuerName() {
         return x509IssuerName;
@@ -65,11 +65,11 @@ public class X509IssuerSerialType
 
     /**
      * Définit la valeur de la propriété x509IssuerName.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setX509IssuerName(String value) {
         this.x509IssuerName = value;
@@ -77,11 +77,11 @@ public class X509IssuerSerialType
 
     /**
      * Obtient la valeur de la propriété x509SerialNumber.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getX509SerialNumber() {
         return x509SerialNumber;
@@ -89,11 +89,11 @@ public class X509IssuerSerialType
 
     /**
      * Définit la valeur de la propriété x509SerialNumber.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setX509SerialNumber(BigInteger value) {
         this.x509SerialNumber = value;
