@@ -175,7 +175,7 @@ class Chapter4ControllerTest : EhealthTest() {
 
 
         val results = getNisses(2).map {
-            val res =this.restTemplate.exchange("http://localhost:$port/chap4/consult/$it?hcpNihii=$nihii1" +
+            val res = this.restTemplate.exchange("http://localhost:$port/chap4/consult/$it?hcpNihii=$nihii1" +
                 "&hcpSsin=$ssin1" +
                 "&hcpFirstName=$firstName1" +
                 "&hcpLastName=$lastName1" +
