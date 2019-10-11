@@ -115,8 +115,43 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
                                                hospitalized = hospitalized ?: false)
     }
 
+    @PostMapping("/{io}/{ioMembership}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun queryMemberDataByMembership(
+        @PathVariable io: String,
+        @PathVariable ioMembership: String,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpName: String,
+        @RequestParam(required = false) hcpQuality: String?,
+        @RequestParam(required = false) date: Long?,
+        @RequestParam(required = false) endDate: Long?,
+        @RequestParam(required = false) hospitalized: Boolean?,
+        @RequestBody facets:List<FacetDto>
+                       ) : List<Assertion> {
+        val startDate: Date =
+            date?.let { Date(date) }
+                ?: Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneId.of("Europe/Brussels").rules.getOffset(Instant.now())))
+        return memberDataService.getMemberData(keystoreId = keystoreId,
+                                               tokenId = tokenId,
+                                               hcpQuality = hcpQuality ?: "doctor",
+                                               hcpNihii = hcpNihii,
+                                               hcpSsin = hcpSsin,
+                                               hcpName = hcpName,
+                                               passPhrase = passPhrase,
+                                               patientSsin = null,
+                                               io = io,
+                                               ioMembership = ioMembership,
+                                               startDate = startDate,
+                                               endDate = endDate?.let { Date(it) }
+                                                   ?: startDate.let { Date(it.time + 86400000) },
+                                               facets = facets.map { mapper.map(it, Facet::class.java) })
+    }
+
     @GetMapping("/{io}/{ioMembership}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getGeneralInsurabilityByMembership(
+    fun getMemberDataByMembership(
         @PathVariable io: String,
         @PathVariable ioMembership: String,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
