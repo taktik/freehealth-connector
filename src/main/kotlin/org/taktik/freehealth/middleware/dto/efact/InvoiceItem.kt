@@ -40,6 +40,7 @@ class InvoiceItem {
     var patientFee: Long = 0
     var doctorSupplement: Long = 0
 
+    var transplantationCode: InvoicingTransplantationCode? = null
     var sideCode: InvoicingSideCode? = null
     var timeOfDay: InvoicingTimeOfDay? = null
 
