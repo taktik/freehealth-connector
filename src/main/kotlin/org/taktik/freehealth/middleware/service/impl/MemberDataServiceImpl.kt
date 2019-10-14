@@ -24,8 +24,6 @@ import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
 import be.cin.types.v1.FaultType
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
-import be.fgov.ehealth.messageservices.core.v1.SendTransactionRequest
-import be.fgov.ehealth.messageservices.core.v1.SendTransactionResponse
 import be.fgov.ehealth.mycarenet.commons.core.v3.CareProviderType
 import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType
 import be.fgov.ehealth.mycarenet.commons.core.v3.IdType
@@ -36,7 +34,6 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORMYCARENETschemes
 import com.google.gson.Gson
 import com.sun.org.apache.xerces.internal.dom.ElementNSImpl
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
@@ -79,7 +76,6 @@ import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.icure.cin.saml.extensions.Facet
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.StatusDetail
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -314,9 +310,10 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     consultMemberData.soapResponse?.writeTo(this.soapResponseOutputStream())
                     consultMemberData.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                errors = ((it.response.anies as java.util.ArrayList<ElementNSImpl>).map {
+                errors = (((it.response.status as org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.Status)?.statusDetail as StatusDetail)?.anies as java.util.ArrayList<*>)?.map {
                     MarshallerHelper(FaultType::class.java, FaultType::class.java).toObject(it as ElementNSImpl)
-                }
+                },
+                commonOutput = it.consultationResponse?.`return`?.commonOutput
                               )
         } ?: MemberDataResponse()
     }
