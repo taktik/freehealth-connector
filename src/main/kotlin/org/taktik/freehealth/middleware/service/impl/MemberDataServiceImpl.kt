@@ -34,6 +34,7 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
+import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationResponse
 import com.google.gson.Gson
 import com.sun.org.apache.xerces.internal.dom.ElementNSImpl
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
@@ -302,7 +303,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 Status(it.response.status.statusCode.value, it.response.status.statusCode.statusCode?.value),
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse =
-                        MarshallerHelper(MemberDataBuilderResponse::class.java, MemberDataBuilderResponse::class.java).toXMLByteArray(it)
+                        MarshallerHelper(MemberDataConsultationResponse::class.java, MemberDataConsultationResponse::class.java).toXMLByteArray(it.consultationResponse)
                             .toString(Charsets.UTF_8)
                     this.transactionRequest =
                         MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java).toXMLByteArray(request)
