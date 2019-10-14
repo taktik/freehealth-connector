@@ -98,6 +98,7 @@ import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
+import org.taktik.connector.technical.exception.UnsealConnectorException
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
@@ -270,60 +271,73 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
             val cancelAttestationResponse = freehealthEattestService.cancelAttestion(samlToken, cancelAttestationRequest)
             val blobType = cancelAttestationResponse.`return`.detail
             val blob = BlobMapper.mapBlobfromBlobType(blobType)
-            val unsealedData =
-                crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
-            val encryptedKnownContent =
-                MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
-                    unsealedData
-                                                                                                               )
-            val xades = encryptedKnownContent!!.xades
-            val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
-            val options = emptyMap<String, Any>()
-            val signatureVerificationResult = xades?.let { builder.verify(unsealedData, it, options) }
 
-            val decryptedAndVerifiedResponse =
-                AttestBuilderResponse(
-                    MarshallerHelper(
-                        SendTransactionResponse::class.java,
-                        SendTransactionResponse::class.java
-                                    ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
-                                     )
+            var xades:ByteArray? = null
+            var kmehrMessage:ByteArray? = null
 
-            val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
+            val sendTransactionResponse = try {
+                val unsealedData =
+                    crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
+                val encryptedKnownContent =
+                    MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
+                        unsealedData
+                    )
+
+                xades = encryptedKnownContent!!.xades
+                kmehrMessage = encryptedKnownContent!!.businessContent.value
+
+                val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
+                val options = emptyMap<String, Any>()
+                val signatureVerificationResult = xades?.let { builder.verify(unsealedData, it, options) }
+
+                    AttestBuilderResponse(
+                        MarshallerHelper(
+                            SendTransactionResponse::class.java,
+                            SendTransactionResponse::class.java
+                        ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
+                    ).sendTransactionResponse
+            } catch(ex: UnsealConnectorException) {
+                MarshallerHelper(
+                    SendTransactionResponse::class.java,
+                    SendTransactionResponse::class.java
+                ).toObject(blob.content)
+            }
+
+            val errors = sendTransactionResponse.acknowledge.errors?.flatMap { e ->
                 e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
                     extractError(requestXml, ec, e.url)
                 } ?: setOf()
             }
             val commonOutput = cancelAttestationResponse.`return`.commonOutput
-            decryptedAndVerifiedResponse.sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
+            sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
                 SendAttestResultWithResponse(
                     acknowledge = EattestAcknowledgeType(
-                        iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
+                        iscomplete = sendTransactionResponse.acknowledge.isIscomplete,
                         errors = errors ?: listOf()
                                                         ),
                     xades = xades,
                     commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
                     mycarenetConversation = MycarenetConversation().apply {
-                        this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse).toString(Charsets.UTF_8)
+                        this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse).toString(Charsets.UTF_8)
                         this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
                         cancelAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                         cancelAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                     },
-                    kmehrMessage = encryptedKnownContent?.businessContent?.value
+                    kmehrMessage = kmehrMessage
                                             )
             } ?: SendAttestResultWithResponse(
                 acknowledge = EattestAcknowledgeType(
-                    iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
+                    iscomplete = sendTransactionResponse.acknowledge.isIscomplete,
                     errors = errors ?: listOf()
                                                     ),
                 xades = xades,
                 mycarenetConversation = MycarenetConversation().apply {
-                    this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse).toString(Charsets.UTF_8)
+                    this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse).toString(Charsets.UTF_8)
                     this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
                     cancelAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     cancelAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                kmehrMessage = encryptedKnownContent?.businessContent?.value
+                kmehrMessage = kmehrMessage
                                              )
         }    }
 
@@ -1953,7 +1967,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                             s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                             (trnsId++).toString()
                         })
-                        cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MYCARENET; sv = "1.4"; value = "cga" })
+                        cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MYCARENET; sv = "1.4"; value = "cgacancellation" })
                         date = refDateTime; time = refDateTime
                         traineeSupervisorNihii?.let {
                             this.author = supervisor
