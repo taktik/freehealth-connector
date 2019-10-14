@@ -584,6 +584,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
         hcpFirstName: String,
         hcpLastName: String,
         hcpCbe: String,
+        treatmentReason: String,
         traineeSupervisorSsin: String?,
         traineeSupervisorNihii: String?,
         traineeSupervisorFirstName: String?,
@@ -624,6 +625,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                     hcpFirstName,
                     hcpLastName,
                     hcpCbe,
+                    treatmentReason,
                     patientSsin,
                     patientFirstName,
                     patientLastName,
@@ -1313,6 +1315,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
         hcpFirstName: String,
         hcpLastName: String,
         hcpCbe: String,
+        treatmentReason : String,
         patientSsin: String,
         patientFirstName: String,
         patientLastName: String,
@@ -1499,49 +1502,64 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                 }
                             }
                         },
-                                           attest.codes.sumBy {
-                                               Math.round((it.doctorSupplement ?: 0.0) * 100)
-                                                   .toInt()
-                                           }.let {
-                                               if (it !== 0) ItemType().apply {
-                                                   ids.add(IDKMEHR().apply {
-                                                       s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
-                                                       (itemId++).toString()
-                                                   })
-                                                   cds.add(CDITEM().apply {
-                                                       s = CD_ITEM_MYCARENET; sv = "1.4"; value =
-                                                       "supplement"
-                                                   })
-                                                   cost = CostType().apply {
-                                                       decimal =
-                                                           BigDecimal.valueOf(it.toLong()).divide(BigDecimal("100"))
-                                                       unit = UnitType().apply {
-                                                           cd =
-                                                               CDUNIT().apply {
-                                                                   s = CDUNITschemes.CD_CURRENCY; sv =
-                                                                   "1.0"; value = "EUR"
-                                                               }
-                                                       }
-                                                   }
-                                               } else null
-                                           },
-                                           ItemType().apply {
-                                               ids.add(IDKMEHR().apply {
-                                                   s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
-                                                   (itemId++).toString()
-                                               })
-                                               cds.add(CDITEM().apply {
-                                                   s = CD_ITEM_MYCARENET; sv = "1.4"; value =
-                                                   "paymentreceivingparty"
-                                               })
-                                               contents.add(ContentType().apply {
-                                                   ids.add(IDKMEHR().apply {
-                                                       s =
-                                                           IDKMEHRschemes.ID_CBE; sv = "1.0"; value = hcpCbe
-                                                   })
-                                               })
-                                           }).filterNotNull()
-                                   )
+                        attest.codes.sumBy {
+                           Math.round((it.doctorSupplement ?: 0.0) * 100)
+                               .toInt()
+                        }.let {
+                           if (it !== 0) ItemType().apply {
+                               ids.add(IDKMEHR().apply {
+                                   s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                   (itemId++).toString()
+                               })
+                               cds.add(CDITEM().apply {
+                                   s = CD_ITEM_MYCARENET; sv = "1.4"; value =
+                                   "supplement"
+                               })
+                               cost = CostType().apply {
+                                   decimal =
+                                       BigDecimal.valueOf(it.toLong()).divide(BigDecimal("100"))
+                                   unit = UnitType().apply {
+                                       cd =
+                                           CDUNIT().apply {
+                                               s = CDUNITschemes.CD_CURRENCY; sv =
+                                               "1.0"; value = "EUR"
+                                           }
+                                   }
+                               }
+                           } else null
+                        },
+                        ItemType().apply {
+                           ids.add(IDKMEHR().apply {
+                               s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                               (itemId++).toString()
+                           })
+                           cds.add(CDITEM().apply {
+                               s = CD_ITEM_MYCARENET; sv = "1.4"; value =
+                               "paymentreceivingparty"
+                           })
+                           contents.add(ContentType().apply {
+                               ids.add(IDKMEHR().apply {
+                                   s =
+                                       IDKMEHRschemes.ID_CBE; sv = "1.0"; value = hcpCbe
+                               })
+                           })
+                        },
+                        ItemType().apply {
+                            ids.add(IDKMEHR().apply {
+                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                (itemId++).toString()
+                            })
+                            cds.add(CDITEM().apply {
+                                s = CD_ITEM_MYCARENET; sv = "1.4"; value =
+                                "treatmentreason"
+                            })
+                            contents.add(ContentType().apply {
+                                cds.add(CDCONTENT().apply {
+                                    s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl = "NIHDI-TREATMENT-REASON"; value = treatmentReason;
+                                })
+                            })
+                        }
+                            ).filterNotNull())
                     }).plus(attest.codes.map { code ->
                         val author = HcpartyType().apply {
                             ids.add(IDHCPARTY().apply {
@@ -1799,6 +1817,16 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                                                    })
                                                                }
                                                            },
+                                                            cr.vignetteReason?.let {
+                                                                ContentType().apply {
+                                                                    cds.add(CDCONTENT().apply {
+                                                                        s =
+                                                                            CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                                        "NIHDI-ID-DOC-VIGNETTE-USE-JUSTIFICATION"; value =
+                                                                        it.toString()
+                                                                    })
+                                                                }
+                                                            },
                                                            ContentType().apply {
                                                                cds.add(CDCONTENT().apply {
                                                                    s =

@@ -47,6 +47,7 @@ class Eattest(var codes: List<EattestCode> = listOf()) : Serializable {
         var mediaType: Int = 1,
         var inputType: Int = 1,
         var manualInputReason: Int? = null,
+        var vignetteReason: Int? = null,
         var serial: String? = null
     ) : Serializable
 
