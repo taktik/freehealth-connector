@@ -303,7 +303,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         return ResponseObjectBuilderImpl().handleConsultationResponse(consultMemberData, crypto)?.let {
             MemberDataResponse(
                 it.assertions,
-                Status(it.response.status.statusCode.value, it.response.status.statusCode.statusCode.value),
+                Status(it.response.status.statusCode.value),
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse =
                         MarshallerHelper(MemberDataBuilderResponse::class.java, MemberDataBuilderResponse::class.java).toXMLByteArray(it)
