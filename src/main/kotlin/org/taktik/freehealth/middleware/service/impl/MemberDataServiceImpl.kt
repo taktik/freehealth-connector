@@ -310,8 +310,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     consultMemberData.soapResponse?.writeTo(this.soapResponseOutputStream())
                     consultMemberData.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                errors = (((it.response.status as org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.Status)?.statusDetail as StatusDetail)?.anies as java.util.ArrayList<*>)?.map {
-                    MarshallerHelper(FaultType::class.java, FaultType::class.java).toObject(it as ElementNSImpl)
+                errors = it.response.status?.statusDetail?.anies?.map {
+                    MarshallerHelper(FaultType::class.java, FaultType::class.java).toObject(it)
                 },
                 commonOutput = it.consultationResponse?.`return`?.commonOutput
                               )

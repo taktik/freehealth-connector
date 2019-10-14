@@ -72,14 +72,6 @@ class MemberDataControllerTest : EhealthTest() {
     }
 
     @Test
-    fun getGeneralInsurability2() {
-        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val genIns = this.restTemplate.exchange("http://localhost:$port/mda/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
-                                                HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-
-    }
-
-    @Test
     fun getGeneralInsurabilityError1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val genIns = this.restTemplate.exchange("http://localhost:$port/mda/${"74010414734"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}",
