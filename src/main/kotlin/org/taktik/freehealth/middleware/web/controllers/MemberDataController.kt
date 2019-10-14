@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.memberdata.FacetDto
+import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponse
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.icure.cin.saml.extensions.Facet
@@ -68,7 +69,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?,
         @RequestBody facets:List<FacetDto>
-                     ) : List<Assertion> {
+                     ) : MemberDataResponse {
         val startDate: Date = date?.let { Date(date) } ?: Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneId.of("Europe/Brussels").rules.getOffset(Instant.now())))
         return memberDataService.getMemberData(keystoreId = keystoreId,
                                                tokenId = tokenId,
@@ -98,7 +99,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?
-    ) : List<Assertion> {
+    ) : MemberDataResponse {
         val startDate: Date = date?.let { Date(date) } ?: Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneId.of("Europe/Brussels").rules.getOffset(Instant.now())))
         return memberDataService.getMemberData(keystoreId = keystoreId,
                                                tokenId = tokenId,
@@ -130,7 +131,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?,
         @RequestBody facets:List<FacetDto>
-                       ) : List<Assertion> {
+                       ) : MemberDataResponse {
         val startDate: Date =
             date?.let { Date(date) }
                 ?: Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneId.of("Europe/Brussels").rules.getOffset(Instant.now())))
@@ -164,7 +165,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?
-    ): List<Assertion> {
+    ): MemberDataResponse {
         val startDate: Date = date?.let { Date(date) } ?: Date()
         return memberDataService.getMemberData(keystoreId = keystoreId,
                                                tokenId = tokenId,
