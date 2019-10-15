@@ -57,7 +57,7 @@ interface EattestService {
         hcpFirstName: String,
         hcpLastName: String,
         hcpCbe: String,
-        treatmentReason : String,
+        treatmentReason : String?,
         traineeSupervisorSsin: String?,
         traineeSupervisorNihii: String?,
         traineeSupervisorFirstName: String?,

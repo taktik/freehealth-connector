@@ -72,7 +72,7 @@ public abstract class AbstractWsSender {
       SOAPConnection conn = null;
       Handler[] chain = genericRequest.getHandlerchain();
 
-      GenericResponse var6;
+      GenericResponse genericResponse;
       try {
          SOAPMessageContext request = this.createSOAPMessageCtx(genericRequest);
          request.putAll(genericRequest.getRequestMap());
@@ -81,17 +81,17 @@ public abstract class AbstractWsSender {
          conn = scf.createConnection();
          SOAPMessageContext reply = createSOAPMessageCtx(conn.call(request.getMessage(), generateEndpoint(request)));
          reply.putAll(genericRequest.getRequestMap());
-      reply.put("javax.xml.ws.handler.message.outbound", false);
+         reply.put("javax.xml.ws.handler.message.outbound", false);
          ArrayUtils.reverse(chain);
       executeHandlers(chain, reply);
-         var6 = new GenericResponse(reply.getMessage());
+         genericResponse = new GenericResponse(reply.getMessage(), request.getMessage());
       } catch (Exception var10) {
          throw translate(var10);
       } finally {
          ConnectorIOUtils.closeQuietly((Object)conn);
       }
 
-      return var6;
+      return genericResponse;
    }
 
    private static SOAPMessageContext createSOAPMessageCtx(SOAPMessage msg) {
