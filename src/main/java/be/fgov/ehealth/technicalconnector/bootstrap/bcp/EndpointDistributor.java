@@ -50,7 +50,7 @@ public final class EndpointDistributor {
    }
 
    public String getActiveEndpoint(String currentEndpoint) {
-      return this.url2Service.containsKey(currentEndpoint) ? (String)this.service2ActiveEndpoint.get(this.url2Service.get(currentEndpoint)) : currentEndpoint;
+      return this.url2Service.containsKey(currentEndpoint) ? this.service2ActiveEndpoint.get(this.url2Service.get(currentEndpoint)) : currentEndpoint;
    }
 
    public boolean mustCache(String currentEndpoint) {
@@ -112,7 +112,7 @@ public final class EndpointDistributor {
       }
    }
 
-   protected void update(EndPointInformation info) {
+   public void update(EndPointInformation info) {
       Validate.notNull(info);
       if (!isBCPMode(info)) {
          this.polling = false;
@@ -139,7 +139,7 @@ public final class EndpointDistributor {
       return !info.getService2ActiveEndpoint().equals(info.getService2DefaultEndpoint());
    }
 
-   private boolean isBCPMode() {
+   public boolean isBCPMode() {
       return !this.service2ActiveEndpoint.equals(this.service2DefaultEndpoint);
    }
 
