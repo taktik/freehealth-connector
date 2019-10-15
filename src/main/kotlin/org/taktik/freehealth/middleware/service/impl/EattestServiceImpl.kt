@@ -570,7 +570,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
         hcpFirstName: String,
         hcpLastName: String,
         hcpCbe: String,
-        treatmentReason: String,
+        treatmentReason: String?,
         traineeSupervisorSsin: String?,
         traineeSupervisorNihii: String?,
         traineeSupervisorFirstName: String?,
@@ -611,11 +611,11 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                     hcpFirstName,
                     hcpLastName,
                     hcpCbe,
-                    treatmentReason,
                     patientSsin,
                     patientFirstName,
                     patientLastName,
                     patientGender,
+                    treatmentReason,
                     traineeSupervisorNihii,
                     traineeSupervisorSsin,
                     traineeSupervisorFirstName,
@@ -1297,15 +1297,15 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
     private fun getEattestCreateV2SendTransactionRequest(
         now: DateTime,
         hcpNihii: String,
-        hcpSsin: String,
+        hcpSsin: String?,
         hcpFirstName: String,
         hcpLastName: String,
         hcpCbe: String,
-        treatmentReason : String,
         patientSsin: String,
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
+        treatmentReason: String?,
         traineeSupervisorNihii: String?,
         traineeSupervisorSsin: String?,
         traineeSupervisorFirstName: String?,
@@ -1670,7 +1670,15 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                                 loc.cdHcParty
                                             })
                                         }
-                                    }))
+                                    },
+                                       code.locationService?.let { svc ->
+                                           ContentType().apply {
+                                               this.cds.add(CDCONTENT().apply {
+                                                   s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                   "NIHDI-SERVICE-CD"; value = svc.toString()
+                                               })
+                                           }
+                                       }).filterNotNull())
                                 }
                             }, code.requestor?.let { req ->
                                 ItemType().apply {
@@ -1704,7 +1712,15 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                                            ContentType().apply {
                                                                date = dateTime(req.date)
                                                                    ?: theDayBeforeRefDate
-                                                           }))
+                                                           },
+                                                           code.requestorNorm?.let { norm ->
+                                                               ContentType().apply {
+                                                                   this.cds.add(CDCONTENT().apply {
+                                                                       s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                                       "NIHDI-REQUESTOR-NORM"; value = norm.toString()
+                                                                   })
+                                                               }
+                                                           }).filterNotNull())
                                 }
                             }, code.gmdManager?.let { gmdm ->
                                 ItemType().apply {
