@@ -25,7 +25,6 @@ public final class EndpointDistributor {
    private static final long DEFAULT_POLLING_INTERVAL = 15L;
    private static final Log log = LogFactory.getLog(EndpointDistributor.class);
    private static ConfigValidator config = ConfigFactory.getConfigValidator();
-   private boolean polling;
    private Timer timer;
    private Map<String, String> url2Service;
    private Map<String, List<String>> service2AllEndpoints;
@@ -50,7 +49,7 @@ public final class EndpointDistributor {
    }
 
    public String getActiveEndpoint(String currentEndpoint) {
-      return this.url2Service.containsKey(currentEndpoint) ? (String)this.service2ActiveEndpoint.get(this.url2Service.get(currentEndpoint)) : currentEndpoint;
+      return this.url2Service.containsKey(currentEndpoint) ? this.service2ActiveEndpoint.get(this.url2Service.get(currentEndpoint)) : currentEndpoint;
    }
 
    public boolean mustCache(String currentEndpoint) {
@@ -63,16 +62,21 @@ public final class EndpointDistributor {
    }
 
    public void activatePolling() {
-      if (!this.polling && this.isBCPMode() && config.getBooleanProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.activated", Boolean.TRUE)) {
-         this.timer = new Timer(true);
-         this.timer.schedule(new EndpointDistributor.StatusPollingTimerTask(), new Date(), TimeUnit.MILLISECONDS.convert(config.getLongProperty("be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.interval.minutes", 15L), TimeUnit.MINUTES));
+      if (this.isBCPMode() && config.getBooleanProperty(PROP_POLLING_ACTIVATED, Boolean.TRUE)) {
+         if (this.timer == null) {
+            this.timer = new Timer(true);
+            this.timer.schedule(new EndpointDistributor.StatusPollingTimerTask(), new Date(), TimeUnit.MILLISECONDS.convert(config.getLongProperty(PROP_POLLING_INTERVAL, 1L), TimeUnit.MINUTES));
+         }
+      } else {
+         if (this.timer != null) {
+            this.timer.cancel();
+            this.timer = null;
+         }
       }
-
-      this.polling = true;
    }
 
    public boolean mustPoll() {
-      return this.polling;
+      return this.timer != null;
    }
 
    public void activateNextEndPoint(String currentEndpoint) throws NoNextEndpointException {
@@ -112,20 +116,16 @@ public final class EndpointDistributor {
       }
    }
 
-   protected void update(EndPointInformation info) {
+   public void update(EndPointInformation info) {
       Validate.notNull(info);
-      if (!isBCPMode(info)) {
-         this.polling = false;
-         if (this.timer != null) {
-            this.timer.cancel();
-         }
-      }
 
       this.url2Service = info.getUrl2Service();
       this.service2ActiveEndpoint = info.getService2ActiveEndpoint();
       this.service2AllEndpoints = info.getService2AllEndpoints();
       this.service2DefaultEndpoint = info.getService2DefaultEndpoint();
       this.service2CacheInformation = info.getService2CacheInformation();
+
+      activatePolling();
    }
 
    protected void reset() {
@@ -139,7 +139,7 @@ public final class EndpointDistributor {
       return !info.getService2ActiveEndpoint().equals(info.getService2DefaultEndpoint());
    }
 
-   private boolean isBCPMode() {
+   public boolean isBCPMode() {
       return !this.service2ActiveEndpoint.equals(this.service2DefaultEndpoint);
    }
 

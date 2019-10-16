@@ -24,14 +24,11 @@ package org.taktik.freehealth.middleware.dto.efact
  * To change this template use File | Settings | File Templates.
  */
 enum class InvoicingTransplantationCode private constructor(val code: Int) {
-
     None(0),
     RefersToRecipient(1),
     RefersToDonor(2);
 
-
     companion object {
-
         fun referTransplantation(transplantation: Int): InvoicingTransplantationCode? {
             for (s in InvoicingTransplantationCode.values()) {
                 if (s.code == transplantation) {

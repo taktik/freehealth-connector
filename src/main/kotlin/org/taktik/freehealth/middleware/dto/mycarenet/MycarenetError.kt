@@ -28,6 +28,12 @@ class MycarenetError(
     var locNl: String? = null,
     var msgFr: String? = null,
     var msgNl: String? = null,
+    var msgEn: String? = null,
     var code: String? = null,
+    var subCode: String? = null,
+    var faultCode: String? = null,
+    var faultSource: String? = null,
+    var detailCode: String? = null,
+    var detailSource: String? = null,
     var value: String? = null
 )

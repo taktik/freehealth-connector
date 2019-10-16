@@ -23,7 +23,12 @@ class MemberDataServiceImpl : MemberDataService, ConfigurationModuleBootstrap.Mo
             val service = ServiceFactory.getMemberDataSyncPort(token)
             service.setPayload(request)
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
-            return xmlResponse.asObject(MemberDataConsultationResponse::class.java)
+            val memberDataConsultationResponse = xmlResponse.asObject(MemberDataConsultationResponse::class.java)
+
+            memberDataConsultationResponse.soapRequest = xmlResponse.request
+            memberDataConsultationResponse.soapResponse = xmlResponse.soapMessage
+
+            return memberDataConsultationResponse
         } catch (ex: SOAPException) {
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
         }
