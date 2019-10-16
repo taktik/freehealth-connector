@@ -1,5 +1,6 @@
 package be.cin.mycarenet._1_0.carenet.types;
 
+
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

@@ -36,7 +36,7 @@ import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EattestService
-import java.util.*
+import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
 @RestController

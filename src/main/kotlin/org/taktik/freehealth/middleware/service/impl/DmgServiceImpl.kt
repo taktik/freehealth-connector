@@ -196,7 +196,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             this.routing = SendRequestMapper.mapRouting(Routing(careReceiver, DateTime()))
             this.detail = SendRequestMapper.mapBlobToBlobType(blob)
 
-            this.xades = BlobUtil.generateXades(this.detail, credential, "mcn.registration")
+            this.xades = BlobUtil.generateXades(credential, this.detail, "mcn.registration")
         }
 
         val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(

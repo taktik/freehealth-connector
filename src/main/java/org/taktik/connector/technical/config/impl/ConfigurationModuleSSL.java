@@ -28,7 +28,6 @@ public final class ConfigurationModuleSSL implements ConfigurationModule {
    private static final String JAVAX_NET_SSL_TRUST_STORE_PASSWORD = "javax.net.ssl.trustStorePassword";
    private static final String JAVAX_NET_SSL_TRUST_STORE = "javax.net.ssl.trustStore";
    private static final String TRUSTSTORE_PASSWORD = "truststore_password";
-   private static final String KEYSTORE_DIR = "KEYSTORE_DIR";
    private static final String TRUSTSTORE_LOCATION = "truststore_location";
    private static final String TRUSTSTORE_LOCATION_ORIGINAL = "truststore_location_original";
    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationModuleSSL.class);

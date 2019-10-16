@@ -17,25 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ConnectorOCSPRevocationStatusChecker extends AbstractRevocationStatusChecker {
-   private static final Logger LOG = LoggerFactory.getLogger(ConnectorOCSPRevocationStatusChecker.class);
-   private OCSPChecker ocspchecker;
-
-   public ConnectorOCSPRevocationStatusChecker() {
-      HashMap options = new HashMap();
-
-      try {
-         options.putAll(CryptoFactory.getOCSPOptions());
-      } catch (TechnicalConnectorException var3) {
-         LOG.warn("Unable to load ocsp options.", var3);
-      }
-
-      this.ocspchecker = OCSPCheckerBuilder.newBuilder().addOCSPPolicy(OCSPPolicy.RECEIVER_MANDATORY, options).build();
-   }
-
    boolean delegateRevoke(X509Certificate cert, DateTime validOn) throws CertificateException {
-      CryptoResult<OCSPData> result = this.ocspchecker.validate(cert, validOn.toDate(), new RevocationValues());
+      CryptoResult<OCSPData> result = OCSPCheckerBuilder.newBuilder().addOCSPPolicy(OCSPPolicy.RECEIVER_MANDATORY, CryptoFactory.getOCSPOptions()).build().validate(cert, validOn.toDate(), new RevocationValues());
       if (result.getFatal() == null && result.getData() != null) {
-         return !((OCSPData)result.getData()).getCertStatus().equals(CertificateStatus.VALID);
+         return !result.getData().getCertStatus().equals(CertificateStatus.VALID);
       } else {
          throw new CertificateException(result.toString());
       }

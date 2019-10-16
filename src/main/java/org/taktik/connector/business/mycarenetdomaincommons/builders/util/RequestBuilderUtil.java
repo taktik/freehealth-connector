@@ -29,6 +29,6 @@ public final class RequestBuilderUtil {
       sendRequest.setCommonInput(SendRequestMapper.mapCommonInput(commonInput));
       sendRequest.setRouting(SendRequestMapper.mapRouting(routing));
       sendRequest.setDetail(SendRequestMapper.mapBlobToBlobType(blob));
-      sendRequest.setXades(BlobUtil.generateXades(sendRequest.getDetail(), credential, xadesValue, projectName));
+      sendRequest.setXades(BlobUtil.generateXades(credential, sendRequest.getDetail(),xadesValue, projectName));
    }
 }

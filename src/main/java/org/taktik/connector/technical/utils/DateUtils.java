@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Locale;
 import javax.xml.bind.DatatypeConverter;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 
 public final class DateUtils {
@@ -26,6 +27,10 @@ public final class DateUtils {
 
    public static String printTime(DateTime dateTime) {
       return dateTime == null ? null : DatatypeConverter.printTime(convert(dateTime));
+   }
+
+   public static String printTimeWithoutTimezone(DateTime dateTime) {
+      return dateTime == null ? null : DateTimeFormat.forPattern("HH:mm:ss").print(dateTime);
    }
 
    public static DateTime parseDate(String lexicalXSDDate) {

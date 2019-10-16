@@ -99,7 +99,7 @@ public final class ServiceFactory {
          request.setSoapAction("urn:be:fgov:ehealth:idsupport:protocol:v2:verifyId");
          HandlerChain handlers = new HandlerChain();
          handlers.register(HandlerPosition.BEFORE, new SchemaValidatorHandler(3, "/ehealth-idsupport/XSD/ehealth-idsupport-protocol-2_0.xsd"));
-         request.setHandlerChain(handlers);
+         request.addHandlerChain(handlers);
          return request;
       }
    }
@@ -118,7 +118,6 @@ public final class ServiceFactory {
 
    private static GenericRequest getUnSecuredRequest(String endpoint) throws TechnicalConnectorException {
       GenericRequest request = new GenericRequest();
-      request.setDefaultHandlerChain();
       request.setEndpoint(endpoint);
       return request;
    }

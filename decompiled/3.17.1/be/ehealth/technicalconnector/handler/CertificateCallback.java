@@ -19,11 +19,11 @@ public class CertificateCallback extends AbstractWsSecurityHandler {
    public CertificateCallback() throws TechnicalConnectorException {
    }
 
-   public CertificateCallback(X509Certificate certificate, PrivateKey privateKey) throws TechnicalConnectorException {
+   public CertificateCallback(X509Certificate certificate, PrivateKey privateKey) {
       this.cred = new KeyPairCredential(privateKey, certificate);
    }
 
-   public CertificateCallback(Credential cred) throws TechnicalConnectorException {
+   public CertificateCallback(Credential cred) {
       this.cred = cred;
    }
 

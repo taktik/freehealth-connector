@@ -34,6 +34,7 @@ import org.apache.commons.lang.Validate;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.taktik.connector.technical.shutdown.DeleteFileOnExitShutdownHook;
 
 public final class ConnectorIOUtils {
    private static final String BASE64_VALIDATOR_REGEX = "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$";
@@ -57,7 +58,7 @@ public final class ConnectorIOUtils {
          } catch (IOException ex) {
             throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, ex, ex.getMessage());
          } finally {
-            closeQuietly((Object)inputStream);
+            closeQuietly(inputStream);
          }
 
          return var1;
@@ -158,7 +159,7 @@ public final class ConnectorIOUtils {
          LOG.error(ex.getClass().getSimpleName() + ": " + ex.getMessage());
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_COMPRESSION, ex);
       } finally {
-         closeQuietly((Object)decompressed);
+         closeQuietly(decompressed);
       }
 
    }
@@ -169,9 +170,9 @@ public final class ConnectorIOUtils {
       byte[] var2;
       try {
          in = new ByteArrayInputStream(input);
-         var2 = getBytes(decompress((InputStream)in));
+         var2 = getBytes(decompress(in));
       } finally {
-         closeQuietly((Object)in);
+         closeQuietly(in);
       }
 
       return var2;
@@ -183,41 +184,64 @@ public final class ConnectorIOUtils {
       is.mark(1024);
 
       try {
-         try {
-            LOG.debug("Using createCompressorInputStream");
-            return factory.createCompressorInputStream(is);
-         } catch (Exception var6) {
-            LOG.debug("[CompressionFactory]   " + var6.getClass().getSimpleName() + ": " + var6.getMessage());
-            is.reset();
-
-            try {
-               LOG.debug("Using createArchiveInputStream");
-               return asFactory.createArchiveInputStream(is);
-            } catch (Exception var5) {
-               LOG.debug("[ArchiveStreamFactory] " + var5.getClass().getSimpleName() + ": " + var5.getMessage());
-               is.reset();
-
-               try {
-                  LOG.debug("Using deflater noWrap");
-                  return deflater(is, true);
-               } catch (Exception var4) {
-                  LOG.debug("[Deflater noWrap] " + var4.getClass().getSimpleName() + ": " + var4.getMessage());
-                  is.reset();
-
-                  try {
-                     LOG.debug("Using deflater wrap");
-                     return deflater(is, false);
-                  } catch (Exception var3) {
-                     LOG.debug("[Deflater wrap] " + var3.getClass().getSimpleName() + ": " + var3.getMessage());
-                  }
-               }
-            }
+         InputStream result = compressorInputStream(is);
+         if (result != null) {
+            return result;
          }
-      } catch (IOException var7) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_COMPRESSION, var7, var7.getMessage());
+
+         is.reset();
+         result = archiveInputStream(is);
+         if (result != null) {
+            return result;
+         }
+
+         is.reset();
+         result = deflate(is, true);
+         if (result != null) {
+            return result;
+         }
+
+         result = deflate(is, false);
+         if (result != null) {
+            return result;
+         }
+
+         is.reset();
+      } catch (IOException var3) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_COMPRESSION, var3, var3.getMessage());
       }
 
       throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_COMPRESSION, "Unsupported compression algorithm.");
+   }
+
+   private static InputStream compressorInputStream(InputStream is) {
+      try {
+         LOG.debug("Using createCompressorInputStream");
+         return factory.createCompressorInputStream(is);
+      } catch (Exception var2) {
+         LOG.debug("[CompressionFactory]   " + var2.getClass().getSimpleName() + ": " + var2.getMessage());
+         return null;
+      }
+   }
+
+   private static InputStream archiveInputStream(InputStream is) {
+      try {
+         LOG.debug("Using createArchiveInputStream");
+         return asFactory.createArchiveInputStream(is);
+      } catch (Exception var2) {
+         LOG.debug("[ArchiveStreamFactory] " + var2.getClass().getSimpleName() + ": " + var2.getMessage());
+         return null;
+      }
+   }
+
+   private static InputStream deflate(InputStream is, boolean noWrap) {
+      try {
+         LOG.debug("Using deflater noWrap={}", noWrap);
+         return deflater(is, noWrap);
+      } catch (Exception var3) {
+         LOG.debug("[Deflater noWrap={}] {}: {}", noWrap, var3.getClass().getSimpleName(), var3.getMessage());
+         return null;
+      }
    }
 
    private static InputStream deflater(final InputStream is, final boolean noWrap) throws Exception {
@@ -236,7 +260,7 @@ public final class ConnectorIOUtils {
          IOUtils.copy(result, fos);
          var5 = new ConnectorIOUtils.AutoDeleteFileInputStream(temp);
       } finally {
-         closeQuietly((Object)fos);
+         closeQuietly(fos, result);
       }
 
       return var5;
@@ -264,35 +288,35 @@ public final class ConnectorIOUtils {
       if (location == null) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL);
       } else {
-         LOG.debug("Loading [" + location + "] as ResourceAsStream.");
+         LOG.debug("Loading [{}] as ResourceAsStream.", location);
          InputStream stream = ConnectorIOUtils.class.getResourceAsStream(location);
          if (stream == null) {
             File file = new File(location);
             if (!file.exists()) {
                try {
-                  LOG.debug("Loading [" + location + "] as URL.");
+                  LOG.debug("Loading [{}] as URL.", location);
                   if (bootstrap) {
                      ConfigFactory.getConfigValidator().getConfig();
                   }
 
                   URL resource = new URL(location);
                   return resource.openStream();
-               } catch (Exception ex) {
-                  LOG.info("Location [" + location + "] could not be retrieved as URL, classpath resource or file.");
-                  throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.MALFORMED_URL, ex, location);
+               } catch (Exception var5) {
+                  LOG.error("Location [{}] could not be retrieved as URL, classpath resource or file.", location);
+                  throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.MALFORMED_URL, var5, location);
                }
             }
 
             try {
-               LOG.debug("Loading [" + location + "] as FileInputStream.");
+               LOG.debug("Loading [{}] as FileInputStream.", location);
                stream = new FileInputStream(file);
             } catch (FileNotFoundException var6) {
-               LOG.error(var6.getClass().getSimpleName() + ": " + var6.getMessage());
+               LOG.error("{}: {}", var6.getClass().getSimpleName(), var6.getMessage());
                throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.MALFORMED_URL, var6, location);
             }
          }
 
-         return (InputStream)stream;
+         return stream;
       }
    }
 
@@ -303,6 +327,7 @@ public final class ConnectorIOUtils {
       File var4;
       try {
          File tempFile = File.createTempFile("connector-io", ".tmp");
+         DeleteFileOnExitShutdownHook.deleteOnExit(tempFile);
          tempFile.deleteOnExit();
          out = new FileOutputStream(tempFile);
          in = getResourceAsStream(location);
@@ -322,8 +347,8 @@ public final class ConnectorIOUtils {
       if (location == null) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL);
       } else {
-         String filePath = null;
-         LOG.debug("Loading " + location + " as ResourceAsString");
+         String filePath;
+         LOG.debug("Loading {} as ResourceAsString", location);
          InputStream stream = null;
 
          try {
@@ -339,7 +364,7 @@ public final class ConnectorIOUtils {
                      filePath = resource.getFile();
                      LOG.debug("Location found as URL.");
                   } catch (MalformedURLException var8) {
-                     LOG.info("location [" + location + "] could not be retrieved as URL, classpath resource or file.");
+                     LOG.error("location [{}] could not be retrieved as URL, classpath resource or file.", location);
                      throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.MALFORMED_URL, var8, "location ]" + location + "[ errorMessage :" + var8.getMessage());
                   }
                } else {
@@ -348,7 +373,7 @@ public final class ConnectorIOUtils {
                }
             }
          } finally {
-            closeQuietly((Object)stream);
+            closeQuietly(stream);
          }
 
          return filePath;
@@ -366,7 +391,7 @@ public final class ConnectorIOUtils {
             LOG.error(var6.getClass().getSimpleName() + ": " + var6.getMessage());
             throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_IOEXCEPTION, var6, var6.getMessage());
          } finally {
-            closeQuietly((Object)is);
+            closeQuietly(is);
          }
 
          return result;
@@ -379,29 +404,15 @@ public final class ConnectorIOUtils {
             Method closeMethod = closeable.getClass().getMethod("close");
             closeMethod.invoke(closeable);
          }
-      } catch (SecurityException var2) {
-         ;
-      } catch (NoSuchMethodException var3) {
-         ;
-      } catch (IllegalArgumentException var4) {
-         ;
-      } catch (IllegalAccessException var5) {
-         ;
-      } catch (InvocationTargetException var6) {
-         ;
+      } catch (SecurityException | InvocationTargetException | NoSuchMethodException | IllegalArgumentException | IllegalAccessException var2) {
       }
 
    }
 
    public static void closeQuietly(Object... closeables) {
-      Object[] arr$ = closeables;
-      int len$ = closeables.length;
-
-      for(int i$ = 0; i$ < len$; ++i$) {
-         Object closeable = arr$[i$];
+      for (Object closeable : closeables) {
          closeQuietly(closeable);
       }
-
    }
 
    /** @deprecated */
@@ -424,41 +435,37 @@ public final class ConnectorIOUtils {
    }
 
    public static File createTempFile(String name) throws TechnicalConnectorException {
-      if (name != null && !name.isEmpty()) {
-         String tempDirectory = System.getProperty("java.io.tmpdir");
-         if (tempDirectory != null && !tempDirectory.isEmpty()) {
-            File tempFile = new File(tempDirectory, name);
-
-            try {
-               tempFile.createNewFile();
-               return tempFile;
-            } catch (IOException var4) {
-               LOG.error("IOException while creating temporary file {0}", tempFile.getPath());
-               throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_IOEXCEPTION, new Object[]{var4.getMessage(), var4, "creating temporary file" + tempFile.getPath()});
-            }
-         } else {
-            LOG.error("The property 'java.io.tmpdir' not found in the system properties");
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"The property 'java.io.tmpdir' not found in the system properties"});
-         }
-      } else {
-         LOG.error("The name given for the tempFile is empty");
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL, new Object[]{"The name given for the tempFile is empty"});
-      }
+      return createTempFile(name, true);
    }
 
    public static String getTempFileLocation(String name) throws TechnicalConnectorException {
+      return createTempFile(name, false).getPath();
+   }
+
+   public static File createTempFile(String name, boolean create) throws TechnicalConnectorException {
       if (name != null && !name.isEmpty()) {
          String tempDirectory = System.getProperty("java.io.tmpdir");
          if (tempDirectory != null && !tempDirectory.isEmpty()) {
             File tempFile = new File(tempDirectory, name);
-            return tempFile.getPath();
+            if (create) {
+               try {
+                  if (tempFile.createNewFile()) {
+                     return tempFile;
+                  }
+               } catch (IOException var5) {
+                  LOG.error("IOException while creating temporary file {}", tempFile.getPath());
+                  throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_IOEXCEPTION, var5.getMessage(), var5, "creating temporary file" + tempFile.getPath());
+               }
+            }
+
+            return tempFile;
          } else {
             LOG.error("The property 'java.io.tmpdir' not found in the system properties");
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, new Object[]{"The property 'java.io.tmpdir' not found in the system properties"});
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CONFIG, "The property 'java.io.tmpdir' not found in the system properties");
          }
       } else {
          LOG.error("The name given for the tempFile is empty");
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL, new Object[]{"The name given for the tempFile is empty"});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL, "The name given for the tempFile is empty");
       }
    }
 
@@ -471,14 +478,14 @@ public final class ConnectorIOUtils {
       public AutoDeleteFileInputStream(File file) throws FileNotFoundException {
          super(file);
          this.file = file;
-         this.file.deleteOnExit();
+         DeleteFileOnExitShutdownHook.deleteOnExit(file);
       }
 
       public void close() {
          if (this.isClosed) {
             LOGGER.debug("stream already closed");
          } else {
-            LOGGER.debug("closing stream :{}" + this.file);
+            LOGGER.debug("closing stream :{}", this.file);
             this.isClosed = true;
 
             try {

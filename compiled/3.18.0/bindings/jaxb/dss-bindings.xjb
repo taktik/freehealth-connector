@@ -1,0 +1,11 @@
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" xmlns:simplify="http://jaxb2-commons.dev.java.net/basic/simplify" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  jaxb:extensionBindingPrefixes="xjc simplify" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.1">
+
+  <jaxb:bindings schemaLocation="../../../../target/generated-resources/external/XSD/oasis-dss-core-schema-v1.0-os.xsd ">
+    <jaxb:bindings node="//xs:element[@name='InputDocuments']/xs:complexType/xs:sequence/xs:choice/xs:element[@ref='dss:Document']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+  </jaxb:bindings>
+
+
+</jaxb:bindings>

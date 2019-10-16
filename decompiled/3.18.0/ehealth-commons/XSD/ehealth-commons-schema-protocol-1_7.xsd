@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 sp1 (x64) (http://www.altova.com) by SMALS (SMALS) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:commons:core:v1" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v1" targetNamespace="urn:be:fgov:ehealth:commons:protocol:v1" elementFormDefault="unqualified"
+  attributeFormDefault="unqualified" version="1.7">
+  <xs:import namespace="urn:be:fgov:ehealth:commons:core:v1" schemaLocation="ehealth-commons-schema-core-1_7.xsd" />
+  <xs:complexType name="RequestType">
+    <xs:annotation>
+      <xs:documentation>Basic eHealth SOA Request Type. EHealth Service Requests SHOULD extend from this element.</xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+  <xs:complexType name="ResponseType">
+    <xs:annotation>
+      <xs:documentation>Basic eHealth SOA Response Type. EHealth Service Responses SHOULD extend from this element.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Status" type="core:StatusType" />
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:string" />
+  </xs:complexType>
+</xs:schema>

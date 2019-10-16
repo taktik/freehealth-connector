@@ -256,7 +256,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             this.inputReference = inputReference
         }
 
-        val xades = BlobUtil.generateXades(SendRequestMapper.mapBlobToBlobType(blob), credential, "invoicing").value
+        val xades = BlobUtil.generateXades(credential, SendRequestMapper.mapBlobToBlobType(blob), "invoicing").value
 
         val post = requestObjectBuilder.buildPostRequest(ci, SendRequestMapper.mapBlobToCinBlob(blob), xades)
         val header: WsAddressingHeader

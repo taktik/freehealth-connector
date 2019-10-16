@@ -1,5 +1,7 @@
 package org.taktik.connector.technical.handler.wss4j;
 
+import org.taktik.connector.technical.config.ConfigFactory;
+import org.taktik.connector.technical.config.ConfigValidator;
 import org.taktik.connector.technical.config.domain.Duration;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
@@ -14,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.wss4j.common.WSEncryptionPart;
@@ -34,6 +38,8 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
    private WSSecTimestamp wsSecTimeStamp;
    private String assertionId;
    private Credential cred;
+   private SOAPMessageContext ctx;
+   private ConfigValidator config = ConfigFactory.getConfigValidator();
 
    public AbstractWsSecurityHandler.WSSecHeaderGeneratorStep1 on(SOAPMessage message) throws TechnicalConnectorException {
       try {
@@ -48,6 +54,12 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
       } catch (WSSecurityException var3) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HANDLER_ERROR, new Object[]{"unable to insert security header.", var3});
       }
+   }
+
+   public AbstractWsSecurityHandler.WSSecHeaderGeneratorStep1 on(SOAPMessageContext ctx) throws TechnicalConnectorException {
+      Validate.notNull(ctx);
+      this.ctx = ctx;
+      return this.on(ctx.getMessage());
    }
 
    public AbstractWsSecurityHandler.WSSecHeaderGeneratorStep2 withTimeStamp(long ttl, TimeUnit unit) {
@@ -88,6 +100,8 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
             this.sign.setKeyIdentifierType(1);
          }
 
+         this.determineSignatureAlgorithm();
+         this.determineDigestAlgo();
          Crypto crypto = new WSSecurityCrypto(this.cred.getPrivateKey(), this.cred.getCertificate());
          this.sign.prepare(this.soapPart, crypto, this.wsSecHeader);
          if (!(this.cred instanceof SAMLHolderOfKeyToken) || !StringUtils.isNotEmpty(this.assertionId)) {
@@ -101,6 +115,23 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
 
       } catch (WSSecurityException var4) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HANDLER_ERROR, new Object[]{"unable to insert security header.", var4});
+      }
+   }
+
+   private void determineDigestAlgo() {
+      if (this.ctx != null && StringUtils.isNotBlank((String)this.ctx.get("digest.method.algorithm"))) {
+         this.sign.setDigestAlgo((String)this.ctx.get("digest.method.algorithm"));
+      } else {
+         this.sign.setDigestAlgo(this.config.getProperty("default.digest.method.algorithm", "http://www.w3.org/2000/09/xmldsig#sha1"));
+      }
+
+   }
+
+   private void determineSignatureAlgorithm() {
+      if (this.ctx != null && StringUtils.isNotBlank((String)this.ctx.get("signature.method.algorithm"))) {
+         this.sign.setSignatureAlgorithm((String)this.ctx.get("signature.method.algorithm"));
+      } else {
+         this.sign.setSignatureAlgorithm(this.config.getProperty("default.signature.method.algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1"));
       }
    }
 

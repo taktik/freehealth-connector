@@ -23,7 +23,7 @@ public class AttachmentUnmarshallerImpl extends AttachmentUnmarshaller {
    }
 
    public DataHandler getAttachmentAsDataHandler(String cid) {
-      AttachmentPart attachment = (AttachmentPart)this.attachments.get(decode(cid));
+      AttachmentPart attachment = this.attachments.get(sanitizePartId(decode(cid)));
 
       try {
          return attachment.getDataHandler();
@@ -47,6 +47,10 @@ public class AttachmentUnmarshallerImpl extends AttachmentUnmarshaller {
       } catch (UnsupportedEncodingException var2) {
          throw new IllegalStateException(var2);
       }
+   }
+
+   private static String sanitizePartId(String cid) {
+      return cid.replaceAll("cid:", "");
    }
 
    public boolean isXOPPackage() {

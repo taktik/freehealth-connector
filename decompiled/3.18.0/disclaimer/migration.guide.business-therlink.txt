@@ -1,0 +1,53 @@
+*******************************************************
+* eHealth Business Connector Therlink MIGRATION GUIDE *
+*******************************************************
+3.11.0 release (sept 2016)
+  . update   Proof types for therapeutic links which don't need any signing now can be created with any name    
+
+3.4.0 beta-5 release
+    .   now creates therapeutic links with pharmacy instead of with pharmacist
+        change the following properties : (already done in provided config file)
+            kmehr.single.hcparty.template.careprovider.in.therapeuticlink.*
+        with the following:
+             #config for the careprovider in the therapeutic link
+              kmehr.single.hcparty.template.careprovider.in.therapeuticlink.id.idhcparty.value=${pharmacy.nihii}
+              kmehr.single.hcparty.template.careprovider.in.therapeuticlink.id.idhcparty.sv=1.0
+              kmehr.single.hcparty.template.careprovider.in.therapeuticlink.cd.cdhcparty.value=orgpharmacy
+              kmehr.single.hcparty.template.careprovider.in.therapeuticlink.cd.cdhcparty.sv=1.1
+              kmehr.single.hcparty.template.careprovider.in.therapeuticlink.name=${pharmacy.name}
+                 
+            
+
+3.4.0 beta-0 release
+    .    ADDED ISI+ SUPPORT
+        To be able to use the isi+ cards , the master Patient object use the parent object be.ehealth.business.common.domain.Patient instead should be used directly.
+        the old therlink specific Patient object still exists , but won't contain the isi+ properties. 
+        the latest version of business common is needed for this.
+ 
+        To use therlink the following properties should be filled out: 
+        1: the general kmehr properties and mycarenet properties ( see migration guide for kmehr business project ) 
+        2: the therlink specific properties : see provided properties file for the prefilled properties
+        -- BEGIN extract ---
+            #now uses new generic builder for kmehr part, which is configured with the kmehr.default.xxx properties ( see kmehr-business project)
+            therlink.requestobjectbuilder.class=be.ehealth.businessconnector.therlink.builders.impl.GenericRequestObjectBuilder
+            #strictly speaking the kmehr.{projectName}.usedefaultproperties is not needed when true : thats the default value ,
+            # if you need other configs : add them as shown in the examples in the kmehr-business project with kmehr.{projectName}.xxx properties
+            kmehr.therlink.usedefaultproperties=true
+
+            #therlink.requestobjectbuilder.class=
+            #therlink.proofbuilder.class=
+            #therlink.commonobjectbuilder.class=
+            #therlink.hcpartyinfobuilder.class=
+
+            validation.incoming.therlink.message=true
+            endpoint.therlink=https://services-acpt.ehealth.fgov.be/TherLink/v1
+
+            #config for the careprovider in the therapeutic link
+            kmehr.single.hcparty.template.careprovider.in.therapeuticlink.id.inss=${user.inss}
+            kmehr.single.hcparty.template.careprovider.in.therapeuticlink.id.idhcparty=${user.nihii}
+            kmehr.single.hcparty.template.careprovider.in.therapeuticlink.cd.cdhcparty=${main.kmehr.quality}
+            kmehr.single.hcparty.template.careprovider.in.therapeuticlink.firstname=${user.firstname}
+            kmehr.single.hcparty.template.careprovider.in.therapeuticlink.lastname=${user.lastname}
+        -- END extract ---
+        
+        

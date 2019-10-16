@@ -1,8 +1,12 @@
 package org.taktik.connector.technical.enumeration;
 
 public enum MimeType {
+   @Deprecated
    plaintext("plain/text"),
-   octectstream("application/octet-stream");
+   PLAIN_TEXT("plain/text"),
+   @Deprecated
+   octetstream("application/octet-stream"),
+   OCTET_STREAM("application/octet-stream");
 
    private String value;
 

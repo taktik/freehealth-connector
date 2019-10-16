@@ -32,8 +32,10 @@ public final class PCSCUtils {
       try {
          ResponseAPDU responseApdu = verifyPIN(pin);
          if (36864 != responseApdu.getSW()) {
-            LOG.debug("VERIFY_PIN error");
-            LOG.debug("SW: " + Integer.toHexString(responseApdu.getSW()));
+            if (LOG.isDebugEnabled()) {
+               LOG.debug("VERIFY_PIN error. SW: {}", Integer.toHexString(responseApdu.getSW()));
+            }
+
             if (27011 == responseApdu.getSW()) {
                throw new BeIDPinCodeException(new ResponseAPDUException("eID card blocked!", responseApdu));
             } else if (99 != responseApdu.getSW1()) {
@@ -82,7 +84,7 @@ public final class PCSCUtils {
    private static ResponseAPDU transmit(CommandAPDU commandApdu) throws CardException {
       TerminalFactory factory = TerminalFactory.getDefault();
       List<CardTerminal> terminals = factory.terminals().list();
-      LOG.debug("Terminals: " + terminals);
+      LOG.debug("Terminals: {}", terminals);
       Card card = null;
       Iterator i$ = terminals.iterator();
 
@@ -100,7 +102,7 @@ public final class PCSCUtils {
          throw new CardNotPresentException("EID is not present");
       } else {
          card.beginExclusive();
-         LOG.debug("card: " + card);
+         LOG.debug("card: {}", card);
          CardChannel cardChannel = card.getBasicChannel();
          ResponseAPDU responseApdu = cardChannel.transmit(commandApdu);
          if (108 == responseApdu.getSW1()) {

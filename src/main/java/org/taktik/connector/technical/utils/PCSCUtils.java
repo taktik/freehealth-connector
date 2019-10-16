@@ -109,6 +109,7 @@ public final class PCSCUtils {
             try {
                Thread.sleep(10L);
             } catch (InterruptedException var7) {
+               Thread.currentThread().interrupt();
                throw new org.taktik.connector.technical.exception.InterruptedException("Cannot sleep", var7);
             }
 
