@@ -3,10 +3,8 @@ package org.taktik.freehealth.middleware.dao
 import com.google.gson.Gson
 import org.eclipse.jetty.client.HttpClient
 import org.springframework.cache.CacheManager
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.taktik.freehealth.middleware.AuthenticationProperties
 import java.net.HttpURLConnection
@@ -39,7 +37,7 @@ class CouchdbUserDetailsService(val httpClient: HttpClient,
                     setRequestProperty("Authorization", "Basic ${Base64.getEncoder().encodeToString("${couchDbProperties.username}:${couchDbProperties.password}".toByteArray())}")
                 }.inputStream.bufferedReader().readText()
                 gson.fromJson(content, User::class.java)?.apply {
-                    authorities.add(SimpleGrantedAuthority("ROLE_USER"))
+                    authorities.add(GrantedAuthority("ROLE_USER"))
                 }
             }
         } catch(e:Exception) {
