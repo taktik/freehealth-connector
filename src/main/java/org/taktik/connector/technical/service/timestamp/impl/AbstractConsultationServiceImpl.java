@@ -28,7 +28,7 @@ public class AbstractConsultationServiceImpl<A, B, C, D> {
          try {
             return org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(request).asObject(this.clazzB);
          } catch (SOAPException var6) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{var6.getMessage(), var6});
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var6.getMessage(), var6);
          }
       } else {
          TechnicalConnectorExceptionValues errorValue = TechnicalConnectorExceptionValues.SECURITY_NO_CERTIFICATE;
@@ -45,12 +45,12 @@ public class AbstractConsultationServiceImpl<A, B, C, D> {
          try {
             return org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(request).asObject(this.clazzD);
          } catch (SOAPException var6) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{var6.getMessage(), var6});
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var6.getMessage(), var6);
          }
       } else {
          TechnicalConnectorExceptionValues errorValue = TechnicalConnectorExceptionValues.SECURITY_NO_CERTIFICATE;
          LOG.debug("\t## " + errorValue.getMessage());
-         throw new TechnicalConnectorException(errorValue, (Throwable)null, new Object[0]);
+         throw new TechnicalConnectorException(errorValue, (Throwable)null);
       }
    }
 }
