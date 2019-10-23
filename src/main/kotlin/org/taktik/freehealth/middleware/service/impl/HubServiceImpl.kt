@@ -246,6 +246,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             RevokePatientConsentRequest().apply {
                 request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null, false)
                 consent = ConsentType().apply {
+                    revokedate = DateTime.now()
                     patient = PatientIdType().apply {
                         ids.add(IDPATIENT().apply {
                             this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value =
