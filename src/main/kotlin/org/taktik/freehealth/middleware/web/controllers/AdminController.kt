@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointDistributor
+import be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointUpdater
 import ch.qos.logback.classic.Level
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -32,7 +34,9 @@ import org.apache.commons.logging.LogFactory
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.GetMapping
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.dto.EndpointDistributorStatusDto
 
 
 @RestController
@@ -45,9 +49,34 @@ class AdminController(val addressbookService: AddressbookService) {
     fun loglevel(@PathVariable("loglevel") logLevel: String, @RequestParam(value = "package") packageName: String): String {
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
 
+        if (principal?.authorities?.any { it.authority == "ROLE_ADMIN" } != true) {
+            throw IllegalAccessException("You are not an administrator. This illegal access attempt has been logged")
+        }
         log.info("Log level: $logLevel")
         log.info("Package name: $packageName")
         return setLogLevel(logLevel, packageName)
+    }
+
+    @GetMapping("/bcp", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun bcpStatus(): EndpointDistributorStatusDto {
+        val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+
+        if (principal?.authorities?.any { it.authority == "ROLE_ADMIN" } != true) {
+            throw IllegalAccessException("You are not an administrator. This illegal access attempt has been logged")
+        }
+        val distributor = EndpointDistributor.getInstance()
+        return EndpointDistributorStatusDto(mustPoll = distributor.mustPoll(), isBcpMode = distributor.isBCPMode)
+    }
+
+    @PostMapping("/bcp", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun updateBcpStatus() {
+        val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+
+        if (principal?.authorities?.any { it.authority == "ROLE_ADMIN" } != true) {
+            throw IllegalAccessException("You are not an administrator. This illegal access attempt has been logged")
+        }
+
+        EndpointUpdater.forceUpdate()
     }
 
     fun setLogLevel(logLevel: String, packageName: String): String {

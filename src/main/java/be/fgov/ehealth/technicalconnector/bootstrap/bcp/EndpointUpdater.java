@@ -44,6 +44,17 @@ public final class EndpointUpdater {
       }
    }
 
+   public static boolean forceUpdate() throws TechnicalConnectorException {
+      String endpoint = determineEndpoint();
+      String onlineSha2 = ConnectorIOUtils.getResourceAsString(endpoint + ".sha2");
+      String content = ConnectorIOUtils.getResourceAsString(endpoint + ".xml");
+      update(content);
+      write(content, loadedXmlLocation);
+      write(onlineSha2, loadedSha2Location);
+      loadedSha2 = onlineSha2;
+      return true;
+   }
+
    private static void write(String content, String location) {
       Validate.notEmpty(location);
       FileOutputStream fos = null;

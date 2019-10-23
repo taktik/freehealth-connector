@@ -51,6 +51,7 @@ class EattestV2Controller(val eattestService: EattestService) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
+        @RequestParam(required = false) treatmentReason: String?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
@@ -68,6 +69,7 @@ class EattestV2Controller(val eattestService: EattestService) {
         hcpFirstName,
         hcpLastName,
         hcpCbe,
+        treatmentReason,
         traineeSupervisorSsin,
         traineeSupervisorNihii,
         traineeSupervisorFirstName,
@@ -98,6 +100,7 @@ class EattestV2Controller(val eattestService: EattestService) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
+        @RequestParam(required = false) treatmentReason: String?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
@@ -115,6 +118,7 @@ class EattestV2Controller(val eattestService: EattestService) {
         hcpFirstName,
         hcpLastName,
         hcpCbe,
+        treatmentReason,
         traineeSupervisorSsin,
         traineeSupervisorNihii,
         traineeSupervisorFirstName,
@@ -173,5 +177,5 @@ class EattestV2Controller(val eattestService: EattestService) {
             null,
             eAttestRef,
             reason
-                                   )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
+       )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 }
