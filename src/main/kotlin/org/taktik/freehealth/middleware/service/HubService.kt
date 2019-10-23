@@ -336,4 +336,17 @@ interface HubService {
         patientSsin: String,
         patientEidCardNumber: String?,
         hubPackageId: String?): RevokeTherapeuticLinkResponse
+
+    fun revokePatientConsent(endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        patientEidCardNumber: String?,
+        hubPackageId: String?): RevokePatientConsentResponse
 }

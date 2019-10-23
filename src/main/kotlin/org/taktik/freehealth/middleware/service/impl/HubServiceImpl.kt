@@ -178,38 +178,85 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         patientSsin: String,
         patientEidCardNumber: String?,
         hubPackageId: String?
-    ): PutPatientConsentResponse {
+                                       ): PutPatientConsentResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Hub operations")
         return freehealthHubService.putPatientConsent(
-                endpoint,
-                samlToken,
-                keystoreId,
-                stsService.getKeyStore(keystoreId, passPhrase)!!,
-                passPhrase,
-                PutPatientConsentRequest().apply {
-                    request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null, false)
-                    consent = ConsentType().apply {
-                        patient = PatientIdType().apply {
-                            ids.add(IDPATIENT().apply {
-                                this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value =
-                                patientSsin
-                            })
-                            patientEidCardNumber?.let {
-                                ids.add(IDPATIENT().apply {
-                                    this.s =
-                                        IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber
-                                })
-                            }
-                        }
-                        cds.add(CDCONSENT().apply {
-                            s = CDCONSENTschemes.CD_CONSENTTYPE; sv = "1.0"; value =
-                            CDCONSENTvalues.RETROSPECTIVE
+            endpoint,
+            samlToken,
+            keystoreId,
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase,
+            PutPatientConsentRequest().apply {
+                request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null, false)
+                consent = ConsentType().apply {
+                    patient = PatientIdType().apply {
+                        ids.add(IDPATIENT().apply {
+                            this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value =
+                            patientSsin
                         })
-                        author = AuthorType().apply { hcparties.add(request.author.hcparties.first()) }
+                        patientEidCardNumber?.let {
+                            ids.add(IDPATIENT().apply {
+                                this.s =
+                                    IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber
+                            })
+                        }
                     }
-                })
+                    cds.add(CDCONSENT().apply {
+                        s = CDCONSENTschemes.CD_CONSENTTYPE; sv = "1.0"; value =
+                        CDCONSENTvalues.RETROSPECTIVE
+                    })
+                    author = AuthorType().apply { hcparties.add(request.author.hcparties.first()) }
+                }
+            })
+    }
+
+    override fun revokePatientConsent(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        patientEidCardNumber: String?,
+        hubPackageId: String?
+                                       ): RevokePatientConsentResponse {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
+        return freehealthHubService.revokePatientConsent(
+            endpoint,
+            samlToken,
+            keystoreId,
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase,
+            RevokePatientConsentRequest().apply {
+                request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null, false)
+                consent = ConsentType().apply {
+                    patient = PatientIdType().apply {
+                        ids.add(IDPATIENT().apply {
+                            this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value =
+                            patientSsin
+                        })
+                        patientEidCardNumber?.let {
+                            ids.add(IDPATIENT().apply {
+                                this.s =
+                                    IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber
+                            })
+                        }
+                    }
+                    cds.add(CDCONSENT().apply {
+                        s = CDCONSENTschemes.CD_CONSENTTYPE; sv = "1.0"; value =
+                        CDCONSENTvalues.RETROSPECTIVE
+                    })
+                    author = AuthorType().apply { hcparties.add(request.author.hcparties.first()) }
+                }
+            })
     }
 
     override fun registerTherapeuticLink(
