@@ -222,6 +222,35 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         patientEidCardNumber = patientEidCardNumber
     )
 
+    @DeleteMapping("/access")
+    fun revokeTherapeuticLink(
+        @RequestParam endpoint: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpFirstName: String,
+        @PathVariable hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam(required = false) hubPackageId: String?,
+        @RequestParam hcpZip: String,
+        @PathVariable patientSsin: String,
+        @RequestParam(required = false) patientEidCardNumber: String?
+                             ) = hubService.revokeTherapeuticLink(
+        endpoint = endpoint,
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hubPackageId = hubPackageId,
+        hcpLastName = hcpLastName,
+        hcpFirstName = hcpFirstName,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpZip = hcpZip,
+        patientSsin = patientSsin,
+        patientEidCardNumber = patientEidCardNumber
+                                                                 )
+
     @GetMapping("/therlink/{hcpNihii}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getTherapeuticLinks(
         @RequestParam endpoint: String,

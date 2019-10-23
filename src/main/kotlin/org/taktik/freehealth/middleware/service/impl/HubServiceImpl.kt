@@ -263,6 +263,57 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                 })
     }
 
+    override fun revokeTherapeuticLink(
+        endpoint: String,
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        patientSsin: String,
+        patientEidCardNumber: String?,
+        hubPackageId: String?
+                                        ): RevokeTherapeuticLinkResponse {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for Hub operations")
+        return freehealthHubService.revokeTherapeuticLink(
+            endpoint,
+            samlToken,
+            keystoreId,
+            stsService.getKeyStore(keystoreId, passPhrase)!!,
+            passPhrase,
+            RevokeTherapeuticLinkRequest().apply {
+                request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null, false)
+                therapeuticlink = TherapeuticLinkType().apply {
+                    cd = CDTHERAPEUTICLINK().apply {
+                        s = CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE
+                        sv = "1.0"
+                        value = "gpconsultation"
+                    }
+                    hcparty = HCPartyIdType().apply {
+                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  hcpNihii })
+                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+                    }
+                    patient = PatientIdType().apply {
+                        ids.add(IDPATIENT().apply {
+                            this.s = IDPATIENTschemes.INSS; this.sv = "1.0"; this.value =
+                            patientSsin
+                        })
+                        patientEidCardNumber?.let {
+                            ids.add(IDPATIENT().apply {
+                                this.s =
+                                    IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber
+                            })
+                        }
+                    }
+                }
+            })
+    }
+
     override fun getTherapeuticLinks(
         endpoint: String,
         keystoreId: UUID,
