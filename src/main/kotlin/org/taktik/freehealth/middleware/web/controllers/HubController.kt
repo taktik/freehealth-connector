@@ -150,7 +150,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
-        @RequestParam(required = false) patientEidCardNumber: String?
+        @RequestParam(required = false) patientEidCardNumber: String?,
+        @RequestParam(required = false) patientIsiCardNumber: String?
                               ) = hubService.registerPatientConsent(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -163,7 +164,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpSsin = hcpSsin,
         hcpZip = hcpZip,
         patientSsin = patientSsin,
-        patientEidCardNumber = patientEidCardNumber
+        patientEidCardNumber = patientEidCardNumber,
+        patientIsiCardNumber = patientIsiCardNumber
+
                                                                    )
 
     @DeleteMapping("/consent/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -179,7 +182,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
-        @RequestParam(required = false) patientEidCardNumber: String?
+        @RequestParam(required = false) patientEidCardNumber: String?,
+        @RequestParam(required = false) patientIsiCardNumber: String?
                               ) = hubService.revokePatientConsent(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -192,7 +196,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpSsin = hcpSsin,
         hcpZip = hcpZip,
         patientSsin = patientSsin,
-        patientEidCardNumber = patientEidCardNumber
+        patientEidCardNumber = patientEidCardNumber,
+        patientIsiCardNumber = patientIsiCardNumber
                                                                    )
 
     @GetMapping("/consent/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -235,7 +240,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
-        @RequestParam(required = false) patientEidCardNumber: String?
+        @RequestParam(required = false) patientEidCardNumber: String?,
+        @RequestParam(required = false) patientIsiCardNumber: String?
     ) = hubService.registerTherapeuticLink(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -248,7 +254,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpSsin = hcpSsin,
         hcpZip = hcpZip,
         patientSsin = patientSsin,
-        patientEidCardNumber = patientEidCardNumber
+        patientEidCardNumber = patientEidCardNumber,
+        patientIsiCardNumber = patientIsiCardNumber
     )
 
     @DeleteMapping("/therlink/{hcpNihii}/{patientSsin}")
@@ -264,7 +271,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
-        @RequestParam(required = false) patientEidCardNumber: String?
+        @RequestParam(required = false) patientEidCardNumber: String?,
+        @RequestParam(required = false) patientIsiCardNumber: String?
                              ) = hubService.revokeTherapeuticLink(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -277,7 +285,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpSsin = hcpSsin,
         hcpZip = hcpZip,
         patientSsin = patientSsin,
-        patientEidCardNumber = patientEidCardNumber
+        patientEidCardNumber = patientEidCardNumber,
+        patientIsiCardNumber = patientIsiCardNumber
                                                                  )
 
     @GetMapping("/therlink/{hcpNihii}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])

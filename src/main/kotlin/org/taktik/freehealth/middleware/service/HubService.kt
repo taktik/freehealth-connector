@@ -91,6 +91,7 @@ interface HubService {
         hcpZip: String,
         patientSsin: String,
         patientEidCardNumber: String?,
+        patientIsiCardNumber: String?,
         hubPackageId: String?
     ): PutPatientConsentResponse
 
@@ -120,6 +121,7 @@ interface HubService {
         hcpZip: String,
         patientSsin: String,
         patientEidCardNumber: String?,
+        patientIsiCardNumber: String?,
         hubPackageId: String?
     ): PutTherapeuticLinkResponse
 
@@ -335,6 +337,7 @@ interface HubService {
         hcpZip: String,
         patientSsin: String,
         patientEidCardNumber: String?,
+        patientIsiCardNumber: String?,
         hubPackageId: String?): RevokeTherapeuticLinkResponse
 
     fun revokePatientConsent(endpoint: String,
@@ -348,5 +351,6 @@ interface HubService {
         hcpZip: String,
         patientSsin: String,
         patientEidCardNumber: String?,
+        patientIsiCardNumber: String?,
         hubPackageId: String?): RevokePatientConsentResponse
 }

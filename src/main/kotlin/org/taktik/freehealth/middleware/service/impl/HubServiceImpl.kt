@@ -177,6 +177,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         hcpZip: String,
         patientSsin: String,
         patientEidCardNumber: String?,
+        patientIsiCardNumber: String?,
         hubPackageId: String?
                                        ): PutPatientConsentResponse {
         val samlToken =
@@ -202,6 +203,12 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                     IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber
                             })
                         }
+                        patientIsiCardNumber?.let {
+                            ids.add(IDPATIENT().apply {
+                                this.s =
+                                    IDPATIENTschemes.ISI_CARDNO; this.sv = "1.0"; this.value = patientIsiCardNumber
+                            })
+                        }
                     }
                     cds.add(CDCONSENT().apply {
                         s = CDCONSENTschemes.CD_CONSENTTYPE; sv = "1.0"; value =
@@ -224,6 +231,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         hcpZip: String,
         patientSsin: String,
         patientEidCardNumber: String?,
+        patientIsiCardNumber: String?,
         hubPackageId: String?
                                        ): RevokePatientConsentResponse {
         val samlToken =
@@ -249,6 +257,13 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                     IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber
                             })
                         }
+                        patientIsiCardNumber?.let {
+                            ids.add(IDPATIENT().apply {
+                                this.s =
+                                    IDPATIENTschemes.ISI_CARDNO; this.sv = "1.0"; this.value = patientIsiCardNumber
+                            })
+                        }
+
                     }
                     cds.add(CDCONSENT().apply {
                         s = CDCONSENTschemes.CD_CONSENTTYPE; sv = "1.0"; value =
@@ -271,6 +286,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         hcpZip: String,
         patientSsin: String,
         patientEidCardNumber: String?,
+        patientIsiCardNumber: String?,
         hubPackageId: String?
     ): PutTherapeuticLinkResponse {
         val samlToken =
@@ -305,6 +321,12 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                         IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber
                                 })
                             }
+                            patientIsiCardNumber?.let {
+                                ids.add(IDPATIENT().apply {
+                                    this.s =
+                                        IDPATIENTschemes.ISI_CARDNO; this.sv = "1.0"; this.value = patientIsiCardNumber
+                                })
+                            }
                         }
                     }
                 })
@@ -322,6 +344,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         hcpZip: String,
         patientSsin: String,
         patientEidCardNumber: String?,
+        patientIsiCardNumber: String?,
         hubPackageId: String?
                                         ): RevokeTherapeuticLinkResponse {
         val samlToken =
@@ -356,6 +379,13 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                     IDPATIENTschemes.EID_CARDNO; this.sv = "1.0"; this.value = patientEidCardNumber
                             })
                         }
+                        patientIsiCardNumber?.let {
+                            ids.add(IDPATIENT().apply {
+                                this.s =
+                                    IDPATIENTschemes.ISI_CARDNO; this.sv = "1.0"; this.value = patientIsiCardNumber
+                            })
+                        }
+
                     }
                 }
             })
