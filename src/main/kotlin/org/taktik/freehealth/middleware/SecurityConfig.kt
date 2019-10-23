@@ -50,7 +50,6 @@ class SecurityConfig {
     @Bean fun httpClient() = HttpClient().apply { start() }
 }
 
-@Configuration
 class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: CouchDbProperties, val authenticationProperties: AuthenticationProperties, val cacheManager: CacheManager) : WebSecurityConfigurerAdapter(false) {
     @Bean
     override fun authenticationManagerBean(): AuthenticationManager {

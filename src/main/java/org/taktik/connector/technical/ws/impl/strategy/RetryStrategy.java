@@ -60,7 +60,7 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
       if (EndpointDistributor.update()) {
          return this.invoke(invokeStrategyContext);
       } else {
-         invokeStrategyContext.setException(new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ExceptionUtils.getRootCause(ctx.lastException), new Object[]{ExceptionUtils.getRootCauseMessage(ctx.lastException)}));
+         invokeStrategyContext.setException(new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ExceptionUtils.getRootCause(ctx.lastException), ExceptionUtils.getRootCauseMessage(ctx.lastException)));
          return true;
       }
    }

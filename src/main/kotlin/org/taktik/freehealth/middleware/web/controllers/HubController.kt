@@ -695,4 +695,11 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         accessSsin = accessSsin,
         hubPackageId = hubPackageId
                                                                )
+
+
+    @PostMapping("/convertKmehrXMLtoJSON", consumes = [MediaType.APPLICATION_XML_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun convertKmehrXMLtoJSON(@RequestBody message: ByteArray): Kmehrmessage {
+        return MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java).toObject(message)
+    }
+
 }

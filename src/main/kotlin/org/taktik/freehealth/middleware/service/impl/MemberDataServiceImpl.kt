@@ -22,6 +22,7 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
+import be.cin.types.v1.FaultType
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import be.fgov.ehealth.mycarenet.commons.core.v3.CareProviderType
 import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType
@@ -33,11 +34,13 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
+import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationResponse
 import com.google.gson.Gson
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
 import ma.glasnost.orika.MapperFacade
+import net.sf.saxon.xpath.XPathFactoryImpl
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.NameIDType
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Subject
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.SubjectConfirmation
@@ -49,7 +52,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.memberdata.builders.impl.ResponseObjectBuilderImpl
-import org.taktik.connector.business.memberdata.domain.MemberDataBuilderResponse
 import org.taktik.connector.business.memberdata.validators.impl.MemberDataXmlValidatorImpl
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
@@ -64,13 +66,16 @@ import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
+import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.domain.memberdata.Status
+import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponse
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.icure.cin.saml.extensions.Facet
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -86,12 +91,12 @@ import javax.xml.xpath.XPathFactory
 @Service
 class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepotService, val mapper: MapperFacade) : MemberDataService {
     private val log = LoggerFactory.getLogger(this.javaClass)
-    private val GenInsErrors =
+    private val MemberDataErrors =
         Gson().fromJson(
-            this.javaClass.getResourceAsStream("/be/errors/GenInsErrors.json").reader(Charsets.UTF_8),
+            this.javaClass.getResourceAsStream("/be/errors/MemberDataErrors.json").reader(Charsets.UTF_8),
             arrayOf<MycarenetError>().javaClass
         ).associateBy({ it.uid }, { it })
-    private val xPathfactory = XPathFactory.newInstance()
+    private val xPathfactory = XPathFactoryImpl()
     private val config = ConfigFactory.getConfigValidator(listOf())
     private val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
     private val memberDataService = org.taktik.connector.business.memberdata.service.impl.MemberDataServiceImpl()
@@ -109,8 +114,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         ioMembership: String?,
         startDate: Date?,
         endDate: Date?,
-        hospitalized: Boolean
-    ): List<Assertion> {
+        hospitalized: Boolean?,
+        facets: List<Facet>?
+                              ): MemberDataResponse {
         val encryptRequest = false
         require(
             hcpQuality == "doctor" ||
@@ -218,11 +224,11 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 this.issueInstant = issueInstant
                 this.version = "2.0"
                 extensions = org.taktik.icure.cin.saml.extensions.ExtensionsType().apply {
-                    this.facets.add(Facet().apply {
+                    this.facets.addAll(facets ?: listOf(Facet().apply {
                         id = "urn:be:cin:nippin:insurability"
                         dimensions.add(Facet.Dimension().apply { id = "requestType"; value = "information" })
-                        dimensions.add(Facet.Dimension().apply { id = "contactType"; value = "other" })
-                    })
+                        dimensions.add(Facet.Dimension().apply { id = "contactType"; value = if (hospitalized == true) "hospitalized" else "other" })
+                    }))
                 }
                 issuer = NameIDType().apply {
                     this.format = "urn:be:cin:nippin:nihii11"
@@ -288,22 +294,48 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         MemberDataXmlValidatorImpl().validate(request)
 
         val consultMemberData = memberDataService.consultMemberData(samlToken, request)
+        val xmlRequest =
+            MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java).toXMLByteArray(request)
 
         return ResponseObjectBuilderImpl().handleConsultationResponse(consultMemberData, crypto)?.let {
-            it.assertions
-        } ?: listOf()
+            val code1 = it.response.status.statusCode?.value
+            val code2 = it.response.status.statusCode?.statusCode?.value
+            MemberDataResponse(
+                it.assertions,
+                Status(code1, code2),
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionResponse =
+                        MarshallerHelper(MemberDataConsultationResponse::class.java, MemberDataConsultationResponse::class.java).toXMLByteArray(it.consultationResponse)
+                            .toString(Charsets.UTF_8)
+                    this.transactionRequest =
+                        xmlRequest
+                            .toString(Charsets.UTF_8)
+                    consultMemberData.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    consultMemberData.soapRequest?.writeTo(this.soapRequestOutputStream())
+                },
+                errors = it.response.status?.statusDetail?.anies?.map {
+                    MarshallerHelper(FaultType::class.java, FaultType::class.java).toObject(it)
+                },
+                commonOutput = it.consultationResponse?.`return`?.commonOutput
+                              )?.apply {
+                this.errors?.forEach {
+                it.details?.details?.forEach { d ->
+                    this.myCarenetErrors += extractError(request.detail.value, code1, code2, d.location, d.detailCode).toList()
+                }
+            }
+            }
+        } ?: MemberDataResponse()
     }
 
-    private fun extractError(sendTransactionRequest: ByteArray, ec: String, errorUrl: String?): Set<MycarenetError> {
+    private fun extractError(sendTransactionRequest: ByteArray, code1: String?, code2: String?, errorUrl: String?, detailCode: String?): Set<MycarenetError> {
         //For some reason... The path starts with ../../../../ which corresponds to the request
         return errorUrl?.let { url ->
             val factory = DocumentBuilderFactory.newInstance()
-            factory.isNamespaceAware = true
+            factory.isNamespaceAware = false
             val builder = factory.newDocumentBuilder()
 
             val xpath = xPathFactory()
-            val expr = xpath.compile(url.replace(Regex("^\\.\\./\\.\\./\\.\\./\\.\\./"),"/gip:GetInsurabilityAsXmlOrFlatRequestType/gip:Request/")
-                                         .replace(Regex("/(CareReceiverId|Inss|RegNrWithMut|Mutuality|InsurabilityRequestDetail|InsurabilityRequestType|Period|PeriodStart|PeriodEnd|InsurabilityContactType|InsurabilityReference)"),"/gic:$1"))
+            val expr = xpath.compile(if (url.startsWith("/")) url else "/$url")
             val result = mutableSetOf<MycarenetError>()
 
             (expr.evaluate(
@@ -318,14 +350,22 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         base = "/${nodeDescr(node.parentNode)}$base"
                         node = node.parentNode
                     }
-                    val elements =
-                        GenInsErrors.values.filter {(it.path == null || it.path == base) && it.code == ec }
+                    var elements =
+                        MemberDataErrors.values.filter {(it.path == null || it.path == base) && it.code == code1 && (code2 == null || it.subCode == code2) && (detailCode == null || it.detailCode == detailCode) }
+
+                    if (elements.isEmpty()) {
+                        val oBase = base.replace(Regex("\\[.+?\\]"),"")
+                        elements =
+                            MemberDataErrors.values.filter {(it.path == null || it.path == oBase) && it.code == code1 && (code2 == null || it.subCode == code2) && (detailCode == null || it.detailCode == detailCode) }
+                    }
+
                     elements.forEach { it.value = textContent }
                     result.addAll(elements)
                 } else {
                     result.add(
                         MycarenetError(
-                            code = ec,
+                            code = code1,
+                            subCode = code2,
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
@@ -346,7 +386,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 val codeElements = detailEntry.getElementsByTagName("Code")
                 for (i in 0..(codeElements.length - 1)){
                     val codeElement = codeElements?.item(i) as ElementImpl
-                    result.addAll(GenInsErrors.values.filter { it.code == codeElement.value })
+                    result.addAll(MemberDataErrors.values.filter { it.code == codeElement.value })
                 }
             }
         }
@@ -356,28 +396,26 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
     private fun nodeDescr(node: Node): String {
         val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
 
-        return localName
+        val id = (node.attributes.getNamedItem("id"))?.let {
+            it.textContent
+        }
+
+        return if (id != null) "$localName[$id]" else localName
     }
 
     private fun xPathFactory(): XPath {
         val xpath = xPathfactory.newXPath()
         xpath.namespaceContext = object : NamespaceContext {
             override fun getNamespaceURI(prefix: String?) = when (prefix) {
-                "gic" -> "urn:be:fgov:ehealth:genericinsurability:core:v1"
-                "gip" -> "urn:be:fgov:ehealth:genericinsurability:protocol:v1"
                 else -> null
             }
 
             override fun getPrefix(namespaceURI: String?) = when (namespaceURI) {
-                "urn:be:fgov:ehealth:genericinsurability:core:v1" -> "gic"
-                "urn:be:fgov:ehealth:genericinsurability:protocol:v1" -> "gip"
                 else -> null
             }
 
             override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
                 when (namespaceURI) {
-                    "urn:be:fgov:ehealth:genericinsurability:core:v1" -> listOf("gic").iterator()
-                    "urn:be:fgov:ehealth:genericinsurability:protocol:v1" -> listOf("gip").iterator()
                     else -> listOf<String>().iterator()
                 }
         }

@@ -66,4 +66,13 @@ class ConsultrnControllerTest : EhealthTest() {
         println(result)
     }
 
+    @Test
+    fun scenario4() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+
+        val result = this.restTemplate.exchange("http://localhost:$port/consultrn/history/{ssin}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, "00000000227")
+        println(result)
+    }
+
+
 }

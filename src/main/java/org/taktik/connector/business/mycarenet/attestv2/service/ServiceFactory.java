@@ -22,6 +22,7 @@ public final class ServiceFactory {
    public static GenericRequest getAttestPort(SAMLToken token) throws TechnicalConnectorException {
       Validate.notNull(token, "Required parameter SAMLToken is null.");
       String endPoint = config.getProperty("endpoint.eattestv2", "$uddi{uddi:ehealth-fgov-be:business:mycareneteattest:v2}");
+      //String endPoint = config.getProperty("endpoint.eattestv2", "https://services-acpt.ehealth.fgov.be/MyCareNet/eAttest/v2");
       return (new GenericRequest()).setEndpoint(endPoint).setCredential(token, TokenType.SAML).addDefaulHandlerChain();
    }
 
