@@ -263,7 +263,8 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         end: Date?,
         therLinkType: String?,
         comment: String?,
-        sign: Boolean?
+        sign: Boolean?,
+        proofType: ProofTypeValues?
                                         ): TherapeuticLinkMessage {
 
 
@@ -286,7 +287,8 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                 tokenId,
                 passPhrase,
                 it,
-                false
+                false,
+                proofType
                       )
         }
 
@@ -300,7 +302,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                                 hcpNihii,
                                 makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
                                 therLink,
-                                makeProof(sign ?: false, therLink.patient, therLink.hcParty)
+                                makeProof(sign ?: false, therLink.patient, therLink.hcParty, proofType)
                                                      )
                                                                         )
                               )
@@ -344,7 +346,8 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         end: Date?,
         therLinkType: String?,
         comment: String?,
-        sign: Boolean?
+        sign: Boolean?,
+        proofType: ProofTypeValues?
                            ): TherapeuticLinkMessage? {
         return doesLinkExist(
             keystoreId,
@@ -364,7 +367,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                 end?.let { DateTime(it.time) },
                 comment
                                )
-                            )?.let { revokeLink(keystoreId, tokenId, passPhrase, it, sign) }
+                            )?.let { revokeLink(keystoreId, tokenId, passPhrase, it, sign, proofType) }
     }
 
     override fun revokeLink(
@@ -372,7 +375,8 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         tokenId: UUID,
         passPhrase: String,
         therLink: TherapeuticLink,
-        sign: Boolean?
+        sign: Boolean?,
+        proofType: ProofTypeValues?
                            ): TherapeuticLinkMessage {
 
         val patient = requireNotNull(therLink.patient)
@@ -401,7 +405,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                     therLink.comment
                                    ),
                 makeProof(
-                    sign ?: false, patient, hcParty
+                    sign ?: false, patient, hcParty, proofType
                          )
                                         )
                                                                                                  )
@@ -480,11 +484,11 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         return author
     }*/
 
-    private fun makeProof(sign: Boolean, patient: Patient?, hcParty: HcParty?): Proof? {
+    private fun makeProof(sign: Boolean, patient: Patient?, hcParty: HcParty?, proofType:ProofTypeValues? = null): Proof? {
         requireNotNull(patient)
         requireNotNull(hcParty)
 
-        Proof(ProofTypeValues.EIDREADING.value).apply { binaryProof = null }
+        Proof((proofType ?: ProofTypeValues.EIDREADING).value).apply { binaryProof = null }
         return when {
             sign -> makeProofForEidSigning(
                 patient,
