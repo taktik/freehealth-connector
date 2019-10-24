@@ -258,7 +258,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         patientIsiCardNumber = patientIsiCardNumber
     )
 
-    @DeleteMapping("/therlink/{hcpNihii}/{patientSsin}")
+    @DeleteMapping("/therlink/{hcpNihii}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun revokeTherapeuticLink(
         @RequestParam endpoint: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

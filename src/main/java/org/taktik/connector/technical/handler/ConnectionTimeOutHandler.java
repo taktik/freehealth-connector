@@ -34,10 +34,10 @@ public class ConnectionTimeOutHandler extends AbstractSOAPHandler {
    private String getDuration(String timeoutProp, String endpointProperty) {
       String endpointTimeoutProp = endpointProperty != null ? timeoutProp + "." + endpointProperty : null;
       if (endpointTimeoutProp != null && (this.config.hasProperty(endpointTimeoutProp) || this.config.hasDurationProperty(endpointTimeoutProp))) {
-         return this.config.hasDurationProperty(endpointTimeoutProp) ? Long.toString(this.config.getDurationProperty("connector.soaphandler.connection.request.timeout", 30L, TimeUnit.SECONDS).convert(TimeUnit.MILLISECONDS)) : this.config.getProperty(endpointTimeoutProp, "30000");
+         return this.config.hasDurationProperty(endpointTimeoutProp) ? Long.toString(this.config.getDurationProperty("connector.soaphandler.connection.request.timeout", 60L, TimeUnit.SECONDS).convert(TimeUnit.MILLISECONDS)) : this.config.getProperty(endpointTimeoutProp, "30000");
       }
 
-      return this.config.hasDurationProperty(timeoutProp) ? Long.toString(this.config.getDurationProperty("connector.soaphandler.connection.request.timeout", 30L, TimeUnit.SECONDS).convert(TimeUnit.MILLISECONDS)) : this.config.getProperty(timeoutProp, "30000");
+      return this.config.hasDurationProperty(timeoutProp) ? Long.toString(this.config.getDurationProperty("connector.soaphandler.connection.request.timeout", 60L, TimeUnit.SECONDS).convert(TimeUnit.MILLISECONDS)) : this.config.getProperty(timeoutProp, "30000");
    }
 
    public boolean handleFault(SOAPMessageContext context) {
