@@ -150,8 +150,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
-        @RequestParam(required = false) patientEidCardNumber: String?
-    ) = hubService.registerPatientConsent(
+        @RequestParam(required = false) patientEidCardNumber: String?,
+        @RequestParam(required = false) patientIsiCardNumber: String?
+                              ) = hubService.registerPatientConsent(
         endpoint = endpoint,
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -163,8 +164,41 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpSsin = hcpSsin,
         hcpZip = hcpZip,
         patientSsin = patientSsin,
-        patientEidCardNumber = patientEidCardNumber
-    )
+        patientEidCardNumber = patientEidCardNumber,
+        patientIsiCardNumber = patientIsiCardNumber
+
+                                                                   )
+
+    @DeleteMapping("/consent/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun revokePatientConsent(
+        @RequestParam endpoint: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam(required = false) hubPackageId: String?,
+        @RequestParam hcpZip: String,
+        @PathVariable patientSsin: String,
+        @RequestParam(required = false) patientEidCardNumber: String?,
+        @RequestParam(required = false) patientIsiCardNumber: String?
+                              ) = hubService.revokePatientConsent(
+        endpoint = endpoint,
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hubPackageId = hubPackageId,
+        hcpLastName = hcpLastName,
+        hcpFirstName = hcpFirstName,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpZip = hcpZip,
+        patientSsin = patientSsin,
+        patientEidCardNumber = patientEidCardNumber,
+        patientIsiCardNumber = patientIsiCardNumber
+                                                                   )
 
     @GetMapping("/consent/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPatientConsent(
@@ -206,7 +240,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
-        @RequestParam(required = false) patientEidCardNumber: String?
+        @RequestParam(required = false) patientEidCardNumber: String?,
+        @RequestParam(required = false) patientIsiCardNumber: String?
     ) = hubService.registerTherapeuticLink(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -219,8 +254,40 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpSsin = hcpSsin,
         hcpZip = hcpZip,
         patientSsin = patientSsin,
-        patientEidCardNumber = patientEidCardNumber
+        patientEidCardNumber = patientEidCardNumber,
+        patientIsiCardNumber = patientIsiCardNumber
     )
+
+    @DeleteMapping("/therlink/{hcpNihii}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun revokeTherapeuticLink(
+        @RequestParam endpoint: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpFirstName: String,
+        @PathVariable hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam(required = false) hubPackageId: String?,
+        @RequestParam hcpZip: String,
+        @PathVariable patientSsin: String,
+        @RequestParam(required = false) patientEidCardNumber: String?,
+        @RequestParam(required = false) patientIsiCardNumber: String?
+                             ) = hubService.revokeTherapeuticLink(
+        endpoint = endpoint,
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        hubPackageId = hubPackageId,
+        hcpLastName = hcpLastName,
+        hcpFirstName = hcpFirstName,
+        hcpNihii = hcpNihii,
+        hcpSsin = hcpSsin,
+        hcpZip = hcpZip,
+        patientSsin = patientSsin,
+        patientEidCardNumber = patientEidCardNumber,
+        patientIsiCardNumber = patientIsiCardNumber
+                                                                 )
 
     @GetMapping("/therlink/{hcpNihii}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getTherapeuticLinks(
@@ -695,4 +762,11 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         accessSsin = accessSsin,
         hubPackageId = hubPackageId
                                                                )
+
+
+    @PostMapping("/convertKmehrXMLtoJSON", consumes = [MediaType.APPLICATION_XML_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun convertKmehrXMLtoJSON(@RequestBody message: ByteArray): Kmehrmessage {
+        return MarshallerHelper(Kmehrmessage::class.java, Kmehrmessage::class.java).toObject(message)
+    }
+
 }
