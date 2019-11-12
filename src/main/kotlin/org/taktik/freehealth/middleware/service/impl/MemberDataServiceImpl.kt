@@ -396,9 +396,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
     private fun nodeDescr(node: Node): String {
         val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
 
-        val id = (node.attributes.getNamedItem("id"))?.let {
+        val id = if(node.attributes !== null) (node.attributes.getNamedItem("id"))?.let {
             it.textContent
-        }
+        } else null;
 
         return if (id != null) "$localName[$id]" else localName
     }
