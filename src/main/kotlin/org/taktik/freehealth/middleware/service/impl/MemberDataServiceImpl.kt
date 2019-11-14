@@ -229,6 +229,20 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         dimensions.add(Facet.Dimension().apply { id = "requestType"; value = "information" })
                         dimensions.add(Facet.Dimension().apply { id = "contactType"; value = if (hospitalized == true) "hospitalized" else "other" })
                     }))
+
+                    this.facets.addAll(facets ?: listOf(Facet().apply {
+                        id = "urn:be:cin:nippin:carePath"
+                        dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "diabetes" })
+                        dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "renalinsufficiency" })
+                    }))
+
+                    this.facets.addAll(facets ?: listOf(Facet().apply {
+                        id = "urn:be:cin:nippin:chronicCondition"
+                    }))
+
+                    this.facets.addAll(facets ?: listOf(Facet().apply {
+                        id = "urn:be:cin:nippin:referencePharmacy"
+                    }))
                 }
                 issuer = NameIDType().apply {
                     this.format = "urn:be:cin:nippin:nihii11"
