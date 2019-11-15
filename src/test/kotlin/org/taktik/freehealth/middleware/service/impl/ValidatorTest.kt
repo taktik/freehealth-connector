@@ -1,10 +1,13 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import be.cin.types.v1.DetailType
+import be.cin.types.v1.DetailsType
+import be.cin.types.v1.FaultType
+import be.cin.types.v1.StringLangType
 import org.junit.Assert
 import org.junit.Test
-import org.taktik.freehealth.middleware.domain.FaultNoNsType
+import org.w3c.dom.Element
 import java.io.ByteArrayInputStream
-import javax.xml.bind.JAXBContext
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.validation.SchemaFactory
 
@@ -41,10 +44,36 @@ class ValidatorTest {
 
         val root = builder.parse(ByteArrayInputStream(s.toByteArray())).documentElement
 
-        val jaxbContext = JAXBContext.newInstance(FaultNoNsType::class.java)
+        val fault = FaultType().apply {
+            faultCode = root.getElementsByTagName("FaultCode").item(0)?.textContent
+            faultSource = root.getElementsByTagName("FaultSource").item(0)?.textContent
+            message = root.getElementsByTagName("Message").item(0)?.let {
+                StringLangType().apply {
+                    value = it.textContent
+                    lang = it.attributes.getNamedItem("lang")?.textContent
+                }
+            }
 
-        val jaxbUnmarshaller = jaxbContext.createUnmarshaller()
-        val fault = jaxbUnmarshaller.unmarshal(root) as FaultNoNsType
+            root.getElementsByTagName("Detail").let {
+                if (it.length > 0) { details = DetailsType() }
+                for (i in 0 until it.length) {
+                    details.details.add(DetailType().apply {
+                        it.item(i).let {
+                            detailCode = (it as Element).getElementsByTagName("DetailCode").item(0)?.textContent
+                            detailSource = it.getElementsByTagName("DetailSource").item(0)?.textContent
+                            location = it.getElementsByTagName("Location").item(0)?.textContent
+                            message = it.getElementsByTagName("Message").item(0)?.let {
+                                StringLangType().apply {
+                                    value = it.textContent
+                                    lang = it.attributes.getNamedItem("lang")?.textContent
+                                } }
+                        }
+                    })
+                }
+
+            }
+        }
+
 
         Assert.assertNotNull("Not null", fault)
     }
