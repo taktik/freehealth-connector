@@ -22,7 +22,6 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
-import be.cin.types.v1.FaultType
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import be.fgov.ehealth.mycarenet.commons.core.v3.CareProviderType
 import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType
@@ -68,8 +67,9 @@ import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.domain.FaultNoNsType
 import org.taktik.freehealth.middleware.domain.memberdata.Status
-import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponse
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
@@ -86,7 +86,6 @@ import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
-import javax.xml.xpath.XPathFactory
 
 @Service
 class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepotService, val mapper: MapperFacade) : MemberDataService {
@@ -314,7 +313,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     consultMemberData.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
                 errors = it.response.status?.statusDetail?.anies?.map {
-                    MarshallerHelper(FaultType::class.java, FaultType::class.java).toObject(it)
+                    MarshallerHelper(FaultNoNsType::class.java, FaultNoNsType::class.java).toObject(it)
                 },
                 commonOutput = it.consultationResponse?.`return`?.commonOutput
                               )?.apply {

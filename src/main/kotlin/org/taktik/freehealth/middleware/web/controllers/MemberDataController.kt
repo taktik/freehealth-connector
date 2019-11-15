@@ -35,11 +35,10 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.memberdata.FacetDto
-import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponse
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.icure.cin.saml.extensions.Facet
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
