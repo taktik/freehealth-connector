@@ -20,9 +20,8 @@
 
 package org.taktik.freehealth.middleware.service
 
-import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponse
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.icure.cin.saml.extensions.Facet
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
 import java.util.Date
 import java.util.UUID
 
