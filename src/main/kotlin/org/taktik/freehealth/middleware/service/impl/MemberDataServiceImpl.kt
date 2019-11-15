@@ -231,13 +231,13 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     }))
 
                     this.facets.addAll(facets ?: listOf(Facet().apply {
-                        id = "urn:be:cin:nippin:carePath"
-                        dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "diabetes" })
-                        dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "renalinsufficiency" })
+                        id = "urn:be:cin:nippin:chronicCondition"
                     }))
 
                     this.facets.addAll(facets ?: listOf(Facet().apply {
-                        id = "urn:be:cin:nippin:chronicCondition"
+                        id = "urn:be:cin:nippin:carePath"
+                        dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "diabetes" })
+                        dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "renalinsufficiency" })
                     }))
 
                     this.facets.addAll(facets ?: listOf(Facet().apply {
