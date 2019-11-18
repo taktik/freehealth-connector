@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.service.impl
 
+import be.fgov.ehealth.commons.core.v1.StatusType
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetBoxInfoRequest
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetMessagesListRequest
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.MessageRequestType
@@ -49,7 +50,6 @@ import java.util.UUID
 
 @Service
 class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyDepotService) : EhboxService {
-
     private val freehealthEhboxService: org.taktik.connector.business.ehbox.service.EhboxService =
         org.taktik.connector.business.ehbox.service.impl.EhboxServiceImpl(EhboxReplyValidatorImpl())
     private val consultationMessageBuilder = ConsultationMessageBuilderImpl()
@@ -93,12 +93,13 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
             this.source = boxId
         }
         val msg = freehealthEhboxService.getFullMessage(samlToken, messageRequest)
-        return try { consultationMessageBuilder.buildFullMessage(
+
+        return if (msg.status?.code != "100") try { consultationMessageBuilder.buildFullMessage(
             KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase), msg).toMessageDto()?.let { MessageResponse(it) } ?: MessageResponse(null, Error("Unknown error")) } catch (e:EhboxCryptoException) {
             alternateKeystores?.mapFirstNotNull {
                 try { it.uuid?.let { uuid -> it.passPhrase?.let { pass -> consultationMessageBuilder.buildFullMessage(KeyStoreCredential(uuid, stsService.getKeyStore(uuid, pass)!!, "authentication", pass), msg).toMessageDto() }}} catch(_: EhboxCryptoException) { null }
             }?.let { MessageResponse(it) } ?: MessageResponse(null, Error("Impossible to decrypt message using provided Keystores"))
-        }
+        } else MessageResponse(null, Error(msg.status?.code, msg.status?.messages?.joinToString(",")))
     }
 
     override fun sendMessage(
@@ -147,8 +148,14 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         messagesListRequest.endIndex = 100
 
         val result = mutableListOf<Message>()
+        var status: StatusType?
+
         while (true) {
             val response = freehealthEhboxService.getMessageList(samlToken, messagesListRequest)
+            status = response.status
+
+            if (status?.code != "100") { break }
+
             result.addAll(response.messages.mapNotNull { msg ->
                 try { consultationMessageBuilder.buildMessage(
                     KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase), msg
@@ -164,7 +171,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
             messagesListRequest.startIndex = messagesListRequest.startIndex + 100
             messagesListRequest.endIndex = messagesListRequest.endIndex + 100
         }
-        return MessagesResponse(result)
+        return MessagesResponse(result, if( status?.code != "100") Error(status?.code, status?.messages?.joinToString(",")) else null)
     }
 
     override fun moveMessages(
