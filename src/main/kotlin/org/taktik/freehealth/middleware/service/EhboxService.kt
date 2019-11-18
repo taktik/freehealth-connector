@@ -23,7 +23,9 @@ package org.taktik.freehealth.middleware.service
 import org.taktik.freehealth.middleware.dto.ehbox.AltKeystore
 import org.taktik.freehealth.middleware.dto.ehbox.BoxInfo
 import org.taktik.freehealth.middleware.dto.ehbox.DocumentMessage
-import org.taktik.freehealth.middleware.dto.ehbox.Message
+import org.taktik.freehealth.middleware.dto.ehbox.MessageResponse
+import org.taktik.freehealth.middleware.dto.ehbox.MessagesResponse
+import org.taktik.freehealth.middleware.dto.ehbox.MessageOperationResponse
 import java.util.*
 
 interface EhboxService {
@@ -35,7 +37,7 @@ interface EhboxService {
         boxId: String,
         messageId: String,
         alternateKeystores: List<AltKeystore>? = null
-                      ): Message
+                      ): MessageResponse
     fun sendMessage(
         keystoreId: UUID,
         tokenId: UUID,
@@ -44,7 +46,7 @@ interface EhboxService {
         publicationReceipt: Boolean,
         receptionReceipt: Boolean,
         readReceipt: Boolean
-    ): Boolean
+    ): MessageOperationResponse
 
     fun loadMessages(
         keystoreId: UUID,
@@ -53,7 +55,7 @@ interface EhboxService {
         boxId: String,
         limit: Int?,
         alternateKeystores: List<AltKeystore>? = null
-                    ): List<Message>
+                    ): MessagesResponse
     fun moveMessages(
         keystoreId: UUID,
         tokenId: UUID,
@@ -61,7 +63,7 @@ interface EhboxService {
         messageIds: List<String>,
         source: String,
         destination: String
-    ): Boolean
+    ): MessageOperationResponse
 
     fun deleteMessages(
         keystoreId: UUID,
@@ -69,5 +71,5 @@ interface EhboxService {
         passPhrase: String,
         messageIds: List<String>,
         source: String
-    ): Boolean
+    ): MessageOperationResponse
 }
