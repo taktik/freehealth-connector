@@ -120,7 +120,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
             ).apply {
                 contentContext.contentSpecification.let {
                     it.isPublicationReceipt =
-                        publicationReceipt; it.isReceivedReceipt = receptionReceipt; it.isPublicationReceipt =
+                        publicationReceipt; it.isReceivedReceipt = receptionReceipt; it.isReadReceipt =
                     readReceipt
                 }
             }
