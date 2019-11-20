@@ -118,7 +118,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         endDate: Date?,
         hospitalized: Boolean?,
         facets: List<Facet>?
-                              ): MemberDataResponse {
+    ): MemberDataResponse {
         val encryptRequest = false
         require(
             hcpQuality == "doctor" ||
@@ -300,12 +300,12 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
                     crypto.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, mbEtk, ConnectorXmlUtils.toByteArray(
                         EncryptedKnownContent().apply {
-                        replyToEtk = keyDepotManager.getETK(credential, keystoreId).encoded
-                        businessContent = BusinessContent().apply {
-                            id = detailId
-                            value = aqb
-                        }
-                    })).let {
+                            replyToEtk = keyDepotManager.getETK(credential, keystoreId).encoded
+                            businessContent = BusinessContent().apply {
+                                id = detailId
+                                value = aqb
+                            }
+                        })).let {
                         BlobMapper.mapBlobTypefromBlob(blobBuilder.build(it, "none", detailId, "text/xml", "MDA", "encryptedForKnownBED"))
                     }
                 } else BlobMapper.mapBlobTypefromBlob(blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA"))
@@ -364,12 +364,12 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         }
                     }                },
                 commonOutput = it.consultationResponse?.`return`?.commonOutput
-                              )?.apply {
+            )?.apply {
                 this.errors?.forEach {
-                it.details?.details?.forEach { d ->
-                    this.myCarenetErrors += extractError(request.detail.value, code1, code2, d.location, d.detailCode).toList()
+                    it.details?.details?.forEach { d ->
+                        this.myCarenetErrors += extractError(request.detail.value, code1, code2, d.location, d.detailCode).toList()
+                    }
                 }
-            }
             }
         } ?: MemberDataResponse()
     }
@@ -388,7 +388,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             (expr.evaluate(
                 builder.parse(ByteArrayInputStream(sendTransactionRequest)),
                 XPathConstants.NODESET
-                          ) as NodeList).let { it ->
+            ) as NodeList).let { it ->
                 if (it.length > 0) {
                     var node = it.item(0)
                     val textContent = node.textContent
@@ -416,8 +416,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                                                                     )
-                              )
+                        )
+                    )
                 }
             }
             result
@@ -443,9 +443,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
     private fun nodeDescr(node: Node): String {
         val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
 
-        val id = if(node.attributes !== null) (node.attributes.getNamedItem("id"))?.let {
+        val id = (node.attributes.getNamedItem("id"))?.let {
             it.textContent
-        } else null;
+        }
 
         return if (id != null) "$localName[$id]" else localName
     }
