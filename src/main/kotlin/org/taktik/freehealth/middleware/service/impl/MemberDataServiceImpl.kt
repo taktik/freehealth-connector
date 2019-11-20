@@ -229,6 +229,20 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         dimensions.add(Facet.Dimension().apply { id = "requestType"; value = "information" })
                         dimensions.add(Facet.Dimension().apply { id = "contactType"; value = if (hospitalized == true) "hospitalized" else "other" })
                     }))
+
+                    this.facets.addAll(facets ?: listOf(Facet().apply {
+                        id = "urn:be:cin:nippin:carePath"
+                        dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "diabetes" })
+                        dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "renalinsufficiency" })
+                    }))
+
+                    this.facets.addAll(facets ?: listOf(Facet().apply {
+                        id = "urn:be:cin:nippin:chronicCondition"
+                    }))
+
+                    this.facets.addAll(facets ?: listOf(Facet().apply {
+                        id = "urn:be:cin:nippin:referencePharmacy"
+                    }))
                 }
                 issuer = NameIDType().apply {
                     this.format = "urn:be:cin:nippin:nihii11"
@@ -396,9 +410,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
     private fun nodeDescr(node: Node): String {
         val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
 
-        val id = (node.attributes.getNamedItem("id"))?.let {
+        val id = if(node.attributes !== null) (node.attributes.getNamedItem("id"))?.let {
             it.textContent
-        }
+        } else null;
 
         return if (id != null) "$localName[$id]" else localName
     }

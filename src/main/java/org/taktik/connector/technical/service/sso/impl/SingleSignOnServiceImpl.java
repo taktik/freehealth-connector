@@ -160,10 +160,10 @@ public class SingleSignOnServiceImpl implements SingleSignOnService {
          IOUtils.write(templateForm, fw);
          fw.flush();
          this.browserHandler.browse(uri);
-      } catch (IOException var13) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.CORE_TECHNICAL, var13, new Object[]{var13.getMessage()});
+      } catch (IOException ioException) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.CORE_TECHNICAL, ioException, ioException.getMessage());
       } finally {
-         ConnectorIOUtils.closeQuietly((Object)fw);
+         ConnectorIOUtils.closeQuietly(fw);
       }
 
    }

@@ -47,6 +47,10 @@ public class ConsultrnServiceImpl implements ConsultrnService, ConfigurationModu
       try {
          return EhealthServiceHelper.callEhealthService_1_0(token, ServiceFactory.getConsultrnPhoneticSearchService(token), request, SearchPhoneticReply.class, this.replyValidator);
       } catch (SoaErrorException ex) {
+         if ("72".equals(ex.getErrorType())) {
+            return new SearchPhoneticReply();
+         }
+
          throw new ConsultrnPhoneticSearchException((SearchPhoneticReply)ex.getResponseTypeV1_0());
       }
    }
@@ -57,7 +61,7 @@ public class ConsultrnServiceImpl implements ConsultrnService, ConfigurationModu
       } catch (SoaErrorException ex) {
          RegisterPersonResponse response = (RegisterPersonResponse)ex.getResponseTypeV2();
          if (response.getResult() != null && response.getResult().getExistingPersons() != null) {
-            throw new ConsultrnRegisterExistingPersonException(response);
+            return response;
          } else {
             throw new ConsultrnRegisterPersonException(response);
          }
