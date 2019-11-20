@@ -116,7 +116,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         endDate: Date?,
         hospitalized: Boolean?,
         facets: List<Facet>?
-                              ): MemberDataResponse {
+    ): MemberDataResponse {
         val encryptRequest = false
         require(
             hcpQuality == "doctor" ||
@@ -156,7 +156,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
         val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword)
 
-        log.info("getMemberData called with principal "+(principal?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
+        log.info("getMemberData called with principal " + (principal
+            ?: "<ANONYMOUS>") + " and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
 
         val inputRef = "" + IdGeneratorFactory.getIdGenerator().generateId()
         val requestId = IdGeneratorFactory.getIdGenerator("xsid").generateId()
@@ -177,13 +178,13 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         }
                         name = ValueRefString().apply { value = packageInfo.packageName }
                     }
-                    config.getProperty("mycarenet.${PropertyUtil.retrieveProjectNameToUse("genins","mycarenet.")}.site.id")?.let{
+                    config.getProperty("mycarenet.${PropertyUtil.retrieveProjectNameToUse("genins", "mycarenet.")}.site.id")?.let {
                         if (it.isNotBlank()) {
                             siteID = ValueRefString().apply { value = it }
                         }
                     }
                     careProvider = CareProviderType().apply {
-                        if(hcpQuality == "guardpost") {
+                        if (hcpQuality == "guardpost") {
                             // nihii11 is required with guardpost
                             nihii =
                                 NihiiType().apply {
@@ -197,7 +198,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                                         ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
                                     }
                             }
-                        }else{
+                        } else {
                             nihii =
                                 NihiiType().apply {
                                     quality = hcpQuality; value =
@@ -228,19 +229,16 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         id = "urn:be:cin:nippin:insurability"
                         dimensions.add(Facet.Dimension().apply { id = "requestType"; value = "information" })
                         dimensions.add(Facet.Dimension().apply { id = "contactType"; value = if (hospitalized == true) "hospitalized" else "other" })
-                    }))
-
-                    this.facets.addAll(facets ?: listOf(Facet().apply {
+                    },
+                    Facet().apply {
                         id = "urn:be:cin:nippin:carePath"
                         dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "diabetes" })
                         dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "renalinsufficiency" })
-                    }))
-
-                    this.facets.addAll(facets ?: listOf(Facet().apply {
+                    },
+                    Facet().apply {
                         id = "urn:be:cin:nippin:chronicCondition"
-                    }))
-
-                    this.facets.addAll(facets ?: listOf(Facet().apply {
+                    },
+                    Facet().apply {
                         id = "urn:be:cin:nippin:referencePharmacy"
                     }))
                 }
@@ -268,7 +266,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     subjectConfirmations.add(SubjectConfirmation().apply {
                         method = "urn:be:cin:nippin:memberIdentification"
                         subjectConfirmationData = SubjectConfirmationDataType().apply {
-                            (startDate ?: Date()).let { notBefore = XMLGregorianCalendarImpl(DateTime(it.time, DateTimeZone.forID("Europe/Brussels")).toGregorianCalendar()) }
+                            (startDate
+                                ?: Date()).let { notBefore = XMLGregorianCalendarImpl(DateTime(it.time, DateTimeZone.forID("Europe/Brussels")).toGregorianCalendar()) }
                             endDate?.let { notOnOrAfter = XMLGregorianCalendarImpl(DateTime(it.time, DateTimeZone.forID("Europe/Brussels")).toGregorianCalendar()) }
                         }
                     })
@@ -278,7 +277,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId();
             val blobBuilder = BlobBuilderFactory.getBlobBuilder("memberdata")
 
-            this.detail = ConnectorXmlUtils.toByteArray(attrQuery as Any).let {aqb ->
+            this.detail = ConnectorXmlUtils.toByteArray(attrQuery as Any).let { aqb ->
                 if (encryptRequest) {
                     val identifierTypeString = config.getProperty("memberdata.keydepot.identifiertype", "CBE")
                     val identifierValue = config.getLongProperty("memberdata.keydepot.identifiervalue", 820563481L)
@@ -294,12 +293,12 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
                     crypto.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, mbEtk, ConnectorXmlUtils.toByteArray(
                         EncryptedKnownContent().apply {
-                        replyToEtk = keyDepotManager.getETK(credential, keystoreId).encoded
-                        businessContent = BusinessContent().apply {
-                            id = detailId
-                            value = aqb
-                        }
-                    })).let {
+                            replyToEtk = keyDepotManager.getETK(credential, keystoreId).encoded
+                            businessContent = BusinessContent().apply {
+                                id = detailId
+                                value = aqb
+                            }
+                        })).let {
                         BlobMapper.mapBlobTypefromBlob(blobBuilder.build(it, "none", detailId, "text/xml", "MDA", "encryptedForKnownBED"))
                     }
                 } else BlobMapper.mapBlobTypefromBlob(blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA"))
@@ -331,12 +330,12 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     MarshallerHelper(FaultType::class.java, FaultType::class.java).toObject(it)
                 },
                 commonOutput = it.consultationResponse?.`return`?.commonOutput
-                              )?.apply {
+            )?.apply {
                 this.errors?.forEach {
-                it.details?.details?.forEach { d ->
-                    this.myCarenetErrors += extractError(request.detail.value, code1, code2, d.location, d.detailCode).toList()
+                    it.details?.details?.forEach { d ->
+                        this.myCarenetErrors += extractError(request.detail.value, code1, code2, d.location, d.detailCode).toList()
+                    }
                 }
-            }
             }
         } ?: MemberDataResponse()
     }
@@ -355,7 +354,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             (expr.evaluate(
                 builder.parse(ByteArrayInputStream(sendTransactionRequest)),
                 XPathConstants.NODESET
-                          ) as NodeList).let { it ->
+            ) as NodeList).let { it ->
                 if (it.length > 0) {
                     var node = it.item(0)
                     val textContent = node.textContent
@@ -365,12 +364,12 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         node = node.parentNode
                     }
                     var elements =
-                        MemberDataErrors.values.filter {(it.path == null || it.path == base) && it.code == code1 && (code2 == null || it.subCode == code2) && (detailCode == null || it.detailCode == detailCode) }
+                        MemberDataErrors.values.filter { (it.path == null || it.path == base) && it.code == code1 && (code2 == null || it.subCode == code2) && (detailCode == null || it.detailCode == detailCode) }
 
                     if (elements.isEmpty()) {
-                        val oBase = base.replace(Regex("\\[.+?\\]"),"")
+                        val oBase = base.replace(Regex("\\[.+?\\]"), "")
                         elements =
-                            MemberDataErrors.values.filter {(it.path == null || it.path == oBase) && it.code == code1 && (code2 == null || it.subCode == code2) && (detailCode == null || it.detailCode == detailCode) }
+                            MemberDataErrors.values.filter { (it.path == null || it.path == oBase) && it.code == code1 && (code2 == null || it.subCode == code2) && (detailCode == null || it.detailCode == detailCode) }
                     }
 
                     elements.forEach { it.value = textContent }
@@ -383,8 +382,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                                                                     )
-                              )
+                        )
+                    )
                 }
             }
             result
@@ -395,10 +394,10 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val result = mutableSetOf<MycarenetError>()
 
         e.fault.detail.detailEntries.forEach { it ->
-            if(it != null) {
+            if (it != null) {
                 val detailEntry = it as DetailEntry1_1Impl
                 val codeElements = detailEntry.getElementsByTagName("Code")
-                for (i in 0..(codeElements.length - 1)){
+                for (i in 0..(codeElements.length - 1)) {
                     val codeElement = codeElements?.item(i) as ElementImpl
                     result.addAll(MemberDataErrors.values.filter { it.code == codeElement.value })
                 }
@@ -410,7 +409,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
     private fun nodeDescr(node: Node): String {
         val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
 
-        val id = if(node.attributes !== null) (node.attributes.getNamedItem("id"))?.let {
+        val id = if (node.attributes !== null) (node.attributes.getNamedItem("id"))?.let {
             it.textContent
         } else null;
 
