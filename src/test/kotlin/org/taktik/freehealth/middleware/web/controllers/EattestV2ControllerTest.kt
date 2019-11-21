@@ -496,7 +496,6 @@ class EattestV2ControllerTest : EhealthTest() {
         assertResultsError("scenario v2 2", results,"196")
     }
 
-
     fun v2scenario3() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
@@ -514,7 +513,7 @@ class EattestV2ControllerTest : EhealthTest() {
         assertResults("scenario v2 3", results)
     }
 
-
+    @Test
     fun v2scenario4() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
@@ -551,7 +550,6 @@ class EattestV2ControllerTest : EhealthTest() {
         assertResults("scenario v2 5", results)
     }
 
-    @Test
     fun v2scenario1Cancel() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
@@ -578,7 +576,6 @@ class EattestV2ControllerTest : EhealthTest() {
         assertResults("scenario v2 cancel 1", results)
     }
 
-    @Test
     fun v2scenario2Cancel() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val now = LocalDateTime.now()
@@ -606,7 +603,6 @@ class EattestV2ControllerTest : EhealthTest() {
         assertResults("scenario v2 cancel 2", results)
     }
 
-    @Test
     fun v2scenario3Cancel() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         var idx=0
@@ -622,7 +618,7 @@ class EattestV2ControllerTest : EhealthTest() {
         assertResultsError("scenario v2 cancel 3", results,"240")
     }
 
-    @Test
+
     fun v2scenario4Cancel() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val results = getNissesv2(0).map {
