@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.dto.eattest
 
+import org.taktik.freehealth.middleware.dto.efact.InvoicingSideCode
+import org.taktik.freehealth.middleware.dto.efact.InvoicingTransplantationCode
 import java.io.Serializable
 
 class Eattest(var codes: List<EattestCode> = listOf()) : Serializable {
@@ -40,7 +42,9 @@ class Eattest(var codes: List<EattestCode> = listOf()) : Serializable {
         var location: EattestHcParty? = null,
         var locationService: Int? = null,
         var internship: EattestHcParty? = null,
-        var gmdManager: EattestHcParty? = null
+        var gmdManager: EattestHcParty? = null,
+        var side: InvoicingSideCode? = null,
+        var transplantationCode: InvoicingTransplantationCode? = null
     ) : Serializable
 
     class EattestCardReading(
