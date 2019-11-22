@@ -226,25 +226,29 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 this.issueInstant = issueInstant
                 this.version = "2.0"
                 extensions = org.taktik.icure.cin.saml.extensions.ExtensionsType().apply {
-                    this.facets.addAll(facets ?: listOf(Facet().apply {
-                        id = "urn:be:cin:nippin:insurability"
-                        dimensions.add(Facet.Dimension().apply { id = "requestType"; value = "information" })
-                        dimensions.add(Facet.Dimension().apply { id = "contactType"; value = if (hospitalized == true) "hospitalized" else "other" })
-                    }))
-
-                    this.facets.addAll(facets ?: listOf(Facet().apply {
-                        id = "urn:be:cin:nippin:chronicCondition"
-                    }))
-
-                    this.facets.addAll(facets ?: listOf(Facet().apply {
-                        id = "urn:be:cin:nippin:carePath"
-                        dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "diabetes" })
-                        dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "renalinsufficiency" })
-                    }))
-
-                    this.facets.addAll(facets ?: listOf(Facet().apply {
-                        id = "urn:be:cin:nippin:referencePharmacy"
-                    }))
+                    this.facets.addAll(facets ?: listOf(
+                        Facet().apply {
+                            id = "urn:be:cin:nippin:insurability"
+                            dimensions.add(Facet.Dimension().apply { id = "requestType"; value = "information" })
+                            dimensions.add(Facet.Dimension().apply {
+                                id = "contactType"; value =
+                                if (hospitalized == true) "hospitalized" else "other"
+                            })
+                        },
+                        Facet().apply {
+                            id = "urn:be:cin:nippin:chronicCondition"
+                        },
+                        Facet().apply {
+                            id = "urn:be:cin:nippin:carePath"
+                            dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "diabetes" })
+                            dimensions.add(Facet.Dimension().apply {
+                                id = "carePathType"; value =
+                                "renalinsufficiency"
+                            })
+                        },
+                        Facet().apply {
+                            id = "urn:be:cin:nippin:referencePharmacy"
+                        }))
                 }
                 issuer = NameIDType().apply {
                     this.format = "urn:be:cin:nippin:nihii11"

@@ -22,11 +22,7 @@ package org.taktik.freehealth.middleware.dto.ehbox
 
 import org.taktik.freehealth.middleware.domain.common.Error
 
-class BoxInfo(
-    val boxId: String,
-    val quality: String,
-    val nbrMessagesInStandBy: Int,
-    val currentSize: Long,
-    val maxSize: Long,
+class MessageResponse(
+    val message: Message?,
     val error: Error? = null
-             )
+                     )
