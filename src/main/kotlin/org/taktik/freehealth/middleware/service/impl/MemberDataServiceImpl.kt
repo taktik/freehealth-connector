@@ -119,7 +119,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         hospitalized: Boolean?,
         facets: List<Facet>?
                               ): MemberDataResponse {
-        val encryptRequest = false
+        val encryptRequest = true
         require(
             hcpQuality == "doctor" ||
                 hcpQuality == "nurse" ||
@@ -442,10 +442,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
     private fun nodeDescr(node: Node): String {
         val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
-
-        val id = if(node.attributes !== null) (node.attributes.getNamedItem("id"))?.let {
-            it.textContent
-        } else null;
+        val id = node.attributes?.getNamedItem("id")?.textContent
 
         return if (id != null) "$localName[$id]" else localName
     }
