@@ -2080,10 +2080,11 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
             val builder = factory.newDocumentBuilder()
 
             val result = mutableSetOf<MycarenetError>()
+            val curratedUrl = if (url.startsWith("/")) url else "/" + url
 
             try {
                 val xpath = xPathFactory.newXPath()
-                val expr = xpath.compile(if (url.startsWith("/")) url else "/" + url)
+                val expr = xpath.compile(curratedUrl)
 
                 (expr.evaluate(
                     builder.parse(ByteArrayInputStream(sendTransactionRequest)),
@@ -2107,7 +2108,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                         result.add(
                             MycarenetError(
                                 code = ec,
-                                path = url,
+                                path = curratedUrl,
                                 msgFr = "Erreur générique, xpath invalide",
                                 msgNl = "Onbekend foutmelding, xpath ongeldig"
                                           )
@@ -2118,7 +2119,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                 result.add(
                     MycarenetError(
                         code = ec,
-                        path = url,
+                        path = curratedUrl,
                         msgFr = "Erreur générique, xpath invalide : "+e.message,
                         msgNl = "Onbekend foutmelding, xpath ongeldig : "+e.message
                                   )
