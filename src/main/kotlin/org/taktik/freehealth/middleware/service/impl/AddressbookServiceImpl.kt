@@ -110,7 +110,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
         nihii: String?,
         ssin: String?,
         language: String
-    ): HealthcareParty {
+    ): HealthcareParty? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Addressbook operations")
@@ -120,7 +120,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
                 GetProfessionalContactInfoRequest().apply {
                     this.nihii = nihii; this.ssin = ssin; issueInstant = DateTime.now()
                 })
-        return makeHealthcareParty(professionalContactInfo.individualContactInformation, language)
+        return professionalContactInfo.individualContactInformation?.let { makeHealthcareParty(it, language) }
     }
 
     override fun getOrg(
@@ -131,7 +131,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
         cbe: String?,
         nihii: String?,
         language: String
-    ): HealthcareParty {
+    ): HealthcareParty? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Addressbook operations")
@@ -141,7 +141,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
                 GetOrganizationContactInfoRequest().apply {
                     this.nihii = nihii; this.cbe = cbe; this.ehp = ehp; issueInstant = DateTime.now()
                 })
-        return makeHealthcareParty(professionalContactInfo.organizationContactInformation, language)
+        return professionalContactInfo.organizationContactInformation?.let { makeHealthcareParty(it, language) }
     }
 
     private fun makeHealthcareParty(it: IndividualContactInformationType, language: String): HealthcareParty {

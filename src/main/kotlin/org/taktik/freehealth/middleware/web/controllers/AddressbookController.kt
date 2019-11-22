@@ -74,7 +74,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable nihii: String,
         @RequestParam(required = false) language: String?
-    ): HealthcareParty = addressbookService.getHcp(
+    ): HealthcareParty? = addressbookService.getHcp(
         keystoreId, tokenId, passPhrase, nihii, null, language ?: "fr"
     )
 
@@ -85,7 +85,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable ssin: String,
         @RequestParam(required = false) language: String?
-    ): HealthcareParty = addressbookService.getHcp(
+    ): HealthcareParty? = addressbookService.getHcp(
         keystoreId, tokenId, passPhrase, null, ssin, language ?: "fr"
     )
 
@@ -96,7 +96,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable nihii: String,
         @RequestParam(required = false) language: String?
-    ): HealthcareParty = addressbookService.getOrg(
+    ): HealthcareParty? = addressbookService.getOrg(
         keystoreId, tokenId, passPhrase, null, null, nihii, language ?: "fr"
     )
 
@@ -107,7 +107,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable cbe: String?,
         @RequestParam(required = false) language: String?
-    ): HealthcareParty = addressbookService.getOrg(
+    ): HealthcareParty? = addressbookService.getOrg(
         keystoreId, tokenId, passPhrase, null, cbe, null, language ?: "fr"
     )
 
@@ -118,7 +118,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable ehp: String?,
         @RequestParam(required = false) language: String?
-    ): HealthcareParty = addressbookService.getOrg(
+    ): HealthcareParty? = addressbookService.getOrg(
         keystoreId, tokenId, passPhrase, ehp, null, null, language ?: "fr"
     )
 }
