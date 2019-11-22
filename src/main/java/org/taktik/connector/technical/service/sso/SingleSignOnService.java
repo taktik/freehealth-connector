@@ -5,9 +5,5 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 
 public interface SingleSignOnService {
-   void signin(SsoProfile var1, String var2, SAMLToken samlToken) throws TechnicalConnectorException;
-
-   void signin(SsoProfile var1, SAMLToken samlToken) throws TechnicalConnectorException;
-
-   void setHandler(BrowserHandler var1);
+   String signin(SsoProfile profile, SAMLToken samlToken) throws TechnicalConnectorException;
 }
