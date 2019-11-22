@@ -9,3 +9,4 @@ out/production/classes/be/apb/gfddpp/assuralia/package-info.class
 out/production/classes/be/apb/gfddpp/assuralia/ObjectFactory.class
 out/production/classes/be/apb/gfddpp/assuralia/AssuraliaRequestParameters.class
 out/
+src/main/resources/acpt/org.taktik.connector.technical.properties

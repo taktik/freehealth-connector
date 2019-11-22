@@ -236,15 +236,15 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                             })
                         },
                         Facet().apply {
+                            id = "urn:be:cin:nippin:chronicCondition"
+                        },
+                        Facet().apply {
                             id = "urn:be:cin:nippin:carePath"
                             dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "diabetes" })
                             dimensions.add(Facet.Dimension().apply {
                                 id = "carePathType"; value =
                                 "renalinsufficiency"
                             })
-                        },
-                        Facet().apply {
-                            id = "urn:be:cin:nippin:chronicCondition"
                         },
                         Facet().apply {
                             id = "urn:be:cin:nippin:referencePharmacy"

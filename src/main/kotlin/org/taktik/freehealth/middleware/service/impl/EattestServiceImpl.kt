@@ -1117,6 +1117,26 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                                 code.relativeService
                                             })
                                         }
+                                    },
+                                    code.side?.let {
+                                        ContentType().apply {
+                                            cds.add(CDCONTENT().apply {
+                                                s = CDCONTENTschemes.LOCAL;
+                                                sv = "1.0";
+                                                sl = "NIHDI-TREATED-LIMB";
+                                                value = code.side.toString();
+                                            })
+                                        }
+                                    },
+                                    code.transplantationCode?.let {
+                                        ContentType().apply {
+                                            cds.add(CDCONTENT().apply {
+                                                s = CDCONTENTschemes.LOCAL;
+                                                sv = "1.0";
+                                                sl = "NIHDI-TRANSPLANTATION";
+                                                value = code.transplantationCode.toString();
+                                            })
+                                        }
                                     }).filterNotNull())
                                 quantity = QuantityType().apply { decimal = BigDecimal(code.quantity) }
                             }, ItemType().apply {
