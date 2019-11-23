@@ -1981,10 +1981,10 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                 cd =
                                     CDSEX().apply {
                                         s = "CD-SEX"; sv = "1.1"; value = try {
-                                        CDSEXvalues.fromValue(patientGender)
-                                    } catch (e: Exception) {
-                                        CDSEXvalues.UNKNOWN
-                                    }
+                                            CDSEXvalues.fromValue(patientGender)
+                                        } catch (e: Exception) {
+                                            CDSEXvalues.UNKNOWN
+                                        }
                                     }
                             }
                     }
