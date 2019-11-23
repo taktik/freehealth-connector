@@ -71,7 +71,7 @@ import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
-import org.taktik.freehealth.middleware.domain.memberdata.Status
+import org.taktik.freehealth.middleware.domain.memberdata.MdaStatus
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
@@ -323,7 +323,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             val code2 = it.response.status.statusCode?.statusCode?.value
             MemberDataResponse(
                 it.assertions,
-                Status(code1, code2),
+                MdaStatus(code1, code2),
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse =
                         MarshallerHelper(MemberDataConsultationResponse::class.java, MemberDataConsultationResponse::class.java).toXMLByteArray(it.consultationResponse)
