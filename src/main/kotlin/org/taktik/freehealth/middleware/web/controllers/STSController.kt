@@ -74,5 +74,6 @@ class STSController(private val stsService: STSService, private val ssoService: 
     fun checkTokenValid(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID) = stsService.checkTokenValid(tokenId)
 
     @GetMapping("/token/bearer", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun checkTokenValid(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID) = ssoService.getBearerToken(tokenId, keystoreId, passPhrase)
+    fun getBearerToken(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID) =
+        ssoService.getBearerToken(tokenId, keystoreId, passPhrase)
 }
