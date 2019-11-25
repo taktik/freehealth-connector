@@ -18,15 +18,9 @@
  *
  */
 
-package org.taktik.freehealth.middleware.dto.ehbox
+package org.taktik.freehealth.middleware.domain.sts
 
-import org.taktik.freehealth.middleware.domain.common.Error
+import java.io.Serializable
+import java.util.*
 
-class BoxInfo(
-    val boxId: String,
-    val quality: String,
-    val nbrMessagesInStandBy: Int,
-    val currentSize: Long,
-    val maxSize: Long,
-    val error: Error? = null
-             )
+class BearerToken(var token:String) : Serializable

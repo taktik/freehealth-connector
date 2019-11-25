@@ -1,6 +1,5 @@
 package org.taktik.connector.technical.service.sso.impl;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bouncycastle.util.encoders.Base64;
@@ -15,10 +14,8 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.idgenerator.IdGenerator;
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory;
-import org.taktik.connector.technical.service.sso.BrowserHandler;
 import org.taktik.connector.technical.service.sso.SingleSignOnService;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
-import org.taktik.connector.technical.utils.ConfigurableFactoryHelper;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import org.taktik.connector.technical.ws.ServiceFactory;
@@ -33,9 +30,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -49,41 +44,29 @@ public class SingleSignOnServiceImpl implements SingleSignOnService {
    private static final Logger LOG = LoggerFactory.getLogger(SingleSignOnServiceImpl.class);
    private IdGenerator idGenerator;
    private ConfigValidator config;
-   private BrowserHandler browserHandler;
 
    public SingleSignOnServiceImpl() {
       try {
          this.idGenerator = IdGeneratorFactory.getIdGenerator("xsid");
          this.config = ConfigFactory.getConfigValidator();
-         this.browserHandler = (BrowserHandler)(new ConfigurableFactoryHelper("org.taktik.connector.technical.service.sso.browserhandler.default", DefaultBrowserHandler.class.getName())).getImplementation();
       } catch (TechnicalConnectorException var2) {
          throw new IllegalArgumentException(var2);
       }
    }
 
-   public void signin(SsoProfile profile, SAMLToken samlToken) throws TechnicalConnectorException {
-      this.signin(profile, null, samlToken);
-   }
-
-   public void setHandler(BrowserHandler handler) {
-      this.browserHandler = handler;
-   }
-
-   public void signin(SsoProfile profile, String relayState, SAMLToken samlToken) throws TechnicalConnectorException {
+   public String signin(SsoProfile profile, SAMLToken samlToken) throws TechnicalConnectorException {
       switch(profile) {
       case SAML2_ARTIFACT:
-         this.signinWithSAML2Artifact(relayState, samlToken);
-         break;
+         return this.signinWithSAML2Artifact(samlToken);
       case SAML2_POST:
-         this.signinWithSAML2POST(relayState, samlToken);
-         break;
+         return this.signinWithSAML2POST(samlToken);
       default:
          throw new IllegalArgumentException("Unsupported SSO profile [" + profile + "]");
       }
 
    }
 
-   private void signinWithSAML2Artifact(String targetLocation, SAMLToken samlToken) throws TechnicalConnectorException {
+   private String signinWithSAML2Artifact(SAMLToken samlToken) throws TechnicalConnectorException {
       try {
          String template = ConnectorIOUtils.getResourceAsString("/sso/SSORequestSTSSAML2Artifact.xml");
          template = StringUtils.replaceEach(template, new String[]{"${reqId}", "${endpoint.idp.saml2.artifact}"}, new String[]{this.idGenerator.generateId(), this.getSAML2Artifact()});
@@ -92,12 +75,9 @@ public class SingleSignOnServiceImpl implements SingleSignOnService {
          Validate.isTrue(references.getLength() == 1);
          Element reference = (Element)references.item(0);
          String uri = reference.getAttribute("URI");
-         if (StringUtils.isNotBlank(targetLocation)) {
-            uri = uri + "&RelayState=" + targetLocation;
-         }
 
          LOG.debug("Launching browser with url [" + uri + "]");
-         this.browserHandler.browse(new URI(uri));
+         return new URI(uri).toASCIIString();
       } catch (URISyntaxException var6) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.CORE_TECHNICAL, var6, new Object[]{var6.getMessage()});
       }
@@ -133,7 +113,7 @@ public class SingleSignOnServiceImpl implements SingleSignOnService {
       return this.config.getProperty("endpoint.idp.saml2.artifact");
    }
 
-   private void signinWithSAML2POST(String targetLocation, SAMLToken samlToken) throws TechnicalConnectorException {
+   private String signinWithSAML2POST(SAMLToken samlToken) throws TechnicalConnectorException {
       FileWriter fw = null;
 
       try {
@@ -145,25 +125,9 @@ public class SingleSignOnServiceImpl implements SingleSignOnService {
          Element assertion = (Element)assertions.item(0);
          String samlResponse = ConnectorIOUtils.getResourceAsString("/sso/bindingTemplate-SAMLResponse.xml");
          samlResponse = StringUtils.replaceEachRepeatedly(samlResponse, new String[]{"${SAMLResponseID}", "${SAMLResponseIssueInstant}", "${SAMLAssertion}"}, new String[]{IdGeneratorFactory.getIdGenerator("xsid").generateId(), (new DateTime()).toString(), this.toXMLString(assertion)});
-         String templateForm = "";
-         if (StringUtils.isNotBlank(targetLocation)) {
-            templateForm = ConnectorIOUtils.getResourceAsString("/sso/bindingTemplate-Form.html");
-         } else {
-            templateForm = ConnectorIOUtils.getResourceAsString("/sso/bindingTemplate-FormNoRelayState.html");
-         }
-
-         templateForm = StringUtils.replaceEachRepeatedly(templateForm, new String[]{"${endpoint.idp.saml2.post}", "${relayState}", "${SAMLResponse}"}, new String[]{this.getSAML2Post(), targetLocation, new String(Base64.encode(ConnectorIOUtils.toBytes(ConnectorXmlUtils.flatten(samlResponse), Charset.UTF_8)))});
-         File result = File.createTempFile("sso-", "post.html");
-         result.deleteOnExit();
-         URI uri = result.toURI();
-         fw = new FileWriter(result);
-         IOUtils.write(templateForm, fw);
-         fw.flush();
-         this.browserHandler.browse(uri);
-      } catch (IOException var13) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.CORE_TECHNICAL, var13, new Object[]{var13.getMessage()});
+         return new String(Base64.encode(ConnectorIOUtils.toBytes(ConnectorXmlUtils.flatten(samlResponse), Charset.UTF_8)));
       } finally {
-         ConnectorIOUtils.closeQuietly((Object)fw);
+         ConnectorIOUtils.closeQuietly(fw);
       }
 
    }

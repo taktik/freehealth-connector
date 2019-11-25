@@ -27,24 +27,24 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import org.taktik.freehealth.middleware.dto.UUIDType
 import org.taktik.freehealth.middleware.exception.MissingKeystoreException
-import org.taktik.freehealth.middleware.exception.MissingTokenException
+import org.taktik.freehealth.middleware.service.SSOService
 import org.taktik.freehealth.middleware.service.STSService
-import java.util.*
+import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/sts")
-class STSController(private val stsService: STSService) {
+class STSController(private val stsService: STSService, private val ssoService: SSOService) {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(MissingKeystoreException::class)
     @ResponseBody
@@ -73,4 +73,7 @@ class STSController(private val stsService: STSService) {
     @GetMapping("/token/check", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun checkTokenValid(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID) = stsService.checkTokenValid(tokenId)
 
+    @GetMapping("/token/bearer", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun getBearerToken(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID) =
+        ssoService.getBearerToken(tokenId, keystoreId, passPhrase)
 }

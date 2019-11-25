@@ -35,11 +35,10 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.memberdata.FacetDto
-import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponse
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.icure.cin.saml.extensions.Facet
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -132,9 +131,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) hospitalized: Boolean?,
         @RequestBody facets:List<FacetDto>
                        ) : MemberDataResponse {
-        val startDate: Date =
-            date?.let { Date(date) }
-                ?: Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneId.of("Europe/Brussels").rules.getOffset(Instant.now())))
+        val startDate: Date = date?.let { Date(date) } ?: Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneId.of("Europe/Brussels").rules.getOffset(Instant.now())))
         return memberDataService.getMemberData(keystoreId = keystoreId,
                                                tokenId = tokenId,
                                                hcpQuality = hcpQuality ?: "doctor",
@@ -146,8 +143,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
                                                io = io,
                                                ioMembership = ioMembership,
                                                startDate = startDate,
-                                               endDate = endDate?.let { Date(it) }
-                                                   ?: startDate.let { Date(it.time + 86400000) },
+                                               endDate = endDate?.let { Date(it) } ?: startDate.let { Date(it.time + 86400000) },
                                                facets = facets.map { mapper.map(it, Facet::class.java) })
     }
 
@@ -166,7 +162,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?
     ): MemberDataResponse {
-        val startDate: Date = date?.let { Date(date) } ?: Date()
+        val startDate: Date = date?.let { Date(date) } ?: Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneId.of("Europe/Brussels").rules.getOffset(Instant.now())))
         return memberDataService.getMemberData(keystoreId = keystoreId,
                                                tokenId = tokenId,
                                                hcpQuality = hcpQuality ?: "doctor",
@@ -178,7 +174,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
                                                io = io,
                                                ioMembership = ioMembership,
                                                startDate = startDate,
-                                               endDate = endDate?.let { Date(it) } ?: startDate,
+                                               endDate = endDate?.let { Date(it) } ?: startDate.let { Date(it.time + 86400000) },
                                                hospitalized = hospitalized ?: false)
     }
 }

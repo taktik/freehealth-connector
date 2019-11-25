@@ -27,7 +27,7 @@ import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredenti
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import org.taktik.freehealth.middleware.dto.CertificateInfo
 import java.security.KeyStore
-import java.util.*
+import java.util.UUID
 
 interface STSService {
     fun uploadKeystore(data: ByteArray): UUID

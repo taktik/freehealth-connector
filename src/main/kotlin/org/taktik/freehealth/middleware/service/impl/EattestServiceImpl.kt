@@ -1117,6 +1117,26 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                                 code.relativeService
                                             })
                                         }
+                                    },
+                                    code.side?.let {
+                                        ContentType().apply {
+                                            cds.add(CDCONTENT().apply {
+                                                s = CDCONTENTschemes.LOCAL;
+                                                sv = "1.0";
+                                                sl = "NIHDI-TREATED-LIMB";
+                                                value = code.side.toString();
+                                            })
+                                        }
+                                    },
+                                    code.transplantationCode?.let {
+                                        ContentType().apply {
+                                            cds.add(CDCONTENT().apply {
+                                                s = CDCONTENTschemes.LOCAL;
+                                                sv = "1.0";
+                                                sl = "NIHDI-TRANSPLANTATION";
+                                                value = code.transplantationCode.toString();
+                                            })
+                                        }
                                     }).filterNotNull())
                                 quantity = QuantityType().apply { decimal = BigDecimal(code.quantity) }
                             }, ItemType().apply {
@@ -1961,10 +1981,10 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                 cd =
                                     CDSEX().apply {
                                         s = "CD-SEX"; sv = "1.1"; value = try {
-                                        CDSEXvalues.fromValue(patientGender)
-                                    } catch (e: Exception) {
-                                        CDSEXvalues.UNKNOWN
-                                    }
+                                            CDSEXvalues.fromValue(patientGender)
+                                        } catch (e: Exception) {
+                                            CDSEXvalues.UNKNOWN
+                                        }
                                     }
                             }
                     }
@@ -2059,38 +2079,51 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
             factory.isNamespaceAware = true
             val builder = factory.newDocumentBuilder()
 
-            val xpath = xPathFactory.newXPath()
-            val expr = xpath.compile(if (url.startsWith("/")) url else "/" + url)
             val result = mutableSetOf<MycarenetError>()
+            val curratedUrl = if (url.startsWith("/")) url else "/" + url
 
-            (expr.evaluate(
-                builder.parse(ByteArrayInputStream(sendTransactionRequest)),
-                XPathConstants.NODESET
-                          ) as NodeList).let { it ->
-                if (it.length > 0) {
-                    var node = it.item(0)
-                    val textContent = node.textContent
-                    var base = "/" + nodeDescr(node)
-                    while (node.parentNode != null && node.parentNode is Element) {
-                        base = "/${nodeDescr(node.parentNode)}$base"
-                        node = node.parentNode
-                    }
-                    val elements =
-                        eAttestErrors.values.filter {
-                            it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+            try {
+                val xpath = xPathFactory.newXPath()
+                val expr = xpath.compile(curratedUrl)
+
+                (expr.evaluate(
+                    builder.parse(ByteArrayInputStream(sendTransactionRequest)),
+                    XPathConstants.NODESET
+                              ) as NodeList).let { it ->
+                    if (it.length > 0) {
+                        var node = it.item(0)
+                        val textContent = node.textContent
+                        var base = "/" + nodeDescr(node)
+                        while (node.parentNode != null && node.parentNode is Element) {
+                            base = "/${nodeDescr(node.parentNode)}$base"
+                            node = node.parentNode
                         }
-                    elements.forEach { it.value = textContent }
-                    result.addAll(elements)
-                } else {
-                    result.add(
-                        MycarenetError(
-                            code = ec,
-                            path = url,
-                            msgFr = "Erreur générique, xpath invalide",
-                            msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                      )
-                              )
+                        val elements =
+                            eAttestErrors.values.filter {
+                                it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+                            }
+                        elements.forEach { it.value = textContent }
+                        result.addAll(elements)
+                    } else {
+                        result.add(
+                            MycarenetError(
+                                code = ec,
+                                path = curratedUrl,
+                                msgFr = "Erreur générique, xpath invalide",
+                                msgNl = "Onbekend foutmelding, xpath ongeldig"
+                                          )
+                                  )
+                    }
                 }
+            } catch(e:Exception) {
+                result.add(
+                    MycarenetError(
+                        code = ec,
+                        path = curratedUrl,
+                        msgFr = "Erreur générique, xpath invalide : "+e.message,
+                        msgNl = "Onbekend foutmelding, xpath ongeldig : "+e.message
+                                  )
+                          )
             }
             result
         } ?: setOf()
