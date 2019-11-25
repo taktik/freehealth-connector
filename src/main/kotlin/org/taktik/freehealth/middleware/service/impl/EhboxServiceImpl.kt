@@ -94,7 +94,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         }
         val msg = freehealthEhboxService.getFullMessage(samlToken, messageRequest)
 
-        return if (msg.status?.code != "100") try { consultationMessageBuilder.buildFullMessage(
+        return if (msg.status?.code == "100") try { consultationMessageBuilder.buildFullMessage(
             KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase), msg).toMessageDto()?.let { MessageResponse(it) } ?: MessageResponse(null, Error("Unknown error")) } catch (e:EhboxCryptoException) {
             alternateKeystores?.mapFirstNotNull {
                 try { it.uuid?.let { uuid -> it.passPhrase?.let { pass -> consultationMessageBuilder.buildFullMessage(KeyStoreCredential(uuid, stsService.getKeyStore(uuid, pass)!!, "authentication", pass), msg).toMessageDto() }}} catch(_: EhboxCryptoException) { null }
