@@ -33,16 +33,11 @@ public enum EnvironmentType {
    }
 
    public static EnvironmentType fromValue(String v) {
-      EnvironmentType[] arr$ = values();
-      int len$ = arr$.length;
-
-      for(int i$ = 0; i$ < len$; ++i$) {
-         EnvironmentType c = arr$[i$];
+      for (EnvironmentType c : values()) {
          if (c.value.equals(v)) {
             return c;
          }
       }
-
       throw new IllegalArgumentException(v);
    }
 }
