@@ -22,13 +22,7 @@
 
 package org.taktik.freehealth.middleware.mapper
 
-import org.taktik.connector.business.ehbox.api.domain.Addressee
-import org.taktik.connector.business.ehbox.api.domain.Document
-import org.taktik.connector.business.ehbox.api.domain.AcknowledgeMessage
-import org.taktik.connector.business.ehbox.api.domain.DocumentMessage
-import org.taktik.connector.business.ehbox.api.domain.ErrorMessage
-import org.taktik.connector.business.ehbox.api.domain.Message
-import org.taktik.connector.business.ehbox.api.domain.NewsMessage
+import org.taktik.connector.business.ehbox.api.domain.*
 import org.taktik.freehealth.middleware.dto.common.IdentifierType
 import org.taktik.freehealth.utils.FuzzyValues
 import java.io.UnsupportedEncodingException
@@ -114,7 +108,8 @@ fun <T> AcknowledgeMessage<T>.toAcknowledgeMessage(): org.taktik.freehealth.midd
         expirationDateTime = expirationDateTime?.let { FuzzyValues.getFuzzyDate(it, ChronoUnit.SECONDS) },
         size = size,
         customMetas = getCustomMetas(),
-        document = if(original is be.fgov.ehealth.ehbox.consultation.protocol.v3.Message) (original as be.fgov.ehealth.ehbox.consultation.protocol.v3.Message).toDocument() else null
+        document = document?.toDocumentDto(),
+        acknowledgment = acknowledgment?.toAcknownledgmentDto()
     )
 
 fun be.fgov.ehealth.ehbox.consultation.protocol.v3.Message.toDocument(): org.taktik.freehealth.middleware.dto.common.Document =
@@ -214,3 +209,6 @@ fun org.taktik.freehealth.middleware.dto.common.Document.toDocument(): Document 
     filename = that.filename
     mimeType = that.mimeType
 }
+
+fun Acknowledgment.toAcknownledgmentDto(): org.taktik.freehealth.middleware.dto.common.Acknowledgment = org.taktik.freehealth.middleware.dto.common.Acknowledgment(this.messageId, this.recipient?.toAddresseeDto(), this.ackType, this.dateTime)
+
