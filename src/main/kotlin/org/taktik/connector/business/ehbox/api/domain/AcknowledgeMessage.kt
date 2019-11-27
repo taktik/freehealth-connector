@@ -20,4 +20,6 @@
 
 package org.taktik.connector.business.ehbox.api.domain
 
-class AcknowledgeMessage<T> : DocumentMessage<T>()
+class AcknowledgeMessage<T> : DocumentMessage<T>() {
+    var acknowledgment: Acknowledgment? = null
+}
