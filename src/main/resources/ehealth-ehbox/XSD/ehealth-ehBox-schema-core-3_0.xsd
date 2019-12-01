@@ -17,7 +17,9 @@
       <xs:documentation>Social Security Number</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
-      <xs:length value="11" fixed="true" />
+      <!--<xs:length value="11" fixed="true" />-->
+      <xs:minLength value="8" />
+      <xs:maxLength value="13" />
     </xs:restriction>
   </xs:simpleType>
 
