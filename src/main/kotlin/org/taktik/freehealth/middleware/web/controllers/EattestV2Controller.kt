@@ -179,7 +179,7 @@ class EattestV2Controller(val eattestService: EattestService) {
             reason
        )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 
-    @DeleteMapping("/send/{patientSsin}")
+    @DeleteMapping("/send/{patientSsin}/verbose")
     fun cancelAttesWithResponse(
         @PathVariable patientSsin: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
