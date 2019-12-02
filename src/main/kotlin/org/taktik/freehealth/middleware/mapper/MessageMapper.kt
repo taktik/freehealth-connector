@@ -29,10 +29,10 @@ import java.io.UnsupportedEncodingException
 import java.time.temporal.ChronoUnit
 
 fun <T> Message<T>.toMessageDto(): org.taktik.freehealth.middleware.dto.ehbox.Message? = when {
-    this is NewsMessage -> this.toNewsMessage()
-    this is AcknowledgeMessage -> this.toAcknowledgeMessage()
-    this is DocumentMessage -> this.toDocumentMessage()
-    this is ErrorMessage -> this.toErrorMessage()
+    this is NewsMessage<*> -> this.toNewsMessage()
+    this is AcknowledgeMessage<*> -> this.toAcknowledgeMessage()
+    this is DocumentMessage<*> -> this.toDocumentMessage()
+    this is ErrorMessage<*> -> this.toErrorMessage()
     else -> null
 }
 
