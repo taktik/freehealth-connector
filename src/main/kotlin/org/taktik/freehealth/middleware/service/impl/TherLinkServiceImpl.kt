@@ -488,15 +488,14 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         requireNotNull(patient)
         requireNotNull(hcParty)
 
-        Proof((proofType ?: ProofTypeValues.EIDREADING).value).apply { binaryProof = null }
         return when {
             sign -> makeProofForEidSigning(
                 patient,
                 hcParty,
                 BeIDCredential.getInstance("Therapeutic Link", "Signature")
                                           )
-            patient.eidCardNumber != null -> Proof(ProofTypeValues.EIDREADING.value)
-            patient.isiCardNumber != null -> Proof(ProofTypeValues.ISIREADING.value)
+            patient.eidCardNumber != null -> Proof((proofType ?: ProofTypeValues.EIDREADING).value)
+            patient.isiCardNumber != null -> Proof((proofType ?: ProofTypeValues.ISIREADING).value)
             else -> null
         }
     }
