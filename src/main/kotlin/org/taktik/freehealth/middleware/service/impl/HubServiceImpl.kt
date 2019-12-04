@@ -360,6 +360,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             RevokeTherapeuticLinkRequest().apply {
                 request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null, false)
                 therapeuticlink = TherapeuticLinkType().apply {
+                    enddate = DateTime.now()
                     cd = CDTHERAPEUTICLINK().apply {
                         s = CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE
                         sv = "1.0"
