@@ -22,6 +22,7 @@ package org.taktik.freehealth.middleware.service
 
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.icure.cin.saml.extensions.Facet
+import java.time.Instant
 import java.util.Date
 import java.util.UUID
 
@@ -36,8 +37,8 @@ interface MemberDataService {
         patientSsin: String?,
         io: String?,
         ioMembership: String?,
-        startDate: Date?,
-        endDate: Date?,
+        startDate: Instant,
+        endDate: Instant,
         hospitalized: Boolean? = null,
         facets: List<Facet>? = null): MemberDataResponse
 }

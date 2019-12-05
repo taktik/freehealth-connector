@@ -52,6 +52,7 @@ import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.AttributeQuer
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.memberdata.builders.impl.ResponseObjectBuilderImpl
@@ -84,6 +85,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
+import java.time.Instant
 import java.util.Date
 import java.util.UUID
 import javax.xml.namespace.NamespaceContext
@@ -93,6 +95,9 @@ import javax.xml.xpath.XPathConstants
 
 @Service
 class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepotService, val mapper: MapperFacade) : MemberDataService {
+    @Value("\${mycarenet.timezone}")
+    internal val mcnTimezone: String = "Europe/Brussels"
+
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val MemberDataErrors =
         Gson().fromJson(
@@ -115,8 +120,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         patientSsin: String?,
         io: String?,
         ioMembership: String?,
-        startDate: Date?,
-        endDate: Date?,
+        startDate: Instant,
+        endDate: Instant,
         hospitalized: Boolean?,
         facets: List<Facet>?
                               ): MemberDataResponse {
@@ -223,8 +228,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 subjectConfirmations.add(SubjectConfirmation().apply {
                     method = "urn:be:cin:nippin:memberIdentification"
                     subjectConfirmationData = SubjectConfirmationDataType().apply {
-                        (startDate ?: Date()).let { notBefore = XMLGregorianCalendarImpl(DateTime(it.time, DateTimeZone.forID("Europe/Brussels")).toGregorianCalendar()) }
-                        endDate?.let { notOnOrAfter = XMLGregorianCalendarImpl(DateTime(it.time, DateTimeZone.forID("Europe/Brussels")).toGregorianCalendar()) }
+                        startDate.let { notBefore = XMLGregorianCalendarImpl(DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)).toGregorianCalendar()) }
+                        endDate.let { notOnOrAfter = XMLGregorianCalendarImpl(DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)).toGregorianCalendar()) }
                     }
                 })
             }

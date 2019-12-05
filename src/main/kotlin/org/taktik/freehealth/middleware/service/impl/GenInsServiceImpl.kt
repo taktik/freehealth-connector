@@ -31,7 +31,9 @@ import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
 import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
@@ -53,6 +55,7 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
 import java.math.BigDecimal
+import java.time.Instant
 import java.util.*
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
@@ -62,6 +65,9 @@ import javax.xml.xpath.XPathFactory
 
 @Service
 class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : GenInsService {
+    @Value("\${mycarenet.timezone}")
+    internal val mcnTimezone: String = "Europe/Brussels"
+
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val freehealthGenInsService: org.taktik.connector.business.genins.service.GenInsService =
         org.taktik.connector.business.genins.service.impl.GenInsServiceImpl()
@@ -84,8 +90,8 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
         patientSsin: String?,
         io: String?,
         ioMembership: String?,
-        startDate: Date?,
-        endDate: Date?,
+        startDate: Instant?,
+        endDate: Instant?,
         hospitalized: Boolean
     ): InsurabilityInfoDto {
         require(
@@ -190,8 +196,8 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                     insurabilityContactType = if (hospitalized) HOSPITALIZED_ELSEWHERE else AMBULATORY_CARE
                     insurabilityReference = "" + System.currentTimeMillis()
                     period = PeriodType().apply {
-                        periodStart = startDate?.let { DateTime(it.time) } ?: DateTime()
-                        periodEnd = endDate?.let { DateTime(it.time) } ?: periodStart
+                        periodStart = startDate?.let { DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)) } ?: DateTime()
+                        periodEnd = endDate?.let { DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)) } ?: periodStart
                     }
                 }
             }
