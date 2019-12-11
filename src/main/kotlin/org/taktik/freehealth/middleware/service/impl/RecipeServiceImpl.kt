@@ -188,7 +188,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                  "CD-HCPARTY" to "1.11",
                                  "CD-HEADING" to "1.2",
                                  "CD-INNCLUSTER" to "LOCALDB",
-                                 "CD-ITEM" to "1.9",
+                                 "CD-ITEM" to "1.11",
                                  "CD-LIFECYCLE" to "1.7",
                                  "CD-PERIODICITY" to "1.1",
                                  "CD-SEX" to "1.1",
@@ -196,7 +196,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                                  "CD-TELECOM" to "1.0",
                                  "CD-TEMPORALITY" to "1.0",
                                  "CD-TIMEUNIT" to "2.1",
-                                 "CD-TRANSACTION" to "1.9",
+                                 "CD-TRANSACTION" to "1.10",
                                  "CD-UNIT" to "1.7")
 
     init {
@@ -406,7 +406,7 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                     cd = CDSTANDARD().apply {
                         s = "CD-STANDARD"
                         value = "20161201"
-                        sv = "1.19"
+                        sv = "1.20"
                     }
                 }
                 date = config.header.date
