@@ -29,16 +29,16 @@ import be.fgov.ehealth.addressbook.protocol.v1.SearchProfessionalsRequest
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
-import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.AddressType
 import org.taktik.freehealth.middleware.dto.HealthcareParty
 import org.taktik.freehealth.middleware.dto.Telecom
 import org.taktik.freehealth.middleware.dto.TelecomType
+import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.AddressbookService
 import org.taktik.freehealth.middleware.service.STSService
-import java.util.*
+import java.util.UUID
 
 @Service
 class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
@@ -155,7 +155,8 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
             lastName = it.lastName,
             ssin = it.ssin,
             gender = Gender.fromCode(it.gender) ?: Gender.unknown,
-            nihii = professionalInformation?.profession?.nihii
+            nihii = professionalInformation?.profession?.nihii,
+            professionCodes = professionalInformation?.profession?.professionCodes ?: listOf()
         ).apply {
             addresses.addAll(professionalInformation?.addresses?.map {
                 Address(addressType = AddressType.work,
