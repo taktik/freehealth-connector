@@ -69,12 +69,13 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
                 true
             )
         }.map {
-            HealthcareParty(firstName = it.firstName,
-                            lastName = it.lastName,
-                            ssin = it.ssin,
+            HealthcareParty(lastName = it.lastName,
+                            firstName = it.firstName,
+                            gender = Gender.fromCode(it.gender) ?: Gender.unknown,
                             nihii = (it.professions.find { it.professionCodes.any { it.value == "PHYSICIAN" } }
                                 ?: it.professions.firstOrNull())?.nihii,
-                            gender = Gender.fromCode(it.gender) ?: Gender.unknown)
+                            ssin = it.ssin,
+                            ehealthBoxes = listOf())
         }
     }
 
@@ -96,10 +97,11 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
         return searchProfessionals.healthCareOrganizations.map {
             HealthcareParty(
                 name = it.names.joinToString { it.value },
-                nihii = if (it.id.type == "NIHII") it.id.value else null,
                 cbe = if (it.id.type == "CBE") it.id.value else null,
-                ehp = if (it.id.type == "HCI") it.id.value else null
-            )
+                ehp = if (it.id.type == "HCI") it.id.value else null,
+                nihii = if (it.id.type == "NIHII") it.id.value else null,
+                ehealthBoxes = listOf()
+                           )
         }
     }
 
@@ -151,13 +153,14 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
                 nihii?.let { it == pi?.profession?.nihii } ?: pi.profession?.professionCodes?.any { it.value == (quality ?: "PHYSICIAN") } ?: false
             } ?: it.professionalInformations.firstOrNull()
         return HealthcareParty(
-            firstName = it.firstName,
             lastName = it.lastName,
-            ssin = it.ssin,
+            firstName = it.firstName,
             gender = Gender.fromCode(it.gender) ?: Gender.unknown,
             nihii = professionalInformation?.profession?.nihii,
-            professionCodes = professionalInformation?.profession?.professionCodes ?: listOf()
-        ).apply {
+            ssin = it.ssin,
+            professionCodes = professionalInformation?.profession?.professionCodes ?: listOf(),
+            ehealthBoxes = listOf()
+                              ).apply {
             addresses.addAll(professionalInformation?.addresses?.map {
                 Address(addressType = AddressType.work,
                         street = (it.street.descriptions.find { it.lang == language }
@@ -184,7 +187,8 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
         return HealthcareParty(name = org.names.find { language == it.lang }?.value
             ?: org.names.joinToString { it.value },
                                ehp = if (org.id.type == "HCI") org.id.value else null,
-                               type = org.organizationTypeCodes?.find { it.type == "code" }?.value
+                               type = org.organizationTypeCodes?.find { it.type == "code" }?.value,
+                               ehealthBoxes = org.eHealthBoxes
         ).apply {
             addresses.addAll(org.addresses?.map {
                 Address(addressType = AddressType.work,
