@@ -186,7 +186,9 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
     private fun makeHealthcareParty(org: OrganizationContactInformationType, language: String): HealthcareParty {
         return HealthcareParty(name = org.names.find { language == it.lang }?.value
             ?: org.names.joinToString { it.value },
-                               ehp = if (org.id.type == "HCI") org.id.value else null,
+                               nihii = if (org.id.authenticSource == "NIHII") org.id.value else null,
+                               cbe = if (org.id.authenticSource == "CBE") org.id.value else null,
+                               ehp = if (org.id.authenticSource == "EHP") org.id.value else null,
                                type = org.organizationTypeCodes?.find { it.type == "code" }?.value,
                                ehealthBoxes = org.eHealthBoxes
         ).apply {
