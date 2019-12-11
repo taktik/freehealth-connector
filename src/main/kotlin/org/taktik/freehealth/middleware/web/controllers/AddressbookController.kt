@@ -75,7 +75,7 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @PathVariable nihii: String,
         @RequestParam(required = false) language: String?
     ): HealthcareParty? = addressbookService.getHcp(
-        keystoreId, tokenId, passPhrase, nihii, null, language ?: "fr"
+        keystoreId, tokenId, passPhrase, nihii, null, null, language ?: "fr"
     )
 
     @GetMapping("/hcp/ssin/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -84,9 +84,10 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable ssin: String,
+        @RequestParam(required = false) quality: String?,
         @RequestParam(required = false) language: String?
     ): HealthcareParty? = addressbookService.getHcp(
-        keystoreId, tokenId, passPhrase, null, ssin, language ?: "fr"
+        keystoreId, tokenId, passPhrase, null, ssin, quality, language ?: "fr"
     )
 
     @GetMapping("/org/nihii/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])

@@ -29,16 +29,16 @@ import be.fgov.ehealth.addressbook.protocol.v1.SearchProfessionalsRequest
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
-import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.AddressType
 import org.taktik.freehealth.middleware.dto.HealthcareParty
 import org.taktik.freehealth.middleware.dto.Telecom
 import org.taktik.freehealth.middleware.dto.TelecomType
+import org.taktik.freehealth.middleware.dto.common.Gender
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.AddressbookService
 import org.taktik.freehealth.middleware.service.STSService
-import java.util.*
+import java.util.UUID
 
 @Service
 class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
@@ -109,6 +109,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
         passPhrase: String,
         nihii: String?,
         ssin: String?,
+        quality: String?,
         language: String
     ): HealthcareParty? {
         val samlToken =
@@ -120,7 +121,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
                 GetProfessionalContactInfoRequest().apply {
                     this.nihii = nihii; this.ssin = ssin; issueInstant = DateTime.now()
                 })
-        return professionalContactInfo.individualContactInformation?.let { makeHealthcareParty(it, language) }
+        return professionalContactInfo.individualContactInformation?.let { makeHealthcareParty(it, nihii, quality, language) }
     }
 
     override fun getOrg(
@@ -144,17 +145,18 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
         return professionalContactInfo.organizationContactInformation?.let { makeHealthcareParty(it, language) }
     }
 
-    private fun makeHealthcareParty(it: IndividualContactInformationType, language: String): HealthcareParty {
+    private fun makeHealthcareParty(it: IndividualContactInformationType, nihii: String?, quality: String?, language: String): HealthcareParty {
         val professionalInformation =
-            it.professionalInformations.find {
-                it.profession?.professionCodes?.any { it.value == "PHYSICIAN" } ?: false
+            it.professionalInformations.find { pi ->
+                nihii?.let { it == pi?.profession?.nihii } ?: pi.profession?.professionCodes?.any { it.value == (quality ?: "PHYSICIAN") } ?: false
             } ?: it.professionalInformations.firstOrNull()
         return HealthcareParty(
             firstName = it.firstName,
             lastName = it.lastName,
             ssin = it.ssin,
             gender = Gender.fromCode(it.gender) ?: Gender.unknown,
-            nihii = professionalInformation?.profession?.nihii
+            nihii = professionalInformation?.profession?.nihii,
+            professionCodes = professionalInformation?.profession?.professionCodes ?: listOf()
         ).apply {
             addresses.addAll(professionalInformation?.addresses?.map {
                 Address(addressType = AddressType.work,

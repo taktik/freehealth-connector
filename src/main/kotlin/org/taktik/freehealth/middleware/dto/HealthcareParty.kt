@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto
 
+import be.fgov.ehealth.aa.complextype.v1.ProfessionCode
 import org.taktik.freehealth.middleware.dto.common.Gender
 
 class HealthcareParty(
@@ -41,5 +42,6 @@ class HealthcareParty(
     val nihii: String? = null,
     val ssin: String? = null,
     val addresses: MutableSet<Address> = HashSet(),
-    val languages: MutableList<String> = mutableListOf()
-)
+    val languages: MutableList<String> = mutableListOf(),
+    val professionCodes: List<ProfessionCode> = listOf()
+                     )
