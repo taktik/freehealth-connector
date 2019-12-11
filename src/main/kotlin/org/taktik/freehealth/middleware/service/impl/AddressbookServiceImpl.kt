@@ -109,6 +109,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
         passPhrase: String,
         nihii: String?,
         ssin: String?,
+        quality: String?,
         language: String
     ): HealthcareParty? {
         val samlToken =
@@ -120,7 +121,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
                 GetProfessionalContactInfoRequest().apply {
                     this.nihii = nihii; this.ssin = ssin; issueInstant = DateTime.now()
                 })
-        return professionalContactInfo.individualContactInformation?.let { makeHealthcareParty(it, language) }
+        return professionalContactInfo.individualContactInformation?.let { makeHealthcareParty(it, nihii, quality, language) }
     }
 
     override fun getOrg(
@@ -144,10 +145,10 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
         return professionalContactInfo.organizationContactInformation?.let { makeHealthcareParty(it, language) }
     }
 
-    private fun makeHealthcareParty(it: IndividualContactInformationType, language: String): HealthcareParty {
+    private fun makeHealthcareParty(it: IndividualContactInformationType, nihii: String?, quality: String?, language: String): HealthcareParty {
         val professionalInformation =
-            it.professionalInformations.find {
-                it.profession?.professionCodes?.any { it.value == "PHYSICIAN" } ?: false
+            it.professionalInformations.find { pi ->
+                nihii?.let { it == pi?.profession?.nihii } ?: pi.profession?.professionCodes?.any { it.value == (quality ?: "PHYSICIAN") } ?: false
             } ?: it.professionalInformations.firstOrNull()
         return HealthcareParty(
             firstName = it.firstName,
