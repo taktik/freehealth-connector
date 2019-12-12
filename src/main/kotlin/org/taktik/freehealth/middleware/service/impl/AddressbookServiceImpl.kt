@@ -159,7 +159,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
             nihii = professionalInformation?.profession?.nihii,
             ssin = it.ssin,
             professionCodes = professionalInformation?.profession?.professionCodes ?: listOf(),
-            ehealthBoxes = listOf()
+            ehealthBoxes = it.professionalInformations?.mapNotNull { it.eHealthBox } ?: listOf()
                               ).apply {
             addresses.addAll(professionalInformation?.addresses?.map {
                 Address(addressType = AddressType.work,
