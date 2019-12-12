@@ -21,6 +21,7 @@
 package org.taktik.freehealth.middleware.service
 
 import org.taktik.freehealth.middleware.dto.genins.InsurabilityInfoDto
+import java.time.Instant
 import java.util.*
 
 interface GenInsService {
@@ -35,8 +36,8 @@ interface GenInsService {
         patientSsin: String?,
         io: String?,
         ioMembership: String?,
-        startDate: Date?,
-        endDate: Date?,
+        startDate: Instant?,
+        endDate: Instant?,
         hospitalized: Boolean
     ): InsurabilityInfoDto
 }

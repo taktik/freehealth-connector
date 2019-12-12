@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto.ehbox
 
+import org.taktik.freehealth.middleware.dto.common.Acknowledgment
 import org.taktik.freehealth.middleware.dto.common.Addressee
 import org.taktik.freehealth.middleware.dto.common.Document
 
@@ -40,8 +41,9 @@ class AcknowledgeMessage(
     expirationDateTime: Long? = null,
     size: String? = null,
     customMetas: Map<String, String>? = null,
-    val document: Document? = null
-    ) : Message(
+    val document: Document? = null,
+    val acknowledgment: Acknowledgment? = null
+) : Message(
     id = id,
     publicationId = publicationId,
     sender = sender,

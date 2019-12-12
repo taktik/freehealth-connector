@@ -29,12 +29,7 @@ import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetFullMessageResponse
 import be.fgov.ehealth.ehbox.core.v3.FreeInformationsType
 import org.apache.commons.lang.ArrayUtils
 import org.slf4j.LoggerFactory
-import org.taktik.connector.business.ehbox.api.domain.AcknowledgeMessage
-import org.taktik.connector.business.ehbox.api.domain.Addressee
-import org.taktik.connector.business.ehbox.api.domain.Document
-import org.taktik.connector.business.ehbox.api.domain.DocumentMessage
-import org.taktik.connector.business.ehbox.api.domain.ErrorMessage
-import org.taktik.connector.business.ehbox.api.domain.Message
+import org.taktik.connector.business.ehbox.api.domain.*
 import org.taktik.connector.business.ehbox.api.domain.exception.EhboxBusinessConnectorException
 import org.taktik.connector.technical.enumeration.Charset
 import org.taktik.connector.technical.exception.TechnicalConnectorException
@@ -47,7 +42,6 @@ import org.taktik.connector.technical.utils.IdentifierType
 import javax.activation.DataHandler
 import java.io.IOException
 import java.io.InputStream
-import java.security.KeyStore
 
 class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessageResponse>() {
 
@@ -81,18 +75,31 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
     ) {
         this.processContentSpecification(context.contentSpecification, message)
         this.processCustomMetas(context.customMetas, message)
-        if (message is DocumentMessage<*>) {
+        if (message is AcknowledgeMessage<*>) {
             this.processDocument(credential, context.content, message, container)
-        } else if (message is AcknowledgeMessage<*>) {
             this.processAcknowledge(context.content, message)
+        } else if (message is DocumentMessage<*>) {
+            this.processDocument(credential, context.content, message, container)
         } else if (message is ErrorMessage<*>) {
             this.processError(context.content, message)
         }
     }
 
     @Throws(EhboxBusinessConnectorException::class, TechnicalConnectorException::class)
-    private fun processAcknowledge(response: ConsultationContentType, message: Message<*>) {
-        LOG.debug("processAcknowledge : processing acknowledge for message " + message.id + " and response acknowledgement" + response.acknowledgment + " : no special processing needed")
+    private fun processAcknowledge(response: ConsultationContentType, message: AcknowledgeMessage<*>) {
+        message.acknowledgment = response.acknowledgment?.let { Acknowledgment(
+            messageId = it.messageId,
+            recipient = it.recipient?.let {
+                Addressee(IdentifierType.lookup(it.type, it.subType, IdentifierType.EHBOX)).apply {
+                    id = it.id
+                    quality = it.quality
+                    firstName = it.user?.firstName
+                    lastName = it.user?.lastName
+                }
+            },
+            ackType = it.ackType,
+            dateTime = it.dateTime.millis
+        ) }
     }
 
     @Throws(EhboxBusinessConnectorException::class, TechnicalConnectorException::class)

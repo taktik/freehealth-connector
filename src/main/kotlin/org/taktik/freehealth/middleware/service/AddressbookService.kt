@@ -47,6 +47,7 @@ interface AddressbookService {
         passPhrase: String,
         nihii: String?,
         ssin: String?,
+        quality: String?,
         language: String = "fr"
     ): HealthcareParty?
 

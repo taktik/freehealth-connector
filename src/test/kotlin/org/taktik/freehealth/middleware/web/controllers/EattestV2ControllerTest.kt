@@ -526,7 +526,7 @@ class EattestV2ControllerTest : EhealthTest() {
         )))
 
         val results = getNissesv2(0).map {
-            this.restTemplate.exchange("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&treatmentReason=0070&patientFirstName={patientFirstName}&patientLastName={patientLastName}&patientGender={patientGender}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", HttpMethod.POST,HttpEntity(eattest, createHeaders(null, null, keystoreId, tokenId, passPhrase)),
+            this.restTemplate.exchange("http://localhost:$port/eattestv2/send/$it/verbose?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&treatmentReason=0070&patientFirstName={patientFirstName}&patientLastName={patientLastName}&patientGender={patientGender}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", HttpMethod.POST,HttpEntity(eattest, createHeaders(null, null, keystoreId, tokenId, passPhrase)),
                 String::class.java, firstName1, lastName1, "John", "Doe", "male", passPhrase).body
         }
         assertResults("scenario v2 4", results)
@@ -544,7 +544,7 @@ class EattestV2ControllerTest : EhealthTest() {
         )))
 
         val results = getNissesv2(4).map {
-            this.restTemplate.exchange("http://localhost:$port/eattestv2/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&treatmentReason=0000&patientFirstName={patientFirstName}&patientLastName={patientLastName}&patientGender={patientGender}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", HttpMethod.POST,HttpEntity(eattest, createHeaders(null, null, keystoreId, tokenId, passPhrase)),
+            this.restTemplate.exchange("http://localhost:$port/eattestv2/send/$it/verbose?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&treatmentReason=0000&patientFirstName={patientFirstName}&patientLastName={patientLastName}&patientGender={patientGender}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", HttpMethod.POST,HttpEntity(eattest, createHeaders(null, null, keystoreId, tokenId, passPhrase)),
                 String::class.java, firstName1, lastName1, "John", "Doe", "male", passPhrase).body
         }
         assertResults("scenario v2 5", results)

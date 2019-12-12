@@ -52,6 +52,7 @@ import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.AttributeQuer
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.memberdata.builders.impl.ResponseObjectBuilderImpl
@@ -79,10 +80,12 @@ import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.icure.cin.saml.extensions.Facet
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.Response
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
+import java.time.Instant
 import java.util.Date
 import java.util.UUID
 import javax.xml.namespace.NamespaceContext
@@ -92,6 +95,9 @@ import javax.xml.xpath.XPathConstants
 
 @Service
 class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepotService, val mapper: MapperFacade) : MemberDataService {
+    @Value("\${mycarenet.timezone}")
+    internal val mcnTimezone: String = "Europe/Brussels"
+
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val MemberDataErrors =
         Gson().fromJson(
@@ -114,8 +120,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         patientSsin: String?,
         io: String?,
         ioMembership: String?,
-        startDate: Date?,
-        endDate: Date?,
+        startDate: Instant,
+        endDate: Instant,
         hospitalized: Boolean?,
         facets: List<Facet>?
                               ): MemberDataResponse {
@@ -165,6 +171,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val issueInstantDateTime = DateTime()
         val issueInstant = XMLGregorianCalendarImpl(issueInstantDateTime.toGregorianCalendar())
+
+        val blobBuilder = BlobBuilderFactory.getBlobBuilder("memberdata")
+        val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId();
 
         val attrQuery = AttributeQuery().apply {
             id = "_$inputRef"
@@ -219,8 +228,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 subjectConfirmations.add(SubjectConfirmation().apply {
                     method = "urn:be:cin:nippin:memberIdentification"
                     subjectConfirmationData = SubjectConfirmationDataType().apply {
-                        (startDate ?: Date()).let { notBefore = XMLGregorianCalendarImpl(DateTime(it.time, DateTimeZone.forID("Europe/Brussels")).toGregorianCalendar()) }
-                        endDate?.let { notOnOrAfter = XMLGregorianCalendarImpl(DateTime(it.time, DateTimeZone.forID("Europe/Brussels")).toGregorianCalendar()) }
+                        startDate.let { notBefore = XMLGregorianCalendarImpl(DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)).toGregorianCalendar()) }
+                        endDate.let { notOnOrAfter = XMLGregorianCalendarImpl(DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)).toGregorianCalendar()) }
                     }
                 })
             }
@@ -282,8 +291,6 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             this.id = requestId
             this.issueInstant = issueInstantDateTime
 
-            val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId();
-            val blobBuilder = BlobBuilderFactory.getBlobBuilder("memberdata")
 
             this.detail = unEncryptedQuery.let {aqb ->
                 if (encryptRequest) {
@@ -315,8 +322,14 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         MemberDataXmlValidatorImpl().validate(request)
 
         val consultMemberData = memberDataService.consultMemberData(samlToken, request)
+        val marshallerHelper =
+            MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java)
         val xmlRequest =
-            MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java).toXMLByteArray(request)
+            marshallerHelper.toXMLByteArray(request)
+
+        val unencryptedXmlRequest = marshallerHelper.toObject(xmlRequest)?.apply {
+            this.detail = unEncryptedQuery?.let {aqb -> BlobMapper.mapBlobTypefromBlob(blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA")) }
+        }?.let { marshallerHelper.toXMLByteArray(it) }
 
         return ResponseObjectBuilderImpl().handleConsultationResponse(consultMemberData, crypto)?.let {
             val code1 = it.response.status.statusCode?.value
@@ -326,11 +339,10 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 MdaStatus(code1, code2),
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse =
-                        MarshallerHelper(MemberDataConsultationResponse::class.java, MemberDataConsultationResponse::class.java).toXMLByteArray(it.consultationResponse)
+                        MarshallerHelper(Response::class.java, Response::class.java).toXMLByteArray(it.response)
                             .toString(Charsets.UTF_8)
-                    this.transactionRequest =
-                        xmlRequest
-                            .toString(Charsets.UTF_8)
+                    this.transactionRequest = (unencryptedXmlRequest ?: xmlRequest).toString(Charsets.UTF_8)
+
                     consultMemberData.soapResponse?.writeTo(this.soapResponseOutputStream())
                     consultMemberData.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },

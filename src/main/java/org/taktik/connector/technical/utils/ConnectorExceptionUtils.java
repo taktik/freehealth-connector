@@ -1,11 +1,7 @@
 package org.taktik.connector.technical.utils;
 
-import org.taktik.connector.technical.exception.SoaErrorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.UnsealConnectorException;
-import be.fgov.ehealth.errors.core.v1.ErrorType;
-import be.fgov.ehealth.errors.soa.v1.BusinessError;
-import be.fgov.ehealth.errors.soa.v1.SystemError;
 import be.fgov.ehealth.etee.crypto.decrypt.UnsealedData;
 import be.fgov.ehealth.etee.crypto.status.CryptoResult;
 import be.fgov.ehealth.etee.crypto.status.NotificationError;
@@ -13,10 +9,8 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import javax.xml.ws.soap.SOAPFaultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
 
 public final class ConnectorExceptionUtils {
    private static final Logger LOG = LoggerFactory.getLogger(ConnectorExceptionUtils.class);
