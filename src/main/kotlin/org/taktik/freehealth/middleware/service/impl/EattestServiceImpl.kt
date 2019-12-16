@@ -1743,18 +1743,18 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                             familyname = req.hcp!!.lastName ?: ""
                                         }
                                     },
-                                                           ContentType().apply {
-                                                               date = dateTime(req.date)
-                                                                   ?: theDayBeforeRefDate
-                                                           },
-                                                           code.requestorNorm?.let { norm ->
-                                                               ContentType().apply {
-                                                                   this.cds.add(CDCONTENT().apply {
-                                                                       s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                                                       "NIHDI-REQUESTOR-NORM"; value = norm.toString()
-                                                                   })
-                                                               }
-                                                           }).filterNotNull())
+                                    ContentType().apply {
+                                       date = dateTime(req.date)
+                                           ?: theDayBeforeRefDate
+                                    },
+                                    code.requestorNorm?.let { norm ->
+                                       ContentType().apply {
+                                           this.cds.add(CDCONTENT().apply {
+                                               s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                               "NIHDI-REQUESTOR-NORM"; value = norm.toString()
+                                           })
+                                       }
+                                    }).filterNotNull())
                                 }
                             }, code.gmdManager?.let { gmdm ->
                                 ItemType().apply {
