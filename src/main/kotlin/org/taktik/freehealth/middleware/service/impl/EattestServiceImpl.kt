@@ -843,7 +843,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = requestAuthorNihii.padEnd(11, '0') })
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
                         cds.add(CDHCPARTY().apply {
-                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
                             requestAuthorCdHcParty
                         })
                         if (guardPostNihii?.isEmpty() != false) {
@@ -874,7 +874,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                             })
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
                             cds.add(CDHCPARTY().apply {
-                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
                                 requestAuthorCdHcParty
                             })
                             if (guardPostNihii?.isEmpty() != false) {
@@ -888,7 +888,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                     recipients.add(RecipientType().apply {
                         hcparties.add(HcpartyType().apply {
                             cds.add(CDHCPARTY().apply {
-                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
                                 "application"
                             })
                             name = "mycarenet"
@@ -925,7 +925,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                     traineeSupervisorSsin
                                 })
                                 cds.add(CDHCPARTY().apply {
-                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
                                     "persphysician"
                                 })
                                 firstname = traineeSupervisorFirstName
@@ -943,7 +943,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                     hcpSsin
                                 })
                                 cds.add(CDHCPARTY().apply {
-                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
                                     "persphysician"
                                 })
                                 firstname = hcpFirstName
@@ -955,7 +955,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                             s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                             (trnsId++).toString()
                         })
-                        cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MYCARENET; sv = "1.2"; value = "cga" })
+                        cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MYCARENET; sv = "1.4"; value = "cga" })
                         date = refDateTime; time = refDateTime
                         traineeSupervisorNihii?.let {
                             this.author = supervisor
@@ -970,7 +970,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                 (itemId++).toString()
                             })
                             cds.add(CDITEM().apply {
-                                s = CD_ITEM_MYCARENET; sv = "1.3"; value =
+                                s = CD_ITEM_MYCARENET; sv = "1.4"; value =
                                 "patientpaid"
                             })
                             cost = CostType().apply {
@@ -999,7 +999,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                                        (itemId++).toString()
                                                    })
                                                    cds.add(CDITEM().apply {
-                                                       s = CD_ITEM_MYCARENET; sv = "1.3"; value =
+                                                       s = CD_ITEM_MYCARENET; sv = "1.4"; value =
                                                        "supplement"
                                                    })
                                                    cost = CostType().apply {
@@ -1021,7 +1021,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                                    (itemId++).toString()
                                                })
                                                cds.add(CDITEM().apply {
-                                                   s = CD_ITEM_MYCARENET; sv = "1.3"; value =
+                                                   s = CD_ITEM_MYCARENET; sv = "1.4"; value =
                                                    "paymentreceivingparty"
                                                })
                                                contents.add(ContentType().apply {
@@ -1044,7 +1044,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                             })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                "1.10"; value = "persphysician"
+                                "1.14"; value = "persphysician"
                             })
                             firstname = hcpFirstName
                             familyname = hcpLastName
@@ -1061,7 +1061,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                             })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                "1.10"; value = "persphysician"
+                                "1.14"; value = "persphysician"
                             })
                             firstname = traineeSupervisorFirstName
                             familyname = traineeSupervisorLastName
@@ -1073,7 +1073,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                 (trnsId++).toString()
                             })
                             cds.add(CDTRANSACTION().apply {
-                                s = CD_TRANSACTION_MYCARENET; sv = "1.2"; value =
+                                s = CD_TRANSACTION_MYCARENET; sv = "1.4"; value =
                                 "cgd"
                             })
                             date = refDateTime; time = refDateTime
@@ -1094,7 +1094,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                     s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                     (itemId++).toString()
                                 })
-                                cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "claim" })
+                                cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "claim" })
                                 contents.addAll(listOf(
                                     ContentType().apply {
                                         cds.add(CDCONTENT().apply {
@@ -1144,7 +1144,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                     s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                     (itemId++).toString()
                                 })
-                                cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "encounterdatetime" })
+                                cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "encounterdatetime" })
                                 contents.add(ContentType().apply { date = dateTime(code.date) ?: refDateTime })
                             }, code.location?.let { loc ->
                                 ItemType().apply {
@@ -1153,7 +1153,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                         (itemId++).toString()
                                     })
                                     cds.add(CDITEM().apply {
-                                        s = CD_ITEM; sv = "1.10"; value =
+                                        s = CD_ITEM; sv = "1.11"; value =
                                         "encounterlocation"
                                     })
                                     contents.addAll(listOf(ContentType().apply {
@@ -1165,7 +1165,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                             })
                                             cds.add(CDHCPARTY().apply {
                                                 s =
-                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
                                                 loc.cdHcParty
                                             })
                                         }
@@ -1177,7 +1177,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                         s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                         (itemId++).toString()
                                     })
-                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "requestor" })
+                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "requestor" })
                                     contents.addAll(listOf(ContentType().apply {
                                         hcparty = HcpartyType().apply {
                                             ids.add(IDHCPARTY().apply {
@@ -1193,7 +1193,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                             }
                                             cds.add(CDHCPARTY().apply {
                                                 s =
-                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
                                                 req.hcp!!.cdHcParty
                                             })
                                             firstname = req.hcp!!.firstName ?: ""
@@ -1211,7 +1211,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                         s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                         (itemId++).toString()
                                     })
-                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "gmdmanager" })
+                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "gmdmanager" })
                                     contents.addAll(listOf(ContentType().apply {
                                         hcparty = HcpartyType().apply {
                                             ids.add(IDHCPARTY().apply {
@@ -1227,7 +1227,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                             }
                                             cds.add(CDHCPARTY().apply {
                                                 s =
-                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
                                                 gmdm.cdHcParty ?: "persphysician"
                                             })
                                             firstname = gmdm.firstName ?: ""
@@ -1242,7 +1242,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                         (itemId++).toString()
                                     })
                                     cds.add(CDITEM().apply {
-                                        s = CD_ITEM_MYCARENET; sv = "1.3"; value =
+                                        s = CD_ITEM_MYCARENET; sv = "1.4"; value =
                                         "internship"
                                     })
                                     contents.addAll(listOf(ContentType().apply {
@@ -1260,7 +1260,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                             }
                                             cds.add(CDHCPARTY().apply {
                                                 s =
-                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.10"; value =
+                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
                                                 intern.cdHcParty
                                             })
                                             firstname = intern.firstName ?: ""
@@ -1274,7 +1274,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                         s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                         (itemId++).toString()
                                     })
-                                    cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.3"; value = "documentidentity" })
+                                    cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.4"; value = "documentidentity" })
                                     contents.addAll(listOf(ContentType().apply {
                                         date = (dateTime(cr.date) ?: now)
                                         time =
@@ -1503,7 +1503,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                 (itemId++).toString()
                             })
                             cds.add(CDITEM().apply {
-                                s = CD_ITEM_MYCARENET; sv = "1.3"; value =
+                                s = CD_ITEM_MYCARENET; sv = "1.4"; value =
                                 "patientpaid"
                             })
                             cost = CostType().apply {
@@ -1592,7 +1592,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                             })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                "1.10"; value = "persphysician"
+                                "1.14"; value = "persphysician"
                             })
                             firstname = hcpFirstName
                             familyname = hcpLastName
@@ -1609,7 +1609,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                             })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                "1.10"; value = "persphysician"
+                                "1.14"; value = "persphysician"
                             })
                             firstname = traineeSupervisorFirstName
                             familyname = traineeSupervisorLastName
@@ -1642,7 +1642,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                     s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                     (itemId++).toString()
                                 })
-                                cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "claim" })
+                                cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "claim" })
                                 contents.addAll(listOf(
                                     ContentType().apply {
                                         cds.add(CDCONTENT().apply {
@@ -1679,7 +1679,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                     s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                     (itemId++).toString()
                                 })
-                                cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "encounterdatetime" })
+                                cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "encounterdatetime" })
                                 contents.add(ContentType().apply { date = dateTime(code.date) ?: refDateTime })
                             }, code.location?.let { loc ->
                                 ItemType().apply {
@@ -1688,7 +1688,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                         (itemId++).toString()
                                     })
                                     cds.add(CDITEM().apply {
-                                        s = CD_ITEM; sv = "1.10"; value =
+                                        s = CD_ITEM; sv = "1.11"; value =
                                         "encounterlocation"
                                     })
                                     contents.addAll(listOf(ContentType().apply {
@@ -1720,7 +1720,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                         s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                         (itemId++).toString()
                                     })
-                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "requestor" })
+                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "requestor" })
                                     contents.addAll(listOf(ContentType().apply {
                                         hcparty = HcpartyType().apply {
                                             ids.add(IDHCPARTY().apply {
@@ -1743,18 +1743,18 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                             familyname = req.hcp!!.lastName ?: ""
                                         }
                                     },
-                                                           ContentType().apply {
-                                                               date = dateTime(req.date)
-                                                                   ?: theDayBeforeRefDate
-                                                           },
-                                                           code.requestorNorm?.let { norm ->
-                                                               ContentType().apply {
-                                                                   this.cds.add(CDCONTENT().apply {
-                                                                       s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                                                       "NIHDI-REQUESTOR-NORM"; value = norm.toString()
-                                                                   })
-                                                               }
-                                                           }).filterNotNull())
+                                    ContentType().apply {
+                                       date = dateTime(req.date)
+                                           ?: theDayBeforeRefDate
+                                    },
+                                    code.requestorNorm?.let { norm ->
+                                       ContentType().apply {
+                                           this.cds.add(CDCONTENT().apply {
+                                               s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                               "NIHDI-REQUESTOR-NORM"; value = norm.toString()
+                                           })
+                                       }
+                                    }).filterNotNull())
                                 }
                             }, code.gmdManager?.let { gmdm ->
                                 ItemType().apply {
@@ -1762,7 +1762,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                         s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                         (itemId++).toString()
                                     })
-                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "gmdmanager" })
+                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "gmdmanager" })
                                     contents.addAll(listOf(ContentType().apply {
                                         hcparty = HcpartyType().apply {
                                             ids.add(IDHCPARTY().apply {
