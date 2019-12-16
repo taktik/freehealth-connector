@@ -128,6 +128,7 @@ import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
 import java.io.StringWriter
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.UUID
@@ -979,7 +980,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                         Math.round(
                                             ((it.reimbursement ?: 0.0) + (it.reglementarySupplement ?: 0.0)) * 100
                                                   ).toInt()
-                                    }.toLong()).divide(BigDecimal(100L))
+                                    }.toLong()).divide(BigDecimal(100L)).apply { setScale(2, RoundingMode.CEILING) }
                                 unit = UnitType().apply {
                                     cd =
                                         CDUNIT().apply {
@@ -1004,7 +1005,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                                    })
                                                    cost = CostType().apply {
                                                        decimal =
-                                                           BigDecimal.valueOf(it.toLong()).divide(BigDecimal("100"))
+                                                           BigDecimal.valueOf(it.toLong()).divide(BigDecimal("100")).apply { setScale(2, RoundingMode.CEILING) }
                                                        unit = UnitType().apply {
                                                            cd =
                                                                CDUNIT().apply {
@@ -1512,7 +1513,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                         Math.round(
                                             ((it.reimbursement ?: 0.0) + (it.reglementarySupplement ?: 0.0)) * 100
                                                   ).toInt()
-                                    }.toLong()).divide(BigDecimal(100L))
+                                    }.toLong()).divide(BigDecimal(100L)).apply { setScale(2, RoundingMode.CEILING) }
                                 unit = UnitType().apply {
                                     cd =
                                         CDUNIT().apply {
@@ -1537,7 +1538,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                })
                                cost = CostType().apply {
                                    decimal =
-                                       BigDecimal.valueOf(it.toLong()).divide(BigDecimal("100"))
+                                       BigDecimal.valueOf(it.toLong()).divide(BigDecimal("100")).apply { setScale(2, RoundingMode.CEILING) }
                                    unit = UnitType().apply {
                                        cd =
                                            CDUNIT().apply {
