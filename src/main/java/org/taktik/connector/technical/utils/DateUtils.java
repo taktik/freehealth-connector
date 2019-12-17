@@ -40,6 +40,10 @@ public final class DateUtils {
       return dateTime == null ? null : ISODateTimeFormat.date().print(dateTime);
    }
 
+   public static String printTimeWithoutTimeZone(DateTime dateTime) {
+      return dateTime == null ? null : ISODateTimeFormat.hourMinuteSecond().print(dateTime);
+   }
+
    public static DateTime convert(Calendar cal) {
       return cal == null ? null : new DateTime(cal);
    }

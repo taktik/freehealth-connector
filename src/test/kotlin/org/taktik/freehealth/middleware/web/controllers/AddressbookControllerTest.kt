@@ -33,7 +33,7 @@ class AddressbookControllerTest : EhealthTest() {
     @Test
     fun searchHcp() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val searchHcp = this.restTemplate.exchange("http://localhost:$port/ab/search/hcp/Duch*", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
+        val searchHcp = this.restTemplate.exchange("http://localhost:$port/ab/search/hcp/Steeman*", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
         Assertions.assertThat(searchHcp != null && searchHcp.length>2 && searchHcp.startsWith("["))
         val hcps: List<HealthcareParty> = gson.fromJson(searchHcp, object : TypeToken<ArrayList<HealthcareParty>>() {}.getType())
         Assertions.assertThat(20).isLessThan(hcps.size)
@@ -53,11 +53,11 @@ class AddressbookControllerTest : EhealthTest() {
     @Test
     fun getHcpByNihii() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val getHcp = this.restTemplate.exchange("http://localhost:$port/ab/hcp/nihii/10032669001", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
+        val getHcp = this.restTemplate.exchange("http://localhost:$port/ab/hcp/nihii/15584039004", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
         Assertions.assertThat(getHcp != null && getHcp.length>2 && getHcp.startsWith("{"))
         val hcp = gson.fromJson(getHcp, HealthcareParty::class.java)
-        Assertions.assertThat("DUCHATEAU").isEqualToIgnoringCase(hcp.lastName)
-        Assertions.assertThat("ANTOINE").isEqualToIgnoringCase(hcp.firstName)
+        Assertions.assertThat("STEEMAN").isEqualToIgnoringCase(hcp.lastName)
+        Assertions.assertThat("MAXIME").isEqualToIgnoringCase(hcp.firstName)
     }
 
     @Test

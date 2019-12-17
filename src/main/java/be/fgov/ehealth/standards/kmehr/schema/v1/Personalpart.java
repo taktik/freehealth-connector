@@ -1,7 +1,7 @@
 package be.fgov.ehealth.standards.kmehr.schema.v1;
 
 import org.taktik.connector.technical.adapter.XmlDateNoTzAdapter;
-import org.taktik.connector.technical.adapter.XmlTimeAdapter;
+import org.taktik.connector.technical.adapter.XmlTimeNoTzAdapter;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCARENETPERSONALPART;
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR;
 import java.io.Serializable;
@@ -39,7 +39,7 @@ public class Personalpart implements Serializable {
    @XmlElement(
       type = String.class
    )
-   @XmlJavaTypeAdapter(XmlTimeAdapter.class)
+   @XmlJavaTypeAdapter(XmlTimeNoTzAdapter.class)
    @XmlSchemaType(
       name = "time"
    )

@@ -2,7 +2,7 @@ package be.fgov.ehealth.standards.kmehr.schema.v1;
 
 import org.taktik.connector.technical.adapter.XmlDateNoTzAdapter;
 import org.taktik.connector.technical.adapter.XmlDateTimeAdapter;
-import org.taktik.connector.technical.adapter.XmlTimeAdapter;
+import org.taktik.connector.technical.adapter.XmlTimeNoTzAdapter;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION;
 import be.fgov.ehealth.standards.kmehr.cd.v1.LnkType;
 import be.fgov.ehealth.standards.kmehr.dt.v1.TextType;
@@ -49,7 +49,7 @@ public class TransactionType implements Serializable {
       required = true,
       type = String.class
    )
-   @XmlJavaTypeAdapter(XmlTimeAdapter.class)
+   @XmlJavaTypeAdapter(XmlTimeNoTzAdapter.class)
    @XmlSchemaType(
       name = "time"
    )
