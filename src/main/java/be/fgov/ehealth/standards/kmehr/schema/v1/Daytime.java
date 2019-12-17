@@ -1,6 +1,6 @@
 package be.fgov.ehealth.standards.kmehr.schema.v1;
 
-import org.taktik.connector.technical.adapter.XmlTimeAdapter;
+import org.taktik.connector.technical.adapter.XmlTimeNoTzAdapter;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -21,7 +21,7 @@ public class Daytime implements Serializable {
    @XmlElement(
       type = String.class
    )
-   @XmlJavaTypeAdapter(XmlTimeAdapter.class)
+   @XmlJavaTypeAdapter(XmlTimeNoTzAdapter.class)
    @XmlSchemaType(
       name = "time"
    )

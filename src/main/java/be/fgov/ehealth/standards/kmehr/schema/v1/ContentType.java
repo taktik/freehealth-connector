@@ -1,7 +1,7 @@
 package be.fgov.ehealth.standards.kmehr.schema.v1;
 
 import org.taktik.connector.technical.adapter.XmlDateNoTzAdapter;
-import org.taktik.connector.technical.adapter.XmlTimeAdapter;
+import org.taktik.connector.technical.adapter.XmlTimeNoTzAdapter;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT;
 import be.fgov.ehealth.standards.kmehr.cd.v1.LnkType;
 import be.fgov.ehealth.standards.kmehr.dt.v1.TextType;
@@ -54,7 +54,7 @@ public class ContentType implements Serializable {
    @XmlElement(
       type = String.class
    )
-   @XmlJavaTypeAdapter(XmlTimeAdapter.class)
+   @XmlJavaTypeAdapter(XmlTimeNoTzAdapter.class)
    @XmlSchemaType(
       name = "time"
    )

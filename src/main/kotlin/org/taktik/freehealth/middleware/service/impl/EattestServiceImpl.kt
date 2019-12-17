@@ -95,6 +95,7 @@ import org.taktik.connector.business.mycarenet.attest.mappers.BlobMapper
 import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
+import org.taktik.connector.technical.adapter.XmlTimeNoTzAdapter
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
@@ -176,7 +177,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val inputReference = InputReference().inputReference
 
-        val now = DateTime.now().withMillisOfSecond(0)
+        val now = DateTime.now().withMillisOfSecond(0).withZone(XmlTimeNoTzAdapter.noTimeZone)
         val refDateTime = dateTime(referenceDate) ?: now
 
         return extractEtk(credential)?.let {
@@ -258,7 +259,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                     }
                 }
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                this.issueInstant = DateTime()
+                this.issueInstant = DateTime().withZone(XmlTimeNoTzAdapter.noTimeZone)
                 this.routing = RoutingType().apply {
                     careReceiver = CareReceiverIdType().apply {
                         ssin = patientSsin
@@ -390,7 +391,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val inputReference = InputReference().inputReference
 
-        val now = DateTime.now().withMillisOfSecond(0)
+        val now = DateTime.now().withMillisOfSecond(0).withZone(XmlTimeNoTzAdapter.noTimeZone)
         val refDateTime = dateTime(referenceDate) ?: now
         val requestAuthorNihii = guardPostNihii ?: hcpNihii
 
@@ -496,7 +497,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                     }
                 }
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                this.issueInstant = DateTime()
+                this.issueInstant = DateTime().withZone(XmlTimeNoTzAdapter.noTimeZone)
                 this.routing = RoutingType().apply {
                     careReceiver = CareReceiverIdType().apply {
                         ssin = patientSsin
@@ -613,7 +614,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val inputReference = InputReference().inputReference
 
-        val now = DateTime.now().withMillisOfSecond(0)
+        val now = DateTime.now().withMillisOfSecond(0).withZone(XmlTimeNoTzAdapter.noTimeZone)
         val refDateTime = dateTime(referenceDate) ?: now
         val requestAuthorNihii = guardPostNihii ?: hcpNihii
 
@@ -720,7 +721,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                     }
                 }
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                this.issueInstant = DateTime()
+                this.issueInstant = DateTime().withZone(XmlTimeNoTzAdapter.noTimeZone)
                 this.routing = RoutingType().apply {
                     careReceiver = CareReceiverIdType().apply {
                         ssin = patientSsin
@@ -825,7 +826,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
         referenceDate: Int?) : SendTransactionRequest {
 
         val refDateTime = dateTime(referenceDate) ?: now
-        val theDayBeforeRefDate = refDateTime.plusDays(-1)
+        val theDayBeforeRefDate = refDateTime.plusDays(-1).withZone(XmlTimeNoTzAdapter.noTimeZone)
 
         val requestAuthorNihii = guardPostNihii ?: hcpNihii
         val requestAuthorSsin = guardPostSsin ?: hcpSsin
@@ -1352,7 +1353,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
         referenceDate: Int?) : SendTransactionRequest {
 
         val refDateTime = dateTime(referenceDate) ?: now
-        val theDayBeforeRefDate = refDateTime.plusDays(-1)
+        val theDayBeforeRefDate = refDateTime.plusDays(-1).withZone(XmlTimeNoTzAdapter.noTimeZone)
 
         val requestAuthorNihii = guardPostNihii ?: hcpNihii
         val requestAuthorSsin = guardPostSsin ?: hcpSsin
@@ -2071,7 +2072,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
 
     private fun dateTime(intDate: Int?) = intDate?.let {
         DateTime(0).withYear(intDate / 10000).withMonthOfYear((intDate / 100) % 100)
-            .withDayOfMonth(intDate % 100)
+            .withDayOfMonth(intDate % 100).withZone(XmlTimeNoTzAdapter.noTimeZone)
     }
 
     private fun extractError(sendTransactionRequest: ByteArray, ec: String, errorUrl: String?): Set<MycarenetError> {

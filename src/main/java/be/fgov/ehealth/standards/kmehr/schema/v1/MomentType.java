@@ -1,7 +1,7 @@
 package be.fgov.ehealth.standards.kmehr.schema.v1;
 
 import org.taktik.connector.technical.adapter.XmlDateNoTzAdapter;
-import org.taktik.connector.technical.adapter.XmlTimeAdapter;
+import org.taktik.connector.technical.adapter.XmlTimeNoTzAdapter;
 import be.fgov.ehealth.standards.kmehr.dt.v1.TextType;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,7 +34,7 @@ public class MomentType implements Serializable {
    @XmlElement(
       type = String.class
    )
-   @XmlJavaTypeAdapter(XmlTimeAdapter.class)
+   @XmlJavaTypeAdapter(XmlTimeNoTzAdapter.class)
    @XmlSchemaType(
       name = "time"
    )
