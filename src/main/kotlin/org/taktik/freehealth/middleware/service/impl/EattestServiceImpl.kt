@@ -1826,60 +1826,58 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                         s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                         (itemId++).toString()
                                     })
-                                    cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.4"; value = "documentidentity" })
-                                    contents.addAll(listOf(ContentType().apply {
-                                        date = (dateTime(cr.date) ?: now)
-                                        time =
-                                            cr.time?.let {
-                                                dateTime(cr.date)?.withHourOfDay(it / 10000)
-                                                    ?.withMinuteOfHour((it / 100) % 100)
-                                                    ?.withSecondOfMinute(it % 100)
-                                            }
-                                    },
-                                                           ContentType().apply {
-                                                               cds.add(CDCONTENT().apply {
-                                                                   s =
-                                                                       CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                                                   "NIHDI-ID-DOC-INPUT-TYPE"; value =
-                                                                   cr.inputType.toString()
-                                                               })
-                                                           },
-                                                           cr.manualInputReason?.let {
-                                                               ContentType().apply {
-                                                                   cds.add(CDCONTENT().apply {
-                                                                       s =
-                                                                           CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                                                       "NIHDI-ID-DOC-MANUAL-INOUT-JUSTIFICATION"; value =
-                                                                       it.toString()
-                                                                   })
-                                                               }
-                                                           },
-                                                            cr.vignetteReason?.let {
-                                                                ContentType().apply {
-                                                                    cds.add(CDCONTENT().apply {
-                                                                        s =
-                                                                            CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                                                        "NIHDI-ID-DOC-VIGNETTE-USE-JUSTIFICATION"; value =
-                                                                        it.toString()
-                                                                    })
-                                                                }
-                                                            },
-                                                           ContentType().apply {
-                                                               cds.add(CDCONTENT().apply {
-                                                                   s =
-                                                                       CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                                                   "NIHDI-ID-DOC-MEDIA-TYPE"; value =
-                                                                   cr.mediaType.toString()
-                                                               })
-                                                           },
-                                                           cr.serial?.let {
-                                                               ContentType().apply {
-                                                                   texts.add(TextType().apply {
-                                                                       l =
-                                                                           "en"; value = it
-                                                                   })
-                                                               }
-                                                           }).filterNotNull())
+                                    cds.add(CDITEM().apply {
+                                        s = CD_ITEM_MYCARENET; sv = "1.4"; value =
+                                        "documentidentity"
+                                    })
+                                    contents.addAll(listOf(
+                                        ContentType().apply {
+                                            date = (dateTime(cr.date) ?: now)
+                                            time =
+                                                cr.time?.let {
+                                                    dateTime(cr.date)?.withHourOfDay(it / 10000)
+                                                        ?.withMinuteOfHour((it / 100) % 100)
+                                                        ?.withSecondOfMinute(it % 100)
+                                                }
+                                        },
+                                        ContentType().apply {
+                                           cds.add(CDCONTENT().apply {
+                                               s =
+                                                   CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                               "NIHDI-ID-DOC-INPUT-TYPE"; value =
+                                               cr.inputType.toString()
+                                           })
+                                           cr.manualInputReason?.let {
+                                               cds.add(CDCONTENT().apply {
+                                                   s =
+                                                       CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                   "NIHDI-ID-DOC-MANUAL-INPUT-JUSTIFICATION"; value =
+                                                   it.toString()
+                                               })
+                                           }
+                                           cr.vignetteReason?.let {
+                                               cds.add(CDCONTENT().apply {
+                                                   s =
+                                                       CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                   "NIHDI-ID-DOC-VIGNETTE-USE-JUSTIFICATION"; value =
+                                                   it.toString()
+                                               })
+                                           }
+                                           cds.add(CDCONTENT().apply {
+                                               s =
+                                                   CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                               "NIHDI-ID-DOC-MEDIA-TYPE"; value =
+                                               cr.mediaType.toString()
+                                           })
+                                        },
+                                        cr.serial?.let {
+                                           ContentType().apply {
+                                               texts.add(TextType().apply {
+                                                   l =
+                                                       "en"; value = it
+                                               })
+                                           }
+                                        }).filterNotNull())
                                 }
                             }).filterNotNull())
                         }
