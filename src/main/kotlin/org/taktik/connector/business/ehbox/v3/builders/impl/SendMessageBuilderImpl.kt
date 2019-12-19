@@ -158,8 +158,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
         val dataToSend =
             this.encode(keystoreId, keystore, passPhrase, message.document!!.getContent(), message.isEncrypted, destinationEtkSet)
         publicationDocumentType.digest = this.processDigest(dataToSend)
-        publicationDocumentType.encryptableBinaryContent =
-            DataHandler(ByteArrayDatasource(dataToSend, message.document!!.mimeType))
+        publicationDocumentType.encryptableTextContent = dataToSend
         publicationDocumentType.mimeType = message.document!!.mimeType
         publicationDocumentType.title = message.document!!.title
         publicationDocumentType.downloadFileName = message.document!!.filename
