@@ -81,6 +81,8 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.TransactionType
 import be.fgov.ehealth.standards.kmehr.schema.v1.UnitType
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
+import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError
+import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult
 import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTransformer
 import com.google.gson.Gson
 import org.apache.commons.codec.binary.Base64
@@ -145,6 +147,7 @@ import javax.xml.xpath.XPathFactory
 
 @Service
 class EattestServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : EattestService {
+
     override fun cancelAttest(keystoreId: UUID,
         tokenId: UUID,
         hcpNihii: String,
@@ -266,42 +269,34 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                     this.referenceDate = refDateTime
                 }
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
-                this.xades = BlobUtil.generateXades(this.detail, credential, "eattest")
+                this.xades = BlobUtil.generateXades(credential, this.detail, "eattest")
             }
 
             val cancelAttestationResponse = freehealthEattestService.cancelAttestion(samlToken, cancelAttestationRequest)
             val blobType = cancelAttestationResponse.`return`.detail
             val blob = BlobMapper.mapBlobfromBlobType(blobType)
 
-            var xades:ByteArray? = null
-            var kmehrMessage:ByteArray? = null
+            val xades = cancelAttestationResponse.`return`.xadesT
 
             val sendTransactionResponse = try {
-                val unsealedData =
-                    crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
-                val encryptedKnownContent =
-                    MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
-                        unsealedData
-                    )
+                val signatureVerificationResult = xades?.let {
+                    val builder =
+                        SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T)
+                    val options = mapOf("followNestedManifest" to true)
+                    builder.verify(this.appendRequestToDataToVerify(cancelAttestationResponse, cancelAttestationRequest), it.value, options)
+                } ?: SignatureVerificationResult().apply {
+                    errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
+                }
 
-                xades = encryptedKnownContent!!.xades
-                kmehrMessage = encryptedKnownContent!!.businessContent.value
-
-                val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
-                val options = emptyMap<String, Any>()
-                val signatureVerificationResult = xades?.let { builder.verify(unsealedData, it, options) }
-
-                    AttestBuilderResponse(
-                        MarshallerHelper(
-                            SendTransactionResponse::class.java,
-                            SendTransactionResponse::class.java
-                        ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
-                    ).sendTransactionResponse
+                MarshallerHelper(
+                    SendTransactionResponse::class.java,
+                    SendTransactionResponse::class.java
+                                ).toObject(blob.content)
             } catch(ex: UnsealConnectorException) {
                 MarshallerHelper(
                     SendTransactionResponse::class.java,
                     SendTransactionResponse::class.java
-                ).toObject(blob.content)
+                                ).toObject(blob.content)
             }
 
             val errors = sendTransactionResponse.acknowledge.errors?.flatMap { e ->
@@ -316,7 +311,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                         iscomplete = sendTransactionResponse.acknowledge.isIscomplete,
                         errors = errors ?: listOf()
                                                         ),
-                    xades = xades,
+                    xades = xades?.value,
                     commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
                     mycarenetConversation = MycarenetConversation().apply {
                         this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse).toString(Charsets.UTF_8)
@@ -324,21 +319,21 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                         cancelAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                         cancelAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                     },
-                    kmehrMessage = kmehrMessage
+                    kmehrMessage = blob.content
                                             )
             } ?: SendAttestResultWithResponse(
                 acknowledge = EattestAcknowledgeType(
                     iscomplete = sendTransactionResponse.acknowledge.isIscomplete,
                     errors = errors ?: listOf()
                                                     ),
-                xades = xades,
+                xades = xades?.value,
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse).toString(Charsets.UTF_8)
                     this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
                     cancelAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     cancelAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                kmehrMessage = kmehrMessage
+                kmehrMessage = blob.content
                                              )
         }    }
 
