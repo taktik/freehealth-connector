@@ -1662,6 +1662,16 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                                             })
                                         }
                                     },
+                                    code.side?.let {
+                                        ContentType().apply {
+                                            cds.add(CDCONTENT().apply {
+                                                s = CDCONTENTschemes.LOCAL;
+                                                sv = "1.0";
+                                                sl = "NIHDI-TREATED-LIMB";
+                                                value = code.side.toString();
+                                            })
+                                        }
+                                    },
                                     code.justification?.let {
                                         ContentType().apply {
                                             cds.add(CDCONTENT().apply {
