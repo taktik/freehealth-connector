@@ -269,7 +269,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                     this.referenceDate = refDateTime
                 }
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
-                this.xades = BlobUtil.generateXades(credential, this.detail, "eattest")
+                this.xades = BlobUtil.generateXades(this.detail, credential, "eattest")
             }
 
             val cancelAttestationResponse = freehealthEattestService.cancelAttestion(samlToken, cancelAttestationRequest)
@@ -336,6 +336,16 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                 kmehrMessage = blob.content
                                              )
         }    }
+
+    @Throws(TechnicalConnectorException::class)
+    private fun appendRequestToDataToVerify(dataToVerify: Any, request: Any): ByteArray? {
+        val explodedDoc = ConnectorXmlUtils.toDocument(dataToVerify)
+        val firstDocImportedNode =
+            explodedDoc.importNode(ConnectorXmlUtils.toElement(ConnectorXmlUtils.toByteArray(request)), true)
+        ConnectorXmlUtils.getFirstChildElement(explodedDoc).appendChild(firstDocImportedNode)
+        return ConnectorXmlUtils.toByteArray(explodedDoc as Node)
+    }
+
 
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val config = ConfigFactory.getConfigValidator(listOf())
