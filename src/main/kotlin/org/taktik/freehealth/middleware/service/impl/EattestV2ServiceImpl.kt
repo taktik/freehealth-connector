@@ -79,6 +79,7 @@ import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.StandardType
 import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.TransactionType
 import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.UnitType
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
+import be.fgov.ehealth.technicalconnector.signature.SignatureBuilder
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult
@@ -517,34 +518,22 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
             val blobType = cancelAttestationResponse.`return`.detail
             val blob = BlobMapper.mapBlobfromBlobType(blobType)
 
-            var xades:ByteArray? = null
-            var kmehrMessage:ByteArray? = null
+            val xades = cancelAttestationResponse.`return`.xadesT
 
             val sendTransactionResponse = try {
-                val unsealedData =
-                    crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
-                val encryptedKnownContent =
-                    MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
-                        unsealedData
-                                                                                                                   )
-
-                xades = encryptedKnownContent!!.xades
-                kmehrMessage = encryptedKnownContent!!.businessContent.value
-
                 val signatureVerificationResult = xades?.let {
-                    val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
-                    val options = emptyMap<String, Any>()
-                    builder.verify(unsealedData, it, options)
+                    val builder =
+                        SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T)
+                    val options = mapOf("followNestedManifest" to true)
+                    builder.verify(this.appendRequestToDataToVerify(cancelAttestationResponse, cancelAttestationRequest), it.value, options)
                 } ?: SignatureVerificationResult().apply {
                     errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
                 }
 
-                AttestV2BuilderResponse(
-                    MarshallerHelper(
-                        SendTransactionResponse::class.java,
-                        SendTransactionResponse::class.java
-                                    ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
-                                                           ).sendTransactionResponse
+                MarshallerHelper(
+                    SendTransactionResponse::class.java,
+                    SendTransactionResponse::class.java
+                                ).toObject(blob.content)
             } catch(ex: UnsealConnectorException) {
                 MarshallerHelper(
                     SendTransactionResponse::class.java,
@@ -564,7 +553,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                         iscomplete = sendTransactionResponse.acknowledge.isIscomplete,
                         errors = errors ?: listOf()
                                                         ),
-                    xades = xades,
+                    xades = xades?.value,
                     commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
                     mycarenetConversation = MycarenetConversation().apply {
                         this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse).toString(Charsets.UTF_8)
@@ -572,23 +561,32 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                         cancelAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                         cancelAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                     },
-                    kmehrMessage = kmehrMessage
+                    kmehrMessage = blob.content
                                             )
             } ?: SendAttestResultWithResponse(
                 acknowledge = EattestAcknowledgeType(
                     iscomplete = sendTransactionResponse.acknowledge.isIscomplete,
                     errors = errors ?: listOf()
                                                     ),
-                xades = xades,
+                xades = xades?.value,
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse).toString(Charsets.UTF_8)
                     this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
                     cancelAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     cancelAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                kmehrMessage = kmehrMessage
+                kmehrMessage = blob.content
                                              )
         }    }
+
+    @Throws(TechnicalConnectorException::class)
+    private fun appendRequestToDataToVerify(dataToVerify: Any, request: Any): ByteArray? {
+        val explodedDoc = ConnectorXmlUtils.toDocument(dataToVerify)
+        val firstDocImportedNode =
+            explodedDoc.importNode(ConnectorXmlUtils.toElement(ConnectorXmlUtils.toByteArray(request)), true)
+        ConnectorXmlUtils.getFirstChildElement(explodedDoc).appendChild(firstDocImportedNode)
+        return ConnectorXmlUtils.toByteArray(explodedDoc as Node)
+    }
 
     private fun getEattestCreateV2SendTransactionRequest(
         now: DateTime,
