@@ -79,7 +79,6 @@ import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.StandardType
 import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.TransactionType
 import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.UnitType
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
-import be.fgov.ehealth.technicalconnector.signature.SignatureBuilder
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult
@@ -130,6 +129,7 @@ import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
 import java.io.StringWriter
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.UUID
@@ -158,236 +158,6 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
 
     fun NodeList.forEach(action: (Node) -> Unit) {
         (0 until this.length).asSequence().map { this.item(it) }.forEach { action(it) }
-    }
-
-    override fun sendAttestV2(
-        keystoreId: UUID,
-        tokenId: UUID,
-        hcpNihii: String,
-        hcpSsin: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        hcpCbe: String,
-        treatmentReason: String?,
-        traineeSupervisorSsin: String?,
-        traineeSupervisorNihii: String?,
-        traineeSupervisorFirstName: String?,
-        traineeSupervisorLastName: String?,
-        guardPostNihii: String?,
-        guardPostSsin: String?,
-        guardPostName: String?,
-        passPhrase: String,
-        patientSsin: String,
-        patientFirstName: String,
-        patientLastName: String,
-        patientGender: String,
-        referenceDate: Int?,
-        attest: Eattest): SendAttestResultWithResponse? {
-
-        val samlToken =
-            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for Eattest operations")
-        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
-        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
-        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
-
-        val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
-        val inputReference = InputReference().inputReference
-
-        val now = DateTime.now().withMillisOfSecond(0)
-        val refDateTime = dateTime(referenceDate) ?: now
-        val requestAuthorNihii = guardPostNihii ?: hcpNihii
-
-        return extractEtk(credential)?.let {
-            val sendTransactionRequest =
-                getEattestCreateV2SendTransactionRequest(
-                    now,
-                    hcpNihii,
-                    hcpSsin,
-                    hcpFirstName,
-                    hcpLastName,
-                    hcpCbe,
-                    patientSsin,
-                    patientFirstName,
-                    patientLastName,
-                    patientGender,
-                    treatmentReason,
-                    traineeSupervisorNihii,
-                    traineeSupervisorSsin,
-                    traineeSupervisorFirstName,
-                    traineeSupervisorLastName,
-                    guardPostNihii,
-                    guardPostSsin,
-                    guardPostName,
-                    attest,
-                    referenceDate
-                                                        )
-            val kmehrMarshallHelper =
-                MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
-            val requestXml = kmehrMarshallHelper.toXMLByteArray(sendTransactionRequest)
-
-            val sendAttestationRequest = be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationRequest().apply {
-                val encryptedKnownContent = EncryptedKnownContent()
-                encryptedKnownContent.replyToEtk = it.encoded
-                val businessContent = BusinessContent().apply { id = detailId }
-                encryptedKnownContent.businessContent = businessContent
-
-                businessContent.value = requestXml
-                log.info("Request is: " + businessContent.value.toString(Charsets.UTF_8))
-                val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
-
-                val blob =
-                    BlobBuilderFactory.getBlobBuilder("attest")
-                        .build(
-                            xmlByteArray,
-                            "none",
-                            detailId,
-                            "text/xml",
-                            null as String?,
-                            "encryptedForKnownBED"
-                              )
-                blob.messageName = "E-ATTEST-V2"
-
-                val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword)
-
-                this.commonInput = CommonInputType().apply {
-                    request =
-                        be.fgov.ehealth.mycarenet.commons.core.v3.RequestType()
-                            .apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
-                    this.inputReference = inputReference
-                    origin = OriginType().apply {
-                        `package` = PackageType().apply {
-                            license = LicenseType().apply {
-                                username = packageInfo.userName
-                                password = packageInfo.password
-                            }
-                            name = ValueRefString().apply { value = packageInfo.packageName }
-                        }
-                        careProvider = CareProviderType().apply {
-                            if (guardPostNihii?.isEmpty() != false) {
-                            nihii =
-                                NihiiType().apply {
-                                    quality = "doctor"; value =
-                                    ValueRefString().apply { value = hcpNihii }
-                                }
-                            physicalPerson = IdType().apply {
-                                name = ValueRefString().apply { value = "$hcpFirstName $hcpLastName" }
-                                ssin = ValueRefString().apply { value = hcpSsin }
-                                nihii =
-                                    NihiiType().apply {
-                                        quality = "doctor"; value =
-                                            ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
-                                        }
-                                }
-                            } else {
-                                nihii =
-                                    NihiiType().apply {
-                                        quality = "guardpost"; value =
-                                        ValueRefString().apply { value = requestAuthorNihii.padEnd(11, '0') }
-                                    }
-
-                                guardPostNihii?.let {
-                                    organization = IdType().apply {
-                                        name = ValueRefString().apply { value = guardPostName }
-                                        nihii = NihiiType().apply {
-                                            quality = "guardpost"; value =
-                                            ValueRefString().apply { value = requestAuthorNihii.padEnd(11, '0') }
-                                        }
-                                    }
-                                    }
-                            }
-                        }
-                    }
-                }
-                this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                this.issueInstant = DateTime()
-                this.routing = RoutingType().apply {
-                    careReceiver = CareReceiverIdType().apply {
-                        ssin = patientSsin
-                    }
-                    this.referenceDate = refDateTime
-                }
-                this.detail = BlobMapper.mapBlobTypefromBlob(blob)
-            }
-
-            val sendAttestationResponse = freehealthEattestService.sendAttestion(samlToken, sendAttestationRequest)
-
-            val blobType = sendAttestationResponse.`return`.detail
-            val blob = BlobMapper.mapBlobfromBlobType(blobType)
-            val unsealedData =
-                crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
-            val encryptedKnownContent =
-                MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
-                    unsealedData
-                                                                                                               )
-            val xades = encryptedKnownContent!!.xades
-            val signatureVerificationResult = xades?.let {
-                val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
-                val options = emptyMap<String, Any>()
-                builder.verify(unsealedData, it, options)
-            } ?: SignatureVerificationResult().apply {
-                errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
-            }
-
-            val decryptedAndVerifiedResponse =
-                AttestV2BuilderResponse(
-                    MarshallerHelper(
-                        SendTransactionResponse::class.java,
-                        SendTransactionResponse::class.java
-                                    ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
-                                                           )
-
-            val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
-                e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
-                    extractError(requestXml, ec, e.url)
-                } ?: setOf()
-            }
-            val commonOutput = sendAttestationResponse.`return`.commonOutput
-            decryptedAndVerifiedResponse.sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
-                SendAttestResultWithResponse(
-                    acknowledge = EattestAcknowledgeType(
-                        iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
-                        errors = errors ?: listOf()
-                                                        ),
-                    invoicingNumber = folder.transactions.find { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cga" } }?.let {
-                        it.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "invoicingnumber" } }
-                            ?.contents?.firstOrNull()?.texts?.firstOrNull()?.value
-                    },
-                    attest = Eattest(codes = folder.transactions?.filter { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cgd" } }?.map { t ->
-                        Eattest.EattestCode(
-                            riziv = t.item.find { it.cds.any { it.s == CD_ITEM && it.value == "claim" } }?.contents?.mapNotNull { it.cds?.find { it.s == CD_NIHDI }?.value }?.firstOrNull(),
-                            fee = t.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "fee" } }?.cost?.decimal?.toDouble()
-                                           )
-                    } ?: listOf()),
-                    xades = xades,
-                    commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
-                    mycarenetConversation = MycarenetConversation().apply {
-                        this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse).toString(Charsets.UTF_8)
-                        this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
-                        sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                        sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
-                    },
-                    kmehrMessage = encryptedKnownContent?.businessContent?.value
-                                            )
-            } ?: SendAttestResultWithResponse(
-                acknowledge = EattestAcknowledgeType(
-                    iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
-                    errors = errors ?: listOf()
-                                                    ),
-                xades = xades,
-                mycarenetConversation = MycarenetConversation().apply {
-                    this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse).toString(Charsets.UTF_8)
-                    this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
-                    sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
-                },
-                kmehrMessage = encryptedKnownContent?.businessContent?.value
-                                             )
-        }
-
     }
 
     override fun cancelAttest(keystoreId: UUID,
@@ -579,6 +349,236 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                              )
         }    }
 
+    override fun sendAttestV2(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        hcpCbe: String,
+        treatmentReason: String?,
+        traineeSupervisorSsin: String?,
+        traineeSupervisorNihii: String?,
+        traineeSupervisorFirstName: String?,
+        traineeSupervisorLastName: String?,
+        guardPostNihii: String?,
+        guardPostSsin: String?,
+        guardPostName: String?,
+        passPhrase: String,
+        patientSsin: String,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
+        referenceDate: Int?,
+        attest: Eattest): SendAttestResultWithResponse? {
+
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for Eattest operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
+
+        val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
+        val inputReference = InputReference().inputReference
+
+        val now = DateTime.now().withMillisOfSecond(0)
+        val refDateTime = dateTime(referenceDate) ?: now
+        val requestAuthorNihii = guardPostNihii ?: hcpNihii
+
+        return extractEtk(credential)?.let {
+            val sendTransactionRequest =
+                getEattestCreateV2SendTransactionRequest(
+                    now,
+                    hcpNihii,
+                    hcpSsin,
+                    hcpFirstName,
+                    hcpLastName,
+                    hcpCbe,
+                    patientSsin,
+                    patientFirstName,
+                    patientLastName,
+                    patientGender,
+                    treatmentReason,
+                    traineeSupervisorNihii,
+                    traineeSupervisorSsin,
+                    traineeSupervisorFirstName,
+                    traineeSupervisorLastName,
+                    guardPostNihii,
+                    guardPostSsin,
+                    guardPostName,
+                    attest,
+                    referenceDate
+                                                        )
+            val kmehrMarshallHelper =
+                MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
+            val requestXml = kmehrMarshallHelper.toXMLByteArray(sendTransactionRequest)
+
+            val sendAttestationRequest = be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationRequest().apply {
+                val encryptedKnownContent = EncryptedKnownContent()
+                encryptedKnownContent.replyToEtk = it.encoded
+                val businessContent = BusinessContent().apply { id = detailId }
+                encryptedKnownContent.businessContent = businessContent
+
+                businessContent.value = requestXml
+                log.info("Request is: " + businessContent.value.toString(Charsets.UTF_8))
+                val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
+
+                val blob =
+                    BlobBuilderFactory.getBlobBuilder("attest")
+                        .build(
+                            xmlByteArray,
+                            "none",
+                            detailId,
+                            "text/xml",
+                            null as String?,
+                            "encryptedForKnownBED"
+                              )
+                blob.messageName = "E-ATTEST-V2"
+
+                val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword)
+
+                this.commonInput = CommonInputType().apply {
+                    request =
+                        be.fgov.ehealth.mycarenet.commons.core.v3.RequestType()
+                            .apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
+                    this.inputReference = inputReference
+                    origin = OriginType().apply {
+                        `package` = PackageType().apply {
+                            license = LicenseType().apply {
+                                username = packageInfo.userName
+                                password = packageInfo.password
+                            }
+                            name = ValueRefString().apply { value = packageInfo.packageName }
+                        }
+                        careProvider = CareProviderType().apply {
+                            if (guardPostNihii?.isEmpty() != false) {
+                                nihii =
+                                    NihiiType().apply {
+                                        quality = "doctor"; value =
+                                        ValueRefString().apply { value = hcpNihii }
+                                    }
+                                physicalPerson = IdType().apply {
+                                    name = ValueRefString().apply { value = "$hcpFirstName $hcpLastName" }
+                                    ssin = ValueRefString().apply { value = hcpSsin }
+                                    nihii =
+                                        NihiiType().apply {
+                                            quality = "doctor"; value =
+                                            ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                                        }
+                                }
+                            } else {
+                                nihii =
+                                    NihiiType().apply {
+                                        quality = "guardpost"; value =
+                                        ValueRefString().apply { value = requestAuthorNihii.padEnd(11, '0') }
+                                    }
+
+                                guardPostNihii?.let {
+                                    organization = IdType().apply {
+                                        name = ValueRefString().apply { value = guardPostName }
+                                        nihii = NihiiType().apply {
+                                            quality = "guardpost"; value =
+                                            ValueRefString().apply { value = requestAuthorNihii.padEnd(11, '0') }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
+                this.issueInstant = DateTime()
+                this.routing = RoutingType().apply {
+                    careReceiver = CareReceiverIdType().apply {
+                        ssin = patientSsin
+                    }
+                    this.referenceDate = refDateTime
+                }
+                this.detail = BlobMapper.mapBlobTypefromBlob(blob)
+            }
+
+            val sendAttestationResponse = freehealthEattestService.sendAttestion(samlToken, sendAttestationRequest)
+
+            val blobType = sendAttestationResponse.`return`.detail
+            val blob = BlobMapper.mapBlobfromBlobType(blobType)
+            val unsealedData =
+                crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
+            val encryptedKnownContent =
+                MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
+                    unsealedData
+                                                                                                               )
+            val xades = encryptedKnownContent!!.xades
+            val signatureVerificationResult = xades?.let {
+                val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
+                val options = emptyMap<String, Any>()
+                builder.verify(unsealedData, it, options)
+            } ?: SignatureVerificationResult().apply {
+                errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
+            }
+
+            val decryptedAndVerifiedResponse =
+                AttestV2BuilderResponse(
+                    MarshallerHelper(
+                        SendTransactionResponse::class.java,
+                        SendTransactionResponse::class.java
+                                    ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
+                                       )
+
+            val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
+                e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
+                    extractError(requestXml, ec, e.url)
+                } ?: setOf()
+            }
+            val commonOutput = sendAttestationResponse.`return`.commonOutput
+            decryptedAndVerifiedResponse.sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
+                SendAttestResultWithResponse(
+                    acknowledge = EattestAcknowledgeType(
+                        iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
+                        errors = errors ?: listOf()
+                                                        ),
+                    invoicingNumber = folder.transactions.find { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cga" } }?.let {
+                        it.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "invoicingnumber" } }
+                            ?.contents?.firstOrNull()?.texts?.firstOrNull()?.value
+                    },
+                    attest = Eattest(codes = folder.transactions?.filter { it.cds.any { it.s == CD_TRANSACTION_MYCARENET && it.value == "cgd" } }?.map { t ->
+                        Eattest.EattestCode(
+                            riziv = t.item.find { it.cds.any { it.s == CD_ITEM && it.value == "claim" } }?.contents?.mapNotNull { it.cds?.find { it.s == CD_NIHDI }?.value }?.firstOrNull(),
+                            fee = t.item.find { it.cds.any { it.s == CD_ITEM_MYCARENET && it.value == "fee" } }?.cost?.decimal?.toDouble()
+                                           )
+                    } ?: listOf()),
+                    xades = xades,
+                    commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
+                    mycarenetConversation = MycarenetConversation().apply {
+                        this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse).toString(Charsets.UTF_8)
+                        this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
+                        sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                        sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    },
+                    kmehrMessage = encryptedKnownContent?.businessContent?.value
+                                            )
+            } ?: SendAttestResultWithResponse(
+                acknowledge = EattestAcknowledgeType(
+                    iscomplete = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.isIscomplete,
+                    errors = errors ?: listOf()
+                                                    ),
+                xades = xades,
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse).toString(Charsets.UTF_8)
+                    this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
+                    sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                },
+                kmehrMessage = encryptedKnownContent?.businessContent?.value
+                                             )
+        }
+
+    }
+
     @Throws(TechnicalConnectorException::class)
     private fun appendRequestToDataToVerify(dataToVerify: Any, request: Any): ByteArray? {
         val explodedDoc = ConnectorXmlUtils.toDocument(dataToVerify)
@@ -763,7 +763,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                 (itemId++).toString()
                             })
                             cds.add(CDITEM().apply {
-                                s = CD_ITEM_MYCARENET; sv = "1.3"; value =
+                                s = CD_ITEM_MYCARENET; sv = "1.4"; value =
                                 "patientpaid"
                             })
                             cost = CostType().apply {
@@ -772,7 +772,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                         Math.round(
                                             ((it.reimbursement ?: 0.0) + (it.reglementarySupplement ?: 0.0)) * 100
                                                   ).toInt()
-                                    }.toLong()).divide(BigDecimal(100L))
+                                    }.toLong()).divide(BigDecimal(100L)).setScale(2, RoundingMode.CEILING)
                                 unit = UnitType().apply {
                                     cd =
                                         CDUNIT().apply {
@@ -797,7 +797,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                })
                                cost = CostType().apply {
                                    decimal =
-                                       BigDecimal.valueOf(it.toLong()).divide(BigDecimal("100"))
+                                       BigDecimal.valueOf(it.toLong()).divide(BigDecimal("100")).setScale(2, RoundingMode.CEILING)
                                    unit = UnitType().apply {
                                        cd =
                                            CDUNIT().apply {
@@ -852,7 +852,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                             })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                "1.10"; value = "persphysician"
+                                "1.14"; value = "persphysician"
                             })
                             firstname = hcpFirstName
                             familyname = hcpLastName
@@ -869,7 +869,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                             })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                "1.10"; value = "persphysician"
+                                "1.14"; value = "persphysician"
                             })
                             firstname = traineeSupervisorFirstName
                             familyname = traineeSupervisorLastName
@@ -902,7 +902,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                     s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                     (itemId++).toString()
                                 })
-                                cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "claim" })
+                                cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "claim" })
                                 contents.addAll(listOf(
                                     ContentType().apply {
                                         cds.add(CDCONTENT().apply {
@@ -939,7 +939,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                     s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                     (itemId++).toString()
                                 })
-                                cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "encounterdatetime" })
+                                cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "encounterdatetime" })
                                 contents.add(ContentType().apply { date = dateTime(code.date) ?: refDateTime })
                             }, code.location?.let { loc ->
                                 ItemType().apply {
@@ -948,7 +948,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                         (itemId++).toString()
                                     })
                                     cds.add(CDITEM().apply {
-                                        s = CD_ITEM; sv = "1.10"; value =
+                                        s = CD_ITEM; sv = "1.11"; value =
                                         "encounterlocation"
                                     })
                                     contents.addAll(listOf(ContentType().apply {
@@ -980,7 +980,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                         s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                         (itemId++).toString()
                                     })
-                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "requestor" })
+                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "requestor" })
                                     contents.addAll(listOf(ContentType().apply {
                                         hcparty = HcpartyType().apply {
                                             ids.add(IDHCPARTY().apply {
@@ -1022,7 +1022,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                         s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                         (itemId++).toString()
                                     })
-                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.10"; value = "gmdmanager" })
+                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "gmdmanager" })
                                     contents.addAll(listOf(ContentType().apply {
                                         hcparty = HcpartyType().apply {
                                             ids.add(IDHCPARTY().apply {
@@ -1102,19 +1102,15 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                                                    "NIHDI-ID-DOC-INPUT-TYPE"; value =
                                                                    cr.inputType.toString()
                                                                })
-                                                           },
                                                            cr.manualInputReason?.let {
-                                                               ContentType().apply {
                                                                    cds.add(CDCONTENT().apply {
                                                                        s =
                                                                            CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                                                       "NIHDI-ID-DOC-MANUAL-INOUT-JUSTIFICATION"; value =
+                                                   "NIHDI-ID-DOC-MANUAL-INPUT-JUSTIFICATION"; value =
                                                                        it.toString()
                                                                    })
                                                                }
-                                                           },
                                                             cr.vignetteReason?.let {
-                                                                ContentType().apply {
                                                                     cds.add(CDCONTENT().apply {
                                                                         s =
                                                                             CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
@@ -1122,8 +1118,6 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                                                         it.toString()
                                                                     })
                                                                 }
-                                                            },
-                                                           ContentType().apply {
                                                                cds.add(CDCONTENT().apply {
                                                                    s =
                                                                        CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
@@ -1339,9 +1333,12 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
             factory.isNamespaceAware = true
             val builder = factory.newDocumentBuilder()
 
-            val xpath = xPathFactory.newXPath()
-            val expr = xpath.compile(if (url.startsWith("/")) url else "/" + url)
             val result = mutableSetOf<MycarenetError>()
+            val curratedUrl = if (url.startsWith("/")) url else "/" + url
+
+            try {
+                val xpath = xPathFactory.newXPath()
+                val expr = xpath.compile(curratedUrl)
 
             (expr.evaluate(
                 builder.parse(ByteArrayInputStream(sendTransactionRequest)),
@@ -1365,12 +1362,22 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                     result.add(
                         MycarenetError(
                             code = ec,
-                            path = url,
+                                path = curratedUrl,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
                                       )
                               )
                 }
+            }
+            } catch(e:Exception) {
+                result.add(
+                    MycarenetError(
+                        code = ec,
+                        path = curratedUrl,
+                        msgFr = "Erreur générique, xpath invalide : "+e.message,
+                        msgNl = "Onbekend foutmelding, xpath ongeldig : "+e.message
+                                  )
+                          )
             }
             result
         } ?: setOf()
