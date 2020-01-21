@@ -18,8 +18,9 @@
  *
  */
 
-package org.taktik.connector.business.ehbox.api.domain
+package org.taktik.freehealth.middleware.domain.sts
 
-class AcknowledgeMessage<T> : DocumentMessage<T>() {
-    var acknowledgment: Acknowledgment? = null
-}
+import java.io.Serializable
+import java.util.*
+
+class BearerToken(var token:String) : Serializable

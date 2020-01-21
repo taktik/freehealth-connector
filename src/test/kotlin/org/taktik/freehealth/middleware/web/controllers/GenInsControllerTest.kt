@@ -172,7 +172,7 @@ class GenInsControllerTest : EhealthTest() {
     fun getGeneralInsurabilityError11() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val genIns = this.restTemplate.exchange("http://localhost:$port/genins/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpName=$name1&hcpQuality=${"doctor"}&date=" + Instant.parse("2099-01-15T00:00:00.00Z").toEpochMilli(),
-            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java, passPhrase)
+            HttpMethod.GET, HttpEntity<Void>(createHeaders(null,null, keystoreId, tokenId, passPhrase)), InsurabilityInfoDto::class.java)
         assertErrors("The StartDate is after now","11",genIns.body)
     }
 

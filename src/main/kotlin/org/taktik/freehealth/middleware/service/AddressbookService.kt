@@ -47,8 +47,9 @@ interface AddressbookService {
         passPhrase: String,
         nihii: String?,
         ssin: String?,
+        quality: String?,
         language: String = "fr"
-    ): HealthcareParty
+    ): HealthcareParty?
 
     fun getOrg(
         keystoreId: UUID,
@@ -58,5 +59,5 @@ interface AddressbookService {
         cbe: String?,
         nihii: String?,
         language: String = "fr"
-    ): HealthcareParty
+    ): HealthcareParty?
 }

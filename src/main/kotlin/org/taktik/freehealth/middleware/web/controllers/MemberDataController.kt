@@ -21,6 +21,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import ma.glasnost.orika.MapperFacade
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -41,7 +42,10 @@ import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.icure.cin.saml.extensions.Facet
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
@@ -49,6 +53,10 @@ import javax.servlet.http.HttpServletRequest
 @RestController
 @RequestMapping("/mda")
 class MemberDataController(val memberDataService: MemberDataService, val mapper: MapperFacade) {
+    @Value("\${mycarenet.timezone}")
+    internal val mcnTimezone: String = "Europe/Brussels"
+
+
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(MissingTokenException::class)
     @ResponseBody
@@ -69,7 +77,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) hospitalized: Boolean?,
         @RequestBody facets:List<FacetDto>
                      ) : MemberDataResponse {
-        val startDate: Date = date?.let { Date(date) } ?: Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneId.of("Europe/Brussels").rules.getOffset(Instant.now())))
+        val startDate: Instant = date?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
         return memberDataService.getMemberData(keystoreId = keystoreId,
                                                tokenId = tokenId,
                                                hcpQuality = hcpQuality ?: "doctor",
@@ -81,7 +89,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
                                                io = null,
                                                ioMembership = null,
                                                startDate = startDate,
-                                               endDate = endDate?.let { Date(it) } ?: startDate.let { Date(it.time + 86400000) },
+                                               endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
                                                facets = facets.map { mapper.map(it, Facet::class.java) })
     }
 
@@ -99,7 +107,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?
     ) : MemberDataResponse {
-        val startDate: Date = date?.let { Date(date) } ?: Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneId.of("Europe/Brussels").rules.getOffset(Instant.now())))
+        val startDate: Instant = date?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
         return memberDataService.getMemberData(keystoreId = keystoreId,
                                                tokenId = tokenId,
                                                hcpQuality = hcpQuality ?: "doctor",
@@ -111,7 +119,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
                                                io = null,
                                                ioMembership = null,
                                                startDate = startDate,
-                                               endDate = endDate?.let { Date(it) } ?: startDate.let { Date(it.time + 86400000) },
+                                               endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
                                                hospitalized = hospitalized ?: false)
     }
 
@@ -131,9 +139,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) hospitalized: Boolean?,
         @RequestBody facets:List<FacetDto>
                        ) : MemberDataResponse {
-        val startDate: Date =
-            date?.let { Date(date) }
-                ?: Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneId.of("Europe/Brussels").rules.getOffset(Instant.now())))
+        val startDate: Instant = date?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
         return memberDataService.getMemberData(keystoreId = keystoreId,
                                                tokenId = tokenId,
                                                hcpQuality = hcpQuality ?: "doctor",
@@ -145,8 +151,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
                                                io = io,
                                                ioMembership = ioMembership,
                                                startDate = startDate,
-                                               endDate = endDate?.let { Date(it) }
-                                                   ?: startDate.let { Date(it.time + 86400000) },
+                                               endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
                                                facets = facets.map { mapper.map(it, Facet::class.java) })
     }
 
@@ -165,7 +170,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?
     ): MemberDataResponse {
-        val startDate: Date = date?.let { Date(date) } ?: Date()
+        val startDate: Instant = date?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
         return memberDataService.getMemberData(keystoreId = keystoreId,
                                                tokenId = tokenId,
                                                hcpQuality = hcpQuality ?: "doctor",
@@ -177,7 +182,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
                                                io = io,
                                                ioMembership = ioMembership,
                                                startDate = startDate,
-                                               endDate = endDate?.let { Date(it) } ?: startDate,
+                                               endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
                                                hospitalized = hospitalized ?: false)
     }
 }

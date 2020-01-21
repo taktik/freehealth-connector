@@ -57,26 +57,36 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
         hazelcastProperties.groupPassword?.let { groupConfig.name = it }
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KEYSTORES").apply {
             timeToLiveSeconds = 18*3600
+            asyncBackupCount = 1
+            isReadBackupData = true
             maxSizeConfig = MaxSizeConfig(128, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.TOKENS").apply {
             timeToLiveSeconds = 12*3600
+            asyncBackupCount = 1
+            isReadBackupData = true
             maxSizeConfig = MaxSizeConfig(128, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK").apply {
             timeToLiveSeconds = 24*3600
+            asyncBackupCount = 1
+            isReadBackupData = true
             maxSizeConfig = MaxSizeConfig(128, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.LONGLIVEDETK").apply {
             timeToLiveSeconds = 3*365*24*3600
+            asyncBackupCount = 1
+            isReadBackupData = true
             maxSizeConfig = MaxSizeConfig(512, MaxSizeConfig.MaxSizePolicy.USED_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KGSS").apply {
             timeToLiveSeconds = 12*3600
+            asyncBackupCount = 1
+            isReadBackupData = true
             maxSizeConfig = MaxSizeConfig(128, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })

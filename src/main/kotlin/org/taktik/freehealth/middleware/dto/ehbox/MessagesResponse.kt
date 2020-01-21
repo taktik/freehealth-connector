@@ -18,8 +18,11 @@
  *
  */
 
-package org.taktik.connector.business.ehbox.api.domain
+package org.taktik.freehealth.middleware.dto.ehbox
 
-class AcknowledgeMessage<T> : DocumentMessage<T>() {
-    var acknowledgment: Acknowledgment? = null
-}
+import org.taktik.freehealth.middleware.domain.common.Error
+
+class MessagesResponse(
+    val messages: List<Message>,
+    val error: Error? = null
+                      )
