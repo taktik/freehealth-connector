@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>be.business.connector</groupId>
+		<artifactId>be-business-connector</artifactId>
+		<version>1.8.0</version>
+	</parent>
+	<artifactId>be-business-connector-projects-common</artifactId>
+	<name>be-business-connector-projects-common</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<aspectj.version>1.8.7</aspectj.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>be.business.connector</groupId>
+			<artifactId>be-business-connector-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>be.ehealth.apb.gfddpp.services.tipsystem</groupId>
+			<artifactId>be-ehealth-apb-gfddpp-services-tipsystem</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>be.ehealth.apb.gfddpp.services.pcdh</groupId>
+			<artifactId>be-ehealth-apb-gfddpp-services-pcdh</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>be-ehealth-recipe-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>be.business.connector</groupId>
+			<artifactId>be-business-connector-test-resources</artifactId>
+		</dependency>
+		<!--        <dependency><groupId>org.aspectj</groupId><artifactId>aspectjrt</artifactId></dependency><dependency><groupId>org.aspectj</groupId><artifactId>aspectjweaver</artifactId></dependency>-->
+		<dependency>
+			<groupId>xmlunit</groupId>
+			<artifactId>xmlunit</artifactId>
+		</dependency>
+	</dependencies>
+	<profiles>
+		<profile>
+			<id>sdk</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-shade-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>shade</goal>
+								</goals>
+								<configuration>
+									<shadedArtifactAttached>true</shadedArtifactAttached>
+									<shadedClassifierName>all-in-one</shadedClassifierName>
+									<filters>
+										<filter>
+											<artifact>*:*</artifact>
+											<excludes>
+												<exclude>META-INF/*.SF</exclude>
+												<exclude>META-INF/*.DSA</exclude>
+												<exclude>META-INF/*.RSA</exclude>
+												<exclude>*.cmd</exclude>
+											</excludes>
+										</filter>
+									</filters>
+									<artifactSet>
+										<excludes>
+											<exclude>be.business.connector:be-business-connector-core*</exclude>
+											<exclude>be.fgov.*:*</exclude>
+											<exclude>joda-time:joda-time</exclude>
+											<exclude>be.apb.gfddpp.services.smc:be-apb-gfddpp-services-smc</exclude>
+											<exclude>be.fedict*:*</exclude>
+											<exclude>commons-*:*</exclude>
+											<exclude>log4j:*</exclude>
+											<exclude>com.sun.xml.wss:*</exclude>
+											<exclude>javax.*:*</exclude>
+											<exclude>com.sun.*:*</exclude>
+											<exclude>net.sf.*:*</exclude>
+											<exclude>org.*:*</exclude>
+											<exclude>relaxngDatatype:relaxngDatatype:ja</exclude>
+											<exclude>relaxngDatatype*:*</exclude>
+											<exclude>junit:junit*</exclude>
+											<exclude>com.googlecode.*:*</exclude>
+										</excludes>
+									</artifactSet>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<configuration>
+							<tasks>
+								<available file="${java.home}/../jre6" property="jre_home" value="${java.home}/../jre6" />
+								<available file="${java.home}/../jre" property="jre_home" value="${java.home}/../jre" />
+								<available file="${env.IKVM_HOME}/bin/ikvmc.exe" property="ikvm.skip" value="false" />
+								<echo message="Checking if IKVM is setup in : ${env.IKVM_HOME} (skip = ${ikvm.skip})" />
+								<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+								<property name="master.dir" value="../be-business-connector-master/src/main/resources" />
+								<property name="temp.dir" value="${basedir}/target/tmp" />
+								<if>
+									<equals arg1="${ikvm.skip}" arg2="false" />
+									<then>
+										<echo message="IKVM will be executed" />
+										<exec executable="${env.IKVM_HOME}/bin/ikvmc.exe">
+											<arg value="-classloader:ikvm.runtime.AppDomainAssemblyClassLoader" />
+											<arg value="-sharedclassloader" />
+											<arg value="-target:library" />
+											<arg value="-out:target/be-business-connector-projects-core.dll" />
+											<arg value="-version:1.7.0.0" />
+											<arg value="-fileversion:1.7.0.0" />
+											<arg value="-keyfile:recipe-dotnet-sign-key.snk" />
+											<arg value="target/${project.artifactId}-${project.version}-all-in-one.jar" />
+											<!--<arg value="${jre_home}/lib/ext/sunpkcs11.jar" />-->
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/businessconnectordlls/be-apb-gfddpp-services-smc.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/businessconnectordlls/be-business-connector-core.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-technical-core.dll" />
+											<!--                                            <arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-technical-signature.dll" />-->
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-technical-smartcardio.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-utilities-codage.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-utilities-common.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-utilities-core.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-utilities-etee.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-utilities-external.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-utilities-timestamping.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-utilities-chapter4.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-utilities-kmehr.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-utilities-mycarenetcommons.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-business-chapter4.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-business-kmehrcommons.dll" />
+											<arg value="-reference:${basedir}/..//be-business-connector-master/src/main/resources/technicalconnectordlls/connector-business-mycarenetcommons.dll" />
+										</exec>
+										<echo message="DLL copy to master" />
+										<copy file="target/be-business-connector-projects-core.dll" todir="${master.dir}/businessconnectordlls" />
+										<copy todir="${temp.dir}/src/projects-core/" includeEmptyDirs="false">
+											<fileset dir="src/main/java" />
+										</copy>
+									</then>
+									<else>
+										<echo message="IKVM compilation skipped, please setup correctly IKVM_HOME env variable" />
+									</else>
+								</if>
+							</tasks>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>aspectj-maven-plugin</artifactId>
+						<version>1.8</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+							<complianceLevel>1.7</complianceLevel>
+							<showWeaveInfo>true</showWeaveInfo>
+							<weaveWithAspectsInMainSourceFolder>false</weaveWithAspectsInMainSourceFolder>
+							<weaveDependencies>
+								<weaveDependency>
+									<groupId>org.perf4j</groupId>
+									<artifactId>perf4j-log4jonly</artifactId>
+								</weaveDependency>
+							</weaveDependencies>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>compile</goal>
+									<!-- use this goal to weave all your main classes -->
+									<goal>test-compile</goal>
+									<!-- use this goal to weave all your test classes -->
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.aspectj</groupId>
+								<artifactId>aspectjrt</artifactId>
+								<version>${aspectj.version}</version>
+							</dependency>
+							<dependency>
+								<groupId>org.aspectj</groupId>
+								<artifactId>aspectjtools</artifactId>
+								<version>${aspectj.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

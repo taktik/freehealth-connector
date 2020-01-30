@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ <WL5G3N0:definitions targetNamespace="urn:be:fgov:ehealth:etkdepot:1_0:protocol" xmlns:WL5G3N0="http://schemas.xmlsoap.org/wsdl/" xmlns:WL5G3N1="urn:be:fgov:ehealth:etkdepot:1_0:protocol" xmlns:WL5G3N2="http://schemas.xmlsoap.org/wsdl/soap/">
+ <WL5G3N0:types>
+ <xs:schema xmlns:etkdepot="urn:be:fgov:ehealth:etkdepot:1_0:protocol" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:types="urn:be:fgov:ehealth:etkdepot:1_0:protocol" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="urn:be:fgov:ehealth:etkdepot:1_0:protocol" schemaLocation="https://services-acpt.ehealth.fgov.be:443/EtkDepot/v1?SCHEMA%2Fetee%2Feteedepot%2Fschemas%2Fehealth-etkdepot-schema-protocol-1_0" /> 
+  </xs:schema>
+  </WL5G3N0:types>
+ <WL5G3N0:message name="GetEtkRequestMessage">
+  <WL5G3N0:part element="WL5G3N1:GetEtkRequest" name="body" /> 
+  </WL5G3N0:message>
+ <WL5G3N0:message name="GetEtkResponseMessage">
+  <WL5G3N0:part element="WL5G3N1:GetEtkResponse" name="body" /> 
+  </WL5G3N0:message>
+ <WL5G3N0:portType name="EtkDepotPortType">
+ <WL5G3N0:operation name="GetEtk">
+  <WL5G3N0:input message="WL5G3N1:GetEtkRequestMessage" /> 
+  <WL5G3N0:output message="WL5G3N1:GetEtkResponseMessage" /> 
+  </WL5G3N0:operation>
+  </WL5G3N0:portType>
+ <WL5G3N0:binding name="EtkDepotSoapBinding" type="WL5G3N1:EtkDepotPortType">
+  <WL5G3N2:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" /> 
+ <WL5G3N0:operation name="GetEtk">
+  <WL5G3N2:operation /> 
+ <WL5G3N0:input>
+  <WL5G3N2:body use="literal" /> 
+  </WL5G3N0:input>
+ <WL5G3N0:output>
+  <WL5G3N2:body use="literal" /> 
+  </WL5G3N0:output>
+  </WL5G3N0:operation>
+  </WL5G3N0:binding>
+ <WL5G3N0:service name="EtkDepotSoapBindingQSService">
+ <WL5G3N0:port binding="WL5G3N1:EtkDepotSoapBinding" name="EtkDepotSoapBindingQSPort">
+  <WL5G3N2:address location="https://services-acpt.ehealth.fgov.be/EtkDepot/v1" /> 
+  </WL5G3N0:port>
+  </WL5G3N0:service>
+  </WL5G3N0:definitions>

@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:recipe="urn:be:fgov:ehealth:recipe:protocol:v4" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/" name="RecipeExecutorWebservice" targetNamespace="urn:be:fgov:ehealth:recipe:protocol:v4">
+  <documentation>Version 4.0</documentation>
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="urn:be:fgov:ehealth:recipe:protocol:v4" schemaLocation="recipeservices_protocol-4_0.xsd"/>
+    </xsd:schema>
+  </types>
+  <message name="RevokePrescriptionRequest">
+    <part name="body" element="recipe:RevokePrescriptionRequest"/>
+  </message>
+  <message name="RevokePrescriptionResponse">
+    <part name="body" element="recipe:RevokePrescriptionResponse"/>
+  </message>
+  <message name="CreateFeedbackRequest">
+    <part name="body" element="recipe:CreateFeedbackRequest"/>
+  </message>
+  <message name="CreateFeedbackResponse">
+    <part name="body" element="recipe:CreateFeedbackResponse"/>
+  </message>
+  <message name="GetPrescriptionForExecutorRequest">
+    <part name="body" element="recipe:GetPrescriptionForExecutorRequest"/>
+  </message>
+  <message name="GetPrescriptionForExecutorResponse">
+    <part name="body" element="recipe:GetPrescriptionForExecutorResponse"/>
+  </message>
+ <message name="GetPrescriptionStatusRequest">
+		<part name="body" element="recipe:GetPrescriptionStatusRequest"/>
+	</message>
+	<message name="GetPrescriptionStatusResponse">
+		<part name="body" element="recipe:GetPrescriptionStatusResponse"/>
+	</message>
+  <message name="ListRidsHistoryRequest">
+		<part name="body" element="recipe:ListRidsHistoryRequest"/>
+	</message>
+	<message name="ListRidsHistoryResponse">
+		<part name="body" element="recipe:ListRidsHistoryResponse"/>
+	</message>
+  <message name="MarkAsArchivedRequest">
+    <part name="body" element="recipe:MarkAsArchivedRequest"/>
+  </message>
+  <message name="MarkAsArchivedResponse">
+    <part name="body" element="recipe:MarkAsArchivedResponse"/>
+  </message>
+  <message name="MarkAsDeliveredRequest">
+    <part name="body" element="recipe:MarkAsDeliveredRequest"/>
+  </message>
+  <message name="MarkAsDeliveredResponse">
+    <part name="body" element="recipe:MarkAsDeliveredResponse"/>
+  </message>
+  <message name="MarkAsUnDeliveredRequest">
+    <part name="body" element="recipe:MarkAsUnDeliveredRequest"/>
+  </message>
+  <message name="MarkAsUnDeliveredResponse">
+    <part name="body" element="recipe:MarkAsUnDeliveredResponse"/>
+  </message>
+  <message name="ListNotificationsRequest">
+    <part name="body" element="recipe:ListNotificationsRequest"/>
+  </message>
+  <message name="ListNotificationsResponse">
+    <part name="body" element="recipe:ListNotificationsResponse"/>
+  </message>
+  <message name="ListOpenPrescriptionsRequest">
+    <part name="body" element="recipe:ListOpenPrescriptionsRequest"/>
+  </message>
+  <message name="ListOpenPrescriptionsResponse">
+    <part name="body" element="recipe:ListOpenPrescriptionsResponse"/>
+  </message>
+  <message name="PutRidsInProcessRequest">
+    <part name="body" element="recipe:PutRidsInProcessRequest"/>
+  </message>
+  <message name="PutRidsInProcessResponse">
+    <part name="body" element="recipe:PutRidsInProcessResponse"/>
+  </message>
+  <message name="ListRidsInProcessRequest">
+    <part name="body" element="recipe:ListRidsInProcessRequest"/>
+  </message>
+  <message name="ListRidsInProcessResponse">
+    <part name="body" element="recipe:ListRidsInProcessResponse"/>
+  </message>
+  <message name="ListReservationsRequest">
+    <part name="body" element="recipe:ListReservationsRequest"/>
+  </message>
+  <message name="ListReservationsResponse">
+    <part name="body" element="recipe:ListReservationsResponse"/>
+  </message>
+   <message name="ListRelationsRequest">
+    <part name="body" element="recipe:ListRelationsRequest"/>
+  </message>
+  <message name="ListRelationsResponse">
+    <part name="body" element="recipe:ListRelationsResponse"/>
+  </message>
+  
+  
+  <portType name="RecipeExecutorPortType">
+    <operation name="revokePrescription">
+      <input message="recipe:RevokePrescriptionRequest"/>
+      <output message="recipe:RevokePrescriptionResponse"/>
+    </operation>
+    <operation name="createFeedback">
+      <input message="recipe:CreateFeedbackRequest"/>
+      <output message="recipe:CreateFeedbackResponse"/>
+    </operation>
+    <operation name="getPrescriptionForExecutor">
+      <input message="recipe:GetPrescriptionForExecutorRequest"/>
+      <output message="recipe:GetPrescriptionForExecutorResponse"/>
+    </operation>
+    <operation name="getPrescriptionStatus">
+			<input message="recipe:GetPrescriptionStatusRequest"/>
+			<output message="recipe:GetPrescriptionStatusResponse"/>
+		</operation>
+    <operation name="markAsArchived">
+      <input message="recipe:MarkAsArchivedRequest"/>
+      <output message="recipe:MarkAsArchivedResponse"/>
+    </operation>
+    <operation name="markAsDelivered">
+      <input message="recipe:MarkAsDeliveredRequest"/>
+      <output message="recipe:MarkAsDeliveredResponse"/>
+    </operation>
+    <operation name="markAsUnDelivered">
+      <input message="recipe:MarkAsUnDeliveredRequest"/>
+      <output message="recipe:MarkAsUnDeliveredResponse"/>
+    </operation>
+    <operation name="listNotifications">
+      <input message="recipe:ListNotificationsRequest"/>
+      <output message="recipe:ListNotificationsResponse"/>
+    </operation>
+     <operation name="listOpenPrescriptions">
+      <input message="recipe:ListOpenPrescriptionsRequest"/>
+      <output message="recipe:ListOpenPrescriptionsResponse"/>
+    </operation>
+	 <operation name="putRidsInProcess">
+      <input message="recipe:PutRidsInProcessRequest"/>
+      <output message="recipe:PutRidsInProcessResponse"/>
+    </operation>
+	 <operation name="listRidsInProcess">
+      <input message="recipe:ListRidsInProcessRequest"/>
+      <output message="recipe:ListRidsInProcessResponse"/>
+    </operation>
+	 <operation name="listReservations">
+      <input message="recipe:ListReservationsRequest"/>
+      <output message="recipe:ListReservationsResponse"/>
+    </operation>
+	 <operation name="listRelations">
+      <input message="recipe:ListRelationsRequest"/>
+      <output message="recipe:ListRelationsResponse"/>
+    </operation>
+    <operation name="listRidsHistory">
+			<input message="recipe:ListRidsHistoryRequest"/>
+			<output message="recipe:ListRidsHistoryResponse"/>
+		</operation>
+  </portType>
+  <binding name="RecipeExecutorSoapBinding" type="recipe:RecipeExecutorPortType">
+    <soap11:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="revokePrescription">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:revokePrescription"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="createFeedback">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:createFeedback"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="getPrescriptionForExecutor">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:getPrescriptionForExecutor"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="getPrescriptionStatus">
+			<soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:getPrescriptionStatus"/>
+			<input>
+				<soap11:body use="literal"/>
+			</input>
+			<output>
+				<soap11:body use="literal"/>
+			</output>
+		</operation>
+    <operation name="markAsArchived">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:markAsArchived"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="markAsDelivered">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:markAsDelivered"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="markAsUnDelivered">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:markAsUnDelivered"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="listNotifications">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:listNotifications"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="listOpenPrescriptions">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:listOpenPrescriptions"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="listRidsHistory">
+			<soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:listRidsHistory"/>
+			<input>
+				<soap11:body use="literal"/>
+			</input>
+			<output>
+				<soap11:body use="literal"/>
+			</output>
+		</operation>
+    <operation name="putRidsInProcess">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:putRidsInProcess"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="listRidsInProcess">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:listRidsInProcess"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="listReservations">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:listReservations"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+      <operation name="listRelations">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:listRelations"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="RecipeExecutorService">
+    <port name="RecipeExecutorServiceSOAP11" binding="recipe:RecipeExecutorSoapBinding">
+      <soap11:address location="https://REPLACE_WITH_ACTUAL_URL"/>
+    </port>
+  </service>
+</definitions>

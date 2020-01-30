@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.apb.be/standards/smoa/schema/code/v1" xmlns:common="http://www.apb.be/standards/smoa/schema/v1" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.apb.be/standards/smoa/schema/code/v1" version="1.0">
+	<xsd:include schemaLocation="single-message-abstract-code-type-1.0.xsd" />
+	<xsd:import namespace="http://www.apb.be/standards/smoa/schema/v1" schemaLocation="../common/single-message-common-1.0.xsd" />
+
+	<xsd:complexType name="AddressKindCodeType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-AddressKindCodeType">
+				<xsd:sequence>
+					<xsd:element name="usage" type="common:CD-ADDRESS" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="TelecomKindCodeType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-TelecomKindCodeType">
+				<xsd:sequence>
+					<xsd:element name="type" type="common:CD-TELECOM" />
+					<xsd:element name="usage" type="common:CD-ADDRESS" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="SpecialPrescriptionCodeType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-SpecialPrescriptionCodeType">
+				<xsd:sequence>
+					<xsd:element name="type" type="SPECIALPRESCRIPTIONTYPE" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="SexCodeType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-SexCodeType">
+				<xsd:sequence>
+					<xsd:element name="code" type="common:CD-SEX" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="ProfessionCodeType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-ProfessionCodeType">
+				<xsd:sequence>
+					<xsd:element name="value" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="BcfiCategoryCodeType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-MedicinalProductCategoryCodeType">
+				<xsd:sequence>
+					<xsd:element name="value" type="BCFI-CATEGORY" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="DiseaseCodeType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-DiseaseCodeType">
+				<xsd:sequence>
+					<xsd:element name="value" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="ActiveSubstanceCodeType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Bron: http://www.fagg-afmps.be/nl/binaries/HUM-2011%2E01%2E26_tcm290-27043.zip
+				CLOTRIMAZOLE, METOCLOPRAMIDE HYDROCHLORIDE,...
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-ActiveSubstanceCodeType">
+				<xsd:sequence>
+					<xsd:element name="value" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="PharmFormCodeType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-PharmFormCodeType">
+				<xsd:sequence>
+					<xsd:element name="value" type="PHARMFORM" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="MutualityNumber">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-MutualityNumberCodeType">
+				<xsd:sequence>
+					<xsd:element name="number" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="AdministrationUnitValuesCodeType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-AdministrationUnitValuesCodeType">
+				<xsd:sequence>
+					<xsd:element name="cd" type="common:CD-ADMINISTRATIONUNIT" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="WeekDayCodeType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-WeekDayCodeType">
+				<xsd:sequence>
+					<xsd:element name="cd" type="common:CD-WEEKDAY" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="PeriodicityType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-PeriodicityType">
+				<xsd:sequence>
+					<xsd:element name="cd" type="common:CD-PERIODICITY" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="DayPeriodCodeType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-DayPeriodCodeType">
+				<xsd:sequence>
+					<xsd:element name="cd" type="common:CD-DAYPERIOD" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="PrescriberCategoryCodeType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-PrescriberCategoryCodeType">
+				<xsd:sequence>
+					<xsd:element name="value" type="common:CD-HCPARTY" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="CountryType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-CountryCodeType">
+				<xsd:sequence>
+					<xsd:element name="code" type="common:CD-COUNTRY" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:simpleType name="SPECIALPRESCRIPTIONTYPE">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="URGENCYTROUSSE" />
+			<xsd:enumeration value="CENTRUMFORTOXICOMANEN" />
+			<xsd:enumeration value="PRINSLEOPOLDINSTITUUR" />
+			<xsd:enumeration value="PATIENTSGROUP" />
+			<xsd:enumeration value="PENITENTIARY" />
+			<xsd:enumeration value="CENTERFORASYLUMSEEKERS" />
+			<xsd:enumeration value="VACCINATIONCAMPAIGNS" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="BCFI-CATEGORY">
+		<xsd:restriction base="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>Category van bcfi http://www.bcfi.be</xsd:documentation>
+			</xsd:annotation>
+			<xsd:enumeration value="1. Cardiovasculair stelsel" />
+			<xsd:enumeration value="1.1. Middelen bij hartfalen" />
+			<xsd:enumeration value="1.1.1. Digitalisglycosiden" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PHARMFORM">
+		<xsd:restriction base="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					Bron: http://www.fagg-afmps.be/nl/binaries/HUM-2011%2E01%2E26_tcm290-27043.zip
+				</xsd:documentation>
+			</xsd:annotation>
+			<xsd:enumeration value="CAPSULE" />
+			<xsd:enumeration value="TABLET" />
+			<xsd:enumeration value="...." />
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

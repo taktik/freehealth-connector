@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<smoa:single-message xmlns:code="http://www.apb.be/standards/smoa/schema/code/v1" 
+xmlns:n1="http://www.altova.com/samplexml/other-namespace" xmlns:sig="http://www.w3.org/2000/09/xmldsig#" 
+xmlns:kmehr="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" xmlns:id="http://www.apb.be/standards/smoa/schema/id/v1" 
+xmlns:mod="http://www.apb.be/standards/smoa/schema/model/v1" xmlns:smoa="http://www.apb.be/standards/smoa/schema/v1" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+	<smoa:unsigned>
+	<smoa:header>
+		<smoa:messageCreateDate>2001-12-17T09:30:47Z</smoa:messageCreateDate>
+		<smoa:messageId>00000000-0000-0000-0000-000000000565</smoa:messageId>
+		<smoa:sender>
+			<smoa:refPharmacy>
+				<smoa:pharmacyId xsi:type="id:PharmacyIdType">
+					<id:nihiiPharmacyNumber>62599147</id:nihiiPharmacyNumber>
+				</smoa:pharmacyId>
+			</smoa:refPharmacy>
+		</smoa:sender>
+	</smoa:header>
+	<smoa:eventFolder>
+		<smoa:events>
+			<smoa:event xsi:type="smoa:MedicationDeliveryEventType">
+				<smoa:id>00000000-0000-0000-0000-000000000000</smoa:id>
+				<smoa:refPharmacy>
+					<smoa:pharmacyId xsi:type="id:PharmacyIdType">
+						<id:nihiiPharmacyNumber>62599147</id:nihiiPharmacyNumber>
+					</smoa:pharmacyId>
+				</smoa:refPharmacy>
+				<smoa:deliveries>
+					<mod:deliveredMedicationHumanHistory>
+						<mod:dGUID>00000000-0000-0000-0000-000000000000</mod:dGUID>
+						<mod:patient>
+							<mod:patientID>11.22.33-444.55</mod:patientID>
+							<mod:patientIDType>INSZ</mod:patientIDType>
+						</mod:patient>
+						<mod:pharmaceuticalInformation>
+							<mod:deliveryDate>2001-12-17T09:30:47Z</mod:deliveryDate>
+							<mod:product>
+								<smoa:Description>
+									<smoa:ProductCode>127928</smoa:ProductCode>
+								</smoa:Description>
+								<smoa:Dispensation>
+									<smoa:NumberOfBoxes>2</smoa:NumberOfBoxes>
+									<smoa:AdministrationInstructions>
+										<smoa:Posology>
+											<smoa:PosologyText>Neem 2 druppels per dag bij het ontbijt</smoa:PosologyText>
+										</smoa:Posology>
+									</smoa:AdministrationInstructions>
+								</smoa:Dispensation>
+							</mod:product>
+						</mod:pharmaceuticalInformation>
+						<mod:metaDataList>
+							<smoa:metaData>
+								<smoa:key>Delphi</smoa:key>
+								<smoa:value>has run</smoa:value>
+							</smoa:metaData>
+							<smoa:metaData>
+								<smoa:key>Pharmaceutical Care</smoa:key>
+								<smoa:value>executed</smoa:value>
+							</smoa:metaData>
+						</mod:metaDataList>
+						<mod:tipQualityIndicator>1</mod:tipQualityIndicator>
+					</mod:deliveredMedicationHumanHistory>
+				</smoa:deliveries>
+			</smoa:event>
+		</smoa:events>
+		<smoa:entitySpace/>
+	</smoa:eventFolder>
+	</smoa:unsigned>
+</smoa:single-message>

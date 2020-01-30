@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:systemServices xmlns:p="http://services.gfddpp.be/systemservices/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://services.gfddpp.be/systemservices/v1 system-services-v20130708.xsd ">
+  <version>2013-07-01T12:00:00</version>
+  <systemServicesList>
+      <systemServicesEntry>
+      <system>
+        <systemType>TIP</systemType>      
+        <systemId>0406753266</systemId>
+      </system>
+      <service>
+        <serviceName>TIPService</serviceName>
+        <URI>https://services-int.ehealth.fgov.be/GFDDPP/TIP/v1</URI>
+      </service>
+    </systemServicesEntry>
+    <systemServicesEntry>
+      <system>
+        <systemType>PCDH</systemType>
+        <systemId>0406753266</systemId>
+      </system>
+      <service>
+        <serviceName>PCDHService</serviceName>
+        <URI>https://services-int.ehealth.fgov.be/GFDDPP/PCDH/v1</URI>
+      </service>
+    </systemServicesEntry>
+  </systemServicesList>
+</p:systemServices>

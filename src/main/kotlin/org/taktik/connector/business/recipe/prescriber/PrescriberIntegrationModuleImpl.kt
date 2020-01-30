@@ -56,7 +56,7 @@ import java.io.ByteArrayInputStream
 import java.security.KeyStore
 import java.util.*
 
-class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotService: KeyDepotService) : AbstractIntegrationModule(keyDepotService), PrescriberIntegrationModule {
+open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotService: KeyDepotService) : AbstractIntegrationModule(keyDepotService), PrescriberIntegrationModule {
     private val log = LoggerFactory.getLogger(PrescriberIntegrationModuleImpl::class.java)
     private val keyCache = HashMap<String, KeyResult>()
     /**

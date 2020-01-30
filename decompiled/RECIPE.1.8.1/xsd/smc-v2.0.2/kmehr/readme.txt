@@ -1,0 +1,1 @@
+https://www.ehealth.fgov.be/standards/kmehr/

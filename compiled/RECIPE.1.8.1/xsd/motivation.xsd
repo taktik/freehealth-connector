@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema id="motivations" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	
+	<xs:complexType name="motivations">
+		<xs:sequence>
+			<xs:element name="SGUID" type="xs:token" minOccurs="1" maxOccurs="1" />
+			<xs:element name="motivation" type="motivation" minOccurs="1" maxOccurs="unbounded" />
+			<xs:element name="requestTime" type="xs:dateTime" minOccurs="1" maxOccurs="1" />
+			<xs:element name="requestorID" type="xs:token" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="motivation">
+		<xs:sequence>
+			<xs:element name="DGUID" type="xs:token" minOccurs="1" maxOccurs="1" />
+			<xs:element name="motivationtext" type="xs:string" minOccurs="1" maxOccurs="1" />
+			<xs:element name="motivationtype" type="xs:string" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,64 +1,101 @@
 package be.recipe.services.prescriber;
 
+import be.recipe.services.core.ResponseType;
+import org.taktik.connector.business.recipe.utils.CalendarAdapter;
+
 import java.util.Calendar;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(
-   namespace = "http:/services.recipe.be/prescriber"
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(
+   name = "getPrescriptionForPrescriberResult",
+   propOrder = {"creationDate", "encryptionKeyId", "feedbackAllowed", "patientId", "prescription", "rid", "expirationDate"}
 )
-public class GetPrescriptionForPrescriberResult {
-   private String rid;
-   private Calendar creationDate;
-   private String patientId;
-   private boolean feedbackAllowed = true;
-   private byte[] prescription;
-   private String encryptionKeyId;
-
-   public String getRid() {
-      return this.rid;
-   }
-
-   public void setRid(String rid) {
-      this.rid = rid;
-   }
+@XmlRootElement(
+   name = "getPrescriptionForPrescriberResult"
+)
+public class GetPrescriptionForPrescriberResult extends ResponseType {
+   @XmlElement(
+      type = String.class
+   )
+   @XmlJavaTypeAdapter(CalendarAdapter.class)
+   @XmlSchemaType(
+      name = "dateTime"
+   )
+   protected Calendar creationDate;
+   protected String encryptionKeyId;
+   protected boolean feedbackAllowed;
+   protected String patientId;
+   protected byte[] prescription;
+   protected String rid;
+   @XmlElement(
+      type = String.class
+   )
+   @XmlJavaTypeAdapter(CalendarAdapter.class)
+   @XmlSchemaType(
+      name = "dateTime"
+   )
+   protected Calendar expirationDate;
 
    public Calendar getCreationDate() {
       return this.creationDate;
    }
 
-   public void setCreationDate(Calendar creationDate) {
-      this.creationDate = creationDate;
-   }
-
-   public String getPatientId() {
-      return this.patientId;
-   }
-
-   public void setPatientId(String patientId) {
-      this.patientId = patientId;
-   }
-
-   public boolean getFeedbackAllowed() {
-      return this.feedbackAllowed;
-   }
-
-   public void setFeedbackAllowed(boolean feedbackAllowed) {
-      this.feedbackAllowed = feedbackAllowed;
-   }
-
-   public byte[] getPrescription() {
-      return this.prescription;
-   }
-
-   public void setPrescription(byte[] prescription) {
-      this.prescription = prescription;
+   public void setCreationDate(Calendar value) {
+      this.creationDate = value;
    }
 
    public String getEncryptionKeyId() {
       return this.encryptionKeyId;
    }
 
-   public void setEncryptionKeyId(String encryptionKeyId) {
-      this.encryptionKeyId = encryptionKeyId;
+   public void setEncryptionKeyId(String value) {
+      this.encryptionKeyId = value;
    }
+
+   public boolean isFeedbackAllowed() {
+      return this.feedbackAllowed;
+   }
+
+   public void setFeedbackAllowed(boolean value) {
+      this.feedbackAllowed = value;
+   }
+
+   public String getPatientId() {
+      return this.patientId;
+   }
+
+   public void setPatientId(String value) {
+      this.patientId = value;
+   }
+
+   public byte[] getPrescription() {
+      return this.prescription;
+   }
+
+   public void setPrescription(byte[] value) {
+      this.prescription = value;
+   }
+
+   public String getRid() {
+      return this.rid;
+   }
+
+   public void setRid(String value) {
+      this.rid = value;
+   }
+
+   public Calendar getExpirationDate() {
+      return this.expirationDate;
+   }
+
+   public void setExpirationDate(Calendar value) {
+      this.expirationDate = value;
+   }
+
 }

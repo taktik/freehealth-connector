@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:tns="https://gfddpp.services.be/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="https://gfddpp.services.be/" version="1.0">
+	<xs:element name="BvacList">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Bvac" type="tns:Bvac" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="Bvac">
+		<xs:sequence>
+			<xs:element name="CBFA" type="xs:string" />
+			<xs:element name="SGUID" type="xs:string" />
+			<xs:element name="BvacDocumentId" type="xs:string" />
+			<xs:element name="EncryptedSymmetricKey" type="xs:base64Binary" />
+			<xs:element name="SingleMessageSealed" type="xs:base64Binary" />
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

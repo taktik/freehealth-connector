@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://services.gfddpp.be"
+           targetNamespace="http://services.gfddpp.be">
+    <xs:element name="events">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="pharmaceuticalCareEventType" 
+                                            type="pharmaceuticalCareEventType" minOccurs="0" maxOccurs="1" />
+                <xs:element name="archivePrescriptionEventType" 
+                                            type="archivePrescriptionEventType" minOccurs="0" maxOccurs="1" />
+                <xs:element name="archivePrescriptionCommentEventType" 
+                                            type="archivePrescriptionCommentEventType" minOccurs="0" maxOccurs="1" />
+                <xs:element name="bvacEventType" type="bvacEventType"
+                                            minOccurs="0" maxOccurs="1" />
+                <xs:element name="continuedPharmaceuticalCareDossierEvent" 
+                                            type="continuedPharmaceuticalCareDossierEvent" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+	
+    <xs:complexType name="pharmaceuticalCareEventType">
+        <xs:sequence>
+            <xs:element name="sguid" type="xs:string" maxOccurs="1" />
+            <xs:element name="dispensation" type="dispensation" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+	
+    <xs:complexType name="archivePrescriptionEventType">
+        <xs:sequence>
+            <xs:element name="sguid" type="xs:string" maxOccurs="1" />
+            <xs:element name="dguid" type="xs:string" maxOccurs="1" />
+            <xs:element name="rid" type="xs:string" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="archivePrescriptionCommentEventType">
+        <xs:sequence>
+            <xs:element name="sguid" type="xs:string" maxOccurs="1" />
+            <xs:element name="dguid" type="xs:string" maxOccurs="1" />
+            <xs:element name="rid" type="xs:string" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="bvacEventType">
+        <xs:sequence>
+            <xs:element name="sguid" type="xs:string" maxOccurs="1" />
+            <xs:element name="bvacDocument" type="bvacDocument"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="bvacDocument">
+        <xs:sequence>
+            <xs:element name="dguid" type="xs:string" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    
+     <xs:complexType name="continuedPharmaceuticalCareDossierEvent">
+        <xs:sequence>
+            <xs:element name="sguid" type="xs:string" maxOccurs="1" />
+            <xs:element name="dguid" type="xs:string" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <xs:complexType name="dispensation">
+        <xs:sequence>
+            <xs:element name="localReference" type="xs:string"
+                                    maxOccurs="1" />
+            <xs:element name="dguid" type="xs:string" maxOccurs="1" />
+            <xs:choice>
+                <xs:element name="product" type="product" maxOccurs="1" />
+                <xs:element name="magistral" type="magistral" maxOccurs="1" />
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="product">
+        <xs:sequence>
+            <xs:element name="productId" type="xs:string" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="magistral">
+        <xs:sequence>
+            <xs:element name="magistralIds" type="xs:string"
+                                    maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

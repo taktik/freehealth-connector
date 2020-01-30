@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.apb.be/standards/smoa/schema/id/v1" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.apb.be/standards/smoa/schema/id/v1" version="1.0">
+	<xsd:complexType name="Abstract-EntityIdType" abstract="true" />
+	<xsd:complexType name="Abstract-PersonIdType" abstract="true" />
+	<xsd:complexType name="Abstract-AddressIdType" abstract="true" />
+	<xsd:complexType name="Abstract-PharmacyIdType" abstract="true" />
+	<xsd:complexType name="Abstract-PrescriptionIdType" abstract="true" />
+	<xsd:complexType name="Abstract-MedicinalProductIdType" abstract="true" />
+	<xsd:complexType name="Abstract-RawMaterialIdType" abstract="true" />
+	<xsd:complexType name="Abstract-SubstanceProductIdType" abstract="true" />
+	<xsd:complexType name="Abstract-AttestIdType" abstract="true" />
+	<xsd:complexType name="Abstract-MagistralCertificateIdType" abstract="true" />
+	<xsd:complexType name="Abstract-CareProviderIdType" abstract="true" />
+	<xsd:complexType name="Abstract-CareServiceIdType" abstract="true" />
+</xsd:schema>

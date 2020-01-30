@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Oracle JAX-WS 2.1.5. -->
+<xs:schema version="1.0" targetNamespace="http://services.recipe.be" xmlns:tns="http://services.recipe.be" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="RecipeException" nillable="true" type="tns:recipeExceptionDetails"/>
+
+    <xs:element name="createFeedback" type="tns:createFeedback"/>                         
+
+    <xs:element name="createFeedbackResponse" type="tns:createFeedbackResponse"/>
+
+    <xs:element name="getPrescriptionForExecutor" type="tns:getPrescriptionForExecutor"/>
+
+    <xs:element name="getPrescriptionForExecutorResponse" type="tns:getPrescriptionForExecutorResponse"/>
+
+    <xs:element name="listNotifications" type="tns:listNotifications"/>
+
+    <xs:element name="listNotificationsResponse" type="tns:listNotificationsResponse"/>
+
+    <xs:element name="markAsArchived" type="tns:markAsArchived"/>
+
+    <xs:element name="markAsArchivedResponse" type="tns:markAsArchivedResponse"/>
+
+    <xs:element name="markAsDelivered" type="tns:markAsDelivered"/>
+
+    <xs:element name="markAsDeliveredResponse" type="tns:markAsDeliveredResponse"/>
+
+    <xs:element name="markAsUnDelivered" type="tns:markAsUnDelivered"/>
+
+    <xs:element name="markAsUnDeliveredResponse" type="tns:markAsUnDeliveredResponse"/>
+
+    <xs:element name="partyIdentification" type="tns:partyIdentification"/>
+
+    <xs:element name="ping" type="tns:ping"/>
+
+    <xs:element name="pingResponse" type="tns:pingResponse"/>
+
+    <xs:element name="recipeError" type="tns:recipeError"/>
+
+    <xs:element name="recipeExceptionDetails" type="tns:recipeExceptionDetails"/>
+
+    <xs:element name="revokePrescription" type="tns:revokePrescription"/>
+
+    <xs:element name="revokePrescriptionResponse" type="tns:revokePrescriptionResponse"/>
+
+    <xs:element name="uploadFile" type="tns:uploadFile"/>
+
+    <xs:element name="uploadFileResponse" type="tns:uploadFileResponse"/>
+
+    <xs:complexType name="revokePrescription">
+        <xs:sequence>
+            <xs:element name="RevokePrescriptionParamSealed" type="xs:base64Binary" minOccurs="0"/>
+            <xs:element name="PartyIdentificationParam" type="tns:partyIdentification" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="partyIdentification">
+        <xs:sequence>
+            <xs:element name="prescriberId" type="xs:string" minOccurs="0"/>
+            <xs:element name="executorId" type="xs:string" minOccurs="0"/>
+            <xs:element name="patientId" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="revokePrescriptionResponse">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="recipeExceptionDetails">
+        <xs:sequence>
+            <xs:element name="code" type="xs:string" minOccurs="0"/>
+            <xs:element name="errorMap">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="key" minOccurs="0" type="xs:string"/>
+                                    <xs:element name="value" minOccurs="0" type="tns:recipeError"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="recipeError">
+        <xs:sequence>
+            <xs:element name="message" type="xs:string" minOccurs="0"/>
+            <xs:element name="resolution" type="xs:string" minOccurs="0"/>
+            <xs:element name="severity" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="getPrescriptionForExecutor">
+        <xs:sequence>
+            <xs:element name="GetPrescriptionForExecutorParamSealed" type="xs:base64Binary" minOccurs="0"/>
+            <xs:element name="PartyIdentificationParam" type="tns:partyIdentification" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="getPrescriptionForExecutorResponse">
+        <xs:sequence>
+            <xs:element name="GetPrescriptionForExecutorResultSealed" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="createFeedback">
+        <xs:sequence>
+            <xs:element name="CreateFeedbackParamSealed" type="xs:base64Binary" minOccurs="0"/>
+            <xs:element name="PartyIdentificationParam" type="tns:partyIdentification" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="createFeedbackResponse">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="uploadFile">
+        <xs:sequence>
+            <xs:element name="UploadFileParam" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="uploadFileResponse">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="markAsDelivered">
+        <xs:sequence>
+            <xs:element name="MarkAsDeliveredParamSealed" type="xs:base64Binary" minOccurs="0"/>
+            <xs:element name="PartyIdentificationParam" type="tns:partyIdentification" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="markAsDeliveredResponse">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="markAsArchived">
+        <xs:sequence>
+            <xs:element name="MarkAsArchivedParamSealed" type="xs:base64Binary" minOccurs="0"/>
+            <xs:element name="PartyIdentificationParam" type="tns:partyIdentification" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="markAsArchivedResponse">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="markAsUnDelivered">
+        <xs:sequence>
+            <xs:element name="MarkAsUndeliveredParamSealed" type="xs:base64Binary" minOccurs="0"/>
+            <xs:element name="PartyIdentificationParam" type="tns:partyIdentification" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="markAsUnDeliveredResponse">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="listNotifications">
+        <xs:sequence>
+            <xs:element name="ListNotificationsParamSealed" type="xs:base64Binary" minOccurs="0"/>
+            <xs:element name="PartyIdentificationParam" type="tns:partyIdentification" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="listNotificationsResponse">
+        <xs:sequence>
+            <xs:element name="ListNotificationsResultSealed" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ping">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="pingResponse">
+        <xs:sequence>
+            <xs:element name="PingResult" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
+
