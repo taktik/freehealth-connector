@@ -76,13 +76,15 @@ interface RecipeService {
     fun getKmehrPrescription(patient: Patient,
                              hcp: HealthcareParty,
                              medications: List<Medication>,
-                             deliveryDate: LocalDateTime?): Kmehrmessage
+                             deliveryDate: LocalDateTime?,
+                             hcpQuality: String): Kmehrmessage
 
     fun getKmehrPrescription(patient: Patient,
                              hcp: HealthcareParty,
                              medications: List<Medication>,
                              deliveryDate: LocalDateTime?,
-                             config: KmehrPrescriptionConfig): Kmehrmessage
+                             config: KmehrPrescriptionConfig,
+                             hcpQuality: String): Kmehrmessage
 
     @Throws(ConnectorException::class, java.util.zip.DataFormatException::class)
     fun getPrescriptionMessage(keystoreId: UUID,
