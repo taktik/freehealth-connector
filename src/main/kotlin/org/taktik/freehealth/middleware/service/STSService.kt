@@ -36,8 +36,7 @@ interface STSService {
         keystoreId: UUID,
         nihiiOrSsin: String,
         passPhrase: String,
-        medicalHouse: Boolean = false,
-        guardPost: Boolean = false,
+        quality: String = "doctor",
         tokenId: UUID? = null,
         extraDesignators: List<Pair<String, String>> = listOf()
     ): SamlTokenResult?

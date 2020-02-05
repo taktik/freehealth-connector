@@ -60,7 +60,15 @@ class STSController(private val stsService: STSService, private val ssoService: 
 
     @GetMapping("/token", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestParam(required = false) isMedicalHouse: Boolean?, @RequestParam(required = false) isGuardPost: Boolean?, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?) =
-        stsService.requestToken(keystoreId, ssin, passPhrase, isMedicalHouse ?: false, isGuardPost ?: false, previousTokenId)
+        stsService.requestToken(keystoreId, ssin, passPhrase, when {
+            isMedicalHouse?: false -> "medicalhouse"
+            isGuardPost?: false -> "guardpost"
+            else -> "doctor"
+        }, previousTokenId)
+
+    @GetMapping("/token/{quality}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestParam(required = false) quality: String?, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?) =
+        stsService.requestToken(keystoreId, ssin, passPhrase, quality ?: "doctor", previousTokenId)
 
     @PostMapping("/token", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerToken(@RequestBody token: String, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID) {

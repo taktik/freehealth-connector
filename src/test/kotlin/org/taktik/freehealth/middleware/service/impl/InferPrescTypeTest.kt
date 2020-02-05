@@ -51,7 +51,7 @@ class InferPrescTypeTest {
     fun setup() {
         hcp = RecipeTestUtils.createHealthcareParty()
         keystoreId = stsService.uploadKeystore((MyTestsConfiguration::class).java.getResource("$ssin.acc-p12").readBytes())
-        tokenId = stsService.requestToken(keystoreId!!, ssin!!, passPhrase!!, false)?.tokenId
+        tokenId = stsService.requestToken(keystoreId!!, ssin!!, passPhrase!!)?.tokenId
     }
 
     @Test
