@@ -176,6 +176,43 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         }
     }
 
+    override fun sendMessage2Ebox(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        message: DocumentMessage,
+        publicationReceipt: Boolean,
+        receptionReceipt: Boolean,
+        readReceipt: Boolean
+                            ): MessageOperationResponse {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+            ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val request =
+            sendMessageBuilder.buildMessage(
+                keystoreId,
+                stsService.getKeyStore(keystoreId, passPhrase)!!,
+                passPhrase,
+                message.toDocumentMessage()
+                                           ).apply {
+                contentContext.contentSpecification.let {
+                    it.isPublicationReceipt =
+                        publicationReceipt; it.isReceivedReceipt = receptionReceipt; it.isReadReceipt =
+                    readReceipt
+                }
+            }
+        request.publicationId = UUID.randomUUID().toString().substring(0, 12)
+        return try {
+            freehealthEhboxService.sendMessage2Ebox(samlToken, request).let { sendMessageResponse ->
+                if (sendMessageResponse.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
+            }
+        } catch (e: TechnicalConnectorException) {
+            (e.cause as? SOAPFaultException)?.let {
+                val be = parseFault(it.fault)?.details?.details?.firstOrNull()
+                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
+            } ?: MessageOperationResponse(false, Error("999", e.message))
+        }
+    }
+
     override fun loadMessages(
         keystoreId: UUID,
         tokenId: UUID,
