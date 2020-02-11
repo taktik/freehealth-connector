@@ -39,22 +39,22 @@ object ServiceFactory {
     @Throws(TechnicalConnectorException::class)
     fun getIntraHubPort(
         endPoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
         soapAction: String
     ): GenericRequest {
-        Validate.notNull(token, "Required parameter SAMLToken is null.")
+        Validate.notNull(samlToken, "Required parameter SAMLToken is null.")
         Validate.notNull(soapAction, "Required parameter SOAPAction is null.")
 
-        return GenericRequest().setEndpoint(endPoint).setSoapAction(soapAction).setCredential(token, TokenType.SAML)
+        return GenericRequest().setEndpoint(endPoint).setSoapAction(soapAction).setCredential(samlToken, TokenType.SAML)
             .addDefaulHandlerChain().addHandlerChain(HandlerChain().apply {
             register(
                 HandlerPosition.BEFORE,
                 HubDecryptionHandler(
                     CryptoFactory.getCrypto(
-                        KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase),
+                        KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality),
                         KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
                     )
                 )

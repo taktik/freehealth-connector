@@ -153,7 +153,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 ?: throw MissingTokenException("Cannot obtain token for Genins operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 

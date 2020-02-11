@@ -113,14 +113,14 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
             freehealthEhboxService.getFullMessage(samlToken, messageRequest).let { msg ->
                 if (msg.status?.code == "100") try {
                     consultationMessageBuilder.buildFullMessage(
-                        KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase), msg).toMessageDto()?.let { MessageResponse(it) }
+                        KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase, samlToken.quality), msg).toMessageDto()?.let { MessageResponse(it) }
                         ?: MessageResponse(null, Error("Unknown error"))
                 } catch (e: EhboxCryptoException) {
                     alternateKeystores?.mapFirstNotNull {
                         try {
                             it.uuid?.let { uuid ->
                                 it.passPhrase?.let { pass ->
-                                    consultationMessageBuilder.buildFullMessage(KeyStoreCredential(uuid, stsService.getKeyStore(uuid, pass)!!, "authentication", pass), msg)
+                                    consultationMessageBuilder.buildFullMessage(KeyStoreCredential(uuid, stsService.getKeyStore(uuid, pass)!!, "authentication", pass, samlToken.quality), msg)
                                         .toMessageDto()
                                 }
                             }
@@ -154,6 +154,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
             sendMessageBuilder.buildMessage(
                 keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
+                samlToken.quality,
                 passPhrase,
                 message.toDocumentMessage()
                                            ).apply {
@@ -191,6 +192,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
             sendMessageBuilder.buildMessage(
                 keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
+                samlToken.quality,
                 passPhrase,
                 message.toDocumentMessage()
                                            ).apply {
@@ -244,14 +246,14 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                 result.addAll(response.messages.mapNotNull { msg ->
                     try {
                         consultationMessageBuilder.buildMessage(
-                            KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase), msg
+                            KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase, samlToken.quality), msg
                                                                ).toMessageDto()
                     } catch (e: EhboxCryptoException) {
                         alternateKeystores?.mapFirstNotNull {
                             try {
                                 it.uuid?.let { uuid ->
                                     it.passPhrase?.let { pass ->
-                                        consultationMessageBuilder.buildMessage(KeyStoreCredential(uuid, stsService.getKeyStore(uuid, pass)!!, "authentication", pass), msg)
+                                        consultationMessageBuilder.buildMessage(KeyStoreCredential(uuid, stsService.getKeyStore(uuid, pass)!!, "authentication", pass, samlToken.quality), msg)
                                             .toMessageDto()
                                     }
                                 }

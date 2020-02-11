@@ -41,7 +41,7 @@ interface STSService {
         extraDesignators: List<Pair<String, String>> = listOf()
     ): SamlTokenResult?
 
-    fun registerToken(tokenId: UUID, token: String)
+    fun registerToken(tokenId: UUID, token: String, quality: String = "doctor")
     fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken?
     fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore?
     fun checkIfKeystoreExist(keystoreId: UUID): Boolean

@@ -72,8 +72,8 @@ class STSController(private val stsService: STSService, private val ssoService: 
         stsService.requestToken(keystoreId, ssin, passPhrase, quality ?: "doctor", previousTokenId)
 
     @PostMapping("/token", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun registerToken(@RequestBody token: String, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID) {
-        stsService.registerToken(tokenId, token)
+    fun registerToken(@RequestBody token: String, @RequestParam(required = false) quality: String?, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID) {
+        stsService.registerToken(tokenId, token, quality ?: "doctor")
     }
 
     @GetMapping("/keystore/check", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])

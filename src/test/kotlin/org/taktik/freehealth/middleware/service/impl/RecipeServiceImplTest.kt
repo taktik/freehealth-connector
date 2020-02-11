@@ -133,7 +133,7 @@ class RecipeServiceImplTest {
             Patient().apply { firstName = "Antoine"; lastName = "Duchateau"; dateOfBirth = 19740104; ssin = "74010414733" },
             HealthcareParty(firstName = "Antoine", lastName = "Baudoux", ssin = "79121430944", nihii = "11478761004", addresses = mutableSetOf(taktik())),
             listOf(medication),
-            LocalDateTime.now())
+            LocalDateTime.now(), "doctor")
 
 	    validator.validatePrescription(kmehrPrescription, listOf(medication))
     }
@@ -156,7 +156,7 @@ class RecipeServiceImplTest {
             Patient().apply { firstName = "Antoine"; lastName = "Duchateau"; dateOfBirth = 19740104; ssin = "74010414733" },
             HealthcareParty(firstName = "Antoine", lastName = "Baudoux", ssin = "79121430944", nihii = "11478761004", addresses = mutableSetOf(taktik()) ),
             medications,
-            LocalDateTime.now())
+            LocalDateTime.now(), "doctor")
 
 		val quantities = kmehrPrescription.folder.transaction.heading.items.get(0).regimen.daynumbersAndQuantitiesAndDaytimes
 			.filter { it is RecipeadministrationquantityType }

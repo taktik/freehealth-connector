@@ -66,25 +66,25 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
     val transformerFactory = TransformerFactory.newInstance()
 
-    override fun registerToken(tokenId: UUID, token: String) {
+    override fun registerToken(tokenId: UUID, token: String, quality: String) {
         val factory = DocumentBuilderFactory.newInstance()
         val builder = factory.newDocumentBuilder()
         val document = builder.parse(InputSource(StringReader(token)))
         val assertion = document.documentElement
 
         tokensMap[tokenId] =
-            SamlTokenResult(tokenId, token, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
+            SamlTokenResult(tokenId, token, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
         log.info("tokensMap size: ${tokensMap.size}")
     }
 
     override fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken? {
         return tokensMap[tokenId]?.let {
-            val keyStore = getKeyStore(keystoreId, passPhrase)
+            val keystore = getKeyStore(keystoreId, passPhrase)
             val result = DOMResult()
             transformerFactory.newTransformer().transform(StreamSource(StringReader(it.token!!)), result)
             return result.node?.firstChild?.let { el ->
                 SAMLTokenFactory.getInstance()
-                    .createSamlToken(el as Element, KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase))
+                    .createSamlToken(el as Element, KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, it.quality))
             }
         }
     }
@@ -115,9 +115,9 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
 
         if (isStillRecommendedForUse) return currentToken
 
-        val keyStore = getKeyStore(keystoreId, passPhrase)
-        val credential = KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase)
-        val hokPrivateKeys = KeyManager.getDecryptionKeys(keyStore, passPhrase.toCharArray())
+        val keystore = getKeyStore(keystoreId, passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, quality)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val etk = getHolderOfKeysEtk(credential, nihiiOrSsin)
         if (!hokPrivateKeys.containsKey(etk?.certificate?.serialNumber?.toString(10))) {
             throw TechnicalConnectorException(
@@ -197,7 +197,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     "urn:be:fgov:certified-namespace:ehealth"
                 ),
                 SAMLAttributeDesignator(
-                    "urn:be:fgov:person:ssin:ehealth:1.0:doctor:nihii11",
+                    "urn:be:fgov:person:ssin:ehealth:1.0:{saml.quality}:nihii11",
                     "urn:be:fgov:certified-namespace:ehealth"
                 ),
                 SAMLAttributeDesignator(
@@ -260,7 +260,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             val samlToken = result.writer.toString()
 
             val samlTokenResult =
-                SamlTokenResult(randomUUID, samlToken, now, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis)
+                SamlTokenResult(randomUUID, samlToken, now, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
             tokensMap[randomUUID] = samlTokenResult
             log.info("tokensMap size: ${tokensMap.size}")
 
@@ -272,8 +272,8 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     }
 
     override fun getKeystoreInfo(keystoreId: UUID, passPhrase: String): CertificateInfo {
-        val keyStore = getKeyStore(keystoreId, passPhrase)
-        val credential = KeyStoreCredential(keystoreId, keyStore, "authentication", passPhrase)
+        val keystore = getKeyStore(keystoreId, passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, "doctor") //Shouldn't assume but won't be used
         val parser = CertificateParser(credential.certificate)
 
         return CertificateInfo(credential.certificate.notAfter.time, parser.type, parser.id, parser.application, parser.owner)

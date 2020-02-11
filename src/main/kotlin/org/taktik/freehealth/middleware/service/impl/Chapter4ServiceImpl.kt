@@ -107,6 +107,7 @@ import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.sts.security.Credential
+import org.taktik.connector.technical.service.sts.security.ExtendedCredential
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
@@ -235,20 +236,20 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
                               keyStore: KeyStore,
                               passPhrase: String,
                               subTypeName: String,
-                              credential: Credential): KeyResult {
+                              credential: ExtendedCredential): KeyResult {
         val acl = ACLUtils.createAclChapterIV(subTypeName)
         val etk = KeyDepotManagerImpl.getInstance(keyDepotService).getETK(credential, keystoreId)
         if (etk == null) {
             throw IllegalArgumentException("EncryptionETK is undefined")
         } else {
-            return kgssService.getNewKey(keystoreId, keyStore, passPhrase, acl, etk.etk.encoded)
+            return kgssService.getNewKey(keystoreId, keyStore, credential.quality, passPhrase, acl, etk.etk.encoded)
         }
     }
 
     private fun createAndValidateSealedRequest(keystoreId: UUID,
                                                keyStore: KeyStore,
                                                passPhrase: String,
-                                               crypto: Crypto, credential: Credential, message: Kmehrmessage,
+                                               crypto: Crypto, credential: ExtendedCredential, message: Kmehrmessage,
                                                careReceiver: CareReceiverIdType,
                                                xmlObjectFactory: XmlObjectFactory,
                                                agreementStartDate: DateTime): SealedRequestWrapper<*> {
@@ -341,7 +342,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
                                        keyStore: KeyStore,
                                        passPhrase: String,
                                        crypto: Crypto,
-                                       credential: Credential,
+                                       credential: ExtendedCredential,
                                        hcpNihii: String,
                                        hcpSsin: String,
                                        hcpFirstName: String,
@@ -416,7 +417,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
                 ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -547,7 +548,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
                 ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -731,7 +732,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
                 ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
