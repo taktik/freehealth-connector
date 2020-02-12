@@ -197,7 +197,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     "urn:be:fgov:certified-namespace:ehealth"
                 ),
                 SAMLAttributeDesignator(
-                    "urn:be:fgov:person:ssin:ehealth:1.0:{saml.quality}:nihii11",
+                    "urn:be:fgov:person:ssin:ehealth:1.0:doctor:nihii11",
                     "urn:be:fgov:certified-namespace:ehealth"
                 ),
                 SAMLAttributeDesignator(
