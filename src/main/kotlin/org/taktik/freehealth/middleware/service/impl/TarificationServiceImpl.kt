@@ -92,6 +92,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 hcparties.add(HcpartyType().apply {
                     ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  hcpNihii })
                     ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+                    // FIXME: set CD_HCPARTY based on samlToken.quality
+                    // Question, how to handle guardpost ?
                     cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
                     firstname = hcpFirstName
                     familyname = hcpLastName
@@ -118,6 +120,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                         hcparties.add(HcpartyType().apply {
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  requestAuthorNihii })
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
+                            // FIXME: set CD_HCPARTY based on samlToken.quality
                             cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = if (guardPostNihii?.isEmpty() != false) "persphysician" else "guardpost" })
                             firstname = hcpFirstName
                             familyname = hcpLastName
@@ -149,6 +152,16 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                 ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (h++).toString() })
                                 cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "claim" })
                                 contents.add(ContentType().apply { cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI; sv = "1.0"; value = code }) })
+
+                                // FIXME: toothNumber
+                                if (code.length == 6) {
+                                    contents.add(ContentType().apply { cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_ISO_3950; sv = "1.0"; value = "28" }) })
+                                }
+
+                                // FIXME: relatedService
+                                if (code.length == 6) {
+                                    contents.add(ContentType().apply { cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value = code }) })
+                                }
                             }
                         })
                         justification?.let { j ->
@@ -206,7 +219,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
 
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
-                                this.quality = if (guardPostNihii?.isEmpty() != false) "doctor" else "guardpost"
+                                this.quality = samlToken.quality
                                 this.value =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
                                         .apply { this.value = requestAuthorNihii }
