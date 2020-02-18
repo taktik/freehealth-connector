@@ -104,7 +104,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             val valid = it.validity
             val ts = it.timestamp
 
-            if (valid == null || ts == null) {
+            if (valid == null || ts == null || quality != it.quality) {
                 false
             } else {
                 val totalValidity = valid - ts
