@@ -51,11 +51,42 @@ class MhmController(val mhmService: MhmService) {
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
         @RequestParam io: String,
-        @RequestParam ioMembership: String,
+        @RequestParam(required = false) ioMembership: String?,
         @RequestParam startDate: Int,
         @RequestParam isTrial: Boolean,
         @RequestParam signatureType: String
     ) = mhmService.startSubscription(
+        keystoreId,
+        tokenId,
+        passPhrase,
+        hcpNihii,
+        hcpName,
+        hcpCbe,
+        patientSsin,
+        patientFirstName,
+        patientLastName,
+        patientGender,
+        io,
+        ioMembership, startDate, isTrial, signatureType)
+
+    @PostMapping("/send/{io}/{ioMembership}/verbose", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun sendAttestWithResponse(
+        @PathVariable io: String,
+        @PathVariable ioMembership: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpName: String,
+        @RequestParam hcpCbe: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientGender: String,
+        @RequestParam(required = false) patientSsin: String?,
+        @RequestParam startDate: Int,
+        @RequestParam isTrial: Boolean,
+        @RequestParam signatureType: String
+                              ) = mhmService.startSubscription(
         keystoreId,
         tokenId,
         passPhrase,

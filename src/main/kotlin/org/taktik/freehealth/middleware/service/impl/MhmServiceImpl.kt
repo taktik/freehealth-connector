@@ -119,12 +119,12 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         hcpNihii: String,
         hcpName: String,
         hcpCbe: String,
-        patientSsin: String,
+        patientSsin: String?,
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
         io: String,
-        ioMembership: String,
+        ioMembership: String?,
         startDate: Int,
         isTrial: Boolean,
         signatureType: String
@@ -165,7 +165,8 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         val sendSubscripionRequest = be.fgov.ehealth.mycarenet.mhm.protocol.v1.SendSubscriptionRequest().apply {
 
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-            val packageInfo = McnConfigUtil.retrievePackageInfo("medicalhousemembership", principal?.mcnLicense, principal?.mcnPassword)
+            val packageInfo =
+                McnConfigUtil.retrievePackageInfo("medicalhousemembership", principal?.mcnLicense, principal?.mcnPassword)
 
             this.commonInput = CommonInputType().apply {
                 request =
@@ -197,7 +198,8 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 }
                 this.referenceDate = now
             }
-            this.detail = BlobMapper.mapBlobTypefromBlob(blobBuilder.build(unencryptedRequest, "none", detailId, "text/xml", "MAA"))
+            this.detail =
+                BlobMapper.mapBlobTypefromBlob(blobBuilder.build(unencryptedRequest, "none", detailId, "text/xml", "MAA"))
             this.xades = BlobUtil.generateXades(credential, this.detail, "medicalhousemembership")
         }
 
@@ -250,7 +252,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
                 kmehrMessage = encryptedKnownContent?.businessContent?.value
-                                                    )
+                                               )
         } ?: StartSubscriptionResultWithResponse(
             xades = xades,
             mycarenetConversation = MycarenetConversation().apply {
@@ -264,7 +266,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
             },
             kmehrMessage = encryptedKnownContent?.businessContent?.value
-                                         )
+                                                )
     }
 
 
@@ -309,12 +311,12 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         hcpNihii: String,
         hcpName: String,
         hcpCbe: String,
-        patientSsin: String,
+        patientSsin: String?,
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
         io: String,
-        ioMembership: String,
+        ioMembership: String?,
         startDate: Int,
         isTrial: Boolean,
         signatureType: String): SendTransactionRequest {
@@ -385,10 +387,11 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
                     ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                     patient = PersonType().apply {
-                        ids.add(IDPATIENT().apply {
-                            s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value =
-                            patientSsin
-                        })
+                        patientSsin?.let {
+                            ids.add(IDPATIENT().apply {
+                                s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value = it
+                            })
+                        }
                         firstnames.add(patientFirstName)
                         familyname = patientLastName
                         sex =
@@ -402,9 +405,11 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                                     }
                                     }
                             }
-                        insurancymembership = MemberinsuranceType().apply {
-                            id = IDINSURANCE().apply { s = IDINSURANCEschemes.ID_INSURANCE; sv = "1.0"; value = io }
-                            membership = ioMembership
+                        ioMembership?.let {
+                            insurancymembership = MemberinsuranceType().apply {
+                                id = IDINSURANCE().apply { s = IDINSURANCEschemes.ID_INSURANCE; sv = "1.0"; value = io }
+                                membership = it
+                            }
                         }
                     }
                     transactions.addAll(listOf(TransactionType().apply {
@@ -546,13 +551,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                                   )
                     }
                 }
-            } catch(e:Exception) {
+            } catch (e: Exception) {
                 result.add(
                     MycarenetError(
                         code = ec,
                         path = curratedUrl,
-                        msgFr = "Erreur générique, xpath invalide : "+e.message,
-                        msgNl = "Onbekend foutmelding, xpath ongeldig : "+e.message
+                        msgFr = "Erreur générique, xpath invalide : " + e.message,
+                        msgNl = "Onbekend foutmelding, xpath ongeldig : " + e.message
                                   )
                           )
             }
