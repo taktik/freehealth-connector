@@ -58,6 +58,7 @@ import com.google.gson.Gson
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.stereotype.Service
 import org.taktik.connector.business.mycarenet.attest.domain.AttestV2BuilderResponse
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
 import org.taktik.connector.business.mycarenet.attest.mappers.BlobMapper
@@ -95,6 +96,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
+@Service
 class MhmServiceImpl(private val stsService: STSService) : MhmService {
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val config = ConfigFactory.getConfigValidator(listOf())
