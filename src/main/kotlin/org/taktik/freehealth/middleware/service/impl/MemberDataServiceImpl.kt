@@ -162,7 +162,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
         val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword)
 
-        log.info("getMemberData called with principal "+(principal?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
+        log.info("getMemberData called with principal "+(principal?._id?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
 
         val inputRef = "" + IdGeneratorFactory.getIdGenerator().generateId()
         val requestId = IdGeneratorFactory.getIdGenerator("xsid").generateId()
