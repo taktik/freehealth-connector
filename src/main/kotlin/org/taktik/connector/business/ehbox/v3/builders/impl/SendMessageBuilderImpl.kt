@@ -159,15 +159,21 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
         destinationEtkSet: Set<EncryptionToken>,
         contentType: PublicationContentType
                                           ) {
-        val publicationDocumentType = PublicationDocumentType()
-        val dataToSend =
-            this.encode(keystoreId, keystore, quality, passPhrase, message.document!!.getContent(), message.isEncrypted, destinationEtkSet)
-        publicationDocumentType.digest = this.processDigest(dataToSend)
-        publicationDocumentType.encryptableTextContent = dataToSend
-        publicationDocumentType.mimeType = message.document!!.mimeType
-        publicationDocumentType.title = message.document!!.title
-        publicationDocumentType.downloadFileName = message.document!!.filename
-        contentType.document = publicationDocumentType
+
+        (message.document ?: Document().apply {
+            setContent("Document with ${message.annexList.size} annexes".toByteArray(Charsets.UTF_8))
+        }).let { doc ->
+            val dataToSend =
+                this.encode(keystoreId, keystore, quality, passPhrase, doc.getContent(), message.isEncrypted, destinationEtkSet)
+
+            contentType.document = PublicationDocumentType().apply {
+                digest = processDigest(dataToSend)
+                encryptableTextContent = dataToSend
+                mimeType = doc.mimeType ?: "text/plain"
+                title = doc.title ?: "Untitled"
+                downloadFileName = doc.filename ?: "body.txt"
+            }
+        }
     }
 
     private fun processCustomMetas(content: ContentContextType, customMetas: Map<String, String>?) {
@@ -404,7 +410,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
             }
 
             annexType.encryptableTitle =
-                this.encode(keystoreId, keystore, quality, passPhrase, annex.title, isDocumentEncrypted, destinationEtkSet)
+                this.encode(keystoreId, keystore, quality, passPhrase, annex.title ?: "Annex", isDocumentEncrypted, destinationEtkSet)
             annexType.mimeType = annex.mimeType
             contentType.annices.add(annexType)
         }
