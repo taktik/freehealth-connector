@@ -37,12 +37,12 @@ class KgssServiceImpl constructor(private val kgssMap : IMap<UUID, SerializableK
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun getNewKey(keystoreId: UUID, keyStore: KeyStore, passPhrase: String, allowedReaders: List<CredentialType>, myEtk: ByteArray): KeyResult {
-        return (this.kgssMap.computeIfAbsent(keystoreId) { getNewKeyFromKgss(keystoreId, keyStore, passPhrase, allowedReaders, myEtk).toSerializableKeyResult() }).toKeyResult()
+    override fun getNewKey(keystoreId: UUID, keyStore: KeyStore, quality: String, passPhrase: String, allowedReaders: List<CredentialType>, myEtk: ByteArray): KeyResult {
+        return (this.kgssMap.computeIfAbsent(keystoreId) { getNewKeyFromKgss(keystoreId, keyStore, quality, passPhrase, allowedReaders, myEtk).toSerializableKeyResult() }).toKeyResult()
     }
 
     @Throws(TechnicalConnectorException::class)
-    fun getNewKeyFromKgss(keystoreId: UUID, keyStore: KeyStore, passPhrase: String, allowedReaders: List<CredentialType>, myEtk: ByteArray): KeyResult {
+    fun getNewKeyFromKgss(keystoreId: UUID, keyStore: KeyStore, quality: String, passPhrase: String, allowedReaders: List<CredentialType>, myEtk: ByteArray): KeyResult {
         val req = GetNewKeyRequestContent()
         req.etk = myEtk
         req.allowedReaders.addAll(allowedReaders)
@@ -53,7 +53,7 @@ class KgssServiceImpl constructor(private val kgssMap : IMap<UUID, SerializableK
         val id = config.getLongProperty("org.taktik.connector.technical.service.kgss.identifier.value", 809394427L)
         val appId = config.getProperty("org.taktik.connector.technical.service.kgss.identifier.applicationid", "KGSS")
 
-        return this.service.getNewKey(req, keystoreId, keyStore, passPhrase,  KeyDepotManagerImpl.getInstance(keyDepotService).getEtk(idType, id, appId, keystoreId, false).encoded)
+        return this.service.getNewKey(req, keystoreId, keyStore, quality, passPhrase,  KeyDepotManagerImpl.getInstance(keyDepotService).getEtk(idType, id, appId, keystoreId, false).encoded)
     }
 
     override fun flushCache() {

@@ -53,7 +53,13 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @GetMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
+    @ResponseBody
+
+fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
+
+@GetMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getInfos(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): BoxInfo =
         ehboxService.getInfos(keystoreId, tokenId, passPhrase)
 
@@ -91,6 +97,25 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         receptionReceipt ?: false,
         readReceipt ?: false
                                                           )
+
+    @PostMapping("/2ebox", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun sendMessage2Ebox(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestBody message: DocumentMessage,
+        @RequestParam publicationReceipt: Boolean?,
+        @RequestParam receptionReceipt: Boolean?,
+        @RequestParam readReceipt: Boolean?
+                   ): MessageOperationResponse = ehboxService.sendMessage2Ebox(
+        keystoreId,
+        tokenId,
+        passPhrase,
+        message,
+        publicationReceipt ?: false,
+        receptionReceipt ?: false,
+        readReceipt ?: false
+                                                                         )
 
     @PostMapping("/move/from/{source}/to/{destination}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun moveMessages(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody messageIds: List<String>, @PathVariable source: String, @PathVariable destination: String): MessageOperationResponse =

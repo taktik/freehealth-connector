@@ -123,7 +123,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for GMD operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
 
         val isTest = config.getProperty("endpoint.mcn.registration").contains("-acpt")
 
@@ -462,7 +462,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for GMD operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
 
         // DMGReferences ref = DmgTestUtils.createDmgReferenceForTest();
         val ref = DMGReferences(true)
@@ -665,7 +665,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for DMG operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
 
         val ref = DMGReferences(true)
 

@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
 
 public interface KgssService {
 
-   KeyResult getNewKey(GetNewKeyRequestContent request, UUID keystoreId, KeyStore keystore, String passPhrase, byte[] kgssETK) throws TechnicalConnectorException;
+   KeyResult getNewKey(GetNewKeyRequestContent request, UUID keystoreId, KeyStore keystore, String quality, String passPhrase, byte[] kgssETK) throws TechnicalConnectorException;
 
    GetNewKeyResponseContent getNewKey(GetNewKeyRequestContent request, Crypto crypto, Credential encryption, Map<String, PrivateKey> decryptionKeys, byte[] etkKGSS) throws TechnicalConnectorException;
 

@@ -113,14 +113,14 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
             freehealthEhboxService.getFullMessage(samlToken, messageRequest).let { msg ->
                 if (msg.status?.code == "100") try {
                     consultationMessageBuilder.buildFullMessage(
-                        KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase), msg).toMessageDto()?.let { MessageResponse(it) }
+                        KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase, samlToken.quality), msg).toMessageDto()?.let { MessageResponse(it) }
                         ?: MessageResponse(null, Error("Unknown error"))
                 } catch (e: EhboxCryptoException) {
                     alternateKeystores?.mapFirstNotNull {
                         try {
                             it.uuid?.let { uuid ->
                                 it.passPhrase?.let { pass ->
-                                    consultationMessageBuilder.buildFullMessage(KeyStoreCredential(uuid, stsService.getKeyStore(uuid, pass)!!, "authentication", pass), msg)
+                                    consultationMessageBuilder.buildFullMessage(KeyStoreCredential(uuid, stsService.getKeyStore(uuid, pass)!!, "authentication", pass, samlToken.quality), msg)
                                         .toMessageDto()
                                 }
                             }
@@ -154,6 +154,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
             sendMessageBuilder.buildMessage(
                 keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
+                samlToken.quality,
                 passPhrase,
                 message.toDocumentMessage()
                                            ).apply {
@@ -166,6 +167,44 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         request.publicationId = UUID.randomUUID().toString().substring(0, 12)
         return try {
             freehealthEhboxService.sendMessage(samlToken, request).let { sendMessageResponse ->
+                if (sendMessageResponse.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
+            }
+        } catch (e: TechnicalConnectorException) {
+            (e.cause as? SOAPFaultException)?.let {
+                val be = parseFault(it.fault)?.details?.details?.firstOrNull()
+                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
+            } ?: MessageOperationResponse(false, Error("999", e.message))
+        }
+    }
+
+    override fun sendMessage2Ebox(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        message: DocumentMessage,
+        publicationReceipt: Boolean,
+        receptionReceipt: Boolean,
+        readReceipt: Boolean
+                            ): MessageOperationResponse {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+            ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val request =
+            sendMessageBuilder.buildMessage(
+                keystoreId,
+                stsService.getKeyStore(keystoreId, passPhrase)!!,
+                samlToken.quality,
+                passPhrase,
+                message.toDocumentMessage()
+                                           ).apply {
+                contentContext.contentSpecification.let {
+                    it.isPublicationReceipt =
+                        publicationReceipt; it.isReceivedReceipt = receptionReceipt; it.isReadReceipt =
+                    readReceipt
+                }
+            }
+        request.publicationId = UUID.randomUUID().toString().substring(0, 12)
+        return try {
+            freehealthEhboxService.sendMessage2Ebox(samlToken, request).let { sendMessageResponse ->
                 if (sendMessageResponse.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
             }
         } catch (e: TechnicalConnectorException) {
@@ -207,14 +246,14 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                 result.addAll(response.messages.mapNotNull { msg ->
                     try {
                         consultationMessageBuilder.buildMessage(
-                            KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase), msg
+                            KeyStoreCredential(keystoreId, stsService.getKeyStore(keystoreId, passPhrase)!!, "authentication", passPhrase, samlToken.quality), msg
                                                                ).toMessageDto()
                     } catch (e: EhboxCryptoException) {
                         alternateKeystores?.mapFirstNotNull {
                             try {
                                 it.uuid?.let { uuid ->
                                     it.passPhrase?.let { pass ->
-                                        consultationMessageBuilder.buildMessage(KeyStoreCredential(uuid, stsService.getKeyStore(uuid, pass)!!, "authentication", pass), msg)
+                                        consultationMessageBuilder.buildMessage(KeyStoreCredential(uuid, stsService.getKeyStore(uuid, pass)!!, "authentication", pass, samlToken.quality), msg)
                                             .toMessageDto()
                                     }
                                 }

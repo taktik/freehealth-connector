@@ -94,7 +94,7 @@ public class KgssMessageBuilderImpl implements KgssMessageBuilder, Configuration
          return new EncryptionToken(etk);
       } catch (GeneralSecurityException var3) {
          LOG.debug(MessageFormat.format(TechnicalConnectorExceptionValues.ERROR_KGSS.getMessage(), "Not a valid ETK, expecting the KGSS ETK."));
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_KGSS, var3, new Object[]{"Not a valid ETK, expecting the KGSS ETK."});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_KGSS, var3, "Not a valid ETK, expecting the KGSS ETK.");
       }
    }
 
