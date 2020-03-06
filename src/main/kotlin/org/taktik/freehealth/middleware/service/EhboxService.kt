@@ -72,4 +72,6 @@ interface EhboxService {
         messageIds: List<String>,
         source: String
     ): MessageOperationResponse
+
+    fun sendMessage2Ebox(keystoreId: UUID, tokenId: UUID, passPhrase: String, message: DocumentMessage, publicationReceipt: Boolean, receptionReceipt: Boolean, readReceipt: Boolean): MessageOperationResponse
 }

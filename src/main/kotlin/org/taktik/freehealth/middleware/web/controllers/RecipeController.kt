@@ -54,7 +54,13 @@ class RecipeController(val recipeService: RecipeService) {
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
+    @ResponseBody
+
+fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
+
+@PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun createPrescription(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody prescription: PrescriptionRequest): Prescription =
         recipeService.createPrescription(
             keystoreId = keystoreId,

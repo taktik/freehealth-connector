@@ -47,7 +47,12 @@ class EattestController(val eattestService: EattestService) {
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @PostMapping("/send/{patientSsin}/verbose", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
+    @ResponseBody
+    fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
+
+@PostMapping("/send/{patientSsin}/verbose", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendAttestWithResponse(
         @PathVariable patientSsin: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

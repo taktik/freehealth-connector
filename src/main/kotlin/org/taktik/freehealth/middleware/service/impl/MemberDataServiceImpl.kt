@@ -37,7 +37,6 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
-import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationResponse
 import com.google.gson.Gson
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
@@ -86,7 +85,6 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
 import java.time.Instant
-import java.util.Date
 import java.util.UUID
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
@@ -155,7 +153,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 ?: throw MissingTokenException("Cannot obtain token for Genins operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -164,7 +162,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
         val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword)
 
-        log.info("getMemberData called with principal "+(principal?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
+        log.info("getMemberData called with principal "+(principal?._id?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
 
         val inputRef = "" + IdGeneratorFactory.getIdGenerator().generateId()
         val requestId = IdGeneratorFactory.getIdGenerator("xsid").generateId()

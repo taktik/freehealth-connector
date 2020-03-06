@@ -82,7 +82,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun declareTransaction(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -94,7 +94,7 @@ interface HubTokenService {
         endpoint: String,
         hubId: Long,
         hubApplication: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -104,7 +104,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun revokeTransaction(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -114,7 +114,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun getTransactionList(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -124,7 +124,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class, IntraHubBusinessConnectorException::class)
     fun getTransaction(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -134,7 +134,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun requestPublication(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -144,7 +144,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun putHCParty(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -154,7 +154,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun getHCParty(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -164,7 +164,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun putPatient(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -174,7 +174,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun getPatient(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -184,7 +184,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun putHCPartyConsent(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -194,7 +194,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun getHCPartyConsent(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -204,7 +204,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun revokeHCPartyConsent(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -214,7 +214,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun putPatientConsent(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -224,7 +224,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun getPatientConsent(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -234,7 +234,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun revokePatientConsent(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -244,7 +244,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun putTherapeuticLink(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -254,7 +254,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun getTherapeuticLink(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -264,7 +264,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun revokeTherapeuticLink(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -274,7 +274,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun putAccessRight(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -284,7 +284,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun getAccessRight(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -294,7 +294,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun revokeAccessRight(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -304,7 +304,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun getPatientAuditTrail(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -316,7 +316,7 @@ interface HubTokenService {
         endpoint: String,
         hubId: Long,
         hubApplication: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -326,7 +326,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun getTransactionSet(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,
@@ -336,7 +336,7 @@ interface HubTokenService {
     @Throws(TechnicalConnectorException::class)
     fun getLatestUpdate(
         endpoint: String,
-        token: SAMLToken,
+        samlToken: SAMLToken,
         keystoreId: UUID,
         keystore: KeyStore,
         passPhrase: String,

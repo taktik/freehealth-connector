@@ -51,7 +51,13 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @GetMapping("/check/{patientSsin}/{hcpNihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
+    @ResponseBody
+
+fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
+
+@GetMapping("/check/{patientSsin}/{hcpNihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun hasTherapeuticLink(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,

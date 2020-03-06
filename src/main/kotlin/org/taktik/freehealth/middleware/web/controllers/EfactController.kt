@@ -49,8 +49,13 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
+    @ResponseBody
 
-    @PostMapping("/batch", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
+
+@PostMapping("/batch", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendBatch(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
