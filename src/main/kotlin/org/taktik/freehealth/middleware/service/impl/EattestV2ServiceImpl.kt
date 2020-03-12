@@ -926,6 +926,16 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                             })
                                         }
                                     },
+                                    code.side?.let {
+                                        be.fgov.ehealth.standards.kmehr.schema.v1.ContentType().apply {
+                                            cds.add(be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT().apply {
+                                                s = be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.LOCAL;
+                                                sv = "1.0";
+                                                sl = "NIHDI-TREATED-LIMB";
+                                                value = code.side.toString();
+                                            })
+                                        }
+                                    },
                                     code.justification?.let {
                                         ContentType().apply {
                                             cds.add(CDCONTENT().apply {
