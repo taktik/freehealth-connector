@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
+import org.taktik.freehealth.middleware.dto.memberdata.MemberDataBatchRequestDto
+import org.taktik.freehealth.middleware.dto.memberdata.MemberInfoDto
 
 import java.io.File
 import java.time.Instant
@@ -706,17 +708,20 @@ class MemberDataControllerTest : EhealthTest() {
 
         val genIns: List<MemberDataResponse> = results.map { it.body }
 
-        genIns.forEach {
-
-
-
-
-
-
-
-
-
-
-        }
+        genIns.forEach {}
     }
+
+    @Test
+    fun scenarioMemberdataRequest() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val str = this.restTemplate.exchange("http://localhost:$port/mda/async/request/500" +
+                                                 "?hcpNihii=$nihii5" +
+                                                 "&hcpSsin=$ssin5" +
+                                                 "&hcpName={name5}" +
+                                                 "&hcpQuality=medicalhouse",
+                                             HttpMethod.POST, HttpEntity<MemberDataBatchRequestDto>(MemberDataBatchRequestDto(nisses[500]?.map { MemberInfoDto(ssin = it) } ?: listOf()), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, name5)
+
+        Assertions.assertThat(str).isNotNull
+    }
+
 }

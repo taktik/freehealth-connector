@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.service
 
+import org.taktik.connector.business.domain.common.GenAsyncResponse
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.icure.cin.saml.extensions.Facet
 import java.time.Instant
@@ -41,4 +43,18 @@ interface MemberDataService {
         endDate: Instant,
         hospitalized: Boolean? = null,
         facets: List<Facet>? = null): MemberDataResponse
+
+    fun sendMemberDataRequest(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        io: String?,
+        startDate: Instant,
+        endDate: Instant,
+        passPhrase: String,
+        mdaRequest: MemberDataBatchRequest
+                             ): GenAsyncResponse
 }
