@@ -188,7 +188,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val issueInstantDateTime = DateTime()
         val issueInstant = XMLGregorianCalendarImpl(issueInstantDateTime.toGregorianCalendar())
-        val samlFacets = mdaRequest.facets.map { mapper.map(it, Facet::class.java) }
+        val samlFacets = mdaRequest.facets?.map { mapper.map(it, Facet::class.java) }
 
         val attrQueries = mdaRequest.members.map {
             val inputRef = "" + IdGeneratorFactory.getIdGenerator().generateId()
