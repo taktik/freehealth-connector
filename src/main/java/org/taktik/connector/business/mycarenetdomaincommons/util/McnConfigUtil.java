@@ -19,6 +19,6 @@ public final class McnConfigUtil {
       String userName = licenseUsername != null ? licenseUsername : configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_USERNAME, "${mycarenet.license.username}");
       String password = licensePassword != null ? licensePassword : configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_PASSWORD, "${mycarenet.license.password}");
       String name = configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_NAME, "${package.name}");
-      return new McnPackageInfo(userName, password, name);
+      return new McnPackageInfo(userName.trim(), password.trim(), name);
    }
 }

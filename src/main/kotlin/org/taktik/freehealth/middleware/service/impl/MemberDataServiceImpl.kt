@@ -102,6 +102,7 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.icure.cin.saml.extensions.AttributeQueryList
 import org.taktik.icure.cin.saml.extensions.ExtensionsType
 import org.taktik.icure.cin.saml.extensions.Facet
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.Response
@@ -193,9 +194,10 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val attrQueries = mdaRequest.members.map {
             val inputRef = "" + IdGeneratorFactory.getIdGenerator().generateId()
             val requestId = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-            getAttrQuery(inputRef, issueInstant, samlFacets, it.hospitalized, hcpNihii, it.ssin, io, it.ioMembership, startDate, endDate) }
+            getAttrQuery(inputRef, issueInstant, samlFacets, it.hospitalized, hcpNihii, it.ssin, io, it.ioMembership, startDate, endDate)
+        }
 
-        val unEncryptedQuery = ConnectorXmlUtils.toByteArray(attrQueries as Any)
+        val unEncryptedQuery = ConnectorXmlUtils.toByteArray(AttributeQueryList().apply { attributeQueries.addAll(attrQueries) })
         val blobBuilder = BlobBuilderFactory.getBlobBuilder("genericasync")
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId();
 
@@ -240,11 +242,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 }
                 careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
                     this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                        quality = "doctor"
+                        quality = hcpQuality
                         value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
-                    }
-                    physicalPerson = be.cin.mycarenet.esb.common.v2.IdType().apply {
-                        this.ssin = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpSsin }
                     }
                 }
             }
@@ -505,8 +504,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         io: String?,
         ioMembership: String?,
         startDate: Instant,
-        endDate: Instant) {
-        AttributeQuery().apply {
+        endDate: Instant) = AttributeQuery().apply {
             id = "_$inputRef"
             this.issueInstant = issueInstant
             this.version = "2.0"
@@ -571,7 +569,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 })
             }
         }
-    }
+
 
     private fun extractError(sendTransactionRequest: ByteArray, code1: String?, code2: String?, errorUrl: String?, detailCode: String?): Set<MycarenetError> {
         //For some reason... The path starts with ../../../../ which corresponds to the request
