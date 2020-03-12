@@ -44,7 +44,7 @@ open class EhealthTest {
     @Value("\${org.taktik.icure.keystore2.password}") var password2: String? = null
     @Value("\${org.taktik.icure.keystore3.password}") var password3: String? = null
     @Value("\${org.taktik.icure.keystore4.password}") var password4: String? = null
-    @Value("\${org.taktik5icure.keystore5.password}") var password5: String? = null
+    @Value("\${org.taktik.icure.keystore5.password}") var password5: String? = null
     @Value("\${org.taktik.icure.keystore1.name}") var name1: String? = null
     @Value("\${org.taktik.icure.keystore2.name}") var name2: String? = null
     @Value("\${org.taktik.icure.keystore3.name}") var name3: String? = null
