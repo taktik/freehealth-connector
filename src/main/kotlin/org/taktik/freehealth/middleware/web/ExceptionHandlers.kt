@@ -14,18 +14,22 @@ import javax.xml.ws.soap.SOAPFaultException
  */
 @ControllerAdvice
 class ExceptionHandlers {
+    companion object {
+        private const val DEFAULT_EXCEPTION_MESSAGE = "unknown reason";
+    }
+
     @ExceptionHandler(TechnicalConnectorException::class)
     fun handleTechnicalConnectorException(response: HttpServletResponse, exception: TechnicalConnectorException) {
-        response.sendError(exception.category.httpStatus.value(), exception.message ?: "unknown reason")
+        response.sendError(exception.category.httpStatus.value(), exception.message ?: DEFAULT_EXCEPTION_MESSAGE)
     }
 
     @ExceptionHandler(MissingKeystoreException::class, MissingTokenException::class)
     fun handleUnauthorizedException(response: HttpServletResponse, exception: Exception) {
-        response.sendError(HttpStatus.UNAUTHORIZED.value(), exception.message ?: "unknown reason")
+        response.sendError(HttpStatus.UNAUTHORIZED.value(), exception.message ?: DEFAULT_EXCEPTION_MESSAGE)
     }
 
     @ExceptionHandler(SOAPFaultException::class)
     fun handleSoapFaultException(response: HttpServletResponse, exception: SOAPFaultException) {
-        response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.message ?: "unknown reason")
+        response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.message ?: DEFAULT_EXCEPTION_MESSAGE)
     }
 }
