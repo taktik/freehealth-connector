@@ -23,46 +23,21 @@ package org.taktik.freehealth.middleware.web.controllers
 import be.fgov.ehealth.consultrn.commons.core.v3.BusinessAnomalyType
 import be.fgov.ehealth.consultrn.protocol.v2.RegisterPersonResponse
 import ma.glasnost.orika.MapperFacade
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.taktik.connector.business.consultrn.exception.manageperson.ConsultrnRegisterExistingPersonException
 import org.taktik.connector.business.consultrn.exception.manageperson.ConsultrnRegisterPersonException
 import org.taktik.freehealth.middleware.dto.consultrn.PersonMid
 import org.taktik.freehealth.middleware.dto.consultrn.RegisterPersonResponseDto
 import org.taktik.freehealth.middleware.dto.consultrn.SearchBySSINReplyDto
 import org.taktik.freehealth.middleware.dto.consultrn.SearchPhoneticReplyDto
-import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.ConsultRnService
-import java.util.UUID
-import javax.servlet.http.HttpServletRequest
-import javax.websocket.server.PathParam
+import java.util.*
 
 @RestController
 @RequestMapping("/consultrn")
 class ConsultrnController(val consultRnService: ConsultRnService, val mapper: MapperFacade) {
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(MissingTokenException::class)
-    @ResponseBody
-    fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
-
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
-    @ResponseBody
-
-fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
-
-@GetMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @GetMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun identify(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,

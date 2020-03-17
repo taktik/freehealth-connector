@@ -34,5 +34,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 class SwaggerConfiguration {
     @Bean
     fun api(): Docket =
-        Docket(DocumentationType.SWAGGER_2).securitySchemes(listOf(BasicAuth("basicAuth"))).select().apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+        Docket(DocumentationType.SWAGGER_2)
+            .securitySchemes(listOf(BasicAuth("basicAuth")))
+            .select()
+            .apis(RequestHandlerSelectors.basePackage("org.taktik"))
+            .paths(PathSelectors.any())
+            .build()
 }

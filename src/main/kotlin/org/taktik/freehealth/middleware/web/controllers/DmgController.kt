@@ -1,40 +1,16 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import ma.glasnost.orika.MapperFacade
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.taktik.freehealth.middleware.dto.common.GenAsyncResponse
-import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.DmgService
 import java.util.*
-import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/gmd")
 class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(MissingTokenException::class)
-    @ResponseBody
-    fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
-
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
-    @ResponseBody
-
-fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
-
-@PostMapping("/register/{oa}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @PostMapping("/register/{oa}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerDoctor(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @PathVariable oa: String, @RequestParam bic: String, @RequestParam iban: String) =
         dmgService.registerDoctor(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, oa = oa, bic = bic, iban = iban)
 

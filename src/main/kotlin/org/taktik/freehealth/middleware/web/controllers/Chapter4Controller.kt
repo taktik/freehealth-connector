@@ -20,16 +20,10 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.*
 import org.taktik.connector.business.domain.chapter4.Appendix
 import org.taktik.connector.business.domain.chapter4.RequestType
 import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
@@ -37,28 +31,15 @@ import org.taktik.freehealth.middleware.drugs.civics.ParagraphInfos
 import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
 import org.taktik.freehealth.middleware.drugs.dto.MppPreview
 import org.taktik.freehealth.middleware.service.Chapter4Service
+import java.net.URL
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
 import javax.servlet.http.HttpServletResponse
-import org.apache.commons.io.IOUtils
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.taktik.freehealth.middleware.exception.MissingTokenException
-import java.net.URL
-import javax.servlet.http.HttpServletRequest
-
 
 @RestController
 @RequestMapping("/chap4")
 class Chapter4Controller(private val chapter4Service: Chapter4Service) {
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(MissingTokenException::class)
-    @ResponseBody fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
-
     val log = LoggerFactory.getLogger(this .javaClass)
 
     @GetMapping("/sam/docpreviews/{chapterName}/{paragraphName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])

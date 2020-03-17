@@ -6,13 +6,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
-import org.springframework.web.servlet.HandlerExceptionResolver
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import org.taktik.freehealth.middleware.web.ExceptionHandlers
 
 @Configuration
 @EnableWebMvc
@@ -21,10 +19,6 @@ import org.taktik.freehealth.middleware.web.ExceptionHandlers
 @EnableConfigurationProperties(ServerProperties::class, ResourceProperties::class)
 class WebMvcConfigurer(val resourceProperties: ResourceProperties) : WebMvcConfigurer {
     private val SERVLET_LOCATIONS = arrayOf("/")
-
-    override fun configureHandlerExceptionResolvers(exceptionResolvers: MutableList<HandlerExceptionResolver>) {
-        exceptionResolvers.add(ExceptionHandlers());
-    }
 
     override fun configureContentNegotiation(contentNegotiationConfigurer: ContentNegotiationConfigurer) {
         // Disable use of pathExtension and parameter for content negotiation
