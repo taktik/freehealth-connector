@@ -225,4 +225,24 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
                                                       )
     }
 
+    @PostMapping("/async/messages/", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun sendMemberDataRequest(
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpName: String,
+        @RequestParam messageNames: List<String>?
+    ): GenAsyncResponse {
+        return memberDataService.getMemberDataMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpName = hcpName,
+            messageNames = messageNames)
+    }
+
 }

@@ -713,13 +713,25 @@ class MemberDataControllerTest : EhealthTest() {
 
     @Test
     fun scenarioMemberdataRequest() {
-        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val str = this.restTemplate.exchange("http://localhost:$port/mda/async/request/500" +
                                                  "?hcpNihii=$nihii5" +
                                                  "&hcpSsin=$ssin5" +
                                                  "&hcpName={name5}" +
                                                  "&hcpQuality=medicalhouse",
                                              HttpMethod.POST, HttpEntity<MemberDataBatchRequestDto>(MemberDataBatchRequestDto(nisses[500]?.map { MemberInfoDto(ssin = it) } ?: listOf()), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, name5)
+
+        Assertions.assertThat(str).isNotNull
+    }
+
+    @Test
+    fun scenarioMemberdataGetMessage() {
+        val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
+        val str = this.restTemplate.exchange("http://localhost:$port/mda/async/messages" +
+            "?hcpNihii=$nihii5" +
+            "&hcpSsin=$ssin5" +
+            "&hcpName={name5}",
+            HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName5, lastName5)
 
         Assertions.assertThat(str).isNotNull
     }
