@@ -23,4 +23,4 @@ package org.taktik.freehealth.middleware.domain.sts
 import java.io.Serializable
 import java.util.*
 
-class SamlTokenResult(var tokenId: UUID? = null, var token: String? = null, var timestamp: Long? = null, var validity: Long? = null, var quality: String? = null) : Serializable
+class SamlTokenResult(var tokenId: UUID? = null, var token: String? = null, var tokenBase64: String? = null, var timestamp: Long? = null, var validity: Long? = null, var quality: String? = null) : Serializable
