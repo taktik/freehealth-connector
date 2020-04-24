@@ -34,13 +34,10 @@ import org.springframework.security.web.DefaultSecurityFilterChain
 import org.springframework.security.web.FilterChainProxy
 import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.taktik.freehealth.middleware.dao.CouchDbProperties
 import org.taktik.freehealth.middleware.dao.CouchdbUserDetailsService
-import org.taktik.freehealth.middleware.web.AuthenticationFailureHandler
-import org.taktik.freehealth.middleware.web.AuthenticationSuccessHandler
 import org.taktik.freehealth.middleware.web.Http401UnauthorizedEntryPoint
 import org.taktik.freehealth.middleware.web.LoginUrlAuthenticationEntryPoint
 
@@ -56,7 +53,6 @@ class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: C
         return super.authenticationManagerBean()
     }
 
-    //@Autowired
     override fun configure(auth: AuthenticationManagerBuilder?) {
         val passwordEncoder = BCryptPasswordEncoder(8)
 		auth!!.authenticationProvider(DaoAuthenticationProvider().apply {
