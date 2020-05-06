@@ -73,7 +73,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val assertion = document.documentElement
 
         tokensMap[tokenId] =
-            SamlTokenResult(tokenId, token, null, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
+            SamlTokenResult(tokenId, token, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
         log.info("tokensMap size: ${tokensMap.size}")
     }
 
@@ -266,10 +266,9 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             transformerFactory.newTransformer().transform(DOMSource(assertion), result)
             val randomUUID = UUID.randomUUID()
             val samlToken = result.writer.toString()
-            val samlTokenURLSafeBase64 = Base64.getUrlEncoder().encodeToString(result.writer.toString().toByteArray())
 
             val samlTokenResult =
-                SamlTokenResult(randomUUID, samlToken, samlTokenURLSafeBase64, now, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
+                SamlTokenResult(randomUUID, samlToken, now, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
             tokensMap[randomUUID] = samlTokenResult
             log.info("tokensMap size: ${tokensMap.size}")
 
