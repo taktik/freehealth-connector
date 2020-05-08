@@ -28,8 +28,30 @@ import be.fgov.ehealth.recipe.core.v1.CreatePrescriptionAdministrativeInformatio
 import be.fgov.ehealth.recipe.core.v1.PrescriberServiceAdministrativeInformationType
 import be.fgov.ehealth.recipe.core.v1.SecuredContentType
 import be.fgov.ehealth.recipe.core.v1.SendNotificationAdministrativeInformationType
-import be.fgov.ehealth.recipe.protocol.v1.*
-import be.recipe.services.prescriber.*
+import be.fgov.ehealth.recipe.protocol.v1.AliveCheckRequest
+import be.fgov.ehealth.recipe.protocol.v1.AliveCheckResponse
+import be.fgov.ehealth.recipe.protocol.v1.CreatePrescriptionRequest
+import be.fgov.ehealth.recipe.protocol.v1.GetPrescriptionForPrescriberRequest
+import be.fgov.ehealth.recipe.protocol.v1.GetPrescriptionForPrescriberResponse
+import be.fgov.ehealth.recipe.protocol.v1.ListFeedbacksRequest
+import be.fgov.ehealth.recipe.protocol.v1.ListFeedbacksResponse
+import be.fgov.ehealth.recipe.protocol.v1.ListOpenPrescriptionsRequest
+import be.fgov.ehealth.recipe.protocol.v1.ListOpenPrescriptionsResponse
+import be.fgov.ehealth.recipe.protocol.v1.RevokePrescriptionRequest
+import be.fgov.ehealth.recipe.protocol.v1.SendNotificationRequest
+import be.fgov.ehealth.recipe.protocol.v1.UpdateFeedbackFlagRequest
+import be.recipe.services.prescriber.CreatePrescriptionParam
+import be.recipe.services.prescriber.CreatePrescriptionResult
+import be.recipe.services.prescriber.GetListOpenPrescriptionParam
+import be.recipe.services.prescriber.GetListOpenPrescriptionResult
+import be.recipe.services.prescriber.GetPrescriptionForPrescriberParam
+import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
+import be.recipe.services.prescriber.ListFeedbackItem
+import be.recipe.services.prescriber.ListFeedbacksParam
+import be.recipe.services.prescriber.ListFeedbacksResult
+import be.recipe.services.prescriber.RevokePrescriptionParam
+import be.recipe.services.prescriber.SendNotificationParam
+import be.recipe.services.prescriber.UpdateFeedbackFlagParam
 import com.sun.xml.internal.ws.client.ClientTransportException
 import org.apache.commons.lang3.StringUtils
 import org.bouncycastle.util.encoders.Base64
@@ -40,7 +62,10 @@ import org.taktik.connector.business.recipe.utils.KmehrHelper
 import org.taktik.connector.business.recipeprojects.core.domain.IdentifierTypes
 import org.taktik.connector.business.recipeprojects.core.domain.KgssIdentifierType
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
-import org.taktik.connector.business.recipeprojects.core.utils.*
+import org.taktik.connector.business.recipeprojects.core.utils.Exceptionutils
+import org.taktik.connector.business.recipeprojects.core.utils.I18nHelper
+import org.taktik.connector.business.recipeprojects.core.utils.IOUtils
+import org.taktik.connector.business.recipeprojects.core.utils.MarshallerHelper
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
@@ -54,7 +79,9 @@ import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.impl.RecipeServiceImpl
 import java.io.ByteArrayInputStream
 import java.security.KeyStore
-import java.util.*
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.Properties
 
 class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotService: KeyDepotService) : AbstractIntegrationModule(keyDepotService), PrescriberIntegrationModule {
     private val log = LoggerFactory.getLogger(PrescriberIntegrationModuleImpl::class.java)
