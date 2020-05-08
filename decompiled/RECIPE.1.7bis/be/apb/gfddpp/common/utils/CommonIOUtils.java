@@ -137,11 +137,11 @@ public class CommonIOUtils {
             if (files == null) {
                return Collections.emptyList();
             } else {
-               File[] arr$ = files;
-               int len$ = files.length;
+               File[] var8 = files;
+               int var9 = files.length;
 
-               for(int i$ = 0; i$ < len$; ++i$) {
-                  File f = arr$[i$];
+               for(int var10 = 0; var10 < var9; ++var10) {
+                  File f = var8[var10];
                   LOG.info("Keystore filename: " + f.getName());
                   if (f.getName().contains(ssinRiziv) && f.getName().endsWith(".p12")) {
                      try {
@@ -216,11 +216,11 @@ public class CommonIOUtils {
             if (files == null) {
                return Collections.emptyList();
             } else {
-               File[] arr$ = files;
-               int len$ = files.length;
+               File[] var8 = files;
+               int var9 = files.length;
 
-               for(int i$ = 0; i$ < len$; ++i$) {
-                  File f = arr$[i$];
+               for(int var10 = 0; var10 < var9; ++var10) {
+                  File f = var8[var10];
                   LOG.info("filename: " + f.getName());
                   if (f.getName().contains(configName) && f.getName().endsWith(".xml")) {
                      filenames = f.getName();

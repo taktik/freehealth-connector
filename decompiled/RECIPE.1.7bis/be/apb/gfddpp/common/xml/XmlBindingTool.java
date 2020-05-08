@@ -43,10 +43,10 @@ public class XmlBindingTool<E> {
 
    private static String generateErrorMessage(List<String> messages) {
       StringBuilder errorMessage = new StringBuilder("XML parse errors:");
-      Iterator i$ = messages.iterator();
+      Iterator var2 = messages.iterator();
 
-      while(i$.hasNext()) {
-         String message = (String)i$.next();
+      while(var2.hasNext()) {
+         String message = (String)var2.next();
          errorMessage.append("\n");
          errorMessage.append(message);
       }

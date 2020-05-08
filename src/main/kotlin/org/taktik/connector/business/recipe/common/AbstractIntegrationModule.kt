@@ -230,12 +230,12 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
 
 
     @Throws(IntegrationModuleException::class)
-    protected fun unsealPrescriptionForUnknown(key: KeyResult, protectedMessage: ByteArray): ByteArray {
-        return unsealForUnknown(key, protectedMessage)
+    protected fun unsealPrescriptionForUnknown(crypto: Crypto, key: KeyResult, protectedMessage: ByteArray): ByteArray {
+        return unsealForUnknown(crypto, key, protectedMessage)
     }
 
-    private fun unsealForUnknown(key: KeyResult, protectedMessage: ByteArray): ByteArray {
-        return ByteArray(0)
+    private fun unsealForUnknown(crypto: Crypto, key: KeyResult, protectedMessage: ByteArray): ByteArray {
+        return crypto.unsealForUnknown(key.secretKey, protectedMessage);
     }
 
     @Throws(IntegrationModuleException::class)

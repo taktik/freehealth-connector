@@ -1,7 +1,5 @@
 package be.apb.standards.smoa.schema.v1;
 
-import be.apb.standards.smoa.schema.id.v1.NihiiIdType;
-import be.apb.standards.smoa.schema.model.v1.MinSetPatient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -13,63 +11,51 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
-        name = "ContinuedPharmaceuticalCareDossierEvent",
-        propOrder = {"minPatient", "pharmacyId", "dguid", "contentDateTime", "contentType", "contentInfo", "contentData", "metaDataList"}
+   name = "ContinuedPharmaceuticalCareEntity",
+   propOrder = {"sguid", "dguid", "contentDateTime", "contentType", "contentInfo", "contentData", "metaDataList", "tipQualityIndicator"}
 )
-public class ContinuedPharmaceuticalCareDossierEvent extends AbstractEventType {
-   @XmlElement(
-           name = "min-Patient",
-           namespace = "http://www.apb.be/standards/smoa/schema/model/v1",
-           required = true
-   )
-   protected MinSetPatient minPatient;
-   @XmlElement(
-           required = true
-   )
-   protected NihiiIdType pharmacyId;
+public class ContinuedPharmaceuticalCareEntity extends AbstractEventType {
    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
    @XmlSchemaType(
-           name = "token"
+      name = "token"
+   )
+   protected String sguid;
+   @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+   @XmlSchemaType(
+      name = "token"
    )
    protected String dguid;
    @XmlElement(
-           name = "ContentDateTime",
-           required = true
+      name = "ContentDateTime",
+      required = true
    )
    @XmlSchemaType(
-           name = "dateTime"
+      name = "dateTime"
    )
    protected XMLGregorianCalendar contentDateTime;
    @XmlElement(
-           name = "ContentType",
-           required = true
+      name = "ContentType",
+      required = true
    )
    protected String contentType;
    @XmlElement(
-           name = "ContentInfo"
+      name = "ContentInfo"
    )
    protected InfoListType contentInfo;
    @XmlElement(
-           name = "ContentData",
-           required = true
+      name = "ContentData",
+      required = true
    )
    protected byte[] contentData;
    protected MetaDataListType metaDataList;
+   protected int tipQualityIndicator;
 
-   public MinSetPatient getMinPatient() {
-      return this.minPatient;
+   public String getSguid() {
+      return this.sguid;
    }
 
-   public void setMinPatient(MinSetPatient value) {
-      this.minPatient = value;
-   }
-
-   public NihiiIdType getPharmacyId() {
-      return this.pharmacyId;
-   }
-
-   public void setPharmacyId(NihiiIdType value) {
-      this.pharmacyId = value;
+   public void setSguid(String value) {
+      this.sguid = value;
    }
 
    public String getDguid() {
@@ -118,5 +104,13 @@ public class ContinuedPharmaceuticalCareDossierEvent extends AbstractEventType {
 
    public void setMetaDataList(MetaDataListType value) {
       this.metaDataList = value;
+   }
+
+   public int getTipQualityIndicator() {
+      return this.tipQualityIndicator;
+   }
+
+   public void setTipQualityIndicator(int value) {
+      this.tipQualityIndicator = value;
    }
 }

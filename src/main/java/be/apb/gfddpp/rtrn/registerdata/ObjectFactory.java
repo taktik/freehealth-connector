@@ -24,6 +24,10 @@ public class ObjectFactory {
       return new BvacEventType();
    }
 
+   public ContinuedPharmaceuticalCareDossierEvent createContinuedPharmaceuticalCareDossierEvent() {
+      return new ContinuedPharmaceuticalCareDossierEvent();
+   }
+
    public BvacDocument createBvacDocument() {
       return new BvacDocument();
    }

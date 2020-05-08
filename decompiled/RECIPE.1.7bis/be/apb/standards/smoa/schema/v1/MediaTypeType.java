@@ -67,11 +67,11 @@ public enum MediaTypeType {
    }
 
    public static MediaTypeType fromValue(String v) {
-      MediaTypeType[] arr$ = values();
-      int len$ = arr$.length;
+      MediaTypeType[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         MediaTypeType c = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         MediaTypeType c = var1[var3];
          if (c.value.equals(v)) {
             return c;
          }

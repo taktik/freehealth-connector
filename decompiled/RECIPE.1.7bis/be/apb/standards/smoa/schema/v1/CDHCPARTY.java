@@ -129,11 +129,11 @@ public enum CDHCPARTY {
    }
 
    public static CDHCPARTY fromValue(String v) {
-      CDHCPARTY[] arr$ = values();
-      int len$ = arr$.length;
+      CDHCPARTY[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         CDHCPARTY c = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         CDHCPARTY c = var1[var3];
          if (c.value.equals(v)) {
             return c;
          }

@@ -57,10 +57,10 @@ public class SchematronValidator {
 
    public List<String> getErrors() {
       List<String> errors = this.validationResult == null ? new ArrayList() : this.validationResult.getErrors();
-      Iterator i$ = ((List)errors).iterator();
+      Iterator var2 = ((List)errors).iterator();
 
-      while(i$.hasNext()) {
-         String error = (String)i$.next();
+      while(var2.hasNext()) {
+         String error = (String)var2.next();
          LOG.error("Schematron Error :" + error);
       }
 

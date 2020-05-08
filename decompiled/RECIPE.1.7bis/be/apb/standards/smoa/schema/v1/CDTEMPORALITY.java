@@ -36,8 +36,8 @@ public enum CDTEMPORALITY {
       CDTEMPORALITY[] arr$ = values();
       int len$ = arr$.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         CDTEMPORALITY c = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         CDTEMPORALITY c = var1[var3];
          if (c.value.equals(v)) {
             return c;
          }

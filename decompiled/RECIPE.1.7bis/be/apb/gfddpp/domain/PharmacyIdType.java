@@ -32,11 +32,11 @@ public enum PharmacyIdType {
    }
 
    public static PharmacyIdType valueOf(Class<? extends AbstractPharmacyIdType> type) {
-      PharmacyIdType[] arr$ = values();
-      int len$ = arr$.length;
+      PharmacyIdType[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         PharmacyIdType instance = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         PharmacyIdType instance = var1[var3];
          if (type.isAssignableFrom(instance.getType())) {
             return instance;
          }

@@ -29,11 +29,11 @@ public enum QuantityPrefix {
    }
 
    public static QuantityPrefix fromValue(String v) {
-      QuantityPrefix[] arr$ = values();
-      int len$ = arr$.length;
+      QuantityPrefix[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         QuantityPrefix c = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         QuantityPrefix c = var1[var3];
          if (c.value.equals(v)) {
             return c;
          }

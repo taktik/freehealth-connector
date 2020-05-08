@@ -8,10 +8,10 @@ public class CriteriaHelper {
    public static List<DateCriteria> getDateCriterias(List<Criteria> criteria) {
       if (!criteria.isEmpty()) {
          List<DateCriteria> dates = new ArrayList();
-         Iterator i$ = criteria.iterator();
+         Iterator var2 = criteria.iterator();
 
-         while(i$.hasNext()) {
-            Criteria crit = (Criteria)i$.next();
+         while(var2.hasNext()) {
+            Criteria crit = (Criteria)var2.next();
             if (crit instanceof DateCriteria && ((DateCriteria)crit).isValid()) {
                dates.add((DateCriteria)crit);
             }
@@ -26,10 +26,10 @@ public class CriteriaHelper {
    public static List<Criteria> getEnumCriterias(List<Criteria> criteria) {
       if (!criteria.isEmpty()) {
          List<Criteria> enums = new ArrayList();
-         Iterator i$ = criteria.iterator();
+         Iterator var2 = criteria.iterator();
 
-         while(i$.hasNext()) {
-            Criteria crit = (Criteria)i$.next();
+         while(var2.hasNext()) {
+            Criteria crit = (Criteria)var2.next();
             if (crit.isEnum()) {
                enums.add(crit);
             }

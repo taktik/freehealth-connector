@@ -57,10 +57,10 @@ public class JQGridParams {
 
    public static List<Criteria> createMasks(QueryString qs, Class clazz) {
       List<Criteria> masks = new ArrayList();
-      Iterator i$ = qs.getParameterMap().entrySet().iterator();
+      Iterator var3 = qs.getParameterMap().entrySet().iterator();
 
-      while(i$.hasNext()) {
-         Entry<String, String[]> entry = (Entry)i$.next();
+      while(var3.hasNext()) {
+         Entry<String, String[]> entry = (Entry)var3.next();
          if (((String)entry.getKey()).toLowerCase().startsWith("mask_")) {
             Field field = getField(clazz, ((String)entry.getKey()).replaceFirst("mask_", ""));
             if (field != null && !"".equals(entry.getValue())) {
@@ -127,11 +127,11 @@ public class JQGridParams {
    private static Criteria createEnumMask(Field field, String[] values) {
       if (field.getType().isEnum() && values != null && values.length > 0) {
          Field[] enumFlds = field.getType().getDeclaredFields();
-         Field[] arr$ = enumFlds;
-         int len$ = enumFlds.length;
+         Field[] var3 = enumFlds;
+         int var4 = enumFlds.length;
 
-         for(int i$ = 0; i$ < len$; ++i$) {
-            Field enumField = arr$[i$];
+         for(int var5 = 0; var5 < var4; ++var5) {
+            Field enumField = var3[var5];
             if (enumField.isEnumConstant() && enumField.getName().equalsIgnoreCase(values[0])) {
                Class clazz = field.getType();
                return new Criteria(field, Enum.valueOf(clazz, enumField.getName()));
@@ -163,11 +163,11 @@ public class JQGridParams {
 
    private static Field getField(Class clazz, String fieldName) {
       if (fieldName != null && !"".equals(fieldName)) {
-         Field[] arr$ = clazz.getDeclaredFields();
-         int len$ = arr$.length;
+         Field[] var2 = clazz.getDeclaredFields();
+         int var3 = var2.length;
 
-         for(int i$ = 0; i$ < len$; ++i$) {
-            Field field = arr$[i$];
+         for(int var4 = 0; var4 < var3; ++var4) {
+            Field field = var2[var4];
             if (fieldName.equalsIgnoreCase(field.getName())) {
                return field;
             }

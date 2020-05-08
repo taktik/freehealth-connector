@@ -32,11 +32,11 @@ public enum CareServiceIdType {
    }
 
    public static CareServiceIdType valueOf(Class<? extends AbstractCareServiceIdType> type) {
-      CareServiceIdType[] arr$ = values();
-      int len$ = arr$.length;
+      CareServiceIdType[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         CareServiceIdType instance = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         CareServiceIdType instance = var1[var3];
          if (type.isAssignableFrom(instance.getType())) {
             return instance;
          }

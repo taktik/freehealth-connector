@@ -35,11 +35,11 @@ public enum EventType {
    }
 
    public static EventType lookupType(Class<? extends AbstractEventType> type) {
-      EventType[] arr$ = values();
-      int len$ = arr$.length;
+      EventType[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         EventType supported = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         EventType supported = var1[var3];
          if (type.isAssignableFrom(supported.getType())) {
             return supported;
          }

@@ -196,10 +196,10 @@ public class SingleMessageWrapper {
 
    public <T extends AbstractEventType> List<T> getAllEventsOfType(Class<T> clazz) {
       List<T> result = new LinkedList();
-      Iterator i$ = this.getEvents().iterator();
+      Iterator var3 = this.getEvents().iterator();
 
-      while(i$.hasNext()) {
-         AbstractEventType type = (AbstractEventType)i$.next();
+      while(var3.hasNext()) {
+         AbstractEventType type = (AbstractEventType)var3.next();
          if (clazz.isInstance(type)) {
             result.add(type);
          }
@@ -210,10 +210,10 @@ public class SingleMessageWrapper {
 
    public <T extends AbstractEntityType> List<T> getAllEntitiesOfType(Class<T> clazz) {
       List<T> result = new LinkedList();
-      Iterator i$ = this.getEntities().iterator();
+      Iterator var3 = this.getEntities().iterator();
 
-      while(i$.hasNext()) {
-         AbstractEntityType type = (AbstractEntityType)i$.next();
+      while(var3.hasNext()) {
+         AbstractEntityType type = (AbstractEntityType)var3.next();
          if (clazz.isInstance(type)) {
             result.add(type);
          }
@@ -224,10 +224,10 @@ public class SingleMessageWrapper {
 
    public List<MaxSetProductType> getAllDispensedProducts() {
       List<MaxSetProductType> result = new LinkedList();
-      Iterator i$ = this.getAllEventsOfType(PharmaceuticalCareEventType.class).iterator();
+      Iterator var2 = this.getAllEventsOfType(PharmaceuticalCareEventType.class).iterator();
 
-      while(i$.hasNext()) {
-         PharmaceuticalCareEventType session = (PharmaceuticalCareEventType)i$.next();
+      while(var2.hasNext()) {
+         PharmaceuticalCareEventType session = (PharmaceuticalCareEventType)var2.next();
          result.addAll(getAllDispensedProducts(session));
       }
 
@@ -236,24 +236,24 @@ public class SingleMessageWrapper {
 
    public static List<MaxSetProductType> getAllDispensedProducts(PharmaceuticalCareEventType session) {
       List<MaxSetProductType> result = new LinkedList();
-      Iterator i$;
+      Iterator var2;
       if (session.getDispensedWithoutPrescription() != null) {
-         i$ = session.getDispensedWithoutPrescription().getProduct().iterator();
+         var2 = session.getDispensedWithoutPrescription().getProduct().iterator();
 
-         while(i$.hasNext()) {
-            MaxSetProductType product = (MaxSetProductType)i$.next();
+         while(var2.hasNext()) {
+            MaxSetProductType product = (MaxSetProductType)var2.next();
             result.add(product);
          }
       }
 
-      i$ = session.getDispensedForSamePrescription().iterator();
+      var2 = session.getDispensedForSamePrescription().iterator();
 
-      while(i$.hasNext()) {
-         PharmaceuticalCareEventType.DispensedForSamePrescription dispensedForSamePrescription = (PharmaceuticalCareEventType.DispensedForSamePrescription)i$.next();
-         Iterator i$ = dispensedForSamePrescription.getProduct().iterator();
+      while(var2.hasNext()) {
+         PharmaceuticalCareEventType.DispensedForSamePrescription dispensedForSamePrescription = (PharmaceuticalCareEventType.DispensedForSamePrescription)var2.next();
+         Iterator var4 = dispensedForSamePrescription.getProduct().iterator();
 
-         while(i$.hasNext()) {
-            PharmaceuticalCareEventType.DispensedForSamePrescription.Product product = (PharmaceuticalCareEventType.DispensedForSamePrescription.Product)i$.next();
+         while(var4.hasNext()) {
+            PharmaceuticalCareEventType.DispensedForSamePrescription.Product product = (PharmaceuticalCareEventType.DispensedForSamePrescription.Product)var4.next();
             result.add(product);
          }
       }
@@ -264,22 +264,22 @@ public class SingleMessageWrapper {
    public List<String> getAllDGUIDs() {
       List<String> result = new LinkedList();
       List<MedicationHistoryEvent> medicationHistoryEvents = this.getAllEventsOfType(MedicationHistoryEvent.class);
-      Iterator i$ = medicationHistoryEvents.iterator();
+      Iterator var3 = medicationHistoryEvents.iterator();
 
-      while(i$.hasNext()) {
-         MedicationHistoryEvent event = (MedicationHistoryEvent)i$.next();
-         Iterator i$ = event.getMedicationHistoryEntity().iterator();
+      while(var3.hasNext()) {
+         MedicationHistoryEvent event = (MedicationHistoryEvent)var3.next();
+         Iterator var5 = event.getMedicationHistoryEntity().iterator();
 
-         while(i$.hasNext()) {
-            MedicationHistoryType entity = (MedicationHistoryType)i$.next();
+         while(var5.hasNext()) {
+            MedicationHistoryType entity = (MedicationHistoryType)var5.next();
             result.add(((EntityIdType)entity.getEntityId()).getId());
          }
       }
 
-      i$ = this.getAllDispensedProducts().iterator();
+      var3 = this.getAllDispensedProducts().iterator();
 
-      while(i$.hasNext()) {
-         MaxSetProductType type = (MaxSetProductType)i$.next();
+      while(var3.hasNext()) {
+         MaxSetProductType type = (MaxSetProductType)var3.next();
          result.add(type.getDispensationGUID());
       }
 
@@ -288,10 +288,10 @@ public class SingleMessageWrapper {
 
    public List<MedicationHistoryType> getAllMedicationHistoryEntries() {
       List<MedicationHistoryType> result = new LinkedList();
-      Iterator i$ = this.getAllEventsOfType(MedicationHistoryEvent.class).iterator();
+      Iterator var2 = this.getAllEventsOfType(MedicationHistoryEvent.class).iterator();
 
-      while(i$.hasNext()) {
-         MedicationHistoryEvent event = (MedicationHistoryEvent)i$.next();
+      while(var2.hasNext()) {
+         MedicationHistoryEvent event = (MedicationHistoryEvent)var2.next();
          result.addAll(event.getMedicationHistoryEntity());
       }
 
@@ -325,10 +325,10 @@ public class SingleMessageWrapper {
 
    public List<HistoryProductType> getAllMedicationHistoryProducts() {
       List<HistoryProductType> result = new LinkedList();
-      Iterator i$ = this.getAllMedicationHistoryEntries().iterator();
+      Iterator var2 = this.getAllMedicationHistoryEntries().iterator();
 
-      while(i$.hasNext()) {
-         MedicationHistoryType medicationHistoryType = (MedicationHistoryType)i$.next();
+      while(var2.hasNext()) {
+         MedicationHistoryType medicationHistoryType = (MedicationHistoryType)var2.next();
          if (medicationHistoryType != null && medicationHistoryType.getProduct() != null) {
             result.add(medicationHistoryType.getProduct());
          }
@@ -339,15 +339,15 @@ public class SingleMessageWrapper {
 
    public List<PharmaceuticalCareEventType.DispensedForSamePrescription> getAllDispensedForSamePrescriptions() {
       List<PharmaceuticalCareEventType.DispensedForSamePrescription> result = new LinkedList();
-      Iterator i$ = this.getAllEventsOfType(PharmaceuticalCareEventType.class).iterator();
+      Iterator var2 = this.getAllEventsOfType(PharmaceuticalCareEventType.class).iterator();
 
-      while(i$.hasNext()) {
-         PharmaceuticalCareEventType pharmaceuticalCareEventType = (PharmaceuticalCareEventType)i$.next();
+      while(var2.hasNext()) {
+         PharmaceuticalCareEventType pharmaceuticalCareEventType = (PharmaceuticalCareEventType)var2.next();
          List<PharmaceuticalCareEventType.DispensedForSamePrescription> dispensedForSamePrescriptions = pharmaceuticalCareEventType.getDispensedForSamePrescription();
-         Iterator i$ = dispensedForSamePrescriptions.iterator();
+         Iterator var5 = dispensedForSamePrescriptions.iterator();
 
-         while(i$.hasNext()) {
-            PharmaceuticalCareEventType.DispensedForSamePrescription dispensedForSamePrescription = (PharmaceuticalCareEventType.DispensedForSamePrescription)i$.next();
+         while(var5.hasNext()) {
+            PharmaceuticalCareEventType.DispensedForSamePrescription dispensedForSamePrescription = (PharmaceuticalCareEventType.DispensedForSamePrescription)var5.next();
             if (dispensedForSamePrescription != null) {
                result.add(dispensedForSamePrescription);
             }
@@ -359,10 +359,10 @@ public class SingleMessageWrapper {
 
    public List<PharmaceuticalCareEventType.DispensedWithoutPrescription> getAllDispensedWithoutPrescriptions() {
       List<PharmaceuticalCareEventType.DispensedWithoutPrescription> result = new LinkedList();
-      Iterator i$ = this.getAllEventsOfType(PharmaceuticalCareEventType.class).iterator();
+      Iterator var2 = this.getAllEventsOfType(PharmaceuticalCareEventType.class).iterator();
 
-      while(i$.hasNext()) {
-         PharmaceuticalCareEventType pharmaceuticalCareEventType = (PharmaceuticalCareEventType)i$.next();
+      while(var2.hasNext()) {
+         PharmaceuticalCareEventType pharmaceuticalCareEventType = (PharmaceuticalCareEventType)var2.next();
          PharmaceuticalCareEventType.DispensedWithoutPrescription dispensedWithoutPrescription = pharmaceuticalCareEventType.getDispensedWithoutPrescription();
          if (dispensedWithoutPrescription != null) {
             result.add(dispensedWithoutPrescription);
@@ -374,29 +374,29 @@ public class SingleMessageWrapper {
 
    public HashMap<String, MaxSetProductType> getAllDGUIDsAndProducts() {
       HashMap<String, MaxSetProductType> result = new HashMap();
-      Iterator i$ = this.getAllDispensedForSamePrescriptions().iterator();
+      Iterator var2 = this.getAllDispensedForSamePrescriptions().iterator();
 
-      Iterator i$;
-      while(i$.hasNext()) {
-         PharmaceuticalCareEventType.DispensedForSamePrescription dispensedForSamePrescription = (PharmaceuticalCareEventType.DispensedForSamePrescription)i$.next();
-         i$ = dispensedForSamePrescription.getProduct().iterator();
+      Iterator var4;
+      while(var2.hasNext()) {
+         PharmaceuticalCareEventType.DispensedForSamePrescription dispensedForSamePrescription = (PharmaceuticalCareEventType.DispensedForSamePrescription)var2.next();
+         var4 = dispensedForSamePrescription.getProduct().iterator();
 
-         while(i$.hasNext()) {
-            PharmaceuticalCareEventType.DispensedForSamePrescription.Product product = (PharmaceuticalCareEventType.DispensedForSamePrescription.Product)i$.next();
+         while(var4.hasNext()) {
+            PharmaceuticalCareEventType.DispensedForSamePrescription.Product product = (PharmaceuticalCareEventType.DispensedForSamePrescription.Product)var4.next();
             if (product != null) {
                result.put(product.getDispensationGUID(), product);
             }
          }
       }
 
-      i$ = this.getAllDispensedWithoutPrescriptions().iterator();
+      var2 = this.getAllDispensedWithoutPrescriptions().iterator();
 
-      while(i$.hasNext()) {
-         PharmaceuticalCareEventType.DispensedWithoutPrescription dispensedWithoutPrescription = (PharmaceuticalCareEventType.DispensedWithoutPrescription)i$.next();
-         i$ = dispensedWithoutPrescription.getProduct().iterator();
+      while(var2.hasNext()) {
+         PharmaceuticalCareEventType.DispensedWithoutPrescription dispensedWithoutPrescription = (PharmaceuticalCareEventType.DispensedWithoutPrescription)var2.next();
+         var4 = dispensedWithoutPrescription.getProduct().iterator();
 
-         while(i$.hasNext()) {
-            MaxSetProductType product = (MaxSetProductType)i$.next();
+         while(var4.hasNext()) {
+            MaxSetProductType product = (MaxSetProductType)var4.next();
             if (product != null) {
                result.put(product.getDispensationGUID(), product);
             }
@@ -408,14 +408,14 @@ public class SingleMessageWrapper {
 
    public List<PharmaceuticalCareEventType.DispensedForSamePrescription.Product> getAllDispensedForSamePrescriptionProducts() {
       List<PharmaceuticalCareEventType.DispensedForSamePrescription.Product> result = new LinkedList();
-      Iterator i$ = this.getAllDispensedForSamePrescriptions().iterator();
+      Iterator var2 = this.getAllDispensedForSamePrescriptions().iterator();
 
-      while(i$.hasNext()) {
-         PharmaceuticalCareEventType.DispensedForSamePrescription dispensedForSamePrescription = (PharmaceuticalCareEventType.DispensedForSamePrescription)i$.next();
-         Iterator i$ = dispensedForSamePrescription.getProduct().iterator();
+      while(var2.hasNext()) {
+         PharmaceuticalCareEventType.DispensedForSamePrescription dispensedForSamePrescription = (PharmaceuticalCareEventType.DispensedForSamePrescription)var2.next();
+         Iterator var4 = dispensedForSamePrescription.getProduct().iterator();
 
-         while(i$.hasNext()) {
-            PharmaceuticalCareEventType.DispensedForSamePrescription.Product product = (PharmaceuticalCareEventType.DispensedForSamePrescription.Product)i$.next();
+         while(var4.hasNext()) {
+            PharmaceuticalCareEventType.DispensedForSamePrescription.Product product = (PharmaceuticalCareEventType.DispensedForSamePrescription.Product)var4.next();
             if (product != null) {
                result.add(product);
             }
@@ -427,14 +427,14 @@ public class SingleMessageWrapper {
 
    public List<MaxSetProductType> getAllDispensedWithoutPrescriptionProducts() {
       List<MaxSetProductType> result = new LinkedList();
-      Iterator i$ = this.getAllDispensedWithoutPrescriptions().iterator();
+      Iterator var2 = this.getAllDispensedWithoutPrescriptions().iterator();
 
-      while(i$.hasNext()) {
-         PharmaceuticalCareEventType.DispensedWithoutPrescription dispensedWithoutPrescription = (PharmaceuticalCareEventType.DispensedWithoutPrescription)i$.next();
-         Iterator i$ = dispensedWithoutPrescription.getProduct().iterator();
+      while(var2.hasNext()) {
+         PharmaceuticalCareEventType.DispensedWithoutPrescription dispensedWithoutPrescription = (PharmaceuticalCareEventType.DispensedWithoutPrescription)var2.next();
+         Iterator var4 = dispensedWithoutPrescription.getProduct().iterator();
 
-         while(i$.hasNext()) {
-            MaxSetProductType product = (MaxSetProductType)i$.next();
+         while(var4.hasNext()) {
+            MaxSetProductType product = (MaxSetProductType)var4.next();
             if (product != null) {
                result.add(product);
             }
@@ -484,10 +484,10 @@ public class SingleMessageWrapper {
    public List<StatusMessageType> getAllStatusMessages() {
       List<StatusMessageType> result = new LinkedList();
       List<AbstractEntityType> entities = this.getEntities();
-      Iterator i$ = entities.iterator();
+      Iterator var3 = entities.iterator();
 
-      while(i$.hasNext()) {
-         AbstractEntityType entity = (AbstractEntityType)i$.next();
+      while(var3.hasNext()) {
+         AbstractEntityType entity = (AbstractEntityType)var3.next();
          if (entity instanceof StatusMessageType) {
             result.add((StatusMessageType)entity);
          }

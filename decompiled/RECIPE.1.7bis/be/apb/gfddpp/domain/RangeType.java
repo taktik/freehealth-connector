@@ -17,11 +17,11 @@ public enum RangeType {
    }
 
    public static RangeType lookupType(Class<? extends RangesType> type) {
-      RangeType[] arr$ = values();
-      int len$ = arr$.length;
+      RangeType[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         RangeType supported = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         RangeType supported = var1[var3];
          if (type.isAssignableFrom(supported.getType())) {
             return supported;
          }

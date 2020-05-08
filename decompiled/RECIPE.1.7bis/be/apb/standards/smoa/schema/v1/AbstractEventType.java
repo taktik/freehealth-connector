@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
    name = "AbstractEventType",
    propOrder = {"id"}
 )
-@XmlSeeAlso({ArchivePrescriptionEventType.class, ArchivePrescriptionCommentEventType.class, MedicationDeliveryEventType.class, RegisterExportEventType.class, PharmaceuticalCareEventType.class, BvacEventType.class, MedicationHistoryEvent.class, ContinuedPharmaceuticalCareDossierEvent.class, AbstractMedicationSchemeResponse.class, MedicationSchemeEntriesRequest.class})
+@XmlSeeAlso({ArchivePrescriptionEventType.class, ArchivePrescriptionCommentEventType.class, MedicationDeliveryEventType.class, RegisterExportEventType.class, PharmaceuticalCareEventType.class, BvacEventType.class, MedicationHistoryEvent.class, ContinuedPharmaceuticalCareDossierEvent.class, ContinuedPharmaceuticalCareEntity.class, ContinuedPharmaceuticalCareResponse.class, AbstractMedicationSchemeResponse.class, MedicationSchemeEntriesRequest.class})
 public abstract class AbstractEventType {
    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
    @XmlSchemaType(

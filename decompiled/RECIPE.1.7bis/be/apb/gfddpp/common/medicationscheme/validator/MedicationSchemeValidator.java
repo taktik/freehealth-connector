@@ -25,10 +25,10 @@ public class MedicationSchemeValidator {
       String schemaNames = getValidationConfig().getProperty("medication-scheme." + formatCode.name());
       List<String> schemas = Arrays.asList(StringUtils.split(schemaNames, ";"));
       List<String> validationErrors = new ArrayList();
-      Iterator i$ = schemas.iterator();
+      Iterator var5 = schemas.iterator();
 
-      while(i$.hasNext()) {
-         String schema = (String)i$.next();
+      while(var5.hasNext()) {
+         String schema = (String)var5.next();
          String xsdLocation = getValidationConfig().getProperty("xsd." + schema);
          if (StringUtils.isNotBlank(xsdLocation)) {
             validationErrors.addAll(validateXsd(xsdLocation, medicationScheme));

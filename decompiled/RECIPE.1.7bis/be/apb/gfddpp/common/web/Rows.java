@@ -68,8 +68,8 @@ public class Rows<T> {
       int i = 0;
 
       Class e;
-      for(Iterator i$ = list.iterator(); i$.hasNext(); ret[i++] = e) {
-         e = (Class)i$.next();
+      for(Iterator var4 = list.iterator(); var4.hasNext(); ret[i++] = e) {
+         e = (Class)var4.next();
       }
 
       return ret;

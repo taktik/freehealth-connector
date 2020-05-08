@@ -41,11 +41,11 @@ public enum CDTIMEUNIT {
    }
 
    public static CDTIMEUNIT fromValue(String v) {
-      CDTIMEUNIT[] arr$ = values();
-      int len$ = arr$.length;
+      CDTIMEUNIT[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         CDTIMEUNIT c = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         CDTIMEUNIT c = var1[var3];
          if (c.value.equals(v)) {
             return c;
          }

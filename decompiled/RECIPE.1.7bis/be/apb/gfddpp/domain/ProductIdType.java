@@ -56,11 +56,11 @@ public enum ProductIdType {
    }
 
    public static ProductIdType valueOf(Class<? extends AbstractMedicinalProductIdType> type) {
-      ProductIdType[] arr$ = values();
-      int len$ = arr$.length;
+      ProductIdType[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         ProductIdType instance = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         ProductIdType instance = var1[var3];
          if (type.isAssignableFrom(instance.getType())) {
             return instance;
          }

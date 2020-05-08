@@ -50,17 +50,17 @@ public abstract class ManagerBean implements Manager {
       String sql = " ";
       if (masks != null && !masks.isEmpty()) {
          sql = sql + " where 1=1 ";
-         Iterator i$ = masks.iterator();
+         Iterator var4 = masks.iterator();
 
          while(true) {
             while(true) {
                Criteria crit;
                do {
-                  if (!i$.hasNext()) {
+                  if (!var4.hasNext()) {
                      return sql;
                   }
 
-                  crit = (Criteria)i$.next();
+                  crit = (Criteria)var4.next();
                } while(crit.isEmpty());
 
                if (crit.isDate() && ((DateCriteria)crit).isValid()) {
@@ -89,20 +89,20 @@ public abstract class ManagerBean implements Manager {
 
    private void setParameterMasks(List<Criteria> masks, Query query) {
       if (masks != null && !masks.isEmpty()) {
-         Iterator i$ = CriteriaHelper.getDateCriterias(masks).iterator();
+         Iterator var3 = CriteriaHelper.getDateCriterias(masks).iterator();
 
-         while(i$.hasNext()) {
-            DateCriteria dCrit = (DateCriteria)i$.next();
+         while(var3.hasNext()) {
+            DateCriteria dCrit = (DateCriteria)var3.next();
             query.setParameter(dCrit.getName() + "_start", dCrit.getStart());
             if (dCrit.isRange()) {
                query.setParameter(dCrit.getName() + "_end", dCrit.getEnd());
             }
          }
 
-         i$ = CriteriaHelper.getEnumCriterias(masks).iterator();
+         var3 = CriteriaHelper.getEnumCriterias(masks).iterator();
 
-         while(i$.hasNext()) {
-            Criteria eCrit = (Criteria)i$.next();
+         while(var3.hasNext()) {
+            Criteria eCrit = (Criteria)var3.next();
             query.setParameter(eCrit.getName(), eCrit.getValue());
          }
       }

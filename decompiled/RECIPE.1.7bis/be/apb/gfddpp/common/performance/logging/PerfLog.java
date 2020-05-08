@@ -28,10 +28,10 @@ public class PerfLog {
          SingleMessage sm = (SingleMessage)jaxContextCentralizer.toObject(SingleMessage.class, payload);
          SingleMessageWrapper smw = new SingleMessageWrapper(sm);
          List<PharmaceuticalCareEventType> listEvent = smw.getAllEventsOfType(PharmaceuticalCareEventType.class);
-         Iterator i$ = listEvent.iterator();
+         Iterator var6 = listEvent.iterator();
 
-         while(i$.hasNext()) {
-            PharmaceuticalCareEventType event = (PharmaceuticalCareEventType)i$.next();
+         while(var6.hasNext()) {
+            PharmaceuticalCareEventType event = (PharmaceuticalCareEventType)var6.next();
             log(logger, "********** PERFLOG-INTERNAL: ", "MAPPING", (String)null, (Long)null, (Long)null, event.getId(), uniqueId);
          }
       } catch (GFDDPPException var8) {
@@ -42,10 +42,10 @@ public class PerfLog {
 
    public static void logMappingSguidAndUniqueId(Logger logger, SingleMessageWrapper singleMessageWrapper, String uniqueId) {
       List<PharmaceuticalCareEventType> listEvent = singleMessageWrapper.getAllEventsOfType(PharmaceuticalCareEventType.class);
-      Iterator i$ = listEvent.iterator();
+      Iterator var4 = listEvent.iterator();
 
-      while(i$.hasNext()) {
-         PharmaceuticalCareEventType event = (PharmaceuticalCareEventType)i$.next();
+      while(var4.hasNext()) {
+         PharmaceuticalCareEventType event = (PharmaceuticalCareEventType)var4.next();
          log(logger, "********** PERFLOG-INTERNAL: ", "MAPPING", (String)null, (Long)null, (Long)null, event.getId(), uniqueId);
       }
 
@@ -114,15 +114,15 @@ public class PerfLog {
       if (!CollectionUtils.isNotEmpty(listEvent) && !CollectionUtils.isNotEmpty(medicationHistoryTypes)) {
          logger.warn("NO SGUID FOUND TO LOG");
       } else {
-         Iterator i$ = listEvent.iterator();
-         if (i$.hasNext()) {
-            PharmaceuticalCareEventType event = (PharmaceuticalCareEventType)i$.next();
+         Iterator var9 = listEvent.iterator();
+         if (var9.hasNext()) {
+            PharmaceuticalCareEventType event = (PharmaceuticalCareEventType)var9.next();
             log(logger, logIndicator, className, method, startTimeStamp, endTimeStamp, event.getId(), (String)null);
          }
 
-         i$ = medicationHistoryTypes.iterator();
-         if (i$.hasNext()) {
-            MedicationHistoryType medicationHistoryType = (MedicationHistoryType)i$.next();
+         var9 = medicationHistoryTypes.iterator();
+         if (var9.hasNext()) {
+            MedicationHistoryType medicationHistoryType = (MedicationHistoryType)var9.next();
             log(logger, logIndicator, className, method, startTimeStamp, endTimeStamp, medicationHistoryType.getSessionID(), (String)null);
          }
       }

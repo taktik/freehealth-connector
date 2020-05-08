@@ -44,11 +44,11 @@ public enum PersonIdType {
    }
 
    public static PersonIdType valueOf(Class<? extends AbstractPersonIdType> type) {
-      PersonIdType[] arr$ = values();
-      int len$ = arr$.length;
+      PersonIdType[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         PersonIdType instance = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         PersonIdType instance = var1[var3];
          if (type.isAssignableFrom(instance.getType())) {
             return instance;
          }

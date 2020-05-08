@@ -45,11 +45,11 @@ public enum MSStatusCode {
    }
 
    public static MSStatusCode fromCode(int code) {
-      MSStatusCode[] arr$ = values();
-      int len$ = arr$.length;
+      MSStatusCode[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         MSStatusCode value = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         MSStatusCode value = var1[var3];
          if (value.getCode() == code) {
             return value;
          }

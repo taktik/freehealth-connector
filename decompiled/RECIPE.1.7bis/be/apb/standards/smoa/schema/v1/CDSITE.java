@@ -85,11 +85,11 @@ public enum CDSITE {
    }
 
    public static CDSITE fromValue(String v) {
-      CDSITE[] arr$ = values();
-      int len$ = arr$.length;
+      CDSITE[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         CDSITE c = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         CDSITE c = var1[var3];
          if (c.value.equals(v)) {
             return c;
          }

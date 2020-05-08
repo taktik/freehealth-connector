@@ -14,14 +14,14 @@ public class DispensedProductsIterator implements Iterator<MaxSetProductType> {
 
    public DispensedProductsIterator(SingleMessageWrapper singleMessage) {
       List<PharmaceuticalCareEventType> allPharmaceuticalCareEvents = singleMessage.getAllEventsOfType(PharmaceuticalCareEventType.class);
-      Iterator i$ = allPharmaceuticalCareEvents.iterator();
+      Iterator var3 = allPharmaceuticalCareEvents.iterator();
 
-      while(i$.hasNext()) {
-         PharmaceuticalCareEventType careEvent = (PharmaceuticalCareEventType)i$.next();
-         Iterator i$ = careEvent.getDispensedForSamePrescription().iterator();
+      while(var3.hasNext()) {
+         PharmaceuticalCareEventType careEvent = (PharmaceuticalCareEventType)var3.next();
+         Iterator var5 = careEvent.getDispensedForSamePrescription().iterator();
 
-         while(i$.hasNext()) {
-            PharmaceuticalCareEventType.DispensedForSamePrescription productList = (PharmaceuticalCareEventType.DispensedForSamePrescription)i$.next();
+         while(var5.hasNext()) {
+            PharmaceuticalCareEventType.DispensedForSamePrescription productList = (PharmaceuticalCareEventType.DispensedForSamePrescription)var5.next();
             this.dispensedProductLists.add(productList.getProduct());
          }
 

@@ -26,10 +26,10 @@ public class PropertyHandlerCommon {
          if (LOG.isDebugEnabled()) {
             LOG.debug("Current folder is : " + (new File(".")).getCanonicalPath());
             LOG.debug("Current properties are : ");
-            Iterator i$ = this.properties.keySet().iterator();
+            Iterator var2 = this.properties.keySet().iterator();
 
-            while(i$.hasNext()) {
-               Object key = i$.next();
+            while(var2.hasNext()) {
+               Object key = var2.next();
                LOG.debug(key + " = " + this.properties.getProperty((String)key));
             }
          }
@@ -137,10 +137,10 @@ public class PropertyHandlerCommon {
 
    public void setDefaultSessionProperties(String niss) {
       if (this.originalProperties != null) {
-         Iterator i$ = this.originalProperties.entrySet().iterator();
+         Iterator var2 = this.originalProperties.entrySet().iterator();
 
-         while(i$.hasNext()) {
-            Entry<Object, Object> entry = (Entry)i$.next();
+         while(var2.hasNext()) {
+            Entry<Object, Object> entry = (Entry)var2.next();
             this.properties.setProperty(entry.getKey().toString(), entry.getValue().toString());
          }
 

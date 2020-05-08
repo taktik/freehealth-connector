@@ -8,11 +8,11 @@ public class ObjectFormatter {
    public static String formatParameters(Object[] args) {
       StringBuilder result = new StringBuilder();
       int j = 0;
-      Object[] arr$ = args;
-      int len$ = args.length;
+      Object[] var3 = args;
+      int var4 = args.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         Object object = arr$[i$];
+      for(int var5 = 0; var5 < var4; ++var5) {
+         Object object = var3[var5];
          if (j > 0) {
             result.append(",");
          }
@@ -30,11 +30,11 @@ public class ObjectFormatter {
                result.append("={");
                Field[] fields = object.getClass().getDeclaredFields();
                int i = 0;
-               Field[] arr$ = fields;
-               int len$ = fields.length;
+               Field[] var9 = fields;
+               int var10 = fields.length;
 
-               for(int i$ = 0; i$ < len$; ++i$) {
-                  Field field = arr$[i$];
+               for(int var11 = 0; var11 < var10; ++var11) {
+                  Field field = var9[var11];
                   if (field.getType() != Logger.class && field.getType() != EncryptedContentType.class) {
                      try {
                         result.append(i == 0 ? "" : "; ");

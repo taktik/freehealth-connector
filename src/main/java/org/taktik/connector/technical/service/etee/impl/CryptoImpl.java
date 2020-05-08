@@ -27,6 +27,7 @@ import be.fgov.ehealth.etee.crypto.status.CryptoResult;
 import be.fgov.ehealth.etee.crypto.status.NotificationWarning;
 import be.fgov.ehealth.etee.crypto.utils.Iterables;
 
+import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -50,6 +51,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.taktik.connector.technical.service.etee.Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION;
+
 public class CryptoImpl extends AbstractEndToEndCrypto {
 	private static final String PROP_CAKEYSTORE_PATH = "CAKEYSTORE_LOCATION";
 	private static final String PROP_CAKEYSTORE_PASSWORD = "CAKEYSTORE_PASSWORD";
@@ -68,9 +71,9 @@ public class CryptoImpl extends AbstractEndToEndCrypto {
 	@Deprecated
 	public CryptoImpl(Credential encryption, Map<String, PrivateKey> decryptionKeys) throws TechnicalConnectorException {
 		this.initSealing(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, encryption, OCSPPolicy.NONE, new EnumMap<>(OCSPOption.class));
-		this.initSealing(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, encryption, OCSPPolicy.NONE, new EnumMap<>(OCSPOption.class));
+		this.initSealing(WITHOUT_NON_REPUDIATION, encryption, OCSPPolicy.NONE, new EnumMap<>(OCSPOption.class));
 		this.initUnsealing(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, decryptionKeys, OCSPPolicy.NONE, new EnumMap<>(OCSPOption.class), new EnumMap<>(SigningOption.class), SigningPolicy.EHEALTH_CERT, SigningPolicy.EID);
-		this.initUnsealing(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, decryptionKeys, OCSPPolicy.NONE, new EnumMap<>(OCSPOption.class), new EnumMap<>(SigningOption.class), SigningPolicy.EHEALTH_CERT, SigningPolicy.EID);
+		this.initUnsealing(WITHOUT_NON_REPUDIATION, decryptionKeys, OCSPPolicy.NONE, new EnumMap<>(OCSPOption.class), new EnumMap<>(SigningOption.class), SigningPolicy.EHEALTH_CERT, SigningPolicy.EID);
 	}
 
 	public byte[] seal(Crypto.SigningPolicySelector type, Set<EncryptionToken> paramEncryptionTokenSet, KeyResult symmKey, byte[] content) throws TechnicalConnectorException {
@@ -103,17 +106,19 @@ public class CryptoImpl extends AbstractEndToEndCrypto {
 		return sealedSet;
 	}
 
+	@Override
 	public UnsealedData unseal(Crypto.SigningPolicySelector type, byte[] protectedMessage) throws TechnicalConnectorException {
 		CryptoResult<be.fgov.ehealth.etee.crypto.decrypt.UnsealedData> result = this.getDataUnsealer(type).unseal(protectedMessage);
 		return processUnsealResult(result);
 	}
 
+	@Override
 	public UnsealedData unseal(Crypto.SigningPolicySelector type, KeyResult symmKey, byte[] protectedMessage) throws TechnicalConnectorException {
 		CryptoResult<be.fgov.ehealth.etee.crypto.decrypt.UnsealedData> result = this.getDataUnsealer(type).unseal(protectedMessage, symmKey.getSecretKey());
 		return processUnsealResult(result);
 	}
 
-   private static UnsealedData processUnsealResult(CryptoResult<be.fgov.ehealth.etee.crypto.decrypt.UnsealedData> result) throws TechnicalConnectorException {
+	private static UnsealedData processUnsealResult(CryptoResult<be.fgov.ehealth.etee.crypto.decrypt.UnsealedData> result) throws TechnicalConnectorException {
       UnsealedData unsealedData = null;
       if (result.hasErrors()) {
          LOG.error("Unsealed message is invalid.");
@@ -191,9 +196,9 @@ public class CryptoImpl extends AbstractEndToEndCrypto {
 		Map<SigningOption, Object> signingOptionMap = extract("cryptolib.signing.optionmap", parameterMap, new HashMap<SigningOption, Object>(), Map.class);
        OCSPPolicy oscpPolicy = extract("cryptolib.ocsp.policy", parameterMap, OCSPPolicy.RECEIVER_MANDATORY, OCSPPolicy.class);
 		this.initSealing(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, encryption, oscpPolicy, ocspOptionMap);
-		this.initSealing(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, encryption, oscpPolicy, ocspOptionMap);
+		this.initSealing(WITHOUT_NON_REPUDIATION, encryption, oscpPolicy, ocspOptionMap);
 		this.initUnsealing(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, decryptionKeys, oscpPolicy, ocspOptionMap, signingOptionMap, SigningPolicy.EHEALTH_CERT, SigningPolicy.EID);
-		this.initUnsealing(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, decryptionKeys, oscpPolicy, ocspOptionMap, signingOptionMap, SigningPolicy.EHEALTH_CERT, SigningPolicy.EID);
+		this.initUnsealing(WITHOUT_NON_REPUDIATION, decryptionKeys, oscpPolicy, ocspOptionMap, signingOptionMap, SigningPolicy.EHEALTH_CERT, SigningPolicy.EID);
 	}
 
 	private static <T> T extract(String key, Map<String, Object> parameters, T defaultValue, Class<T> clazz) throws TechnicalConnectorException {

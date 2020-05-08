@@ -16,11 +16,11 @@ public enum SupportedDataTypes {
    }
 
    public static SupportedDataTypes lookupType(String name) {
-      SupportedDataTypes[] arr$ = values();
-      int len$ = arr$.length;
+      SupportedDataTypes[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         SupportedDataTypes supported = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         SupportedDataTypes supported = var1[var3];
          if (supported.getName().equals(name)) {
             return supported;
          }

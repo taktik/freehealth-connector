@@ -32,11 +32,11 @@ public class MetricsUploadPolicy implements RollingPolicy, OptionHandler, Trigge
          try {
             FileRenameAction fra = (FileRenameAction)desc.getSynchronous();
             if (this.destinationField == null) {
-               Field[] arr$ = fra.getClass().getDeclaredFields();
-               int len$ = arr$.length;
+               Field[] var3 = fra.getClass().getDeclaredFields();
+               int var4 = var3.length;
 
-               for(int i$ = 0; i$ < len$; ++i$) {
-                  Field f = arr$[i$];
+               for(int var5 = 0; var5 < var4; ++var5) {
+                  Field f = var3[var5];
                   if (f.getName().equalsIgnoreCase("source") && Modifier.isPrivate(f.getModifiers())) {
                      f.setAccessible(true);
                      this.destinationField = f;

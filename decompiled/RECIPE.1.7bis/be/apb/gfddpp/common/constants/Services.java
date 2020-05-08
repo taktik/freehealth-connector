@@ -21,11 +21,11 @@ public enum Services {
    }
 
    public static Services lookupType(String name) {
-      Services[] arr$ = values();
-      int len$ = arr$.length;
+      Services[] var1 = values();
+      int var2 = var1.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         Services services = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         Services services = var1[var3];
          if (services.getName().equals(name)) {
             return services;
          }

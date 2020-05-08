@@ -38,10 +38,10 @@ public class LogsSMC {
 
    public static synchronized void logDguid(SingleMessageWrapper wrapper, LogsSMC.IntermediateMessage intermediateMessage, Class clazz) {
       List<String> listDguid = wrapper.getAllDGUIDs();
-      Iterator i$ = listDguid.iterator();
+      Iterator var4 = listDguid.iterator();
 
-      while(i$.hasNext()) {
-         String dguid = (String)i$.next();
+      while(var4.hasNext()) {
+         String dguid = (String)var4.next();
          LOG.info("The dguid " + dguid + intermediateMessage.getMessage() + clazz.getSimpleName());
       }
 
@@ -49,20 +49,20 @@ public class LogsSMC {
 
    public static synchronized void logSguid(SingleMessageWrapper wrapper, LogsSMC.IntermediateMessage intermediateMessage, Class clazz) {
       List<PharmaceuticalCareEventType> listEvent = wrapper.getAllEventsOfType(PharmaceuticalCareEventType.class);
-      Iterator i$ = listEvent.iterator();
+      Iterator var4 = listEvent.iterator();
 
-      while(i$.hasNext()) {
-         PharmaceuticalCareEventType event = (PharmaceuticalCareEventType)i$.next();
+      while(var4.hasNext()) {
+         PharmaceuticalCareEventType event = (PharmaceuticalCareEventType)var4.next();
          LOG.info("The sguid " + event.getId() + intermediateMessage.getMessage() + clazz.getSimpleName());
       }
 
    }
 
    public static synchronized void logDguidSguid(List<StatusMessageType> statusMessages, LogsSMC.IntermediateMessageStatus intermediateMessage, Class clazz) {
-      Iterator i$ = statusMessages.iterator();
+      Iterator var3 = statusMessages.iterator();
 
-      while(i$.hasNext()) {
-         StatusMessageType statusMessage = (StatusMessageType)i$.next();
+      while(var3.hasNext()) {
+         StatusMessageType statusMessage = (StatusMessageType)var3.next();
          logDguidSguid(statusMessage, intermediateMessage, clazz);
       }
 

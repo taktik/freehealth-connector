@@ -142,10 +142,10 @@ public class ProductFilterEngine {
    }
 
    private void parseRanges(List<JAXBElement<? extends RangesType>> absRanges, List<Range> medicineRanges, List<Range> preparationRanges) {
-      Iterator i$ = absRanges.iterator();
+      Iterator var4 = absRanges.iterator();
 
-      while(i$.hasNext()) {
-         JAXBElement<? extends RangesType> absRange = (JAXBElement)i$.next();
+      while(var4.hasNext()) {
+         JAXBElement<? extends RangesType> absRange = (JAXBElement)var4.next();
          RangesType rangesType = (RangesType)absRange.getValue();
          RangeType range = RangeType.valueOf(rangesType);
          switch(range) {
@@ -160,10 +160,10 @@ public class ProductFilterEngine {
    }
 
    private void parseRange(List<Range> rangeList, List<Range> ranges) {
-      Iterator i$ = ranges.iterator();
+      Iterator var3 = ranges.iterator();
 
-      while(i$.hasNext()) {
-         Range rng = (Range)i$.next();
+      while(var3.hasNext()) {
+         Range rng = (Range)var3.next();
          rangeList.add(rng);
       }
 
@@ -183,20 +183,20 @@ public class ProductFilterEngine {
    }
 
    private void parseListMedicine(List<Medicine> list, HashMap<String, Medicine> map) {
-      Iterator i$ = list.iterator();
+      Iterator var3 = list.iterator();
 
-      while(i$.hasNext()) {
-         Medicine obj = (Medicine)i$.next();
+      while(var3.hasNext()) {
+         Medicine obj = (Medicine)var3.next();
          map.put("" + Integer.parseInt(obj.getProductId()), obj);
       }
 
    }
 
    private void parseListPreparation(List<Preparation> list, HashMap<String, Preparation> map) {
-      Iterator i$ = list.iterator();
+      Iterator var3 = list.iterator();
 
-      while(i$.hasNext()) {
-         Preparation obj = (Preparation)i$.next();
+      while(var3.hasNext()) {
+         Preparation obj = (Preparation)var3.next();
          map.put("" + Integer.parseInt(obj.getProductId()), obj);
       }
 

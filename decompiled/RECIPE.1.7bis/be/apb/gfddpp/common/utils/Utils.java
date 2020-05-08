@@ -64,15 +64,15 @@ public class Utils {
    }
 
    public static String formatLogMessage(StatusCode statusCode, String message) {
-      return "---> CODE: " + statusCode + "\n" + "---> TYPE: " + StatusResolver.resolveType(StatusResolver.TYPE_BUNDLE, statusCode) + "\n" + "---> MESSAGE: " + message + "\n";
+      return "---> CODE: " + statusCode + "\n---> TYPE: " + StatusResolver.resolveType(StatusResolver.TYPE_BUNDLE, statusCode) + "\n---> MESSAGE: " + message + "\n";
    }
 
    public static String formatLogMessage(StatusCode statusCode) {
-      return "---> CODE: " + statusCode + "\n" + "---> TYPE: " + StatusResolver.resolveType(StatusResolver.TYPE_BUNDLE, statusCode) + "\n" + "---> MESSAGE: " + StatusResolver.resolveMessage(StatusResolver.MESSAGE_DEFAULT_BUNDLE, statusCode) + "\n";
+      return "---> CODE: " + statusCode + "\n---> TYPE: " + StatusResolver.resolveType(StatusResolver.TYPE_BUNDLE, statusCode) + "\n---> MESSAGE: " + StatusResolver.resolveMessage(StatusResolver.MESSAGE_DEFAULT_BUNDLE, statusCode) + "\n";
    }
 
    public static String formatLogMessage(StatusCode statusCode, String[] placeHolders) {
-      return "---> CODE: " + statusCode + "\n" + "---> TYPE: " + StatusResolver.resolveType(StatusResolver.TYPE_BUNDLE, statusCode) + "\n" + "---> MESSAGE: " + StatusResolver.resolveMessage(StatusResolver.MESSAGE_DEFAULT_BUNDLE, statusCode, placeHolders) + "\n";
+      return "---> CODE: " + statusCode + "\n---> TYPE: " + StatusResolver.resolveType(StatusResolver.TYPE_BUNDLE, statusCode) + "\n---> MESSAGE: " + StatusResolver.resolveMessage(StatusResolver.MESSAGE_DEFAULT_BUNDLE, statusCode, placeHolders) + "\n";
    }
 
    public static String generateGUID(String token) {

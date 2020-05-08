@@ -77,15 +77,15 @@ public class StatusResolver {
    }
 
    public static ResourceBundle getResourceBundle(String local) {
-      Iterator i$ = MESSAGE_BUNDLES.iterator();
+      Iterator var1 = MESSAGE_BUNDLES.iterator();
 
       ResourceBundle resourceBundle;
       do {
-         if (!i$.hasNext()) {
+         if (!var1.hasNext()) {
             return MESSAGE_DEFAULT_BUNDLE;
          }
 
-         resourceBundle = (ResourceBundle)i$.next();
+         resourceBundle = (ResourceBundle)var1.next();
       } while(!getLanguage(resourceBundle).toLowerCase().equals(local));
 
       return resourceBundle;

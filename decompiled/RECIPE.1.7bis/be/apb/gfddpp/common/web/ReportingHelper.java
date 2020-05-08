@@ -62,10 +62,10 @@ public class ReportingHelper {
       } else {
          Plot plot = new Plot(serieName);
          Serie serie = new Serie(serieName);
-         Iterator i$ = data.iterator();
+         Iterator var4 = data.iterator();
 
-         while(i$.hasNext()) {
-            Object[] o = (Object[])i$.next();
+         while(var4.hasNext()) {
+            Object[] o = (Object[])var4.next();
             int i = 1;
             String x = null;
             String y = null;
@@ -117,8 +117,8 @@ public class ReportingHelper {
          Serie serie = null;
 
          Point p;
-         for(Iterator i$ = data.iterator(); i$.hasNext(); serie.addPoint(p)) {
-            Object[] o = (Object[])i$.next();
+         for(Iterator var5 = data.iterator(); var5.hasNext(); serie.addPoint(p)) {
+            Object[] o = (Object[])var5.next();
             int i = 0;
             String serieName = null;
             String x = null;
@@ -191,10 +191,10 @@ public class ReportingHelper {
    }
 
    private static boolean hasFailure(List<Object[]> data) {
-      Iterator i$ = data.iterator();
+      Iterator var1 = data.iterator();
 
-      while(i$.hasNext()) {
-         Object[] o = (Object[])i$.next();
+      while(var1.hasNext()) {
+         Object[] o = (Object[])var1.next();
 
          for(int i = 0; i < o.length; ++i) {
             if (isFailure(o)) {
@@ -207,11 +207,11 @@ public class ReportingHelper {
    }
 
    private static boolean isFailure(Object[] o) {
-      Object[] arr$ = o;
-      int len$ = o.length;
+      Object[] var1 = o;
+      int var2 = o.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         Object obj = arr$[i$];
+      for(int var3 = 0; var3 < var2; ++var3) {
+         Object obj = var1[var3];
          String data = getData(obj);
          if (data != null && data.toLowerCase().contains(".failure")) {
             return true;
@@ -223,10 +223,10 @@ public class ReportingHelper {
 
    private static void addFailurePoint(Serie serie) {
       boolean contains = false;
-      Iterator i$ = serie.getPoints().iterator();
+      Iterator var2 = serie.getPoints().iterator();
 
-      while(i$.hasNext()) {
-         Point p = (Point)i$.next();
+      while(var2.hasNext()) {
+         Point p = (Point)var2.next();
          if (p.getX().equalsIgnoreCase("count.failure")) {
             contains = true;
             break;
