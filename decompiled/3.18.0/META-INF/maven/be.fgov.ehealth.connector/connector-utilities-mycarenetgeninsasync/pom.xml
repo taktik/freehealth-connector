@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>be.fgov.ehealth.connector</groupId>
+        <artifactId>connector-utilities-master</artifactId>
+        <version>3.18.0</version>
+    </parent>
+
+    <artifactId>connector-utilities-mycarenetgeninsasync</artifactId>
+    <name>${project.artifactId}</name>
+
+    <packaging>jar</packaging>
+
+    <properties>
+        <binding-directory>default-binding</binding-directory>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/generated-resources</outputDirectory>
+                            <includes>**/mycarenet-genasync-insurability/**/*.xsd</includes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack xsds from mycarenet commons v3</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>be.fgov.ehealth.xsd</groupId>
+                                    <artifactId>xsd-commons-mycarenet</artifactId>
+                                    <version>3.0.1</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>target/generated-resources</outputDirectory>
+                            <includes>**/*.xsd</includes>
+                            <excludes>**/*mycarenet-genasync-v1.xsd,**/*commonTypes-v1.3.xsd,**/*commonInfo-v2.3.xsd,***/*Reject.xsd,**/*commonInfo-v2.0-Basic.xsd,**/ehealth-commons*,**/ehealth-*/**/*.xsd,**/mycarenet-gensync/**/*.xsd,**/swaref.xsd,/META-INF/**</excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack xsds from external</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>be.fgov.ehealth.xsd</groupId>
+                                    <artifactId>xsd-external</artifactId>
+                                    <version>${version.xsd-external}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>**/saml-schema-assertion*.xsd,**/xmldsig-core-schema.xsd,**/xenc-schema.xsd,**/xml.xsd</includes>
+                            <outputDirectory>target/generated-resources</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>Generate JAva Xml Bindings</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <bindingIncludes>
+                        <include>mycarenetgeninsasync-bindings.xjb</include>
+                    </bindingIncludes>
+                    <schemaIncludes>
+                        <include>**/mycarenet-genasync-insurability/**/GenericAsyncBusiness.xsd</include>
+                    </schemaIncludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-utilities-core</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-utilities-common</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-utilities-external</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-utilities-genericasync</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-utilities-mycarenetcommonsv3</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-utilities-mycarenetcommons</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+</project>

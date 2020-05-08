@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="urn:be:cin:encrypted" targetNamespace="urn:be:cin:encrypted" elementFormDefault="qualified">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd"/>
+    <xsd:element name="EncryptedKnownContent">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Reply-to-Etk" type="xsd:base64Binary"
+                    minOccurs="0" />
+                <xsd:element name="BusinessContent">
+                    <xsd:complexType>
+                        <xsd:simpleContent>
+                            <xsd:extension base="xsd:base64Binary">
+                                <xsd:attribute name="id" type="xsd:ID" />
+                                <xsd:attribute name="ContentType" type="xsd:string" default="application/octet-stream"/>
+                                <xsd:attribute name="ContentEncoding" type="xsd:string" default="none"/>
+                            </xsd:extension>
+                        </xsd:simpleContent>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Xades" type="xsd:base64Binary"
+                    minOccurs="0" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -224,7 +224,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         requireNotNull(tokenId) { "Token id cannot be null" }
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
 
         val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
 
@@ -256,7 +256,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             this.inputReference = inputReference
         }
 
-        val xades = BlobUtil.generateXades(SendRequestMapper.mapBlobToBlobType(blob), credential, "invoicing").value
+        val xades = BlobUtil.generateXades(credential, SendRequestMapper.mapBlobToBlobType(blob), "invoicing").value
 
         val post = requestObjectBuilder.buildPostRequest(ci, SendRequestMapper.mapBlobToCinBlob(blob), xades)
         val header: WsAddressingHeader

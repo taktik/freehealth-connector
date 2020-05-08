@@ -46,6 +46,6 @@ public class ByteArrayDatasource implements DataSource {
    }
 
    static {
-      DEFAULT_CONTENT_TYPE = MimeType.octectstream.getValue();
+      DEFAULT_CONTENT_TYPE = MimeType.OCTET_STREAM.getValue();
    }
 }

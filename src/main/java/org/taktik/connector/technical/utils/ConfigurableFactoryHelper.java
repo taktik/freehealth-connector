@@ -5,6 +5,8 @@ import org.taktik.connector.technical.config.Configuration;
 import org.taktik.connector.technical.exception.SilentInstantiationException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
+
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,31 +37,33 @@ public class ConfigurableFactoryHelper<T> {
    }
 
    private T createAndConfigureImplementation(String headerClassName, Map<String, Object> configParameters, boolean silent) throws TechnicalConnectorException {
-      T providerObject;
-
       try {
-         Class<T> provider = (Class<T>) Class.forName(headerClassName);
-
-         try {
-            providerObject = provider.newInstance();
-         } catch (IllegalAccessException var9) {
-            LOG.debug("Default constructor is not public. Trying to invoke getInstance().");
-            Method method = provider.getMethod("getInstance");
-            providerObject = (T) method.invoke(provider);
+         T result = this.createInstance(headerClassName);
+         if (result != null) {
+            this.init(result, configParameters, silent);
          }
-
-         if (providerObject != null) {
-            this.init(providerObject, configParameters, silent);
-         }
-
-         return providerObject;
-      } catch (Exception var10) {
+         return result;
+      } catch (Exception var6) {
          if (!silent) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HEADER_INSTANCIATION, var10, new Object[]{headerClassName});
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HEADER_INSTANCIATION, var6, headerClassName);
          } else {
             return null;
          }
       }
+   }
+
+   private T createInstance(String headerClassName) throws ClassNotFoundException, InstantiationException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+      Class<T> provider = (Class<T>) Class.forName(headerClassName);
+      T providerObject;
+      try {
+         providerObject = provider.newInstance();
+      } catch (IllegalAccessException var6) {
+         LOG.debug("Default constructor is not public. Trying to invoke getInstance().");
+         Method method = provider.getMethod("getInstance");
+         providerObject = (T) method.invoke(provider);
+      }
+
+      return providerObject;
    }
 
    public T getImplementation() throws TechnicalConnectorException {

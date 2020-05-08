@@ -52,8 +52,8 @@ public class KgssServiceImpl implements KgssService, ConfigurationModuleBootstra
    private Logger log = LoggerFactory.getLogger(this.getClass());
 
    @Override
-   public KeyResult getNewKey(GetNewKeyRequestContent request, UUID keystoreId, KeyStore keystore, String passPhrase, byte[] kgssETK) throws TechnicalConnectorException {
-      Credential credential = new KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase);
+   public KeyResult getNewKey(GetNewKeyRequestContent request, UUID keystoreId, KeyStore keystore, String quality, String passPhrase, byte[] kgssETK) throws TechnicalConnectorException {
+      Credential credential = new KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, quality);
       Map<String, PrivateKey> hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray());
       Crypto crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys);
 

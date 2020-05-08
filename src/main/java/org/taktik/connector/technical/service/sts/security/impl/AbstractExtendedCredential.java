@@ -13,6 +13,15 @@ import org.joda.time.DateTime;
 
 public abstract class AbstractExtendedCredential implements ExtendedCredential {
    private static final CertificateFactory CF;
+   private final String quality;
+
+   public AbstractExtendedCredential() {
+      this.quality = "doctor";
+   }
+
+   public AbstractExtendedCredential(String quality) {
+      this.quality = quality;
+   }
 
    public CertPath getCertPath() throws TechnicalConnectorException {
       try {
@@ -26,14 +35,17 @@ public abstract class AbstractExtendedCredential implements ExtendedCredential {
       return new DateTime(this.getCertificate().getNotAfter());
    }
 
+   @Override
+   public String getQuality() {
+      return quality;
+   }
+
    static {
       try {
          SecurityConfiguration.configure();
          CF = CertificateFactory.getInstance("X.509", "BC");
-      } catch (NoSuchProviderException var1) {
-         throw new IllegalArgumentException(var1);
-      } catch (CertificateException var2) {
-         throw new IllegalArgumentException(var2);
+      } catch (NoSuchProviderException | CertificateException ex) {
+         throw new IllegalArgumentException(ex);
       }
    }
 }

@@ -29,31 +29,9 @@ import org.taktik.freehealth.middleware.domain.recipe.CompoundPrescription
 import org.taktik.freehealth.middleware.domain.recipe.Feedback
 import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.dto.HealthcareParty
-import org.taktik.freehealth.middleware.service.RecipeService
-import org.taktik.freehealth.middleware.service.STSService
-import org.taktik.freehealth.middleware.service.impl.RecipeServiceImpl
-import org.taktik.freehealth.middleware.service.impl.STSServiceImpl
 import org.taktik.freehealth.middleware.service.impl.examples.PrescriptionExample
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils
 import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample1
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample10
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample11
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample12
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample13
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample14
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample15
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample16
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample17
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample18
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample19
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample2
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample3
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample4
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample5
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample6
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample7
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample8
-import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample9
 import java.io.Serializable
 import java.util.UUID
 import java.util.regex.Pattern
@@ -91,7 +69,7 @@ class RecipeStories {
     @Before
     fun setup() {
         keystoreId = stsService.uploadKeystore((MyTestsConfiguration::class).java.getResource("$ssin.acc-p12").readBytes())
-        tokenId = stsService.requestToken(keystoreId!!, ssin!!, passPhrase!!, false)?.tokenId
+        tokenId = stsService.requestToken(keystoreId!!, ssin!!, passPhrase!!)?.tokenId
     }
 
     private val prescriptions = listOf(

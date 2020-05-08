@@ -14,7 +14,9 @@ public enum RequestTypeType {
    @XmlEnumValue("extention")
    EXTENTION("extention"),
    @XmlEnumValue("modification")
-   MODIFICATION("modification");
+   MODIFICATION("modification"),
+   @XmlEnumValue("close")
+   CLOSE("close");
 
    private final String value;
 

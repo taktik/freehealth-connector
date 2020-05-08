@@ -26,5 +26,5 @@ import java.io.Serializable
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 enum class PersonalStatus : Serializable {
-    single, in_couple, married, divorced, widower, complicated, unknown
+    single, in_couple, married, divorced, widower, complicated, separated, unknown
 }

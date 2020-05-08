@@ -123,7 +123,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for GMD operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
 
         val isTest = config.getProperty("endpoint.mcn.registration").contains("-acpt")
 
@@ -196,7 +196,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             this.routing = SendRequestMapper.mapRouting(Routing(careReceiver, DateTime()))
             this.detail = SendRequestMapper.mapBlobToBlobType(blob)
 
-            this.xades = BlobUtil.generateXades(this.detail, credential, "mcn.registration")
+            this.xades = BlobUtil.generateXades(credential, this.detail, "mcn.registration")
         }
 
         val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(
@@ -462,7 +462,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for GMD operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
 
         // DMGReferences ref = DmgTestUtils.createDmgReferenceForTest();
         val ref = DMGReferences(true)
@@ -665,7 +665,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for DMG operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
 
         val ref = DMGReferences(true)
 

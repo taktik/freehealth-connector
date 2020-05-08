@@ -19,11 +19,10 @@ class CryptoServiceImpl(val stsService: STSService, keyDepotService: KeyDepotSer
 
     override fun encrypt(keystoreId: UUID,
         passPhrase: String,
-        addressee: Addressee
-        ,
+        addressee: Addressee,
         plainData: ByteArray): ByteArray? {
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, "doctor")
 
         val etkTokens = this.keyDepotManager.getEtkSet(
             addressee.identifierTypeHelper,
@@ -42,7 +41,7 @@ class CryptoServiceImpl(val stsService: STSService, keyDepotService: KeyDepotSer
         passPhrase: String,
         encryptedData: ByteArray): ByteArray? {
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, "doctor")
 
         val hokPrivateKeys = KeyManager.getDecryptionKeys(credential.keyStore, credential.password)
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)

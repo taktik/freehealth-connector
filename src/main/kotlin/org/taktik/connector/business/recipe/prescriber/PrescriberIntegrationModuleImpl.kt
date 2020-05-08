@@ -602,7 +602,7 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
     @Throws(IntegrationModuleException::class)
     protected fun getNewKeyFromKgss(credential: KeyStoreCredential, prescriptionType: String, prescriberId: String, executorId: String?, patientId: String, myEtk: ByteArray): KeyResult? {
         val etkKgss = etkHelper!!.kgsS_ETK[0]
-        val credentialTypes = propertyHandler.getMatchingProperties("kgss.createPrescription.ACL." + prescriptionType)
+        val credentialTypes = propertyHandler.getMatchingProperties("kgss.createPrescription.ACL.$prescriptionType")?.map { it.replace(Regex("\\{saml.quality}"), credential.quality) }
 
         var keyResult: KeyResult? = null
         try {

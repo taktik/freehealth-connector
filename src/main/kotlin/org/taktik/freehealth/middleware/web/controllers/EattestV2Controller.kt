@@ -31,12 +31,12 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
-import org.taktik.freehealth.middleware.service.EattestService
-import java.util.*
+import org.taktik.freehealth.middleware.service.EattestV2Service
+import java.util.UUID
 
 @RestController
 @RequestMapping("/eattestv2")
-class EattestV2Controller(val eattestService: EattestService) {
+class EattestV2Controller(val eattestService: EattestV2Service) {
     @PostMapping("/send/{patientSsin}/verbose", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendAttestWithResponse(
         @PathVariable patientSsin: String,

@@ -23,7 +23,9 @@ public class KeyStoreCredential extends AbstractExtendedCredential {
    private UUID keystoreId;
    private char[] password;
 
-   public KeyStoreCredential(UUID keystoreId, KeyStore keyStore, String alias, String password) throws TechnicalConnectorException {
+   public KeyStoreCredential(UUID keystoreId, KeyStore keyStore, String alias, String password, String quality) throws TechnicalConnectorException {
+      super(quality);
+
       this.keystoreId = keystoreId;
       this.password = password == null ? ArrayUtils.EMPTY_CHAR_ARRAY : password.toCharArray();
       this.alias = alias;
@@ -84,4 +86,5 @@ public class KeyStoreCredential extends AbstractExtendedCredential {
    public char[] getPassword() {
       return password;
    }
+
 }

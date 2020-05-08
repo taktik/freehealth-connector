@@ -9,6 +9,6 @@ import java.util.UUID
 interface KgssService {
     fun remove(key: UUID): KeyResult?
     fun containsKey(key: UUID): Boolean
-    fun getNewKey(keystoreId: UUID, keyStore: KeyStore, passPhrase: String, allowedReaders: List<CredentialType>, myEtk: ByteArray): KeyResult
+    fun getNewKey(keystoreId: UUID, keyStore: KeyStore, quality: String, passPhrase: String, allowedReaders: List<CredentialType>, myEtk: ByteArray): KeyResult
     fun flushCache()
 }

@@ -8,4 +8,6 @@ public interface ExtendedCredential extends Credential {
    DateTime getExpirationDateTime() throws TechnicalConnectorException;
 
    CertPath getCertPath() throws TechnicalConnectorException;
+
+   String getQuality() throws TechnicalConnectorException;
 }

@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,6 +18,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.slf4j.Logger;
@@ -27,8 +29,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+@SuppressWarnings("unchecked")
 public final class ConnectorXmlUtils {
    private static final Logger LOG = LoggerFactory.getLogger(ConnectorXmlUtils.class);
+   private static TransformerFactory trfactory = TransformerFactory.newInstance();
 
    public static DocumentBuilder getDocumentBuilder() {
       try {
@@ -50,7 +54,7 @@ public final class ConnectorXmlUtils {
          return null;
       } else {
          if (nodeList.getLength() > 1) {
-            LOG.debug("{}:{} elements count: ,returning first one", new Object[]{namespaceURI, localName, nodeList.getLength()});
+            LOG.debug("{}:{} elements count: {},returning first one", namespaceURI, localName, nodeList.getLength());
          }
 
          return (Element)nodeList.item(0);
@@ -58,10 +62,10 @@ public final class ConnectorXmlUtils {
    }
 
    public static Element getFirstChildElement(Node node) {
-      Node child;
-      for(child = node.getFirstChild(); child != null && child.getNodeType() != 1; child = child.getNextSibling()) {
+      Node child = node.getFirstChild();
+      while (child != null && child.getNodeType() != 1) {
+         child = child.getNextSibling();
       }
-
       return child != null ? (Element)child : null;
    }
 
@@ -98,20 +102,16 @@ public final class ConnectorXmlUtils {
          Source source = new DOMSource(node);
          out = new ByteArrayOutputStream();
          Result result = new StreamResult(out);
-         TransformerFactory factory = TransformerFactory.newInstance();
-         Transformer transformer = factory.newTransformer();
+         Transformer transformer = trfactory.newTransformer();
          transformer.transform(source, result);
-         byte[] var6 = out.toByteArray();
-         return var6;
-      } catch (TransformerConfigurationException var11) {
+         return out.toByteArray();
+      } catch (TransformerException var11) {
          LOG.error(var11.getClass().getSimpleName() + ":" + var11.getMessage());
-      } catch (TransformerException var12) {
-         LOG.error(var12.getClass().getSimpleName() + ":" + var12.getMessage());
       } finally {
-         ConnectorIOUtils.closeQuietly((Object)out);
+         ConnectorIOUtils.closeQuietly(out);
       }
 
-      return null;
+      return new byte[0];
    }
 
    public static byte[] toByteArray(Object obj) {
@@ -134,12 +134,22 @@ public final class ConnectorXmlUtils {
          in = new ByteArrayInputStream(data);
          var2 = getDocumentBuilder().parse(in);
       } catch (Exception var6) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var6, new Object[]{var6.getMessage()});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var6, var6.getMessage());
       } finally {
-         ConnectorIOUtils.closeQuietly((Object)in);
+         ConnectorIOUtils.closeQuietly(in);
       }
 
       return var2;
+   }
+
+   public static Document toDocument(Source source) throws TechnicalConnectorException {
+      try {
+         DOMResult result = new DOMResult();
+         trfactory.newTransformer().transform(source, result);
+         return result.getNode().getOwnerDocument();
+      } catch (Exception var2) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var2, var2.getMessage());
+      }
    }
 
    public static Document toDocument(Object obj) {
@@ -151,7 +161,7 @@ public final class ConnectorXmlUtils {
       try {
          return parseXmlFile(xml);
       } catch (Exception var2) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var2, new Object[]{var2.getMessage()});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var2, var2.getMessage());
       }
    }
 
@@ -180,7 +190,7 @@ public final class ConnectorXmlUtils {
    }
 
    public static String toString(Node node) throws TechnicalConnectorException {
-      return toString((Source)(new DOMSource(node)));
+      return toString(new DOMSource(node));
    }
 
    public static String toString(Source source) throws TechnicalConnectorException {
@@ -188,54 +198,54 @@ public final class ConnectorXmlUtils {
 
       String var5;
       try {
-         TransformerFactory tff = TransformerFactory.newInstance();
-         Transformer tf = tff.newTransformer();
+         Transformer tf = trfactory.newTransformer();
          tf.setOutputProperty("omit-xml-declaration", "yes");
          Result result = new StreamResult(outputStream);
          tf.transform(source, result);
-         var5 = new String(outputStream.toByteArray(), "UTF-8");
+         var5 = new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
       } catch (Exception var9) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var9, new Object[]{var9.getMessage()});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var9, var9.getMessage());
       } finally {
-         ConnectorIOUtils.closeQuietly((Object)outputStream);
+         ConnectorIOUtils.closeQuietly(outputStream);
       }
 
       return var5;
    }
 
    public static String flatten(String xml) {
-      String result;
-      for(result = xml.replaceAll("[\t\n\r]", ""); result.contains(" <"); result = result.replace(" <", "<")) {
+      String result = xml.replaceAll("[\t\n\r]", "");
+      while (result.contains(" <")) {
+         result = result.replace(" <", "<");
       }
-
       return result;
    }
 
    public static String format(String unformattedXml) {
-      return format(unformattedXml, (Source)null);
+      return format(unformattedXml, null);
    }
 
    public static String format(String unformattedXml, Source xslt) {
+      return xslt(new DOMSource(parseXmlFile(unformattedXml)), xslt);
+   }
+
+   public static String xslt(Source doc, Source xslt) {
       try {
-         Document doc = parseXmlFile(unformattedXml);
-         DOMSource domSource = new DOMSource(doc);
          StringWriter writer = new StringWriter();
          StreamResult result = new StreamResult(writer);
-         TransformerFactory tf = TransformerFactory.newInstance();
          Transformer transformer = null;
          if (xslt != null) {
-            transformer = tf.newTransformer(xslt);
+            transformer = trfactory.newTransformer(xslt);
          } else {
-            transformer = tf.newTransformer();
+            transformer = trfactory.newTransformer();
          }
 
          transformer.setOutputProperty("indent", "yes");
          transformer.setOutputProperty("omit-xml-declaration", "yes");
          transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(1));
-         transformer.transform(domSource, result);
+         transformer.transform(doc, result);
          return writer.toString();
-      } catch (Exception var8) {
-         throw new InstantiationException(var8);
+      } catch (Exception var5) {
+         throw new InstantiationException(var5);
       }
    }
 

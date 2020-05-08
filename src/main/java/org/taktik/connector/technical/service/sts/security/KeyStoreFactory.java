@@ -30,15 +30,9 @@ public final class KeyStoreFactory {
             LOG.warn(msg);
             throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.PROVIDER_INSTANCIATION, new Object[]{msg});
          }
-      } catch (InstantiationException var4) {
+      } catch (InstantiationException | IllegalAccessException | ClassNotFoundException var4) {
          LOG.error("InstantiationException", var4);
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_EIDPINLCALLBACKHANDLERFACTORY, var4, new Object[]{keyStoreClassName});
-      } catch (IllegalAccessException var5) {
-         LOG.error("InstantiationException", var5);
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_EIDPINLCALLBACKHANDLERFACTORY, var5, new Object[]{keyStoreClassName});
-      } catch (ClassNotFoundException var6) {
-         LOG.error("InstantiationException", var6);
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_EIDPINLCALLBACKHANDLERFACTORY, var6, new Object[]{keyStoreClassName});
       } catch (KeyStoreException var7) {
          LOG.error("KeyStoreException", var7);
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_EIDPINLCALLBACKHANDLERFACTORY, var7, new Object[]{keyStoreClassName});

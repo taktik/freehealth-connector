@@ -97,15 +97,15 @@ public class MarshallerHelper<X, Y> {
    }
 
    public X toObject(byte[] data) {
+      ByteArrayInputStream stream = new ByteArrayInputStream(data);
       try {
-         return this.toObject((InputStream)(new ByteArrayInputStream(data)));
-      } catch (TechnicalConnectorException var3) {
-         LOG.error(var3.getMessage(), var3);
-         return null;
+         return this.toObject(stream);
+      } finally {
+         ConnectorIOUtils.closeQuietly(stream);
       }
    }
 
-   public X toObject(InputStream inputStream) throws TechnicalConnectorException {
+   public X toObject(InputStream inputStream) {
       Object var3;
       try {
          JAXBElement<X> root = this.getUnMarshaller().unmarshal(new StreamSource(inputStream), this.unmarshallClass);
@@ -113,7 +113,7 @@ public class MarshallerHelper<X, Y> {
       } catch (JAXBException var7) {
          throw handleException(var7);
       } finally {
-         ConnectorIOUtils.closeQuietly((Object)inputStream);
+         ConnectorIOUtils.closeQuietly(inputStream);
       }
 
       return (X) var3;
@@ -216,7 +216,7 @@ public class MarshallerHelper<X, Y> {
       } catch (JAXBException var7) {
          throw handleException(var7);
       } finally {
-         ConnectorIOUtils.closeQuietly((Object)bos);
+         ConnectorIOUtils.closeQuietly(bos);
       }
 
       return var9;
