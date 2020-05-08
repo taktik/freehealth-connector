@@ -29,6 +29,8 @@ import be.fgov.ehealth.recipe.core.v1.PrescriberServiceAdministrativeInformation
 import be.fgov.ehealth.recipe.core.v1.SecuredContentType
 import be.fgov.ehealth.recipe.core.v1.SendNotificationAdministrativeInformationType
 import be.fgov.ehealth.recipe.protocol.v1.*
+import be.fgov.ehealth.recipe.protocol.v1.GetPrescriptionForPrescriberResponse
+import be.fgov.ehealth.recipe.protocol.v1.ListFeedbacksResponse
 import be.recipe.services.prescriber.*
 import com.sun.xml.internal.ws.client.ClientTransportException
 import org.apache.commons.lang3.StringUtils
