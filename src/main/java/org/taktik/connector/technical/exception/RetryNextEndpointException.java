@@ -2,17 +2,17 @@ package org.taktik.connector.technical.exception;
 
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
-public class RetryNextEndpointException extends TechnicalConnectorException {
+public class RetryNextEndpointException extends RuntimeException {
    private static final long serialVersionUID = 1L;
    private SOAPMessageContext context;
 
    public RetryNextEndpointException(SOAPMessageContext context) {
-      super(TechnicalConnectorExceptionValues.ERROR_IOEXCEPTION, "Unable to connect to endpoint, allowing to retry next one.");
+      super("Unable to connect to endpoint, allowing to retry next one.");
       this.context = context;
    }
 
    public RetryNextEndpointException(Throwable cause) {
-      super(TechnicalConnectorExceptionValues.ERROR_IOEXCEPTION, "Unable to connect to endpoint, allowing to retry next one.", cause);
+      super("Unable to connect to endpoint, allowing to retry next one.", cause);
    }
 
    public boolean hasContext() {

@@ -38,6 +38,8 @@ import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class CmsSignatureBuilder extends AbstractSignatureBuilder implements SignatureBuilder {
    private static final String MSG_VERIFY_FAILED = "Unable to verify signature";
@@ -100,6 +102,11 @@ public class CmsSignatureBuilder extends AbstractSignatureBuilder implements Sig
       }
 
       return result;
+   }
+
+   @Override
+   public SignatureVerificationResult verify(Document signedContent, Element sigElement, Map<String, Object> options) throws TechnicalConnectorException {
+      throw new UnsupportedOperationException();
    }
 
    public byte[] sign(Credential signatureCredential, byte[] byteArrayToSign) throws TechnicalConnectorException {

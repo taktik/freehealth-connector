@@ -18,7 +18,7 @@ public class MessageLevelRetryHandler extends AbstractSOAPHandler {
    public static final String PROP_MESSAGELEVEL_RETRY_ACTIVATED = "be.ehealth.technicalconnector.handler.message.level.retry.activated";
    public static final String PROP_MESSAGELEVEL_RETRY_XSLT_LOCATION = "be.ehealth.technicalconnector.handler.message.level.retry.xslt.location";
 
-   public boolean handleInbound(SOAPMessageContext context) throws RetryNextEndpointException {
+   public boolean handleInbound(SOAPMessageContext context) {
       if (Boolean.TRUE.equals(this.config.getBooleanProperty("be.ehealth.technicalconnector.handler.message.level.retry.activated", Boolean.TRUE))) {
          try {
             Element body = ConnectorXmlUtils.getFirstChildElement(context.getMessage().getSOAPBody());
