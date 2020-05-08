@@ -104,8 +104,7 @@ public final class ConnectorXmlUtils {
          Result result = new StreamResult(out);
          Transformer transformer = trfactory.newTransformer();
          transformer.transform(source, result);
-         byte[] var6 = out.toByteArray();
-         return var6;
+         return out.toByteArray();
       } catch (TransformerException var11) {
          LOG.error(var11.getClass().getSimpleName() + ":" + var11.getMessage());
       } finally {

@@ -1,6 +1,7 @@
 package org.taktik.connector.technical.handler;
 
 import org.taktik.connector.technical.enumeration.Charset;
+import org.taktik.connector.technical.exception.RetryNextEndpointException;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +26,7 @@ public abstract class AbstractSOAPHandler implements SOAPHandler<SOAPMessageCont
       return true;
    }
 
-   public boolean handleInbound(SOAPMessageContext context) {
+   public boolean handleInbound(SOAPMessageContext context) throws RetryNextEndpointException {
       return true;
    }
 

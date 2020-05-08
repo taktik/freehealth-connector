@@ -184,7 +184,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -378,7 +378,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                 ?: throw MissingTokenException("Cannot obtain token for Eattest operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -927,9 +927,9 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                         }
                                     },
                                     code.side?.let {
-                                        be.fgov.ehealth.standards.kmehr.schema.v1.ContentType().apply {
-                                            cds.add(be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT().apply {
-                                                s = be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes.LOCAL;
+                                        ContentType().apply {
+                                            cds.add(CDCONTENT().apply {
+                                                s = CDCONTENTschemes.LOCAL;
                                                 sv = "1.0";
                                                 sl = "NIHDI-TREATED-LIMB";
                                                 value = code.side.toString();
