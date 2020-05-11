@@ -11,24 +11,66 @@ import be.recipe.services.prescriber.PutVisionResult
 import be.recipe.services.prescriber.ValidationPropertiesParam
 import be.recipe.services.prescriber.ValidationPropertiesResult
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
+import org.taktik.connector.technical.service.sts.security.SAMLToken
+import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
+import java.security.KeyStore
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 interface PrescriberIntegrationModuleV4 : PrescriberIntegrationModule {
     @Throws(IntegrationModuleException::class)
-    fun createPrescription(feedbackRequested: Boolean, patientId: String, prescription: ByteArray, prescriptionType: String, visibility: String? = null, expirationDate: String? = null): String?
+    fun createPrescription(
+        keystore: KeyStore,
+        samlToken: SAMLToken,
+        passPhrase: String,
+        credential: KeyStoreCredential,
+        nihii: String,
+        feedbackRequested: Boolean,
+        patientId: String,
+        prescription: ByteArray,
+        prescriptionType: String,
+        visibility: String? = null,
+        expirationDate: LocalDateTime = LocalDateTime.now().plusMonths(3)
+                          ): String?
 
     @Throws(IntegrationModuleException::class)
-    fun getData(var1: GetPrescriptionStatusParam?): GetPrescriptionStatusResult?
+    fun getData(
+        keystore: KeyStore,
+        samlToken: SAMLToken,
+        passPhrase: String,
+        credential: KeyStoreCredential,
+        param: GetPrescriptionStatusParam): GetPrescriptionStatusResult?
 
     @Throws(IntegrationModuleException::class)
-    fun getData(var1: ListRidsHistoryParam?): ListRidsHistoryResult?
+    fun getData(
+        keystore: KeyStore,
+        samlToken: SAMLToken,
+        passPhrase: String,
+        credential: KeyStoreCredential,
+        param: ListRidsHistoryParam): ListRidsHistoryResult?
 
     @Throws(IntegrationModuleException::class)
-    fun putData(var1: PutVisionParam?): PutVisionResult?
+    fun putData(        keystore: KeyStore,
+        samlToken: SAMLToken,
+        passPhrase: String,
+        credential: KeyStoreCredential,
+        param: PutVisionParam): PutVisionResult?
 
     @Throws(IntegrationModuleException::class)
-    fun getData(var1: ListOpenRidsParam?): ListOpenRidsResult?
+    fun getData(
+        keystore: KeyStore,
+        samlToken: SAMLToken,
+        passPhrase: String,
+        credential: KeyStoreCredential,
+        param: ListOpenRidsParam): ListOpenRidsResult?
 
     @Throws(IntegrationModuleException::class)
-    fun getData(var1: ValidationPropertiesParam?): ValidationPropertiesResult?
+    fun getData(
+        keystore: KeyStore,
+        samlToken: SAMLToken,
+        passPhrase: String,
+        credential: KeyStoreCredential,
+        param: ValidationPropertiesParam): ValidationPropertiesResult?
 }

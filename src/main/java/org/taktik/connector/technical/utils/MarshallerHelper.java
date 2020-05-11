@@ -10,9 +10,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
+import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
 import javax.activation.DataHandler;
+import javax.crypto.Cipher;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -220,6 +222,19 @@ public class MarshallerHelper<X, Y> {
       }
 
       return var9;
+   }
+
+   public X unsealWithSymmKey(byte[] data, Key symmKey) {
+      byte[] result = null;
+
+      try {
+         Cipher cipher = Cipher.getInstance("DESede");
+         cipher.init(Cipher.DECRYPT_MODE, symmKey);
+         result = cipher.doFinal(data);
+      } catch (Exception e) {
+      }
+      data = result;
+      return toObject(data);
    }
 
    /** @deprecated */

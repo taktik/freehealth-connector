@@ -58,7 +58,7 @@ public class GetPrescriptionForPrescriberResult extends ResponseType {
       this.encryptionKeyId = value;
    }
 
-   public boolean isFeedbackAllowed() {
+   public boolean getFeedbackAllowed() {
       return this.feedbackAllowed;
    }
 

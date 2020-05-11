@@ -21,7 +21,7 @@ public class ListFeedbacksParam extends PartyIdentification {
    )
    protected byte[] symmKey;
 
-   public boolean isReadFlag() {
+   public boolean getReadFlag() {
       return this.readFlag;
    }
 

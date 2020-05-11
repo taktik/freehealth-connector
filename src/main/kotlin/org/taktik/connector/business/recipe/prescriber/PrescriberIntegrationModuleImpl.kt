@@ -20,18 +20,30 @@
 
 package org.taktik.connector.business.recipe.prescriber
 
-import be.fgov.ehealth.commons.core.v1.IdentifierType
-import be.fgov.ehealth.commons.core.v1.StatusType
-import be.fgov.ehealth.commons.protocol.v1.ResponseType
-import be.fgov.ehealth.etee.crypto.utils.KeyManager
-import be.fgov.ehealth.recipe.core.v1.CreatePrescriptionAdministrativeInformationType
-import be.fgov.ehealth.recipe.core.v1.PrescriberServiceAdministrativeInformationType
-import be.fgov.ehealth.recipe.core.v1.SecuredContentType
-import be.fgov.ehealth.recipe.core.v1.SendNotificationAdministrativeInformationType
-import be.fgov.ehealth.recipe.protocol.v1.*
+import be.fgov.ehealth.recipe.protocol.v1.AliveCheckRequest
+import be.fgov.ehealth.recipe.protocol.v1.AliveCheckResponse
+import be.fgov.ehealth.recipe.protocol.v1.CreatePrescriptionRequest
+import be.fgov.ehealth.recipe.protocol.v1.GetPrescriptionForPrescriberRequest
 import be.fgov.ehealth.recipe.protocol.v1.GetPrescriptionForPrescriberResponse
+import be.fgov.ehealth.recipe.protocol.v1.ListFeedbacksRequest
 import be.fgov.ehealth.recipe.protocol.v1.ListFeedbacksResponse
-import be.recipe.services.prescriber.*
+import be.fgov.ehealth.recipe.protocol.v1.ListOpenPrescriptionsRequest
+import be.fgov.ehealth.recipe.protocol.v1.ListOpenPrescriptionsResponse
+import be.fgov.ehealth.recipe.protocol.v1.RevokePrescriptionRequest
+import be.fgov.ehealth.recipe.protocol.v1.SendNotificationRequest
+import be.fgov.ehealth.recipe.protocol.v1.UpdateFeedbackFlagRequest
+import be.recipe.services.prescriber.CreatePrescriptionParam
+import be.recipe.services.prescriber.CreatePrescriptionResult
+import be.recipe.services.prescriber.GetListOpenPrescriptionParam
+import be.recipe.services.prescriber.GetListOpenPrescriptionResult
+import be.recipe.services.prescriber.GetPrescriptionForPrescriberParam
+import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
+import be.recipe.services.prescriber.ListFeedbackItem
+import be.recipe.services.prescriber.ListFeedbacksParam
+import be.recipe.services.prescriber.ListFeedbacksResult
+import be.recipe.services.prescriber.RevokePrescriptionParam
+import be.recipe.services.prescriber.SendNotificationParam
+import be.recipe.services.prescriber.UpdateFeedbackFlagParam
 import com.sun.xml.internal.ws.client.ClientTransportException
 import org.apache.commons.lang3.StringUtils
 import org.bouncycastle.util.encoders.Base64
@@ -42,7 +54,9 @@ import org.taktik.connector.business.recipe.utils.KmehrHelper
 import org.taktik.connector.business.recipeprojects.core.domain.IdentifierTypes
 import org.taktik.connector.business.recipeprojects.core.domain.KgssIdentifierType
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
-import org.taktik.connector.business.recipeprojects.core.utils.*
+import org.taktik.connector.business.recipeprojects.core.utils.Exceptionutils
+import org.taktik.connector.business.recipeprojects.core.utils.I18nHelper
+import org.taktik.connector.business.recipeprojects.core.utils.IOUtils
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
@@ -56,7 +70,20 @@ import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.service.impl.RecipeServiceImpl
 import java.io.ByteArrayInputStream
 import java.security.KeyStore
-import java.util.*
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.Properties
+import be.fgov.ehealth.commons.core.v1.IdentifierType
+import be.fgov.ehealth.commons.core.v1.StatusType
+import be.fgov.ehealth.commons.core.v2.Status
+import be.fgov.ehealth.commons.protocol.v1.ResponseType
+import be.fgov.ehealth.etee.crypto.utils.KeyManager
+import be.fgov.ehealth.recipe.core.v1.CreatePrescriptionAdministrativeInformationType
+import be.fgov.ehealth.recipe.core.v1.PrescriberServiceAdministrativeInformationType
+import be.fgov.ehealth.recipe.core.v1.SecuredContentType
+import be.fgov.ehealth.recipe.core.v1.SendNotificationAdministrativeInformationType
+import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
+import org.taktik.connector.technical.utils.MarshallerHelper
 
 open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotService: KeyDepotService) : AbstractIntegrationModule(keyDepotService), PrescriberIntegrationModule {
     private val log = LoggerFactory.getLogger(PrescriberIntegrationModuleImpl::class.java)
@@ -67,7 +94,7 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
     private val prescriptionCache = HashMap<String, String>()
     private val kgssService = KgssServiceImpl()
     private val recipePrescriberService = RecipePrescriberServiceImpl()
-    private val kmehrHelper = KmehrHelper(Properties().apply { load(RecipeServiceImpl::class.java.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
+    protected val kmehrHelper = KmehrHelper(Properties().apply { load(RecipeServiceImpl::class.java.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
 
     /**
      * Gets the new key.
@@ -80,7 +107,7 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
      * @throws IntegrationModuleException the integration module exception
      */
     @Throws(IntegrationModuleException::class)
-    private fun getNewKey(credential: KeyStoreCredential,
+    protected fun getNewKey(credential: KeyStoreCredential,
         nihii: String,
         patientId: String,
         prescriptionType: String): KeyResult? {
@@ -138,20 +165,20 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
             val helper = MarshallerHelper(CreatePrescriptionResult::class.java, CreatePrescriptionParam::class.java)
 
             // get recipe etk
-            val etkRecipes = etkHelper!!.recipe_ETK
+            val etkRecipes = etkHelper.recipe_ETK
 
             // create sealed prescription
-            val key = getNewKey(credential, nihii, patientId, prescriptionType)
-            val message = getCrypto(credential).seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, null, KeyResult(key?.secretKey, key?.keyId), IOUtils.compress(prescription))
+            val key = getNewKey(credential, nihii, patientId, prescriptionType) ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_KGSS, "Cannot obtain key from KGSS for patient $patientId")
+            val message = getCrypto(credential).seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, null, KeyResult(key.secretKey, key.keyId), IOUtils.compress(prescription))
 
             // create sealed content
             val params = CreatePrescriptionParam()
             params.patientId = patientId
-            params.setFeedbackRequested(feedbackRequested)
+            params.isFeedbackRequested = feedbackRequested
             params.prescription = message
             params.prescriptionType = prescriptionType
-            params.symmKey = symmKey!!.encoded
-            params.keyId = key!!.keyId
+            params.symmKey = symmKey.encoded
+            params.keyId = key.keyId
             params.prescriberId = nihii
 
             // create request
@@ -209,7 +236,7 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
             val helper = MarshallerHelper(Any::class.java, RevokePrescriptionParam::class.java)
 
             // get Recipe ETK
-            val etkRecipes = etkHelper!!.recipe_ETK
+            val etkRecipes = etkHelper.recipe_ETK
 
             // create params
             val params = RevokePrescriptionParam()
@@ -270,7 +297,7 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
             val helper = MarshallerHelper(GetPrescriptionForPrescriberResult::class.java, GetPrescriptionForPrescriberParam::class.java)
 
             // get recipe etk
-            val etkRecipes = etkHelper!!.recipe_ETK
+            val etkRecipes = etkHelper.recipe_ETK
 
             // create sealed request
             val param = GetPrescriptionForPrescriberParam()
@@ -337,7 +364,7 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
             val helper = MarshallerHelper(GetListOpenPrescriptionResult::class.java, GetListOpenPrescriptionParam::class.java)
 
             // get recipe etk
-            val etkRecipes = etkHelper!!.recipe_ETK
+            val etkRecipes = etkHelper.recipe_ETK
 
             // create param
             val param = GetListOpenPrescriptionParam()
@@ -410,10 +437,10 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
             val helper = MarshallerHelper(Any::class.java, SendNotificationParam::class.java)
 
             // get recipe etk
-            val etkRecipes = etkHelper!!.recipe_ETK
+            val etkRecipes = etkHelper.recipe_ETK
 
             // get recipient etk
-            val etkRecipients = etkHelper!!.getEtks(KgssIdentifierType.NIHII_PHARMACY, executorId)
+            val etkRecipients = etkHelper.getEtks(KgssIdentifierType.NIHII_PHARMACY, executorId)
 
             val notificationZip = IOUtils.compress(notificationText)
 
@@ -474,7 +501,7 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
             val helper = MarshallerHelper(Any::class.java, UpdateFeedbackFlagParam::class.java)
 
             // get recipe etk
-            val etkRecipes = etkHelper!!.recipe_ETK
+            val etkRecipes = etkHelper.recipe_ETK
 
             // create param
             val param = UpdateFeedbackFlagParam()
@@ -512,7 +539,7 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
             val helper = MarshallerHelper(ListFeedbacksResult::class.java, ListFeedbacksParam::class.java)
 
             // get recipe etk
-            val etkRecipes = etkHelper!!.recipe_ETK
+            val etkRecipes = etkHelper.recipe_ETK
 
             // create param
             val param = ListFeedbacksParam()
@@ -560,7 +587,15 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
     }
 
     @Throws(IntegrationModuleException::class)
-    private fun checkStatus(response: ResponseType) {
+    protected fun checkStatus(response: ResponseType) {
+        if (AbstractIntegrationModule.EHEALTH_SUCCESS_CODE_100 != response.status.code && AbstractIntegrationModule.EHEALTH_SUCCESS_CODE_200 != response.status.code) {
+            log.error("Error Status received : " + response.status.code)
+            throw IntegrationModuleException(getLocalisedMsg(response.status))
+        }
+    }
+
+    @Throws(IntegrationModuleException::class)
+    protected fun checkStatus(response: be.recipe.services.core.ResponseType) {
         if (AbstractIntegrationModule.EHEALTH_SUCCESS_CODE_100 != response.status.code && AbstractIntegrationModule.EHEALTH_SUCCESS_CODE_200 != response.status.code) {
             log.error("Error Status received : " + response.status.code)
             throw IntegrationModuleException(getLocalisedMsg(response.status))
@@ -568,6 +603,18 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
     }
 
     private fun getLocalisedMsg(status: StatusType): String {
+        val locale = IntegrationModuleException.getUserLocale()
+        for (msg in status.messages) {
+            if (msg.lang != null && locale.equals(msg.lang.value(), ignoreCase = true)) {
+                return msg.value
+            }
+        }
+        return if (status.messages.size > 0) {
+            status.messages[0].value
+        } else status.code
+    }
+
+    private fun getLocalisedMsg(status: be.recipe.services.core.StatusType): String {
         val locale = IntegrationModuleException.getUserLocale()
         for (msg in status.messages) {
             if (msg.lang != null && locale.equals(msg.lang.value(), ignoreCase = true)) {
@@ -590,20 +637,18 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
         return prescriptionCache[rid] ?: "72081061175"
     }
 
-    private fun setPatientId(rid: String, patientId: String) {
+    protected fun setPatientId(rid: String, patientId: String) {
         prescriptionCache.put(rid, patientId)
     }
-
 
     @Throws(IntegrationModuleException::class)
     protected fun unsealFeedback(crypto: Crypto, message: ByteArray?): ByteArray? {
         return message?.let { unsealNotiffeed(crypto, it) }
     }
 
-
     @Throws(IntegrationModuleException::class)
     protected fun getNewKeyFromKgss(credential: KeyStoreCredential, prescriptionType: String, prescriberId: String, executorId: String?, patientId: String, myEtk: ByteArray): KeyResult? {
-        val etkKgss = etkHelper!!.kgsS_ETK[0]
+        val etkKgss = etkHelper.kgsS_ETK[0]
         val credentialTypes = propertyHandler.getMatchingProperties("kgss.createPrescription.ACL.$prescriptionType")?.map { it.replace(Regex("\\{saml.quality}"), credential.quality) }
 
         var keyResult: KeyResult? = null
@@ -622,7 +667,7 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
         return crypto.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, paramEncryptionToken, paramArrayOfByte)
     }
 
-    private fun getCrypto(credential: KeyStoreCredential) : Crypto {
+    protected fun getCrypto(credential: KeyStoreCredential) : Crypto {
         val hokPrivateKeys = KeyManager.getDecryptionKeys(credential.keyStore, credential.password)
         return CryptoFactory.getCrypto(credential, hokPrivateKeys)
     }

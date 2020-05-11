@@ -1,12 +1,5 @@
-package be.fgov.ehealth.insurability.protocol.v2;
-
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
-
-// $FF: synthetic class
-@XmlSchema(
-   namespace = "urn:be:fgov:ehealth:insurability:protocol:v2",
-   elementFormDefault = XmlNsForm.QUALIFIED
+@javax.xml.bind.annotation.XmlSchema(
+		namespace = "urn:be:fgov:ehealth:insurability:protocol:v2",
+		elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED
 )
-interface package-info {
-}
+package be.fgov.ehealth.insurability.protocol.v2;
