@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="InsurabilityConsultation" 
+    targetNamespace="urn:be:fgov:ehealth:insurability:protocol:v2" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:ins="urn:be:fgov:ehealth:insurability:protocol:v2" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:err="urn:be:fgov:ehealth:errors:soa:v1">
+	<documentation>Version 2.0</documentation>
+	<types>
+		<xsd:schema>
+			<xsd:import namespace="urn:be:fgov:ehealth:insurability:protocol:v2" schemaLocation="../XSD/insurabilityservices_protocol-2_0.xsd"/>
+			<xsd:import namespace="urn:be:fgov:ehealth:errors:soa:v1" schemaLocation="../../ehealth-errors/XSD/ehealth-errors-schema-soa-1_1.xsd"/>
+		</xsd:schema>
+	</types>
+	<message name="GetInsurabilityForPharmacistRequest">
+		<part name="body" element="ins:GetInsurabilityForPharmacistRequest"/>
+	</message>
+	<message name="GetInsurabilityForPharmacistResponse">
+		<part name="body" element="ins:GetInsurabilityForPharmacistResponse"/>
+	</message>
+	<message name="SystemError">
+		<part name="fault" element="err:SystemError"/>
+	</message>
+	<portType name="InsurabilityConsultationPortType">
+		<operation name="getInsurabilityForPharmacist">
+			<input message="ins:GetInsurabilityForPharmacistRequest"/>
+			<output message="ins:GetInsurabilityForPharmacistResponse"/>
+			<fault message="ins:SystemError" name="SystemError"/>
+		</operation>
+	</portType>
+	<binding name="InsurabilityConsultationSOAPBinding" type="ins:InsurabilityConsultationPortType">
+		<soap11:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="getInsurabilityForPharmacist">
+			<soap11:operation style="document" soapAction="urn:be:fgov:ehealth:insurability:protocol:v2:GetInsurabilityForPharmacist"/>
+			<input>
+				<soap11:body use="literal"/>
+			</input>
+			<output>
+				<soap11:body use="literal"/>
+			</output>
+			<fault name="SystemError">
+				<soap11:fault name="SystemError" use="literal"/>
+			</fault>
+		</operation>
+	</binding>
+	<service name="InsurabilityConsultationService">
+		<port name="InsurabilityConsultationServiceSOAP11" binding="ins:InsurabilityConsultationSOAPBinding">
+			<soap11:address location="https://services.ehealth.fgov.be/insurability/consultation/v2"/>
+		</port>
+	</service>
+</definitions>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="22">
+	<resources/>
+	<component name="defaultmap1" blackbox="0" uid="1" editable="1">
+		<properties SelectedLanguage="xslt2"/>
+		<structure>
+			<children>
+				<component name="constant" library="core" uid="8" kind="2">
+					<properties/>
+					<targets>
+						<datapoint pos="0" key="1"/>
+					</targets>
+					<view ltx="612" lty="89" rbx="667" rby="107"/>
+					<data>
+						<constant value="2.0" datatype="string"/>
+						<wsdl/>
+					</data>
+				</component>
+				<component name="single-message-oa-1.0" library="xml" uid="3" kind="14">
+					<properties XSLTTargetEncoding="UTF-8" XSLTDefaultOutput="1"/>
+					<view ltx="892" rbx="1258" rby="770"/>
+					<data>
+						<root scrollposition="1">
+							<header>
+								<namespaces>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/v1"/>
+									<namespace uid="http://www.altova.com/mapforce"/>
+								</namespaces>
+							</header>
+							<entry name="FileInstance" ns="1" expanded="1">
+								<entry name="document" ns="1" expanded="1" casttotargettypemode="cast-in-subtree">
+									<entry name="single-message" inpkey="3" expanded="1">
+										<entry name="unsigned" inpkey="4" expanded="1">
+											<entry name="header" inpkey="5" expanded="1">
+												<entry name="version" inpkey="6"/>
+												<entry name="messageCreateDate" inpkey="7"/>
+												<entry name="messageID" inpkey="8"/>
+												<entry name="sender" inpkey="9"/>
+											</entry>
+											<entry name="eventFolder" inpkey="10" expanded="1">
+												<entry name="events" expanded="1">
+													<entry name="event" expanded="1"/>
+												</entry>
+											</entry>
+										</entry>
+										<entry name="signed" inpkey="14"/>
+									</entry>
+								</entry>
+							</entry>
+						</root>
+						<document schema="..\xsd\smc-v2\single-message\maindoc\single-message-oa-1.0.xsd" outputinstance="..\xsd\smc-v2\single-message\maindoc\single-message-oa-1.0.xml" instanceroot="{http://www.apb.be/standards/smoa/schema/v1}single-message"/>
+						<wsdl/>
+					</data>
+				</component>
+				<component name="single-message-oa-1.0" library="xml" uid="2" kind="14">
+					<properties XSLTTargetEncoding="UTF-8"/>
+					<view rbx="401" rby="770"/>
+					<data>
+						<root scrollposition="1">
+							<header>
+								<namespaces>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/v1"/>
+									<namespace uid="http://www.altova.com/mapforce"/>
+								</namespaces>
+							</header>
+							<entry name="FileInstance" ns="1" expanded="1">
+								<entry name="document" ns="1" expanded="1" casttotargettypemode="cast-in-subtree">
+									<entry name="single-message" outkey="16" expanded="1">
+										<entry name="unsigned" outkey="17" expanded="1">
+											<entry name="header" outkey="18" expanded="1">
+												<entry name="messageCreateDate" outkey="19"/>
+												<entry name="messageID" outkey="20"/>
+												<entry name="sender" outkey="21"/>
+											</entry>
+											<entry name="eventFolder" outkey="22" expanded="1">
+												<entry name="events" expanded="1">
+													<entry name="event" expanded="1"/>
+												</entry>
+											</entry>
+										</entry>
+										<entry name="signed" outkey="26"/>
+									</entry>
+								</entry>
+							</entry>
+						</root>
+						<document schema="..\xsd\smc-v1\single-message\maindoc\single-message-oa-1.0.xsd" inputinstance="..\single-message-maximal-dataset-sample1.xml" outputinstance="..\xsd\smc-v2\single-message-maximal-dataset-sample.xml" instanceroot="{http://www.apb.be/standards/smoa/schema/v1}single-message"/>
+						<wsdl/>
+					</data>
+				</component>
+			</children>
+			<graph directed="1">
+				<edges>
+					<edge edgekey="41">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="42">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="43">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+				</edges>
+				<vertices>
+					<vertex vertexkey="1">
+						<edges>
+							<edge vertexkey="6" edgekey="31"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="16">
+						<edges>
+							<edge vertexkey="3" edgekey="44"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="17">
+						<edges>
+							<edge vertexkey="4" edgekey="45"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="18">
+						<edges>
+							<edge vertexkey="5" edgekey="46"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="19">
+						<edges>
+							<edge vertexkey="7" edgekey="47"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="20">
+						<edges>
+							<edge vertexkey="8" edgekey="48"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="21">
+						<edges>
+							<edge vertexkey="9" edgekey="42"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="22">
+						<edges>
+							<edge vertexkey="10" edgekey="41"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="26">
+						<edges>
+							<edge vertexkey="14" edgekey="43"/>
+						</edges>
+					</vertex>
+				</vertices>
+			</graph>
+		</structure>
+	</component>
+</mapping>

@@ -1,0 +1,38 @@
+package be.fgov.ehealth.insurability.core.v2;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(
+   name = "NihiiType",
+   propOrder = {"quality", "value"}
+)
+public class NihiiType extends SelfRefType {
+   @XmlElement(
+      name = "Quality"
+   )
+   protected String quality;
+   @XmlElement(
+      name = "Value"
+   )
+   protected ValueRefString value;
+
+   public String getQuality() {
+      return this.quality;
+   }
+
+   public void setQuality(String value) {
+      this.quality = value;
+   }
+
+   public ValueRefString getValue() {
+      return this.value;
+   }
+
+   public void setValue(ValueRefString value) {
+      this.value = value;
+   }
+}

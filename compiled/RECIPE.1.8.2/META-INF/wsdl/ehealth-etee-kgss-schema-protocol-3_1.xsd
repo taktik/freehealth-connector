@@ -1,0 +1,77 @@
+<!-- edited with XMLSpy v2009 (http://www.altova.com) by Smals-MVM ASBL/VZW (Smals-MVM ASBL/VZW) --><xs:schema targetNamespace="urn:be:fgov:ehealth:etee:kgss:1_0:protocol" elementFormDefault="qualified" xmlns="urn:be:fgov:ehealth:etee:kgss:1_0:protocol" xmlns:core="urn:be:fgov:ehealth:commons:1_0:core" xmlns:protocol="urn:be:fgov:ehealth:commons:1_0:protocol" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:etee="urn:be:fgov:ehealth:etee:commons:1_0:etee"> 
+ 
+  <xs:import namespace="urn:be:fgov:ehealth:commons:1_0:core" schemaLocation="ehealth-commons-schema-core-1_0.xsd"/> 
+  <xs:import namespace="urn:be:fgov:ehealth:commons:1_0:protocol" schemaLocation="ehealth-commons-schema-protocol-1_0.xsd"/> 
+  <xs:import namespace="urn:be:fgov:ehealth:etee:commons:1_0:etee" schemaLocation="ehealth-etee-commons-schema-3_0.xsd"/> 
+ 
+  <!--
+      "Create, store safely and return a new secret key. 
+      The access to this key must be limited according to the given AccesToken (thus before sealing or encrypting data)."                   
+    --> 
+  <xs:element name="GetNewKeyRequest"> 
+    <xs:complexType> 
+      <xs:complexContent> 
+        <xs:extension base="protocol:RequestType"> 
+          <xs:sequence minOccurs="1" maxOccurs="1"> 
+            <xs:element name="SealedNewKeyRequest" type="SealedContentType"/> 
+          </xs:sequence> 
+        </xs:extension> 
+      </xs:complexContent> 
+    </xs:complexType> 
+  </xs:element> 
+  <!--
+    "Here your NewKey with its NewKeyIdentifier."
+  --> 
+  <xs:element name="GetNewKeyResponse"> 
+    <xs:complexType> 
+      <xs:complexContent> 
+        <xs:extension base="etee:EteeResponseType"> 
+          <xs:sequence minOccurs="1" maxOccurs="1"> 
+            <xs:element name="SealedNewKeyResponse" type="SealedContentType"/> 
+          </xs:sequence> 
+        </xs:extension> 
+      </xs:complexContent> 
+    </xs:complexType> 
+  </xs:element> 
+ 
+  <!--
+    "I am an authorized reader, I am in the ACL provided at creation of the new key by the new key requestor. Give me the key with this KeyIdentifier. (If the key was created with the four eyes principle: I have the cooperation of Reader2 to receive this
+    key. He/she is also on the ACL and signed the KeyIdentifier as the KeyIdentifierSignedByReader2.) "
+  --> 
+  <xs:element name="GetKeyRequest"> 
+    <xs:complexType> 
+      <xs:complexContent> 
+        <xs:extension base="protocol:RequestType"> 
+          <xs:sequence minOccurs="1" maxOccurs="1"> 
+            <xs:element name="SealedKeyRequest" type="SealedContentType"/> 
+          </xs:sequence> 
+        </xs:extension> 
+      </xs:complexContent> 
+    </xs:complexType> 
+  </xs:element> 
+ 
+  <xs:element name="GetKeyResponse"> 
+    <xs:complexType> 
+      <xs:complexContent> 
+        <xs:extension base="etee:EteeResponseType"> 
+          <xs:sequence minOccurs="1" maxOccurs="1"> 
+            <xs:element name="SealedKeyResponse" type="SealedContentType"/> 
+          </xs:sequence> 
+        </xs:extension> 
+      </xs:complexContent> 
+    </xs:complexType> 
+  </xs:element> 
+ 
+  <xs:complexType name="SealedContentType"> 
+    <xs:sequence minOccurs="1" maxOccurs="1"> 
+      <xs:element name="SealedContent" type="xs:base64Binary"/> 
+    </xs:sequence> 
+  </xs:complexType> 
+ 
+<!--  <xs:complexType name="SecuredResponseType">--> 
+<!--    <xs:sequence minOccurs="1" maxOccurs="1">--> 
+<!--      <xs:element name="SecuredContent" type="xs:base64Binary" />--> 
+<!--    </xs:sequence>--> 
+<!--  </xs:complexType>--> 
+ 
+</xs:schema>
