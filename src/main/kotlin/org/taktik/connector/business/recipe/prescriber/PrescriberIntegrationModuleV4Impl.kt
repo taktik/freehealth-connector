@@ -95,9 +95,8 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
 
         return try {
             val propertyHandler: PropertyHandler = PropertyHandler.getInstance()
-            val days = System.getProperty("validation.expirationDate.days", "365")
             val expDateAsString = expirationDate.format(DateTimeFormatter.ofPattern("YYYY-MM-DD"))
-            ValidationUtils.validateExpirationDate(expDateAsString, days)
+            ValidationUtils.validateExpirationDate(expDateAsString)
             performValidation(prescription, prescriptionType, expDateAsString)
             val helper = MarshallerHelper(CreatePrescriptionResult::class.java, CreatePrescriptionParam::class.java)
             val etkRecipes: List<*> = etkHelper.recipe_ETK
@@ -443,7 +442,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
                     errors.add(I18nHelper.getLabel("error.validation.expirationdate.different.message", arrayOf<Any>(expirationDateFromRequest, expirationDateFromKmehr)))
                 }
             } else {
-                errors.add(I18nHelper.getLabel("error.validation.expirationdate1"))
+                errors.add(I18nHelper.getLabel("error.validation.expirationdate.kmehr"));
             }
         } catch (ex: ParserConfigurationException) {
             Exceptionutils.errorHandler(ex)
