@@ -20,22 +20,13 @@
 
 package org.taktik.freehealth.middleware.service
 
-import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.taktik.connector.technical.exception.ConnectorException
-import org.taktik.freehealth.middleware.domain.recipe.Feedback
 import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.recipe.Prescription
-import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
-import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
-import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
-import java.security.KeyStoreException
-import java.security.cert.CertificateExpiredException
 import java.time.LocalDateTime
 import java.util.UUID
-import java.util.zip.DataFormatException
-import javax.xml.bind.JAXBException
 
 /**
  * Created with IntelliJ IDEA.
@@ -61,6 +52,7 @@ interface RecipeV4Service {
         prescriptionType: String?,
         notification: String?,
         executorId: String?,
+        samVersion: String?,
         deliveryDate: LocalDateTime?,
         vision: String?,
         expirationDate: LocalDateTime?

@@ -4,9 +4,10 @@ import org.hamcrest.Matchers.greaterThanOrEqualTo
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThat
 import org.junit.Test
+import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelper
 import org.taktik.freehealth.middleware.domain.recipe.RegimenItem
 import org.taktik.freehealth.middleware.dto.Code
-import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionHelper.Period
+import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelper.Period
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.temporal.ChronoUnit.WEEKS
 
@@ -67,7 +68,7 @@ class KmehrPrescriptionHelperTest {
             RegimenItem().apply { date = 20170306 },
             RegimenItem().apply { date = 20170309 },
             RegimenItem().apply { date = 20170312 }
-        )))
+                                                                                           )))
     }
 
     @Test
@@ -78,7 +79,7 @@ class KmehrPrescriptionHelperTest {
             RegimenItem().apply { date = 20160305 },
             RegimenItem().apply { date = 20160308 },
             RegimenItem().apply { date = 20160311 }
-        )))
+                                                                                           )))
     }
 
     @Test
@@ -89,7 +90,7 @@ class KmehrPrescriptionHelperTest {
             RegimenItem().apply { date = 20170306 },
             RegimenItem().apply { date = 20170310 }, // 4 days here
             RegimenItem().apply { date = 20170313 }
-        )))
+                                                                                )))
     }
 
     @Test
@@ -99,7 +100,7 @@ class KmehrPrescriptionHelperTest {
             RegimenItem().apply {
                     weekday = RegimenItem.Weekday().apply { weekDay = Code("CD-WEEKDAY", "monday") }
                 }
-        )))
+                                                                                )))
     }
 
     @Test
@@ -107,7 +108,7 @@ class KmehrPrescriptionHelperTest {
         assertEquals(null, KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { date = 20170228; },
             RegimenItem().apply { dayNumber = 1 }
-        )))
+                                                                                )))
     }
 
     @Test
@@ -117,7 +118,7 @@ class KmehrPrescriptionHelperTest {
                     weekday = RegimenItem.Weekday().apply { weekDay = Code("CD-WEEKDAY", "monday") }
                 },
             RegimenItem().apply { dayNumber = 1 }
-        )))
+                                                                                )))
     }
 
     @Test
@@ -137,7 +138,7 @@ class KmehrPrescriptionHelperTest {
                         administrationUnit = Code("CD-UNIT", "bag")
                     }
                 }
-        )))
+                                                                                           )))
     }
 
     @Test
@@ -157,7 +158,7 @@ class KmehrPrescriptionHelperTest {
                         administrationUnit = Code("CD-UNIT", "cap")
                     }
                 }
-        )))
+                                                                                           )))
     }
 
     @Test
@@ -177,7 +178,7 @@ class KmehrPrescriptionHelperTest {
                         administrationUnit = Code("CD-UNIT", "bag")
                     }
                 }
-        )))
+                                                                                           )))
     }
 
     @Test
@@ -185,7 +186,7 @@ class KmehrPrescriptionHelperTest {
         assertEquals(null, KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { date = 20170228 ; timeOfDay = 60000},
             RegimenItem().apply { date = 20170228 ; timeOfDay = 180000}
-        )))
+                                                                                )))
     }
 
     @Test
@@ -193,7 +194,7 @@ class KmehrPrescriptionHelperTest {
         assertThat(KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { timeOfDay = 60000},
             RegimenItem().apply { timeOfDay = 180000}
-        ))?.unit, greaterThanOrEqualTo(DAYS))
+                                                                        ))?.unit, greaterThanOrEqualTo(DAYS))
     }
 
     @Test(expected = Exception::class)
@@ -201,7 +202,7 @@ class KmehrPrescriptionHelperTest {
         assertEquals(null, KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { date = 20170228; timeOfDay = 105959; dayPeriod = Code("CD-DAYPERIOD", "beforelunch")},
             RegimenItem().apply { date = 20170303; timeOfDay = 105959; dayPeriod = Code("CD-DAYPERIOD", "beforelunch")}
-        )))
+                                                                                )))
     }
 
     @Test
@@ -209,7 +210,7 @@ class KmehrPrescriptionHelperTest {
         assertEquals(Period(DAYS, 3), KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { date = 20170228; timeOfDay = 105959},
             RegimenItem().apply { date = 20170303; timeOfDay = 105959}
-        )))
+                                                                                           )))
     }
 
     @Test
@@ -217,7 +218,7 @@ class KmehrPrescriptionHelperTest {
         assertEquals(Period(DAYS, 3), KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { date = 20170324; timeOfDay = 105959},
             RegimenItem().apply { date = 20170327; timeOfDay = 105959}
-        )))
+                                                                                           )))
     }
 
     @Test
@@ -226,7 +227,7 @@ class KmehrPrescriptionHelperTest {
             RegimenItem().apply { date = 20170225; timeOfDay = 105959},
             RegimenItem().apply { date = 20170228; timeOfDay = 105959},
             RegimenItem().apply { date = 20170303; timeOfDay = 110000}
-        )))
+                                                                                )))
     }
 
     @Test
@@ -234,7 +235,7 @@ class KmehrPrescriptionHelperTest {
         assertEquals(Period(DAYS, 3), KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { date = 20170228; dayPeriod = Code("CD-DAYPERIOD", "beforelunch")},
             RegimenItem().apply { date = 20170303; dayPeriod = Code("CD-DAYPERIOD", "beforelunch")}
-        )))
+                                                                                           )))
     }
 
     @Test
@@ -242,7 +243,7 @@ class KmehrPrescriptionHelperTest {
         assertEquals(null, KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { date = 20170228; dayPeriod = Code("CD-DAYPERIOD", "morning")},
             RegimenItem().apply { date = 20170303; dayPeriod = Code("CD-DAYPERIOD", "beforelunch")}
-        )))
+                                                                                )))
     }
 
     @Test
@@ -250,7 +251,7 @@ class KmehrPrescriptionHelperTest {
         assertEquals(Period(WEEKS, 1), KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { date = 20170301 },
             RegimenItem().apply { date = 20170308 }
-        )))
+                                                                                            )))
     }
 
     @Test
@@ -258,7 +259,7 @@ class KmehrPrescriptionHelperTest {
         assertEquals(Period(DAYS, 2), KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { dayNumber = 1 },
             RegimenItem().apply { dayNumber = 3 }
-        )))
+                                                                                           )))
     }
 
     @Test
@@ -267,7 +268,7 @@ class KmehrPrescriptionHelperTest {
             RegimenItem().apply { dayNumber = 1 },
             RegimenItem().apply { dayNumber = 3 },
             RegimenItem().apply { dayNumber = 6 }
-        )))
+                                                                                )))
     }
 
     @Test
@@ -275,7 +276,7 @@ class KmehrPrescriptionHelperTest {
         assertEquals(Period(WEEKS, 2), KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { weekday = RegimenItem.Weekday().apply { weekDay = Code("CD-WEEKDAY", "monday"); weekNumber = 1 } },
             RegimenItem().apply { weekday = RegimenItem.Weekday().apply { weekDay = Code("CD-WEEKDAY", "monday"); weekNumber = 3 } }
-        )))
+                                                                                            )))
     }
 
     @Test
@@ -283,7 +284,7 @@ class KmehrPrescriptionHelperTest {
         assertEquals(null, KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { weekday = RegimenItem.Weekday().apply { weekDay = Code("CD-WEEKDAY", "monday"); weekNumber = 1 } },
             RegimenItem().apply { weekday = RegimenItem.Weekday().apply { weekDay = Code("CD-WEEKDAY", "monday") } }
-        )))
+                                                                                )))
     }
 
     @Test
@@ -291,14 +292,14 @@ class KmehrPrescriptionHelperTest {
         assertEquals(null, KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { weekday = RegimenItem.Weekday().apply { weekDay = Code("CD-WEEKDAY", "monday"); weekNumber = 1 } },
             RegimenItem().apply { weekday = RegimenItem.Weekday().apply { weekDay = Code("CD-WEEKDAY", "tuesday"); weekNumber = 3 } }
-        )))
+                                                                                )))
     }
 
     @Test(expected = Exception::class)
     fun byWeekDayInvalid() {
         assertEquals(null, KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { weekday = RegimenItem.Weekday() }
-        )))
+                                                                                )))
     }
 
     @Test
@@ -306,7 +307,7 @@ class KmehrPrescriptionHelperTest {
         assertEquals(null, KmehrPrescriptionHelper.inferPeriodFromRegimen(listOf(
             RegimenItem().apply { weekday = RegimenItem.Weekday().apply { weekDay = Code("CD-WEEKDAY", "monday"); weekNumber = 1 } },
             RegimenItem().apply { weekday = RegimenItem.Weekday().apply { weekDay = Code("CD-WEEKDAY", "tuesday"); weekNumber = 3 } }
-        )))
+                                                                                )))
     }
 
     @Test
@@ -316,6 +317,6 @@ class KmehrPrescriptionHelperTest {
             RegimenItem().apply { dayPeriod = Code("CD-DAYPERIOD", "beforelunch")},
             RegimenItem().apply { timeOfDay = 165959 },
             RegimenItem().apply { dayPeriod = Code("CD-DAYPERIOD", "beforeldinner")}
-        )))
+                                                                                           )))
     }
 }
