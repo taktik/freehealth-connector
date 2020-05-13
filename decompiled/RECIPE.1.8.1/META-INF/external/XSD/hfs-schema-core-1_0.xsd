@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           targetNamespace="urn:be:smals:hfs:core:1_0"
+           xmlns:core="urn:be:smals:hfs:core:1_0" 
+           xmlns:xmime="http://www.w3.org/2005/05/xmlmime" 
+           >
+        
+	<xs:complexType name="StatusType">
+        <xs:annotation>
+            <xs:documentation>Status of the request</xs:documentation>
+        </xs:annotation>
+      	<xs:sequence>
+			<xs:element name="code" type="xs:string"/>
+			<xs:element name="message" type="xs:string" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+    <xs:simpleType name="ApplicationIdType">
+        <xs:annotation>
+            <xs:documentation>Application identifier</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="([a-z0-9])*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DirectoryNameType">
+        <xs:annotation>
+            <xs:documentation>Directory name may contain multiple sub-directories separated by a "/"</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="([a-z0-9_/])*"/>
+        </xs:restriction>
+    </xs:simpleType> 
+
+    <xs:simpleType name="FileNameType">
+        <xs:annotation>
+            <xs:documentation>File name is composed of the file name and its extension separated bu a "."</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="([a-z0-9_.])*"/>
+        </xs:restriction>
+    </xs:simpleType>    
+    
+    <xs:simpleType name="FileIdentificationType">
+        <xs:annotation>
+            <xs:documentation>File identificaiton uniquely identifies a file in the server</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+<!--          <xs:pattern value="([a-zA-Z0-9-])*"/>-->
+        </xs:restriction>
+    </xs:simpleType> 
+    
+
+    <xs:simpleType name="AnyDataType">
+        <xs:annotation>
+            <xs:documentation>File content is any xmime type : */*</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:base64Binary" xmime:expectedContentTypes="*/*">
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="FileSignatureType">
+      <xs:annotation>
+        <xs:documentation>hash of the file : type is SHA-256 ...</xs:documentation>
+      </xs:annotation>
+      <xs:sequence>
+        <!--<xs:element name="type" type="xs:string" />-->
+        <xs:element name="algorithm">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="SHA-256" />
+              <xs:enumeration value="SHA-512" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="signature" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+    
+
+  
+</xs:schema>

@@ -1,0 +1,14 @@
+package be.apb.gfddpp.common.utils;
+
+public enum Operation {
+   GETDATA,
+   GETPHARMACYDETAILS,
+   UPDATE,
+   GETDATATYPES,
+   REGISTER,
+   REVOKE,
+   GETSTATUS,
+   COMMON,
+   MEDICATIONSCHEME_GET_TIMESTAMPS,
+   MEDICATIONSCHEME_GET_ENTRIES;
+}

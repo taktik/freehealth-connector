@@ -18,11 +18,13 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.CertStore;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,11 +59,11 @@ public final class CryptoFactory {
    }
 
    public static Crypto getCrypto(Credential encryption, Map<String, PrivateKey> decryptionKeys, String oCSPPolicy) throws TechnicalConnectorException {
-      Map<String, Object> configParameters = new HashMap();
+      Map<String, Object> configParameters = new HashMap<>();
       configParameters.put("datasealer.credential", encryption);
       configParameters.put("dataunsealer.pkmap", decryptionKeys);
       configParameters.put("cryptolib.ocsp.policy", OCSPPolicy.valueOf(oCSPPolicy));
-      Map<SigningOption, Object> signingOptions = new HashMap();
+      Map<SigningOption, Object> signingOptions = new EnumMap<>(SigningOption.class);
       signingOptions.put(SigningOption.SIGNING_TIME_EXPIRATION, configuration.getIntegerProperty("be.fgov.ehealth.etee.crypto.policies.SigningOption.SIGNING_TIME_EXPIRATION", 5));
       signingOptions.put(SigningOption.CLOCK_SKEW, configuration.getLongProperty("be.fgov.ehealth.etee.crypto.policies.SigningOption.CLOCK_SKEW", 300000L));
       signingOptions.put(SigningOption.SIGNING_TIME_TRUST_IMPLICIT, configuration.getBooleanProperty("be.fgov.ehealth.etee.crypto.policies.SigningOption.SIGNING_TIME_TRUST_IMPLICIT", Boolean.FALSE));
@@ -72,11 +74,11 @@ public final class CryptoFactory {
       return helper.getImplementation(configParameters, false);
    }
 
-   public static Map<OCSPOption, Object> getOCSPOptions() throws TechnicalConnectorException {
+   public static Map<OCSPOption, Object> getOCSPOptions() {
       return CryptoFactory.OCSPOptionHolder.load();
    }
 
-   public static void resetOCSPOptions() throws TechnicalConnectorException {
+   public static void resetOCSPOptions() {
       CryptoFactory.OCSPOptionHolder.invalidate();
       CryptoFactory.OCSPOptionHolder.load();
    }
@@ -91,14 +93,7 @@ public final class CryptoFactory {
          char[] pwd = configuration.getProperty(password, "").toCharArray();
          String path = configuration.getProperty(key, "");
          if (StringUtils.isNotBlank(path)) {
-            String keystorePath = path;
-
-            try {
-               KeyStoreManager ocspKeyStoreManager = new KeyStoreManager(keystorePath, pwd);
-               keystore = ocspKeyStoreManager.getKeyStore();
-            } catch (TechnicalConnectorException var7) {
-               LOG.info("Unable to load keystore.", var7);
-            }
+            keystore = loadKeyStore(keystore, pwd, path);
          }
 
          if (keystore == null) {
@@ -107,11 +102,21 @@ public final class CryptoFactory {
          }
 
          return keystore;
-      } catch (Exception var8) {
-         throw new ConfigurationException(var8);
+      } catch (Exception var6) {
+         throw new ConfigurationException(var6);
       }
    }
 
+   private static KeyStore loadKeyStore(KeyStore keystore, char[] pwd, String keystorePath) {
+      try {
+         KeyStoreManager ocspKeyStoreManager = new KeyStoreManager(keystorePath, pwd);
+         keystore = ocspKeyStoreManager.getKeyStore();
+      } catch (TechnicalConnectorException var4) {
+         LOG.info("Unable to load keystore.", var4);
+      }
+
+      return keystore;
+   }
    public static Crypto getCrypto(Credential encryption, Map<String, PrivateKey> decryptionKeys) throws TechnicalConnectorException {
       return getCrypto(encryption, decryptionKeys, "NONE");
    }
@@ -124,67 +129,76 @@ public final class CryptoFactory {
 
          for(int i$ = 0; i$ < len$; ++i$) {
             KeyStore store = arr$[i$];
-
-            try {
-               Enumeration enumeration = store.aliases();
-
-               while(enumeration.hasMoreElements()) {
-                  certsAndCrls.add(store.getCertificate((String)enumeration.nextElement()));
-               }
-
-               LOG.info("Added truststore in CertStore.");
-            } catch (KeyStoreException var30) {
-               LOG.warn("Unable to add truststore to CertStore", var30);
-            }
+            process(certsAndCrls, store);
          }
 
          java.security.cert.CertificateFactory factory = java.security.cert.CertificateFactory.getInstance("X.509");
          Iterator i$ = configuration.getMatchingProperties(baseKey + ".CERT").iterator();
 
          String crlLocation;
-         InputStream stream;
          while(i$.hasNext()) {
             crlLocation = (String)i$.next();
-            stream = null;
-
-            try {
-               stream = ConnectorIOUtils.getResourceAsStream(crlLocation);
-               certsAndCrls.add(factory.generateCertificate(stream));
-               LOG.info("Added " + crlLocation + " as CERT in CertStore.");
-            } catch (Exception var28) {
-               LOG.error(var28.getClass().getName() + ":" + var28.getMessage(), var28);
-            } finally {
-               ConnectorIOUtils.closeQuietly((Object)stream);
-            }
+            processCERT(certsAndCrls, factory, crlLocation);
          }
 
          i$ = configuration.getMatchingProperties(baseKey + ".CRL").iterator();
 
          while(i$.hasNext()) {
             crlLocation = (String)i$.next();
-            stream = null;
-
-            try {
-               stream = ConnectorIOUtils.getResourceAsStream(crlLocation);
-               certsAndCrls.add(factory.generateCRL(stream));
-               LOG.info("Added " + crlLocation + " as CRL in CertStore.");
-            } catch (Exception var26) {
-               LOG.error(var26.getClass().getName() + ":" + var26.getMessage(), var26);
-            } finally {
-               ConnectorIOUtils.closeQuietly((Object)stream);
-            }
+            processCRL(certsAndCrls, factory, crlLocation);
          }
 
          return CertStore.getInstance("Collection", new CollectionCertStoreParameters(certsAndCrls));
-      } catch (CertificateException var31) {
-         LOG.error(var31.getClass().getName() + ":" + var31.getMessage(), var31);
-      } catch (InvalidAlgorithmParameterException var32) {
-         LOG.error(var32.getClass().getName() + ":" + var32.getMessage(), var32);
-      } catch (NoSuchAlgorithmException var33) {
-         LOG.error(var33.getClass().getName() + ":" + var33.getMessage(), var33);
+      } catch (CertificateException | InvalidAlgorithmParameterException | NoSuchAlgorithmException ex) {
+         LOG.error(ex.getClass().getName() + ":" + ex.getMessage(), ex);
       }
 
       return null;
+   }
+
+   private static void processCRL(Collection certsAndCrls, java.security.cert.CertificateFactory factory, String crlLocation) {
+      InputStream stream = null;
+
+      try {
+         stream = ConnectorIOUtils.getResourceAsStream(crlLocation);
+         certsAndCrls.add(factory.generateCRL(stream));
+         LOG.info("Added {} as CRL in CertStore.", crlLocation);
+      } catch (Exception var8) {
+         LOG.error(var8.getClass().getName() + ":" + var8.getMessage(), var8);
+      } finally {
+         ConnectorIOUtils.closeQuietly((Object)stream);
+      }
+
+   }
+
+   private static void processCERT(Collection<Certificate> certsAndCrls, java.security.cert.CertificateFactory factory, String certLocation) {
+      InputStream stream = null;
+
+      try {
+         stream = ConnectorIOUtils.getResourceAsStream(certLocation);
+         certsAndCrls.add(factory.generateCertificate(stream));
+         LOG.info("Added " + certLocation + " as CERT in CertStore.");
+      } catch (Exception var8) {
+         LOG.error(var8.getClass().getName() + ":" + var8.getMessage(), var8);
+      } finally {
+         ConnectorIOUtils.closeQuietly((Object)stream);
+      }
+
+   }
+
+   private static void process(Collection<Certificate> certsAndCrls, KeyStore store) {
+      try {
+         Enumeration enumeration = store.aliases();
+
+         while(enumeration.hasMoreElements()) {
+            certsAndCrls.add(store.getCertificate((String)enumeration.nextElement()));
+         }
+
+         LOG.info("Added truststore in CertStore.");
+      } catch (KeyStoreException var3) {
+         LOG.warn("Unable to add truststore to CertStore", var3);
+      }
+
    }
 
    private static class OCSPOptionHolder {
@@ -192,9 +206,9 @@ public final class CryptoFactory {
 
       public static synchronized Map<OCSPOption, Object> load() {
          if (ocspOptionMap == null) {
-            Map<OCSPOption, Object> map = new HashMap();
+            Map<OCSPOption, Object> map = new EnumMap<>(OCSPOption.class);
             map.put(OCSPOption.OCSP_URI, CryptoFactory.configuration.getProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.OCSP_URI"));
-         KeyStore trustStore = CryptoFactory.getCaCertificateStore();
+            KeyStore trustStore = CryptoFactory.getCaCertificateStore();
             map.put(OCSPOption.TRUST_STORE, trustStore);
             map.put(OCSPOption.CERT_STORE, CryptoFactory.generateCertStore("be.fgov.ehealth.etee.crypto.policies.OCSPOption.CERT_STORE", trustStore));
             map.put(OCSPOption.INJECT_RESPONSE, CryptoFactory.configuration.getBooleanProperty("be.fgov.ehealth.etee.crypto.policies.OCSPOption.INJECT_RESPONSE", Boolean.FALSE));

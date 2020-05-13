@@ -1,55 +1,55 @@
 package be.recipe.services.prescriber;
 
-import be.recipe.services.PartyIdentification;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import be.recipe.services.core.PartyIdentification;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
+import javax.xml.bind.annotation.XmlType;
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(
+   name = "revokePrescriptionParam",
+   propOrder = {"rid", "reason", "symmKey"}
+)
 @XmlRootElement(
-   namespace = "http:/services.recipe.be/prescriber"
+   name = "revokePrescriptionParam"
 )
 public class RevokePrescriptionParam extends PartyIdentification {
-   @NotNull
-   @Size(
-      min = 12,
-      max = 12
+   @XmlElement(
+      required = true
    )
-   private String rid;
-   @Size(
-      max = 256
+   protected String rid;
+   @XmlElement(
+      required = true
    )
-   private String reason;
-
-   @NotNull
-   public String getPrescriberId() {
-      return super.getPrescriberId();
-   }
-
-   public RevokePrescriptionParam() {
-   }
-
-   public RevokePrescriptionParam(String rid, String reason) {
-      this.rid = rid;
-      this.reason = reason;
-   }
-
-   public String toString() {
-      return "rid=" + this.rid + "," + "reason=" + this.reason;
-   }
+   protected String reason;
+   @XmlElement(
+      required = true
+   )
+   protected byte[] symmKey;
 
    public String getRid() {
       return this.rid;
    }
 
-   public void setRid(String rid) {
-      this.rid = rid;
+   public void setRid(String value) {
+      this.rid = value;
    }
 
    public String getReason() {
       return this.reason;
    }
 
-   public void setReason(String reason) {
-      this.reason = reason;
+   public void setReason(String value) {
+      this.reason = value;
    }
+
+   public byte[] getSymmKey() {
+      return this.symmKey;
+   }
+
+   public void setSymmKey(byte[] value) {
+      this.symmKey = value;
+   }
+
 }

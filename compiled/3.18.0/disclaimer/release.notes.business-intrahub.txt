@@ -1,0 +1,154 @@
+**********************************************************
+* eHealth Business intrahub   RELEASE NOTES              *
+**********************************************************
+3.17.1 release (april 2019)
+  . change              Support of the ID-ENCRYPTION-KEY kmehr property that can be added to the hcparty identifier of the request for operations where the response must be encrypted.
+                        The ID-ENCRYPTION-KEY value contains the base64 encoded reply-to ETK.
+                        By default ID-ENCRYPTION-KEY is not added since service providers might not be compliant yet.
+                        To activate the ID-ENCRYPTION-KEY kmehr property (when the service provider is compliant),following configuration properties should be added:
+                                            - kmehr.intrahub.usedefaultproperties=false
+                                            - kmehr.intrahub.hcpartylist=identifier
+                                            - kmehr.intrahub.identifier.id.inss.value=${careprovider.inss}
+                                            - kmehr.intrahub.identifier.id.inss.sv=1.0
+                                            - kmehr.intrahub.identifier.id.idhcparty.value=${careprovider.nihii}
+                                            - kmehr.intrahub.identifier.id.idhcparty.sv=1.0
+                                            - kmehr.intrahub.identifier.cd.cdhcparty.value=${main.kmehr.quality}
+                                            - kmehr.intrahub.identifier.cd.cdhcparty.sv=1.1
+                                            - kmehr.intrahub.identifier.firstname=${careprovider.firstname}
+                                            - kmehr.intrahub.identifier.lastname=${careprovider.lastname}
+                                            - kmehr.intrahub.identifier.id.idencryptionkey=true
+                                            - kmehr.intrahub.identifier.id.idencryptionkey.sv=1.0
+
+                        The following classes were modified:
+                                 be/ehealth/businessconnector/hub/util/RequestTypeBuilder
+                                 be/ehealth/businessconnector/hub/security/HubRequestWithEncryptionIntegrationTest
+
+3.17.0 internal release (april 2019)
+
+3.14.0-beta-0 release (september 2017)
+  . deleted             b.e.b.hub.exception.FolderDecryptionRuntimeException            moved to intrahubcommons
+  . deleted             b.e.b.hub.exception.IntraHubBusinessConnectorException          moved to intrahubcommons
+  . deleted             b.e.b.hub.exception.IntraHubBusinessConnectorExceptionValues    moved to intrahubcommons
+  . deleted             b.e.b.hub.exception.KmehrBusinessConnectorException             moved to intrahubcommons
+  . deleted             b.e.b.hub.security.FolderDecryptor                              moved to intrahubcommons
+  . deleted             b.e.b.hub.security.FolderEncryptor                              moved to intrahubcommons
+  . deleted             b.e.b.hub.security.HubDecryptionHandler                         moved to intrahubcommons
+  . deleted             b.e.b.hub.security.IntrahubEncryptionUtil                       moved to intrahubcommons
+  . improvement         b.e.b.hub.util.RequestTypeBuilder                               moved method addSecurityTags to kmehrcommons
+  . improvement         Were modified as a result of moving intrahub v1/v3 common code to intrahubcommons:
+                                be/ehealth/businessconnector/hub/service/IntraHubAccessRightService.java
+                                be/ehealth/businessconnector/hub/service/IntraHubHCPartyService.java
+                                be/ehealth/businessconnector/hub/service/IntraHubPatientService.java
+                                be/ehealth/businessconnector/hub/service/IntraHubService.java
+                                be/ehealth/businessconnector/hub/service/IntraHubTherapeuticLinkService.java
+                                be/ehealth/businessconnector/hub/service/IntraHubTransactionService.java
+                                be/ehealth/businessconnector/hub/service/ServiceFactory.java
+                                be/ehealth/businessconnector/hub/service/impl/IntraHubAbstract.java
+                                be/ehealth/businessconnector/hub/service/impl/IntraHubAccessRightServiceImpl.java
+                                be/ehealth/businessconnector/hub/service/impl/IntraHubHCPartyServiceImpl.java
+                                be/ehealth/businessconnector/hub/service/impl/IntraHubPatientServiceImpl.java
+                                be/ehealth/businessconnector/hub/service/impl/IntraHubServiceImpl.java
+                                be/ehealth/businessconnector/hub/service/impl/IntraHubTherapeuticLinkServiceImpl.java
+                                be/ehealth/businessconnector/hub/service/impl/IntraHubTransactionServiceImpl.java
+                                be/ehealth/businessconnector/hub/session/HubService.java
+                                be/ehealth/businessconnector/hub/session/HubServiceComplete.java
+                                be/ehealth/businessconnector/hub/session/impl/HubServiceCompleteImpl.java
+                                be/ehealth/businessconnector/hub/session/impl/HubServiceImpl.java
+                                be/ehealth/businessconnector/hub/validators/HubReplyValidator.java
+                                be/ehealth/businessconnector/hub/validators/impl/HubReplyValidatorImpl.java                                                               
+    . improvement       improve integration test scenario:
+                                be/ehealth/businessconnector/hub/session/AbstractIntrahubIntegrationTest.java
+                                be/ehealth/businessconnector/hub/session/ConsentIntegrationTest.java
+                                be/ehealth/businessconnector/hub/session/HubConfig.java
+                                be/ehealth/businessconnector/hub/session/HubTestHelper.java
+                                be/ehealth/businessconnector/hub/session/InitHubRule.java
+                                be/ehealth/businessconnector/hub/session/SpecificHubIntegrationTest.java
+                                be/ehealth/businessconnector/hub/session/TherLinkIntegrationTest.java
+                                be/ehealth/businessconnector/hub/session/TransactionIntegrationTest.java
+                                be/ehealth/businessconnector/hub/session/WalkThroughIntegrationTest.java
+                                be/ehealth/businessconnector/intrahub/service/AbstractIntrahubIntegrationTest.cs
+                                be/ehealth/businessconnector/intrahub/session/HubServiceCompleteIntegrationTest.cs
+
+3.13.1 release (july 2017)
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . improvement             refactored DoctorRequestHandler,HubRequestWithEncryption and RequestHandler interface to be more generic now creates kmehrId and Author based on general config ( with full nihii number including specialisation now )
+  . improvement             refactored to be usable for all healthcare professionals
+  . improvement             refactoring in put and get transaction request we don't add empty application id anymore ( not needed for individual health care professional)
+  . improvement             refactoring in HubReplyValidator , removed superfluous null check
+  . improvement             now using HandlerChainUtil.buildChainWithValidator in ServiceFactory
+  . improvement             made RequestTypeBuilder request property private instead of package accessible
+  . improvement             removed double setting of SchemaValidatorHandler in ServiceFactory
+
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+  . bugfix fixed bug retrieving encryption key from etk , now also works when hub is known with multiple ids in etk depot
+
+3.11.0 internal release (october 2016)
+  . update                  using technical connector 3.11.0
+
+3.10.4 release (september 2016)
+  . using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  . internal release
+  
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+  .   change                  added bootstrapping
+  .   change                  some minor checkstyle fixes
+  .   change                  using latest kmehr methods for specific kmehr configs  
+
+
+  3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)  
+3.4.0-beta-9 release
+  .   change                  new kmehr version 1.14
+  .   using latest version of technical connector 3.4.0-beta-9 
+  .   bugfix                  b.e.b.hub.security.HubRequestWithEncryption          fixed NPE when marshalling object
+  
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+  
+3.4.0-beta-7 release
+  . using latest version of technical connector 3.4.0-beta-7
+	
+3.4.0 beta-6 release
+  . using latest version of technical connector 3.4.0-beta-6
+  
+3.4.0 beta-5 release
+ .    change                    Crypto properties are now retrieved from session when needed. methods with crypto as parameter are deprecated
+ .    change                    now using factory to create GenericWsSender instead of constructor 
+ .    change                    Unnecessary Local Before Return dropped
+ .    improvement               replaced new GenericWsSenderImpl() with factory method in service
+ .    improvement               new Exceptions now always include the rootcause
+ .    improvement               removed some unused imports and autoformatted the source code
+ .    improvement               HubReplyValidatorImpl : inlined list definition just before loop
+  
+3.4.0-beta-4 release
+
+3.4.0 beta release
+ .  improvement                                                                    upgrade to new version of kmehr (version 1.8.0)
+ .    change                    refactored calling of KeyDepotManager
+
+
+3.3.0 beta-3 release
+ .  improvement                                                                    upgrade to new version of kmehr (version 1.7.0)
+ .     bugfix            b.e.e.hub.service.ServiceFactory                            correction to new xsd locations
+ 
+3.3.0 beta release
+ .    improvement        logging standardized on sl4j 
+ .    improvement        now logs message on debug level when unable to obtain nihii from session
+ 
+3.4.0 beta-3 release
+ .    improvement        b.e.b.hub.security.FolderDecryptor                            internal refactoring (removing xpath instances)
+ .    improvement        b.e.b.hub.security.FolderEncryptor                            internal refactoring (performace improvements)

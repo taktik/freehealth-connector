@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:tns="urn:be:cin:nip:sync:reg:v1" targetNamespace="urn:be:cin:nip:sync:reg:v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+  xmlns:common="urn:be:cin:mycarenet:esb:common:v2" xmlns:type="urn:be:cin:types:v1">
+
+  <xsd:import schemaLocation="../../mycarenet-commons/XSD/commonTypes-v1.2.xsd" namespace="urn:be:cin:types:v1" />
+  <xsd:import schemaLocation="../../mycarenet-commons/XSD/commonInfo-v2.3.xsd" namespace="urn:be:cin:mycarenet:esb:common:v2" />
+  <xsd:annotation>
+    <xsd:documentation xml:lang="en">
+      * v1.0: Initial version
+    </xsd:documentation>
+  </xsd:annotation>
+  <xsd:simpleType name="registrationStatus">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="SUCCESS" />
+      <xsd:enumeration value="ERROR" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:element name="registrations" type="tns:registrationsType" />
+
+  <xsd:complexType name="registrationsType">
+    <xsd:sequence>
+      <xsd:element name="registrant" minOccurs="1" maxOccurs="1" type="tns:registrantType" />
+      <xsd:element name="registration" minOccurs="1" maxOccurs="1" type="tns:registrationType" />
+    </xsd:sequence>
+    <xsd:attribute name="StartDateTime" type="xsd:date" use="required" />
+  </xsd:complexType>
+
+  <xsd:complexType name="registrantType">
+    <xsd:sequence>
+      <xsd:element name="CareProvider" type="common:CareProviderType">
+        <xsd:annotation>
+          <xsd:documentation>
+            The care provider for which the request was
+            sent. This is not necessary the party
+            that sent
+            the request, but it can be.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="bankAccountType">
+    <xsd:attribute name="bic">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="11" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="iban" use="required">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="34" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="registrationType">
+    <xsd:sequence>
+      <xsd:element name="bankAccount" type="tns:bankAccountType" minOccurs="0" />
+      <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xsd:sequence>
+    <xsd:attribute name="serviceName" type="xsd:string" use="required" />
+  </xsd:complexType>
+
+  <xsd:element name="registrationsAnswer" type="tns:registrationsAnswerType" />
+
+  <xsd:complexType name="registrationsAnswerType">
+    <xsd:sequence>
+      <xsd:element name="registrant" minOccurs="1" maxOccurs="1" type="tns:registrantType" />
+      <xsd:element name="registrationAnswer" minOccurs="1" maxOccurs="1" type="tns:registrationAnswerType" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="registrationAnswerType">
+    <xsd:sequence>
+      <xsd:element name="answerDetails" type="type:DetailType" minOccurs="0" maxOccurs="unbounded" />
+      <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xsd:sequence>
+    <xsd:attribute name="serviceName" type="xsd:string" use="required" />
+    <xsd:attribute name="status" type="tns:registrationStatus" use="required" />
+    <xsd:attribute name="startDate" type="xsd:date" use="optional" />
+    <xsd:attribute name="endDate" type="xsd:date" use="optional" />
+  </xsd:complexType>
+</xsd:schema>

@@ -82,7 +82,11 @@ public class GenericResponse {
    }
 
    private String getAttachmentPartId(AttachmentPart element) {
-      return "cid:" + StringUtils.substringBetween(element.getContentId(), "<", ">");
+      return this.sanitizePartId(StringUtils.substringBetween(element.getContentId(), "<", ">"));
+   }
+
+   private String sanitizePartId(String cid) {
+      return cid.replaceAll("cid:", "");
    }
 
    public byte[] getAttachment(String cid) throws SOAPException {
@@ -95,7 +99,7 @@ public class GenericResponse {
          }
 
          element = (AttachmentPart)attachmentPartIterator.next();
-      } while(!StringUtils.equals(cid, this.getAttachmentPartId(element)));
+      } while(!StringUtils.equals(this.sanitizePartId(cid), this.getAttachmentPartId(element)));
 
       return element.getRawContentBytes();
    }
@@ -115,9 +119,11 @@ public class GenericResponse {
          SOAPFault fault = this.message.getSOAPBody().getFault();
          if (fault != null) {
             try {
-               LOG.error("SOAPFault: " + ConnectorXmlUtils.flatten(ConnectorXmlUtils.toString((Node)fault)));
+               if (LOG.isErrorEnabled()) {
+                  LOG.error("SOAPFault: {}", ConnectorXmlUtils.flatten(ConnectorXmlUtils.toString((Node)fault)));
+               }
             } catch (TechnicalConnectorException var3) {
-               LOG.debug("Unable to dump SOAPFault. Reason [" + var3.getMessage() + "]", var3);
+               LOG.debug("Unable to dump SOAPFault. Reason [{}]", var3.getMessage(), var3);
             }
 
             throw new SOAPFaultException(fault);

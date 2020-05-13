@@ -134,10 +134,10 @@ public class STSServiceImpl extends AbstractSTSService {
    }
 
    public Element renewToken(Credential headerCredentials, Credential bodyCredentials, Element samlToken, int validity) throws TechnicalConnectorException {
-      List<SAMLAttributeDesignator> designators = new ArrayList();
-      List<SAMLAttribute> attributes = new ArrayList();
+      List<SAMLAttributeDesignator> designators = new ArrayList<>();
+      List<SAMLAttribute> attributes = new ArrayList<>();
       NodeList authenticationStatementList = samlToken.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "AuthenticationStatement");
-      Set<String> idenAttr = new HashSet();
+      Set<String> idenAttr = new HashSet<>();
 
       String value;
       String namespace;
@@ -151,6 +151,7 @@ public class STSServiceImpl extends AbstractSTSService {
             String[] values = this.extractTextContent(attr.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "AttributeValue"));
             if (!"urn:be:fgov:certified-namespace:ehealth".equals(value)) {
                attributes.add(new SAMLAttribute(namespace, value, values));
+               idenAttr.add(namespace);
             }
          }
       }
@@ -175,7 +176,7 @@ public class STSServiceImpl extends AbstractSTSService {
          }
       }
 
-      String subjectConfirmationMethod = ((Element)samlToken.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "ConfirmationMethod").item(0)).getTextContent();
+      String subjectConfirmationMethod = samlToken.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "ConfirmationMethod").item(0).getTextContent();
       String authenticationMethod = null;
 
       for(int i = 0; i < authenticationStatementList.getLength(); ++i) {
@@ -204,7 +205,7 @@ public class STSServiceImpl extends AbstractSTSService {
 
       for(int i = 0; i < nodelist.getLength(); ++i) {
          Element el = (Element)nodelist.item(i);
-         result = (String[])((String[])ArrayUtils.add(result, el.getTextContent()));
+         result = (String[])ArrayUtils.add(result, el.getTextContent());
       }
 
       return result;
@@ -257,10 +258,8 @@ public class STSServiceImpl extends AbstractSTSService {
 
    private void addDesignators(List<SAMLAttributeDesignator> designators, Document doc) {
       Element attributeQuery = (Element)doc.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:protocol", "AttributeQuery").item(0);
-      Iterator i$ = designators.iterator();
 
-      while(i$.hasNext()) {
-         SAMLAttributeDesignator attr = (SAMLAttributeDesignator)i$.next();
+      for (SAMLAttributeDesignator attr : designators) {
          Element attrEl = doc.createElementNS("urn:oasis:names:tc:SAML:1.0:assertion", "saml:AttributeDesignator");
          attrEl.setAttribute("AttributeName", attr.getName());
          attrEl.setAttribute("AttributeNamespace", attr.getNamespace());
@@ -309,7 +308,7 @@ public class STSServiceImpl extends AbstractSTSService {
       DOMSignContext domSignContext = new DOMSignContext(privateKey, requestElement, requestElement.getFirstChild());
       String requestId = requestElement.getAttribute("RequestID");
       requestElement.setIdAttribute("RequestID", true);
-      List<Transform> transforms = new LinkedList();
+      List<Transform> transforms = new LinkedList<>();
       transforms.add(xmlSignatureFactory.newTransform("http://www.w3.org/2000/09/xmldsig#enveloped-signature", (TransformParameterSpec)null));
       transforms.add(xmlSignatureFactory.newTransform("http://www.w3.org/2001/10/xml-exc-c14n#", (C14NMethodParameterSpec)null));
       Reference reference = xmlSignatureFactory.newReference("#" + requestId, xmlSignatureFactory.newDigestMethod("http://www.w3.org/2000/09/xmldsig#sha1", (DigestMethodParameterSpec)null), transforms, (String)null, (String)null);

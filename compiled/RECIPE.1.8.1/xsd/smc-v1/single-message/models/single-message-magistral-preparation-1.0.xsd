@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.apb.be/standards/smoa/schema/model/v1" xmlns:smoa="http://www.apb.be/standards/smoa/schema/v1" targetNamespace="http://www.apb.be/standards/smoa/schema/model/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:import namespace="http://www.apb.be/standards/smoa/schema/v1" schemaLocation="../common/single-message-common-1.0.xsd" />
+	
+	<xsd:complexType name="MagistralPreparationType">
+		<xsd:annotation>
+			<xsd:documentation>a magistral preparation can be prescribed as a (coded) reference to a preparation in a reference book (formularyreference), or as a (coded) list of individual compounds (compoundlist), or as free text (magistraltext)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:element name="compound" type="compoundType" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>a list of compounds to be used in a magistral preparation</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="formularyReference" type="formularyReferenceType">
+					<xsd:annotation>
+						<xsd:documentation>a reference to an official formulary for magistral preparations (eg TMF, NF6)</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="magistralText" type="xsd:string">
+					<xsd:annotation>
+						<xsd:documentation>magistral preparation as free text</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:choice>
+			<xsd:element name="galenicform" type="galenicformType">
+				<xsd:annotation>
+					<xsd:documentation>Used to specify the galenic form. Can be a value from the reference table GALENIC_FORMS or free text</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="quantity" type="smoa:QuantityType" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="compoundType">
+		<xsd:sequence>
+			<xsd:element name="order" type="xsd:positiveInteger">
+				<xsd:annotation>
+					<xsd:documentation>used to sequentially number the different compounds of a magistral preparation</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:choice>
+				<xsd:element name="medicinalproduct">
+					<xsd:annotation>
+						<xsd:documentation>identification of the prepacked medicinal products prescribed</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:annotation>
+							<xsd:documentation>a medicinal product can be identified unambiguously by a CNK code identifying a package. The descriptive identification is only mandatory in case of absence of a package ID.</xsd:documentation>
+						</xsd:annotation>
+						<xsd:sequence>
+							<xsd:element name="intendedProduct" type="smoa:CnkType">
+								<xsd:annotation>
+									<xsd:documentation>in Belgium a selected CNK code out of the drug database</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="deliveredProduct" type="smoa:CnkType" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>in Belgium the effective delivered CNK code out of the drug database</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="intendedname" type="xsd:string">
+								<xsd:annotation>
+									<xsd:documentation>descriptive name in the package database, in Belgium the name use in the pharmacy database</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="deliveredname" type="xsd:string" minOccurs="0" />
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="substance">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="substancecode" type="smoa:CnkType">
+								<xsd:annotation>
+									<xsd:documentation>Refers to the national code (CNK) of the substance (table maintained by APB). See table SUBSTANCE_CNK for examples.</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="substancename" type="xsd:string" />
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+			<xsd:element name="quantityprefix" type="smoa:QuantityPrefix">
+				<xsd:annotation>
+					<xsd:documentation>to be used as a prefix for quantitiy (eg: ad 100 ml)</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="quantity" type="smoa:QuantityType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="formularyReferenceType">
+		<xsd:sequence>
+			<xsd:element name="formulaCode" type="smoa:CnkType">
+				<xsd:annotation>
+					<xsd:documentation>refers to the national code (CNK) of the preparation (table maintained by APB). See table PREPARATION_CNK for examples.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="formulaName" type="xsd:string" />
+			<xsd:element name="formulary" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>used to name the referenced formulary. See reference table FORMULARY_REF</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="galenicformType">
+		<xsd:choice>
+			<xsd:element name="galenicformcode" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>refers to a value of the reference table galenic forms</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="galenicformtext" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>galenic form as free text</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:complexType>
+</xsd:schema>

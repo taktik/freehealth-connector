@@ -5,7 +5,6 @@ import org.taktik.connector.technical.exception.RetryNextEndpointException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
-import org.taktik.connector.technical.ws.domain.GenericResponse;
 import org.taktik.connector.technical.ws.impl.AbstractWsSender;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointDistributor;
 import java.util.ArrayList;
@@ -31,25 +30,12 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
 
             try {
                invokeStrategyContext.setResponse(super.call(genericRequest));
-               if (ctx.alternativeActivated) {
-                  LOG.debug("Activating status page polling!");
-                  distributor.activatePolling();
-               }
-
+               this.activatePolling(ctx);
                return false;
-            } catch (RetryNextEndpointException retryException) {
-               LOG.error("Unable to invoke endpoint [{}], activating next one.", activeEndpoint, retryException);
-
-               try {
-                  distributor.activateNextEndPoint(activeEndpoint);
-                  ctx.alternativeActivated = true;
-               } catch (NoNextEndpointException var9) {
-                  LOG.error("Unable to activate alternative", var9);
-               }
-
-               ctx.lastException = retryException;
-            } catch (TechnicalConnectorException var11) {
-               invokeStrategyContext.setException(var11);
+            } catch (RetryNextEndpointException var8) {
+               this.retryNext(ctx, activeEndpoint, var8);
+            } catch (TechnicalConnectorException var9) {
+               invokeStrategyContext.setException(var9);
                return true;
             }
          } else {
@@ -65,13 +51,34 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
       }
    }
 
-   private static class RetryContext {
-      protected String endpoint;
-      protected Exception lastException;
-      protected boolean alternativeActivated;
-      protected List<String> invokedEndpoints = new ArrayList();
+   private void activatePolling(RetryStrategy.RetryContext ctx) {
+      if (ctx.alternativeActivated) {
+         LOG.debug("Activating status page polling!");
+         distributor.activatePolling();
+      }
 
-      public RetryContext(String endpoint) {
+   }
+
+   private void retryNext(RetryStrategy.RetryContext ctx, String activeEndpoint, RetryNextEndpointException e) {
+      LOG.error("Unable to invoke endpoint [{}], activating next one.", activeEndpoint, e);
+
+      try {
+         distributor.activateNextEndPoint(activeEndpoint);
+         ctx.alternativeActivated = true;
+      } catch (NoNextEndpointException var5) {
+         LOG.error("Unable to activate alternative", var5);
+      }
+
+      ctx.lastException = e;
+   }
+
+   private static class RetryContext {
+      String endpoint;
+      Exception lastException;
+      boolean alternativeActivated;
+      List<String> invokedEndpoints = new ArrayList();
+
+      RetryContext(String endpoint) {
          this.endpoint = endpoint;
       }
    }

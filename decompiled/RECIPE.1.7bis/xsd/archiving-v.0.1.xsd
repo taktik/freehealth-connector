@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http:/services.recipe.be/executor"
+           xmlns:sig="http://www.w3.org/2000/09/xmldsig#"
+           targetNamespace="http:/services.recipe.be/executor"
+           version="1.0">
+    <xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="smc-v2.0.3/single-message/external/kmehr/external/XSD/xmldsig-core-schema.xsd"/>
+
+    <xs:element name="prescriptionWithSecurityToken">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="creationDate" minOccurs="0" type="xs:dateTime"/>
+                <xs:element name="rid" type="xs:string"/>
+                <xs:element name="feedbackRequested" type="xs:boolean"/>
+                <xs:element name="encryptionKeyId" minOccurs="0" type="xs:string"/>
+                <xs:element name="prescriptionSealed" minOccurs="0" type="xs:base64Binary"/>
+                <xs:element name="prescriptionType" minOccurs="0" type="xs:string"/>
+                <xs:element name="patientId" minOccurs="0" type="ID"/>
+                <xs:element name="prescriberId" minOccurs="0" type="ID"/>
+                <xs:element name="securityToken" minOccurs="0" type="xs:base64Binary"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="timestampedPrescription">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="prescriptionWithSecurityToken"/>
+                <xs:element name="Signature" type="sig:SignatureType" nillable="true" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="archiveStandard">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" name="creationDate" type="xs:dateTime"/>
+                <xs:element minOccurs="1" name="executorId" type="ID"/>
+                <xs:element minOccurs="1" name="rid" type="xs:string"/>
+                <xs:element minOccurs="0" name="timestampedPrescription" type="xs:base64Binary"/>
+                <xs:element minOccurs="0" name="timestampedPrescriptionVersion" type="xs:string"/>
+                <xs:element minOccurs="1" name="prescriptionSealed" type="xs:base64Binary"/>
+                <xs:element minOccurs="0" name="timestampeId" type="xs:string"/>
+                <xs:element minOccurs="1" name="prescriptionType" type="xs:string"/>
+                <xs:element minOccurs="1" name="patientId" type="ID"/>
+                <xs:element minOccurs="1" name="prescriberId" type="ID"/>
+                <xs:element minOccurs="1" name="encryptionKeyId" type="xs:string"/>
+                <xs:element minOccurs="1" name="encryptionKey" type="xs:base64Binary"/>
+                <xs:element minOccurs="0" name="unsealedPrescription" type="xs:base64Binary"/>
+                <xs:element minOccurs="1" name="prescriptionPrescriberId" type="ID"/>
+                <xs:element minOccurs="0" name="properties" type="properties"/>
+                <xs:element minOccurs="0" name="validationWarnings" type="validationWarnings"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ID">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="Type" type="xs:string"/>
+                <xs:attribute name="IdType" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="properties">
+        <xs:sequence>
+            <xs:element name="property" maxOccurs='unbounded' type="property" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="property">
+        <xs:attribute name="key" type="xs:string"/>
+        <xs:attribute name="value" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="validationWarnings">
+        <xs:sequence>
+            <xs:element name="validationWarning" maxOccurs='unbounded' type="validationWarning" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="validationWarning">
+        <xs:sequence>
+            <xs:element name="ruleId" type="ruleId" />
+            <xs:element name="ruleMessage" type="ruleMessage"/>
+            <xs:element name="severity" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ruleId">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="IdType" type="xs:string" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="ruleMessage">
+        <xs:sequence>
+            <xs:element name="messageText" type="messageText" maxOccurs='unbounded' />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="messageText">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="language" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>

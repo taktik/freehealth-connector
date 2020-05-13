@@ -1,35 +1,28 @@
 package be.recipe.services.prescriber;
 
+import be.recipe.services.core.ResponseType;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-@XmlRootElement(
-   namespace = "http:/services.recipe.be/prescriber"
-)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
-   name = "ListFeedbacksResult"
+   name = "listFeedbacksResult",
+   propOrder = {"feedbacks"}
 )
-public class ListFeedbacksResult {
-   @XmlElement(
-      name = "feedbacks"
-   )
-   private List<ListFeedbackItem> listOfFeedbacks = new ArrayList();
+@XmlRootElement(
+   name = "listFeedbacksResult"
+)
+public class ListFeedbacksResult extends ResponseType {
+   protected List<ListFeedbackItem> feedbacks;
 
    public List<ListFeedbackItem> getFeedbacks() {
-      return this.listOfFeedbacks;
-   }
+      if (this.feedbacks == null) {
+         this.feedbacks = new ArrayList();
+      }
 
-   public void setFeedbacks(List<ListFeedbackItem> listOfFeedbacks) {
-      this.listOfFeedbacks = listOfFeedbacks;
-   }
-
-   public boolean add(ListFeedbackItem e) {
-      return this.listOfFeedbacks.add(e);
+      return this.feedbacks;
    }
 }

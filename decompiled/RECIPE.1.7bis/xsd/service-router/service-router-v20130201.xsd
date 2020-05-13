@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<xs:schema id="service-router" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xs:element name="contract-types">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="contract-type" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+							<xs:element name="description" type="xs:string" minOccurs="1" maxOccurs="1" />
+							<xs:element name="service-name" type="xs:string" minOccurs="1" maxOccurs="1" />
+							<xs:element name="event-name" type="xs:string" minOccurs="1" maxOccurs="1" />
+							<xs:element name="service-routings">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="service-routing" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="pharmacy-id" type="xs:string" minOccurs="1" maxOccurs="1" />
+													<xs:element name="start-date" type="xs:dateTime" minOccurs="1" maxOccurs="1" />
+													<xs:element name="end-date" type="xs:dateTime" minOccurs="1" maxOccurs="1" />
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

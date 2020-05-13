@@ -10,52 +10,58 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
-   name = "SingleSpecificTechnicalCareRequestType",
-   propOrder = {"careReceiverId", "specificTechnicalCareDetail"}
+        name = "SingleSpecificTechnicalCareRequestType",
+        propOrder = {"careReceiverId", "specificTechnicalCareDetail"}
 )
 @XmlRootElement(
-   name = "SingleSpecificTechnicalCareRequest"
+        name = "SingleSpecificTechnicalCareRequest"
 )
 public class SingleSpecificTechnicalCareRequest implements Serializable {
    private static final long serialVersionUID = 1L;
    @XmlElement(
-      name = "CareReceiverId",
-      required = true
+           name = "CareReceiverId",
+           required = true
    )
    protected ExtCareReceiverStrictIdType careReceiverId;
    @XmlElement(
-      name = "SpecificTechnicalCareDetail",
-      required = true
+           name = "SpecificTechnicalCareDetail",
+           required = true
    )
    protected SpecificTechnicalCareDetail specificTechnicalCareDetail;
    @XmlAttribute(
-      name = "MessageName"
+           name = "MessageName",
+           required = true
    )
    protected MessageNameType messageName;
    @XmlAttribute(
-      name = "Version"
+           name = "Version",
+           required = true
    )
    protected String version;
    @XmlAttribute(
-      name = "Duplicate"
+           name = "Duplicate",
+           required = true
    )
-   protected Boolean duplicate;
+   protected boolean duplicate;
    @XmlAttribute(
-      name = "TestFlag"
+           name = "TestFlag",
+           required = true
    )
-   protected Boolean testFlag;
+   protected boolean testFlag;
    @XmlAttribute(
-      name = "SenderReference"
+           name = "SenderReference",
+           required = true
    )
    protected String senderReference;
    @XmlAttribute(
-      name = "ReceiverReference"
+           name = "ReceiverReference"
    )
    protected String receiverReference;
    @XmlAttribute(
-      name = "Synchronous"
+           name = "Synchronous",
+           required = true
    )
-   protected Boolean synchronous;
+   protected boolean synchronous;
 
    public ExtCareReceiverStrictIdType getCareReceiverId() {
       return this.careReceiverId;
@@ -89,19 +95,19 @@ public class SingleSpecificTechnicalCareRequest implements Serializable {
       this.version = value;
    }
 
-   public Boolean isDuplicate() {
+   public boolean isDuplicate() {
       return this.duplicate;
    }
 
-   public void setDuplicate(Boolean value) {
+   public void setDuplicate(boolean value) {
       this.duplicate = value;
    }
 
-   public Boolean isTestFlag() {
+   public boolean isTestFlag() {
       return this.testFlag;
    }
 
-   public void setTestFlag(Boolean value) {
+   public void setTestFlag(boolean value) {
       this.testFlag = value;
    }
 
@@ -121,11 +127,11 @@ public class SingleSpecificTechnicalCareRequest implements Serializable {
       this.receiverReference = value;
    }
 
-   public Boolean isSynchronous() {
+   public boolean isSynchronous() {
       return this.synchronous;
    }
 
-   public void setSynchronous(Boolean value) {
+   public void setSynchronous(boolean value) {
       this.synchronous = value;
    }
 }

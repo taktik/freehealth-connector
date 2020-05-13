@@ -5,23 +5,18 @@ import org.apache.commons.logging.LogFactory;
 import org.taktik.connector.technical.exception.RetryNextEndpointException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
-import org.taktik.connector.technical.utils.ConfigurableFactoryHelper;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import org.taktik.connector.technical.ws.domain.GenericResponse;
 import org.taktik.connector.technical.ws.impl.strategy.InvokeStrategy;
 import org.taktik.connector.technical.ws.impl.strategy.InvokeStrategyContext;
 import org.taktik.connector.technical.ws.impl.strategy.InvokeStrategyFactory;
-import org.taktik.connector.technical.ws.impl.strategy.NoRetryInvokeStrategy;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointDistributor;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -44,11 +39,12 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 public abstract class AbstractWsSender {
    public static final String MESSAGECONTEXT_ENDPOINT_ADDRESS = "javax.xml.ws.service.endpoint.address";
+   /** @deprecated */
+   @Deprecated
    public static final String PROP_RETRY_STRATEGY = "org.taktik.connector.technical.ws.genericsender.invokestrategy";
    private static final Log log = LogFactory.getLog(AbstractWsSender.class);
    private static MessageFactory mf;
    private static SOAPConnectionFactory scf;
-   private static ConfigurableFactoryHelper<InvokeStrategy> invokeStrategyHelper = new ConfigurableFactoryHelper("org.taktik.connector.technical.ws.genericsender.invokestrategy", NoRetryInvokeStrategy.class.getName());
 
    public GenericResponse send(GenericRequest genericRequest) throws TechnicalConnectorException {
       List<InvokeStrategy> strategies = InvokeStrategyFactory.getList((String)genericRequest.getRequestMap().get("javax.xml.ws.service.endpoint.address"));
@@ -83,8 +79,8 @@ public abstract class AbstractWsSender {
          reply.putAll(genericRequest.getRequestMap());
          reply.put("javax.xml.ws.handler.message.outbound", false);
          ArrayUtils.reverse(chain);
-      executeHandlers(chain, reply);
-         genericResponse = new GenericResponse(reply.getMessage(), request.getMessage());
+         executeHandlers(chain, reply);
+         genericResponse = new GenericResponse(reply.getMessage());
       } catch (Exception var10) {
          throw translate(var10);
       } finally {
@@ -98,9 +94,11 @@ public abstract class AbstractWsSender {
       return new SOAPMessageContextImpl(msg);
    }
 
-   private static TechnicalConnectorException translate(Exception e) {
-      if (e instanceof SOAPException) {
-         return new RetryNextEndpointException(e);
+   private static TechnicalConnectorException translate(Exception e) throws RetryNextEndpointException {
+      if (e instanceof RetryNextEndpointException) {
+         throw (RetryNextEndpointException)e;
+      } else if (e instanceof SOAPException) {
+         throw new RetryNextEndpointException(e);
       } else if (e instanceof TechnicalConnectorException) {
          return (TechnicalConnectorException)e;
       } else {
@@ -134,7 +132,7 @@ public abstract class AbstractWsSender {
       String target = EndpointDistributor.getInstance().getActiveEndpoint(requestedTarget);
       request.put("javax.xml.ws.service.endpoint.address", target);
       URL targetURL = new URL(target);
-      StringBuffer context = new StringBuffer();
+      StringBuilder context = new StringBuilder();
       context.append(targetURL.getProtocol());
       context.append("://");
       context.append(targetURL.getHost());
@@ -143,7 +141,7 @@ public abstract class AbstractWsSender {
          context.append(targetURL.getPort());
       }
 
-      URL endpoint = new URL(new URL(context.toString()), targetURL.getFile(), new URLStreamHandler() {
+      return new URL(new URL(context.toString()), targetURL.getFile(), new URLStreamHandler() {
          protected URLConnection openConnection(URL url) throws IOException {
             URL target = new URL(url.toString());
             URLConnection connection = target.openConnection();
@@ -152,7 +150,6 @@ public abstract class AbstractWsSender {
             return connection;
          }
       });
-      return endpoint;
    }
 
    protected SOAPMessageContext createSOAPMessageCtx(GenericRequest genericRequest) throws TechnicalConnectorException {

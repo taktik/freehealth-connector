@@ -50,6 +50,10 @@ public class ObjectFactory {
       return new MetaDataListType();
    }
 
+   public InfoListType createInfoListType() {
+      return new InfoListType();
+   }
+
    public MetaDataType createMetaDataType() {
       return new MetaDataType();
    }
@@ -146,6 +150,14 @@ public class ObjectFactory {
       return new ContinuedPharmaceuticalCareDossierEvent();
    }
 
+   public ContinuedPharmaceuticalCareEntity createContinuedPharmaceuticalCareEntity() {
+      return new ContinuedPharmaceuticalCareEntity();
+   }
+
+   public ContinuedPharmaceuticalCareResponse createContinuedPharmaceuticalCareResponse() {
+      return new ContinuedPharmaceuticalCareResponse();
+   }
+
    public AbstractMedicationSchemeResponse createAbstractMedicationSchemeResponse() {
       return new AbstractMedicationSchemeResponse();
    }
@@ -199,18 +211,18 @@ public class ObjectFactory {
    }
 
    @XmlElementDecl(
-      namespace = "http://www.apb.be/standards/smoa/schema/v1",
-      name = "abstract-Folder"
+           namespace = "http://www.apb.be/standards/smoa/schema/v1",
+           name = "abstract-Folder"
    )
    public JAXBElement<AbstractFolderType> createAbstractFolder(AbstractFolderType value) {
       return new JAXBElement(_AbstractFolder_QNAME, AbstractFolderType.class, (Class)null, value);
    }
 
    @XmlElementDecl(
-      namespace = "http://www.apb.be/standards/smoa/schema/v1",
-      name = "eventFolder",
-      substitutionHeadNamespace = "http://www.apb.be/standards/smoa/schema/v1",
-      substitutionHeadName = "abstract-Folder"
+           namespace = "http://www.apb.be/standards/smoa/schema/v1",
+           name = "eventFolder",
+           substitutionHeadNamespace = "http://www.apb.be/standards/smoa/schema/v1",
+           substitutionHeadName = "abstract-Folder"
    )
    public JAXBElement<EventFolderType> createEventFolder(EventFolderType value) {
       return new JAXBElement(_EventFolder_QNAME, EventFolderType.class, (Class)null, value);

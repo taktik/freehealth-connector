@@ -1,0 +1,23 @@
+<!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+	<!-- We only want to weave in the log4j TimingAspect into the @Profiled classes. Note that Perf4J provides TimingAspects for the most popular Java logging frameworks and facades: log4j, java.util.logging, Apache Commons Logging and SLF4J. The TimingAspect you specify here will depend on which logging framework you wish to use in your code. -->
+	<aspects>
+		<aspect name="org.perf4j.log4j.aop.TimingAspect" />
+                <!--<aspect name="org.perf4j.slf4j.aop.TimingAspect"/>-->
+	</aspects>
+	<!-- We only want to weave in the log4j TimingAspect into the @Profiled classes. Note that Perf4J provides TimingAspects for the most popular Java logging frameworks and facades: log4j, java.util.logging, Apache Commons Logging and SLF4J. The TimingAspect you specify here will depend on which logging framework you wish to use in your code. -->
+<!-- 	<aspects>
+		<aspect name="org.perf4j.log4j.aop.TimingAspect" />
+
+	</aspects> -->
+
+	<weaver options="-verbose -showWeaveInfo">
+		<!-- Here is where we specify the classes to be woven. You can specify package names like com.company.project.* -->
+		<!-- Weave in perf4j aspects for Aspectj 1.6.7+ -->
+		<include within="org.perf4j.log4j.aop.*" />
+                <!--<include within="org.perf4j.slf4j.aop.*"/>-->
+		<include within="org.perf4j.aop.*" />
+		<!-- <include within="org.perf4j.commonslog.aop.*" /> <include within="org.perf4j.slf4j.aop.*" /> -->
+	</weaver>
+</aspectj>
+

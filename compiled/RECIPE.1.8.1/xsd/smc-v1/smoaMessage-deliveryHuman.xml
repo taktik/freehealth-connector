@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<smoa:single-message xmlns:code="http://www.apb.be/standards/smoa/schema/code/v1" 
+xmlns:n1="http://www.altova.com/samplexml/other-namespace" xmlns:sig="http://www.w3.org/2000/09/xmldsig#" 
+xmlns:kmehr="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" xmlns:id="http://www.apb.be/standards/smoa/schema/id/v1" 
+xmlns:mod="http://www.apb.be/standards/smoa/schema/model/v1" xmlns:smoa="http://www.apb.be/standards/smoa/schema/v1" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+	<smoa:unsigned>
+		<smoa:header>
+			<smoa:messageCreateDate>2001-12-17T09:30:47Z</smoa:messageCreateDate>
+			<smoa:messageId>00000000-0000-0000-0000-000000000565</smoa:messageId>
+			<smoa:sender>
+				<smoa:refPharmacy>
+					<smoa:pharmacyId xsi:type="id:PharmacyIdType">
+						<id:nihiiPharmacyNumber>62599147</id:nihiiPharmacyNumber>
+					</smoa:pharmacyId>
+				</smoa:refPharmacy>
+			</smoa:sender>
+		</smoa:header>
+		<smoa:eventFolder>
+			<smoa:events>
+				<smoa:event xsi:type="smoa:MedicationDeliveryEventType">
+					<smoa:id>00000000-0000-0000-0012-005555000000</smoa:id>
+					<smoa:refPharmacy>
+						<smoa:pharmacyId xsi:type="id:PharmacyIdType">
+							<id:nihiiPharmacyNumber>62599147</id:nihiiPharmacyNumber>
+						</smoa:pharmacyId>
+					</smoa:refPharmacy>
+					<smoa:deliveries>
+						<mod:deliveredMedicationHuman>
+							<mod:dGUID>00000000-0000-0000-0012-005555000012</mod:dGUID>
+							<mod:deliveryDate>2001-12-17T09:30:47Z</mod:deliveryDate>
+							<mod:quantity>1</mod:quantity>
+							<mod:lotNumber>4241242g</mod:lotNumber>
+							<mod:uniqueBarcode>0000002147483640</mod:uniqueBarcode>
+							<mod:careProvidor>
+								<mod:id xsi:type="id:RizivIdType">
+									<id:riziv>0/00000/00/000</id:riziv>
+								</mod:id>
+							</mod:careProvidor>
+							<mod:medicationConsumerPatient>
+								<mod:person>
+									<mod:id xsi:type="id:InszIdType">
+										<id:insz>81.04.26-142.67</id:insz>
+									</mod:id>
+									<mod:firstNames>
+										<mod:firstName>Lucky</mod:firstName>
+									</mod:firstNames>
+									<mod:familyName>Luke</mod:familyName>
+									<mod:sex xsi:type="code:SexCodeType">
+										<code:telcomCode>MALE</code:telcomCode>
+									</mod:sex>
+								</mod:person>
+							</mod:medicationConsumerPatient>
+							<mod:medicinalProduct>
+								<mod:id xsi:type="id:CnkIdType">
+									<id:cnk>222222</id:cnk>
+								</mod:id>
+								<mod:productName>Aspirine</mod:productName>
+								<mod:diseas xsi:type="code:DiseasCodeType">
+									<code:value>String</code:value>
+								</mod:diseas>
+								<mod:category xsi:type="code:BcfiCategoryCodeType">
+									<code:value>1. Cardiovasculair stelsel</code:value>
+								</mod:category>
+								<mod:activeSubstance xsi:type="code:ActiveSubstanceCodeType">
+									<code:value>String</code:value>
+								</mod:activeSubstance>
+								<mod:activeSubstanceQuantity>
+									<mod:quantity>0</mod:quantity>
+									<mod:unit>UI/ML</mod:unit>
+								</mod:activeSubstanceQuantity>
+								<mod:licenseOwner>String</mod:licenseOwner>
+								<mod:licenseNumber>String</mod:licenseNumber>
+								<mod:pharmForm xsi:type="code:PharmFormCodeType">
+									<code:value>CAPSULE</code:value>
+								</mod:pharmForm>
+								<mod:serialNumber>String</mod:serialNumber>
+								<mod:uniqueBarcode>0000002147483640</mod:uniqueBarcode>
+								<mod:batch>String</mod:batch>
+								<mod:isSubstitutionAllowed>true</mod:isSubstitutionAllowed>
+								<mod:nationalLicensedMedicine>true</mod:nationalLicensedMedicine>
+								<mod:emeaRegisteredMedicine>true</mod:emeaRegisteredMedicine>
+								<mod:narcotic>true</mod:narcotic>
+								<mod:psychotrope>true</mod:psychotrope>
+								<mod:hypnotic>true</mod:hypnotic>
+								<mod:adUsVetOnly>true</mod:adUsVetOnly>
+							</mod:medicinalProduct>
+							<smoa:refAttest>
+								<smoa:attestId xsi:type="id:AttestIdType">
+									<id:attestNumber>String</id:attestNumber>
+								</smoa:attestId>
+							</smoa:refAttest>
+							<mod:narcotic>true</mod:narcotic>
+							<mod:psychotrope>true</mod:psychotrope>
+							<mod:hypnotic>true</mod:hypnotic>
+							<mod:delayedDelivery>true</mod:delayedDelivery>
+							<mod:delayedRequestDate>1967-08-13</mod:delayedRequestDate>
+							<mod:specialPrescription>
+								<mod:id xsi:type="id:RecipeIdKmherType">
+									<id:rid>String</id:rid>
+								</mod:id>
+								<mod:careProvidor>
+									<mod:id xsi:type="id:RizivIdType">
+										<id:riziv>0/00000/00/000</id:riziv>
+									</mod:id>
+								</mod:careProvidor>
+								<mod:type xsi:type="code:SpecialPrescriptionCodeType">
+									<code:type>URGENCYTROUSSE</code:type>
+								</mod:type>
+								<smoa:refAttest>
+									<smoa:attestId xsi:type="id:AttestIdType">
+										<id:attestNumber>String</id:attestNumber>
+									</smoa:attestId>
+								</smoa:refAttest>
+								<mod:description>String</mod:description>
+							</mod:specialPrescription>
+							<smoa:metaDataList>
+								<smoa:metaData>
+									<smoa:key>Delphi</smoa:key>
+									<smoa:value>has run</smoa:value>
+								</smoa:metaData>
+							</smoa:metaDataList>
+						</mod:deliveredMedicationHuman>
+						<mod:deliveredMedicationHuman>
+							<mod:dGUID>00000000-0000-0000-0012-005555000013</mod:dGUID>
+							<mod:deliveryDate>2001-12-17T09:30:47Z</mod:deliveryDate>
+							<mod:quantity>2</mod:quantity>
+							<mod:lotNumber>fghfhfhgf12143</mod:lotNumber>
+							<mod:uniqueBarcode>0000001562223001</mod:uniqueBarcode>
+							<mod:careProvidor>
+								<mod:id xsi:type="id:RizivIdType">
+									<id:riziv>0/00000/00/000</id:riziv>
+								</mod:id>
+							</mod:careProvidor>
+							<mod:medicationConsumerPatient>
+								<mod:person>
+									<mod:id xsi:type="id:InszIdType">
+										<id:insz>81.04.26-142.67</id:insz>
+									</mod:id>
+									<mod:firstNames>
+										<mod:firstName>Lucky</mod:firstName>
+									</mod:firstNames>
+									<mod:familyName>Luke</mod:familyName>
+									<mod:sex xsi:type="code:SexCodeType">
+										<code:telcomCode>MALE</code:telcomCode>
+									</mod:sex>
+								</mod:person>
+							</mod:medicationConsumerPatient>
+							<mod:medicinalProduct>
+								<mod:id xsi:type="id:CnkIdType">
+									<id:cnk>111111</id:cnk>
+								</mod:id>
+								<mod:productName>String</mod:productName>
+								<mod:diseas xsi:type="code:DiseasCodeType">
+									<code:value>String</code:value>
+								</mod:diseas>
+								<mod:category xsi:type="code:BcfiCategoryCodeType">
+									<code:value>1. Cardiovasculair stelsel</code:value>
+								</mod:category>
+								<mod:activeSubstance xsi:type="code:ActiveSubstanceCodeType">
+									<code:value>String</code:value>
+								</mod:activeSubstance>
+								<mod:activeSubstanceQuantity>
+									<mod:quantity>0</mod:quantity>
+									<mod:unit>UI/ML</mod:unit>
+								</mod:activeSubstanceQuantity>
+								<mod:licenseOwner>String</mod:licenseOwner>
+								<mod:licenseNumber>String</mod:licenseNumber>
+								<mod:pharmForm xsi:type="code:PharmFormCodeType">
+									<code:value>CAPSULE</code:value>
+								</mod:pharmForm>
+								<mod:serialNumber>String</mod:serialNumber>
+								<mod:uniqueBarcode>0000002147483640</mod:uniqueBarcode>
+								<mod:batch>String</mod:batch>
+								<mod:isSubstitutionAllowed>true</mod:isSubstitutionAllowed>
+								<mod:nationalLicensedMedicine>true</mod:nationalLicensedMedicine>
+								<mod:emeaRegisteredMedicine>true</mod:emeaRegisteredMedicine>
+								<mod:narcotic>true</mod:narcotic>
+								<mod:psychotrope>true</mod:psychotrope>
+								<mod:hypnotic>true</mod:hypnotic>
+								<mod:adUsVetOnly>true</mod:adUsVetOnly>
+							</mod:medicinalProduct>
+							<smoa:refAttest>
+								<smoa:attestId xsi:type="id:AttestIdType">
+									<id:attestNumber>String</id:attestNumber>
+								</smoa:attestId>
+							</smoa:refAttest>
+							<mod:narcotic>true</mod:narcotic>
+							<mod:psychotrope>true</mod:psychotrope>
+							<mod:hypnotic>true</mod:hypnotic>
+							<mod:delayedDelivery>true</mod:delayedDelivery>
+							<mod:delayedRequestDate>1967-08-13</mod:delayedRequestDate>
+							<mod:specialPrescription>
+								<mod:id xsi:type="id:RecipeIdKmherType">
+									<id:rid>String</id:rid>
+								</mod:id>
+								<mod:careProvidor>
+									<mod:id xsi:type="id:RizivIdType">
+										<id:riziv>0/00000/00/000</id:riziv>
+									</mod:id>
+								</mod:careProvidor>
+								<mod:type xsi:type="code:SpecialPrescriptionCodeType">
+									<code:type>URGENCYTROUSSE</code:type>
+								</mod:type>
+								<smoa:refAttest>
+									<smoa:attestId xsi:type="id:AttestIdType">
+										<id:attestNumber>String</id:attestNumber>
+									</smoa:attestId>
+								</smoa:refAttest>
+								<mod:description>String</mod:description>
+							</mod:specialPrescription>
+							<smoa:metaDataList>
+								<smoa:metaData>
+									<smoa:key>Delphi</smoa:key>
+									<smoa:value>has NOT run</smoa:value>
+								</smoa:metaData>
+							</smoa:metaDataList>
+						</mod:deliveredMedicationHuman>
+					</smoa:deliveries>
+				</smoa:event>
+			</smoa:events>
+			<smoa:entitySpace/>
+		</smoa:eventFolder>
+	</smoa:unsigned>
+</smoa:single-message>

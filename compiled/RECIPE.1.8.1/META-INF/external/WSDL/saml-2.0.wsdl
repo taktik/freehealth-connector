@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="SAMLProtocol" targetNamespace="urn:oasis:names:tc:SAML:2.0:protocol:wsdl" xmlns:tns="urn:oasis:names:tc:SAML:2.0:protocol:wsdl" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="urn:oasis:names:tc:SAML:2.0:protocol" schemaLocation="../XSD/saml-schema-protocol-2.0.xsd" />
+    </xsd:schema>
+  </types>
+
+  <message name="AssertionIDRequestMessage">
+    <part name="body" element="samlp:AssertionIDRequest" />
+  </message>
+  <message name="SubjectQueryMessage">
+    <part name="body" element="samlp:SubjectQuery" />
+  </message>
+  <message name="AuthnQueryMessage">
+    <part name="body" element="samlp:AuthnQuery" />
+  </message>
+  <message name="AttributeQueryMessage">
+    <part name="body" element="samlp:AttributeQuery" />
+  </message>
+  <message name="AuthzDecisionQueryMessage">
+    <part name="body" element="samlp:AuthzDecisionQuery" />
+  </message>
+  <message name="AuthnRequestMessage">
+    <part name="body" element="samlp:AuthnRequest" />
+  </message>
+  <message name="ResponseMessage">
+    <part name="body" element="samlp:Response" />
+  </message>
+
+  <message name="ArtifactResolveMessage">
+    <part name="body" element="samlp:ArtifactResolve" />
+  </message>
+  <message name="ArtifactResponseMessage">
+    <part name="body" element="samlp:ArtifactResponse" />
+  </message>
+
+  <message name="ManageNameIDRequestMessage">
+    <part name="body" element="samlp:ManageNameIDRequest" />
+  </message>
+  <message name="ManageNameIDResponseMessage">
+    <part name="body" element="samlp:ManageNameIDResponse" />
+  </message>
+
+  <message name="LogoutRequestMessage">
+    <part name="body" element="samlp:LogoutRequest" />
+  </message>
+  <message name="LogoutResponseMessage">
+    <part name="body" element="samlp:LogoutResponse" />
+  </message>
+
+  <message name="NameIDMappingRequestMessage">
+    <part name="body" element="samlp:NameIDMappingRequest" />
+  </message>
+  <message name="NameIDMappingResponseMessage">
+    <part name="body" element="samlp:NameIDMappingResponse" />
+  </message>
+
+  <portType name="ArtifactResolutionServicePortType">
+    <operation name="ArtifactResolve">
+      <input message="tns:ArtifactResolveMessage" />
+      <output message="tns:ArtifactResponseMessage" />
+    </operation>
+  </portType>
+
+  <portType name="SingleLogoutServicePortType">
+    <operation name="Logout">
+      <input message="tns:LogoutRequestMessage" />
+      <output message="tns:LogoutResponseMessage" />
+    </operation>
+  </portType>
+
+  <portType name="ManageNameIDServicePortType">
+    <operation name="ManageNameID">
+      <input message="tns:ManageNameIDRequestMessage" />
+      <output message="tns:ManageNameIDResponseMessage" />
+    </operation>
+  </portType>
+
+  <portType name="SingleSignOnServicePortType">
+    <operation name="Authn">
+      <input message="tns:AuthnRequestMessage" />
+      <output message="tns:ResponseMessage" />
+    </operation>
+  </portType>
+
+  <portType name="NameIDMappingServicePortType">
+    <operation name="NameIDMapping">
+      <input message="tns:NameIDMappingRequestMessage" />
+      <output message="tns:NameIDMappingResponseMessage" />
+    </operation>
+  </portType>
+
+  <portType name="AssertionQueryServicePortType">
+    <operation name="AssertionIDRequest">
+      <input message="tns:AssertionIDRequestMessage" />
+      <output message="tns:ResponseMessage" />
+    </operation>
+    <operation name="AuthnQuery">
+      <input message="tns:AuthnQueryMessage" />
+      <output message="tns:ResponseMessage" />
+    </operation>
+    <operation name="SubjectQuery">
+      <input message="tns:SubjectQueryMessage" />
+      <output message="tns:ResponseMessage" />
+    </operation>
+  </portType>
+
+  <portType name="AuthzServicePortType">
+    <operation name="AuthzDecisionQuery">
+      <input message="tns:AuthzDecisionQueryMessage" />
+      <output message="tns:ResponseMessage" />
+    </operation>
+  </portType>
+
+  <portType name="AttributeServicePortType">
+    <operation name="AttributeQuery">
+      <input message="tns:AttributeQueryMessage" />
+      <output message="tns:ResponseMessage" />
+    </operation>
+  </portType>
+
+  <binding name="ArtifactResolutionServiceSoapBinding" type="tns:ArtifactResolutionServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="ArtifactResolve">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <binding name="SingleLogoutServiceSoapBinding" type="tns:SingleLogoutServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="Logout">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <binding name="ManageNameIDServiceSoapBinding" type="tns:ManageNameIDServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="ManageNameID">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <binding name="SingleSignOnServiceSoapBinding" type="tns:SingleSignOnServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="Authn">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <binding name="NameIDMappingServiceSoapBinding" type="tns:NameIDMappingServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="NameIDMapping">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <binding name="AssertionQueryServiceSoapBinding" type="tns:AssertionQueryServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="AssertionIDRequest">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="AuthnQuery">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="SubjectQuery">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <binding name="AuthzServiceSoapBinding" type="tns:AuthzServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="AuthzDecisionQuery">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <binding name="AttributeServiceSoapBinding" type="tns:AttributeServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="AttributeQuery">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <service name="ArtifactResolutionService">
+    <documentation>This is per-installation data</documentation>
+    <port name="ArtifactResolutionServicePort" binding="tns:ArtifactResolutionServiceSoapBinding">
+      <soap:address location="http://my.org/SAML2Server/ArtifactResolutionService" />
+    </port>
+  </service>
+
+  <service name="SingleLogoutService">
+    <documentation>This is per-installation data</documentation>
+    <port name="SingleLogoutServicePort" binding="tns:SingleLogoutServiceSoapBinding">
+      <soap:address location="http://my.org/SAML2Server/SingleLogoutService" />
+    </port>
+  </service>
+
+  <service name="ManageNameIDService">
+    <documentation>This is per-installation data</documentation>
+    <port name="ManageNameIDServicePort" binding="tns:ManageNameIDServiceSoapBinding">
+      <soap:address location="http://my.org/SAML2Server/ManageNameIDService" />
+    </port>
+  </service>
+
+  <service name="SingleSignOnService">
+    <documentation>This is per-installation data</documentation>
+    <port name="SingleSignOnServicePort" binding="tns:SingleSignOnServiceSoapBinding">
+      <soap:address location="http://my.org/SAML2Server/SingleSingOnService" />
+    </port>
+  </service>
+
+  <service name="NameIDMappingService">
+    <documentation>This is per-installation data</documentation>
+    <port name="NameIDMappingServicePort" binding="tns:NameIDMappingServiceSoapBinding">
+      <soap:address location="http://my.org/SAML2Server/NameIDMappingnService" />
+    </port>
+  </service>
+
+  <service name="AssertionQueryService">
+    <documentation>This is per-installation data</documentation>
+    <port name="AssertionQueryServicePort" binding="tns:AssertionQueryServiceSoapBinding">
+      <soap:address location="http://my.org/SAML2Server/AssertionQueryService" />
+    </port>
+  </service>
+
+  <service name="AuthzService">
+    <documentation>This is per-installation data</documentation>
+    <port name="AuthzServicePort" binding="tns:AuthzServiceSoapBinding">
+      <soap:address location="http://my.org/SAML2Server/AuthzService" />
+    </port>
+  </service>
+
+  <service name="AttributeService">
+    <documentation>This is per-installation data</documentation>
+    <port name="AttributeServicePort" binding="tns:AttributeServiceSoapBinding">
+      <soap:address location="http://my.org/SAML2Server/AttributeService" />
+    </port>
+  </service>
+</definitions>

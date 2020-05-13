@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Conditions d'utilisation des certificats eHealth</title>
+</head>
+  <body>
+    <h2 style="background-color: #C0C0C0">
+      Donn&#233;es de la demande de certificat
+    </h2>
+    <br>
+    Common Name (CN) : ${oids.get("CN").replace("\","")}<br>
+    #foreach( $ou in ${oids.get("OU")} )
+    Organizational Unit (OU) : ${ou.replace("\","")}<br>
+    #end
+    Organization (O) :  ${oids.get("O")}<br>
+    Country (C) :  ${oids.get("C")}<br><br>
+
+    <h2 style="background-color: #C0C0C0">
+      Donn&#233;es de contact
+    </h2>
+    <br>
+    E-mail (personnel)* : $contact.emailPrivate<br>
+    E-mail (general)    : $!contact.emailGeneral<br>
+    T&#233;l&#233;phone (personnel)* : $contact.phonePrivate<br>
+    T&#233;l&#233;phone (g&#233;n&#233;ral)  :$!contact.phoneGeneral<br>
+    <br>
+
+    #parse ("/templates/terms.fr.html")
+  </body>
+</html>

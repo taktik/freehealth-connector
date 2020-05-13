@@ -20,7 +20,7 @@ public class ConfigurationModuleSSLVerifier implements ConfigurationModule {
    private SSLSocketFactory oldSSLSocketFactory;
 
    public void init(Configuration config) throws TechnicalConnectorException {
-      LOG.debug("Initializing ConfigurationModule " + this.getClass().getName());
+      LOG.debug("Initializing ConfigurationModule {}", this.getClass().getName());
       LOG.warn("Activating bypass: SSL verifcation. DO NOT USE THIS IN PRODUCTION.");
       TrustManager[] trustAllCerts = new TrustManager[]{new ConfigurationModuleSSLVerifier.ConnectorTrustManager()};
 
@@ -35,7 +35,7 @@ public class ConfigurationModuleSSLVerifier implements ConfigurationModule {
    }
 
    public void unload() throws TechnicalConnectorException {
-      LOG.debug("Unloading ConfigurationModule " + this.getClass().getName());
+      LOG.debug("Unloading ConfigurationModule {}", this.getClass().getName());
       HttpsURLConnection.setDefaultSSLSocketFactory(this.oldSSLSocketFactory);
    }
 
@@ -50,14 +50,14 @@ public class ConfigurationModuleSSLVerifier implements ConfigurationModule {
       }
 
       public void checkClientTrusted(X509Certificate[] certs, String authType) {
-         ConfigurationModuleSSLVerifier.LOG.debug("checkClientTrusted() : authType=" + authType);
+         ConfigurationModuleSSLVerifier.LOG.debug("checkClientTrusted() : authType={}", authType);
       }
 
       public void checkServerTrusted(X509Certificate[] certs, String authType) {
-         ConfigurationModuleSSLVerifier.LOG.debug("checkServerTrusted() : authType=" + authType);
+         ConfigurationModuleSSLVerifier.LOG.debug("checkServerTrusted() : authType={}", authType);
 
          for(int i = 0; i < certs.length; ++i) {
-            ConfigurationModuleSSLVerifier.LOG.debug("Server Certificate to be checked " + i + " : " + certs[i].getSubjectX500Principal().getName("RFC1779") + "with issuer:" + certs[i].getIssuerX500Principal().getName("RFC1779"));
+            ConfigurationModuleSSLVerifier.LOG.debug("Server Certificate to be checked {} : {} with issuer: {}", new Object[]{i, certs[i].getSubjectX500Principal().getName("RFC1779"), certs[i].getIssuerX500Principal().getName("RFC1779")});
          }
 
       }

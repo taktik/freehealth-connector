@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="http://services.recipe.be" xmlns:ns1="http:/services.recipe.be/prescriber" xmlns:tns="http://services.recipe.be" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http:/services.recipe.be/prescriber" schemaLocation="UnsealedPrescriberServices_schema1.xsd"/>
+
+  <xs:element name="RecipeException" nillable="true" type="tns:recipeExceptionDetails"/>
+
+  <xs:element name="createPrescriptionUnsealed" type="tns:createPrescriptionUnsealed"/>
+
+  <xs:element name="createPrescriptionUnsealedResponse" type="tns:createPrescriptionUnsealedResponse"/>
+
+  <xs:element name="getPrescriptionForPrescriberUnsealed" type="tns:getPrescriptionForPrescriberUnsealed"/>
+
+  <xs:element name="getPrescriptionForPrescriberUnsealedResponse" type="tns:getPrescriptionForPrescriberUnsealedResponse"/>
+
+  <xs:element name="listFeedbacksUnsealed" type="tns:listFeedbacksUnsealed"/>
+
+  <xs:element name="listFeedbacksUnsealedResponse" type="tns:listFeedbacksUnsealedResponse"/>
+
+  <xs:element name="listOpenPrescriptionUnsealed" type="tns:listOpenPrescriptionUnsealed"/>
+
+  <xs:element name="listOpenPrescriptionUnsealedResponse" type="tns:listOpenPrescriptionUnsealedResponse"/>
+
+  <xs:element name="partyIdentification" type="tns:partyIdentification"/>
+
+  <xs:element name="recipeError" type="tns:recipeError"/>
+
+  <xs:element name="recipeExceptionDetails" type="tns:recipeExceptionDetails"/>
+
+  <xs:element name="revokePrescriptionUnsealed" type="tns:revokePrescriptionUnsealed"/>
+
+  <xs:element name="revokePrescriptionUnsealedResponse" type="tns:revokePrescriptionUnsealedResponse"/>
+
+  <xs:element name="sendNotificationUnsealed" type="tns:sendNotificationUnsealed"/>
+
+  <xs:element name="sendNotificationUnsealedResponse" type="tns:sendNotificationUnsealedResponse"/>
+
+  <xs:element name="updateFeedbackFlagUnsealed" type="tns:updateFeedbackFlagUnsealed"/>
+
+  <xs:element name="updateFeedbackFlagUnsealedResponse" type="tns:updateFeedbackFlagUnsealedResponse"/>
+
+  <xs:complexType name="sendNotificationUnsealed">
+    <xs:sequence>
+      <xs:element name="SendNotificationParam" type="tns:sendNotificationParam" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="sendNotificationParam">
+    <xs:complexContent>
+      <xs:extension base="tns:partyIdentification">
+        <xs:sequence>
+          <xs:element name="content" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="partyIdentification">
+    <xs:sequence>
+      <xs:element name="prescriberId" type="xs:long" minOccurs="0"/>
+      <xs:element name="executorId" type="xs:long" minOccurs="0"/>
+      <xs:element name="patientId" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="sendNotificationUnsealedResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="recipeExceptionDetails">
+    <xs:sequence>
+      <xs:element name="code" type="xs:string" minOccurs="0"/>
+      <xs:element name="errorMap">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="key" minOccurs="0" type="xs:string"/>
+                  <xs:element name="value" minOccurs="0" type="tns:recipeError"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="recipeError">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+      <xs:element name="resolution" type="xs:string" minOccurs="0"/>
+      <xs:element name="severity" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="revokePrescriptionUnsealed">
+    <xs:sequence>
+      <xs:element name="RevokePrescriptionParam" type="tns:revokePrescriptionParam" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="revokePrescriptionParam">
+    <xs:complexContent>
+      <xs:extension base="tns:partyIdentification">
+        <xs:sequence>
+          <xs:element name="rid" type="xs:string" minOccurs="0"/>
+          <xs:element name="reason" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="revokePrescriptionUnsealedResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="updateFeedbackFlagUnsealed">
+    <xs:sequence>
+      <xs:element name="UpdateFeedbackFlagParam" type="tns:updateFeedbackFlagParam" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateFeedbackFlagParam">
+    <xs:complexContent>
+      <xs:extension base="tns:partyIdentification">
+        <xs:sequence>
+          <xs:element name="rid" type="xs:string" minOccurs="0"/>
+          <xs:element name="allowFeedback" type="xs:boolean" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="updateFeedbackFlagUnsealedResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="listFeedbacksUnsealed">
+    <xs:sequence>
+      <xs:element name="ListFeedbacksParam" type="tns:listFeedbacksParam" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="listFeedbacksParam">
+    <xs:complexContent>
+      <xs:extension base="tns:partyIdentification">
+        <xs:sequence>
+          <xs:element name="readFlag" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="symmKey" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="listFeedbacksUnsealedResponse">
+    <xs:sequence>
+      <xs:element name="ListFeedbacksResult" type="tns:ListFeedbacksResult" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ListFeedbacksResult">
+    <xs:sequence>
+      <xs:element name="feedbacks" type="tns:ListFeedbackItem" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ListFeedbackItem">
+    <xs:sequence>
+      <xs:element name="rid" type="xs:string" minOccurs="0"/>
+      <xs:element name="sentBy" type="xs:long" minOccurs="0"/>
+      <xs:element name="sentDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="content" type="xs:base64Binary" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getPrescriptionForPrescriberUnsealed">
+    <xs:sequence>
+      <xs:element name="GetPrescriptionForPrescriberParam" type="tns:getPrescriptionForPrescriberParam" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getPrescriptionForPrescriberParam">
+    <xs:complexContent>
+      <xs:extension base="tns:partyIdentification">
+        <xs:sequence>
+          <xs:element name="rid" type="xs:string" minOccurs="0"/>
+          <xs:element name="symmKey" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="getPrescriptionForPrescriberUnsealedResponse">
+    <xs:sequence>
+      <xs:element name="GetPrescriptionForPrescriberResult" type="tns:getPrescriptionForPrescriberResult" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getPrescriptionForPrescriberResult">
+    <xs:sequence>
+      <xs:element name="creationDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="encryptionKeyId" type="xs:string" minOccurs="0"/>
+      <xs:element name="feedbackAllowed" type="xs:boolean"/>
+      <xs:element name="patientId" type="xs:string" minOccurs="0"/>
+      <xs:element name="prescription" type="xs:base64Binary" minOccurs="0"/>
+      <xs:element name="rid" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="listOpenPrescriptionUnsealed">
+    <xs:sequence>
+      <xs:element name="GetListOpenPrescriptionParam" type="tns:getListOpenPrescriptionParam" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getListOpenPrescriptionParam">
+    <xs:complexContent>
+      <xs:extension base="tns:partyIdentification">
+        <xs:sequence>
+          <xs:element name="symmKey" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="listOpenPrescriptionUnsealedResponse">
+    <xs:sequence>
+      <xs:element name="GetListOpenPrescriptionResult" type="tns:GetListOpenPrescriptionResult" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="GetListOpenPrescriptionResult">
+    <xs:sequence>
+      <xs:element name="prescriptions" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="createPrescriptionUnsealed">
+    <xs:sequence>
+      <xs:element name="CreatePrescriptionParam" type="tns:createPrescriptionParam" minOccurs="0"/>
+      <xs:element name="DocumentId" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="createPrescriptionParam">
+    <xs:complexContent>
+      <xs:extension base="tns:partyIdentification">
+        <xs:sequence>
+          <xs:element name="prescription" type="xs:base64Binary" minOccurs="0"/>
+          <xs:element name="prescriptionType" type="xs:string" minOccurs="0"/>
+          <xs:element name="feedbackRequested" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="keyId" type="xs:string" minOccurs="0"/>
+          <xs:element name="symmKey" type="xs:base64Binary" minOccurs="0"/>
+          <xs:element name="prescriberLabel" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="createPrescriptionUnsealedResponse">
+    <xs:sequence>
+      <xs:element name="CreatePrescriptionResult" type="tns:createPrescriptionResult" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="createPrescriptionResult">
+    <xs:sequence>
+      <xs:element name="rid" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="urn:be:smals:hfs:protocol:1_0" 
+		   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+		   xmlns:protocol="urn:be:smals:hfs:protocol:1_0" 
+		   xmlns:core="urn:be:smals:hfs:core:1_0">
+        
+	<xs:import namespace="urn:be:smals:hfs:core:1_0" schemaLocation="hfs-schema-core-1_0.xsd"/>
+
+    <xs:complexType name="RequestType">
+        <xs:annotation>
+            <xs:documentation>Each request contains the application identifier</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="applicationId" type="core:ApplicationIdType"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="ResponseType">
+        <xs:annotation>
+            <xs:documentation>Each response contains a status</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element name="status" type="core:StatusType"/>
+        </xs:sequence>
+    </xs:complexType>
+ 
+</xs:schema>

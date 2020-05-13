@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<s0:definitions name="RecipeExecutorWebservice" targetNamespace="urn:be:fgov:ehealth:recipe:protocol:v2" xmlns:s0="http://schemas.xmlsoap.org/wsdl/" xmlns:s1="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:s2="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:s3="urn:be:fgov:ehealth:recipe:protocol:v2" xmlns:s4="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+    <s0:documentation>Version 1.0</s0:documentation>
+    <s1:Policy s2:Id="samlPolicy-holder-of-key-signed-Smals">
+        <wssp:Identity xmlns:wssp="http://www.bea.com/wls90/security/policy">
+            <wssp:SupportedTokens>
+                <wssp:SecurityToken TokenType="http://docs.oasis-open.org/wss/2004/01/oasis-2004-01-saml-token-profile-1.0#SAMLAssertionID">
+                    <wssp:Claims>
+                        <wssp:ConfirmationMethod>
+                            holder-of-key
+                        </wssp:ConfirmationMethod>
+                    </wssp:Claims>
+                </wssp:SecurityToken>
+            </wssp:SupportedTokens>
+        </wssp:Identity>
+        <wssp:Integrity SignToken="false" xmlns:wls="http://www.bea.com/wls90/security/policy/wsee#part" xmlns:wssp="http://www.bea.com/wls90/security/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+            <wssp:SignatureAlgorithm URI="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            <wssp:CanonicalizationAlgorithm URI="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+            <wssp:Target>
+                <wssp:DigestAlgorithm URI="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                <wssp:MessageParts Dialect="http://schemas.xmlsoap.org/2002/12/wsse#part">
+                    wsp:Body()
+                </wssp:MessageParts>
+            </wssp:Target>
+            <!--
+            <wssp:Target>
+                    <wssp:DigestAlgorithm URI="http://www.w3.org/2000/09/xmldsig#sha1" />
+                    <wssp:MessageParts Dialect="http://www.bea.com/wls90/security/policy/wsee#part">
+                            wls:SecurityHeader(wsu:Timestamp)
+                    </wssp:MessageParts>
+            </wssp:Target>
+            -->
+            <!--
+            <wssp:Target>
+                    <wssp:DigestAlgorithm URI="http://www.w3.org/2000/09/xmldsig#sha1" />
+                    <wssp:MessageParts Dialect="http://www.bea.com/wls90/security/policy/wsee#part">
+                            wls:SecurityHeader(Assertion)
+                    </wssp:MessageParts>
+            </wssp:Target>
+            -->
+            <wssp:SupportedTokens>
+                <wssp:SecurityToken TokenType="http://docs.oasis-open.org/wss/2004/01/oasis-2004-01-saml-token-profile-1.0#SAMLAssertionID">
+                    <wssp:Claims>
+                        <wssp:ConfirmationMethod>
+                            holder-of-key
+                        </wssp:ConfirmationMethod>
+                    </wssp:Claims>
+                </wssp:SecurityToken>
+            </wssp:SupportedTokens>
+        </wssp:Integrity>
+        <wssp:MessageAge Age="300" xmlns:wssp="http://www.bea.com/wls90/security/policy"/>
+    </s1:Policy>
+    <wsp:UsingPolicy s0:Required="true"/>
+    <s0:types>
+        <xsd:schema xmlns:recipe="urn:be:fgov:ehealth:recipe:protocol:v2" xmlns:s1="urn:be:fgov:ehealth:recipe:protocol:v2" xmlns:s2="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="urn:be:fgov:ehealth:recipe:protocol:v2" schemaLocation="recipeservices_protocol-2_0.xsd"/>
+        </xsd:schema>
+    </s0:types>
+    <s0:message name="RevokePrescriptionForExecutorRequest">
+        <s0:part element="s3:RevokePrescriptionForExecutorRequest" name="body"/>
+    </s0:message>
+    <s0:message name="RevokePrescriptionForExecutorResponse">
+        <s0:part element="s3:RevokePrescriptionForExecutorResponse" name="body"/>
+    </s0:message>
+    <s0:message name="AliveCheckRequest">
+        <s0:part element="s3:AliveCheckRequest" name="body"/>
+    </s0:message>
+    <s0:message name="AliveCheckResponse">
+        <s0:part element="s3:AliveCheckResponse" name="body"/>
+    </s0:message>
+    <s0:message name="CreateFeedbackRequest">
+        <s0:part element="s3:CreateFeedbackRequest" name="body"/>
+    </s0:message>
+    <s0:message name="CreateFeedbackResponse">
+        <s0:part element="s3:CreateFeedbackResponse" name="body"/>
+    </s0:message>
+    <s0:message name="GetPrescriptionForExecutorRequest">
+        <s0:part element="s3:GetPrescriptionForExecutorRequest" name="body"/>
+    </s0:message>
+    <s0:message name="GetPrescriptionForExecutorResponse">
+        <s0:part element="s3:GetPrescriptionForExecutorResponse" name="body"/>
+    </s0:message>
+    <s0:message name="MarkAsArchivedRequest">
+        <s0:part element="s3:MarkAsArchivedRequest" name="body"/>
+    </s0:message>
+    <s0:message name="MarkAsArchivedResponse">
+        <s0:part element="s3:MarkAsArchivedResponse" name="body"/>
+    </s0:message>
+    <s0:message name="MarkAsDeliveredRequest">
+        <s0:part element="s3:MarkAsDeliveredRequest" name="body"/>
+    </s0:message>
+    <s0:message name="MarkAsDeliveredResponse">
+        <s0:part element="s3:MarkAsDeliveredResponse" name="body"/>
+    </s0:message>
+    <s0:message name="MarkAsUnDeliveredRequest">
+        <s0:part element="s3:MarkAsUnDeliveredRequest" name="body"/>
+    </s0:message>
+    <s0:message name="MarkAsUnDeliveredResponse">
+        <s0:part element="s3:MarkAsUnDeliveredResponse" name="body"/>
+    </s0:message>
+    <s0:message name="ListNotificationsRequest">
+        <s0:part element="s3:ListNotificationsRequest" name="body"/>
+    </s0:message>
+    <s0:message name="ListNotificationsResponse">
+        <s0:part element="s3:ListNotificationsResponse" name="body"/>
+    </s0:message>
+    <s0:portType name="RecipeExecutorPortType">
+        <s0:operation name="revokePrescriptionForExecutor">
+            <s0:input message="s3:RevokePrescriptionForExecutorRequest"/>
+            <s0:output message="s3:RevokePrescriptionForExecutorResponse"/>
+        </s0:operation>
+        <s0:operation name="aliveCheck">
+            <s0:input message="s3:AliveCheckRequest"/>
+            <s0:output message="s3:AliveCheckResponse"/>
+        </s0:operation>
+        <s0:operation name="createFeedback">
+            <s0:input message="s3:CreateFeedbackRequest"/>
+            <s0:output message="s3:CreateFeedbackResponse"/>
+        </s0:operation>
+        <s0:operation name="getPrescriptionForExecutor">
+            <s0:input message="s3:GetPrescriptionForExecutorRequest"/>
+            <s0:output message="s3:GetPrescriptionForExecutorResponse"/>
+        </s0:operation>
+        <s0:operation name="markAsArchived">
+            <s0:input message="s3:MarkAsArchivedRequest"/>
+            <s0:output message="s3:MarkAsArchivedResponse"/>
+        </s0:operation>
+        <s0:operation name="markAsDelivered">
+            <s0:input message="s3:MarkAsDeliveredRequest"/>
+            <s0:output message="s3:MarkAsDeliveredResponse"/>
+        </s0:operation>
+        <s0:operation name="markAsUnDelivered">
+            <s0:input message="s3:MarkAsUnDeliveredRequest"/>
+            <s0:output message="s3:MarkAsUnDeliveredResponse"/>
+        </s0:operation>
+        <s0:operation name="listNotifications">
+            <s0:input message="s3:ListNotificationsRequest"/>
+            <s0:output message="s3:ListNotificationsResponse"/>
+        </s0:operation>
+    </s0:portType>
+    <s0:binding name="RecipeExecutorSoapBinding" type="s3:RecipeExecutorPortType">
+        <s4:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <s0:operation name="revokePrescriptionForExecutor">
+            <s4:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:RevokePrescriptionForExecutor" style="document"/>
+            <s0:input>
+                <s4:body use="literal"/>
+                <wsp:Policy>
+                    <wsp:PolicyReference URI="#samlPolicy-holder-of-key-signed-Smals"/>
+                </wsp:Policy>
+            </s0:input>
+            <s0:output>
+                <s4:body use="literal"/>
+            </s0:output>
+        </s0:operation>
+        <s0:operation name="aliveCheck">
+            <s4:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:AliveCheck" style="document"/>
+            <s0:input>
+                <s4:body use="literal"/>
+                <wsp:Policy>
+                    <wsp:PolicyReference URI="#samlPolicy-holder-of-key-signed-Smals"/>
+                </wsp:Policy>
+            </s0:input>
+            <s0:output>
+                <s4:body use="literal"/>
+            </s0:output>
+        </s0:operation>
+        <s0:operation name="createFeedback">
+            <s4:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:CreateFeedback" style="document"/>
+            <s0:input>
+                <s4:body use="literal"/>
+                <wsp:Policy>
+                    <wsp:PolicyReference URI="#samlPolicy-holder-of-key-signed-Smals"/>
+                </wsp:Policy>
+            </s0:input>
+            <s0:output>
+                <s4:body use="literal"/>
+            </s0:output>
+        </s0:operation>
+        <s0:operation name="getPrescriptionForExecutor">
+            <s4:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:GetPrescriptionForExecutor" style="document"/>
+            <s0:input>
+                <s4:body use="literal"/>
+                <wsp:Policy>
+                    <wsp:PolicyReference URI="#samlPolicy-holder-of-key-signed-Smals"/>
+                </wsp:Policy>
+            </s0:input>
+            <s0:output>
+                <s4:body use="literal"/>
+            </s0:output>
+        </s0:operation>
+        <s0:operation name="markAsArchived">
+            <s4:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:MarkAsArchived" style="document"/>
+            <s0:input>
+                <s4:body use="literal"/>
+                <wsp:Policy>
+                    <wsp:PolicyReference URI="#samlPolicy-holder-of-key-signed-Smals"/>
+                </wsp:Policy>
+            </s0:input>
+            <s0:output>
+                <s4:body use="literal"/>
+            </s0:output>
+        </s0:operation>
+        <s0:operation name="markAsDelivered">
+            <s4:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:MarkAsDelivered" style="document"/>
+            <s0:input>
+                <s4:body use="literal"/>
+                <wsp:Policy>
+                    <wsp:PolicyReference URI="#samlPolicy-holder-of-key-signed-Smals"/>
+                </wsp:Policy>
+            </s0:input>
+            <s0:output>
+                <s4:body use="literal"/>
+            </s0:output>
+        </s0:operation>
+        <s0:operation name="markAsUnDelivered">
+            <s4:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:MarkAsUnDelivered" style="document"/>
+            <s0:input>
+                <s4:body use="literal"/>
+                <wsp:Policy>
+                    <wsp:PolicyReference URI="#samlPolicy-holder-of-key-signed-Smals"/>
+                </wsp:Policy>
+            </s0:input>
+            <s0:output>
+                <s4:body use="literal"/>
+            </s0:output>
+        </s0:operation>
+        <s0:operation name="listNotifications">
+            <s4:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:ListNotifications" style="document"/>
+            <s0:input>
+                <s4:body use="literal"/>
+                <wsp:Policy>
+                    <wsp:PolicyReference URI="#samlPolicy-holder-of-key-signed-Smals"/>
+                </wsp:Policy>
+            </s0:input>
+            <s0:output>
+                <s4:body use="literal"/>
+            </s0:output>
+        </s0:operation>
+    </s0:binding>
+    <s0:service name="RecipeExecutorService">
+        <s0:port binding="s3:RecipeExecutorSoapBinding" name="RecipeExecutorServiceSOAP11">
+            <s4:address location="null/Recip-e/v2/Executor_v2"/>
+        </s0:port>
+    </s0:service>
+</s0:definitions>

@@ -94,10 +94,10 @@ public class KeyDepotServiceImpl implements KeyDepotService, ConfigurationModule
          if (etkParser.getIdentifier().equals(identifier) && etkParser.getId().equalsIgnoreCase(id)) {
             result.add(etk);
          } else if (etkParser.getIdentifier().equals(be.ehealth.technicalconnector.utils.IdentifierType.SSIN) && identifier.equals(be.ehealth.technicalconnector.utils.IdentifierType.NIHII)) {
-            LOG.debug("Request was based on NIHII number [" + id + "] but SSIN recieved.");
+            LOG.debug("Request was based on NIHII number [{}] but SSIN recieved.", id);
             result.add(etk);
          } else {
-            LOG.warn("Ignoring etk with SubjectX509Name [" + etk.getAuthenticationCertificate().getSubjectX500Principal().getName("RFC2253") + "]");
+            LOG.warn("Ignoring etk with SubjectX509Name [{}]", etk.getAuthenticationCertificate().getSubjectX500Principal().getName("RFC2253"));
          }
 
          return result;
@@ -125,14 +125,17 @@ public class KeyDepotServiceImpl implements KeyDepotService, ConfigurationModule
 
    private static void unableToFindEtk(SearchCriteriaType searchType) throws TechnicalConnectorException {
       StringBuilder sb = new StringBuilder();
+      if (LOG.isErrorEnabled()) {
       Iterator i$ = searchType.getIdentifiers().iterator();
 
       while(i$.hasNext()) {
          IdentifierType identifier = (IdentifierType)i$.next();
-         sb.append("SearchCriteria:  type=[" + identifier.getType() + "] , value=[" + identifier.getValue() + "], appId=[" + identifier.getApplicationID() + "]");
+            sb.append("SearchCriteria:  type=[").append(identifier.getType()).append("] , value=[").append(identifier.getValue()).append("], appId=[").append(identifier.getApplicationID()).append("]");
+         }
+
+         LOG.error("No ETK found for {}", sb.toString());
       }
 
-      LOG.error("No ETK found for " + sb.toString());
       throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND, new Object[0]);
    }
 

@@ -62,6 +62,8 @@ public abstract class AbstractWsSecurityHandler extends AbstractSOAPHandler {
    }
 
    public interface WSSecHeaderGeneratorStep0 extends AbstractWsSecurityHandler.WSSecHeaderGeneratorStep2 {
+      /** @deprecated */
+      @Deprecated
       AbstractWsSecurityHandler.WSSecHeaderGeneratorStep1 on(SOAPMessage var1) throws TechnicalConnectorException;
    }
 

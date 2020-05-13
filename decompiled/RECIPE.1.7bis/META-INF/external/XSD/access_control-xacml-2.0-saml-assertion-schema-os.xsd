@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:xacml-context="urn:oasis:names:tc:xacml:2.0:context:schema:os" xmlns:xacml="urn:oasis:names:tc:xacml:2.0:policy:schema:os" xmlns:xacml-saml="urn:oasis:xacml:2.0:saml:assertion:schema:os" targetNamespace="urn:oasis:xacml:2.0:saml:assertion:schema:os" elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="substitution" version="2.0">
+	<import namespace="urn:oasis:names:tc:SAML:2.0:assertion" schemaLocation="saml-schema-assertion-2.0.xsd"/>
+	<!-- <import namespace="urn:oasis:names:tc:SAML:2.0:protocol" schemaLocation="saml-schema-protocol-2.0.xsd"/> -->
+	<import namespace="urn:oasis:names:tc:xacml:2.0:context:schema:os" schemaLocation="access_control-xacml-2.0-context-schema-os.xsd"/>
+	<!-- <import namespace="urn:oasis:names:tc:xacml:2.0:policy:schema:os" schemaLocation="access_control-xacml-2.0-policy-schema-os.xsd"/> -->
+	<annotation>
+		<documentation>
+        Document identifier: access_control-xacml-2.0-saml-assertion-schema-cd-02.xsd
+        Location: http://docs.oasis-open.org/xacml/2.0/access_control-xacml-2.0-saml-assertion-schema-cd-os.xsd
+    </documentation>
+	</annotation>
+	<!--    -->
+	<element name="XACMLAuthzDecisionStatement" type="xacml-saml:XACMLAuthzDecisionStatementType"/>
+	<complexType name="XACMLAuthzDecisionStatementType">
+		<complexContent>
+			<extension base="saml:StatementAbstractType">
+				<sequence>
+					<element ref="xacml-context:Response"/>
+					<element ref="xacml-context:Request" minOccurs="0"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<!--    -->
+	<!-- <element name="XACMLPolicyStatement" type="xacml-saml:XACMLPolicyStatementType"/>
+	<complexType name="XACMLPolicyStatementType">
+		<complexContent>
+			<extension base="saml:StatementAbstractType">
+				<choice minOccurs="0" maxOccurs="unbounded">
+					<element ref="xacml:Policy"/>
+					<element ref="xacml:PolicySet"/>
+				</choice>
+			</extension>
+		</complexContent>
+	</complexType> -->
+</schema>

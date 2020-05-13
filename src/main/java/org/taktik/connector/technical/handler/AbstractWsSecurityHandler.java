@@ -62,7 +62,11 @@ public abstract class AbstractWsSecurityHandler extends AbstractSOAPHandler {
    }
 
    public interface WSSecHeaderGeneratorStep0 extends AbstractWsSecurityHandler.WSSecHeaderGeneratorStep2 {
+      /** @deprecated */
+      @Deprecated
       AbstractWsSecurityHandler.WSSecHeaderGeneratorStep1 on(SOAPMessage var1) throws TechnicalConnectorException;
+
+      AbstractWsSecurityHandler.WSSecHeaderGeneratorStep1 on(SOAPMessageContext var1) throws TechnicalConnectorException;
    }
 
    public static enum SignedParts {
@@ -71,4 +75,5 @@ public abstract class AbstractWsSecurityHandler extends AbstractSOAPHandler {
       BST,
       SAML_ASSERTION;
    }
+
 }

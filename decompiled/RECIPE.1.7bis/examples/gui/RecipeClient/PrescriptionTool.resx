@@ -1,0 +1,401 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PrescriptionContent.Text" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+&lt;kmehrmessage xmlns="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ehealth.fgov.be/standards/kmehr/schema/v1 ../ehealth-kmehr/XSD/recipe_PP_kmehr_elements-1_17.xsd"&gt;
+	&lt;header&gt;
+		&lt;standard&gt;
+			&lt;cd S="CD-STANDARD" SV="1.18"&gt;20160601&lt;/cd&gt;
+		&lt;/standard&gt;
+		&lt;id S="ID-KMEHR" SV="1.0"&gt;19006951001.20090110090000000&lt;/id&gt;
+		&lt;id S="LOCAL" SL="ID-MEDISOFT" SV="versie 1.23.25.0"&gt;8e1c4ea4-3825-48e4-bcc2b8cadfa7a897&lt;/id&gt;
+		&lt;date&gt;2016-09-28&lt;/date&gt;
+		&lt;time&gt;09:00:00&lt;/time&gt;
+		&lt;sender&gt;
+			&lt;hcparty&gt;
+				&lt;id S="ID-HCPARTY" SV="1.0"&gt;19006951001&lt;/id&gt;
+				&lt;cd S="CD-HCPARTY" SV="1.9"&gt;persphysician&lt;/cd&gt;
+				&lt;firstname&gt;Donald&lt;/firstname&gt;
+				&lt;familyname&gt;Duck&lt;/familyname&gt;
+			&lt;/hcparty&gt;
+			&lt;hcparty&gt;
+				&lt;cd S="CD-HCPARTY" SV="1.9"&gt;application&lt;/cd&gt;
+				&lt;name&gt;MySoftware&lt;/name&gt;
+				&lt;telecom&gt;
+					&lt;cd S="CD-ADDRESS" SV="1.1"&gt;work&lt;/cd&gt;
+					&lt;cd S="CD-TELECOM" SV="1.0"&gt;phone&lt;/cd&gt;
+					&lt;telecomnumber&gt;02/100.11.12&lt;/telecomnumber&gt;
+				&lt;/telecom&gt;
+				&lt;telecom&gt;
+					&lt;cd S="CD-ADDRESS" SV="1.1"&gt;work&lt;/cd&gt;
+					&lt;cd S="CD-TELECOM" SV="1.0"&gt;email&lt;/cd&gt;
+					&lt;telecomnumber&gt;tom@mysoftware.com&lt;/telecomnumber&gt;
+				&lt;/telecom&gt;
+			&lt;/hcparty&gt;
+		&lt;/sender&gt;
+		&lt;recipient&gt;
+			&lt;hcparty&gt;
+				&lt;id S="ID-HCPARTY" SV="1.0"&gt;RECIPE&lt;/id&gt;
+				&lt;cd S="CD-HCPARTY" SV="1.9"&gt;orgpublichealth&lt;/cd&gt;
+				&lt;name&gt;Recip-e&lt;/name&gt;
+			&lt;/hcparty&gt;
+		&lt;/recipient&gt;
+	&lt;/header&gt;
+	&lt;folder&gt;
+		&lt;id S="ID-KMEHR" SV="1.0"&gt;1&lt;/id&gt;
+		&lt;patient&gt;
+			&lt;id S="ID-PATIENT" SV="1.0"&gt;76020727360&lt;/id&gt;
+			&lt;firstname&gt;Fred&lt;/firstname&gt;
+			&lt;familyname&gt;Flintstone&lt;/familyname&gt;
+			&lt;birthdate&gt;
+				&lt;date&gt;1976-02-07&lt;/date&gt;
+			&lt;/birthdate&gt;
+			&lt;sex&gt;
+				&lt;cd S="CD-SEX" SV="1.1"&gt;male&lt;/cd&gt;
+			&lt;/sex&gt;
+		&lt;/patient&gt;
+		&lt;transaction&gt;
+			&lt;id S="ID-KMEHR" SV="1.0"&gt;1&lt;/id&gt;
+			&lt;cd S="CD-TRANSACTION" SV="1.9"&gt;pharmaceuticalprescription&lt;/cd&gt;
+			&lt;date&gt;2016-09-28&lt;/date&gt;
+			&lt;time&gt;09:00:00&lt;/time&gt;
+			&lt;author&gt;
+				&lt;hcparty&gt;
+					&lt;id S="ID-HCPARTY" SV="1.0"&gt;19006951001&lt;/id&gt;
+					&lt;cd S="CD-HCPARTY" SV="1.9"&gt;persphysician&lt;/cd&gt;
+					&lt;name&gt;Dr. Duck Donald&lt;/name&gt;
+					&lt;address&gt;
+						&lt;cd S="CD-ADDRESS" SV="1.1"&gt;work&lt;/cd&gt;
+						&lt;country&gt;
+							&lt;cd S="CD-FED-COUNTRY" SV="1.2"&gt;be&lt;/cd&gt;
+						&lt;/country&gt;
+						&lt;zip&gt;1000&lt;/zip&gt;
+						&lt;city&gt;Brussel&lt;/city&gt;
+						&lt;street&gt;Grote Markt&lt;/street&gt;
+						&lt;housenumber&gt;7&lt;/housenumber&gt;
+					&lt;/address&gt;
+					&lt;telecom&gt;
+						&lt;cd S="CD-ADDRESS" SV="1.1"&gt;work&lt;/cd&gt;
+						&lt;cd S="CD-TELECOM" SV="1.0"&gt;phone&lt;/cd&gt;
+						&lt;telecomnumber&gt;02/221.21.21&lt;/telecomnumber&gt;
+					&lt;/telecom&gt;
+				&lt;/hcparty&gt;
+			&lt;/author&gt;
+			&lt;iscomplete&gt;true&lt;/iscomplete&gt;
+			&lt;isvalidated&gt;true&lt;/isvalidated&gt;
+			&lt;heading&gt;
+				&lt;id S="ID-KMEHR" SV="1.0"&gt;1&lt;/id&gt;
+				&lt;cd S="CD-HEADING" SV="1.2"&gt;prescription&lt;/cd&gt;
+				&lt;item&gt;
+					&lt;id S="ID-KMEHR" SV="1.0"&gt;1&lt;/id&gt;
+					&lt;cd S="CD-ITEM" SV="1.9"&gt;medication&lt;/cd&gt;
+					&lt;content&gt;
+						&lt;medicinalproduct&gt;
+							&lt;intendedcd S="CD-DRUG-CNK" SV="LOCALDB"&gt;0318717&lt;/intendedcd&gt;
+							&lt;intendedname&gt;ADALAT OROS 30 COMP 28 X 30 MG&lt;/intendedname&gt;
+						&lt;/medicinalproduct&gt;
+					&lt;/content&gt;
+					&lt;beginmoment&gt;
+						&lt;date&gt;2016-09-28&lt;/date&gt;
+					&lt;/beginmoment&gt;
+					&lt;lifecycle&gt;
+						&lt;cd S="CD-LIFECYCLE" SV="1.7"&gt;prescribed&lt;/cd&gt;
+					&lt;/lifecycle&gt;
+					&lt;quantity&gt;
+						&lt;decimal&gt;1&lt;/decimal&gt;
+					&lt;/quantity&gt;
+					&lt;posology&gt;
+						&lt;text L="nl"&gt;1 tablet per dag&lt;/text&gt;
+					&lt;/posology&gt;
+				&lt;/item&gt;
+			&lt;/heading&gt;
+		&lt;/transaction&gt;
+	&lt;/folder&gt;
+&lt;/kmehrmessage&gt;
+</value>
+  </data>
+  <data name="txtPrescriptionNotification.Text" xml:space="preserve">
+    <value> &lt;kmehrmessage&gt;
+	&lt;header xmlns="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" 
+xmlns:enc="http://www.w3.org/2001/04/xmlenc#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+		&lt;standard&gt;
+			&lt;cd S="CD-STANDARD" SV="1.0"&gt;20021205&lt;/cd&gt;
+		&lt;/standard&gt;
+		&lt;id S="ID-KMEHR" SV="4.0"&gt;71071801.1234&lt;/id&gt;
+		&lt;date&gt;2009-06-22&lt;/date&gt;
+		&lt;time&gt;06:03:00&lt;/time&gt;
+		&lt;sender&gt;
+			&lt;hcparty&gt;
+				&lt;id S="ID-HCPARTY" SV="1.0"&gt;71071801&lt;/id&gt;
+				&lt;cd S="CD-HCPARTY" SV="1.0"&gt;persphysician&lt;/cd&gt;
+				&lt;firstname&gt;Voor&lt;/firstname&gt;
+				&lt;familyname&gt;Schrijver&lt;/familyname&gt;
+			&lt;/hcparty&gt;
+		&lt;/sender&gt;
+		&lt;recipient&gt;
+			&lt;hcparty&gt;
+				&lt;id S="ID-HCPARTY" SV="1.0"&gt;1.64646.46.004&lt;/id&gt;
+				&lt;cd S="CD-HCPARTY" SV="1.0"&gt;perspharmacist&lt;/cd&gt;
+				&lt;firstname/&gt;
+				&lt;familyname&gt;Recip-e&lt;/familyname&gt;
+			&lt;/hcparty&gt;
+		&lt;/recipient&gt;
+		&lt;acknowledgment&gt;
+			&lt;cd S="CD-ACKNOWLEDGMENT" SV="1.0"&gt;onerror&lt;/cd&gt;
+		&lt;/acknowledgment&gt;
+	&lt;/header&gt;
+	&lt;folder xmlns="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" 
+xmlns:enc="http://www.w3.org/2001/04/xmlenc#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+		&lt;id S="ID-KMEHR" SV="1.0"&gt;1&lt;/id&gt;
+		&lt;patient&gt;
+			&lt;id S="ID-PATIENT" SV="1.0"&gt;32031011931&lt;/id&gt;
+			&lt;firstname&gt;Jean&lt;/firstname&gt;
+			&lt;familyname&gt;Dubois&lt;/familyname&gt;
+			&lt;birthdate&gt;
+				&lt;date&gt;1932-03-10&lt;/date&gt;
+			&lt;/birthdate&gt;
+			&lt;sex&gt;
+				&lt;cd S="CD-SEX" SV="1.0"&gt;male&lt;/cd&gt;
+			&lt;/sex&gt;
+			&lt;address&gt;
+				&lt;cd S="CD-ADDRESS" SV="1.0"&gt;home&lt;/cd&gt;
+				&lt;country&gt;
+					&lt;cd S="CD-COUNTRY" SV="1.0"&gt;be&lt;/cd&gt;
+				&lt;/country&gt;
+				&lt;zip&gt;6044&lt;/zip&gt;
+				&lt;city&gt;ROUX&lt;/city&gt;
+				&lt;street&gt;Rue du coucou&lt;/street&gt;
+				&lt;housenumber&gt;6&lt;/housenumber&gt;
+			&lt;/address&gt;
+		&lt;/patient&gt;
+		&lt;transaction&gt;
+			&lt;id S="ID-KMEHR" SV="1.0"&gt;1&lt;/id&gt;
+			&lt;cd S="CD-TRANSACTION" SV="1.0"&gt;pharmaceuticalprescription&lt;/cd&gt;
+			&lt;date&gt;2009-06-22&lt;/date&gt;
+			&lt;time&gt;06:03:00&lt;/time&gt;
+			&lt;author&gt;
+				&lt;hcparty&gt;
+					&lt;id S="ID-HCPARTY" SV="1.0"&gt;222222222222???&lt;/id&gt;
+					&lt;cd S="CD-HCPARTY" SV="1.0"&gt;persphysician&lt;/cd&gt;
+					&lt;firstname&gt;FIRSTNAME&lt;/firstname&gt;
+					&lt;familyname&gt;LASTNAME&lt;/familyname&gt;
+				&lt;/hcparty&gt;
+			&lt;/author&gt;
+			&lt;iscomplete&gt;true&lt;/iscomplete&gt;
+			&lt;isvalidated&gt;true&lt;/isvalidated&gt;
+			&lt;heading&gt;
+				&lt;id S="ID-KMEHR" SV="1.0"&gt;4&lt;/id&gt;
+				&lt;cd S="CD-HEADING" SV="1.0"&gt;treatment&lt;/cd&gt;
+				&lt;item&gt;
+					&lt;id S="ID-KMEHR" SV="1.0"&gt;1&lt;/id&gt;
+					&lt;cd S="CD-ITEM" SV="1.0"&gt;medication&lt;/cd&gt;
+					&lt;content&gt;
+						&lt;medication&gt;
+							&lt;cd S="CD-DRUG-CNK" SV="1999"&gt;0135418&lt;/cd&gt;
+							&lt;tradename&gt;Tevax amp 0,5ml&lt;/tradename&gt;
+							&lt;presentation&gt;
+								&lt;cd S="CD-DRUG-PRESENTATION" SV="V1.0"&gt;solution&lt;/cd&gt;
+							&lt;/presentation&gt;
+							&lt;strength&gt;
+								&lt;decimal&gt;0.5&lt;/decimal&gt;
+								&lt;unit&gt;
+									&lt;cd S="CD-UNIT" SV="1.0"&gt;ml&lt;/cd&gt;
+								&lt;/unit&gt;
+							&lt;/strength&gt;
+							&lt;route&gt;
+								&lt;cd S="CD-DRUG-ROUTE" SV="V1.0"&gt;intramuscular&lt;/cd&gt;
+							&lt;/route&gt;
+						&lt;/medication&gt;
+					&lt;/content&gt;
+					&lt;lifecycle&gt;
+						&lt;cd S="CD-LIFECYCLE" SV="1.0"&gt;administrated&lt;/cd&gt;
+					&lt;/lifecycle&gt;
+					&lt;quantity&gt;
+						&lt;decimal&gt;1&lt;/decimal&gt;
+					&lt;/quantity&gt;
+				&lt;/item&gt;
+				&lt;item&gt;
+					&lt;id S="ID-KMEHR" SV="1.0"&gt;2&lt;/id&gt;
+					&lt;cd S="CD-ITEM" SV="1.0"&gt;medication&lt;/cd&gt;
+					&lt;content&gt;
+						&lt;text L="en"&gt;prescription of Augmentin 500mg 3x1caps/day during 5 days&lt;/text&gt;
+					&lt;/content&gt;
+				&lt;/item&gt;
+			&lt;/heading&gt;
+		&lt;/transaction&gt;
+		&lt;transaction&gt;
+			&lt;id S="ID-KMEHR" SV="1.0"&gt;1&lt;/id&gt;
+			&lt;cd S="CD-TRANSACTION" SV="1.0"&gt;blabla&lt;/cd&gt;
+			&lt;date&gt;2009-06-22&lt;/date&gt;
+			&lt;time&gt;06:03:00&lt;/time&gt;
+			&lt;author&gt;
+				&lt;hcparty&gt;
+					&lt;id S="ID-HCPARTY" SV="1.0"&gt;222222222222???&lt;/id&gt;
+					&lt;cd S="CD-HCPARTY" SV="1.0"&gt;persphysician&lt;/cd&gt;
+					&lt;firstname&gt;FIRSTNAME&lt;/firstname&gt;
+					&lt;familyname&gt;LASTNAME&lt;/familyname&gt;
+				&lt;/hcparty&gt;
+			&lt;/author&gt;
+			&lt;iscomplete&gt;true&lt;/iscomplete&gt;
+			&lt;isvalidated&gt;true&lt;/isvalidated&gt;
+			&lt;heading&gt;
+				&lt;id S="ID-KMEHR" SV="1.0"&gt;4&lt;/id&gt;
+				&lt;cd S="CD-HEADING" SV="1.0"&gt;treatment&lt;/cd&gt;
+				&lt;item&gt;
+					&lt;id S="ID-KMEHR" SV="1.0"&gt;1&lt;/id&gt;
+					&lt;cd S="CD-ITEM" SV="1.0"&gt;medication&lt;/cd&gt;
+					&lt;content&gt;
+						&lt;medication&gt;
+							&lt;cd S="CD-DRUG-CNK" SV="1999"&gt;0135418&lt;/cd&gt;
+							&lt;tradename&gt;Tevax amp 0,5ml&lt;/tradename&gt;
+							&lt;presentation&gt;
+								&lt;cd S="CD-DRUG-PRESENTATION" SV="V1.0"&gt;solution&lt;/cd&gt;
+							&lt;/presentation&gt;
+							&lt;strength&gt;
+								&lt;decimal&gt;0.5&lt;/decimal&gt;
+								&lt;unit&gt;
+									&lt;cd S="CD-UNIT" SV="1.0"&gt;ml&lt;/cd&gt;
+								&lt;/unit&gt;
+							&lt;/strength&gt;
+							&lt;route&gt;
+								&lt;cd S="CD-DRUG-ROUTE" SV="V1.0"&gt;intramuscular&lt;/cd&gt;
+							&lt;/route&gt;
+						&lt;/medication&gt;
+					&lt;/content&gt;
+					&lt;lifecycle&gt;
+						&lt;cd S="CD-LIFECYCLE" SV="1.0"&gt;administrated&lt;/cd&gt;
+					&lt;/lifecycle&gt;
+					&lt;quantity&gt;
+						&lt;decimal&gt;1&lt;/decimal&gt;
+					&lt;/quantity&gt;
+				&lt;/item&gt;
+				&lt;item&gt;
+					&lt;id S="ID-KMEHR" SV="1.0"&gt;2&lt;/id&gt;
+					&lt;cd S="CD-ITEM" SV="1.0"&gt;medication&lt;/cd&gt;
+					&lt;content&gt;
+						&lt;text L="en"&gt;prescription of Augmentin 500mg 3x1caps/day during 5 days&lt;/text&gt;
+					&lt;/content&gt;
+				&lt;/item&gt;
+			&lt;/heading&gt;
+		&lt;/transaction&gt;
+	&lt;/folder&gt;
+&lt;/kmehrmessage&gt;</value>
+  </data>
+</root>

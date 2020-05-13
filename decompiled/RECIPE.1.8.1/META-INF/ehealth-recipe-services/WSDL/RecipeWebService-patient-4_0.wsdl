@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:recipe="urn:be:fgov:ehealth:recipe:protocol:v4" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/" name="RecipePatientWebservice" targetNamespace="urn:be:fgov:ehealth:recipe:protocol:v4">
+  <documentation>Version 4.0</documentation>
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="urn:be:fgov:ehealth:recipe:protocol:v4" schemaLocation="recipeservices_protocol-4_0.xsd"/>
+    </xsd:schema>
+  </types>
+  <message name="PutFeedbackFlagRequest">
+    <part name="body" element="recipe:PutFeedbackFlagRequest"/>
+  </message>
+  <message name="PutFeedbackFlagResponse">
+    <part name="body" element="recipe:PutFeedbackFlagResponse"/>
+  </message>
+   <message name="ListOpenPrescriptionsRequest">
+    <part name="body" element="recipe:ListOpenPrescriptionsRequest"/>
+  </message>
+  <message name="ListOpenPrescriptionsResponse">
+    <part name="body" element="recipe:ListOpenPrescriptionsResponse"/>
+  </message>
+   <message name="RevokePrescriptionRequest">
+    <part name="body" element="recipe:RevokePrescriptionRequest"/>
+  </message>
+  <message name="RevokePrescriptionResponse">
+    <part name="body" element="recipe:RevokePrescriptionResponse"/>
+  </message>
+   <message name="GetPrescriptionRequest">
+    <part name="body" element="recipe:GetPrescriptionRequest"/>
+  </message>
+  <message name="GetPrescriptionResponse">
+    <part name="body" element="recipe:GetPrescriptionResponse"/>
+  </message>
+   <message name="CreateReservationRequest">
+    <part name="body" element="recipe:CreateReservationRequest"/>
+  </message>
+  <message name="CreateReservationResponse">
+    <part name="body" element="recipe:CreateReservationResponse"/>
+  </message>
+   <message name="PutVisionForPatientRequest">
+    <part name="body" element="recipe:PutVisionForPatientRequest"/>
+  </message>
+  <message name="PutVisionForPatientResponse">
+    <part name="body" element="recipe:PutVisionForPatientResponse"/>
+  </message>
+   <message name="GetVisionRequest">
+    <part name="body" element="recipe:GetVisionRequest"/>
+  </message>
+  <message name="GetVisionResponse">
+    <part name="body" element="recipe:GetVisionResponse"/>
+  </message>
+   <message name="GetPrescriptionStatusRequest">
+    <part name="body" element="recipe:GetPrescriptionStatusRequest"/>
+  </message>
+  <message name="GetPrescriptionStatusResponse">
+    <part name="body" element="recipe:GetPrescriptionStatusResponse"/>
+  </message>
+   <message name="ListRidsHistoryRequest">
+    <part name="body" element="recipe:ListRidsHistoryRequest"/>
+  </message>
+  <message name="ListRidsHistoryResponse">
+    <part name="body" element="recipe:ListRidsHistoryResponse"/>
+  </message>
+   <message name="ListOpenRidsRequest">
+    <part name="body" element="recipe:ListOpenRidsRequest"/>
+  </message>
+  <message name="ListOpenRidsResponse">
+    <part name="body" element="recipe:ListOpenRidsResponse"/>
+  </message>
+   <message name="ListRelationsRequest">
+    <part name="body" element="recipe:ListRelationsRequest"/>
+  </message>
+  <message name="ListRelationsResponse">
+    <part name="body" element="recipe:ListRelationsResponse"/>
+  </message>
+   <message name="CreateRelationRequest">
+    <part name="body" element="recipe:CreateRelationRequest"/>
+  </message>
+  <message name="CreateRelationResponse">
+    <part name="body" element="recipe:CreateRelationResponse"/>
+  </message>
+    <message name="RevokeRelationRequest">
+    <part name="body" element="recipe:RevokeRelationRequest"/>
+  </message>
+  <message name="RevokeRelationResponse">
+    <part name="body" element="recipe:RevokeRelationResponse"/>
+  </message>
+ 
+  <portType name="RecipePatientPortType">
+    <operation name="putFeedbackFlag">
+      <input message="recipe:PutFeedbackFlagRequest"/>
+      <output message="recipe:PutFeedbackFlagResponse"/>
+    </operation>
+        <operation name="listOpenPrescriptions">
+      <input message="recipe:ListOpenPrescriptionsRequest"/>
+      <output message="recipe:ListOpenPrescriptionsResponse"/>
+    </operation>
+     <operation name="revokePrescription">
+      <input message="recipe:RevokePrescriptionRequest"/>
+      <output message="recipe:RevokePrescriptionResponse"/>
+    </operation>
+     <operation name="getPrescription">
+      <input message="recipe:GetPrescriptionRequest"/>
+      <output message="recipe:GetPrescriptionResponse"/>
+    </operation>
+     <operation name="createReservation">
+      <input message="recipe:CreateReservationRequest"/>
+      <output message="recipe:CreateReservationResponse"/>
+    </operation>
+     <operation name="putVisionForPatient">
+      <input message="recipe:PutVisionForPatientRequest"/>
+      <output message="recipe:PutVisionForPatientResponse"/>
+    </operation>
+     <operation name="getVision">
+      <input message="recipe:GetVisionRequest"/>
+      <output message="recipe:GetVisionResponse"/>
+    </operation>
+     <operation name="getPrescriptionStatus">
+      <input message="recipe:GetPrescriptionStatusRequest"/>
+      <output message="recipe:GetPrescriptionStatusResponse"/>
+    </operation>
+     <operation name="listRidsHistory">
+      <input message="recipe:ListRidsHistoryRequest"/>
+      <output message="recipe:ListRidsHistoryResponse"/>
+    </operation>
+        <operation name="listOpenRids">
+      <input message="recipe:ListOpenRidsRequest"/>
+      <output message="recipe:ListOpenRidsResponse"/>
+    </operation>
+        <operation name="listRelations">
+      <input message="recipe:ListRelationsRequest"/>
+      <output message="recipe:ListRelationsResponse"/>
+    </operation>
+        <operation name="createRelation">
+      <input message="recipe:CreateRelationRequest"/>
+      <output message="recipe:CreateRelationResponse"/>
+    </operation>
+       <operation name="revokeRelation">
+      <input message="recipe:RevokeRelationRequest"/>
+      <output message="recipe:RevokeRelationResponse"/>
+    </operation>
+  
+  </portType>
+  <binding name="RecipePatientSoapBinding" type="recipe:RecipePatientPortType">
+    <soap11:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="putFeedbackFlag">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:putFeedbackFlag"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+     <operation name="listOpenPrescriptions">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:listOpenPrescriptions"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+     <operation name="revokePrescription">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:revokePrescription"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+     <operation name="getPrescription">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:getPrescription"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+     <operation name="createReservation">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:createReservation"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+     <operation name="putVisionForPatient">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:putVisionForPatient"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+     <operation name="getVision">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:getVision"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+     <operation name="getPrescriptionStatus">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:getPrescriptionStatus"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+     <operation name="listRidsHistory">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:listRidsHistory"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+     <operation name="listOpenRids">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:listOpenRids"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+     <operation name="listRelations">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:listRelations"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+     <operation name="createRelation">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:createRelation"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+     <operation name="revokeRelation">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v4:revokeRelation"/>
+      <input>
+        <soap11:body use="literal"/>
+      </input>
+      <output>
+        <soap11:body use="literal"/>
+      </output>
+    </operation>
+    
+  </binding>
+  <service name="RecipePatientService">
+    <port name="RecipePatientServiceSOAP11" binding="recipe:RecipePatientSoapBinding">
+      <soap11:address location="https://REPLACE_WITH_ACTUAL_URL"/>
+    </port>
+  </service>
+</definitions>

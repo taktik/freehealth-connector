@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://services.gfddpp.be" xmlns:ns="http://services.gfddpp.be/systemservices/v2" targetNamespace="http://services.gfddpp.be/systemservices/v2">
+    <xs:element name="systemServices">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="version" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="systemServicesList" type="ns:systemServicesList" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>   
+    </xs:element>
+    <xs:complexType name="systemServicesList">
+        <xs:sequence>
+            <xs:element name="systemServicesEntry" type="ns:systemServicesEntry" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="systemServicesEntry">
+        <xs:sequence>
+            <xs:element name="system" type="ns:system" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="service" type="ns:service" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="contractList" type="ns:contractList" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>		    		
+    <xs:complexType name="system">
+        <xs:sequence>
+            <xs:element name="systemType" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="systemId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>							    		
+    <xs:complexType name="service">
+        <xs:sequence>
+            <xs:element name="serviceName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="URI" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>							    		
+    <xs:complexType name="contractList">
+        <xs:sequence>
+            <xs:element name="contractEntry" type="ns:contractEntry" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="contractEntry">
+        <xs:sequence>
+            <xs:element name="contractType" type="xs:string" minOccurs="1"/>
+            <xs:element name="contractPartyList" type="ns:contractPartyList" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="contractPartyList">
+        <xs:sequence>
+            <xs:element name="contractPartyEntry" type="ns:contractPartyEntry" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="contractPartyEntry">
+        <xs:sequence>
+            <xs:element name="contractPartyType" type="xs:string" minOccurs="1"/>
+            <xs:element name="contractPartyID" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

@@ -81,7 +81,7 @@ public final class IdentifierType implements Serializable {
    public static IdentifierType getInstance(Map<Integer, String> mapping, int expectedLength) throws TechnicalConnectorException {
       if (mapping == null) {
          TechnicalConnectorExceptionValues errorValue = TechnicalConnectorExceptionValues.INVALID_MAPPING;
-         LOG.debug("\t## " + MessageFormat.format(errorValue.getMessage(), "mapping is empty"));
+         LOG.debug("\t## {}", MessageFormat.format(errorValue.getMessage(), "mapping is empty"));
          throw new TechnicalConnectorException(errorValue, new Object[]{"mapping is empty"});
       } else {
          String typeETK = (String)mapping.get(48);
@@ -138,12 +138,12 @@ public final class IdentifierType implements Serializable {
       if (typeETK != null && typeEhbox != null && actualMapSize <= 3) {
          if (StringUtils.countMatches(typeETK, "-") > 1 || StringUtils.countMatches(typeEhbox, "-") > 1 || StringUtils.countMatches(typeRecipe, "-") > 1) {
             errorValue = TechnicalConnectorExceptionValues.INVALID_MAPPING;
-            LOG.debug("\t## " + MessageFormat.format(errorValue.getMessage(), "maximum one '-' is allowed."));
+            LOG.debug("\t## {}", MessageFormat.format(errorValue.getMessage(), "maximum one '-' is allowed."));
             throw new TechnicalConnectorException(errorValue, new Object[]{"maximum one '-' is allowed."});
          }
       } else {
          errorValue = TechnicalConnectorExceptionValues.INVALID_MAPPING;
-         LOG.debug("\t## " + MessageFormat.format(errorValue.getMessage(), "mapping doesn't contains key for ETKDEPOT or EHBOX."));
+         LOG.debug("\t## {}", MessageFormat.format(errorValue.getMessage(), "mapping doesn't contains key for ETKDEPOT or EHBOX."));
          throw new TechnicalConnectorException(errorValue, new Object[]{"mapping doesn't contains key for ETKDEPOT or EHBOX or RECIPE."});
       }
    }
@@ -187,7 +187,7 @@ public final class IdentifierType implements Serializable {
 
    public String formatIdentifierValue(String value) {
       if (value.length() > this.length) {
-         LOG.debug("Truncating identifiervalue [" + value + "] to length " + this.length);
+         LOG.debug("Truncating identifiervalue [{}] to length {}", value, this.length);
          return value.substring(0, this.length);
       } else {
          return StringUtils.leftPad(value, this.length, "0");
@@ -214,18 +214,15 @@ public final class IdentifierType implements Serializable {
 
    public String getSubType(int source) {
       String returnValue = null;
-      switch(source) {
-      case 49:
-         if (this.typeEhbox != null) {
+      if (source == 49 && this.typeEhbox != null) {
             String[] ehboxV2 = this.typeEhbox.split("-");
             if (ehboxV2.length == 2) {
                returnValue = this.typeEhbox.split("-")[1];
             }
          }
-      default:
+
          return returnValue;
       }
-   }
 
    private String getTypeEhbox() {
       return this.typeEhbox;

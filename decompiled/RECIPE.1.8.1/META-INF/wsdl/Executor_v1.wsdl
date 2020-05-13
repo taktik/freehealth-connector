@@ -1,0 +1,170 @@
+<s0:definitions name="RecipeExecutorWebservice" targetNamespace="urn:be:fgov:ehealth:recipe:protocol:v1" xmlns:s0="http://schemas.xmlsoap.org/wsdl/" xmlns:s1="urn:be:fgov:ehealth:recipe:protocol:v1" xmlns:s2="http://schemas.xmlsoap.org/wsdl/soap/"> 
+  <s0:documentation>Version 1.0</s0:documentation> 
+  <s0:types> 
+    <xsd:schema xmlns:recipe="urn:be:fgov:ehealth:recipe:protocol:v1" xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> 
+      <xsd:import namespace="urn:be:fgov:ehealth:recipe:protocol:v1" schemaLocation="recipeservices_protocol-1_0.xsd"/> 
+    </xsd:schema> 
+  </s0:types> 
+  <s0:message name="RevokePrescriptionForExecutorRequest"> 
+    <s0:part element="s1:RevokePrescriptionForExecutorRequest" name="body"/> 
+  </s0:message> 
+  <s0:message name="RevokePrescriptionForExecutorResponse"> 
+    <s0:part element="s1:RevokePrescriptionForExecutorResponse" name="body"/> 
+  </s0:message> 
+  <s0:message name="AliveCheckRequest"> 
+    <s0:part element="s1:AliveCheckRequest" name="body"/> 
+  </s0:message> 
+  <s0:message name="AliveCheckResponse"> 
+    <s0:part element="s1:AliveCheckResponse" name="body"/> 
+  </s0:message> 
+  <s0:message name="CreateFeedbackRequest"> 
+    <s0:part element="s1:CreateFeedbackRequest" name="body"/> 
+  </s0:message> 
+  <s0:message name="CreateFeedbackResponse"> 
+    <s0:part element="s1:CreateFeedbackResponse" name="body"/> 
+  </s0:message> 
+  <s0:message name="GetPrescriptionForExecutorRequest"> 
+    <s0:part element="s1:GetPrescriptionForExecutorRequest" name="body"/> 
+  </s0:message> 
+  <s0:message name="GetPrescriptionForExecutorResponse"> 
+    <s0:part element="s1:GetPrescriptionForExecutorResponse" name="body"/> 
+  </s0:message> 
+  <s0:message name="MarkAsArchivedRequest"> 
+    <s0:part element="s1:MarkAsArchivedRequest" name="body"/> 
+  </s0:message> 
+  <s0:message name="MarkAsArchivedResponse"> 
+    <s0:part element="s1:MarkAsArchivedResponse" name="body"/> 
+  </s0:message> 
+  <s0:message name="MarkAsDeliveredRequest"> 
+    <s0:part element="s1:MarkAsDeliveredRequest" name="body"/> 
+  </s0:message> 
+  <s0:message name="MarkAsDeliveredResponse"> 
+    <s0:part element="s1:MarkAsDeliveredResponse" name="body"/> 
+  </s0:message> 
+  <s0:message name="MarkAsUnDeliveredRequest"> 
+    <s0:part element="s1:MarkAsUnDeliveredRequest" name="body"/> 
+  </s0:message> 
+  <s0:message name="MarkAsUnDeliveredResponse"> 
+    <s0:part element="s1:MarkAsUnDeliveredResponse" name="body"/> 
+  </s0:message> 
+  <s0:message name="ListNotificationsRequest"> 
+    <s0:part element="s1:ListNotificationsRequest" name="body"/> 
+  </s0:message> 
+  <s0:message name="ListNotificationsResponse"> 
+    <s0:part element="s1:ListNotificationsResponse" name="body"/> 
+  </s0:message> 
+  <s0:portType name="RecipeExecutorPortType"> 
+    <s0:operation name="revokePrescriptionForExecutor"> 
+      <s0:input message="s1:RevokePrescriptionForExecutorRequest"/> 
+      <s0:output message="s1:RevokePrescriptionForExecutorResponse"/> 
+    </s0:operation> 
+    <s0:operation name="aliveCheck"> 
+      <s0:input message="s1:AliveCheckRequest"/> 
+      <s0:output message="s1:AliveCheckResponse"/> 
+    </s0:operation> 
+    <s0:operation name="createFeedback"> 
+      <s0:input message="s1:CreateFeedbackRequest"/> 
+      <s0:output message="s1:CreateFeedbackResponse"/> 
+    </s0:operation> 
+    <s0:operation name="getPrescriptionForExecutor"> 
+      <s0:input message="s1:GetPrescriptionForExecutorRequest"/> 
+      <s0:output message="s1:GetPrescriptionForExecutorResponse"/> 
+    </s0:operation> 
+    <s0:operation name="markAsArchived"> 
+      <s0:input message="s1:MarkAsArchivedRequest"/> 
+      <s0:output message="s1:MarkAsArchivedResponse"/> 
+    </s0:operation> 
+    <s0:operation name="markAsDelivered"> 
+      <s0:input message="s1:MarkAsDeliveredRequest"/> 
+      <s0:output message="s1:MarkAsDeliveredResponse"/> 
+    </s0:operation> 
+    <s0:operation name="markAsUnDelivered"> 
+      <s0:input message="s1:MarkAsUnDeliveredRequest"/> 
+      <s0:output message="s1:MarkAsUnDeliveredResponse"/> 
+    </s0:operation> 
+    <s0:operation name="listNotifications"> 
+      <s0:input message="s1:ListNotificationsRequest"/> 
+      <s0:output message="s1:ListNotificationsResponse"/> 
+    </s0:operation> 
+  </s0:portType> 
+  <s0:binding name="RecipeExecutorSoapBinding" type="s1:RecipeExecutorPortType"> 
+    <s2:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/> 
+    <s0:operation name="revokePrescriptionForExecutor"> 
+      <s2:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:RevokePrescriptionForExecutor" style="document"/> 
+      <s0:input> 
+        <s2:body use="literal"/> 
+      </s0:input> 
+      <s0:output> 
+        <s2:body use="literal"/> 
+      </s0:output> 
+    </s0:operation> 
+    <s0:operation name="aliveCheck"> 
+      <s2:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:AliveCheck" style="document"/> 
+      <s0:input> 
+        <s2:body use="literal"/> 
+      </s0:input> 
+      <s0:output> 
+        <s2:body use="literal"/> 
+      </s0:output> 
+    </s0:operation> 
+    <s0:operation name="createFeedback"> 
+      <s2:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:CreateFeedback" style="document"/> 
+      <s0:input> 
+        <s2:body use="literal"/> 
+      </s0:input> 
+      <s0:output> 
+        <s2:body use="literal"/> 
+      </s0:output> 
+    </s0:operation> 
+    <s0:operation name="getPrescriptionForExecutor"> 
+      <s2:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:GetPrescriptionForExecutor" style="document"/> 
+      <s0:input> 
+        <s2:body use="literal"/> 
+      </s0:input> 
+      <s0:output> 
+        <s2:body use="literal"/> 
+      </s0:output> 
+    </s0:operation> 
+    <s0:operation name="markAsArchived"> 
+      <s2:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:MarkAsArchived" style="document"/> 
+      <s0:input> 
+        <s2:body use="literal"/> 
+      </s0:input> 
+      <s0:output> 
+        <s2:body use="literal"/> 
+      </s0:output> 
+    </s0:operation> 
+    <s0:operation name="markAsDelivered"> 
+      <s2:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:MarkAsDelivered" style="document"/> 
+      <s0:input> 
+        <s2:body use="literal"/> 
+      </s0:input> 
+      <s0:output> 
+        <s2:body use="literal"/> 
+      </s0:output> 
+    </s0:operation> 
+    <s0:operation name="markAsUnDelivered"> 
+      <s2:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:MarkAsUnDelivered" style="document"/> 
+      <s0:input> 
+        <s2:body use="literal"/> 
+      </s0:input> 
+      <s0:output> 
+        <s2:body use="literal"/> 
+      </s0:output> 
+    </s0:operation> 
+    <s0:operation name="listNotifications"> 
+      <s2:operation soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:ListNotifications" style="document"/> 
+      <s0:input> 
+        <s2:body use="literal"/> 
+      </s0:input> 
+      <s0:output> 
+        <s2:body use="literal"/> 
+      </s0:output> 
+    </s0:operation> 
+  </s0:binding> 
+  <s0:service name="RecipeExecutorService"> 
+    <s0:port binding="s1:RecipeExecutorSoapBinding" name="RecipeExecutorServiceSOAP11"> 
+      <s2:address location="https://services-acpt.ehealth.fgov.be/Recip-e/v1/Executor_v1"/> 
+    </s0:port> 
+  </s0:service> 
+</s0:definitions>

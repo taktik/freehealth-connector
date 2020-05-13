@@ -1,26 +1,50 @@
 package be.recipe.services.prescriber;
 
-import be.recipe.services.PartyIdentification;
-import javax.validation.constraints.NotNull;
+import be.recipe.services.core.Page;
+import be.recipe.services.core.PartyIdentification;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
+import javax.xml.bind.annotation.XmlType;
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(
+   name = "getListOpenPrescriptionParam",
+   propOrder = {"symmKey", "page", "session"}
+)
 @XmlRootElement(
-   namespace = "http:/services.recipe.be/prescriber"
+   name = "getListOpenPrescriptionParam"
 )
 public class GetListOpenPrescriptionParam extends PartyIdentification {
-   @NotNull
-   private byte[] symmKey;
-
-   @NotNull
-   public String getPrescriberId() {
-      return super.getPrescriberId();
-   }
+   @XmlElement(
+      required = true
+   )
+   protected byte[] symmKey;
+   protected Page page;
+   protected byte[] session;
 
    public byte[] getSymmKey() {
       return this.symmKey;
    }
 
-   public void setSymmKey(byte[] symmKey) {
-      this.symmKey = symmKey;
+   public void setSymmKey(byte[] value) {
+      this.symmKey = value;
    }
+
+   public Page getPage() {
+      return this.page;
+   }
+
+   public void setPage(Page value) {
+      this.page = value;
+   }
+
+   public byte[] getSession() {
+      return this.session;
+   }
+
+   public void setSession(byte[] value) {
+      this.session = value;
+   }
+
 }

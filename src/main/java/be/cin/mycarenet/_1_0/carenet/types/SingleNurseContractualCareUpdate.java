@@ -10,57 +10,63 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
-   name = "SingleNurseContractualCareUpdateType",
-   propOrder = {"careReceiverDetail", "nurseContractualCareUpdateDetail", "nurseContractualCarePreviousDetail"}
+        name = "SingleNurseContractualCareUpdateType",
+        propOrder = {"careReceiverDetail", "nurseContractualCareUpdateDetail", "nurseContractualCarePreviousDetail"}
 )
 @XmlRootElement(
-   name = "SingleNurseContractualCareUpdate"
+        name = "SingleNurseContractualCareUpdate"
 )
 public class SingleNurseContractualCareUpdate implements Serializable {
    private static final long serialVersionUID = 1L;
    @XmlElement(
-      name = "CareReceiverDetail",
-      required = true
+           name = "CareReceiverDetail",
+           required = true
    )
    protected ExtCareReceiverDetailType careReceiverDetail;
    @XmlElement(
-      name = "NurseContractualCareUpdateDetail",
-      required = true
+           name = "NurseContractualCareUpdateDetail",
+           required = true
    )
    protected NurseContractualCareUpdateDetail nurseContractualCareUpdateDetail;
    @XmlElement(
-      name = "NurseContractualCarePreviousDetail",
-      required = true
+           name = "NurseContractualCarePreviousDetail",
+           required = true
    )
    protected NurseContractualCareDetailType nurseContractualCarePreviousDetail;
    @XmlAttribute(
-      name = "MessageName"
+           name = "MessageName",
+           required = true
    )
    protected MessageNameType messageName;
    @XmlAttribute(
-      name = "Version"
+           name = "Version",
+           required = true
    )
    protected String version;
    @XmlAttribute(
-      name = "Duplicate"
+           name = "Duplicate",
+           required = true
    )
-   protected Boolean duplicate;
+   protected boolean duplicate;
    @XmlAttribute(
-      name = "TestFlag"
+           name = "TestFlag",
+           required = true
    )
-   protected Boolean testFlag;
+   protected boolean testFlag;
    @XmlAttribute(
-      name = "SenderReference"
+           name = "SenderReference",
+           required = true
    )
    protected String senderReference;
    @XmlAttribute(
-      name = "ReceiverReference"
+           name = "ReceiverReference"
    )
    protected String receiverReference;
    @XmlAttribute(
-      name = "Synchronous"
+           name = "Synchronous",
+           required = true
    )
-   protected Boolean synchronous;
+   protected boolean synchronous;
 
    public ExtCareReceiverDetailType getCareReceiverDetail() {
       return this.careReceiverDetail;
@@ -102,19 +108,19 @@ public class SingleNurseContractualCareUpdate implements Serializable {
       this.version = value;
    }
 
-   public Boolean isDuplicate() {
+   public boolean isDuplicate() {
       return this.duplicate;
    }
 
-   public void setDuplicate(Boolean value) {
+   public void setDuplicate(boolean value) {
       this.duplicate = value;
    }
 
-   public Boolean isTestFlag() {
+   public boolean isTestFlag() {
       return this.testFlag;
    }
 
-   public void setTestFlag(Boolean value) {
+   public void setTestFlag(boolean value) {
       this.testFlag = value;
    }
 
@@ -134,11 +140,11 @@ public class SingleNurseContractualCareUpdate implements Serializable {
       this.receiverReference = value;
    }
 
-   public Boolean isSynchronous() {
+   public boolean isSynchronous() {
       return this.synchronous;
    }
 
-   public void setSynchronous(Boolean value) {
+   public void setSynchronous(boolean value) {
       this.synchronous = value;
    }
 }
