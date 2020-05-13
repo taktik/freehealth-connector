@@ -23,7 +23,7 @@ package org.taktik.connector.business.domain.kmehr.v20110701
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import org.taktik.connector.business.domain.kmehr.v20110701.be.fgov.ehealth.standards.kmehr.schema.v1.DateType
 import org.taktik.connector.business.domain.kmehr.v20110701.be.fgov.ehealth.standards.kmehr.schema.v1.MomentType
-import javax.xml.datatype.DatatypeConstants.FIELD_UNDEFINED
+import sun.util.calendar.CalendarDate.FIELD_UNDEFINED
 
 class Utils {
     fun makeXMLGregorianCalendarFromFuzzyLong(date: Long?): XMLGregorianCalendarImpl? {
