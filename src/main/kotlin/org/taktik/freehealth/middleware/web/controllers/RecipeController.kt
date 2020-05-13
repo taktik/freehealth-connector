@@ -98,6 +98,7 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
             prescriptionType = prescription.prescriptionType,
             notification = prescription.notification,
             executorId = prescription.executorId,
+            samVersion = prescription.samVersion,
             deliveryDate = prescription.deliveryDate?.let {FuzzyValues.getLocalDateTime(it)},
             expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)},
             vision = prescription.vision

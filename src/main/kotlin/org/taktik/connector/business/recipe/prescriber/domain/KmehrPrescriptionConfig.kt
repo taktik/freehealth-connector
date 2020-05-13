@@ -33,6 +33,7 @@ class KmehrPrescriptionConfig {
         var time: XMLGregorianCalendar? = null
         var recorddatetime: XMLGregorianCalendar? = null
         var messageId: String? = null
+        var samVersion: String? = null
         fun getIdKmehr() = this@KmehrPrescriptionConfig.prescription.inami + '.' + _idKhmerId
     }
 
