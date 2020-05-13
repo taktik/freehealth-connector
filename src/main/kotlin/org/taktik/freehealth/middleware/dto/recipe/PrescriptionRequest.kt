@@ -32,6 +32,7 @@ class PrescriptionRequest(
     var medications:List<Medication>? = null,
     var prescriptionType:String? = null,
     var notification:String? = null,
+    var samVersion:String? = null,
     var executorId:String? = null,
     val deliveryDate: Long? = null,
     val expirationDate: Long? = null,
