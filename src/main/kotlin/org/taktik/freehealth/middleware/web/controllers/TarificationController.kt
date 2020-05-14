@@ -52,13 +52,12 @@ class TarificationController(val tarificationService: TarificationService, val m
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
     @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
     @ResponseBody
+    fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
 
-fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
-
-private val ConsultTarifErrors =
+    private val ConsultTarifErrors =
         Gson().fromJson(
             this.javaClass.getResourceAsStream("/be/errors/ConsultTarifErrors.json").reader(Charsets.UTF_8),
             arrayOf<MycarenetError>().javaClass

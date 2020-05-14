@@ -48,7 +48,13 @@ import javax.servlet.http.HttpServletRequest
 class HubController(val hubService: HubService, val mapper: MapperFacade) {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(MissingTokenException::class)
-    @ResponseBody fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
+    @ResponseBody
+    fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
+
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
+    @ResponseBody
+    fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
 
     @PostMapping("/patient/{lastName}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun putPatient(
