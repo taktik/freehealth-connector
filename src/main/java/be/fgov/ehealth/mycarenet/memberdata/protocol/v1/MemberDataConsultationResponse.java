@@ -23,6 +23,7 @@ public class MemberDataConsultationResponse extends SendResponseType implements 
    @XmlTransient
    private SOAPMessage soapRequest;
    @XmlTransient private SOAPMessage soapResponse;
+   @XmlTransient private Integer upstreamTiming;
 
    @Override
    public SOAPMessage getSoapRequest() {
@@ -44,4 +45,13 @@ public class MemberDataConsultationResponse extends SendResponseType implements 
       this.soapResponse = soapResponse;
    }
 
+   @Override
+   public Integer getUpstreamTiming() {
+      return upstreamTiming;
+   }
+
+   @Override
+   public void setUpstreamTiming(Integer upstreamTiming) {
+      this.upstreamTiming = upstreamTiming;
+   }
 }

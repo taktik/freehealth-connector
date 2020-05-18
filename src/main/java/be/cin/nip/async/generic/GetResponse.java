@@ -38,6 +38,7 @@ public class GetResponse implements Serializable, SoapConversationLogger {
    @XmlTransient
    private SOAPMessage soapRequest;
    @XmlTransient private SOAPMessage soapResponse;
+   @XmlTransient private Integer upstreamTiming;
 
    @Override
    public SOAPMessage getSoapRequest() {
@@ -57,5 +58,15 @@ public class GetResponse implements Serializable, SoapConversationLogger {
    @Override
    public void setSoapResponse(SOAPMessage soapResponse) {
       this.soapResponse = soapResponse;
+   }
+
+   @Override
+   public Integer getUpstreamTiming() {
+      return upstreamTiming;
+   }
+
+   @Override
+   public void setUpstreamTiming(Integer upstreamTiming) {
+      this.upstreamTiming = upstreamTiming;
    }
 }

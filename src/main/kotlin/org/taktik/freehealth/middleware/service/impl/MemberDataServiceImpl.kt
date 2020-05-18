@@ -320,10 +320,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         MemberDataXmlValidatorImpl().validate(request)
 
         val consultMemberData = memberDataService.consultMemberData(samlToken, request)
-        val marshallerHelper =
-            MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java)
-        val xmlRequest =
-            marshallerHelper.toXMLByteArray(request)
+        val marshallerHelper = MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java)
+        val xmlRequest = marshallerHelper.toXMLByteArray(request)
 
         val unencryptedXmlRequest = marshallerHelper.toObject(xmlRequest)?.apply {
             this.detail = unEncryptedQuery?.let {aqb -> BlobMapper.mapBlobTypefromBlob(blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA")) }

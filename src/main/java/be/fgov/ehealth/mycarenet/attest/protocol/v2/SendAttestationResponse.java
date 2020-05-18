@@ -16,6 +16,8 @@ public class SendAttestationResponse extends SendResponseType implements SoapCon
 	@XmlTransient
 	private SOAPMessage soapRequest;
 	@XmlTransient private SOAPMessage soapResponse;
+	@XmlTransient
+	private Integer upstreamTiming;
 
 	@Override
 	public SOAPMessage getSoapRequest() {
@@ -37,4 +39,13 @@ public class SendAttestationResponse extends SendResponseType implements SoapCon
 		this.soapResponse = soapResponse;
 	}
 
+	@Override
+	public Integer getUpstreamTiming() {
+		return upstreamTiming;
+	}
+
+	@Override
+	public void setUpstreamTiming(Integer upstreamTiming) {
+		this.upstreamTiming = upstreamTiming;
+	}
 }

@@ -61,10 +61,13 @@ class GenInsServiceImpl : GenInsService, ConfigurationModuleBootstrap.ModuleBoot
 
         try {
             val service = ServiceFactory.getGeninsPort(token).apply { setPayload(genericReq) }
+            val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
 
             val response = xmlResponse.asObject(GetInsurabilityResponse::class.java) as GetInsurabilityResponse
 
+            response.upstreamTiming = (stop - start).toInt();
             response.soapRequest = xmlResponse.request
             response.soapResponse = xmlResponse.soapMessage
 

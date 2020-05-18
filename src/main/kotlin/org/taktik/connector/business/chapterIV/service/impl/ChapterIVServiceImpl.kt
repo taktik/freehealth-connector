@@ -24,9 +24,12 @@ class ChapterIVServiceImpl(private val replyValidator: EhealthReplyValidator) : 
             val service = ServiceFactory.getConsultationService(token)
             service.setPayload(request)
             service.setSoapAction("urn:be:fgov:ehealth:chap4:protocol:v1:ConsultChap4MedicalAdvisorAgreement")
+            val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
             val response = xmlResponse.asObject(ConsultChap4MedicalAdvisorAgreementResponse::class.java)
 
+            response.upstreamTiming = (stop - start).toInt();
             response.soapRequest = xmlResponse.request
             response.soapResponse = xmlResponse.soapMessage
 
@@ -48,9 +51,12 @@ class ChapterIVServiceImpl(private val replyValidator: EhealthReplyValidator) : 
             val service = ServiceFactory.getAdmissionService(token)
             service.setPayload(request)
             service.setSoapAction("urn:be:fgov:ehealth:chap4:protocol:v1:AskChap4MedicalAdvisorAgreement")
+            val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
             val response = xmlResponse.asObject(AskChap4MedicalAdvisorAgreementResponse::class.java)
 
+            response.upstreamTiming = (stop - start).toInt();
             response.soapRequest = xmlResponse.request
             response.soapResponse = xmlResponse.soapMessage
 

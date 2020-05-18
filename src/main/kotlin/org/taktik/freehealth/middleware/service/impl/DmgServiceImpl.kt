@@ -199,11 +199,13 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             this.xades = BlobUtil.generateXades(this.detail, credential, "mcn.registration")
         }
 
+        val start = System.currentTimeMillis()
         val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(
             org.taktik.connector.business.registration.service.ServiceFactory.getRegistrationService(samlToken).apply {
                 setPayload(mcRequest)
                 setSoapAction("urn:be:fgov:ehealth:mycarenet:registration:protocol:v1:RegisterToMycarenetService")
             })
+        val stop = System.currentTimeMillis()
 
         val intermediateResponse = try {
             xmlResponse.asObject(RegisterToMycarenetServiceResponse::class.java)
@@ -211,6 +213,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             RegisterToMycarenetServiceResponse()
         }
 
+        intermediateResponse.upstreamTiming = (stop - start).toInt()
         intermediateResponse.soapRequest = xmlResponse.request
         intermediateResponse.soapResponse = xmlResponse.soapMessage
 
@@ -747,7 +750,10 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
         return try {
             val response = ResponseObjectBuilderFactory.getResponseObjectBuilder()
                 .handleSendResponseType(xmlResponse.asObject(
-                    NotifyGlobalMedicalFileResponse::class.java).apply { replyValidator.validateReplyStatus(this) })
+                    NotifyGlobalMedicalFileResponse::class.java).apply {
+                    replyValidator.validateReplyStatus(this)
+                })
+
 
             DmgConsultation(response.sendTransactionResponse.acknowledge.isIscomplete).apply {
                 this.errors.addAll(response.sendTransactionResponse.acknowledge.errors?.filterNotNull()?.flatMap { et ->
