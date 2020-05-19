@@ -182,7 +182,10 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 this.facets.addAll(facets ?: listOf(
                     Facet().apply {
                         id = "urn:be:cin:nippin:insurability"
-                        dimensions.add(Facet.Dimension().apply { id = "requestType"; value = if(requestType === "invoicing") "invoicing" else "information"})
+                        dimensions.add(Facet.Dimension().apply {
+                            id = "requestType";
+                            value = if(requestType == "invoicing") "invoicing" else "information"
+                        })
                         dimensions.add(Facet.Dimension().apply {
                             id = "contactType"; value =
                             if (hospitalized == true) "hospitalized" else "other"
