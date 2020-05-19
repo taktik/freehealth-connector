@@ -121,6 +121,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         startDate: Instant,
         endDate: Instant,
         hospitalized: Boolean?,
+        requestType: String?,
         facets: List<Facet>?
                               ): MemberDataResponse {
         val encryptRequest = true
@@ -181,7 +182,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 this.facets.addAll(facets ?: listOf(
                     Facet().apply {
                         id = "urn:be:cin:nippin:insurability"
-                        dimensions.add(Facet.Dimension().apply { id = "requestType"; value = "information" })
+                        dimensions.add(Facet.Dimension().apply { id = "requestType"; value = if(requestType === "invoicing") "invoicing" else "information"})
                         dimensions.add(Facet.Dimension().apply {
                             id = "contactType"; value =
                             if (hospitalized == true) "hospitalized" else "other"
@@ -253,7 +254,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         }
                     }
                     careProvider = CareProviderType().apply {
-                        if(hcpQuality == "guardpost") {
+                        if((hcpQuality == "guardpost")||(hcpQuality == "medicalhouse")) {
                             // nihii11 is required with guardpost
                             nihii =
                                 NihiiType().apply {

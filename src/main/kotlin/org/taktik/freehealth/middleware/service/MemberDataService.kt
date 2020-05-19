@@ -40,5 +40,6 @@ interface MemberDataService {
         startDate: Instant,
         endDate: Instant,
         hospitalized: Boolean? = null,
+        requestType: String?,
         facets: List<Facet>? = null): MemberDataResponse
 }
