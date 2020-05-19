@@ -24,11 +24,13 @@ class GeneralControllerAdvice() : ResponseBodyAdvice<Any> {
         selectedConverterType: Class<out HttpMessageConverter<*>>,
         request: ServerHttpRequest,
         response: ServerHttpResponse): Any? {
-        val servletServerRequest = request as ServletServerHttpRequest
-        val startTime = servletServerRequest.servletRequest.getAttribute("startTime") as Long
-        val timeElapsed = System.currentTimeMillis() - startTime
-        response.headers.add("X-FHC-Timing", timeElapsed.toString())
-        response.headers.add("X-FHC-Node", InetAddress.getLocalHost().hostName)
+        (request as? ServletServerHttpRequest)?.servletRequest?.getAttribute("startTime")?.let {
+            (it as? Long)?.let { startTime ->
+                val timeElapsed = System.currentTimeMillis() - startTime
+                response.headers.add("X-FHC-Timing", timeElapsed.toString())
+                response.headers.add("X-FHC-Node", InetAddress.getLocalHost().hostName)
+            }
+        }
         return body
     }
 }

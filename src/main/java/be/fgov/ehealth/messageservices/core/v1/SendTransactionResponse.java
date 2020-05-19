@@ -34,6 +34,7 @@ public class SendTransactionResponse implements Serializable, SoapConversationLo
 
    @XmlTransient private SOAPMessage soapRequest;
    @XmlTransient private SOAPMessage soapResponse;
+   @XmlTransient private Integer upstreamTiming;
 
    public ResponseType getResponse() {
       return this.response;
@@ -85,5 +86,15 @@ public class SendTransactionResponse implements Serializable, SoapConversationLo
    @Override
    public void setSoapResponse(SOAPMessage soapResponse) {
       this.soapResponse = soapResponse;
+   }
+
+   @Override
+   public Integer getUpstreamTiming() {
+      return upstreamTiming;
+   }
+
+   @Override
+   public void setUpstreamTiming(Integer upstreamTiming) {
+      this.upstreamTiming = upstreamTiming;
    }
 }
