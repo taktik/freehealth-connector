@@ -54,6 +54,8 @@ interface MemberDataService {
         startDate: Instant,
         endDate: Instant,
         passPhrase: String,
+        hospitalized: Boolean? = false,
+        requestType: String?,
         mdaRequest: MemberDataBatchRequest
                              ): GenAsyncResponse
 

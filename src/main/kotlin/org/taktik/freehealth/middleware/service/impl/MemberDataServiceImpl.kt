@@ -167,6 +167,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         startDate: Instant,
         endDate: Instant,
         passPhrase: String,
+        hospitalized: Boolean?,
+        requestType: String?,
         mdaRequest: MemberDataBatchRequest
                                       ): GenAsyncResponse {
         val encryptRequest = false
@@ -206,6 +208,13 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val unEncryptedQuery = ConnectorXmlUtils.toByteArray(AttributeQueryList().apply { attributeQueries.addAll(attrQueries) })
         val blobBuilder = BlobBuilderFactory.getBlobBuilder("genericasync")
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId();
+
+        val marshallerHelper = MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java)
+
+        val marshallRequest = marshallerHelper.toObject(unEncryptedQuery)?.apply {
+            this.detail = unEncryptedQuery?.let {aqb -> BlobMapper.mapBlobTypefromBlob(blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA")) }
+        }?.let { marshallerHelper.toXMLByteArray(it) }
+
 
         val blob = unEncryptedQuery.let {aqb ->
             if (encryptRequest) {
