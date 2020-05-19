@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import org.taktik.freehealth.middleware.dto.UUIDType
 import org.taktik.freehealth.middleware.exception.MissingKeystoreException
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.SSOService
 import org.taktik.freehealth.middleware.service.STSService
 import java.util.UUID
@@ -46,9 +47,24 @@ import javax.servlet.http.HttpServletRequest
 @RequestMapping("/sts")
 class STSController(private val stsService: STSService, private val ssoService: SSOService) {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(MissingKeystoreException::class)
+    @ExceptionHandler(MissingTokenException::class)
     @ResponseBody
-    fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
+    fun handleUnauthorizedRequest(req: HttpServletRequest, ex: MissingTokenException): String = ex.message ?: "unknown reason"
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException::class)
+    @ResponseBody
+    fun handleBadRequest(req: HttpServletRequest, ex: IllegalArgumentException): String = ex.message ?: "unknown reason"
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NumberFormatException::class)
+    @ResponseBody
+    fun handleBadRequest(req: HttpServletRequest, ex: NumberFormatException): String = ex.message ?: "unknown reason"
+
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
+    @ResponseBody
+    fun handleBadGateway(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
 
     val log = LoggerFactory.getLogger(this.javaClass)
 

@@ -15,6 +15,7 @@ public class RegisterToMycarenetServiceResponse extends SendResponseType impleme
 
    @XmlTransient private SOAPMessage soapRequest;
    @XmlTransient private SOAPMessage soapResponse;
+   @XmlTransient private Integer upstreamTiming;
 
    @Override
    public SOAPMessage getSoapRequest() {
@@ -34,5 +35,15 @@ public class RegisterToMycarenetServiceResponse extends SendResponseType impleme
    @Override
    public void setSoapResponse(SOAPMessage soapResponse) {
       this.soapResponse = soapResponse;
+   }
+
+   @Override
+   public Integer getUpstreamTiming() {
+      return upstreamTiming;
+   }
+
+   @Override
+   public void setUpstreamTiming(Integer upstreamTiming) {
+      this.upstreamTiming = upstreamTiming;
    }
 }

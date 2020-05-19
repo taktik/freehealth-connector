@@ -44,15 +44,19 @@ class GenInsController(val genInsService: GenInsService) {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(MissingTokenException::class)
     @ResponseBody
+    fun handleUnauthorizedRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException::class)
+    @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
     @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
     @ResponseBody
+    fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
 
-fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
-
-@GetMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @GetMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getGeneralInsurability(
         @PathVariable ssin: String,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,

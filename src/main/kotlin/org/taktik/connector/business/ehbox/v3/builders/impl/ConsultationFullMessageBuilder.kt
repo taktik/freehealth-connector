@@ -170,13 +170,14 @@ class ConsultationFullMessageBuilder : AbstractConsultationBuilder<GetFullMessag
         val annex = Document()
         annex.filename = annexType.downloadFileName
         annex.mimeType = annexType.mimeType
-        val annexTitle =
+        val annexTitle = annexType.encryptableTitle?.let {
             this.handleAndDecryptIfNeeded(
                 credential,
-                annexType.encryptableTitle,
+                it,
                 documentMessage.isEncrypted,
                 container
-            )
+                                         )
+        }
         if (annexTitle != null) {
             annex.title = ConnectorIOUtils.toString(annexTitle, Charset.UTF_8)
         }
