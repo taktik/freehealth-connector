@@ -59,19 +59,23 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
     @Value("\${mycarenet.timezone}")
     internal val mcnTimezone: String = "Europe/Brussels"
 
-
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(MissingTokenException::class)
     @ResponseBody
+    fun handleUnauthorizedRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException::class)
+    @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
     @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
     @ResponseBody
 
-fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
+    fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
 
-@PostMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @PostMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun queryMemberData(
         @PathVariable ssin: String,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -84,6 +88,7 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?,
+        @RequestParam(required = false) requestType: String?,
         @RequestBody facets:List<FacetDto>
                      ) : MemberDataResponse {
         val startDate: Instant = date?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
@@ -99,7 +104,8 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
                                                ioMembership = null,
                                                startDate = startDate,
                                                endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
-                                               facets = facets.map { mapper.map(it, Facet::class.java) })
+                                                requestType= requestType,
+                                                facets = facets.map { mapper.map(it, Facet::class.java) })
     }
 
     @GetMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -114,7 +120,8 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) endDate: Long?,
-        @RequestParam(required = false) hospitalized: Boolean?
+        @RequestParam(required = false) hospitalized: Boolean?,
+        @RequestParam(required = false) requestType: String?
     ) : MemberDataResponse {
         val startDate: Instant = date?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
         return memberDataService.getMemberData(keystoreId = keystoreId,
@@ -129,7 +136,8 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
                                                ioMembership = null,
                                                startDate = startDate,
                                                endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
-                                               hospitalized = hospitalized ?: false)
+                                               hospitalized = hospitalized ?: false,
+                                               requestType= requestType)
     }
 
     @PostMapping("/{io}/{ioMembership}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -146,6 +154,7 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?,
+        @RequestParam(required = false) requestType: String?,
         @RequestBody facets:List<FacetDto>
                        ) : MemberDataResponse {
         val startDate: Instant = date?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
@@ -161,7 +170,8 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
                                                ioMembership = ioMembership,
                                                startDate = startDate,
                                                endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
-                                               facets = facets.map { mapper.map(it, Facet::class.java) })
+                                                requestType= requestType,
+            facets = facets.map { mapper.map(it, Facet::class.java) })
     }
 
     @GetMapping("/{io}/{ioMembership}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -177,7 +187,8 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) endDate: Long?,
-        @RequestParam(required = false) hospitalized: Boolean?
+        @RequestParam(required = false) hospitalized: Boolean?,
+        @RequestParam(required = false) requestType: String?
     ): MemberDataResponse {
         val startDate: Instant = date?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
         return memberDataService.getMemberData(keystoreId = keystoreId,
@@ -192,7 +203,8 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
                                                ioMembership = ioMembership,
                                                startDate = startDate,
                                                endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
-                                               hospitalized = hospitalized ?: false)
+                                               hospitalized = hospitalized ?: false,
+                                               requestType= requestType)
     }
 
     @PostMapping("/async/request/{io}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])

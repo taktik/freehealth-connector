@@ -284,6 +284,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         startDate: Instant,
         endDate: Instant,
         hospitalized: Boolean?,
+        requestType: String?,
         facets: List<Facet>?
                               ): MemberDataResponse {
         val encryptRequest = true
@@ -315,7 +316,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId();
 
         val attrQuery =
-            getAttrQuery(inputRef, issueInstant, facets, hospitalized, hcpNihii, patientSsin, io, ioMembership, startDate, endDate)
+            getAttrQuery(inputRef, issueInstant, facets, hospitalized, requestType, hcpNihii, patientSsin, io, ioMembership, startDate, endDate)
         val unEncryptedQuery = ConnectorXmlUtils.toByteArray(attrQuery as Any)
 
         val request = MemberDataConsultationRequest().apply {
@@ -337,7 +338,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         }
                     }
                     careProvider = CareProviderType().apply {
-                        if(hcpQuality == "guardpost") {
+                        if((hcpQuality == "guardpost")||(hcpQuality == "medicalhouse")) {
                             // nihii11 is required with guardpost
                             nihii =
                                 NihiiType().apply {
@@ -404,10 +405,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         MemberDataXmlValidatorImpl().validate(request)
 
         val consultMemberData = memberDataService.consultMemberData(samlToken, request)
-        val marshallerHelper =
-            MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java)
-        val xmlRequest =
-            marshallerHelper.toXMLByteArray(request)
+        val marshallerHelper = MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java)
+        val xmlRequest = marshallerHelper.toXMLByteArray(request)
 
         val unencryptedXmlRequest = marshallerHelper.toObject(xmlRequest)?.apply {
             this.detail = unEncryptedQuery?.let {aqb -> BlobMapper.mapBlobTypefromBlob(blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA")) }
@@ -499,6 +498,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         issueInstant: XMLGregorianCalendarImpl,
         facets: List<Facet>?,
         hospitalized: Boolean?,
+        requestType: String?,
         hcpNihii: String,
         patientSsin: String?,
         io: String?,
@@ -512,7 +512,10 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 this.facets.addAll(facets ?: listOf(
                     Facet().apply {
                         id = "urn:be:cin:nippin:insurability"
-                        dimensions.add(Facet.Dimension().apply { id = "requestType"; value = "information" })
+                        dimensions.add(Facet.Dimension().apply {
+                            id = "requestType"
+                            value = if(requestType == "invoicing") "invoicing" else "information"
+                        })
                         dimensions.add(Facet.Dimension().apply {
                             id = "contactType"; value =
                             if (hospitalized == true) "hospitalized" else "other"

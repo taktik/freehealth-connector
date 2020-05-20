@@ -9,10 +9,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.web.servlet.HandlerExceptionResolver
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import org.taktik.freehealth.middleware.web.ExceptionHandlers
+import org.taktik.freehealth.middleware.web.ExecuterTimeInterceptor
 
 @Configuration
 @EnableWebMvc
@@ -22,9 +23,6 @@ import org.taktik.freehealth.middleware.web.ExceptionHandlers
 class WebMvcConfigurer(val resourceProperties: ResourceProperties) : WebMvcConfigurer {
     private val SERVLET_LOCATIONS = arrayOf("/")
 
-    override fun configureHandlerExceptionResolvers(exceptionResolvers: MutableList<HandlerExceptionResolver>) {
-        exceptionResolvers.add(ExceptionHandlers());
-    }
 
     override fun configureContentNegotiation(contentNegotiationConfigurer: ContentNegotiationConfigurer) {
         // Disable use of pathExtension and parameter for content negotiation
@@ -55,6 +53,10 @@ class WebMvcConfigurer(val resourceProperties: ResourceProperties) : WebMvcConfi
         System.arraycopy(SERVLET_LOCATIONS, 0, locations, staticLocations.size,
                          SERVLET_LOCATIONS.size)
         return locations.filterNotNull().toTypedArray()
+    }
+
+    override fun addInterceptors(registry: InterceptorRegistry) {
+        registry.addInterceptor(ExecuterTimeInterceptor()).addPathPatterns("/**")
     }
 
 }

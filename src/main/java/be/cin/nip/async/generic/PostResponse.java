@@ -37,6 +37,7 @@ public class PostResponse implements Serializable, SoapConversationLogger {
 
    @XmlTransient private SOAPMessage soapRequest;
    @XmlTransient private SOAPMessage soapResponse;
+   @XmlTransient private Integer upstreamTiming;
 
    @Override
    public SOAPMessage getSoapRequest() {
@@ -58,4 +59,13 @@ public class PostResponse implements Serializable, SoapConversationLogger {
       this.soapResponse = soapResponse;
    }
 
+   @Override
+   public Integer getUpstreamTiming() {
+      return upstreamTiming;
+   }
+
+   @Override
+   public void setUpstreamTiming(Integer upstreamTiming) {
+      this.upstreamTiming = upstreamTiming;
+   }
 }
