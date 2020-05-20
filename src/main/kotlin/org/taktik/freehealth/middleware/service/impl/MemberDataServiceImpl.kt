@@ -86,6 +86,7 @@ import org.taktik.connector.business.mycarenetcommons.mapper.SendRequestMapper
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.builders.RequestBuilderFactory
+import org.taktik.connector.business.mycarenetdomaincommons.domain.Blob
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
 import org.taktik.connector.technical.config.ConfigFactory
@@ -171,7 +172,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         requestType: String?,
         mdaRequest: MemberDataBatchRequest
                                       ): GenAsyncResponse {
-        val encryptRequest = false
+        val encryptRequest = true
         validateQuality(hcpQuality)
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -240,7 +241,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     })).let {
                     blobBuilder.build(it, "none", detailId, "text/xml", "MDA", "encryptedForKnownBED")
                 }
-            } else blobBuilder.build(aqb, "deflate", detailId, "text/xml", "MDA")
+            } else blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA")
         }
 
         val ci = CommonInput().apply {

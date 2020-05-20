@@ -1,5 +1,6 @@
 package org.taktik.connector.business.mycarenetcommons.mapper;
 
+import be.cin.types.v1.ContentEncryptionType;
 import org.taktik.connector.business.mycarenetdomaincommons.domain.Blob;
 import org.taktik.connector.business.mycarenetdomaincommons.domain.CareProvider;
 import org.taktik.connector.business.mycarenetdomaincommons.domain.CareReceiverId;
@@ -187,6 +188,7 @@ public final class SendRequestMapper implements ConfigurationModuleBootstrap.Mod
       result.setContentEncoding(blob.getContentEncoding());
       result.setHashValue(blob.getHashValue());
       result.setContentType(blob.getContentType());
+      result.setContentEncryption(blob.getContentEncryption());
       return result;
    }
 

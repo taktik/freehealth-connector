@@ -215,7 +215,7 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
         return memberDataService.sendMemberDataRequest(
             keystoreId = keystoreId,
             tokenId = tokenId,
-            hcpQuality = hcpQuality ?: "doctor",
+            hcpQuality = hcpQuality ?: "medicalhouse",
             hcpNihii = hcpNihii,
             hcpSsin = hcpSsin,
             hcpName = hcpName,
