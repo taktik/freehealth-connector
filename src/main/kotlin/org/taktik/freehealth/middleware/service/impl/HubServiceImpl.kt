@@ -597,11 +597,50 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         breakTheGlassReason: String?,
         sv: String,
         sl: String,
-        value: String
+        value: String,
+        hubAuthorId: String?
     ): Kmehrmessage? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Hub operations")
+
+        val transactionRequest =  GetTransactionRequest().apply {
+            request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, breakTheGlassReason, true)
+            select = SelectGetTransactionType().apply {
+                patient =
+                    PatientIdType().apply {
+                        ids.add(IDPATIENT().apply {
+                            this.s =
+                                IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin
+                        })
+                    }
+                transaction = TransactionBaseType().apply {
+                    id =
+                        IDKMEHR().apply {
+                            this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
+                            sl; this.value = value
+                        }
+
+                    if(StringUtils.isNotEmpty(hubAuthorId)) {
+                        author = AuthorType().apply {
+                            hcparties.add(HcpartyType().apply {
+                                ids.add(IDHCPARTY().apply {
+                                    this.s = IDHCPARTYschemes.ID_HCPARTY
+                                    this.sv = "1.0"
+                                    this.value = hubAuthorId
+                                })
+                                cds.add(CDHCPARTY().apply {
+                                    this.s = CDHCPARTYschemes.CD_HCPARTY
+                                    this.sv = "1.1"
+                                    this.value = "hub"
+                                })
+                            })
+                        }
+                    }
+                }
+            }
+        }
+
         val transaction =
             freehealthHubService.getTransaction(
                 endpoint,
@@ -609,25 +648,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                 keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
-                GetTransactionRequest().apply {
-                    request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, breakTheGlassReason, true)
-                    select = SelectGetTransactionType().apply {
-                        patient =
-                            PatientIdType().apply {
-                                ids.add(IDPATIENT().apply {
-                                    this.s =
-                                        IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin
-                                })
-                            }
-                        transaction = TransactionBaseType().apply {
-                            id =
-                                IDKMEHR().apply {
-                                    this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
-                                    sl; this.value = value
-                                }
-                        }
-                    }
-                })
+                transactionRequest)
 
         return transaction.kmehrmessage
     }

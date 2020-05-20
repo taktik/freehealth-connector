@@ -379,6 +379,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @RequestParam(required = false) breakTheGlassReason: String?,
+        @RequestParam(required = false) hubAuthorId: String?,
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
@@ -397,6 +398,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
             hcpZip = hcpZip,
             ssin = ssin,
             breakTheGlassReason = breakTheGlassReason,
+            hubAuthorId = hubAuthorId,
             sv = sv,
             sl = sl,
             value = id
@@ -416,6 +418,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @RequestParam(required = false) breakTheGlassReason: String?,
+        @RequestParam(required = false) hubAuthorId: String?,
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
@@ -434,6 +437,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
             hcpZip = hcpZip,
             ssin = ssin,
             breakTheGlassReason = breakTheGlassReason,
+            hubAuthorId = hubAuthorId,
             sv = sv,
             sl = sl,
             value = id
