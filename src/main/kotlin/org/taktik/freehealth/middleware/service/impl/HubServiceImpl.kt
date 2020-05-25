@@ -598,7 +598,8 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         sv: String,
         sl: String,
         value: String,
-        hubAuthorId: String?
+        externalHubId: String?,
+        externalHubName: String?
     ): Kmehrmessage? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -621,19 +622,22 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                             sl; this.value = value
                         }
 
-                    if(StringUtils.isNotEmpty(hubAuthorId)) {
+                    if(StringUtils.isNotEmpty(externalHubId)) {
                         author = AuthorType().apply {
                             hcparties.add(HcpartyType().apply {
                                 ids.add(IDHCPARTY().apply {
                                     this.s = IDHCPARTYschemes.ID_HCPARTY
                                     this.sv = "1.0"
-                                    this.value = hubAuthorId
+                                    this.value = externalHubId
                                 })
                                 cds.add(CDHCPARTY().apply {
                                     this.s = CDHCPARTYschemes.CD_HCPARTY
                                     this.sv = "1.1"
                                     this.value = "hub"
                                 })
+                                if(StringUtils.isNotEmpty(externalHubName)){
+                                    name = externalHubName
+                                }
                             })
                         }
                     }

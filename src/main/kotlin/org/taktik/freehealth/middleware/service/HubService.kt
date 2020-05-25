@@ -195,7 +195,8 @@ interface HubService {
         sv: String,
         sl: String,
         value: String,
-        hubAuthorId: String? = null
+        externalHubId: String? = null,
+        externalHubName: String? = null
     ): Kmehrmessage?
 
     fun revokeTransaction(
