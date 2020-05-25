@@ -100,7 +100,6 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         extraDesignators: List<Pair<String, String>>
     ): SamlTokenResult? {
         val now = System.currentTimeMillis()
-
         val currentToken = tokenId?.let { id -> tokensMap[id] }
         val isStillRecommendedForUse = currentToken?.let {
             val valid = it.validity
@@ -167,6 +166,28 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
+            "sortingcenter" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:sortingcenter:nihii-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:sortingcenter:nihii-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:sortingcenter:nihii-number",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:sortingcenter:nihii-number:recognisedsortingcenter:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:sortingcenter:nihii-number:recognisedsortingcenter:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
+            )
             "dentist" -> listOf(
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
@@ -225,6 +246,18 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 ),
                 SAMLAttribute(
                     "urn:be:fgov:ehealth:1.0:certificateholder:medicalhouse:nihii-number",
+                    "urn:be:fgov:identification-namespace",
+                    nihiiOrSsin
+                )
+            )
+            "sortingcenter" -> listOf(
+                SAMLAttribute(
+                    "urn:be:fgov:ehealth:1.0:sortingcenter:nihii-number",
+                    "urn:be:fgov:identification-namespace",
+                    nihiiOrSsin
+                ),
+                SAMLAttribute(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:sortingcenter:nihii-number",
                     "urn:be:fgov:identification-namespace",
                     nihiiOrSsin
                 )
