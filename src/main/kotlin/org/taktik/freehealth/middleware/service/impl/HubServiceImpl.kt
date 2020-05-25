@@ -605,46 +605,6 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Hub operations")
 
-        val transactionRequest =  GetTransactionRequest().apply {
-            request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, breakTheGlassReason, true)
-            select = SelectGetTransactionType().apply {
-                patient =
-                    PatientIdType().apply {
-                        ids.add(IDPATIENT().apply {
-                            this.s =
-                                IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin
-                        })
-                    }
-                transaction = TransactionBaseType().apply {
-                    id =
-                        IDKMEHR().apply {
-                            this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
-                            sl; this.value = value
-                        }
-
-                    if(StringUtils.isNotEmpty(externalHubId)) {
-                        author = AuthorType().apply {
-                            hcparties.add(HcpartyType().apply {
-                                ids.add(IDHCPARTY().apply {
-                                    this.s = IDHCPARTYschemes.ID_HCPARTY
-                                    this.sv = "1.0"
-                                    this.value = externalHubId
-                                })
-                                cds.add(CDHCPARTY().apply {
-                                    this.s = CDHCPARTYschemes.CD_HCPARTY
-                                    this.sv = "1.1"
-                                    this.value = "hub"
-                                })
-                                if(StringUtils.isNotEmpty(externalHubName)){
-                                    name = externalHubName
-                                }
-                            })
-                        }
-                    }
-                }
-            }
-        }
-
         val transaction =
             freehealthHubService.getTransaction(
                 endpoint,
@@ -652,7 +612,45 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                 keystoreId,
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
-                transactionRequest)
+                GetTransactionRequest().apply {
+                    request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, breakTheGlassReason, true)
+                    select = SelectGetTransactionType().apply {
+                        patient =
+                            PatientIdType().apply {
+                                ids.add(IDPATIENT().apply {
+                                    this.s =
+                                        IDPATIENTschemes.INSS; this.sv = "1.0"; this.value = ssin
+                                })
+                            }
+                        transaction = TransactionBaseType().apply {
+                            id =
+                                IDKMEHR().apply {
+                                    this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
+                                    sl; this.value = value
+                                }
+
+                            if(StringUtils.isNotEmpty(externalHubId)) {
+                                author = AuthorType().apply {
+                                    hcparties.add(HcpartyType().apply {
+                                        ids.add(IDHCPARTY().apply {
+                                            this.s = IDHCPARTYschemes.ID_HCPARTY
+                                            this.sv = "1.0"
+                                            this.value = externalHubId
+                                        })
+                                        cds.add(CDHCPARTY().apply {
+                                            this.s = CDHCPARTYschemes.CD_HCPARTY
+                                            this.sv = "1.1"
+                                            this.value = "hub"
+                                        })
+                                        if(StringUtils.isNotEmpty(externalHubName)){
+                                            name = externalHubName
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    }
+                })
 
         return transaction.kmehrmessage
     }
