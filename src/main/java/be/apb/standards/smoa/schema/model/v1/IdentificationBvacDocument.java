@@ -8,13 +8,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
    name = "IdentificationBvacDocument",
-   propOrder = {"id", "barCode"}
+        propOrder = {"id", "internalReference", "barCode"}
 )
 public class IdentificationBvacDocument {
    @XmlElement(
       required = true
    )
    protected String id;
+   @XmlElement(
+           name = "InternalReference"
+   )
+   protected String internalReference;
    @XmlElement(
       required = true
    )
@@ -26,6 +30,14 @@ public class IdentificationBvacDocument {
 
    public void setId(String value) {
       this.id = value;
+   }
+
+   public String getInternalReference() {
+      return this.internalReference;
+   }
+
+   public void setInternalReference(String value) {
+      this.internalReference = value;
    }
 
    public BarCode getBarCode() {

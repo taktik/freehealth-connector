@@ -3,6 +3,7 @@ package org.taktik.connector.technical.ws.domain;
 import org.taktik.connector.technical.handler.CacheFeederHandler;
 import org.taktik.connector.technical.handler.ConnectionTimeOutHandler;
 import org.taktik.connector.technical.handler.LoggingHandler;
+import org.taktik.connector.technical.handler.MessageLevelRetryHandler;
 import org.taktik.connector.technical.handler.UserAgentHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,10 +20,13 @@ import org.slf4j.LoggerFactory;
 
 final class HandlersLoader {
    private static final Logger LOG = LoggerFactory.getLogger(HandlersLoader.class);
-   private static List<Class> defaultHandlers = Arrays.asList(ConnectionTimeOutHandler.class, LoggingHandler.class, UserAgentHandler.class, CacheFeederHandler.class);
+   private static List<Class> defaultHandlers = Arrays.asList(MessageLevelRetryHandler.class, ConnectionTimeOutHandler.class, LoggingHandler.class, UserAgentHandler.class, CacheFeederHandler.class);
 
-   static Handler<?>[] addingDefaultHandlers(Handler<?>[] result) {
-      ArrayList<Class> requiredHandler = new ArrayList(defaultHandlers.size());
+   private HandlersLoader() {
+   }
+
+   static Handler[] addingDefaultHandlers(Handler[] result) {
+      List<Class> requiredHandler = new ArrayList(defaultHandlers.size());
       requiredHandler.addAll(defaultHandlers);
       CollectionUtils.filter(requiredHandler, new HandlersLoader.DefaultHandlersPredicate(result));
       Iterator i$ = requiredHandler.iterator();

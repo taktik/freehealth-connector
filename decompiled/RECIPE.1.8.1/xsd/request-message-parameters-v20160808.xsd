@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://services.gfddpp.be" targetNamespace="http://services.gfddpp.be">
+	<xs:element name="getDataRequestParameters">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="patient" type="patientType" minOccurs="0"/>
+				<xs:element name="requestor" type="requestorType" minOccurs="1"/>
+				<xs:element name="dataType" type="xs:token" minOccurs="1"/>
+				<xs:element name="version" type="xs:string" minOccurs="0"/>
+				<xs:choice minOccurs="0">
+					<xs:element name="dataSpecificParametersGetData" type="dataSpecificParametersGetData" />
+					<xs:element name="dataSpecificParametersGetDataTypes" type="dataSpecificParametersGetDataTypes" />
+					<xs:element name="dataSpecificParametersPharmacyDetails" type="dataSpecificParametersPharmacyDetails" />
+					<xs:element name="dataSpecificParametersGetStatus" type="dataSpecificParametersGetStatus"/>
+					<xs:element name="dataSpecificParametersMedicationSchemeTimestamps" type="dataSpecificParametersMedicationSchemeTimestamps"/>
+					<xs:element name="dataSpecificParametersMedicationSchemeEntries" type="dataSpecificParametersMedicationSchemeEntries"/>
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="patientType">
+		<xs:sequence>
+			<xs:element name="patientId" type="xs:token" minOccurs="1"/>
+			<xs:element name="patientIdType" type="xs:token" minOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="requestorType">
+		<xs:sequence>
+			<xs:element name="requestorType" type="xs:token" minOccurs="1"/>
+			<xs:element name="requestorId" type="xs:token" minOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="dataSpecificParametersGetData">
+		<xs:sequence>
+			<xs:element name="excludeOwnData" type="xs:boolean" />
+			<xs:element name="dateRangeType" type="xs:string" />
+			<xs:element name="startDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="endDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="dataSpecificParametersGetDataTypes">
+		<xs:sequence>
+			<xs:element name="startDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="endDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="dataSpecificParametersPharmacyDetails">
+		<xs:sequence>
+			<xs:element name="dGuid" type="xs:string" />
+			<xs:element name="motivation" type="motivation" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="motivation">
+		<xs:sequence>
+			<xs:element name="motivationtext" type="xs:string" />
+			<xs:element name="motivationtype" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="dataSpecificParametersGetStatus">
+		<xs:sequence>
+			<xs:element name="SGUID" type="xs:token" minOccurs="0"/>
+			<xs:element name="DGUID" type="xs:token" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="dataSpecificParametersMedicationSchemeTimestamps">
+		<xs:sequence>
+			<xs:element name="clientMessageId" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="patientINSS" type="xs:string" minOccurs="1" maxOccurs="10"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="dataSpecificParametersMedicationSchemeEntries">
+		<xs:sequence>
+			<xs:element name="clientMessageId" type="xs:string" minOccurs="0"/>
+			<xs:element name="paginationIndex" type="xs:int" minOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+
+
+</xs:schema>

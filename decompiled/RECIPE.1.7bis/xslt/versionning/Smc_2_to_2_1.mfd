@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="22">
+	<resources/>
+	<component name="defaultmap1" blackbox="0" uid="1" editable="1">
+		<properties SelectedLanguage="xslt2"/>
+		<structure>
+			<children>
+				<component name="single-message-oa-1.0" library="xml" uid="2" kind="14">
+					<properties XSLTTargetEncoding="UTF-8" XSLTDefaultOutput="1"/>
+					<view ltx="762" lty="15" rbx="1262" rby="835"/>
+					<data>
+						<root scrollposition="1">
+							<header>
+								<namespaces>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/v1"/>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/model/v1"/>
+									<namespace uid="http://www.altova.com/mapforce"/>
+								</namespaces>
+							</header>
+							<entry name="FileInstance" ns="2" expanded="1">
+								<entry name="document" ns="2" expanded="1" casttotargettypemode="cast-in-subtree">
+									<entry name="single-message" inpkey="1" expanded="1">
+										<entry name="unsigned" inpkey="2" expanded="1">
+											<entry name="header" expanded="1">
+												<entry name="version" inpkey="67"/>
+												<entry name="messageCreateDate" inpkey="68"/>
+												<entry name="messageID" inpkey="69"/>
+												<entry name="sender" inpkey="70"/>
+											</entry>
+											<entry name="eventFolder" inpkey="76" expanded="1">
+												<entry name="events" inpkey="77" expanded="1">
+													<entry name="event" expanded="1" displayselectionmode="all"/>
+													<entry name="event" inpkey="4">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}BvacEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+														<entry name="id" inpkey="5"/>
+														<entry name="PharmacyList" inpkey="78" expanded="1">
+															<entry name="pharmacy" ns="1" inpkey="6" expanded="1">
+																<entry name="identification" ns="1" inpkey="7" expanded="1"/>
+																<entry name="identity" ns="1" inpkey="8"/>
+																<entry name="bvacList" ns="1" inpkey="9" expanded="1">
+																	<entry name="bvacDocument" ns="1" inpkey="10" expanded="1">
+																		<entry name="identification" ns="1" inpkey="11" expanded="1">
+																			<entry name="id" ns="1" inpkey="12"/>
+																			<entry name="barCode" ns="1" inpkey="13" expanded="1"/>
+																		</entry>
+																		<entry name="currency" ns="1" inpkey="14"/>
+																		<entry name="deliveryDate" ns="1" inpkey="15"/>
+																		<entry name="patient" ns="1" inpkey="16"/>
+																		<entry name="doctor" ns="1" inpkey="17"/>
+																		<entry name="productList" ns="1" inpkey="18"/>
+																		<entry name="totalAmounts" ns="1" inpkey="19"/>
+																	</entry>
+																</entry>
+															</entry>
+														</entry>
+													</entry>
+													<entry name="event" inpkey="91">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}ContinuedPharmaceuticalCareDossierEvent" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+													</entry>
+													<entry name="event" inpkey="92">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}MedicationDeliveryEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+													</entry>
+													<entry name="event" inpkey="87">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}MedicationHistoryEvent" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+													</entry>
+													<entry name="event" inpkey="79">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}PharmaceuticalCareEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+													</entry>
+													<entry name="event" inpkey="93">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}PharmaceuticalPrescriptionEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+													</entry>
+													<entry name="event" inpkey="94">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}RegisterExportEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+													</entry>
+												</entry>
+												<entry name="entitySpace" inpkey="20"/>
+											</entry>
+										</entry>
+										<entry name="signed" inpkey="21"/>
+									</entry>
+								</entry>
+							</entry>
+						</root>
+						<document schema="..\..\..\..\..\..\..\gfd-dpp\be-apb-gfddpp-services-smc\src\main\resources\xsd\smc-v3\single-message\maindoc\single-message-oa-1.0.xsd" outputinstance="..\..\..\..\..\..\..\gfd-dpp\be-apb-gfddpp-services-smc\src\main\resources\xsd\smc-v3\single-message\maindoc\single-message-oa-1.0.xml" instanceroot="{http://www.apb.be/standards/smoa/schema/v1}single-message"/>
+						<wsdl/>
+					</data>
+				</component>
+				<component name="single-message-oa-1.0" library="xml" uid="3" kind="14">
+					<properties XSLTTargetEncoding="UTF-8"/>
+					<view ltx="99" lty="15" rbx="478" rby="835"/>
+					<data>
+						<root scrollposition="1">
+							<header>
+								<namespaces>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/v1"/>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/model/v1"/>
+									<namespace uid="http://www.altova.com/mapforce"/>
+								</namespaces>
+							</header>
+							<entry name="FileInstance" ns="2" expanded="1">
+								<entry name="document" ns="2" expanded="1" casttotargettypemode="cast-in-subtree">
+									<entry name="single-message" outkey="22" expanded="1">
+										<entry name="unsigned" outkey="23" expanded="1">
+											<entry name="header" expanded="1">
+												<entry name="messageCreateDate" outkey="64"/>
+												<entry name="messageID" outkey="65"/>
+												<entry name="sender" outkey="66"/>
+											</entry>
+											<entry name="eventFolder" outkey="80" expanded="1">
+												<entry name="events" outkey="81" expanded="1">
+													<entry name="event" expanded="1" displayselectionmode="all"/>
+													<entry name="event" outkey="25">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}BvacEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+														<entry name="id" outkey="26"/>
+														<entry name="PharmacyList" outkey="27" expanded="1">
+															<entry name="identification" ns="1" outkey="28"/>
+															<entry name="identity" ns="1" outkey="29"/>
+															<entry name="bvacList" ns="1" outkey="30" expanded="1">
+																<entry name="bvacDocument" ns="1" outkey="31" expanded="1">
+																	<entry name="identification" ns="1" outkey="32">
+																		<entry name="id" ns="1" outkey="33"/>
+																	</entry>
+																	<entry name="barCode" ns="1" outkey="34"/>
+																	<entry name="currency" ns="1" outkey="35"/>
+																	<entry name="deliveryDate" ns="1" outkey="36"/>
+																	<entry name="patient" ns="1" outkey="37"/>
+																	<entry name="doctor" ns="1" outkey="38"/>
+																	<entry name="productList" ns="1" outkey="39"/>
+																	<entry name="totalAmounts" ns="1" outkey="40"/>
+																</entry>
+															</entry>
+														</entry>
+													</entry>
+													<entry name="event" outkey="95">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}ContinuedPharmaceuticalCareDossierEvent" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+													</entry>
+													<entry name="event" outkey="96">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}MedicationDeliveryEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+													</entry>
+													<entry name="event" outkey="88">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}MedicationHistoryEvent" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+													</entry>
+													<entry name="event" outkey="82">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}PharmaceuticalCareEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+													</entry>
+													<entry name="event" outkey="97">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}PharmaceuticalPrescriptionEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+													</entry>
+													<entry name="event" outkey="98">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}RegisterExportEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+													</entry>
+												</entry>
+												<entry name="entitySpace" outkey="41"/>
+											</entry>
+										</entry>
+										<entry name="signed" outkey="42"/>
+									</entry>
+								</entry>
+							</entry>
+						</root>
+						<document schema="..\..\..\..\..\..\..\gfd-dpp\be-apb-gfddpp-services-smc\src\main\resources\xsd\smc-v2\single-message\maindoc\single-message-oa-1.0.xsd" outputinstance="..\..\..\..\..\..\..\gfd-dpp\be-apb-gfddpp-services-smc\src\main\resources\xsd\smc-v2\single-message\maindoc\single-message-oa-1.0.xml" instanceroot="{http://www.apb.be/standards/smoa/schema/v1}single-message"/>
+						<wsdl/>
+					</data>
+				</component>
+				<component name="constant" library="core" uid="5" kind="2">
+					<properties/>
+					<targets>
+						<datapoint pos="0" key="71"/>
+					</targets>
+					<view ltx="603" lty="101" rbx="667" rby="119"/>
+					<data>
+						<constant value="2.0.1" datatype="string"/>
+						<wsdl/>
+					</data>
+				</component>
+			</children>
+			<graph directed="1">
+				<edges>
+					<edge edgekey="43">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="44">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="45">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="46">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="47">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="48">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="49">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="50">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="51">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="72">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="83">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="89">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="99">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="100">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="101">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="102">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+				</edges>
+				<vertices>
+					<vertex vertexkey="22">
+						<edges>
+							<edge vertexkey="1" edgekey="53"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="23">
+						<edges>
+							<edge vertexkey="2" edgekey="54"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="25">
+						<edges>
+							<edge vertexkey="4" edgekey="55"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="26">
+						<edges>
+							<edge vertexkey="5" edgekey="56"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="27">
+						<edges>
+							<edge vertexkey="6" edgekey="57"/>
+							<edge vertexkey="78" edgekey="84"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="28">
+						<edges>
+							<edge vertexkey="7" edgekey="44"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="29">
+						<edges>
+							<edge vertexkey="8" edgekey="43"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="30">
+						<edges>
+							<edge vertexkey="9" edgekey="58"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="31">
+						<edges>
+							<edge vertexkey="10" edgekey="59"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="32">
+						<edges>
+							<edge vertexkey="11" edgekey="60"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="33">
+						<edges>
+							<edge vertexkey="12" edgekey="61"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="34">
+						<edges>
+							<edge vertexkey="13" edgekey="47"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="35">
+						<edges>
+							<edge vertexkey="14" edgekey="62"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="36">
+						<edges>
+							<edge vertexkey="15" edgekey="63"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="37">
+						<edges>
+							<edge vertexkey="16" edgekey="45"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="38">
+						<edges>
+							<edge vertexkey="17" edgekey="46"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="39">
+						<edges>
+							<edge vertexkey="18" edgekey="48"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="40">
+						<edges>
+							<edge vertexkey="19" edgekey="49"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="41">
+						<edges>
+							<edge vertexkey="20" edgekey="50"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="42">
+						<edges>
+							<edge vertexkey="21" edgekey="51"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="64">
+						<edges>
+							<edge vertexkey="68" edgekey="73"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="65">
+						<edges>
+							<edge vertexkey="69" edgekey="74"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="66">
+						<edges>
+							<edge vertexkey="70" edgekey="72"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="71">
+						<edges>
+							<edge vertexkey="67" edgekey="75"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="80">
+						<edges>
+							<edge vertexkey="76" edgekey="90"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="81">
+						<edges>
+							<edge vertexkey="77" edgekey="86"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="82">
+						<edges>
+							<edge vertexkey="79" edgekey="83"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="88">
+						<edges>
+							<edge vertexkey="87" edgekey="89"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="95">
+						<edges>
+							<edge vertexkey="91" edgekey="102"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="96">
+						<edges>
+							<edge vertexkey="92" edgekey="101"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="97">
+						<edges>
+							<edge vertexkey="93" edgekey="100"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="98">
+						<edges>
+							<edge vertexkey="94" edgekey="99"/>
+						</edges>
+					</vertex>
+				</vertices>
+			</graph>
+		</structure>
+	</component>
+</mapping>

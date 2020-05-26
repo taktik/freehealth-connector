@@ -155,7 +155,7 @@ public final class ConfigurationModuleSSL implements ConfigurationModule {
    }
 
    public void unload() {
-      LOG.debug("Unloading ConfigurationModule " + this.getClass().getName());
+      LOG.debug("Unloading ConfigurationModule {}", this.getClass().getName());
       ConfigurationModuleLoader.unloadSystemProperties(this.oldValues);
    }
 }

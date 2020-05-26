@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Oracle JAX-WS 2.1.5. --><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:sts="urn:be:fgov:ehealth:sts:protocol:v1" xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="urn:be:fgov:ehealth:sts:protocol:v1" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsp:UsingPolicy wssutil:Required="true"/><wsp:Policy wssutil:Id="Wssp1.2-2007-Wss1.0-X509-Basic256.xml"><ns0:AsymmetricBinding xmlns:ns0="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702"><wsp:Policy><ns0:InitiatorToken><wsp:Policy><ns0:X509Token ns0:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient"><wsp:Policy><ns0:WssX509V3Token10/></wsp:Policy></ns0:X509Token></wsp:Policy></ns0:InitiatorToken><ns0:RecipientToken><wsp:Policy><ns0:X509Token ns0:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/Never"><wsp:Policy><ns0:WssX509V3Token10/></wsp:Policy></ns0:X509Token></wsp:Policy></ns0:RecipientToken><ns0:AlgorithmSuite><wsp:Policy><ns0:Basic256/></wsp:Policy></ns0:AlgorithmSuite><ns0:Layout><wsp:Policy><ns0:Lax/></wsp:Policy></ns0:Layout><ns0:IncludeTimestamp/><ns0:ProtectTokens/><ns0:OnlySignEntireHeadersAndBody/></wsp:Policy></ns0:AsymmetricBinding><ns1:SignedParts xmlns:ns1="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702"><ns1:Body/></ns1:SignedParts><ns2:Wss10 xmlns:ns2="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702"><wsp:Policy><ns2:MustSupportRefKeyIdentifier/><ns2:MustSupportRefIssuerSerial/></wsp:Policy></ns2:Wss10></wsp:Policy>
+    <documentation>Version 1.1</documentation>
+    <types>
+        <xsd:schema targetNamespace="urn:be:fgov:ehealth:sts:protocol:v1">
+            <xsd:import namespace="urn:oasis:names:tc:SAML:1.0:protocol" schemaLocation="https://wwwacc.ehealth.fgov.be:443/sts_1_1/SecureTokenService?xsd=2"/>
+        </xsd:schema>
+    </types>
+    <message name="RequestMessage">
+        <part name="body" element="samlp:Request"/>
+    </message>
+    <message name="ResponseMessage">
+        <part name="body" element="samlp:Response"/>
+    </message>
+    <portType name="SecureTokenServicePortType">
+        <operation name="RequestSecureToken">
+            <input message="sts:RequestMessage"/>
+            <output message="sts:ResponseMessage"/>
+        </operation>
+    </portType>
+    <binding name="SecureTokenServiceSoapBinding" type="sts:SecureTokenServicePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="RequestSecureToken">
+            <soap:operation soapAction="urn:be:fgov:ehealth:sts:protocol:v1:RequestSecureToken"/>
+            <input><wsp:PolicyReference URI="#Wssp1.2-2007-Wss1.0-X509-Basic256.xml"/>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="SecureTokenService">
+        <port name="SecureTokenServicePort" binding="sts:SecureTokenServiceSoapBinding">
+            <soap:address location="https://www.ehealth.fgov.be/sts_1_1/SecureTokenService"/>
+        </port>
+    </service>
+</definitions>

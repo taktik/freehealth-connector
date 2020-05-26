@@ -26,7 +26,7 @@ public abstract class AbstractSTSService implements STSService {
    protected static final String XMLNS_SAML = "urn:oasis:names:tc:SAML:1.0:assertion";
    protected static final String XMLNS_SAMLP = "urn:oasis:names:tc:SAML:1.0:protocol";
 
-   private SAMLNameIdentifier generateNameIdentifier(X509Certificate authnCertificate) throws TechnicalConnectorException {
+   private SAMLNameIdentifier generateNameIdentifier(X509Certificate authnCertificate) {
       Validate.notNull(authnCertificate, "Parameter authnCertificate is not nullable.");
       String cn = authnCertificate.getSubjectX500Principal().getName("RFC1779");
       String ca = authnCertificate.getIssuerX500Principal().getName("RFC1779");

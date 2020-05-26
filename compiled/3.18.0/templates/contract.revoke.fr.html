@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Conditions d'utilisation des certificats eHealth</title>
+</head>
+  <body>
+    <h2 style="background-color: #C0C0C0">
+      Donn&#233;es signal&#233;tiques certificat
+    </h2>
+    Propri&#233;taire du certificat: $!identity.firstName $!identity.middleName $identity.name<br>
+	Type de certificat: 
+	#if($cert.naturalPerson)
+    Personnel
+    #else
+    Organisation
+    #end
+    <br>Identifier du certificat: ${oids.get("CN").replace("\","")}<br>
+
+    <h2 style="background-color: #C0C0C0">
+      Motif de r&#233;vocation du certificat
+    </h2>
+    $reason $!reasonDetail<br>&#65279;
+
+    #parse ("/templates/terms.fr.html")
+  </body>
+</html>

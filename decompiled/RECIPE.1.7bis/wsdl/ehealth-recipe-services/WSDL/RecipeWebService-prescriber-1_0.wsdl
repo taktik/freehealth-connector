@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="RecipePrescriberWebservice" targetNamespace="urn:be:fgov:ehealth:recipe:protocol:v1" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:recipe="urn:be:fgov:ehealth:recipe:protocol:v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/">
+	<documentation>Version 1.0</documentation>
+	<types>
+		<xsd:schema>
+			<xsd:import namespace="urn:be:fgov:ehealth:recipe:protocol:v1" schemaLocation="../XSD/recipeservices_protocol-1_0.xsd"/>
+		</xsd:schema>
+	</types>
+	<message name="AliveCheckRequest">
+		<part name="body" element="recipe:AliveCheckRequest"/>
+	</message>
+	<message name="AliveCheckResponse">
+		<part name="body" element="recipe:AliveCheckResponse"/>
+	</message>
+	<message name="CreatePrescriptionRequest">
+		<part name="body" element="recipe:CreatePrescriptionRequest"/>
+	</message>
+	<message name="CreatePrescriptionResponse">
+		<part name="body" element="recipe:CreatePrescriptionResponse"/>
+	</message>
+	<message name="RevokePrescriptionRequest">
+		<part name="body" element="recipe:RevokePrescriptionRequest"/>
+	</message>
+	<message name="RevokePrescriptionResponse">
+		<part name="body" element="recipe:RevokePrescriptionResponse"/>
+	</message>
+	<message name="GetPrescriptionForPrescriberRequest">
+		<part name="body" element="recipe:GetPrescriptionForPrescriberRequest"/>
+	</message>
+	<message name="GetPrescriptionForPrescriberResponse">
+		<part name="body" element="recipe:GetPrescriptionForPrescriberResponse"/>
+	</message>
+	<message name="ListOpenPrescriptionsRequest">
+		<part name="body" element="recipe:ListOpenPrescriptionsRequest"/>
+	</message>
+	<message name="ListOpenPrescriptionsResponse">
+		<part name="body" element="recipe:ListOpenPrescriptionsResponse"/>
+	</message>
+	<message name="SendNotificationRequest">
+		<part name="body" element="recipe:SendNotificationRequest"/>
+	</message>
+	<message name="SendNotificationResponse">
+		<part name="body" element="recipe:SendNotificationResponse"/>
+	</message>
+	<message name="UpdateFeedbackFlagRequest">
+		<part name="body" element="recipe:UpdateFeedbackFlagRequest"/>
+	</message>
+	<message name="UpdateFeedbackFlagResponse">
+		<part name="body" element="recipe:UpdateFeedbackFlagResponse"/>
+	</message>
+	<message name="ListFeedbacksRequest">
+		<part name="body" element="recipe:ListFeedbacksRequest"/>
+	</message>
+	<message name="ListFeedbacksResponse">
+		<part name="body" element="recipe:ListFeedbacksResponse"/>
+	</message>
+	<portType name="RecipePrescriberPortType">
+		<operation name="aliveCheck">
+			<input message="recipe:AliveCheckRequest"/>
+			<output message="recipe:AliveCheckResponse"/>
+		</operation>
+		<operation name="createPrescription">
+			<input message="recipe:CreatePrescriptionRequest"/>
+			<output message="recipe:CreatePrescriptionResponse"/>
+		</operation>
+		<operation name="revokePrescription">
+			<input message="recipe:RevokePrescriptionRequest"/>
+			<output message="recipe:RevokePrescriptionResponse"/>
+		</operation>
+		<operation name="getPrescriptionForPrescriber">
+			<input message="recipe:GetPrescriptionForPrescriberRequest"/>
+			<output message="recipe:GetPrescriptionForPrescriberResponse"/>
+		</operation>
+		<operation name="listOpenPrescriptions">
+			<input message="recipe:ListOpenPrescriptionsRequest"/>
+			<output message="recipe:ListOpenPrescriptionsResponse"/>
+		</operation>
+		<operation name="sendNotification">
+			<input message="recipe:SendNotificationRequest"/>
+			<output message="recipe:SendNotificationResponse"/>
+		</operation>
+		<operation name="updateFeedbackFlag">
+			<input message="recipe:UpdateFeedbackFlagRequest"/>
+			<output message="recipe:UpdateFeedbackFlagResponse"/>
+		</operation>
+		<operation name="listFeedbacks">
+			<input message="recipe:ListFeedbacksRequest"/>
+			<output message="recipe:ListFeedbacksResponse"/>
+		</operation>
+	</portType>
+	<binding name="RecipePrescriberSoapBinding" type="recipe:RecipePrescriberPortType">
+		<soap11:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="aliveCheck">
+			<soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:AliveCheck"/>
+			<input>
+				<soap11:body use="literal"/>
+			</input>
+			<output>
+				<soap11:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="createPrescription">
+			<soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:CreatePrescription"/>
+			<input>
+				<soap11:body use="literal"/>
+			</input>
+			<output>
+				<soap11:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="revokePrescription">
+			<soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:RevokePrescription"/>
+			<input>
+				<soap11:body use="literal"/>
+			</input>
+			<output>
+				<soap11:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="getPrescriptionForPrescriber">
+			<soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:GetPrescriptionForPrescriber"/>
+			<input>
+				<soap11:body use="literal"/>
+			</input>
+			<output>
+				<soap11:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="listOpenPrescriptions">
+			<soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:ListOpenPrescriptions"/>
+			<input>
+				<soap11:body use="literal"/>
+			</input>
+			<output>
+				<soap11:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="sendNotification">
+			<soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:SendNotification"/>
+			<input>
+				<soap11:body use="literal"/>
+			</input>
+			<output>
+				<soap11:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="updateFeedbackFlag">
+			<soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:UpdateFeedbackFlag"/>
+			<input>
+				<soap11:body use="literal"/>
+			</input>
+			<output>
+				<soap11:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="listFeedbacks">
+			<soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v1:ListFeedbacks"/>
+			<input>
+				<soap11:body use="literal"/>
+			</input>
+			<output>
+				<soap11:body use="literal"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="RecipePrescriberService">
+		<port name="RecipePrescriberServiceSOAP11" binding="recipe:RecipePrescriberSoapBinding">
+			<soap11:address location="https://services.ehealth.fgov.be/recipe/presciber/v1"/>
+		</port>
+	</service>
+</definitions>

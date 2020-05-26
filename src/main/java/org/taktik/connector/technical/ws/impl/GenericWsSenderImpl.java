@@ -32,8 +32,7 @@ public class GenericWsSenderImpl extends AbstractWsSender implements GenericWsSe
       }
 
       request.setEndpoint(url);
-      request.setDefaultHandlerChain();
-      request.setHandlerChain((new HandlerChain()).register(HandlerPosition.SECURITY, new SoapActionHandler()));
+      request.addHandlerChain((new HandlerChain()).register(HandlerPosition.SECURITY, new SoapActionHandler()));
 
       try {
          return this.send(request).asString();
@@ -54,8 +53,7 @@ public class GenericWsSenderImpl extends AbstractWsSender implements GenericWsSe
       }
 
       request.setEndpoint(url);
-      request.setDefaultHandlerChain();
-      request.setHandlerChain((new HandlerChain()).register(HandlerPosition.SECURITY, new SoapActionHandler()));
+      request.addHandlerChain((new HandlerChain()).register(HandlerPosition.SECURITY, new SoapActionHandler()));
 
       try {
          return this.send(request).asNode();
@@ -77,8 +75,7 @@ public class GenericWsSenderImpl extends AbstractWsSender implements GenericWsSe
       }
 
       request.setEndpoint(url);
-      request.setDefaultHandlerChain();
-      request.setHandlerChain((new HandlerChain()).register(HandlerPosition.SECURITY, new SoapActionHandler()));
+      request.addHandlerChain((new HandlerChain()).register(HandlerPosition.SECURITY, new SoapActionHandler()));
       request.setSamlSecured(assertion, credential);
 
       try {
@@ -101,8 +98,7 @@ public class GenericWsSenderImpl extends AbstractWsSender implements GenericWsSe
       }
 
       SAMLToken token = SAMLTokenFactory.getInstance().createSamlToken(assertion, credential);
-      request.setHandlerChain((new HandlerChain()).register(HandlerPosition.SECURITY, new SAMLHolderOfKeyHandler(token)).register(HandlerPosition.SECURITY, new SoapActionHandler()));
-      request.setDefaultHandlerChain();
+      request.addHandlerChain((new HandlerChain()).register(HandlerPosition.SECURITY, new SAMLHolderOfKeyHandler(token)).register(HandlerPosition.SECURITY, new SoapActionHandler()));
 
       try {
          return this.send(request).asNode();
@@ -123,8 +119,7 @@ public class GenericWsSenderImpl extends AbstractWsSender implements GenericWsSe
          request.setSoapAction(soapAction);
       }
 
-      request.setHandlerChain((new HandlerChain()).register(HandlerPosition.SECURITY, new CertificateCallback(certificate, privateKey)).register(HandlerPosition.SECURITY, new SoapActionHandler()));
-      request.setDefaultHandlerChain();
+      request.addHandlerChain((new HandlerChain()).register(HandlerPosition.SECURITY, new CertificateCallback(certificate, privateKey)).register(HandlerPosition.SECURITY, new SoapActionHandler()));
 
       try {
          return this.send(request).asString();
@@ -146,8 +141,7 @@ public class GenericWsSenderImpl extends AbstractWsSender implements GenericWsSe
       }
 
       request.setCertificateSecured(certificate, privateKey);
-      request.setHandlerChain((new HandlerChain()).register(HandlerPosition.SECURITY, new CertificateCallback(certificate, privateKey)).register(HandlerPosition.SECURITY, new SoapActionHandler()));
-      request.setDefaultHandlerChain();
+      request.addHandlerChain((new HandlerChain()).register(HandlerPosition.SECURITY, new CertificateCallback(certificate, privateKey)).register(HandlerPosition.SECURITY, new SoapActionHandler()));
 
       try {
          return this.send(request).asNode();

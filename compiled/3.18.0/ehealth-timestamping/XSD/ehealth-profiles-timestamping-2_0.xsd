@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="urn:be:fgov:ehealth:timestamping:protocol:v2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dss="urn:oasis:names:tc:dss:1.0:core:schema" targetNamespace="urn:be:fgov:ehealth:timestamping:protocol:v2" elementFormDefault="qualified">
+	<xs:import namespace="urn:oasis:names:tc:dss:1.0:core:schema" schemaLocation="../../external/XSD/oasis-dss-core-schema-v1.0-os.xsd"/>
+	<xs:element name="TSConsultRequest" type="TSConsultRequestType"/>
+	<xs:element name="TSConsultResponse" type="TSConsultResponseType"/>
+	<xs:element name="TSConsultTSBagRequest" type="TSConsultTSBagRequestType"/>
+	<xs:element name="TSConsultTSBagResponse" type="TSConsultTSBagResponseType"/>
+	<xs:simpleType name="HashType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="SHA-256"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="TSConsultRequestType">
+		<xs:annotation>
+			<xs:documentation>request to behealth to check that the archive is complete</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="IDHospital" type="xs:string"/>
+			<xs:element name="Period" type="PeriodType"/>
+			<xs:element name="TSList" type="TimeStampIdentification" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TSConsultResponseType">
+		<xs:annotation>
+			<xs:documentation>
+        response to the TSConsultRequest TSList : list all the time stamp identification that is not listed in the specified request, If there are 2 or more time stamp are requested for the same time stamp bag and in the request there is one
+        identification mention, then then the other identifications will not be mention in this list. This list is not empty if there are not enough time stamp in the archive of the hospital. If the list of the hospital is shorter, then there is a problem
+        in be health
+      </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Status" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>OK, INCOMPLETE or ERROR</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Error" type="ErrorType" minOccurs="0"/>
+			<xs:element name="TSList" type="TimeStampIdentification" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TSConsultTSBagRequestType">
+		<xs:annotation>
+			<xs:documentation>request the tsbag and response for a concrete identification of the timestamp</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="IDHospital" type="xs:string"/>
+			<xs:element name="TSList" type="TimeStampIdentification" minOccurs="0" maxOccurs="10"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TSConsultTSBagResponseType">
+		<xs:annotation>
+			<xs:documentation>response to the TSConsultTSBagResquest</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Error" type="ErrorType" minOccurs="0"/>
+			<xs:element name="TSBag" type="TSBagType" minOccurs="0" maxOccurs="10"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TSBagType">
+		<xs:annotation>
+			<xs:documentation>contains the tsbag and the oasis time stamp response</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TSBagValue" type="xs:base64Binary">
+				<xs:annotation>
+					<xs:documentation>TimeStampRequest uses base64 to encode the original timestamp. This same base64 is returned unmodified, undecoded.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="dss:SignResponse"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ErrorType">
+		<xs:annotation>
+			<xs:documentation>error code 0 : OK > 0 : error and the type if filled in</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Type" type="xs:string"/>
+			<xs:element name="Number" type="xs:integer"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TimeStampIdentification">
+		<xs:annotation>
+			<xs:documentation>unique identification of the TSBag and response * sequence number of the time stamp response * MMDDYYYY UU:MM of the time stamp response</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="sequenceNumber" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>sequence number returned by time stamp server</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="dateTime" type="xs:long">
+				<xs:annotation>
+					<xs:documentation>date and time returned by the time stamp server</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PeriodType">
+		<xs:annotation>
+			<xs:documentation>Both start and end time are included in the interval.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Start" type="xs:long"/>
+			<xs:element name="End" type="xs:long"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TimeStampBagType">
+		<xs:annotation>
+			<xs:documentation>the time stamp bag that is send to behealth</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="JournalEntry" type="JournalEntryType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="Hash" type="HashType" use="required"/>
+		<xs:attribute name="SequenceNumber" type="xs:long" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="JournalEntryType">
+		<xs:sequence>
+			<xs:element name="Hash" type="xs:string"/>
+			<xs:element name="Ref" type="xs:long"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

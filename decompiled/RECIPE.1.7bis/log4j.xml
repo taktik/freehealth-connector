@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-5p %c{1} - %m%n" />
+		</layout>
+	</appender>
+
+<!--	<appender name="FILE" class="org.apache.log4j.rolling.RollingFileAppender">
+		<rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+			<param name="FileNamePattern" value="../../log/connector-%d{yyyyMMdd}.log"/>
+		</rollingPolicy>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d [%t] %-5p %C{6} (%F:%L) - %m%n" />
+		</layout>
+	</appender>
+	<appender name="ROLL-Executor"
+		class="be.connector.common.performance.metrics.MetricsUploadAppenderExecutor">
+		<param name="file" value="../../log/connector-metrics-executor.log" />
+		<param name="append" value="true" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="ROLL-Common"
+		class="be.connector.common.performance.metrics.MetricsUploadAppenderCommon">
+		<param name="file" value="../../log/common-metrics-executor.log" />
+		<param name="append" value="true" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%m%n" />
+		</layout>
+		 
+	</appender>
+	
+	<appender name="ROLL-Recipe"
+		class="be.connector.common.performance.metrics.MetricsUploadAppenderRecipe">
+		<param name="file" value="../../log/recipe-metrics-executor.log" />
+		<param name="append" value="true" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%m%n" />
+		</layout>
+		 
+	</appender>
+	<logger name="be.smals.ehealth">
+		<level value="warn" />
+	</logger>
+	<logger name="org.opensaml">
+		<level value="warn" />
+	</logger>	
+	 <logger name="org.perf4j.TimingLogger_Executor" additivity="false" >
+		<level value="INFO" />
+		<appender-ref ref="ROLL-Executor"/>
+	</logger> 
+	
+	 <logger name="org.perf4j.TimingLogger_Common" additivity="false" >
+		<level value="INFO" />
+		<appender-ref ref="ROLL-Common"/>
+	</logger> 
+	
+	<logger name="org.perf4j.TimingLogger" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="ROLL-Recipe" />
+	</logger>-->
+	<root>
+        <priority value="INFO"></priority>
+        <!--<appender-ref ref="console"/>-->
+        <appender-ref ref="console"/>
+    </root>
+</log4j:configuration>

@@ -19,7 +19,7 @@ public class SAMLSenderVouchesHandler extends AbstractWsSecurityHandler {
 
    /** @deprecated */
    @Deprecated
-   public SAMLSenderVouchesHandler(Element assertion, X509Certificate certificate, PrivateKey privateKey) throws TechnicalConnectorException {
+   public SAMLSenderVouchesHandler(Element assertion, X509Certificate certificate, PrivateKey privateKey) {
       this.token = SAMLTokenFactory.getInstance().createSamlToken(assertion, new KeyPairCredential(privateKey, certificate));
    }
 

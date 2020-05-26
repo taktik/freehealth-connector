@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- 
+  Kmehr-Bis Message elements
+  
+  XSchema
+ -->
+<!-- Derived from the Official eHealth Kmehr standard by Henkens Tom (VZW Recip-e ASBL) -->
+<!-- Copyright (c) eHealth -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" targetNamespace="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:annotation>
+		<xsd:appinfo>
+ Implementation-Title: XSD recipeKMEHR restrictions
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.beta1
+ Build-Time: 20170125 
+ </xsd:appinfo>
+	</xsd:annotation>
+	<xsd:include schemaLocation="recipe_PP_kmehr-1_19.xsd"/>
+	<xsd:element name="kmehrmessage" type="recipekmehrmessageType"/>
+</xsd:schema>

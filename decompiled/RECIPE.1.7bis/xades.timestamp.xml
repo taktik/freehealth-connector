@@ -1,0 +1,31 @@
+<xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#"
+                            xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                            Target="${regex=#xmldsig-.*}">
+    <xades:SignedProperties Id="${regex=xmldsig-.*-xades}">
+        <xades:SignedSignatureProperties>
+            <xades:SigningTime>${ignore}</xades:SigningTime>
+            <xades:SigningCertificate>
+                <xades:Cert>
+                    <xades:CertDigest>
+                        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                        <ds:DigestValue>${ignore}</ds:DigestValue>
+                    </xades:CertDigest>
+                    <xades:IssuerSerial>
+                        <ds:X509IssuerName>${ignore}</ds:X509IssuerName>
+                        <ds:X509SerialNumber>${ignore}</ds:X509SerialNumber>
+                    </xades:IssuerSerial>
+                </xades:Cert>
+            </xades:SigningCertificate>
+        </xades:SignedSignatureProperties>
+    </xades:SignedProperties>
+    <xades:UnsignedProperties>
+        <xades:UnsignedSignatureProperties>
+            <xades:SignatureTimeStamp xmlns:xadesv141="http://uri.etsi.org/01903/v1.4.1#"
+                                      Id="${regex=time-stamp-.*}">
+                <CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"
+                                        xmlns="http://www.w3.org/2000/09/xmldsig#"/>
+                <xades:EncapsulatedTimeStamp Id="${regex=time-stamp-token-.*}">${ignore}</xades:EncapsulatedTimeStamp>
+            </xades:SignatureTimeStamp>
+        </xades:UnsignedSignatureProperties>
+    </xades:UnsignedProperties>
+</xades:QualifyingProperties>

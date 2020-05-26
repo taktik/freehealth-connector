@@ -1,0 +1,17 @@
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	jaxb:extensionBindingPrefixes="xjc">
+	<jaxb:bindings>
+		<!-- <jaxb:globalBindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<jaxb:serializable uid="1" />
+			<jaxb:javaType name="org.joda.time.DateTime" xmlType="xs:dateTime"   
+				parseMethod="be.recipe.common.util.JodaDateTimeAdapter.unmarshal" 
+				printMethod="be.recipe.common.util.JodaDateTimeAdapter.marshal" />
+			<xjc:javaType adapter="be.recipe.common.util.JodaDateTimeAdapter"
+                      name="org.joda.time.DateTime" xmlType="xs:dateTime"/>
+		</jaxb:globalBindings> -->
+		<jaxb:globalBindings localScoping="nested" collectionType="java.util.ArrayList" generateValueClass="true">
+			<xjc:javaType adapter="be.recipe.common.util.JodaDateTimeAdapter" name="org.joda.time.DateTime" xmlType="xs:dateTime" />
+			<xjc:simple />
+		</jaxb:globalBindings>
+	</jaxb:bindings>
+</jaxb:bindings>

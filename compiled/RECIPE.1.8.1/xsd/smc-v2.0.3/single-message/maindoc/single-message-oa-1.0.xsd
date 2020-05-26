@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.apb.be/standards/smoa/schema/v1" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.apb.be/standards/smoa/schema/v1" version="1.0">
+	<xsd:include schemaLocation="single-message-oa-layout1.0.xsd" />
+	<xsd:element name="single-message">
+		<xsd:complexType>
+			<xsd:choice>
+				<xsd:element name="unsigned" type="SmoaMessageType"></xsd:element>
+				<xsd:element name="signed" type="DigitalSignedSmoaMessageType"></xsd:element>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

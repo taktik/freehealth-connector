@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.apb.be/standards/smoa/schema/v1" xmlns:model="http://www.apb.be/standards/smoa/schema/model/v1" targetNamespace="http://www.apb.be/standards/smoa/schema/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:include schemaLocation="../common/single-message-common-2.0.2.xsd" />
+	<xsd:include schemaLocation="single-message-folder-1.0.xsd" />
+	<xsd:import namespace="http://www.apb.be/standards/smoa/schema/model/v1" schemaLocation="../models/single-message-abstract-message-model-1.0.xsd" />
+	
+	<xsd:complexType name="DigitalSignatureType">
+		<xsd:sequence>
+			<xsd:element name="dateTime" type="xsd:dateTime" />
+			<xsd:element name="signature" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="DigitalSignedSmoaMessageType">
+		<xsd:sequence>
+			<xsd:element name="message" type="SmoaMessageType" />
+			<xsd:element name="signature" type="DigitalSignatureType" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="SmoaMessageType">
+		<xsd:sequence>
+			<xsd:element name="header" type="HeaderType" />
+			<xsd:element ref="abstract-Folder" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="HeaderType">
+		<xsd:sequence>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="messageCreateDate" type="xsd:dateTime" />
+			<xsd:element name="messageID" type="UuidType" />
+			<xsd:element name="sender" type="SenderType" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="SenderType"> <!-- TODO improve with real sender types instead of choice -->
+		<xsd:choice>
+			<xsd:element ref="model:abstract-Pharmacy" />
+			<xsd:element ref="model:abstract-CareService"/>
+		</xsd:choice>
+	</xsd:complexType>
+</xsd:schema>

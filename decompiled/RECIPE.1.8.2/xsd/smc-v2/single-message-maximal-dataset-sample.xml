@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<smc:single-message xmlns:code="http://www.apb.be/standards/smoa/schema/code/v1" xmlns:id="http://www.apb.be/standards/smoa/schema/id/v1" xmlns:model="http://www.apb.be/standards/smoa/schema/model/v1" xmlns:smc="http://www.apb.be/standards/smoa/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.apb.be/standards/smoa/schema/v1 xsd/smc-v1/single-message/maindoc/single-message-oa-1.0.xsd">
+	<smc:unsigned>
+		<smc:header>
+			<smc:version>1.0</smc:version>
+			<smc:messageCreateDate>2012-10-09T09:00:00</smc:messageCreateDate><!-- filled by connector module -->
+			<smc:messageID>12345678-1234-1234-1234-0123456789AB</smc:messageID><!-- filled by connector module -->
+			<smc:sender>
+				<model:refPharmacy>
+					<model:pharmacyId xsi:type="id:NihiiIdType">
+						<id:nihiiPharmacyNumber>62599147</id:nihiiPharmacyNumber>
+					</model:pharmacyId>
+				</model:refPharmacy>
+			</smc:sender>
+		</smc:header>
+		<smc:eventFolder>
+			<smc:events>
+				<smc:event xsi:type="smc:PharmaceuticalCareEventType">
+					<smc:sessionDateTime>2012-10-09T08:55:00</smc:sessionDateTime>
+					<smc:pharmacyId><!-- TODO replace with ref? -->
+						<id:nihiiPharmacyNumber>62599147</id:nihiiPharmacyNumber>
+					</smc:pharmacyId>
+					<model:max-Patient>
+						<model:identification>
+							<model:personId xsi:type="id:InssIdType">
+								<id:id>81112623980</id:id>
+							</model:personId>
+							<model:name>Homer</model:name>
+							<model:name>J</model:name>
+							<model:familyName>Simpson</model:familyName>
+						</model:identification>
+						<model:contact>
+							<model:address xsi:type="model:EuropeanAddressType" usage="HOME">
+								<model:country>BE</model:country>
+								<model:zip>3000</model:zip>
+								<model:city>Leuven</model:city>
+								<model:street>Langestraat</model:street>
+								<model:housenumber>5</model:housenumber>
+							</model:address>
+							<model:telecom xsi:type="model:GenericTelecomType">
+								<model:kind>
+									<code:type>PHONE</code:type>
+									<code:usage>HOME</code:usage>
+								</model:kind>
+								<model:value>123456789</model:value>
+							</model:telecom>
+						</model:contact>
+						<!-- <model:entourage></model:entourage> <model:careProviders></model:careProviders> -->
+						<model:physiology>
+							<model:condition>
+								<model:female>
+									<model:pregnant deliveryDate="2012-10-10" />
+									<model:nursing>false</model:nursing>
+								</model:female>
+							</model:condition>
+							<model:chronicPathologies>
+								<model:disease>
+									<model:serviceOid>whatever</model:serviceOid>
+									<model:version>string</model:version>
+									<model:reference>I want</model:reference>
+								</model:disease>
+								<model:allergy>
+									<model:serviceOid>even more so</model:serviceOid>
+									<model:version>anything</model:version>
+									<model:reference>we want</model:reference>
+								</model:allergy>
+								<model:homeOxygenTherapy>
+									<model:type>OXYGENCONCENTRATOR</model:type>
+									<model:start>2012-10-08</model:start>
+								</model:homeOxygenTherapy>
+							</model:chronicPathologies>
+						</model:physiology>
+					</model:max-Patient>
+					<smc:dispensedForSamePrescription>
+						<model:hcparty>
+							<model:type>persbiologist</model:type>
+							<model:address xsi:type="model:EuropeanAddressType" usage="HOME">
+								<model:country>BE</model:country>
+								<model:zip>3000</model:zip>
+								<model:city>Leuven</model:city>
+								<model:street>Langestraat</model:street>
+								<model:housenumber>5</model:housenumber>
+							</model:address>
+							<model:telecom xsi:type="model:GenericTelecomType">
+								<model:kind>
+									<code:type>PHONE</code:type>
+									<code:usage>HOME</code:usage>
+								</model:kind>
+								<model:value>123456789</model:value>
+							</model:telecom>
+						</model:hcparty>
+						<smc:product onSubstanceName="true">
+							<model:description>
+								<model:productCode xsi:type="id:CnkIdType">
+									<id:cnk>0011957</id:cnk>
+								</model:productCode>
+							</model:description>
+							<model:dispensation>
+								<model:numberOfUnits>1</model:numberOfUnits>
+								<model:administrationInstructions>
+									<model:beginmoment>
+										<smc:yearmonth>2012-10</smc:yearmonth>
+									</model:beginmoment>
+									<model:regimen>
+										<model:daynumber>1</model:daynumber>
+										<model:daytime>
+											<model:dayperiod xsi:type="code:DayPeriodCodeType">
+												<code:cd>BETWEENBREAKFASTANDLUNCH</code:cd>
+											</model:dayperiod>
+										</model:daytime>
+										<model:quantity>
+											<model:decimal>5.0</model:decimal>
+											<model:unit xsi:type="code:AdministrationUnitValuesCodeType">
+												<code:cd>ml</code:cd><!-- not codified yet -->
+											</model:unit>
+										</model:quantity>
+									</model:regimen>
+									<model:route>test</model:route><!-- not codified yet -->
+									<model:issubstitutionallowed>false</model:issubstitutionallowed>
+								</model:administrationInstructions>
+							</model:dispensation>
+							<model:pharmaceuticalCare>
+								<model:productInformation>
+									<model:infoFirstDispensation>true</model:infoFirstDispensation>
+									<model:brochure>Drug Addicts Weekly</model:brochure>
+								</model:productInformation>
+								<model:drugRelatedProblem>
+									<model:cause>interrupted therapy</model:cause>
+									<model:intervention>phone calls</model:intervention>
+									<model:result>blocked on facebook</model:result>
+								</model:drugRelatedProblem>
+							</model:pharmaceuticalCare>
+							<model:localReference>LOCALID</model:localReference><!-- filled by pharmacy software at their leasure -->
+							<model:dispensationGUID>99999999-1234-1234-1234-0123456789AB</model:dispensationGUID><!-- filled by connector module DISPENSATION GUID -->
+						</smc:product>
+					</smc:dispensedForSamePrescription>
+					<smc:dispensedWithoutPrescription>
+						<smc:product>
+							<model:description>
+								<model:productCode xsi:type="id:CnkIdType">
+									<id:cnk>1234567</id:cnk>
+								</model:productCode>
+							</model:description>
+							<model:dispensation>
+								<model:numberOfUnits>1</model:numberOfUnits>
+								<model:administrationInstructions>
+									<model:beginmoment>
+										<smc:yearmonth>2012-10</smc:yearmonth>
+									</model:beginmoment>
+									<model:regimen>
+										<model:daynumber>1</model:daynumber>
+										<model:daytime>
+											<model:dayperiod xsi:type="code:DayPeriodCodeType">
+												<code:cd>BETWEENBREAKFASTANDLUNCH</code:cd>
+											</model:dayperiod>
+										</model:daytime>
+										<model:quantity>
+											<model:decimal>5.0</model:decimal>
+											<model:unit xsi:type="code:AdministrationUnitValuesCodeType">
+												<code:cd>ml</code:cd><!-- not codified yet -->
+											</model:unit>
+										</model:quantity>
+									</model:regimen>
+									<model:route>test</model:route><!-- not codified yet -->
+									<model:issubstitutionallowed>false</model:issubstitutionallowed>
+								</model:administrationInstructions>
+							</model:dispensation>
+							<model:pharmaceuticalCare>
+								<model:productInformation>
+									<model:infoFirstDispensation>true</model:infoFirstDispensation>
+									<model:brochure>Drug Addicts Weekly</model:brochure>
+								</model:productInformation>
+								<model:drugRelatedProblem>
+									<model:cause>interrupted therapy</model:cause>
+									<model:intervention>phone calls</model:intervention>
+									<model:result>blocked on facebook</model:result>
+								</model:drugRelatedProblem>
+							</model:pharmaceuticalCare>
+							<model:localReference>LOCALIDHELLYEAH</model:localReference><!-- filled by pharmacy software at their leasure -->
+							<model:dispensationGUID>00000000-1234-1234-1234-0123456789AB</model:dispensationGUID><!-- filled by connector module DISPENSATION GUID -->
+						</smc:product>
+						<smc:product>
+							<model:description>
+								<model:productCode xsi:type="id:CnkIdType">
+									<id:cnk>1234567</id:cnk>
+								</model:productCode>
+							</model:description>
+							<model:dispensation>
+								<model:numberOfUnits>1</model:numberOfUnits>
+								<model:administrationInstructions>
+									<model:beginmoment>
+										<smc:yearmonth>2012-10</smc:yearmonth>
+									</model:beginmoment>
+									<model:regimen>
+										<model:daynumber>1</model:daynumber>
+										<model:daytime>
+											<model:dayperiod xsi:type="code:DayPeriodCodeType">
+												<code:cd>BETWEENBREAKFASTANDLUNCH</code:cd>
+											</model:dayperiod>
+										</model:daytime>
+										<model:quantity>
+											<model:decimal>5.0</model:decimal>
+											<model:unit xsi:type="code:AdministrationUnitValuesCodeType">
+												<code:cd>ml</code:cd><!-- not codified yet -->
+											</model:unit>
+										</model:quantity>
+									</model:regimen>
+									<model:route>test</model:route><!-- not codified yet -->
+									<model:issubstitutionallowed>false</model:issubstitutionallowed>
+								</model:administrationInstructions>
+							</model:dispensation>
+							<model:pharmaceuticalCare>
+								<model:productInformation>
+									<model:infoFirstDispensation>true</model:infoFirstDispensation>
+									<model:brochure>Drug Addicts Weekly</model:brochure>
+								</model:productInformation>
+								<model:drugRelatedProblem>
+									<model:cause>interrupted therapy</model:cause>
+									<model:intervention>phone calls</model:intervention>
+									<model:result>blocked on facebook</model:result>
+								</model:drugRelatedProblem>
+							</model:pharmaceuticalCare>
+							<model:localReference>LOCALIDHELLYEAH</model:localReference><!-- filled by pharmacy software at their leasure -->
+							<model:dispensationGUID>88888888-1234-1234-1234-0123456789AB</model:dispensationGUID><!-- filled by connector module DISPENSATION GUID -->
+						</smc:product>
+					</smc:dispensedWithoutPrescription>
+					<smc:pharmaceuticalCareActivities>
+						<smc:drugRelatedProblem>
+							<model:cause>habit</model:cause>
+							<model:intervention>slap</model:intervention>
+							<model:result>mildly disoriented</model:result>
+						</smc:drugRelatedProblem>
+					</smc:pharmaceuticalCareActivities>
+					<smc:metaDataList>
+						<smc:metaData>
+							<smc:key>HasDelphiCareRun</smc:key>
+							<smc:value>TRUE</smc:value>
+						</smc:metaData>
+					</smc:metaDataList>
+				</smc:event>
+			</smc:events>
+		</smc:eventFolder>
+	</smc:unsigned>
+</smc:single-message>

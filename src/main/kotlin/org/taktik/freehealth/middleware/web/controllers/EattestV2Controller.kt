@@ -36,13 +36,13 @@ import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
 import org.taktik.freehealth.middleware.exception.MissingTokenException
-import org.taktik.freehealth.middleware.service.EattestService
-import java.util.*
+import org.taktik.freehealth.middleware.service.EattestV2Service
+import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/eattestv2")
-class EattestV2Controller(val eattestService: EattestService) {
+class EattestV2Controller(val eattestService: EattestV2Service) {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(MissingTokenException::class)
     @ResponseBody
@@ -57,7 +57,6 @@ class EattestV2Controller(val eattestService: EattestService) {
     @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
-
     @PostMapping("/send/{patientSsin}/verbose", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendAttestWithResponse(
         @PathVariable patientSsin: String,

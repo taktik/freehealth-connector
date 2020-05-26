@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://services.gfddpp.be"
+	targetNamespace="http://services.gfddpp.be">
+	<xs:element name="patientSignature">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="signature" type="xs:base64Binary" minOccurs="1" />
+				<xs:element name="publickey" type="xs:base64Binary" minOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

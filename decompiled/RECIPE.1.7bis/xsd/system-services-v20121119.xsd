@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://services.gfddpp.be" targetNamespace="http://services.gfddpp.be/systemservices">
+    <xs:element name="systemServices">
+	     <xs:complexType>
+	    	<xs:sequence>
+	    		<xs:element name="version" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+	    		<xs:element name="systemServicesList" minOccurs="1" maxOccurs="1">
+				    <xs:complexType>
+				    	<xs:sequence>
+				    		<xs:element name="systemServicesEntry" minOccurs="0" maxOccurs="unbounded">
+							    <xs:complexType>
+							    	<xs:sequence>
+							    		<xs:element name="system" minOccurs="1" maxOccurs="1">
+										    <xs:complexType>
+										    	<xs:sequence>
+										    		<xs:element name="serviceName" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+										    		<xs:element name="URI" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+										    	</xs:sequence>
+										    </xs:complexType>							    		
+							    		</xs:element>
+							    		<xs:element name="service" minOccurs="1" maxOccurs="1">
+										    <xs:complexType>
+										    	<xs:sequence>
+										    		<xs:element name="systemIdType" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+										    		<xs:element name="systemId" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+										    	</xs:sequence>
+										    </xs:complexType>							    		
+							    		</xs:element>
+						    		</xs:sequence>
+						    	</xs:complexType>		    		
+				    		</xs:element>
+				    	</xs:sequence>
+				    </xs:complexType>
+	    		</xs:element>
+	    	</xs:sequence>
+	    </xs:complexType>   
+    </xs:element>
+</xs:schema>

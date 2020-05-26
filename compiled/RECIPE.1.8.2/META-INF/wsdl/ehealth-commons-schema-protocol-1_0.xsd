@@ -1,0 +1,10 @@
+<!-- edited with XMLSpy v2009 (http://www.altova.com) by Smals-MVM ASBL/VZW (Smals-MVM ASBL/VZW) --><xs:schema targetNamespace="urn:be:fgov:ehealth:commons:1_0:protocol" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:commons:1_0:core" xmlns:protocol="urn:be:fgov:ehealth:commons:1_0:protocol"> 
+	<xs:import namespace="urn:be:fgov:ehealth:commons:1_0:core" schemaLocation="ehealth-commons-schema-core-1_0.xsd"/> 
+	<xs:complexType name="RequestType"/> 
+	<xs:complexType name="ResponseType"> 
+		<xs:sequence> 
+			<xs:element ref="core:Status"/> 
+		</xs:sequence> 
+		<xs:attribute name="Id" type="xs:string"/> 
+	</xs:complexType> 
+</xs:schema>

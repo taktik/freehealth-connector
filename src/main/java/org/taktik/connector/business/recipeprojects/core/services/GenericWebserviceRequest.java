@@ -12,6 +12,7 @@ public class GenericWebserviceRequest {
     private boolean addSoapFaultHandler;
     private boolean addMustUnderstandHandler;
     private boolean addInsurabilityHandler;
+    private String soapAction;
 
     public Object getRequest() {
         return request;
@@ -77,4 +78,11 @@ public class GenericWebserviceRequest {
         this.addInsurabilityHandler = addInsurabilityHandler;
     }
 
+    public String getSoapAction() {
+        return soapAction;
+    }
+
+    public void setSoapAction(String soapAction) {
+        this.soapAction = soapAction;
+    }
 }

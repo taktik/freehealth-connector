@@ -10,62 +10,68 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
-   name = "SingleSpecificTechnicalCareResponseType",
-   propOrder = {"careReceiverDetail", "specificTechnicalResponseCareDetail", "careReceiverId", "specificTechnicalCareDetail", "messageFault"}
+        name = "SingleSpecificTechnicalCareResponseType",
+        propOrder = {"careReceiverDetail", "specificTechnicalResponseCareDetail", "careReceiverId", "specificTechnicalCareDetail", "messageFault"}
 )
 @XmlRootElement(
-   name = "SingleSpecificTechnicalCareResponse"
+        name = "SingleSpecificTechnicalCareResponse"
 )
 public class SingleSpecificTechnicalCareResponse implements Serializable {
    private static final long serialVersionUID = 1L;
    @XmlElement(
-      name = "CareReceiverDetail"
+           name = "CareReceiverDetail"
    )
    protected ExtCareReceiverDetailType careReceiverDetail;
    @XmlElement(
-      name = "SpecificTechnicalResponseCareDetail"
+           name = "SpecificTechnicalResponseCareDetail"
    )
    protected SpecificTechnicalResponseCareDetail specificTechnicalResponseCareDetail;
    @XmlElement(
-      name = "CareReceiverId"
+           name = "CareReceiverId"
    )
    protected ExtCareReceiverStrictIdType careReceiverId;
    @XmlElement(
-      name = "SpecificTechnicalCareDetail"
+           name = "SpecificTechnicalCareDetail"
    )
    protected SpecificTechnicalCareDetail specificTechnicalCareDetail;
    @XmlElement(
-      name = "MessageFault"
+           name = "MessageFault"
    )
    protected MessageFaultType messageFault;
    @XmlAttribute(
-      name = "MessageName"
+           name = "MessageName",
+           required = true
    )
    protected MessageNameType messageName;
    @XmlAttribute(
-      name = "Version"
+           name = "Version",
+           required = true
    )
    protected String version;
    @XmlAttribute(
-      name = "Duplicate"
+           name = "Duplicate",
+           required = true
    )
-   protected Boolean duplicate;
+   protected boolean duplicate;
    @XmlAttribute(
-      name = "TestFlag"
+           name = "TestFlag",
+           required = true
    )
-   protected Boolean testFlag;
+   protected boolean testFlag;
    @XmlAttribute(
-      name = "SenderReference"
+           name = "SenderReference",
+           required = true
    )
    protected String senderReference;
    @XmlAttribute(
-      name = "ReceiverReference"
+           name = "ReceiverReference"
    )
    protected String receiverReference;
    @XmlAttribute(
-      name = "Synchronous"
+           name = "Synchronous",
+           required = true
    )
-   protected Boolean synchronous;
+   protected boolean synchronous;
 
    public ExtCareReceiverDetailType getCareReceiverDetail() {
       return this.careReceiverDetail;
@@ -123,19 +129,19 @@ public class SingleSpecificTechnicalCareResponse implements Serializable {
       this.version = value;
    }
 
-   public Boolean isDuplicate() {
+   public boolean isDuplicate() {
       return this.duplicate;
    }
 
-   public void setDuplicate(Boolean value) {
+   public void setDuplicate(boolean value) {
       this.duplicate = value;
    }
 
-   public Boolean isTestFlag() {
+   public boolean isTestFlag() {
       return this.testFlag;
    }
 
-   public void setTestFlag(Boolean value) {
+   public void setTestFlag(boolean value) {
       this.testFlag = value;
    }
 
@@ -155,11 +161,11 @@ public class SingleSpecificTechnicalCareResponse implements Serializable {
       this.receiverReference = value;
    }
 
-   public Boolean isSynchronous() {
+   public boolean isSynchronous() {
       return this.synchronous;
    }
 
-   public void setSynchronous(Boolean value) {
+   public void setSynchronous(boolean value) {
       this.synchronous = value;
    }
 }

@@ -9,6 +9,9 @@ import org.apache.commons.lang.StringUtils;
 public final class InvokeStrategyFactory {
    private static EndpointDistributor distributor = EndpointDistributor.getInstance();
 
+   private InvokeStrategyFactory() {
+   }
+
    public static final List<InvokeStrategy> getList(String endpoint) {
       ArrayList<InvokeStrategy> strategies = new ArrayList();
       String serviceName = distributor.getService(endpoint);
