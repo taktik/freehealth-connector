@@ -157,6 +157,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         hcpNihii: String,
         hcpSsin: String,
         hcpName: String,
+        requestType: String,
         io: String?,
         startDate: Instant,
         endDate: Instant,
@@ -194,7 +195,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val attrQueries = mdaRequest.members.map {
             val inputRef = "" + IdGeneratorFactory.getIdGenerator().generateId()
             val requestId = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-            getAttrQuery(inputRef, issueInstant, samlFacets, it.hospitalized, hcpNihii, it.ssin, io, it.ioMembership, startDate, endDate)
+            getAttrQuery(inputRef, issueInstant, samlFacets, it.hospitalized, requestType, hcpNihii, it.ssin, io, it.ioMembership, startDate, endDate)
         }
 
         val unEncryptedQuery = ConnectorXmlUtils.toByteArray(AttributeQueryList().apply { attributeQueries.addAll(attrQueries) })
