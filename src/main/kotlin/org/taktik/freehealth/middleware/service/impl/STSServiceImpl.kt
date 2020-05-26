@@ -45,11 +45,13 @@ import org.taktik.freehealth.middleware.exception.MissingKeystoreException
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
+import java.io.IOException
 import java.io.StringReader
 import java.io.StringWriter
 import java.security.KeyStore
 import java.time.Instant
 import java.util.*
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerFactory
@@ -120,9 +122,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val etk = getHolderOfKeysEtk(credential, nihiiOrSsin)
         if (!hokPrivateKeys.containsKey(etk?.certificate?.serialNumber?.toString(10))) {
-            throw TechnicalConnectorException(
-                ERROR_CONFIG, "The certificate from the ETK don't match with the one in the encryption keystore"
-            )
+            throw java.lang.IllegalArgumentException("The certificate from the ETK don't match with the one in the encryption keystore")
         }
 
         val designators = when (quality) {
@@ -346,7 +346,9 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     })
 
     override fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore? {
-        return keystoreCache.get(Pair(keystoreId, passPhrase))
+        return try { keystoreCache.get(Pair(keystoreId, passPhrase)) } catch(ex:ExecutionException) {
+            (ex.cause as? IOException)?.let { throw IllegalArgumentException(it.message ?: "Decryption exception") } ?: throw (ex.cause ?: ex)
+        }
     }
 
     override fun checkIfKeystoreExist(keystoreId: UUID): Boolean {

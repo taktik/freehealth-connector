@@ -36,6 +36,8 @@ public class RetrieveTransactionResponse implements Serializable, SoapConversati
    private SOAPMessage soapRequest;
    @XmlTransient
    private SOAPMessage soapResponse;
+   @XmlTransient
+   private Integer upstreamTiming;
 
    @Override
    public SOAPMessage getSoapRequest() {
@@ -55,6 +57,16 @@ public class RetrieveTransactionResponse implements Serializable, SoapConversati
    @Override
    public void setSoapResponse(SOAPMessage soapResponse) {
       this.soapResponse = soapResponse;
+   }
+
+   @Override
+   public Integer getUpstreamTiming() {
+      return upstreamTiming;
+   }
+
+   @Override
+   public void setUpstreamTiming(Integer upstreamTiming) {
+      this.upstreamTiming = upstreamTiming;
    }
 
    public ResponseType getResponse() {

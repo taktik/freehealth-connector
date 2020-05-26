@@ -47,6 +47,7 @@ import org.taktik.freehealth.middleware.dto.ehbox.Message
 import org.taktik.freehealth.middleware.dto.ehbox.MessageOperationResponse
 import org.taktik.freehealth.middleware.dto.ehbox.MessageResponse
 import org.taktik.freehealth.middleware.dto.ehbox.MessagesResponse
+import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.mapper.toDocumentMessage
 import org.taktik.freehealth.middleware.mapper.toMessageDto
 import org.taktik.freehealth.middleware.service.EhboxService
@@ -77,7 +78,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
 
     override fun getInfos(keystoreId: UUID, tokenId: UUID, passPhrase: String): BoxInfo {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-            ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+            ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val infoRequest = GetBoxInfoRequest()
         return try {
             freehealthEhboxService.getBoxInfo(samlToken, infoRequest).let { response ->
@@ -104,7 +105,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         messageId: String,
         alternateKeystores: List<AltKeystore>?): MessageResponse {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-            ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+            ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val messageRequest = MessageRequestType().apply {
             this.messageId = messageId
             this.source = boxId
@@ -149,7 +150,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         readReceipt: Boolean
                             ): MessageOperationResponse {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-            ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+            ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val request =
             sendMessageBuilder.buildMessage(
                 keystoreId,
@@ -187,7 +188,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         readReceipt: Boolean
                             ): MessageOperationResponse {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-            ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+            ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val request =
             sendMessageBuilder.buildMessage(
                 keystoreId,
@@ -224,7 +225,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         alternateKeystores: List<AltKeystore>?
                              ): MessagesResponse {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-            ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+            ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val messagesListRequest = GetMessagesListRequest()
 
         messagesListRequest.source = boxId
@@ -289,7 +290,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         destination: String
                              ): MessageOperationResponse {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-            ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+            ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val mmr = MoveMessageRequest()
         mmr.source = source
         mmr.destination = destination
@@ -315,7 +316,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         source: String
                                ): MessageOperationResponse {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-            ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+            ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val mmr = be.fgov.ehealth.ehbox.consultation.protocol.v3.DeleteMessageRequest()
         mmr.source = source
         mmr.messageIds.addAll(messageIds)

@@ -42,9 +42,12 @@ class EattestServiceImpl : EattestService, ConfigurationModuleBootstrap.ModuleBo
         try {
             val service = org.taktik.connector.business.mycarenet.attestv2.service.ServiceFactory.getAttestPort(token)
             service.setPayload(request as Any)
+            val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
             val response = xmlResponse.asObject(be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationResponse::class.java) as be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationResponse
 
+            response.upstreamTiming = (stop - start).toInt();
             response.soapRequest = xmlResponse.request
             response.soapResponse = xmlResponse.soapMessage
 
@@ -58,9 +61,12 @@ class EattestServiceImpl : EattestService, ConfigurationModuleBootstrap.ModuleBo
         try {
             val service = org.taktik.connector.business.mycarenet.attestv2.service.ServiceFactory.getAttestPort(token)
             service.setPayload(request as Any)
+            val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
             val response = xmlResponse.asObject(be.fgov.ehealth.mycarenet.attest.protocol.v2.CancelAttestationResponse::class.java) as be.fgov.ehealth.mycarenet.attest.protocol.v2.CancelAttestationResponse
 
+            response.upstreamTiming = (stop - start).toInt();
             response.soapRequest = xmlResponse.request
             response.soapResponse = xmlResponse.soapMessage
 
@@ -74,9 +80,12 @@ class EattestServiceImpl : EattestService, ConfigurationModuleBootstrap.ModuleBo
         try {
             val service = ServiceFactory.getAttestPort(token)
             service.setPayload(request as Any)
+            val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
             val response = xmlResponse.asObject(SendAttestationResponse::class.java) as SendAttestationResponse
 
+            response.upstreamTiming = (stop - start).toInt();
             response.soapRequest = xmlResponse.request
             response.soapResponse = xmlResponse.soapMessage
 

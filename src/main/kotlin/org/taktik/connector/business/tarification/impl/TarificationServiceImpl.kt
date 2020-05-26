@@ -17,9 +17,12 @@ class TarificationServiceImpl : TarificationService, ConfigurationModuleBootstra
         try {
             val service = ServiceFactory.getTarificationSessionForMycarenet(token)
             service.setPayload(request as Any)
+            val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
             val tarificationConsultationResponse = xmlResponse.asObject(TarificationConsultationResponse::class.java) as TarificationConsultationResponse
 
+            tarificationConsultationResponse.upstreamTiming = (stop - start).toInt()
             tarificationConsultationResponse.soapRequest = xmlResponse.request
             tarificationConsultationResponse.soapResponse = xmlResponse.soapMessage
 

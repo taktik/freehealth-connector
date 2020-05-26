@@ -22,9 +22,12 @@ class MemberDataServiceImpl : MemberDataService, ConfigurationModuleBootstrap.Mo
         try {
             val service = ServiceFactory.getMemberDataSyncPort(token)
             service.setPayload(request)
+            val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
             val memberDataConsultationResponse = xmlResponse.asObject(MemberDataConsultationResponse::class.java)
 
+            memberDataConsultationResponse.upstreamTiming = (stop - start).toInt();
             memberDataConsultationResponse.soapRequest = xmlResponse.request
             memberDataConsultationResponse.soapResponse = xmlResponse.soapMessage
 

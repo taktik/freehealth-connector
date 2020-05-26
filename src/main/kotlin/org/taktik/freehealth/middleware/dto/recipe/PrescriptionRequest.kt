@@ -36,6 +36,5 @@ class PrescriptionRequest(
     var executorId:String? = null,
     val deliveryDate: Long? = null,
     val expirationDate: Long? = null,
-    val vision: String
-) {
-}
+    val vision: String? = null
+)
