@@ -150,7 +150,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
 
         val service = PrescriberIntegrationModuleV4Impl(stsService, keyDepotService)
         try {
-            kmehrHelper.assertValidKmehrPrescription(ByteArrayInputStream(prescription), selectedType)
+            //kmehrHelper.assertValidKmehrPrescription(ByteArrayInputStream(prescription), selectedType)
             log.debug("prescription $selectedType XML:\n${String(prescription)}")
         } catch (e: Exception) {
             log.error("Invalid $selectedType prescription XML:\n${String(prescription)}")
