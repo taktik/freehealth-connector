@@ -129,8 +129,8 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
 
             val response: CreatePrescriptionResponse? = recipePrescriberServiceV4.createPrescription(samlToken, credential, request) ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON, "Unknown error in recipe")
 
-            response?.let {
-                helper.unsealWithSymmKey(it.securedCreatePrescriptionResponse.securedContent, symmKey)?.also {
+            response?.let { r ->
+                helper.unsealWithSymmKey(r.securedCreatePrescriptionResponse.securedContent, symmKey)?.also {
                     checkStatus(response)
                     setPatientId(it.rid, patientId)
                 }
