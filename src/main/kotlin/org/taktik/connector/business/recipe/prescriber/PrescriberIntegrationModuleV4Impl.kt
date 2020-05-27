@@ -98,7 +98,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
             val days = System.getProperty("validation.expirationDate.days", "365")
             val expDateAsString = expirationDate.format(DateTimeFormatter.ofPattern("YYYY-MM-DD"))
             ValidationUtils.validateExpirationDate(expDateAsString, days)
-            performValidation(prescription, prescriptionType, expDateAsString)
+            //performValidation(prescription, prescriptionType, expDateAsString)
             val helper = MarshallerHelper(CreatePrescriptionResult::class.java, CreatePrescriptionParam::class.java)
             val etkRecipes: List<*> = etkHelper.recipe_ETK
             val key: KeyResult = getNewKey(credential, nihii, patientId, prescriptionType) ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_KGSS, "Cannot obtain key from KGSS for patient $patientId")
