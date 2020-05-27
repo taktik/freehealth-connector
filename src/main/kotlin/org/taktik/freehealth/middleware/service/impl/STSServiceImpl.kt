@@ -75,7 +75,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val assertion = document.documentElement
 
         tokensMap[tokenId] =
-            SamlTokenResult(tokenId, token, null, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
+            SamlTokenResult(tokenId, token, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
         log.info("tokensMap size: ${tokensMap.size}")
     }
 
@@ -100,7 +100,6 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         extraDesignators: List<Pair<String, String>>
     ): SamlTokenResult? {
         val now = System.currentTimeMillis()
-
         val currentToken = tokenId?.let { id -> tokensMap[id] }
         val isStillRecommendedForUse = currentToken?.let {
             val valid = it.validity
@@ -167,6 +166,28 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
+            "sortingcenter" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:sortingcenter:nihii-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:sortingcenter:nihii-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:sortingcenter:nihii-number",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:sortingcenter:nihii-number:recognisedsortingcenter:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:sortingcenter:nihii-number:recognisedsortingcenter:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
+            )
             "dentist" -> listOf(
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
@@ -229,6 +250,18 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     nihiiOrSsin
                 )
             )
+            "sortingcenter" -> listOf(
+                SAMLAttribute(
+                    "urn:be:fgov:ehealth:1.0:sortingcenter:nihii-number",
+                    "urn:be:fgov:identification-namespace",
+                    nihiiOrSsin
+                ),
+                SAMLAttribute(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:sortingcenter:nihii-number",
+                    "urn:be:fgov:identification-namespace",
+                    nihiiOrSsin
+                )
+            )
             "guardpost" -> listOf(
                 SAMLAttribute(
                     "urn:be:fgov:ehealth:1.0:guardpost:nihii-number",
@@ -266,10 +299,9 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             transformerFactory.newTransformer().transform(DOMSource(assertion), result)
             val randomUUID = UUID.randomUUID()
             val samlToken = result.writer.toString()
-            val samlTokenURLSafeBase64 = Base64.getUrlEncoder().encodeToString(result.writer.toString().toByteArray())
 
             val samlTokenResult =
-                SamlTokenResult(randomUUID, samlToken, samlTokenURLSafeBase64, now, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
+                SamlTokenResult(randomUUID, samlToken, now, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
             tokensMap[randomUUID] = samlTokenResult
             log.info("tokensMap size: ${tokensMap.size}")
 
