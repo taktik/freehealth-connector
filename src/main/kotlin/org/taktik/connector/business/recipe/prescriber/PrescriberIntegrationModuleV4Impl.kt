@@ -120,7 +120,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
             val request = CreatePrescriptionRequest()
             request.securedCreatePrescriptionRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(params)))
 
-            request.programId = propertyHandler.getProperty("programIdentification")
+            request.programId = propertyHandler.getProperty("programIdentification") ?: "freehealth-connector"
             request.id = "id" + UUID.randomUUID().toString()
             request.issueInstant = DateTime.now()
 
@@ -282,7 +282,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         param.symmKey = symmKey.encoded
         val request = PutVisionForPrescriberRequest()
         request.securedPutVisionForPrescriberRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(param)))
-        request.programId = PropertyHandler.getInstance().getProperty("programIdentification")
+        request.programId = PropertyHandler.getInstance().getProperty("programIdentification") ?: "freehealth-connector"
         request.issueInstant = DateTime()
         request.id = "id" + UUID.randomUUID().toString()
         return request
@@ -305,7 +305,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         param.symmKey = symmKey.encoded
         val request = GetValidationPropertiesRequest()
         request.securedGetValidationPropertiesRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(param)))
-        request.programId = PropertyHandler.getInstance().getProperty("programIdentification")
+        request.programId = PropertyHandler.getInstance().getProperty("programIdentification") ?: "freehealth-connector"
         request.issueInstant = DateTime()
         request.id = "id" + UUID.randomUUID().toString()
         return request
@@ -329,7 +329,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
 
         val request = ListOpenRidsRequest()
         request.securedListOpenRidsRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(param)))
-        request.programId = PropertyHandler.getInstance().getProperty("programIdentification")
+        request.programId = PropertyHandler.getInstance().getProperty("programIdentification") ?: "freehealth-connector"
         request.issueInstant = DateTime()
         request.id = "id" + UUID.randomUUID().toString()
         return request
@@ -374,7 +374,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         param.symmKey = symmKey.encoded
         val request = GetPrescriptionStatusRequest()
         request.securedGetPrescriptionStatusRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(param)))
-        request.programId = PropertyHandler.getInstance().getProperty("programIdentification")
+        request.programId = PropertyHandler.getInstance().getProperty("programIdentification") ?: "freehealth-connector"
         request.issueInstant = DateTime()
         request.id = "id" + UUID.randomUUID().toString()
         return request
