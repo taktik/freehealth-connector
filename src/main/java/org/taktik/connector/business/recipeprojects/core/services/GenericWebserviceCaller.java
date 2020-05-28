@@ -82,7 +82,7 @@ public abstract class GenericWebserviceCaller {
             GenericRequest genericRequest = new GenericRequest();
             genericRequest.setPayload(payload);
             genericRequest.setEndpoint(genericWebserviceRequest.getEndpoint());
-
+            genericRequest.setSoapAction(genericWebserviceRequest.getSoapAction());
 
             final HandlerChain handlerChain = new HandlerChain();
             if (genericWebserviceRequest.isAddLoggingHandler()) {
@@ -106,7 +106,7 @@ public abstract class GenericWebserviceCaller {
                 handlerChain.register(HandlerPosition.AFTER, new InsurabilityHandler());
             }
 
-            genericRequest.setHandlerChain(handlerChain);
+            genericRequest.addHandlerChain(handlerChain);
 
             final GenericResponse resp;
 

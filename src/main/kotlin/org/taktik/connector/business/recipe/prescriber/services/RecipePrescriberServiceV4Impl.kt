@@ -38,8 +38,8 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
         credential: Credential,
         request: GetPrescriptionRequest): GetPrescriptionResponse? {
         return GenericWebserviceCaller.callGenericWebservice(samlToken,
-            credential,
-            request, GetPrescriptionResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:getPrescription\"") as GetPrescriptionResponse?
+                                                             credential,
+                                                             request, GetPrescriptionResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:getPrescription\"")
     }
 
     @Throws(IntegrationModuleException::class)
@@ -48,8 +48,8 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
         credential: Credential,
         request: PutFeedbackFlagRequest): PutFeedbackFlagResponse? {
         return GenericWebserviceCaller.callGenericWebservice(samlToken,
-            credential,
-            request, PutFeedbackFlagResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:putFeedbackFlag\"") as PutFeedbackFlagResponse?
+                                                             credential,
+                                                             request, PutFeedbackFlagResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:putFeedbackFlag\"")
     }
 
     @Throws(IntegrationModuleException::class)
@@ -58,8 +58,8 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
         credential: Credential,
         request: ListFeedbacksRequest): ListFeedbacksResponse? {
         return GenericWebserviceCaller.callGenericWebservice(samlToken,
-            credential,
-            request, ListFeedbacksResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:listFeedbacks\"") as ListFeedbacksResponse?
+                                                             credential,
+                                                             request, ListFeedbacksResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:listFeedbacks\"")
     }
 
     @Throws(IntegrationModuleException::class)
@@ -68,8 +68,8 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
         credential: Credential,
         request: RevokePrescriptionRequest): RevokePrescriptionResponse? {
         return GenericWebserviceCaller.callGenericWebservice(samlToken,
-            credential,
-            request, RevokePrescriptionResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:revokePrescription\"") as RevokePrescriptionResponse?
+                                                             credential,
+                                                             request, RevokePrescriptionResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:revokePrescription\"")
     }
 
     @Throws(IntegrationModuleException::class)
@@ -78,8 +78,8 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
         credential: Credential,
         request: SendNotificationRequest): SendNotificationResponse? {
         return GenericWebserviceCaller.callGenericWebservice(samlToken,
-            credential,
-            request, SendNotificationResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:sendNotification\"") as SendNotificationResponse?
+                                                             credential,
+                                                             request, SendNotificationResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:sendNotification\"")
     }
 
     @Throws(IntegrationModuleException::class)
@@ -88,8 +88,8 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
         credential: Credential,
         request: CreatePrescriptionRequest): CreatePrescriptionResponse? {
         return GenericWebserviceCaller.callGenericWebservice(samlToken,
-            credential,
-            request, CreatePrescriptionResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:createPrescription\"") as CreatePrescriptionResponse?
+                                                             credential,
+                                                             request, CreatePrescriptionResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:createPrescription\"")
     }
 
     @Throws(IntegrationModuleException::class)
@@ -98,8 +98,8 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
         credential: Credential,
         request: GetValidationPropertiesRequest): GetValidationPropertiesResponse? {
         return GenericWebserviceCaller.callGenericWebservice(samlToken,
-            credential,
-            request, GetValidationPropertiesResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:getValidationProperties\"") as GetValidationPropertiesResponse?
+                                                             credential,
+                                                             request, GetValidationPropertiesResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:getValidationProperties\"")
     }
 
     @Throws(IntegrationModuleException::class)
@@ -108,8 +108,8 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
         credential: Credential,
         request: GetPrescriptionStatusRequest): GetPrescriptionStatusResponse? {
         return GenericWebserviceCaller.callGenericWebservice(samlToken,
-            credential,
-            request, GetPrescriptionStatusResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:getPrescriptionStatus\"") as GetPrescriptionStatusResponse?
+                                                             credential,
+                                                             request, GetPrescriptionStatusResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:getPrescriptionStatus\"")
     }
 
     @Throws(IntegrationModuleException::class)
@@ -118,8 +118,8 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
         credential: Credential,
         request: ListOpenRidsRequest): ListOpenRidsResponse? {
         return GenericWebserviceCaller.callGenericWebservice(samlToken,
-            credential,
-            request, ListOpenRidsResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:ListOpenRids\"") as ListOpenRidsResponse?
+                                                             credential,
+                                                             request, ListOpenRidsResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:ListOpenRids\"")
     }
 
     @Throws(IntegrationModuleException::class)
@@ -128,8 +128,8 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
         credential: Credential,
         request: PutVisionForPrescriberRequest): PutVisionForPrescriberResponse? {
         return GenericWebserviceCaller.callGenericWebservice(samlToken,
-            credential,
-            request, PutVisionForPrescriberResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:putVisionForPrescriber\"") as PutVisionForPrescriberResponse?
+                                                             credential,
+                                                             request, PutVisionForPrescriberResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:putVisionForPrescriber\"")
     }
 
     @Throws(IntegrationModuleException::class)
