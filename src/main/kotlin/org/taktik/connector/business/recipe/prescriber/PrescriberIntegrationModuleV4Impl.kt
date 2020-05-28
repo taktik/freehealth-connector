@@ -50,6 +50,7 @@ import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
+import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Document
@@ -96,7 +97,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         return try {
             val propertyHandler: PropertyHandler = PropertyHandler.getInstance()
             val days = System.getProperty("validation.expirationDate.days", "365")
-            val expDateAsString = expirationDate.format(DateTimeFormatter.ofPattern("YYYY-MM-DD"))
+            val expDateAsString = expirationDate.format(DateTimeFormatter.ofPattern("YYYY-MM-dd"))
             ValidationUtils.validateExpirationDate(expDateAsString, days)
             //performValidation(prescription, prescriptionType, expDateAsString)
             val helper = MarshallerHelper(CreatePrescriptionResult::class.java, CreatePrescriptionParam::class.java)
@@ -113,6 +114,9 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
             params.expirationDate = expDateAsString
             params.vision = vision
 
+            log.info("Recip-e v4 prescription is {}", prescription.toString(Charsets.UTF_8))
+            log.info("Recip-e v4 message is {}", ConnectorXmlUtils.toString(params))
+
             val request = CreatePrescriptionRequest()
             request.securedCreatePrescriptionRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(params)))
 
@@ -126,6 +130,8 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
             adminValue.referenceSourceVersion = extractReferenceSourceVersionFromKmehr(prescription)
             adminValue.prescriptionType = prescriptionType
             request.administrativeInformation = adminValue
+
+            log.info("Recip-e v4 request is {}", ConnectorXmlUtils.toString(request))
 
             val response: CreatePrescriptionResponse? = recipePrescriberServiceV4.createPrescription(samlToken, credential, request) ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON, "Unknown error in recipe")
 
