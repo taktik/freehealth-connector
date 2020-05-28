@@ -540,7 +540,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
 
     @Throws(IntegrationModuleException::class)
     protected fun checkStatus(response: StatusResponseType) {
-        if (EHEALTH_SUCCESS_CODE_100 != response.status.statusCode.value && EHEALTH_SUCCESS_CODE_200 != response.status.statusCode.value) {
+        if (EHEALTH_SUCCESS_CODE_100 != response.status.statusCode.value && EHEALTH_SUCCESS_CODE_200 != response.status.statusCode.value && EHEALTH_SUCCESS_URN != response.status.statusCode.value) {
             log.error("Error Status received : " + response.status.statusCode.value)
             throw IntegrationModuleException(getLocalisedMsg(response.status))
         }

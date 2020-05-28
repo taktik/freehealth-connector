@@ -246,6 +246,7 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
     companion object {
         val EHEALTH_SUCCESS_CODE_100 = "100"
         val EHEALTH_SUCCESS_CODE_200 = "200"
+        val EHEALTH_SUCCESS_URN = "urn:be:fgov:ehealth:2.0:status:Success"
         val RID_PATTERN = "BE([PKN])([P0-9])([0-9A-Z]){8}"
     }
 }
