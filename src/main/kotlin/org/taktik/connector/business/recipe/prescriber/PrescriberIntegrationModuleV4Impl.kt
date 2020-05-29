@@ -50,6 +50,7 @@ import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
+import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Document
@@ -95,9 +96,9 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
 
         return try {
             val propertyHandler: PropertyHandler = PropertyHandler.getInstance()
-            val expDateAsString = expirationDate.format(DateTimeFormatter.ofPattern("YYYY-MM-DD"))
+            val expDateAsString = expirationDate.format(DateTimeFormatter.ofPattern("YYYY-MM-dd"))
             ValidationUtils.validateExpirationDate(expDateAsString)
-            performValidation(prescription, prescriptionType, expDateAsString)
+            //performValidation(prescription, prescriptionType, expDateAsString)
             val helper = MarshallerHelper(CreatePrescriptionResult::class.java, CreatePrescriptionParam::class.java)
             val etkRecipes: List<*> = etkHelper.recipe_ETK
             val key: KeyResult = getNewKey(credential, nihii, patientId, prescriptionType) ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_KGSS, "Cannot obtain key from KGSS for patient $patientId")
@@ -112,10 +113,13 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
             params.expirationDate = expDateAsString
             params.vision = vision
 
+            log.info("Recip-e v4 prescription is {}", prescription.toString(Charsets.UTF_8))
+            log.info("Recip-e v4 message is {}", ConnectorXmlUtils.toString(params))
+
             val request = CreatePrescriptionRequest()
             request.securedCreatePrescriptionRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(params)))
 
-            request.programId = propertyHandler.getProperty("programIdentification")
+            request.programId = propertyHandler.getProperty("programIdentification") ?: "freehealth-connector"
             request.id = "id" + UUID.randomUUID().toString()
             request.issueInstant = DateTime.now()
 
@@ -126,10 +130,12 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
             adminValue.prescriptionType = prescriptionType
             request.administrativeInformation = adminValue
 
+            log.info("Recip-e v4 request is {}", ConnectorXmlUtils.toString(request))
+
             val response: CreatePrescriptionResponse? = recipePrescriberServiceV4.createPrescription(samlToken, credential, request) ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON, "Unknown error in recipe")
 
-            response?.let {
-                helper.unsealWithSymmKey(it.securedCreatePrescriptionResponse.securedContent, symmKey)?.also {
+            response?.let { r ->
+                helper.unsealWithSymmKey(r.securedCreatePrescriptionResponse.securedContent, symmKey)?.also {
                     checkStatus(response)
                     setPatientId(it.rid, patientId)
                 }
@@ -275,7 +281,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         param.symmKey = symmKey.encoded
         val request = PutVisionForPrescriberRequest()
         request.securedPutVisionForPrescriberRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(param)))
-        request.programId = PropertyHandler.getInstance().getProperty("programIdentification")
+        request.programId = PropertyHandler.getInstance().getProperty("programIdentification") ?: "freehealth-connector"
         request.issueInstant = DateTime()
         request.id = "id" + UUID.randomUUID().toString()
         return request
@@ -298,7 +304,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         param.symmKey = symmKey.encoded
         val request = GetValidationPropertiesRequest()
         request.securedGetValidationPropertiesRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(param)))
-        request.programId = PropertyHandler.getInstance().getProperty("programIdentification")
+        request.programId = PropertyHandler.getInstance().getProperty("programIdentification") ?: "freehealth-connector"
         request.issueInstant = DateTime()
         request.id = "id" + UUID.randomUUID().toString()
         return request
@@ -322,7 +328,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
 
         val request = ListOpenRidsRequest()
         request.securedListOpenRidsRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(param)))
-        request.programId = PropertyHandler.getInstance().getProperty("programIdentification")
+        request.programId = PropertyHandler.getInstance().getProperty("programIdentification") ?: "freehealth-connector"
         request.issueInstant = DateTime()
         request.id = "id" + UUID.randomUUID().toString()
         return request
@@ -367,7 +373,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         param.symmKey = symmKey.encoded
         val request = GetPrescriptionStatusRequest()
         request.securedGetPrescriptionStatusRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(param)))
-        request.programId = PropertyHandler.getInstance().getProperty("programIdentification")
+        request.programId = PropertyHandler.getInstance().getProperty("programIdentification") ?: "freehealth-connector"
         request.issueInstant = DateTime()
         request.id = "id" + UUID.randomUUID().toString()
         return request
@@ -533,7 +539,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
 
     @Throws(IntegrationModuleException::class)
     protected fun checkStatus(response: StatusResponseType) {
-        if (EHEALTH_SUCCESS_CODE_100 != response.status.statusCode.value && EHEALTH_SUCCESS_CODE_200 != response.status.statusCode.value) {
+        if (EHEALTH_SUCCESS_CODE_100 != response.status.statusCode.value && EHEALTH_SUCCESS_CODE_200 != response.status.statusCode.value && EHEALTH_SUCCESS_URN != response.status.statusCode.value) {
             log.error("Error Status received : " + response.status.statusCode.value)
             throw IntegrationModuleException(getLocalisedMsg(response.status))
         }
