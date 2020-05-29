@@ -73,9 +73,6 @@ import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredenti
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
-import org.taktik.freehealth.middleware.dto.eattest.Eattest
-import org.taktik.freehealth.middleware.dto.eattest.EattestAcknowledgeType
-import org.taktik.freehealth.middleware.dto.eattest.SendAttestResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.CancelSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.EndSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.StartSubscriptionResultWithResponse
@@ -103,11 +100,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
     private val config = ConfigFactory.getConfigValidator(listOf())
     private val freehealthMhmService: org.taktik.connector.business.mhm.MhmService =
         org.taktik.connector.business.mhm.impl.MhmServiceImpl()
-    private val eAttestErrors =
+
+    private val mhmSubscriptionErrors =
         Gson().fromJson(
-            this.javaClass.getResourceAsStream("/be/errors/eAttestErrors.json").reader(Charsets.UTF_8),
+            this.javaClass.getResourceAsStream("/be/errors/mhmSubscriptionError.json").reader(Charsets.UTF_8),
             arrayOf<MycarenetError>().javaClass
                        ).associateBy({ it.uid }, { it })
+
     private val xPathFactory = XPathFactory.newInstance()
 
     fun NodeList.forEach(action: (Node) -> Unit) {
@@ -132,7 +131,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                                   ): StartSubscriptionResultWithResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for Eattest operations")
+                ?: throw MissingTokenException("Cannot obtain token for medical house subscription operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
@@ -172,7 +171,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
             this.commonInput = CommonInputType().apply {
                 request =
                     be.fgov.ehealth.mycarenet.commons.core.v3.RequestType()
-                        .apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
+                        .apply { isIsTest = config.getProperty("endpoint.mcn.medicalhousemembership")?.contains("-acpt") ?: false }
                 this.inputReference = inputReference
                 origin = OriginType().apply {
                     `package` = PackageType().apply {
@@ -204,10 +203,10 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
             this.xades = BlobUtil.generateXades(credential, this.detail, "medicalhousemembership")
         }
 
-        log.info("Sending subscription resuest {}", ConnectorXmlUtils.toString(sendSubscripionRequest))
-        val sendAttestationResponse = freehealthMhmService.startSubscription(samlToken, sendSubscripionRequest)
+        log.info("Sending subscription request {}", ConnectorXmlUtils.toString(sendSubscripionRequest))
+        val sendSubscriptionResponse = freehealthMhmService.startSubscription(samlToken, sendSubscripionRequest)
 
-        val blobType = sendAttestationResponse.`return`.detail
+        val blobType = sendSubscriptionResponse.`return`.detail
         val blob = BlobMapper.mapBlobfromBlobType(blobType)
         val unsealedData =
             crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
@@ -237,7 +236,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 extractError(unencryptedRequest, ec, e.url)
             } ?: setOf()
         }
-        val commonOutput = sendAttestationResponse.`return`.commonOutput
+        val commonOutput = sendSubscriptionResponse.`return`.commonOutput
 
         return decryptedAndVerifiedResponse.sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
             StartSubscriptionResultWithResponse(
@@ -250,8 +249,8 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     this.transactionRequest =
                         MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
                             .toString(Charsets.UTF_8)
-                    sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    sendSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    sendSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
                 kmehrMessage = encryptedKnownContent?.businessContent?.value
                                                )
@@ -264,8 +263,8 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 this.transactionRequest =
                     MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
                         .toString(Charsets.UTF_8)
-                sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                sendSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                sendSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
             },
             kmehrMessage = encryptedKnownContent?.businessContent?.value
                                                 )
@@ -539,7 +538,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                             node = node.parentNode
                         }
                         val elements =
-                            eAttestErrors.values.filter {
+                            mhmSubscriptionErrors.values.filter {
                                 it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
                             }
                         elements.forEach { it.value = textContent }

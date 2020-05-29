@@ -18,7 +18,7 @@ public final class ServiceFactory {
 
    public static GenericRequest getSubscriptionPort(SAMLToken token) throws TechnicalConnectorException {
       Validate.notNull(token, "Required parameter SAMLToken is null.");
-      String endPoint = config.getProperty("endpoint.eattestv2", "$uddi{uddi:ehealth-fgov-be:business:mycarenetmhm:v1}");
+      String endPoint = config.getProperty("endpoint.mcn.medicalhousemembership", "$uddi{uddi:ehealth-fgov-be:business:mycarenetmhm:v1}");
       return (new GenericRequest()).setEndpoint(endPoint).setCredential(token, TokenType.SAML).addDefaulHandlerChain();
    }
 }

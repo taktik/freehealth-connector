@@ -13,7 +13,7 @@ import javax.xml.soap.SOAPException
 class MhmServiceImpl : MhmService {
     override fun startSubscription(token: SAMLToken, request: SendSubscriptionRequest): SendSubscriptionResponse {
         try {
-            val service = org.taktik.connector.business.mycarenet.attestv2.service.ServiceFactory.getAttestPort(token)
+            val service = org.taktik.connector.business.mycarenet.mhm.service.ServiceFactory.getSubscriptionPort(token)
             service.setPayload(request as Any)
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
             val response = xmlResponse.asObject(SendSubscriptionResponse::class.java)
