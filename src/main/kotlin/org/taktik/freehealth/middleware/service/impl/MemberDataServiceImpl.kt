@@ -24,8 +24,11 @@ import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
 import be.cin.mycarenet.esb.common.v2.CommonInput
 import be.cin.mycarenet.esb.common.v2.OrigineType
+import be.cin.nip.async.generic.Get
+import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Post
 import be.cin.nip.async.generic.PostResponse
+import be.cin.nip.async.generic.Query
 import be.cin.types.v1.DetailType
 import be.cin.types.v1.DetailsType
 import be.cin.types.v1.FaultType
@@ -71,7 +74,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import org.taktik.connector.business.dmg.builders.ResponseObjectBuilderFactory
 import org.taktik.connector.business.domain.common.GenAsyncResponse
+import org.taktik.connector.business.domain.dmg.DmgAcknowledge
+import org.taktik.connector.business.domain.dmg.DmgsList
 import org.taktik.connector.business.genericasync.builders.BuilderFactory
 import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
 import org.taktik.connector.business.memberdata.builders.impl.ResponseObjectBuilderImpl
@@ -80,6 +86,7 @@ import org.taktik.connector.business.mycarenetcommons.mapper.SendRequestMapper
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.builders.RequestBuilderFactory
+import org.taktik.connector.business.mycarenetdomaincommons.domain.Blob
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
 import org.taktik.connector.technical.config.ConfigFactory
@@ -112,7 +119,7 @@ import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
 import java.net.URI
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPath
@@ -162,13 +169,15 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         startDate: Instant,
         endDate: Instant,
         passPhrase: String,
+        hospitalized: Boolean?,
+        requestType: String?,
         mdaRequest: MemberDataBatchRequest
                                       ): GenAsyncResponse {
         val encryptRequest = true
         validateQuality(hcpQuality)
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for GMD operations")
+                ?: throw MissingTokenException("Cannot obtain token for MDA operations")
 
         val istest = config.getProperty("endpoint.dmg.notification.v1").contains("-acpt")
         val author = makeAuthor(hcpNihii, hcpSsin, hcpName)
@@ -202,6 +211,13 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val blobBuilder = BlobBuilderFactory.getBlobBuilder("genericasync")
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId();
 
+        val marshallerHelper = MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java)
+
+        val marshallRequest = marshallerHelper.toObject(unEncryptedQuery)?.apply {
+            this.detail = unEncryptedQuery?.let {aqb -> BlobMapper.mapBlobTypefromBlob(blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA")) }
+        }?.let { marshallerHelper.toXMLByteArray(it) }
+
+
         val blob = unEncryptedQuery.let {aqb ->
             if (encryptRequest) {
                 val identifierTypeString = config.getProperty("memberdata.keydepot.identifiertype", "CBE")
@@ -226,7 +242,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     })).let {
                     blobBuilder.build(it, "none", detailId, "text/xml", "MDA", "encryptedForKnownBED")
                 }
-            } else blobBuilder.build(aqb, "deflate", detailId, "text/xml", "MDA")
+            } else blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA")
         }
 
         val ci = CommonInput().apply {
@@ -252,7 +268,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             this.inputReference = inputReference
         }
 
-        // no xades needed for dmg async
+        // no xades needed for MDA async
         val post = BuilderFactory.getRequestObjectBuilder("mda")
             .buildPostRequest(ci, SendRequestMapper.mapBlobToCinBlob(blob), null)
         val postResponse = genAsyncService.postRequest(samlToken, post, postHeader)
@@ -270,6 +286,56 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             }
         }
     }
+
+    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpName: String, messageNames: List<String>?): GenAsyncResponse {
+
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for MDA operations")
+
+        val getHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
+            messageID = URI(IdGeneratorFactory.getIdGenerator("uuid").generateId())
+        }
+
+        val get = Get().apply {
+            msgQuery = MsgQuery().apply {
+                isInclude = true
+                max = 100
+                messageNames?.let { this.messageNames.addAll(it) }
+            }
+            tAckQuery = Query().apply {
+                isInclude = true
+                max = 100
+            }
+            origin = buildOriginType(hcpNihii, hcpSsin, hcpName, hcpName)
+        }
+        val response = genAsyncService.getRequest(samlToken, get, getHeader)
+
+        val b64 = Base64.getEncoder()
+
+        return GenAsyncResponse()
+    }
+
+    private fun buildOriginType(nihii: String, ssin: String, firstname: String, lastname: String): OrigineType =
+        OrigineType().apply {
+            `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
+                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.dmg.package.name") }
+                license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
+                    username = config.getProperty("mycarenet.license.username")
+                    password = config.getProperty("mycarenet.license.password")
+                }
+            }
+            careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
+                this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                    quality = "medicalhouse"
+                    value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = nihii }
+                }
+                physicalPerson = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                    this.ssin = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = ssin }
+                }
+            }
+        }
+
 
     override fun getMemberData(
         keystoreId: UUID,

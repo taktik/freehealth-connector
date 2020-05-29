@@ -25,7 +25,6 @@ import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.icure.cin.saml.extensions.Facet
 import java.time.Instant
-import java.util.Date
 import java.util.UUID
 
 interface MemberDataService {
@@ -57,6 +56,18 @@ interface MemberDataService {
         startDate: Instant,
         endDate: Instant,
         passPhrase: String,
+        hospitalized: Boolean? = false,
+        requestType: String?,
         mdaRequest: MemberDataBatchRequest
                              ): GenAsyncResponse
+
+    fun getMemberDataMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        messageNames: List<String>?
+    ): GenAsyncResponse
 }

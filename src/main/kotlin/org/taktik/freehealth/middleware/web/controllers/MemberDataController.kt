@@ -218,6 +218,8 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) endDate: Long?,
+        @RequestParam(required = false) hospitalized: Boolean?,
+        @RequestParam(required = false) requestType: String?,
         @PathVariable io: String,
         @RequestBody mdaRequest: MemberDataBatchRequestDto
                              ): GenAsyncResponse {
@@ -225,7 +227,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         return memberDataService.sendMemberDataRequest(
             keystoreId = keystoreId,
             tokenId = tokenId,
-            hcpQuality = hcpQuality ?: "doctor",
+            hcpQuality = hcpQuality ?: "medicalhouse",
             hcpNihii = hcpNihii,
             hcpSsin = hcpSsin,
             hcpName = hcpName,
@@ -233,8 +235,30 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
             startDate = startDate,
             endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
             passPhrase = passPhrase,
+            hospitalized = hospitalized,
+            requestType = requestType,
             mdaRequest = mapper.map(mdaRequest, MemberDataBatchRequest::class.java)
                                                       )
+    }
+
+    @PostMapping("/async/messages/", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun getMemberDataMessage(
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpName: String,
+        @RequestParam messageNames: List<String>?
+    ): GenAsyncResponse {
+        return memberDataService.getMemberDataMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpName = hcpName,
+            messageNames = messageNames)
     }
 
 }
