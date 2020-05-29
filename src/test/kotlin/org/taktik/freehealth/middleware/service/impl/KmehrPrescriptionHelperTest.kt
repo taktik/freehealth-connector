@@ -5,9 +5,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThat
 import org.junit.Test
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelper
+import org.taktik.connector.business.recipe.utils.Period
 import org.taktik.freehealth.middleware.domain.recipe.RegimenItem
 import org.taktik.freehealth.middleware.dto.Code
-import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelper.Period
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.temporal.ChronoUnit.WEEKS
 
