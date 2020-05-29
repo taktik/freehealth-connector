@@ -170,7 +170,6 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         endDate: Instant,
         passPhrase: String,
         hospitalized: Boolean?,
-        requestType: String?,
         mdaRequest: MemberDataBatchRequest
                                       ): GenAsyncResponse {
         val encryptRequest = true

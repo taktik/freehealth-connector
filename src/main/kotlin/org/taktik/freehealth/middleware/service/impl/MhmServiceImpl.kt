@@ -134,7 +134,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 ?: throw MissingTokenException("Cannot obtain token for Eattest operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase)
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
@@ -203,6 +203,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
             this.xades = BlobUtil.generateXades(credential, this.detail, "medicalhousemembership")
         }
 
+        log.info("Sending subscription resuest {}", ConnectorXmlUtils.toString(sendSubscripionRequest))
         val sendAttestationResponse = freehealthMhmService.startSubscription(samlToken, sendSubscripionRequest)
 
         val blobType = sendAttestationResponse.`return`.detail

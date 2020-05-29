@@ -15,6 +15,8 @@ public class SendSubscriptionResponse extends SendResponseType implements SoapCo
 	private static final long serialVersionUID = 1L;
 
 	@XmlTransient
+	Integer upstreamTiming;
+	@XmlTransient
 	private SOAPMessage soapRequest;
 	@XmlTransient private SOAPMessage soapResponse;
 
@@ -38,4 +40,13 @@ public class SendSubscriptionResponse extends SendResponseType implements SoapCo
 		this.soapResponse = soapResponse;
 	}
 
+	@Override
+	public Integer getUpstreamTiming() {
+		return upstreamTiming;
+	}
+
+	@Override
+	public void setUpstreamTiming(Integer upstreamTiming) {
+		this.upstreamTiming = upstreamTiming;
+	}
 }

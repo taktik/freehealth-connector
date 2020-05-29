@@ -236,7 +236,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
             endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
             passPhrase = passPhrase,
             hospitalized = hospitalized,
-            requestType = requestType,
+            requestType = requestType ?: "information",
             mdaRequest = mapper.map(mdaRequest, MemberDataBatchRequest::class.java)
                                                       )
     }
