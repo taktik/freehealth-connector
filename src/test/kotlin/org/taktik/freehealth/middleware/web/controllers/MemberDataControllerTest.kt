@@ -39,6 +39,15 @@ class MemberDataControllerTest : EhealthTest() {
         600 to listOf("45021812602","72072320188","16020808228","15011820591","0615007639744","54071402460","27101406159","86052640376","45021812602","92070850968","26120934416","51120124705","48062301752","14011618454","42032920621","88091034505","??","0609003009338","54071402460","27101406159"),
         900 to listOf("73050819368","50010403034","19081826340","17012401843","0446347301700","28030407427","81082855769","50010403034","73050819368","26011100128","24060902854","95021931359","91020551103","17012401843","31011514068","96020250510","51010604775","0386015000200","28030407427","11011238210")
     )
+
+    private val asyncNisses = mapOf(
+        100 to listOf("84022148878", "68091400202", "30050802512", "59041744620", "03062620819", "57052511675", "93101144683", "68021229115"),
+        300 to listOf("53070735020", "57010179489", "49021629574", "76110435930", "98080832693", "53040145574", "49012619462", "59040320896"),
+        500 to listOf("76102424423", "37112712021", "16112106736", "68021910291", "58112438989", "48033044311", "58042802590", "46121723514"),
+        600 to listOf("67120143655", "70021546287", "23102820194", "69021902691", "70083132280", "45011112215", "27121516833", "45112243029"),
+        900 to listOf("57012803538", "82062220229", "45072705334", "60122945519", "99091447286", "59082410780", "25111903990", "39010315202")
+    )
+
     private fun getNisses(idx: Int) = listOf(nisses[100]!![idx], nisses[300]!![idx], nisses[500]!![idx], nisses[600]!![idx], nisses[900]!![idx])
 
     private fun assertErrors(scenario: String, error: String, results: MemberDataResponse?) {
@@ -712,14 +721,26 @@ class MemberDataControllerTest : EhealthTest() {
     }
 
     @Test
-    fun scenarioMemberdataRequest() {
-        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val str = this.restTemplate.exchange("http://localhost:$port/mda/async/request/500" +
+    fun scenarioMemberdataAsyncRequest() {
+        val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
+        val str = this.restTemplate.exchange("http://localhost:$port/mda/async/request/900" +
                                                  "?hcpNihii=$nihii5" +
                                                  "&hcpSsin=$ssin5" +
                                                  "&hcpName={name5}" +
                                                  "&hcpQuality=medicalhouse",
-                                             HttpMethod.POST, HttpEntity<MemberDataBatchRequestDto>(MemberDataBatchRequestDto(nisses[500]?.map { MemberInfoDto(ssin = it) } ?: listOf()), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, name5)
+                                             HttpMethod.POST, HttpEntity<MemberDataBatchRequestDto>(MemberDataBatchRequestDto(asyncNisses[900]?.map { MemberInfoDto(ssin = it) } ?: listOf()), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, name5)
+
+        Assertions.assertThat(str).isNotNull
+    }
+
+    @Test
+    fun scenarioMemberdataAsyncGetMessage() {
+        val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
+        val str = this.restTemplate.exchange("http://localhost:$port/mda/async/messages" +
+            "?hcpNihii=$nihii5" +
+            "&hcpSsin=$ssin5" +
+            "&hcpName={name5}",
+            HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName5, lastName5)
 
         Assertions.assertThat(str).isNotNull
     }
