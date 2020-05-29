@@ -76,10 +76,11 @@ class STSController(private val stsService: STSService, private val ssoService: 
 
     @Deprecated("Please specify a quality")
     @GetMapping("/token", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestParam(required = false) isMedicalHouse: Boolean?, @RequestParam(required = false) isGuardPost: Boolean?, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?) =
+    fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestParam(required = false) isMedicalHouse: Boolean?, @RequestParam(required = false) isGuardPost: Boolean?, @RequestParam(required = false) isSortingCenter: Boolean?, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?) =
         stsService.requestToken(keystoreId, ssin, passPhrase, when {
             isMedicalHouse?: false -> "medicalhouse"
             isGuardPost?: false -> "guardpost"
+            isSortingCenter ?: false -> "sortingcenter"
             else -> "doctor"
         }, previousTokenId)
 

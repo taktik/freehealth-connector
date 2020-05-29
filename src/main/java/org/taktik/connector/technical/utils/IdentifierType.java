@@ -48,6 +48,7 @@ public final class IdentifierType implements Serializable {
    public static final IdentifierType NIHII_BELRAI_SCREEN = new IdentifierType("NIHII-BELRAI_SCREEN", 8);
    public static final IdentifierType NIHII_GROUP_MIDWIVES = new IdentifierType("NIHII-GROUP_MIDWIVES", 8);
    public static final IdentifierType NIHII_SORTING_CENTER = new IdentifierType("NIHII-SORTING_CENTER", "NIHII-SORTING_CENTER", "SORTING_CENTER" , 8);
+   public static final IdentifierType UNKNOWN = new IdentifierType("UNKNOWN", "UNKNOWN", "UNKNOWN" , 8);
    /** @deprecated */
    @Deprecated
    public static final IdentifierType HUB;
@@ -150,7 +151,7 @@ public final class IdentifierType implements Serializable {
    }
 
    public static IdentifierType lookup(String type, String subType, int source) {
-      IdentifierType returnValue = null;
+      IdentifierType returnValue = UNKNOWN;
       Iterator i$ = predefinedTypes.values().iterator();
 
       while(true) {
@@ -160,6 +161,9 @@ public final class IdentifierType implements Serializable {
          do {
             do {
                if (!i$.hasNext()) {
+                  if (returnValue == UNKNOWN) {
+                     LOG.warn("Could not lookup {}, {}, {}",type,subType,source);
+                  }
                   return returnValue;
                }
 
