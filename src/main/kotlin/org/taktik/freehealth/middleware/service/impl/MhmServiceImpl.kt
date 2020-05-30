@@ -113,7 +113,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         (0 until this.length).asSequence().map { this.item(it) }.forEach { action(it) }
     }
 
-    override fun startSubscription(keystoreId: UUID,
+    override fun sendSubscription(keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
@@ -204,7 +204,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         }
 
         log.info("Sending subscription request {}", ConnectorXmlUtils.toString(sendSubscripionRequest))
-        val sendSubscriptionResponse = freehealthMhmService.startSubscription(samlToken, sendSubscripionRequest)
+        val sendSubscriptionResponse = freehealthMhmService.sendSubscription(samlToken, sendSubscripionRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:SendSubscription")
 
         val blobType = sendSubscriptionResponse.`return`.detail
         val blob = BlobMapper.mapBlobfromBlobType(blobType)
@@ -286,10 +286,25 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         reference: String,
         endDate: Int,
         reason: String): CancelSubscriptionResultWithResponse? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for medical house subscription operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
+
+        val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
+        val inputReference = InputReference().inputReference
+
+        val now = DateTime.now().withMillisOfSecond(0)
+
+        return null
     }
 
-    override fun endSubscription(keystoreId: UUID,
+    override fun notifySubscriptionClosure(keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
@@ -304,7 +319,22 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         reference: String,
         endDate: Int,
         reason: String): EndSubscriptionResultWithResponse? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for medical house subscription operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
+
+        val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
+        val inputReference = InputReference().inputReference
+
+        val now = DateTime.now().withMillisOfSecond(0)
+
+        return null
     }
 
     private fun createStartSubscriptionRequest(

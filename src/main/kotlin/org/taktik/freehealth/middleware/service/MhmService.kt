@@ -28,7 +28,7 @@ import org.taktik.freehealth.middleware.dto.mhm.StartSubscriptionResultWithRespo
 import java.util.*
 
 interface MhmService {
-    fun startSubscription(
+    fun sendSubscription(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
@@ -65,7 +65,7 @@ interface MhmService {
         reason: String
                          ): CancelSubscriptionResultWithResponse?
 
-    fun endSubscription(
+    fun notifySubscriptionClosure(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,

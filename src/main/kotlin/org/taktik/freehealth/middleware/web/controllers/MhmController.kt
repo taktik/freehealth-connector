@@ -38,8 +38,8 @@ import java.util.UUID
 @RestController
 @RequestMapping("/mhm")
 class MhmController(val mhmService: MhmService) {
-    @PostMapping("/send/{patientSsin}/verbose", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun sendAttestWithResponse(
+    @PostMapping("/sendSubscriptionBySsin/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun sendSubscriptionBySsin(
         @PathVariable patientSsin: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -55,7 +55,7 @@ class MhmController(val mhmService: MhmService) {
         @RequestParam startDate: Int,
         @RequestParam isTrial: Boolean,
         @RequestParam signatureType: String
-    ) = mhmService.startSubscription(
+    ) = mhmService.sendSubscription(
         keystoreId,
         tokenId,
         passPhrase,
@@ -69,8 +69,8 @@ class MhmController(val mhmService: MhmService) {
         io,
         ioMembership, startDate, isTrial, signatureType)
 
-    @PostMapping("/send/{io}/{ioMembership}/verbose", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun sendAttestWithResponse(
+    @PostMapping("/sendSubscriptionByIo/{io}/{ioMembership}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun sendSubscriptionByIo(
         @PathVariable io: String,
         @PathVariable ioMembership: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -86,7 +86,7 @@ class MhmController(val mhmService: MhmService) {
         @RequestParam startDate: Int,
         @RequestParam isTrial: Boolean,
         @RequestParam signatureType: String
-                              ) = mhmService.startSubscription(
+                              ) = mhmService.sendSubscription(
         keystoreId,
         tokenId,
         passPhrase,
@@ -100,4 +100,73 @@ class MhmController(val mhmService: MhmService) {
         io,
         ioMembership, startDate, isTrial, signatureType)
 
+    @PostMapping("/cancelSubscription", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun cancelSubscription(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpName: String,
+        @RequestParam hcpCbe: String,
+        @RequestParam(required = false) patientSsin: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientGender: String,
+        @RequestParam io: String,
+        @RequestParam(required = false) ioMembership: String,
+        @RequestParam reference: String,
+        @RequestParam endDate: Int,
+        @RequestParam reason: String
+    ) = mhmService.cancelSubscription(
+        keystoreId,
+        tokenId,
+        passPhrase,
+        hcpNihii,
+        hcpName,
+        hcpCbe,
+        patientSsin,
+        patientFirstName,
+        patientLastName,
+        patientGender,
+        io,
+        ioMembership,
+        reference,
+        endDate,
+        reason
+    )
+
+    @PostMapping("/notifySubscriptionClosure", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun endSubscription(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpName: String,
+        @RequestParam hcpCbe: String,
+        @RequestParam(required = false) patientSsin: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientGender: String,
+        @RequestParam io: String,
+        @RequestParam(required = false) ioMembership: String,
+        @RequestParam reference: String,
+        @RequestParam endDate: Int,
+        @RequestParam reason: String
+    ) = mhmService.notifySubscriptionClosure(
+        keystoreId,
+        tokenId,
+        passPhrase,
+        hcpNihii,
+        hcpName,
+        hcpCbe,
+        patientSsin,
+        patientFirstName,
+        patientLastName,
+        patientGender,
+        io,
+        ioMembership,
+        reference,
+        endDate,
+        reason
+    )
 }
