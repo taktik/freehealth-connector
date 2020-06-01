@@ -53,7 +53,7 @@ class MhmControlerTest : EhealthTest() {
     fun sendSubscriptionRequestByIo(){
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val subscription = this.restTemplate.exchange("http://localhost:$port/mhm/sendSubscriptionByIo/${""}/${""}?hcpNihii=$nihii5&hcpName=$name5&hcpCbe=$cbe5" +
-            "&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&patientSsin=${""}" +
+            "&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${"300"}&ioMembership=${"06983482"}" +
             "&startDate="+(Instant.parse("2017-01-01T00:00:00.00Z").toEpochMilli() / 1000).toInt()+"&isTrial=${"false"}" +
             "&signatureType=${"holder-eid"}",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
@@ -63,7 +63,7 @@ class MhmControlerTest : EhealthTest() {
     fun cancelSubscription(){
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val subscription = this.restTemplate.exchange("http://localhost:$port/mhm/cancelSubscription?hcpNihii=$nihii5&hcpName=$name5&hcpCbe=$cbe5" +
-            "&patientSsin=${""}&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${""}&ioMembership=${""}" +
+            "&patientSsin=${""}&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${"300"}&ioMembership=${""}" +
             "&reference=${""}",
         HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
@@ -72,8 +72,8 @@ class MhmControlerTest : EhealthTest() {
     fun notifySubscriptionClosure(){
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val subscription = this.restTemplate.exchange("http://localhost:$port/mhm/notifySubscriptionClosure?hcpNihii=$nihii5&hcpName=$name5&hcpCbe=$cbe5" +
-            "&patientSsin=${""}&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${""}&ioMembership=${""}" +
-            "&reference=${""}&endDate="+(Instant.parse("1800-06-01T00:00:00.00Z").toEpochMilli() / 1000).toInt()+"&reason=${"202"}&decisionType=${"patientdecision"}",
+            "&patientSsin=${""}&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${"300"}&ioMembership=${""}" +
+            "&reference=${""}&endDate="+(Instant.parse("2017-06-01T00:00:00.00Z").toEpochMilli() / 1000).toInt()+"&reason=${"202"}&decisionType=${"patientdecision"}",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 

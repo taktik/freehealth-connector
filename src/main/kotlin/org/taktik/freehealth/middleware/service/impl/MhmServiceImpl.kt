@@ -16,7 +16,9 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.OriginType
 import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
+import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
 import be.fgov.ehealth.mycarenet.mhm.protocol.v1.NotifySubscriptionClosureRequest
+import be.fgov.ehealth.mycarenet.mhm.protocol.v1.SendSubscriptionRequest
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENT
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENTschemes
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDERRORMYCARENETschemes
@@ -139,6 +141,9 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
+        val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+        log.info("getMemberData called with principal "+(principal?._id?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
+
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val inputReference = InputReference().inputReference
 
@@ -205,6 +210,12 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
         log.info("Sending subscription request {}", ConnectorXmlUtils.toString(sendSubscripionRequest))
         MhmXmlValidatorImpl().validate(sendSubscripionRequest)
+
+        val marshallerHelper = MarshallerHelper(SendSubscriptionRequest::class.java, SendSubscriptionRequest::class.java)
+        val xmlRequest = marshallerHelper.toXMLByteArray(sendSubscripionRequest)
+
+
+
         val sendSubscriptionResponse = freehealthMhmService.sendSubscription(samlToken, sendSubscripionRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:SendSubscription")
 
         val blobType = sendSubscriptionResponse.`return`.detail
