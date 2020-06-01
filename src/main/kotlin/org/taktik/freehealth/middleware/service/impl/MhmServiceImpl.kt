@@ -60,6 +60,7 @@ import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import org.taktik.connector.business.mhm.validator.impl.MhmXmlValidatorImpl
 import org.taktik.connector.business.mycarenet.attest.domain.AttestV2BuilderResponse
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
 import org.taktik.connector.business.mycarenet.attest.mappers.BlobMapper
@@ -203,6 +204,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         }
 
         log.info("Sending subscription request {}", ConnectorXmlUtils.toString(sendSubscripionRequest))
+        MhmXmlValidatorImpl().validate(sendSubscripionRequest)
         val sendSubscriptionResponse = freehealthMhmService.sendSubscription(samlToken, sendSubscripionRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:SendSubscription")
 
         val blobType = sendSubscriptionResponse.`return`.detail
