@@ -9,10 +9,13 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.context.annotation.Import
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
+import org.taktik.freehealth.middleware.dto.dmg.DmgMessage
 import org.taktik.freehealth.middleware.dto.memberdata.MemberDataBatchRequestDto
 import org.taktik.freehealth.middleware.dto.memberdata.MemberInfoDto
 
@@ -64,7 +67,7 @@ class MemberDataAsyncControllerTest: EhealthTest() {
                 "?hcpNihii=$nihii5" +
                 "&hcpSsin=$ssin5" +
                 "&hcpName={name5}",
-                HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, name5)
+                HttpMethod.POST, HttpEntity<List<String>>(listOf(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<MemberDataResponse>>() {}, name5)
 
             Assertions.assertThat(messages.body).isNotEmpty()
             println(messages.body)

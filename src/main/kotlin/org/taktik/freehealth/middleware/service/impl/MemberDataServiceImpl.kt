@@ -104,6 +104,7 @@ import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.memberdata.MdaStatus
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
+import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponseDto
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
@@ -286,7 +287,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         }
     }
 
-    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpName: String, messageNames: List<String>?): GenAsyncResponse {
+    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpName: String, messageNames: List<String>?): MemberDataResponseDto {
 
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -312,7 +313,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val b64 = Base64.getEncoder()
 
-        return GenAsyncResponse()
+        return MemberDataResponseDto()
     }
 
     private fun buildOriginType(nihii: String, ssin: String, firstname: String, lastname: String): OrigineType =
