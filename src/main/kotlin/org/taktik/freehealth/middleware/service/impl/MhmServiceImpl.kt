@@ -16,6 +16,7 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.OriginType
 import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
+import be.fgov.ehealth.mycarenet.mhm.protocol.v1.NotifySubscriptionClosureRequest
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENT
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENTschemes
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDERRORMYCARENETschemes
@@ -118,7 +119,6 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        hcpCbe: String,
         patientSsin: String?,
         patientFirstName: String,
         patientLastName: String,
@@ -143,12 +143,11 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
         val now = DateTime.now().withMillisOfSecond(0)
 
-        val sendTransactionRequest =
+        val sendTransactionRequest: SendTransactionRequest =
             createStartSubscriptionRequest(
                 now,
                 hcpNihii,
                 hcpName,
-                hcpCbe,
                 patientSsin,
                 patientFirstName,
                 patientLastName,
@@ -276,16 +275,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        hcpCbe: String,
         patientSsin: String,
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
         io: String,
         ioMembership: String,
-        reference: String,
-        endDate: Int,
-        reason: String): CancelSubscriptionResultWithResponse? {
+        reference: String): CancelSubscriptionResultWithResponse? {
 
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -301,7 +297,129 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
         val now = DateTime.now().withMillisOfSecond(0)
 
-        return null
+        val sendTransactionRequest =
+            createCancelSubscriptionRequest(
+                now,
+                hcpNihii,
+                hcpName,
+                patientSsin,
+                patientFirstName,
+                patientLastName,
+                patientGender,
+                io,
+                ioMembership,
+                reference
+            )
+
+        val unencryptedRequest = ConnectorXmlUtils.toByteArray(sendTransactionRequest as Any)
+        val blobBuilder = BlobBuilderFactory.getBlobBuilder("medicalhousemembership")
+
+        val sendCancelSubscripionRequest = be.fgov.ehealth.mycarenet.mhm.protocol.v1.CancelSubscriptionRequest().apply {
+
+            val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+            val packageInfo =
+                McnConfigUtil.retrievePackageInfo("medicalhousemembership", principal?.mcnLicense, principal?.mcnPassword)
+
+            this.commonInput = CommonInputType().apply {
+                request =
+                    be.fgov.ehealth.mycarenet.commons.core.v3.RequestType()
+                        .apply { isIsTest = config.getProperty("endpoint.mcn.medicalhousemembership")?.contains("-acpt") ?: false }
+                this.inputReference = inputReference
+                origin = OriginType().apply {
+                    `package` = PackageType().apply {
+                        license = LicenseType().apply {
+                            username = packageInfo.userName
+                            password = packageInfo.password
+                        }
+                        name = ValueRefString().apply { value = packageInfo.packageName }
+                    }
+                    careProvider = CareProviderType().apply {
+                        nihii =
+                            NihiiType().apply {
+                                quality = "orgprimarycarecenter"; value =
+                                ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                            }
+                    }
+                }
+            }
+            this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
+            this.issueInstant = DateTime()
+            this.routing = RoutingType().apply {
+                careReceiver = CareReceiverIdType().apply {
+                    ssin = patientSsin
+                }
+                this.referenceDate = now
+            }
+            this.detail =
+                BlobMapper.mapBlobTypefromBlob(blobBuilder.build(unencryptedRequest, "none", detailId, "text/xml", "MAACANCELLATION"))
+            this.xades = BlobUtil.generateXades(credential, this.detail, "medicalhousemembership")
+        }
+
+        log.info("Sending cancel subscription request {}", ConnectorXmlUtils.toString(sendCancelSubscripionRequest))
+        val sendCancelSubscriptionResponse = freehealthMhmService.cancelSubscription(samlToken, sendCancelSubscripionRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:CancelSubscription")
+
+        val blobType = sendCancelSubscriptionResponse.`return`.detail
+        val blob = BlobMapper.mapBlobfromBlobType(blobType)
+        val unsealedData =
+            crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
+        val encryptedKnownContent =
+            MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
+                unsealedData
+            )
+        val xades = encryptedKnownContent!!.xades
+        val signatureVerificationResult = xades?.let {
+            val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
+            val options = emptyMap<String, Any>()
+            builder.verify(unsealedData, it, options)
+        } ?: SignatureVerificationResult().apply {
+            errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
+        }
+
+        val decryptedAndVerifiedResponse =
+            AttestV2BuilderResponse(
+                MarshallerHelper(
+                    SendTransactionResponse::class.java,
+                    SendTransactionResponse::class.java
+                ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
+            )
+
+        val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
+            e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
+                extractError(unencryptedRequest, ec, e.url)
+            } ?: setOf()
+        }
+        val commonOutput = sendCancelSubscriptionResponse.`return`.commonOutput
+
+        return decryptedAndVerifiedResponse.sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
+            CancelSubscriptionResultWithResponse(
+                xades = xades,
+                commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionResponse =
+                        MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse)
+                            .toString(Charsets.UTF_8)
+                    this.transactionRequest =
+                        MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
+                            .toString(Charsets.UTF_8)
+                    sendCancelSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    sendCancelSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                },
+                kmehrMessage = encryptedKnownContent?.businessContent?.value
+            )
+        } ?: CancelSubscriptionResultWithResponse(
+            xades = xades,
+            mycarenetConversation = MycarenetConversation().apply {
+                this.transactionResponse =
+                    MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse)
+                        .toString(Charsets.UTF_8)
+                this.transactionRequest =
+                    MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
+                        .toString(Charsets.UTF_8)
+                sendCancelSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                sendCancelSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+            },
+            kmehrMessage = encryptedKnownContent?.businessContent?.value
+        )
     }
 
     override fun notifySubscriptionClosure(keystoreId: UUID,
@@ -309,7 +427,6 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        hcpCbe: String,
         patientSsin: String,
         patientFirstName: String,
         patientLastName: String,
@@ -318,7 +435,8 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         ioMembership: String,
         reference: String,
         endDate: Int,
-        reason: String): EndSubscriptionResultWithResponse? {
+        reason: String,
+        decisionType: String): EndSubscriptionResultWithResponse? {
 
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -334,14 +452,139 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
         val now = DateTime.now().withMillisOfSecond(0)
 
-        return null
+        val sendTransactionRequest =
+            createNotifySubscriptionClosureRequest(
+                now,
+                hcpNihii,
+                hcpName,
+                patientSsin,
+                patientFirstName,
+                patientLastName,
+                patientGender,
+                io,
+                ioMembership,
+                reference,
+                endDate,
+                reason,
+                decisionType
+            )
+
+        val unencryptedRequest = ConnectorXmlUtils.toByteArray(sendTransactionRequest as Any)
+        val blobBuilder = BlobBuilderFactory.getBlobBuilder("medicalhousemembership")
+
+        val sendNotifySubscripionClosureRequest = be.fgov.ehealth.mycarenet.mhm.protocol.v1.NotifySubscriptionClosureRequest().apply {
+
+            val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+            val packageInfo =
+                McnConfigUtil.retrievePackageInfo("medicalhousemembership", principal?.mcnLicense, principal?.mcnPassword)
+
+            this.commonInput = CommonInputType().apply {
+                request =
+                    be.fgov.ehealth.mycarenet.commons.core.v3.RequestType()
+                        .apply { isIsTest = config.getProperty("endpoint.mcn.medicalhousemembership")?.contains("-acpt") ?: false }
+                this.inputReference = inputReference
+                origin = OriginType().apply {
+                    `package` = PackageType().apply {
+                        license = LicenseType().apply {
+                            username = packageInfo.userName
+                            password = packageInfo.password
+                        }
+                        name = ValueRefString().apply { value = packageInfo.packageName }
+                    }
+                    careProvider = CareProviderType().apply {
+                        nihii =
+                            NihiiType().apply {
+                                quality = "orgprimarycarecenter"; value =
+                                ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                            }
+                    }
+                }
+            }
+            this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
+            this.issueInstant = DateTime()
+            this.routing = RoutingType().apply {
+                careReceiver = CareReceiverIdType().apply {
+                    ssin = patientSsin
+                }
+                this.referenceDate = now
+            }
+            this.detail =
+                BlobMapper.mapBlobTypefromBlob(blobBuilder.build(unencryptedRequest, "none", detailId, "text/xml", "MAACLOSURE"))
+            this.xades = BlobUtil.generateXades(credential, this.detail, "medicalhousemembership")
+        }
+
+        log.info("Sending notify subscription closure request {}", ConnectorXmlUtils.toString(sendNotifySubscripionClosureRequest))
+        val sendNotifySubscriptionClosureResponse = freehealthMhmService.notifySubscriptionClosure(samlToken, sendNotifySubscripionClosureRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:NotifySubscriptionClosure")
+
+        val blobType = sendNotifySubscriptionClosureResponse.`return`.detail
+        val blob = BlobMapper.mapBlobfromBlobType(blobType)
+        val unsealedData =
+            crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
+        val encryptedKnownContent =
+            MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
+                unsealedData
+            )
+        val xades = encryptedKnownContent!!.xades
+        val signatureVerificationResult = xades?.let {
+            val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
+            val options = emptyMap<String, Any>()
+            builder.verify(unsealedData, it, options)
+        } ?: SignatureVerificationResult().apply {
+            errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
+        }
+
+        val decryptedAndVerifiedResponse =
+            AttestV2BuilderResponse(
+                MarshallerHelper(
+                    SendTransactionResponse::class.java,
+                    SendTransactionResponse::class.java
+                ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
+            )
+
+        val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
+            e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
+                extractError(unencryptedRequest, ec, e.url)
+            } ?: setOf()
+        }
+        val commonOutput = sendNotifySubscriptionClosureResponse.`return`.commonOutput
+
+        return decryptedAndVerifiedResponse.sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
+            EndSubscriptionResultWithResponse(
+                xades = xades,
+                commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionResponse =
+                        MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse)
+                            .toString(Charsets.UTF_8)
+                    this.transactionRequest =
+                        MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
+                            .toString(Charsets.UTF_8)
+                    sendNotifySubscriptionClosureResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    sendNotifySubscriptionClosureResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                },
+                kmehrMessage = encryptedKnownContent?.businessContent?.value
+            )
+        } ?: EndSubscriptionResultWithResponse(
+            xades = xades,
+            mycarenetConversation = MycarenetConversation().apply {
+                this.transactionResponse =
+                    MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse)
+                        .toString(Charsets.UTF_8)
+                this.transactionRequest =
+                    MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
+                        .toString(Charsets.UTF_8)
+                sendNotifySubscriptionClosureResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                sendNotifySubscriptionClosureResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+            },
+            kmehrMessage = encryptedKnownContent?.businessContent?.value
+        )
+
     }
 
     private fun createStartSubscriptionRequest(
         now: DateTime,
         hcpNihii: String,
         hcpName: String,
-        hcpCbe: String,
         patientSsin: String?,
         patientFirstName: String,
         patientLastName: String,
@@ -531,6 +774,383 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                                                    })
                                                })
                                            }))
+                    }))
+                })
+            }
+        }
+    }
+
+    private fun createCancelSubscriptionRequest(
+        now: DateTime,
+        hcpNihii: String,
+        hcpName : String,
+        patientSsin: String?,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
+        io: String,
+        ioMembership: String?,
+        reference: String
+    ) : SendTransactionRequest{
+        val refDateTime = now
+
+        val requestAuthorNihii = hcpNihii
+        val requestAuthorCdHcParty = "orgprimaryhealthcarecenter"
+
+        return SendTransactionRequest().apply {
+            messageProtocoleSchemaVersion = BigDecimal("1.27")
+            request = RequestType().apply {
+                id =
+                    IDKMEHR().apply {
+                        s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = requestAuthorNihii.padEnd(11, '0') + "." +
+                        refDateTime.toString("yyyyMMddHHmmss")
+                    }
+                author = AuthorType().apply {
+                    hcparties.add(HcpartyType().apply {
+                        ids.add(IDHCPARTY().apply {
+                            s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                            requestAuthorNihii.padEnd(11, '0')
+                        })
+                        cds.add(CDHCPARTY().apply {
+                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.15"; value =
+                            requestAuthorCdHcParty
+                        })
+                        name = hcpName
+                    })
+                }
+                date = now; time = now
+            }
+
+            kmehrmessage = Kmehrmessage().apply {
+                header = HeaderType().apply {
+                    standard =
+                        StandardType().apply {
+                            cd =
+                                CDSTANDARD().apply { s = "CD-STANDARD"; sv = "1.28"; value = "20181201" }
+                        }
+                    ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
+                    date = refDateTime; time = refDateTime
+                    sender = SenderType().apply {
+                        hcparties.add(HcpartyType().apply {
+                            ids.add(IDHCPARTY().apply {
+                                s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                requestAuthorNihii.padEnd(11, '0')
+                            })
+                            cds.add(CDHCPARTY().apply {
+                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.15"; value =
+                                requestAuthorCdHcParty
+                            })
+                            name = hcpName
+                        })
+                    }
+                    recipients.add(RecipientType().apply {
+                        hcparties.add(HcpartyType().apply {
+                            cds.add(CDHCPARTY().apply {
+                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.15"; value =
+                                "application"
+                            })
+                            name = "mycarenet"
+                        })
+                    })
+                }
+                folders.add(FolderType().apply {
+                    var trnsId = 1
+
+                    ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
+                    patient = PersonType().apply {
+                        patientSsin?.let {
+                            ids.add(IDPATIENT().apply {
+                                s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value = it
+                            })
+                        }
+                        firstnames.add(patientFirstName)
+                        familyname = patientLastName
+                        sex =
+                            SexType().apply {
+                                cd =
+                                    CDSEX().apply {
+                                        s = "CD-SEX"; sv = "1.1"; value = try {
+                                        CDSEXvalues.fromValue(patientGender)
+                                    } catch (e: Exception) {
+                                        CDSEXvalues.UNKNOWN
+                                    }
+                                    }
+                            }
+                        ioMembership?.let {
+                            insurancymembership = MemberinsuranceType().apply {
+                                id = IDINSURANCE().apply { s = IDINSURANCEschemes.ID_INSURANCE; sv = "1.0"; value = io }
+                                membership = it
+                            }
+                        }
+                    }
+                    transactions.addAll(listOf(TransactionType().apply {
+                        var itemId = 1
+                        val author = AuthorType().apply {
+                            hcparties.add(HcpartyType().apply {
+                                ids.add(IDHCPARTY().apply {
+                                    s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                    hcpNihii
+                                })
+                                cds.add(CDHCPARTY().apply {
+                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.15"; value =
+                                    requestAuthorCdHcParty
+                                })
+                                name = hcpName
+                            })
+                        }
+
+                        ids.add(IDKMEHR().apply {
+                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                            (trnsId++).toString()
+                        })
+                        cds.add(CDTRANSACTION().apply {
+                            s = CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET; sv =
+                            "1.5"; value = "maacancellation"
+                        })
+                        date = refDateTime; time = refDateTime
+                        this.author = author
+                        isIscomplete = true
+                        isIsvalidated = true
+                        item.addAll(listOf(
+                         ItemType().apply {
+                            ids.add(IDKMEHR().apply {
+                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                (itemId++).toString()
+                            })
+                            cds.add(CDITEM().apply {
+                                s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                "agreementtype"
+                            })
+                            contents.add(ContentType().apply {
+                                cds.add(CDCONTENT().apply {
+                                    s = CDCONTENTschemes.LOCAL; sv = "1.1"; sl =
+                                    "MAA-TYPE"; value = "packagemedicalhouse"
+                                })
+                            })
+                        },
+                            ItemType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                    (itemId++).toString()
+                                })
+                                cds.add(CDITEM().apply {
+                                    s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                    "decisionreference"
+                                })
+                                contents.add(ContentType().apply {
+                                    cds.add(CDCONTENT().apply {
+                                        s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                        "IOreferencesystemname"; value = reference
+                                    })
+                                })
+                            }))
+                    }))
+                })
+            }
+        }
+    }
+
+    private fun createNotifySubscriptionClosureRequest(
+        now: DateTime,
+        hcpNihii: String,
+        hcpName : String,
+        patientSsin: String?,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
+        io: String,
+        ioMembership: String?,
+        reference: String,
+        endDate: Int?,
+        reason: String,
+        decisionType: String
+    ): SendTransactionRequest{
+        val refDateTime = now
+
+        val requestAuthorNihii = hcpNihii
+        val requestAuthorCdHcParty = "orgprimaryhealthcarecenter"
+
+        return SendTransactionRequest().apply {
+            messageProtocoleSchemaVersion = BigDecimal("1.27")
+            request = RequestType().apply {
+                id =
+                    IDKMEHR().apply {
+                        s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = requestAuthorNihii.padEnd(11, '0') + "." +
+                        refDateTime.toString("yyyyMMddHHmmss")
+                    }
+                author = AuthorType().apply {
+                    hcparties.add(HcpartyType().apply {
+                        ids.add(IDHCPARTY().apply {
+                            s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                            requestAuthorNihii.padEnd(11, '0')
+                        })
+                        cds.add(CDHCPARTY().apply {
+                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.15"; value =
+                            requestAuthorCdHcParty
+                        })
+                        name = hcpName
+                    })
+                }
+                date = now; time = now
+            }
+
+            kmehrmessage = Kmehrmessage().apply {
+                header = HeaderType().apply {
+                    standard =
+                        StandardType().apply {
+                            cd =
+                                CDSTANDARD().apply { s = "CD-STANDARD"; sv = "1.28"; value = "20181201" }
+                        }
+                    ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
+                    date = refDateTime; time = refDateTime
+                    sender = SenderType().apply {
+                        hcparties.add(HcpartyType().apply {
+                            ids.add(IDHCPARTY().apply {
+                                s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                requestAuthorNihii.padEnd(11, '0')
+                            })
+                            cds.add(CDHCPARTY().apply {
+                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.15"; value =
+                                requestAuthorCdHcParty
+                            })
+                            name = hcpName
+                        })
+                    }
+                    recipients.add(RecipientType().apply {
+                        hcparties.add(HcpartyType().apply {
+                            cds.add(CDHCPARTY().apply {
+                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.15"; value =
+                                "application"
+                            })
+                            name = "mycarenet"
+                        })
+                    })
+                }
+                folders.add(FolderType().apply {
+                    var trnsId = 1
+
+                    ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
+                    patient = PersonType().apply {
+                        patientSsin?.let {
+                            ids.add(IDPATIENT().apply {
+                                s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value = it
+                            })
+                        }
+                        firstnames.add(patientFirstName)
+                        familyname = patientLastName
+                        sex =
+                            SexType().apply {
+                                cd =
+                                    CDSEX().apply {
+                                        s = "CD-SEX"; sv = "1.1"; value = try {
+                                        CDSEXvalues.fromValue(patientGender)
+                                    } catch (e: Exception) {
+                                        CDSEXvalues.UNKNOWN
+                                    }
+                                    }
+                            }
+                        ioMembership?.let {
+                            insurancymembership = MemberinsuranceType().apply {
+                                id = IDINSURANCE().apply { s = IDINSURANCEschemes.ID_INSURANCE; sv = "1.0"; value = io }
+                                membership = it
+                            }
+                        }
+                    }
+                    transactions.addAll(listOf(TransactionType().apply {
+                        var itemId = 1
+                        val author = AuthorType().apply {
+                            hcparties.add(HcpartyType().apply {
+                                ids.add(IDHCPARTY().apply {
+                                    s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
+                                    hcpNihii
+                                })
+                                cds.add(CDHCPARTY().apply {
+                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.15"; value =
+                                    requestAuthorCdHcParty
+                                })
+                                name = hcpName
+                            })
+                        }
+
+                        ids.add(IDKMEHR().apply {
+                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                            (trnsId++).toString()
+                        })
+                        cds.add(CDTRANSACTION().apply {
+                            s = CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET; sv =
+                            "1.5"; value = "maaclosure"
+                        })
+                        date = refDateTime; time = refDateTime
+                        this.author = author
+                        isIscomplete = true
+                        isIsvalidated = true
+                        item.addAll(listOf(
+                        ItemType().apply {
+                            ids.add(IDKMEHR().apply {
+                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                (itemId++).toString()
+                            })
+                            cds.add(CDITEM().apply {
+                                s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                "agreementtype"
+                            })
+                            contents.add(ContentType().apply {
+                                cds.add(CDCONTENT().apply {
+                                    s = CDCONTENTschemes.LOCAL; sv = "1.1"; sl =
+                                    "MAA-TYPE"; value = "packagemedicalhouse"
+                                })
+                            })
+                        }, ItemType().apply {
+                            ids.add(IDKMEHR().apply {
+                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                (itemId++).toString()
+                            })
+                            cds.add(CDITEM().apply {
+                                s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                "decisionreference"
+                            })
+                            contents.add(ContentType().apply {
+                                cds.add(CDCONTENT().apply {
+                                    s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                    "IOreferencesystemname"; value = reference
+                                })
+                            })
+                        }, ItemType().apply {
+                            ids.add(IDKMEHR().apply {
+                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                (itemId++).toString()
+                            })
+                            cds.add(CDITEM().apply {
+                                s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                "agreementenddate"
+                            })
+                            FuzzyValues.getJodaDateTime(endDate!!.toLong())?.let {
+                                contents.add(ContentType().apply {
+                                    date = it
+                                })
+                            }
+                        },ItemType().apply {
+                            ids.add(IDKMEHR().apply {
+                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                (itemId++).toString()
+                            })
+                            cds.add(CDITEM().apply {
+                                s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                "closurejustification"
+                            })
+                            contents.add(ContentType().apply {
+                                cds.add(CDCONTENT().apply {
+                                    s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                    "MAA-CLOSUREDECISION"; value = decisionType
+                                })
+                            })
+                            contents.add(ContentType().apply {
+                                cds.add(CDCONTENT().apply {
+                                    s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                    "MAA-CLOSUREJUSTIFICATION"; value = reason
+                                })
+                            })
+                        }))
                     }))
                 })
             }

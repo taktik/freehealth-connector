@@ -34,7 +34,6 @@ interface MhmService {
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        hcpCbe: String,
         patientSsin: String?,
         patientFirstName:String,
         patientLastName:String,
@@ -53,16 +52,13 @@ interface MhmService {
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        hcpCbe: String,
         patientSsin: String,
         patientFirstName:String,
         patientLastName:String,
         patientGender:String,
         io: String,
         ioMembership: String,
-        reference: String,
-        endDate: Int,
-        reason: String
+        reference: String
                          ): CancelSubscriptionResultWithResponse?
 
     fun notifySubscriptionClosure(
@@ -71,7 +67,6 @@ interface MhmService {
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        hcpCbe: String,
         patientSsin: String,
         patientFirstName:String,
         patientLastName:String,
@@ -80,6 +75,7 @@ interface MhmService {
         ioMembership: String,
         reference: String,
         endDate: Int,
-        reason: String
+        reason: String,
+        decisionType: String
                           ): EndSubscriptionResultWithResponse?
 }

@@ -46,7 +46,6 @@ class MhmController(val mhmService: MhmService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
-        @RequestParam hcpCbe: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
@@ -61,13 +60,15 @@ class MhmController(val mhmService: MhmService) {
         passPhrase,
         hcpNihii,
         hcpName,
-        hcpCbe,
         patientSsin,
         patientFirstName,
         patientLastName,
         patientGender,
         io,
-        ioMembership, startDate, isTrial, signatureType)
+        ioMembership,
+        startDate,
+        isTrial,
+        signatureType)
 
     @PostMapping("/sendSubscriptionByIo/{io}/{ioMembership}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendSubscriptionByIo(
@@ -78,7 +79,6 @@ class MhmController(val mhmService: MhmService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
-        @RequestParam hcpCbe: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
@@ -92,13 +92,15 @@ class MhmController(val mhmService: MhmService) {
         passPhrase,
         hcpNihii,
         hcpName,
-        hcpCbe,
         patientSsin,
         patientFirstName,
         patientLastName,
         patientGender,
         io,
-        ioMembership, startDate, isTrial, signatureType)
+        ioMembership,
+        startDate,
+        isTrial,
+        signatureType)
 
     @PostMapping("/cancelSubscription", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun cancelSubscription(
@@ -107,32 +109,26 @@ class MhmController(val mhmService: MhmService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
-        @RequestParam hcpCbe: String,
         @RequestParam(required = false) patientSsin: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
         @RequestParam io: String,
         @RequestParam(required = false) ioMembership: String,
-        @RequestParam reference: String,
-        @RequestParam endDate: Int,
-        @RequestParam reason: String
+        @RequestParam reference: String
     ) = mhmService.cancelSubscription(
         keystoreId,
         tokenId,
         passPhrase,
         hcpNihii,
         hcpName,
-        hcpCbe,
         patientSsin,
         patientFirstName,
         patientLastName,
         patientGender,
         io,
         ioMembership,
-        reference,
-        endDate,
-        reason
+        reference
     )
 
     @PostMapping("/notifySubscriptionClosure", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -142,7 +138,6 @@ class MhmController(val mhmService: MhmService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
-        @RequestParam hcpCbe: String,
         @RequestParam(required = false) patientSsin: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
@@ -151,14 +146,14 @@ class MhmController(val mhmService: MhmService) {
         @RequestParam(required = false) ioMembership: String,
         @RequestParam reference: String,
         @RequestParam endDate: Int,
-        @RequestParam reason: String
+        @RequestParam reason: String,
+        @RequestParam decisionType : String
     ) = mhmService.notifySubscriptionClosure(
         keystoreId,
         tokenId,
         passPhrase,
         hcpNihii,
         hcpName,
-        hcpCbe,
         patientSsin,
         patientFirstName,
         patientLastName,
@@ -167,6 +162,7 @@ class MhmController(val mhmService: MhmService) {
         ioMembership,
         reference,
         endDate,
-        reason
+        reason,
+        decisionType
     )
 }
