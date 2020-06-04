@@ -19,6 +19,7 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
 import be.fgov.ehealth.mycarenet.mhm.protocol.v1.NotifySubscriptionClosureRequest
 import be.fgov.ehealth.mycarenet.mhm.protocol.v1.SendSubscriptionRequest
+import be.fgov.ehealth.mycarenet.mhm.protocol.v1.SendSubscriptionResponse
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENT
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENTschemes
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDERRORMYCARENETschemes
@@ -214,49 +215,35 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         val marshallerHelper = MarshallerHelper(SendSubscriptionRequest::class.java, SendSubscriptionRequest::class.java)
         val xmlRequest = marshallerHelper.toXMLByteArray(sendSubscripionRequest)
 
-
-
         val sendSubscriptionResponse = freehealthMhmService.sendSubscription(samlToken, sendSubscripionRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:SendSubscription")
 
-        val blobType = sendSubscriptionResponse.`return`.detail
-        val blob = BlobMapper.mapBlobfromBlobType(blobType)
-        val unsealedData =
-            crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
-        val encryptedKnownContent =
-            MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
-                unsealedData
-                                                                                                           )
-        val xades = encryptedKnownContent!!.xades
-        val signatureVerificationResult = xades?.let {
-            val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
+        log.info("Response: "+ConnectorXmlUtils.toString(sendSubscriptionResponse.`return`))
+
+        val sendTransactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toObject(sendSubscriptionResponse.`return`.detail.value)
+
+        val xades = sendSubscriptionResponse.`return`.xadesT?.value
+        val signatureVerificationResult = xades.let {
+            val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T)
             val options = emptyMap<String, Any>()
-            builder.verify(unsealedData, it, options)
+            builder.verify(sendSubscriptionResponse.`return`.detail.value, it, options)
         } ?: SignatureVerificationResult().apply {
             errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
         }
 
-        val decryptedAndVerifiedResponse =
-            AttestV2BuilderResponse(
-                MarshallerHelper(
-                    SendTransactionResponse::class.java,
-                    SendTransactionResponse::class.java
-                                ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
-                                   )
-
-        val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
+        val errors = sendTransactionResponse.acknowledge.errors?.flatMap { e ->
             e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
                 extractError(unencryptedRequest, ec, e.url)
             } ?: setOf()
         }
         val commonOutput = sendSubscriptionResponse.`return`.commonOutput
 
-        return decryptedAndVerifiedResponse.sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
+        return sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
             StartSubscriptionResultWithResponse(
                 xades = xades,
                 commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse =
-                        MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse)
+                        MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse)
                             .toString(Charsets.UTF_8)
                     this.transactionRequest =
                         MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
@@ -264,13 +251,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     sendSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     sendSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                kmehrMessage = encryptedKnownContent?.businessContent?.value
+                kmehrMessage = unencryptedRequest
                                                )
         } ?: StartSubscriptionResultWithResponse(
             xades = xades,
             mycarenetConversation = MycarenetConversation().apply {
                 this.transactionResponse =
-                    MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse)
+                    MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse)
                         .toString(Charsets.UTF_8)
                 this.transactionRequest =
                     MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
@@ -278,8 +265,8 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 sendSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                 sendSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
             },
-            kmehrMessage = encryptedKnownContent?.businessContent?.value
-                                                )
+            kmehrMessage = unencryptedRequest
+        )
     }
 
 
