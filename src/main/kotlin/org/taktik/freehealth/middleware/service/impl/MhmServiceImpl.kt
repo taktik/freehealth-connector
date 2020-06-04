@@ -142,7 +142,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-        log.info("getMemberData called with principal "+(principal?._id?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
+        log.info("sendSubscription called with principal "+(principal?._id?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
 
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val inputReference = InputReference().inputReference
@@ -298,7 +298,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for medical house subscription operations")
+                ?: throw MissingTokenException("Cannot obtain token for medical house cancel subscription operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
@@ -453,7 +453,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for medical house subscription operations")
+                ?: throw MissingTokenException("Cannot obtain token for medical house notify subscription closure operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
