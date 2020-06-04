@@ -56,8 +56,8 @@ public class SoapActionHandler extends AbstractSOAPHandler {
          return soapAction;
       } else {
          LOG.debug("[WSI] R1109: SOAPACTION must be a quoted string [{}]", soapAction);
-         String fixedSoapAction = org.apache.commons.lang3.StringUtils.prependIfMissing(soapAction, "\"", new CharSequence[0]);
-         fixedSoapAction = org.apache.commons.lang3.StringUtils.appendIfMissing(fixedSoapAction, "\"", new CharSequence[0]);
+         String fixedSoapAction = org.apache.commons.lang3.StringUtils.prependIfMissing(soapAction, "\"");
+         fixedSoapAction = org.apache.commons.lang3.StringUtils.appendIfMissing(fixedSoapAction, "\"");
          return fixedSoapAction;
       }
    }
