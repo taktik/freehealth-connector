@@ -189,7 +189,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     careProvider = CareProviderType().apply {
                         nihii =
                             NihiiType().apply {
-                                quality = "orgprimarycarecenter"; value =
+                                quality = "medicalhouse"; value =
                                 ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
                             }
                     }
@@ -349,7 +349,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     careProvider = CareProviderType().apply {
                         nihii =
                             NihiiType().apply {
-                                quality = "orgprimarycarecenter"; value =
+                                quality = "medicalhouse"; value =
                                 ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
                             }
                     }
@@ -507,7 +507,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     careProvider = CareProviderType().apply {
                         nihii =
                             NihiiType().apply {
-                                quality = "orgprimarycarecenter"; value =
+                                quality = "medicalhouse"; value =
                                 ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
                             }
                     }
@@ -866,6 +866,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                         })
                     })
                 }
+
                 folders.add(FolderType().apply {
                     var trnsId = 1
 
