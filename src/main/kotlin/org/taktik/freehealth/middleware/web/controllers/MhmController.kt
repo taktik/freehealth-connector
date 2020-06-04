@@ -38,14 +38,14 @@ import java.util.UUID
 @RestController
 @RequestMapping("/mhm")
 class MhmController(val mhmService: MhmService) {
-    @PostMapping("/sendSubscriptionBySsin/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun sendSubscriptionBySsin(
-        @PathVariable patientSsin: String,
+    @PostMapping("/sendSubscription", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun sendSubscription(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
+        @RequestParam(required = false) patientSsin: String?,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
@@ -70,38 +70,6 @@ class MhmController(val mhmService: MhmService) {
         isTrial,
         signatureType)
 
-    @PostMapping("/sendSubscriptionByIo/{io}/{ioMembership}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun sendSubscriptionByIo(
-        @PathVariable io: String,
-        @PathVariable ioMembership: String,
-        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
-        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
-        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
-        @RequestParam hcpNihii: String,
-        @RequestParam hcpName: String,
-        @RequestParam patientFirstName: String,
-        @RequestParam patientLastName: String,
-        @RequestParam patientGender: String,
-        @RequestParam(required = false) patientSsin: String?,
-        @RequestParam startDate: Int,
-        @RequestParam isTrial: Boolean,
-        @RequestParam signatureType: String
-                              ) = mhmService.sendSubscription(
-        keystoreId,
-        tokenId,
-        passPhrase,
-        hcpNihii,
-        hcpName,
-        patientSsin,
-        patientFirstName,
-        patientLastName,
-        patientGender,
-        io,
-        ioMembership,
-        startDate,
-        isTrial,
-        signatureType)
-
     @PostMapping("/cancelSubscription", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun cancelSubscription(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -109,12 +77,12 @@ class MhmController(val mhmService: MhmService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
-        @RequestParam(required = false) patientSsin: String,
+        @RequestParam(required = false) patientSsin: String?,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
         @RequestParam io: String,
-        @RequestParam(required = false) ioMembership: String,
+        @RequestParam(required = false) ioMembership: String?,
         @RequestParam reference: String
     ) = mhmService.cancelSubscription(
         keystoreId,
@@ -138,12 +106,12 @@ class MhmController(val mhmService: MhmService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
-        @RequestParam(required = false) patientSsin: String,
+        @RequestParam(required = false) patientSsin: String?,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
         @RequestParam io: String,
-        @RequestParam(required = false) ioMembership: String,
+        @RequestParam(required = false) ioMembership: String?,
         @RequestParam reference: String,
         @RequestParam endDate: Int,
         @RequestParam reason: String,

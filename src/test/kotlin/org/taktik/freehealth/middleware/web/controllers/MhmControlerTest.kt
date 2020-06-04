@@ -37,10 +37,10 @@ class MhmControlerTest : EhealthTest() {
     )
 
     @Test
-    fun sendSubscriptionRequestBySsin(){
+    fun sendSubscriptionRequest(){
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
-        val subscription = this.restTemplate.exchange("http://localhost:$port/mhm/sendSubscriptionBySsin/${"92092412781"}?hcpNihii=$nihii5&hcpName=$name5&hcpCbe=$cbe5" +
-            "&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${"300"}" +
+        val subscription = this.restTemplate.exchange("http://localhost:$port/mhm/sendSubscription?hcpNihii=$nihii5&hcpName=$name5&hcpCbe=$cbe5" +
+            "&patientSsin=${"92092412781"}&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${"300"}" +
             "&startDate="+(Instant.parse("2017-01-01T00:00:00.00Z").toEpochMilli() / 1000).toInt()+"&isTrial=${"false"}" +
             "&signatureType=${"holder-eid"}",
         HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
@@ -49,22 +49,13 @@ class MhmControlerTest : EhealthTest() {
 
     }
 
-    @Test
-    fun sendSubscriptionRequestByIo(){
-        val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
-        val subscription = this.restTemplate.exchange("http://localhost:$port/mhm/sendSubscriptionByIo/${"300"}/${"123456789"}?hcpNihii=$nihii5&hcpName=$name5&hcpCbe=$cbe5" +
-            "&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}" +
-            "&startDate="+(Instant.parse("2017-01-01T00:00:00.00Z").toEpochMilli() / 1000).toInt()+"&isTrial=${"false"}" +
-            "&signatureType=${"holder-eid"}",
-            HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-    }
 
     @Test
     fun cancelSubscription(){
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val subscription = this.restTemplate.exchange("http://localhost:$port/mhm/cancelSubscription?hcpNihii=$nihii5&hcpName=$name5&hcpCbe=$cbe5" +
-            "&patientSsin=${"92092412781"}&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${"300"}&ioMembership=${""}" +
-            "&reference=${""}",
+            "&patientSsin=${"92092412781"}&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${"300"}" +
+            "&reference=${"31720200604000000748"}",
         HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 

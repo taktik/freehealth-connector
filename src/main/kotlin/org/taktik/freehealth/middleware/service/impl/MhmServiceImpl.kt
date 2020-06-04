@@ -275,12 +275,12 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        patientSsin: String,
+        patientSsin: String?,
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
         io: String,
-        ioMembership: String,
+        ioMembership: String?,
         reference: String): CancelSubscriptionResultWithResponse? {
 
         val samlToken =
@@ -358,45 +358,33 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         log.info("Sending cancel subscription request {}", ConnectorXmlUtils.toString(sendCancelSubscripionRequest))
         val sendCancelSubscriptionResponse = freehealthMhmService.cancelSubscription(samlToken, sendCancelSubscripionRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:CancelSubscription")
 
-        val blobType = sendCancelSubscriptionResponse.`return`.detail
-        val blob = BlobMapper.mapBlobfromBlobType(blobType)
-        val unsealedData =
-            crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
-        val encryptedKnownContent =
-            MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
-                unsealedData
-            )
-        val xades = encryptedKnownContent!!.xades
-        val signatureVerificationResult = xades?.let {
-            val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
+        log.info("Response: "+ConnectorXmlUtils.toString(sendCancelSubscriptionResponse.`return`))
+
+        val sendTransactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toObject(sendCancelSubscriptionResponse.`return`.detail.value)
+
+        val xades = sendCancelSubscriptionResponse.`return`.xadesT?.value
+        val signatureVerificationResult = xades.let {
+            val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T)
             val options = emptyMap<String, Any>()
-            builder.verify(unsealedData, it, options)
+            builder.verify(sendCancelSubscriptionResponse.`return`.detail.value, it, options)
         } ?: SignatureVerificationResult().apply {
             errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
         }
 
-        val decryptedAndVerifiedResponse =
-            AttestV2BuilderResponse(
-                MarshallerHelper(
-                    SendTransactionResponse::class.java,
-                    SendTransactionResponse::class.java
-                ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
-            )
-
-        val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
+        val errors = sendTransactionResponse.acknowledge.errors?.flatMap { e ->
             e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
                 extractError(unencryptedRequest, ec, e.url)
             } ?: setOf()
         }
         val commonOutput = sendCancelSubscriptionResponse.`return`.commonOutput
 
-        return decryptedAndVerifiedResponse.sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
+        return sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
             CancelSubscriptionResultWithResponse(
                 xades = xades,
                 commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse =
-                        MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse)
+                        MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse)
                             .toString(Charsets.UTF_8)
                     this.transactionRequest =
                         MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
@@ -404,13 +392,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     sendCancelSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     sendCancelSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                kmehrMessage = encryptedKnownContent?.businessContent?.value
+                kmehrMessage = unencryptedRequest
             )
         } ?: CancelSubscriptionResultWithResponse(
             xades = xades,
             mycarenetConversation = MycarenetConversation().apply {
                 this.transactionResponse =
-                    MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse)
+                    MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse)
                         .toString(Charsets.UTF_8)
                 this.transactionRequest =
                     MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
@@ -418,7 +406,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 sendCancelSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                 sendCancelSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
             },
-            kmehrMessage = encryptedKnownContent?.businessContent?.value
+            kmehrMessage = unencryptedRequest
         )
     }
 
@@ -427,12 +415,12 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        patientSsin: String,
+        patientSsin: String?,
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
         io: String,
-        ioMembership: String,
+        ioMembership: String?,
         reference: String,
         endDate: Int,
         reason: String,
@@ -516,45 +504,33 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         log.info("Sending notify subscription closure request {}", ConnectorXmlUtils.toString(sendNotifySubscripionClosureRequest))
         val sendNotifySubscriptionClosureResponse = freehealthMhmService.notifySubscriptionClosure(samlToken, sendNotifySubscripionClosureRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:NotifySubscriptionClosure")
 
-        val blobType = sendNotifySubscriptionClosureResponse.`return`.detail
-        val blob = BlobMapper.mapBlobfromBlobType(blobType)
-        val unsealedData =
-            crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
-        val encryptedKnownContent =
-            MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
-                unsealedData
-            )
-        val xades = encryptedKnownContent!!.xades
-        val signatureVerificationResult = xades?.let {
-            val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
+        log.info("Response: "+ConnectorXmlUtils.toString(sendNotifySubscriptionClosureResponse.`return`))
+
+        val sendTransactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toObject(sendNotifySubscriptionClosureResponse.`return`.detail.value)
+
+        val xades = sendNotifySubscriptionClosureResponse.`return`.xadesT?.value
+        val signatureVerificationResult = xades.let {
+            val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T)
             val options = emptyMap<String, Any>()
-            builder.verify(unsealedData, it, options)
+            builder.verify(sendNotifySubscriptionClosureResponse.`return`.detail.value, it, options)
         } ?: SignatureVerificationResult().apply {
             errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
         }
 
-        val decryptedAndVerifiedResponse =
-            AttestV2BuilderResponse(
-                MarshallerHelper(
-                    SendTransactionResponse::class.java,
-                    SendTransactionResponse::class.java
-                ).toObject(encryptedKnownContent.businessContent.value), signatureVerificationResult
-            )
-
-        val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
+        val errors = sendTransactionResponse.acknowledge.errors?.flatMap { e ->
             e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
                 extractError(unencryptedRequest, ec, e.url)
             } ?: setOf()
         }
         val commonOutput = sendNotifySubscriptionClosureResponse.`return`.commonOutput
 
-        return decryptedAndVerifiedResponse.sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
+        return sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
             EndSubscriptionResultWithResponse(
                 xades = xades,
                 commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse =
-                        MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse)
+                        MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse)
                             .toString(Charsets.UTF_8)
                     this.transactionRequest =
                         MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
@@ -562,13 +538,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     sendNotifySubscriptionClosureResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     sendNotifySubscriptionClosureResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                kmehrMessage = encryptedKnownContent?.businessContent?.value
+                kmehrMessage = unencryptedRequest
             )
         } ?: EndSubscriptionResultWithResponse(
             xades = xades,
             mycarenetConversation = MycarenetConversation().apply {
                 this.transactionResponse =
-                    MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse)
+                    MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse)
                         .toString(Charsets.UTF_8)
                 this.transactionRequest =
                     MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
@@ -576,7 +552,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 sendNotifySubscriptionClosureResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                 sendNotifySubscriptionClosureResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
             },
-            kmehrMessage = encryptedKnownContent?.businessContent?.value
+            kmehrMessage = unencryptedRequest
         )
 
     }
@@ -691,8 +667,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                         val author = AuthorType().apply {
                             hcparties.add(HcpartyType().apply {
                                 ids.add(IDHCPARTY().apply {
-                                    s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
-                                    hcpNihii
+                                    s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = requestAuthorNihii.padEnd(11, '0')
                                 })
                                 cds.add(CDHCPARTY().apply {
                                     s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.15"; value =
@@ -890,7 +865,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                             hcparties.add(HcpartyType().apply {
                                 ids.add(IDHCPARTY().apply {
                                     s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
-                                    hcpNihii
+                                    requestAuthorNihii.padEnd(11, '0')
                                 })
                                 cds.add(CDHCPARTY().apply {
                                     s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.15"; value =
@@ -939,9 +914,11 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                                     "decisionreference"
                                 })
                                 contents.add(ContentType().apply {
-                                    cds.add(CDCONTENT().apply {
-                                        s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                        "IOreferencesystemname"; value = reference
+                                    ids.add(IDKMEHR().apply {
+                                        s = IDKMEHRschemes.LOCAL;
+                                        sv = "1.0";
+                                        sl = "IOreferencesystemname";
+                                        value = reference
                                     })
                                 })
                             }))
@@ -1063,7 +1040,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                             hcparties.add(HcpartyType().apply {
                                 ids.add(IDHCPARTY().apply {
                                     s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
-                                    hcpNihii
+                                    requestAuthorNihii.padEnd(11, '0')
                                 })
                                 cds.add(CDHCPARTY().apply {
                                     s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.15"; value =
