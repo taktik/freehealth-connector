@@ -87,26 +87,26 @@ class MhmController(val mhmService: MhmService) {
         @RequestParam startDate: Int,
         @RequestParam isTrial: Boolean,
         @RequestParam signatureType: String,
-        @RequestParam isRecovery: Boolean,
-        @RequestParam isTestForNotify: Boolean
+        @RequestParam isRecovery: Boolean?,
+        @RequestParam isTestForNotify: Boolean?
     ) : StartSubscriptionResultWithResponse? {
         return mhmService.sendSubscription(
-            keystoreId,
-            tokenId,
-            passPhrase,
-            hcpNihii,
-            hcpName,
-            patientSsin,
-            patientFirstName,
-            patientLastName,
-            patientGender,
-            io,
-            ioMembership,
-            startDate,
-            isTrial,
-            signatureType,
-            isRecovery,
-            isTestForNotify)
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
+            hcpName = hcpName,
+            patientSsin = patientSsin,
+            patientFirstName = patientFirstName,
+            patientLastName = patientLastName,
+            patientGender = patientGender,
+            io = io,
+            ioMembership = ioMembership,
+            startDate = startDate,
+            isTrial = isTrial,
+            signatureType = signatureType,
+            isRecovery = isRecovery ?: false,
+            isTestForNotify = isTestForNotify ?: false)
     }
 
     @PostMapping("/cancelSubscription", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -125,18 +125,18 @@ class MhmController(val mhmService: MhmService) {
         @RequestParam reference: String
     ) : CancelSubscriptionResultWithResponse? {
       return mhmService.cancelSubscription(
-          keystoreId,
-          tokenId,
-          passPhrase,
-          hcpNihii,
-          hcpName,
-          patientSsin,
-          patientFirstName,
-          patientLastName,
-          patientGender,
-          io,
-          ioMembership,
-          reference
+          keystoreId = keystoreId,
+          tokenId = tokenId,
+          passPhrase = passPhrase,
+          hcpNihii = hcpNihii,
+          hcpName = hcpName,
+          patientSsin = patientSsin,
+          patientFirstName = patientFirstName,
+          patientLastName = patientLastName,
+          patientGender = patientGender,
+          io = io,
+          ioMembership = ioMembership,
+          reference = reference
       )
     }
 
@@ -159,21 +159,21 @@ class MhmController(val mhmService: MhmService) {
         @RequestParam decisionType : String
     ): EndSubscriptionResultWithResponse? {
       return mhmService.notifySubscriptionClosure(
-          keystoreId,
-          tokenId,
-          passPhrase,
-          hcpNihii,
-          hcpName,
-          patientSsin,
-          patientFirstName,
-          patientLastName,
-          patientGender,
-          io,
-          ioMembership,
-          reference,
-          endDate,
-          reason,
-          decisionType
+          keystoreId = keystoreId,
+          tokenId = tokenId,
+          passPhrase = passPhrase,
+          hcpNihii = hcpNihii,
+          hcpName = hcpName,
+          patientSsin = patientSsin,
+          patientFirstName = patientFirstName,
+          patientLastName = patientLastName,
+          patientGender = patientGender,
+          io = io,
+          ioMembership = ioMembership,
+          reference = reference,
+          endDate = endDate,
+          reason = reason,
+          decisionType = decisionType
       )
     }
 }
