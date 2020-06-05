@@ -25,6 +25,7 @@ import org.taktik.freehealth.middleware.dto.eattest.SendAttestResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.CancelSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.EndSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.StartSubscriptionResultWithResponse
+import java.time.Instant
 import java.util.*
 
 interface MhmService {
@@ -38,11 +39,13 @@ interface MhmService {
         patientFirstName:String,
         patientLastName:String,
         patientGender:String,
-        io: String,
+        io: String?,
         ioMembership: String?,
         startDate: Int,
         isTrial: Boolean,
-        signatureType: String
+        signatureType: String,
+        isRecovery: Boolean,
+        isTestForNotify: Boolean
                          ): StartSubscriptionResultWithResponse?
 
 
@@ -56,7 +59,7 @@ interface MhmService {
         patientFirstName:String,
         patientLastName:String,
         patientGender:String,
-        io: String,
+        io: String?,
         ioMembership: String?,
         reference: String
                          ): CancelSubscriptionResultWithResponse?
@@ -71,7 +74,7 @@ interface MhmService {
         patientFirstName:String,
         patientLastName:String,
         patientGender:String,
-        io: String,
+        io: String?,
         ioMembership: String?,
         reference: String,
         endDate: Int,

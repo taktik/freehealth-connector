@@ -60,6 +60,7 @@ import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerification
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult
 import com.google.gson.Gson
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -93,6 +94,7 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
 import java.math.BigDecimal
+import java.time.Instant
 import java.util.UUID
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
@@ -110,7 +112,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         Gson().fromJson(
             this.javaClass.getResourceAsStream("/be/errors/mhmSubscriptionError.json").reader(Charsets.UTF_8),
             arrayOf<MycarenetError>().javaClass
-                       ).associateBy({ it.uid }, { it })
+        ).associateBy({ it.uid }, { it })
 
     private val xPathFactory = XPathFactory.newInstance()
 
@@ -119,20 +121,22 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
     }
 
     override fun sendSubscription(keystoreId: UUID,
-        tokenId: UUID,
-        passPhrase: String,
-        hcpNihii: String,
-        hcpName: String,
-        patientSsin: String?,
-        patientFirstName: String,
-        patientLastName: String,
-        patientGender: String,
-        io: String,
-        ioMembership: String?,
-        startDate: Int,
-        isTrial: Boolean,
-        signatureType: String
-                                  ): StartSubscriptionResultWithResponse? {
+                                  tokenId: UUID,
+                                  passPhrase: String,
+                                  hcpNihii: String,
+                                  hcpName: String,
+                                  patientSsin: String?,
+                                  patientFirstName: String,
+                                  patientLastName: String,
+                                  patientGender: String,
+                                  io: String?,
+                                  ioMembership: String?,
+                                  startDate: Int,
+                                  isTrial: Boolean,
+                                  signatureType: String,
+                                  isRecovery: Boolean,
+                                  isTestForNotify: Boolean
+    ): StartSubscriptionResultWithResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for medical house subscription operations")
@@ -163,8 +167,10 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 ioMembership,
                 startDate,
                 isTrial,
-                signatureType
-                                          )
+                signatureType,
+                isRecovery,
+                isTestForNotify
+            )
         val unencryptedRequest = ConnectorXmlUtils.toByteArray(sendTransactionRequest as Any)
         val blobBuilder = BlobBuilderFactory.getBlobBuilder("medicalhousemembership")
 
@@ -252,7 +258,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     sendSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
                 kmehrMessage = unencryptedRequest
-                                               )
+            )
         } ?: StartSubscriptionResultWithResponse(
             xades = xades,
             mycarenetConversation = MycarenetConversation().apply {
@@ -271,17 +277,17 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
 
     override fun cancelSubscription(keystoreId: UUID,
-        tokenId: UUID,
-        passPhrase: String,
-        hcpNihii: String,
-        hcpName: String,
-        patientSsin: String?,
-        patientFirstName: String,
-        patientLastName: String,
-        patientGender: String,
-        io: String,
-        ioMembership: String?,
-        reference: String): CancelSubscriptionResultWithResponse? {
+                                    tokenId: UUID,
+                                    passPhrase: String,
+                                    hcpNihii: String,
+                                    hcpName: String,
+                                    patientSsin: String?,
+                                    patientFirstName: String,
+                                    patientLastName: String,
+                                    patientGender: String,
+                                    io: String?,
+                                    ioMembership: String?,
+                                    reference: String): CancelSubscriptionResultWithResponse? {
 
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -411,20 +417,20 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
     }
 
     override fun notifySubscriptionClosure(keystoreId: UUID,
-        tokenId: UUID,
-        passPhrase: String,
-        hcpNihii: String,
-        hcpName: String,
-        patientSsin: String?,
-        patientFirstName: String,
-        patientLastName: String,
-        patientGender: String,
-        io: String,
-        ioMembership: String?,
-        reference: String,
-        endDate: Int,
-        reason: String,
-        decisionType: String): EndSubscriptionResultWithResponse? {
+                                           tokenId: UUID,
+                                           passPhrase: String,
+                                           hcpNihii: String,
+                                           hcpName: String,
+                                           patientSsin: String?,
+                                           patientFirstName: String,
+                                           patientLastName: String,
+                                           patientGender: String,
+                                           io: String?,
+                                           ioMembership: String?,
+                                           reference: String,
+                                           endDate: Int,
+                                           reason: String,
+                                           decisionType: String): EndSubscriptionResultWithResponse? {
 
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -565,11 +571,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
-        io: String,
+        io: String?,
         ioMembership: String?,
         startDate: Int,
         isTrial: Boolean,
-        signatureType: String): SendTransactionRequest {
+        signatureType: String,
+        isRecovery: Boolean,
+        isTestForNotify: Boolean): SendTransactionRequest {
 
         val refDateTime = now
 
@@ -705,50 +713,66 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                                 })
                             })
                         },
-                                           ItemType().apply {
-                                               ids.add(IDKMEHR().apply {
-                                                   s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
-                                                   (itemId++).toString()
-                                               })
-                                               cds.add(CDITEM().apply {
-                                                   s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
-                                                   "agreementstartdate"
-                                               })
-                                               FuzzyValues.getJodaDateTime(startDate.toLong())?.let {
-                                                   contents.add(ContentType().apply {
-                                                       date = it
-                                                   })
-                                               }
-                                           },
-                                           ItemType().apply {
-                                               ids.add(IDKMEHR().apply {
-                                                   s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
-                                                   (itemId++).toString()
-                                               })
-                                               cds.add(CDITEM().apply {
-                                                   s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
-                                                   "istrialperiod"
-                                               })
-                                               contents.add(ContentType().apply {
-                                                   isBoolean = isTrial
-                                               })
-                                           },
-                                           ItemType().apply {
-                                               ids.add(IDKMEHR().apply {
-                                                   s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
-                                                   (itemId++).toString()
-                                               })
-                                               cds.add(CDITEM().apply {
-                                                   s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
-                                                   "documentidentity"
-                                               })
-                                               contents.add(ContentType().apply {
-                                                   cds.add(CDCONTENT().apply {
-                                                       s = CDCONTENTschemes.LOCAL; sv =
-                                                       "1.0"; sl = "SIGNATURE-TYPE"; value = signatureType
-                                                   })
-                                               })
-                                           }))
+                            ItemType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                    (itemId++).toString()
+                                })
+                                cds.add(CDITEM().apply {
+                                    s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                    "agreementstartdate"
+                                })
+
+                                if (isRecovery){
+                                    /*01/01/1900*/
+                                    contents.add(ContentType().apply {
+                                        date = dateTime(19000101)
+                                    })
+
+                                }else if(isTestForNotify){
+                                    /*01/01/1800*/
+                                    contents.add(ContentType().apply {
+                                        date = dateTime(18000101)
+                                    })
+
+                                }else{
+                                    //FuzzyValues.getJodaDateTime(startDate.toLong())?.let {
+                                    contents.add(ContentType().apply {
+                                        date = dateTime(startDate)
+                                    })
+                                    //}
+                                }
+
+                            },
+                            ItemType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                    (itemId++).toString()
+                                })
+                                cds.add(CDITEM().apply {
+                                    s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                    "istrialperiod"
+                                })
+                                contents.add(ContentType().apply {
+                                    isBoolean = isTrial
+                                })
+                            },
+                            ItemType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                    (itemId++).toString()
+                                })
+                                cds.add(CDITEM().apply {
+                                    s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                    "documentidentity"
+                                })
+                                contents.add(ContentType().apply {
+                                    cds.add(CDCONTENT().apply {
+                                        s = CDCONTENTschemes.LOCAL; sv =
+                                        "1.0"; sl = "SIGNATURE-TYPE"; value = signatureType
+                                    })
+                                })
+                            }))
                     }))
                 })
             }
@@ -763,7 +787,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
-        io: String,
+        io: String?,
         ioMembership: String?,
         reference: String
     ) : SendTransactionRequest{
@@ -888,22 +912,22 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                         isIscomplete = true
                         isIsvalidated = true
                         item.addAll(listOf(
-                         ItemType().apply {
-                            ids.add(IDKMEHR().apply {
-                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
-                                (itemId++).toString()
-                            })
-                            cds.add(CDITEM().apply {
-                                s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
-                                "agreementtype"
-                            })
-                            contents.add(ContentType().apply {
-                                cds.add(CDCONTENT().apply {
-                                    s = CDCONTENTschemes.LOCAL; sv = "1.1"; sl =
-                                    "MAA-TYPE"; value = "packagemedicalhouse"
+                            ItemType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                    (itemId++).toString()
                                 })
-                            })
-                        },
+                                cds.add(CDITEM().apply {
+                                    s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                    "agreementtype"
+                                })
+                                contents.add(ContentType().apply {
+                                    cds.add(CDCONTENT().apply {
+                                        s = CDCONTENTschemes.LOCAL; sv = "1.1"; sl =
+                                        "MAA-TYPE"; value = "packagemedicalhouse"
+                                    })
+                                })
+                            },
                             ItemType().apply {
                                 ids.add(IDKMEHR().apply {
                                     s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
@@ -936,10 +960,10 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
-        io: String,
+        io: String?,
         ioMembership: String?,
         reference: String,
-        endDate: Int?,
+        endDate: Int,
         reason: String,
         decisionType: String
     ): SendTransactionRequest{
@@ -1063,22 +1087,22 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                         isIscomplete = true
                         isIsvalidated = true
                         item.addAll(listOf(
-                        ItemType().apply {
-                            ids.add(IDKMEHR().apply {
-                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
-                                (itemId++).toString()
-                            })
-                            cds.add(CDITEM().apply {
-                                s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
-                                "agreementtype"
-                            })
-                            contents.add(ContentType().apply {
-                                cds.add(CDCONTENT().apply {
-                                    s = CDCONTENTschemes.LOCAL; sv = "1.1"; sl =
-                                    "MAA-TYPE"; value = "packagemedicalhouse"
+                            ItemType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                    (itemId++).toString()
                                 })
-                            })
-                        }, ItemType().apply {
+                                cds.add(CDITEM().apply {
+                                    s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                    "agreementtype"
+                                })
+                                contents.add(ContentType().apply {
+                                    cds.add(CDCONTENT().apply {
+                                        s = CDCONTENTschemes.LOCAL; sv = "1.1"; sl =
+                                        "MAA-TYPE"; value = "packagemedicalhouse"
+                                    })
+                                })
+                            }, ItemType().apply {
                             ids.add(IDKMEHR().apply {
                                 s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                 (itemId++).toString()
@@ -1088,9 +1112,11 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                                 "decisionreference"
                             })
                             contents.add(ContentType().apply {
-                                cds.add(CDCONTENT().apply {
-                                    s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                    "IOreferencesystemname"; value = reference
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.LOCAL;
+                                    sv = "1.0";
+                                    sl = "IOreferencesystemname";
+                                    value = reference
                                 })
                             })
                         }, ItemType().apply {
@@ -1102,11 +1128,11 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                                 s = CDITEMschemes.CD_ITEM_MYCARENET; sv = "1.6"; value =
                                 "agreementenddate"
                             })
-                            FuzzyValues.getJodaDateTime(endDate!!.toLong())?.let {
-                                contents.add(ContentType().apply {
-                                    date = it
-                                })
-                            }
+                            //FuzzyValues.getJodaDateTime(endDate.toLong())?.let {
+                            contents.add(ContentType().apply {
+                                date = dateTime(endDate)
+                            })
+                            //}
                         },ItemType().apply {
                             ids.add(IDKMEHR().apply {
                                 s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
@@ -1156,7 +1182,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 (expr.evaluate(
                     builder.parse(ByteArrayInputStream(sendTransactionRequest)),
                     XPathConstants.NODESET
-                              ) as NodeList).let { it ->
+                ) as NodeList).let { it ->
                     if (it.length > 0) {
                         var node = it.item(0)
                         val textContent = node.textContent
@@ -1178,8 +1204,8 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                                 path = curratedUrl,
                                 msgFr = "Erreur générique, xpath invalide",
                                 msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                          )
-                                  )
+                            )
+                        )
                     }
                 }
             } catch (e: Exception) {
@@ -1189,8 +1215,8 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                         path = curratedUrl,
                         msgFr = "Erreur générique, xpath invalide : " + e.message,
                         msgNl = "Onbekend foutmelding, xpath ongeldig : " + e.message
-                                  )
-                          )
+                    )
+                )
             }
             result
         } ?: setOf()

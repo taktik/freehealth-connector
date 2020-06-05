@@ -41,8 +41,8 @@ class MhmControlerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val subscription = this.restTemplate.exchange("http://localhost:$port/mhm/sendSubscription?hcpNihii=$nihii5&hcpName=$name5&hcpCbe=$cbe5" +
             "&patientSsin=${"92092412781"}&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${"300"}" +
-            "&startDate="+(Instant.parse("2017-01-01T00:00:00.00Z").toEpochMilli() / 1000).toInt()+"&isTrial=${"false"}" +
-            "&signatureType=${"holder-eid"}",
+            "&startDate="+20200605+"&isTrial=${"false"}" +
+            "&signatureType=${"holder-eid"}&isRecovery=${"false"}&isTestForNotify=${"false"}",
         HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
 
         //assertErrors("Start subscription", subscription.body)
@@ -55,7 +55,7 @@ class MhmControlerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val subscription = this.restTemplate.exchange("http://localhost:$port/mhm/cancelSubscription?hcpNihii=$nihii5&hcpName=$name5&hcpCbe=$cbe5" +
             "&patientSsin=${"92092412781"}&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${"300"}" +
-            "&reference=${"31720200604000000748"}",
+            "&reference=${"31720200605000000727"}",
         HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 
@@ -63,8 +63,8 @@ class MhmControlerTest : EhealthTest() {
     fun notifySubscriptionClosure(){
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val subscription = this.restTemplate.exchange("http://localhost:$port/mhm/notifySubscriptionClosure?hcpNihii=$nihii5&hcpName=$name5&hcpCbe=$cbe5" +
-            "&patientSsin=${"92092412781"}&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${"300"}&ioMembership=${""}" +
-            "&reference=${""}&endDate="+(Instant.parse("2017-06-01T00:00:00.00Z").toEpochMilli() / 1000).toInt()+"&reason=${"202"}&decisionType=${"patientdecision"}",
+            "&patientSsin=${"92092412781"}&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${"300"}"+
+            "&reference=${"31720200605000000424"}&endDate="+20200605+"&reason=${"202"}&decisionType=${"patientdecision"}",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 
