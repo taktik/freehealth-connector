@@ -21,9 +21,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import ma.glasnost.orika.MapperFacade
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -31,36 +29,16 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import org.taktik.connector.business.therlink.domain.HasTherapeuticLinkMessage
 import org.taktik.connector.business.therlink.domain.ProofTypeValues
 import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkDto
 import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkMessageDto
-import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.TherLinkService
 import java.util.*
-import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/therlink")
 class TherLinkController(val therLinkService: TherLinkService, val mapper: MapperFacade) {
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(MissingTokenException::class)
-    @ResponseBody
-    fun handleUnauthorizedRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException::class)
-    @ResponseBody
-    fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
-
-    @ResponseStatus(HttpStatus.BAD_GATEWAY)
-    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
-    @ResponseBody
-    fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
-
     @GetMapping("/check/{patientSsin}/{hcpNihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun hasTherapeuticLink(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

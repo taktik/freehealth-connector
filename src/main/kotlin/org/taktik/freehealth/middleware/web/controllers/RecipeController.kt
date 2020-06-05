@@ -20,10 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -32,39 +30,20 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.domain.recipe.Feedback
 import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.recipe.PrescriptionRequest
-import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.RecipeService
 import org.taktik.freehealth.middleware.service.RecipeV4Service
 import org.taktik.freehealth.utils.FuzzyValues
 import java.util.*
-import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/recipe")
 class RecipeController(val recipeService: RecipeService, val recipeV4Service: RecipeV4Service) {
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(MissingTokenException::class)
-    @ResponseBody
-    fun handleUnauthorizedRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException::class)
-    @ResponseBody
-    fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
-
-    @ResponseStatus(HttpStatus.BAD_GATEWAY)
-    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
-    @ResponseBody
-    fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
-
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun createPrescription(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody prescription: PrescriptionRequest): Prescription =
         recipeService.createPrescription(
