@@ -37,6 +37,8 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
+import org.taktik.freehealth.middleware.dto.mhm.CancelSubscriptionResultWithResponse
+import org.taktik.freehealth.middleware.dto.mhm.EndSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.StartSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EattestV2Service
@@ -121,23 +123,25 @@ class MhmController(val mhmService: MhmService) {
         @RequestParam(required = false) io: String,
         @RequestParam(required = false) ioMembership: String?,
         @RequestParam reference: String
-    ) = mhmService.cancelSubscription(
-        keystoreId,
-        tokenId,
-        passPhrase,
-        hcpNihii,
-        hcpName,
-        patientSsin,
-        patientFirstName,
-        patientLastName,
-        patientGender,
-        io,
-        ioMembership,
-        reference
-    )
+    ) : CancelSubscriptionResultWithResponse? {
+      return mhmService.cancelSubscription(
+          keystoreId,
+          tokenId,
+          passPhrase,
+          hcpNihii,
+          hcpName,
+          patientSsin,
+          patientFirstName,
+          patientLastName,
+          patientGender,
+          io,
+          ioMembership,
+          reference
+      )
+    }
 
     @PostMapping("/notifySubscriptionClosure", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun endSubscription(
+    fun notifySubscriptionClosure(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
@@ -153,21 +157,23 @@ class MhmController(val mhmService: MhmService) {
         @RequestParam endDate: Int,
         @RequestParam reason: String,
         @RequestParam decisionType : String
-    ) = mhmService.notifySubscriptionClosure(
-        keystoreId,
-        tokenId,
-        passPhrase,
-        hcpNihii,
-        hcpName,
-        patientSsin,
-        patientFirstName,
-        patientLastName,
-        patientGender,
-        io,
-        ioMembership,
-        reference,
-        endDate,
-        reason,
-        decisionType
-    )
+    ): EndSubscriptionResultWithResponse? {
+      return mhmService.notifySubscriptionClosure(
+          keystoreId,
+          tokenId,
+          passPhrase,
+          hcpNihii,
+          hcpName,
+          patientSsin,
+          patientFirstName,
+          patientLastName,
+          patientGender,
+          io,
+          ioMembership,
+          reference,
+          endDate,
+          reason,
+          decisionType
+      )
+    }
 }
