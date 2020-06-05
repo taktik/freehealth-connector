@@ -82,10 +82,10 @@ class MhmController(val mhmService: MhmService) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam(required = false) io: String,
+        @RequestParam(required = false) io: String?,
         @RequestParam(required = false) ioMembership: String?,
         @RequestParam startDate: Int,
-        @RequestParam isTrial: Boolean,
+        @RequestParam(required = false) isTrial: Boolean?,
         @RequestParam signatureType: String,
         @RequestParam isRecovery: Boolean?,
         @RequestParam isTestForNotify: Boolean?
@@ -103,7 +103,7 @@ class MhmController(val mhmService: MhmService) {
             io = io,
             ioMembership = ioMembership,
             startDate = startDate,
-            isTrial = isTrial,
+            isTrial = isTrial ?: false,
             signatureType = signatureType,
             isRecovery = isRecovery ?: false,
             isTestForNotify = isTestForNotify ?: false)
