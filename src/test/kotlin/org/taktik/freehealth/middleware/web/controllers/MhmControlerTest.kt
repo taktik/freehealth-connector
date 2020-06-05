@@ -55,7 +55,7 @@ class MhmControlerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val subscription = this.restTemplate.exchange("http://localhost:$port/mhm/cancelSubscription?hcpNihii=$nihii5&hcpName=$name5&hcpCbe=$cbe5" +
             "&patientSsin=${"92092412781"}&patientFirstName=${"Maxime"}&patientLastName=${"Mennechet"}&patientGender=${"male"}&io=${"300"}" +
-            "&reference=${"31720200605000000727"}",
+            "&reference=${"31720200605000000828"}",
         HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 

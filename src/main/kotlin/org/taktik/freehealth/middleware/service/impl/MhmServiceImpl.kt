@@ -31,6 +31,7 @@ import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDSEX
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDSEXvalues
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDSTANDARD
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDTRANSACTION
+import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDTRANSACTIONCARENET
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDTRANSACTIONschemes
 import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.IDHCPARTYschemes
@@ -257,7 +258,21 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     sendSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     sendSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                kmehrMessage = unencryptedRequest
+                kmehrMessage = unencryptedRequest,
+                reference = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaagreement" } }?.let {
+                    it.item?.find{it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "decisionreference" }}.let{
+                        it?.contents?.firstOrNull()?.ids?.firstOrNull()?.value
+                    }
+                },
+               subscriptionsStartDate = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaagreement" } }?.let {
+                   it.item?.find{it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "agreementstartdate" }}.let{
+                       it?.contents?.firstOrNull()?.date.let {
+                           it?.toString("yyyyMMdd")!!.toInt()
+                       }
+                   }
+               },
+               inscriptionDate = null
+
             )
         } ?: StartSubscriptionResultWithResponse(
             xades = xades,
