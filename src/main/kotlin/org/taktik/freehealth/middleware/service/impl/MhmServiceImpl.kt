@@ -271,7 +271,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                        }
                    }
                },
-               inscriptionDate = null
+               inscriptionDate = startDate
 
             )
         } ?: StartSubscriptionResultWithResponse(
@@ -413,7 +413,15 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     sendCancelSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     sendCancelSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                kmehrMessage = unencryptedRequest
+                kmehrMessage = unencryptedRequest,
+                decisionReference = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maacancellation" } }?.let {
+                    it.item?.find{it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "decisionreference" }}.let{
+                        it?.contents?.firstOrNull()?.ids?.firstOrNull()?.value
+                    }
+                },
+                subscriptionsCancelDate = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maacancellation" } }?.let {
+                    it.date.toString("yyyyMMdd")!!.toInt()
+                }
             )
         } ?: CancelSubscriptionResultWithResponse(
             xades = xades,
@@ -559,7 +567,19 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     sendNotifySubscriptionClosureResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     sendNotifySubscriptionClosureResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                kmehrMessage = unencryptedRequest
+                kmehrMessage = unencryptedRequest,
+                reference = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaclosure" } }?.let {
+                    it.item?.find{it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "decisionreference" }}.let{
+                        it?.contents?.firstOrNull()?.ids?.firstOrNull()?.value
+                    }
+                },
+                subscriptionsEndDate = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaclosure" } }?.let {
+                    it.item?.find{it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "agreementenddate" }}.let{
+                        it?.contents?.firstOrNull()?.date.let {
+                            it?.toString("yyyyMMdd")!!.toInt()
+                        }
+                    }
+                }
             )
         } ?: EndSubscriptionResultWithResponse(
             xades = xades,

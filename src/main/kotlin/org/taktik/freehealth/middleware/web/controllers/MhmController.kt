@@ -120,7 +120,7 @@ class MhmController(val mhmService: MhmService) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam(required = false) io: String,
+        @RequestParam(required = false) io: String?,
         @RequestParam(required = false) ioMembership: String?,
         @RequestParam reference: String
     ) : CancelSubscriptionResultWithResponse? {
@@ -151,7 +151,7 @@ class MhmController(val mhmService: MhmService) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam(required = false) io: String,
+        @RequestParam(required = false) io: String?,
         @RequestParam(required = false) ioMembership: String?,
         @RequestParam reference: String,
         @RequestParam endDate: Int,
