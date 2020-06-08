@@ -40,7 +40,7 @@ class MemberDataAsyncControllerTest: EhealthTest() {
         900 to listOf("57012803538", "82062220229", "45072705334", "60122945519", "99091447286", "59082410780", "25111903990", "39010315202")
     )
 
-    private val regOa = listOf("900")
+    private val regOa = listOf("")
 
 
     @Test
@@ -61,16 +61,17 @@ class MemberDataAsyncControllerTest: EhealthTest() {
     @Test
     fun getMemberDataMessage() {
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
-
         val results = regOa.map {
             val messages = this.restTemplate.exchange("http://localhost:$port/mda/async/messages" +
                 "?hcpNihii=$nihii5" +
                 "&hcpSsin=$ssin5" +
-                "&hcpName={name5}",
+                "&hcpName={name5}" +
+                "&messageNames=$it",
                 HttpMethod.POST, HttpEntity<List<String>>(listOf(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<MemberDataResponse>>() {}, name5)
 
             Assertions.assertThat(messages.body).isNotEmpty()
             println(messages.body)
         }
+
     }
 }

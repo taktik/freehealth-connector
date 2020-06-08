@@ -47,6 +47,7 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
+import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationResponse
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION
@@ -87,6 +88,7 @@ import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.builders.RequestBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.domain.Blob
+import org.taktik.connector.business.mycarenetdomaincommons.mapper.DomainBlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
 import org.taktik.connector.technical.config.ConfigFactory
@@ -287,11 +289,13 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         }
     }
 
-    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpName: String, messageNames: List<String>?): MemberDataResponseDto {
+    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpName: String, messageNames: List<String>?) {
 
-        val samlToken =
-            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for MDA operations")
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw MissingTokenException("Cannot obtain token for MDA operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
         val getHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
             messageID = URI(IdGeneratorFactory.getIdGenerator("uuid").generateId())
@@ -313,7 +317,16 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val b64 = Base64.getEncoder()
 
-        return MemberDataResponseDto()
+        response.`return`.msgResponses?.map{it ->
+            val blob = DomainBlobMapper.mapToBlob(it.getDetail())
+            var data: ByteArray? = blob.content
+            val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
+            val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
+            MarshallerHelper(MemberDataConsultationResponse::class.java, MemberDataConsultationResponse::class.java).toObject(unsealedData)
+        }
+
+
+
     }
 
     private fun buildOriginType(nihii: String, ssin: String, firstname: String, lastname: String): OrigineType =
@@ -354,7 +367,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         requestType: String?,
         facets: List<Facet>?
                               ): MemberDataResponse {
-        val encryptRequest = true
+        val encryptRequest = false
         validateQuality(hcpQuality)
 
         val samlToken =
@@ -389,7 +402,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val request = MemberDataConsultationRequest().apply {
             commonInput = CommonInputType().apply {
                 request =
-                    RequestType().apply { isIsTest = false /*config.getProperty("endpoint.genins")?.contains("-acpt") ?: false*/ }
+                    RequestType().apply { isIsTest = true /*config.getProperty("endpoint.genins")?.contains("-acpt") ?: false*/ }
                 inputReference = inputRef
                 origin = OriginType().apply {
                     `package` = PackageType().apply {

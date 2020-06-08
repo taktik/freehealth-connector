@@ -250,18 +250,13 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpName: String,
-        @RequestParam messageNames: List<String>?
-    ): MemberDataResponseDto {
-        return memberDataService.getMemberDataMessages(
+        @RequestParam messageNames: List<String>?) = memberDataService.getMemberDataMessages(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
             hcpNihii = hcpNihii,
             hcpSsin = hcpSsin,
             hcpName = hcpName,
-            messageNames = messageNames).let{
-                mapper.map(it, org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponseDto::class.java)
-        }
-    }
+            messageNames = messageNames)
 
 }
