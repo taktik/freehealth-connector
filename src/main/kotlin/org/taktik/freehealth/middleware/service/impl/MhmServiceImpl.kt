@@ -271,8 +271,8 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                        }
                    }
                },
-               inscriptionDate = startDate
-
+               inscriptionDate = startDate,
+               errors = errors
             )
         } ?: StartSubscriptionResultWithResponse(
             xades = xades,
@@ -286,7 +286,11 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 sendSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                 sendSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
             },
-            kmehrMessage = unencryptedRequest
+            kmehrMessage = unencryptedRequest,
+            reference = null,
+            subscriptionsStartDate = null,
+            inscriptionDate = null,
+            errors = errors
         )
     }
 
@@ -421,7 +425,8 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 },
                 subscriptionsCancelDate = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maacancellation" } }?.let {
                     it.date.toString("yyyyMMdd")!!.toInt()
-                }
+                },
+                errors = errors
             )
         } ?: CancelSubscriptionResultWithResponse(
             xades = xades,
@@ -435,7 +440,10 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 sendCancelSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                 sendCancelSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
             },
-            kmehrMessage = unencryptedRequest
+            kmehrMessage = unencryptedRequest,
+            decisionReference = null,
+            subscriptionsCancelDate = null,
+            errors = errors
         )
     }
 
@@ -579,7 +587,8 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                             it?.toString("yyyyMMdd")!!.toInt()
                         }
                     }
-                }
+                },
+                errors = errors
             )
         } ?: EndSubscriptionResultWithResponse(
             xades = xades,
@@ -593,7 +602,10 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 sendNotifySubscriptionClosureResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                 sendNotifySubscriptionClosureResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
             },
-            kmehrMessage = unencryptedRequest
+            kmehrMessage = unencryptedRequest,
+            errors = errors,
+            subscriptionsEndDate = null,
+            reference = null
         )
 
     }
