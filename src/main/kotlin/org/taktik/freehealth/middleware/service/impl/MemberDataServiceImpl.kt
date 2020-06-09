@@ -322,7 +322,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             var data: ByteArray? = blob.content
             val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
             val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
-            MarshallerHelper(MemberDataConsultationResponse::class.java, MemberDataConsultationResponse::class.java).toObject(unsealedData)
+
+
+
         }
 
 
@@ -367,7 +369,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         requestType: String?,
         facets: List<Facet>?
                               ): MemberDataResponse {
-        val encryptRequest = false
+        val encryptRequest = true
         validateQuality(hcpQuality)
 
         val samlToken =
@@ -475,6 +477,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         businessContent = BusinessContent().apply {
                             id = detailId
                             value = aqb
+                            contentType = "text/xml"
                         }
                     })).let {
                         BlobMapper.mapBlobTypefromBlob(blobBuilder.build(it, "none", detailId, "text/xml", "MDA", "encryptedForKnownBED"))
