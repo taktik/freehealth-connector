@@ -1231,17 +1231,32 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     XPathConstants.NODESET
                 ) as NodeList).let { it ->
                     if (it.length > 0) {
-                        var node = it.item(0)
-                        val textContent = node.textContent
-                        var base = "/" + nodeDescr(node)
-                        while (node.parentNode != null && node.parentNode is Element) {
-                            base = "/${nodeDescr(node.parentNode)}$base"
-                            node = node.parentNode
-                        }
-                        val elements =
-                            mhmSubscriptionErrors.values.filter {
-                                it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+                        val startNode = it.item(0)
+                        val textContent = startNode.textContent
+                        var elements: List<MycarenetError>
+                        var skip = 0
+                        do {
+                            var skipped = skip
+                            var node = startNode
+                            var base = if (skipped == 0) { "/" + nodeDescr(node) } else ""
+                            while (node.parentNode != null && node.parentNode is Element) {
+                                if (skipped <= 1) { base = "/${nodeDescr(node.parentNode)}$base" } else skipped--
+                                node = node.parentNode
                             }
+                            elements =
+                                mhmSubscriptionErrors.values.filter {
+                                    it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+                                }
+                            if (skipped>1) { break }
+                            skip++
+                        } while (elements.isEmpty())
+
+                        if (elements.isEmpty()) {
+                            elements =
+                                mhmSubscriptionErrors.values.filter {
+                                    it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+                                }
+                        }
                         elements.forEach { it.value = textContent }
                         result.addAll(elements)
                     } else {
