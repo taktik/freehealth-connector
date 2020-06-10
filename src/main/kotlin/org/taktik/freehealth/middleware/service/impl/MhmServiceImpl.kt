@@ -1278,9 +1278,9 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
             override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
                 if (namespaceURI == "http://www.ehealth.fgov.be/standards/kmehr/schema/v1") listOf("ns1").iterator() else listOf<String>().iterator()
         }
-        if (localName == "transaction") {
+        /*if (localName == "transaction") {
             return "transaction[${xpath.evaluate("ns1:cd[@S=\"CD-TRANSACTION-MYCARENET\"]", node)}]"
-        }
+        }*/
         if (localName == "item") {
             return "item[${xpath.evaluate("ns1:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
         }
