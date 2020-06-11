@@ -48,6 +48,7 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationResponse
+import be.fgov.ehealth.mycarenet.mhm.protocol.v1.CancelSubscriptionRequest
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION
@@ -514,7 +515,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     this.transactionRequest = (unencryptedXmlRequest ?: xmlRequest).toString(Charsets.UTF_8)
 
                     consultMemberData.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    consultMemberData.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    soapRequest = MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java).toXMLByteArray(request).toString(Charsets.UTF_8)
                 },
                 errors = it.response.status?.statusDetail?.anies?.map {
                     FaultType().apply {
