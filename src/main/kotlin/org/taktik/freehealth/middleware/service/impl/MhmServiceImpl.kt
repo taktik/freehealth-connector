@@ -770,11 +770,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
                     ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                     patient = PersonType().apply {
-                        patientSsin?.let {
-                            ids.add(IDPATIENT().apply {
-                                s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value = it
-                            })
-                        }
+                        ids.add(IDPATIENT().apply {
+                                s = IDPATIENTschemes.ID_PATIENT;
+                                sv = "1.0";
+                                patientSsin?.let {
+                                    value = it
+                                }
+                        })
                         firstnames.add(patientFirstName)
                         familyname = patientLastName
                         sex =
@@ -983,11 +985,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
                     ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                     patient = PersonType().apply {
-                        patientSsin?.let {
-                            ids.add(IDPATIENT().apply {
-                                s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value = it
-                            })
-                        }
+                        ids.add(IDPATIENT().apply {
+                            s = IDPATIENTschemes.ID_PATIENT;
+                            sv = "1.0";
+                            patientSsin?.let {
+                                value = it
+                            }
+                        })
                         firstnames.add(patientFirstName)
                         familyname = patientLastName
                         sex =
@@ -1158,11 +1162,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
                     ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                     patient = PersonType().apply {
-                        patientSsin?.let {
-                            ids.add(IDPATIENT().apply {
-                                s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value = it
-                            })
-                        }
+                        ids.add(IDPATIENT().apply {
+                            s = IDPATIENTschemes.ID_PATIENT;
+                            sv = "1.0";
+                            patientSsin?.let {
+                                value = it
+                            }
+                        })
                         firstnames.add(patientFirstName)
                         familyname = patientLastName
                         sex =
