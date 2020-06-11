@@ -47,6 +47,7 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
+import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationResponse
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION
@@ -87,6 +88,7 @@ import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.builders.RequestBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.domain.Blob
+import org.taktik.connector.business.mycarenetdomaincommons.mapper.DomainBlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
 import org.taktik.connector.technical.config.ConfigFactory
@@ -97,6 +99,7 @@ import org.taktik.connector.technical.service.etee.CryptoFactory
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
+import org.taktik.connector.technical.utils.ConnectorIOUtils
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
@@ -104,6 +107,7 @@ import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.memberdata.MdaStatus
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
+import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponseDto
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
@@ -112,6 +116,7 @@ import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.icure.cin.saml.extensions.AttributeQueryList
 import org.taktik.icure.cin.saml.extensions.ExtensionsType
 import org.taktik.icure.cin.saml.extensions.Facet
+import org.taktik.icure.cin.saml.extensions.ResponseList
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.Response
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -286,11 +291,13 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         }
     }
 
-    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpName: String, messageNames: List<String>?): GenAsyncResponse {
+    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpName: String, messageNames: List<String>?) {
 
-        val samlToken =
-            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for MDA operations")
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw MissingTokenException("Cannot obtain token for MDA operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
         val getHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
             messageID = URI(IdGeneratorFactory.getIdGenerator("uuid").generateId())
@@ -312,7 +319,22 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val b64 = Base64.getEncoder()
 
-        return GenAsyncResponse()
+        response.`return`.msgResponses?.map{it ->
+            val blob = DomainBlobMapper.mapToBlob(it.detail)
+            var data: ByteArray? = blob.content
+            val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
+            val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
+            val responseList = MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(
+                if(encryptedKnownContent.businessContent.contentEncoding == "deflate")
+                    ConnectorIOUtils.decompress(encryptedKnownContent.businessContent.value) else encryptedKnownContent.businessContent.value
+            )
+            responseList.responses.map {
+                it
+            }
+        }
+
+
+
     }
 
     private fun buildOriginType(nihii: String, ssin: String, firstname: String, lastname: String): OrigineType =
@@ -388,7 +410,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val request = MemberDataConsultationRequest().apply {
             commonInput = CommonInputType().apply {
                 request =
-                    RequestType().apply { isIsTest = false /*config.getProperty("endpoint.genins")?.contains("-acpt") ?: false*/ }
+                    RequestType().apply { isIsTest = true /*config.getProperty("endpoint.genins")?.contains("-acpt") ?: false*/ }
                 inputReference = inputRef
                 origin = OriginType().apply {
                     `package` = PackageType().apply {
@@ -461,6 +483,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         businessContent = BusinessContent().apply {
                             id = detailId
                             value = aqb
+                            contentType = "text/xml"
                         }
                     })).let {
                         BlobMapper.mapBlobTypefromBlob(blobBuilder.build(it, "none", detailId, "text/xml", "MDA", "encryptedForKnownBED"))

@@ -22,6 +22,7 @@ package org.taktik.freehealth.middleware.dto.mhm
 
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 
 
 class CancelSubscriptionResultWithResponse(
@@ -30,5 +31,6 @@ class CancelSubscriptionResultWithResponse(
     commonOutput: CommonOutput? = null,
     var xades: ByteArray?,
     mycarenetConversation: MycarenetConversation? = null,
-    var kmehrMessage: ByteArray?
+    var kmehrMessage: ByteArray?,
+    var errors: List<MycarenetError>? = null
                                           ): CancelSubscriptionResult(decisionReference, subscriptionsCancelDate, commonOutput, mycarenetConversation)

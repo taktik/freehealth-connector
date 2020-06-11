@@ -25,25 +25,27 @@ import org.taktik.freehealth.middleware.dto.eattest.SendAttestResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.CancelSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.EndSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.StartSubscriptionResultWithResponse
+import java.time.Instant
 import java.util.*
 
 interface MhmService {
-    fun startSubscription(
+    fun sendSubscription(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        hcpCbe: String,
         patientSsin: String?,
         patientFirstName:String,
         patientLastName:String,
         patientGender:String,
-        io: String,
+        io: String?,
         ioMembership: String?,
         startDate: Int,
         isTrial: Boolean,
-        signatureType: String
+        signatureType: String,
+        isRecovery: Boolean,
+        isTestForNotify: Boolean
                          ): StartSubscriptionResultWithResponse?
 
 
@@ -53,33 +55,30 @@ interface MhmService {
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        hcpCbe: String,
-        patientSsin: String,
+        patientSsin: String?,
         patientFirstName:String,
         patientLastName:String,
         patientGender:String,
-        io: String,
-        ioMembership: String,
-        reference: String,
-        endDate: Int,
-        reason: String
+        io: String?,
+        ioMembership: String?,
+        reference: String
                          ): CancelSubscriptionResultWithResponse?
 
-    fun endSubscription(
+    fun notifySubscriptionClosure(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        hcpCbe: String,
-        patientSsin: String,
+        patientSsin: String?,
         patientFirstName:String,
         patientLastName:String,
         patientGender:String,
-        io: String,
-        ioMembership: String,
+        io: String?,
+        ioMembership: String?,
         reference: String,
         endDate: Int,
-        reason: String
+        reason: String,
+        decisionType: String
                           ): EndSubscriptionResultWithResponse?
 }

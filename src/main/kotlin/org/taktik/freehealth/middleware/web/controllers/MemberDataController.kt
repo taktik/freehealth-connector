@@ -36,6 +36,7 @@ import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
 import org.taktik.freehealth.middleware.dto.memberdata.FacetDto
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.freehealth.middleware.dto.memberdata.MemberDataBatchRequestDto
+import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponseDto
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.icure.cin.saml.extensions.Facet
@@ -218,7 +219,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
                                                       )
     }
 
-    @PostMapping("/async/messages/", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @PostMapping("/async/messages", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getMemberDataMessage(
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -226,9 +227,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpName: String,
-        @RequestParam messageNames: List<String>?
-    ): GenAsyncResponse {
-        return memberDataService.getMemberDataMessages(
+        @RequestParam messageNames: List<String>?) = memberDataService.getMemberDataMessages(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
@@ -236,6 +235,5 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
             hcpSsin = hcpSsin,
             hcpName = hcpName,
             messageNames = messageNames)
-    }
 
 }

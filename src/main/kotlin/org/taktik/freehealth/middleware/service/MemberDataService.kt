@@ -21,8 +21,10 @@
 package org.taktik.freehealth.middleware.service
 
 import org.taktik.connector.business.domain.common.GenAsyncResponse
+import org.taktik.connector.business.domain.dmg.DmgsList
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
+import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponseDto
 import org.taktik.icure.cin.saml.extensions.Facet
 import java.time.Instant
 import java.util.UUID
@@ -68,5 +70,5 @@ interface MemberDataService {
         hcpSsin: String,
         hcpName: String,
         messageNames: List<String>?
-    ): GenAsyncResponse
+    )
 }

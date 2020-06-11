@@ -20,8 +20,10 @@
 
 package org.taktik.freehealth.middleware.dto.mhm
 
+import be.cin.types.v1.FaultType
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 
 
 class StartSubscriptionResultWithResponse(
@@ -31,5 +33,6 @@ class StartSubscriptionResultWithResponse(
     commonOutput: CommonOutput? = null,
     var xades: ByteArray?,
     mycarenetConversation: MycarenetConversation? = null,
-    var kmehrMessage: ByteArray?
+    var kmehrMessage: ByteArray?,
+    var errors: List<MycarenetError>? = null
                                          ): StartSubscriptionResult(reference, subscriptionsStartDate, inscriptionDate, commonOutput, mycarenetConversation)
