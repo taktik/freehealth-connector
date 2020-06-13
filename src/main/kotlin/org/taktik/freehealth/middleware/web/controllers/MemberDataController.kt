@@ -230,7 +230,6 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
             tokenId = tokenId,
             hcpQuality = hcpQuality ?: "medicalhouse",
             hcpNihii = hcpNihii,
-            hcpSsin = hcpSsin,
             hcpName = hcpName,
             io = io,
             startDate = startDate,
@@ -255,8 +254,39 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
             tokenId = tokenId,
             passPhrase = passPhrase,
             hcpNihii = hcpNihii,
-            hcpSsin = hcpSsin,
             hcpName = hcpName,
             messageNames = messageNames)
+
+    @PostMapping("async/confirm/messages", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun confirmDmgMessages(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpName: String,
+        @RequestBody mdaMessagesHashes: List<String>) =
+        memberDataService.confirmMemberDataMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
+            hcpName = hcpName,
+            mdaMessagesHashes = mdaMessagesHashes)
+
+    @PostMapping("async/confirm/acks", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun confirmAcks(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpName: String,
+        @RequestBody mdaAcksHashes: List<String>) =
+        memberDataService.confirmMemberDataAcks(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
+            hcpName = hcpName,
+            mdaAcksHashes = mdaAcksHashes)
 
 }

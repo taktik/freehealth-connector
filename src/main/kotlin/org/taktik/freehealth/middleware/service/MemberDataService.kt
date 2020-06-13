@@ -51,7 +51,6 @@ interface MemberDataService {
         tokenId: UUID,
         hcpQuality: String,
         hcpNihii: String,
-        hcpSsin: String,
         hcpName: String,
         requestType: String = "information",
         io: String?,
@@ -67,8 +66,25 @@ interface MemberDataService {
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
-        hcpSsin: String,
         hcpName: String,
         messageNames: List<String>?
     )
+
+    fun confirmMemberDataMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpName: String,
+        mdaMessagesHashes: List<String>
+    ): Boolean
+
+    fun confirmMemberDataAcks(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpName: String,
+        mdaAcksHashes: List<String>
+    ): Boolean
 }
