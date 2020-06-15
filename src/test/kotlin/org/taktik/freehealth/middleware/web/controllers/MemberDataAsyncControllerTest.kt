@@ -64,7 +64,7 @@ class MemberDataAsyncControllerTest: EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val results = regOa.map {
             val messages = this.restTemplate.exchange("http://localhost:$port/mda/async/messages" +
-                "?hcpNihii=84450277" +
+                "?hcpNihii=$nihii5" +
                 "&hcpSsin=$ssin5" +
                 "&hcpName={name5}" +
                 "&messageNames=$it",
