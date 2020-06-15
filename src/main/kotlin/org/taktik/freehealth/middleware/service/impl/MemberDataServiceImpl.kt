@@ -24,7 +24,6 @@ import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
 import be.cin.mycarenet.esb.common.v2.CommonInput
 import be.cin.mycarenet.esb.common.v2.OrigineType
-import be.cin.nip.async.business.GenericResponseList
 import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Post
@@ -35,9 +34,7 @@ import be.cin.types.v1.DetailsType
 import be.cin.types.v1.FaultType
 import be.cin.types.v1.StringLangType
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
-import be.fgov.ehealth.messageservices.core.v1.RetrieveTransactionRequest
-import be.fgov.ehealth.messageservices.core.v1.SelectRetrieveTransactionType
-import be.fgov.ehealth.messageservices.core.v1.TransactionType
+import be.fgov.ehealth.messageservices.mycarenet.core.v1.SendTransactionRequest
 import be.fgov.ehealth.mycarenet.commons.core.v3.CareProviderType
 import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType
 import be.fgov.ehealth.mycarenet.commons.core.v3.IdType
@@ -49,18 +46,13 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataAcknowledge
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
-import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationResponse
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataList
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataMessage
-import be.fgov.ehealth.mycarenet.mhm.protocol.v1.CancelSubscriptionRequest
+import be.fgov.ehealth.mycarenet.mhm.protocol.v1.SendSubscriptionRequest
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
-import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
 import com.google.gson.Gson
@@ -80,11 +72,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.taktik.connector.business.dmg.builders.ResponseObjectBuilder
-import org.taktik.connector.business.dmg.builders.ResponseObjectBuilderFactory
 import org.taktik.connector.business.domain.common.GenAsyncResponse
-import org.taktik.connector.business.domain.dmg.DmgAcknowledge
-import org.taktik.connector.business.domain.dmg.DmgsList
 import org.taktik.connector.business.genericasync.builders.BuilderFactory
 import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
 import org.taktik.connector.business.memberdata.builders.impl.ResponseObjectBuilderImpl
@@ -92,8 +80,6 @@ import org.taktik.connector.business.memberdata.validators.impl.MemberDataXmlVal
 import org.taktik.connector.business.mycarenetcommons.mapper.SendRequestMapper
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
-import org.taktik.connector.business.mycarenetdomaincommons.builders.RequestBuilderFactory
-import org.taktik.connector.business.mycarenetdomaincommons.domain.Blob
 import org.taktik.connector.business.mycarenetdomaincommons.mapper.DomainBlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
@@ -114,7 +100,6 @@ import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.memberdata.MdaStatus
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
-import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponseDto
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
@@ -124,20 +109,18 @@ import org.taktik.icure.cin.saml.extensions.AttributeQueryList
 import org.taktik.icure.cin.saml.extensions.ExtensionsType
 import org.taktik.icure.cin.saml.extensions.Facet
 import org.taktik.icure.cin.saml.extensions.ResponseList
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.Response
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
-import java.io.StringWriter
+import java.lang.Exception
 import java.net.URI
 import java.time.Instant
 import java.util.*
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
+import javax.xml.ws.soap.SOAPFaultException
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 
@@ -271,9 +254,18 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = packageInfo.packageName }
                 }
                 careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
-                    this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                        quality = hcpQuality
-                        value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
+                    nihii =
+                        be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                            quality = hcpQuality; value =
+                            be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                        }
+
+                    organization = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                        nihii =
+                            be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                                quality = hcpQuality; value =
+                                be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                            }
                     }
                 }
             }
@@ -308,6 +300,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
+
         val getHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
             messageID = URI(IdGeneratorFactory.getIdGenerator("uuid").generateId())
         }
@@ -329,7 +322,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
             val b64 = Base64.getEncoder()
 
+
             return MemberDataList().apply{
+
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
                     this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
@@ -346,74 +341,89 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     }
                 } ?: listOf()
 
-
                 memberDataMessageList = response.`return`.msgResponses?.map{it ->
                     MemberDataMessage().apply {
-                        commonOutput.apply {
-                            nipReference = it.commonOutput.nipReference
-                            inputReference = it.commonOutput.inputReference
-                            outputReference = it.commonOutput.outputReference
-                        }
+
+                        commonOutput = commonOutput
 
                         valueHash = it.detail?.hashValue?.let {
                             b64.encodeToString(it)
                         }
 
-                        val blob = DomainBlobMapper.mapToBlob(it.detail)
-                        var data: ByteArray? = blob.content
-                        val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
-                        val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
+                        try{
+                            var data: ByteArray? = if (it.detail.contentEncoding  == "deflate") ConnectorIOUtils.decompress(DomainBlobMapper.mapToBlob(it.detail).content) else DomainBlobMapper.mapToBlob(it.detail).content
 
-                        val responseList = MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(
-                            if(encryptedKnownContent.businessContent.contentEncoding == "deflate")
-                                ConnectorIOUtils.decompress(encryptedKnownContent.businessContent.value) else encryptedKnownContent.businessContent.value
-                        )
+                            val responseList = if (it.detail.contentEncryption  == "encryptedForKnownRecipient") {
+                                val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
+                                val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
+                                MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(
+                                    if (encryptedKnownContent.businessContent.contentEncoding == "deflate")
+                                        ConnectorIOUtils.decompress(encryptedKnownContent.businessContent.value) else encryptedKnownContent.businessContent.value
+                                )
+                            } else {
+                                MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(data)
+                            }
 
-                        memberDataResponse = responseList.responses.map {
+                            responseList.responses.map {
 
-                            MemberDataResponse().apply {
-                                val code1 = it.status.statusCode?.value
-                                val code2 = it.status.statusCode?.statusCode?.value
+                                log.info("Xml value:"+ConnectorXmlUtils.toString(it))
 
-                                status = MdaStatus(code1, code2)
+                                MemberDataResponse().apply {
+                                    val code1 = it.status.statusCode?.value
+                                    val code2 = it.status.statusCode?.statusCode?.value
 
-                                errors = it.status?.statusDetail?.anies?.map {
-                                    FaultType().apply {
-                                        faultCode = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultCode").item(0)?.textContent
-                                        faultSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultSource").item(0)?.textContent
-                                        message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
-                                            StringLangType().apply {
-                                                value = it.textContent
-                                                lang = it.attributes.getNamedItem("lang")?.textContent
-                                            }
-                                        }
+                                    assertions = listOf()
 
-                                        it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Detail").let {
-                                            if (it.length > 0) { details = DetailsType() }
-                                            for (i in 0 until it.length) {
-                                                details.details.add(DetailType().apply {
-                                                    it.item(i).let {
-                                                        detailCode = (it as Element).getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailCode").item(0)?.textContent
-                                                        detailSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailSource").item(0)?.textContent
-                                                        location = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Location").item(0)?.textContent
-                                                        message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
-                                                            StringLangType().apply {
-                                                                value = it.textContent
-                                                                lang = it.attributes.getNamedItem("lang")?.textContent
-                                                            } }
-                                                    }
-                                                })
+                                    status = MdaStatus(code1, code2)
+
+                                    errors = it.status?.statusDetail?.anies?.map {
+                                        FaultType().apply {
+                                            faultCode = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultCode").item(0)?.textContent
+                                            faultSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultSource").item(0)?.textContent
+                                            message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
+                                                StringLangType().apply {
+                                                    value = it.textContent
+                                                    lang = it.attributes.getNamedItem("lang")?.textContent
+                                                }
                                             }
 
+
+                                            it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Detail").let {
+                                                if (it.length > 0) { details = DetailsType() }
+                                                for (i in 0 until it.length) {
+                                                    details.details.add(DetailType().apply {
+                                                        it.item(i).let {
+                                                            detailCode = (it as Element).getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailCode").item(0)?.textContent
+                                                            detailSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailSource").item(0)?.textContent
+                                                            location = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Location").item(0)?.textContent
+                                                            message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
+                                                                StringLangType().apply {
+                                                                    value = it.textContent
+                                                                    lang = it.attributes.getNamedItem("lang")?.textContent
+                                                                } }
+                                                        }
+                                                    })
+                                                }
+                                            }
                                         }
                                     }
                                 }
-
+                            }
+                        }catch (e: SOAPFaultException){
+                            MemberDataResponse().apply {
+                                mycarenetConversation = MycarenetConversation().apply {
+                                    this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
+                                    this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
+                                    response?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                                    soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                                }
+                                errors = listOf(FaultType().apply {
+                                    faultSource = e.message
+                                    faultCode = e.fault?.faultCode
+                                })
                             }
                         }
-
                     }
-
                 }
             }
 
@@ -431,7 +441,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             BuilderFactory.getRequestObjectBuilder("mda")
                 .buildConfirmRequestWithHashes(
                     buildOriginType(hcpNihii, hcpName),
-                    mdaMessagesHashes.map { valueHash -> Base64.getDecoder().decode(valueHash) },
+                    mdaMessagesHashes.map { it -> ConnectorXmlUtils.toByteArray(it) },
                     listOf())
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
