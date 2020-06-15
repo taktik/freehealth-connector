@@ -1,5 +1,6 @@
 package be.fgov.ehealth.mycarenet.memberdata.protocol.v1;
 
+import be.cin.types.v1.FaultType;
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse;
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput;
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation;
@@ -11,14 +12,14 @@ import java.util.List;
 
 public class MemberDataMessage implements Serializable {
     private CommonOutput commonOutput;
-    private MycarenetConversation mycarenetConversation;
     protected boolean complete;
-    private List<MycarenetError> errors = new ArrayList<>();
+    private List<MycarenetError> errors;
+    private List<FaultType> genericErrors;
+    private List<MemberDataResponse> memberDataResponse;
     private String io;
     private String appliesTo;
     private String reference;
     private String valueHash;
-
 
     public CommonOutput getCommonOutput() {
         return commonOutput;
@@ -26,14 +27,6 @@ public class MemberDataMessage implements Serializable {
 
     public void setCommonOutput(CommonOutput commonOutput) {
         this.commonOutput = commonOutput;
-    }
-
-    public MycarenetConversation getMycarenetConversation() {
-        return mycarenetConversation;
-    }
-
-    public void setMycarenetConversation(MycarenetConversation mycarenetConversation) {
-        this.mycarenetConversation = mycarenetConversation;
     }
 
     public boolean isComplete() {
@@ -50,6 +43,22 @@ public class MemberDataMessage implements Serializable {
 
     public void setErrors(List<MycarenetError> errors) {
         this.errors = errors;
+    }
+
+    public List<FaultType> getGenericErrors() {
+        return genericErrors;
+    }
+
+    public void setGenericErrors(List<FaultType> genericErrors) {
+        this.genericErrors = genericErrors;
+    }
+
+    public List<MemberDataResponse> getMemberDataResponse() {
+        return memberDataResponse;
+    }
+
+    public void setMemberDataResponse(List<MemberDataResponse> memberDataResponse) {
+        this.memberDataResponse = memberDataResponse;
     }
 
     public String getIo() {

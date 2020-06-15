@@ -1,7 +1,10 @@
 package be.fgov.ehealth.mycarenet.memberdata.protocol.v1;
 
-import be.cin.nippin.memberdata.saml.extension.ResponseList;
+import be.cin.nip.async.generic.MsgResponse;
 import org.taktik.connector.business.memberdatav2.domain.MemberDataBuilderResponse;
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse;
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation;
+import org.taktik.icure.cin.saml.extensions.ResponseList;
 
 
 import java.io.Serializable;
@@ -9,10 +12,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MemberDataList extends MemberDataMessage implements Serializable {
-    List<MemberDataAcknowledge> acks = new ArrayList();
-    List<MemberDataBuilderResponse> memberDataListResponse = new ArrayList();
-    Date date;
+public class MemberDataList implements Serializable {
+    private MycarenetConversation mycarenetConversation;
+    private List<MemberDataAcknowledge> acks = new ArrayList();
+    private List<MemberDataMessage> memberDataMessageList;
+    private Date date;
+
+    public MycarenetConversation getMycarenetConversation() {
+        return mycarenetConversation;
+    }
+
+    public void setMycarenetConversation(MycarenetConversation mycarenetConversation) {
+        this.mycarenetConversation = mycarenetConversation;
+    }
 
     public List<MemberDataAcknowledge> getAcks() {
         return acks;
@@ -22,12 +34,12 @@ public class MemberDataList extends MemberDataMessage implements Serializable {
         this.acks = acks;
     }
 
-    public List<MemberDataBuilderResponse> getMemberDataListResponse() {
-        return memberDataListResponse;
+    public List<MemberDataMessage> getMemberDataMessageList() {
+        return memberDataMessageList;
     }
 
-    public void setMemberDataListResponse(List<MemberDataBuilderResponse> memberDataListResponse) {
-        this.memberDataListResponse = memberDataListResponse;
+    public void setMemberDataMessageList(List<MemberDataMessage> memberDataMessageList) {
+        this.memberDataMessageList = memberDataMessageList;
     }
 
     public Date getDate() {

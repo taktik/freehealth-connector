@@ -18,6 +18,7 @@ import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.freehealth.middleware.dto.dmg.DmgMessage
 import org.taktik.freehealth.middleware.dto.memberdata.MemberDataBatchRequestDto
 import org.taktik.freehealth.middleware.dto.memberdata.MemberInfoDto
+import sun.rmi.runtime.Log
 
 
 @RunWith(SpringRunner::class)
@@ -47,7 +48,7 @@ class MemberDataAsyncControllerTest: EhealthTest() {
     fun sendMemberDataRequest() {
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val str = this.restTemplate.exchange("http://localhost:$port/mda/async/request/900" +
-            "?hcpNihii=$nihii5" +
+            "?hcpNihii=84450277111" +
             "&hcpSsin=$ssin5" +
             "&hcpName={name5}" +
             "&hcpQuality=medicalhouse",
@@ -63,15 +64,12 @@ class MemberDataAsyncControllerTest: EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val results = regOa.map {
             val messages = this.restTemplate.exchange("http://localhost:$port/mda/async/messages" +
-                "?hcpNihii=$nihii5" +
+                "?hcpNihii=84450277" +
                 "&hcpSsin=$ssin5" +
                 "&hcpName={name5}" +
                 "&messageNames=$it",
                 HttpMethod.POST, HttpEntity<List<String>>(listOf(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<MemberDataResponse>>() {}, name5)
 
-            Assertions.assertThat(messages.body).isNotEmpty()
-            println(messages.body)
         }
-
     }
 }

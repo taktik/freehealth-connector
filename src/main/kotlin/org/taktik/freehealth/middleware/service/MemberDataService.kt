@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.service
 
+import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataList
 import org.taktik.connector.business.domain.common.GenAsyncResponse
 import org.taktik.connector.business.domain.dmg.DmgsList
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
@@ -68,7 +69,7 @@ interface MemberDataService {
         hcpNihii: String,
         hcpName: String,
         messageNames: List<String>?
-    )
+    ): MemberDataList?
 
     fun confirmMemberDataMessages(
         keystoreId: UUID,

@@ -24,6 +24,7 @@ import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
 import be.cin.mycarenet.esb.common.v2.CommonInput
 import be.cin.mycarenet.esb.common.v2.OrigineType
+import be.cin.nip.async.business.GenericResponseList
 import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Post
@@ -50,6 +51,7 @@ import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataAcknowledge
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationResponse
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataList
+import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataMessage
 import be.fgov.ehealth.mycarenet.mhm.protocol.v1.CancelSubscriptionRequest
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
@@ -184,7 +186,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         hospitalized: Boolean?,
         mdaRequest: MemberDataBatchRequest
                                       ): GenAsyncResponse {
-        val encryptRequest = true
+        val encryptRequest = false
         validateQuality(hcpQuality)
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -298,7 +300,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         }
     }
 
-    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, messageNames: List<String>?) {
+    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, messageNames: List<String>?): MemberDataList? {
 
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw MissingTokenException("Cannot obtain token for MDA operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
@@ -322,91 +324,98 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             }
             origin = buildOriginType(hcpNihii, hcpName)
         }
-        val response = genAsyncService.getRequest(samlToken, get, getHeader)
 
-        val b64 = Base64.getEncoder()
+            val response = genAsyncService.getRequest(samlToken, get, getHeader)
 
-        MemberDataList().apply{
-            mycarenetConversation = MycarenetConversation().apply {
-                this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
-                this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
-                response?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                response?.soapRequest?.writeTo(this.soapRequestOutputStream())
-            }
+            val b64 = Base64.getEncoder()
 
-            acks = response.`return`.tAckResponses?.map {
-                MemberDataAcknowledge(it.tAck.resultMajor, it.tAck.resultMinor, it.tAck.resultMessage).apply {
-                    io = it.tAck.issuer.replace("urn:nip:issuer:io:".toRegex(), "")
-                    reference = it.tAck.reference
-                    appliesTo = it.tAck.appliesTo
-                    valueHash = b64.encodeToString(it.tAck.value)
-                }
-            } ?: listOf()
-
-            memberDataListResponse = response.`return`.msgResponses?.map{it ->
-                val nipReference = it.commonOutput.nipReference
-                val inputReference = it.commonOutput.inputReference
-                val outputReference = it.commonOutput.outputReference
-
-                val encodedHashValue = it.detail?.hashValue?.let {
-                    b64.encodeToString(it)
+            return MemberDataList().apply{
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
+                    this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
+                    response?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
                 }
 
-                val blob = DomainBlobMapper.mapToBlob(it.detail)
-                var data: ByteArray? = blob.content
-                val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
-                val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
-
-                val responseList = MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(
-                    if(encryptedKnownContent.businessContent.contentEncoding == "deflate")
-                        ConnectorIOUtils.decompress(encryptedKnownContent.businessContent.value) else encryptedKnownContent.businessContent.value
-                )
-
-                responseList.responses.map {
+                acks = response.`return`.tAckResponses?.map {
+                    MemberDataAcknowledge(it.tAck.resultMajor, it.tAck.resultMinor, it.tAck.resultMessage).apply {
+                        io = it.tAck.issuer.replace("urn:nip:issuer:io:".toRegex(), "")
+                         reference = it.tAck.reference
+                        appliesTo = it.tAck.appliesTo
+                        valueHash = b64.encodeToString(it.tAck.value)
+                    }
+                } ?: listOf()
 
 
-                    val code1 = it.status.statusCode?.value
-                    val code2 = it.status.statusCode?.statusCode?.value
+                memberDataMessageList = response.`return`.msgResponses?.map{it ->
+                    MemberDataMessage().apply {
+                        commonOutput.apply {
+                            nipReference = it.commonOutput.nipReference
+                            inputReference = it.commonOutput.inputReference
+                            outputReference = it.commonOutput.outputReference
+                        }
 
-                    it.status?.statusDetail?.anies?.map {
-                        FaultType().apply {
-                            faultCode = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultCode").item(0)?.textContent
-                            faultSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultSource").item(0)?.textContent
-                            message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
-                                StringLangType().apply {
-                                    value = it.textContent
-                                    lang = it.attributes.getNamedItem("lang")?.textContent
-                                }
-                            }
+                        valueHash = it.detail?.hashValue?.let {
+                            b64.encodeToString(it)
+                        }
 
-                            it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Detail").let {
-                                if (it.length > 0) { details = DetailsType() }
-                                for (i in 0 until it.length) {
-                                    details.details.add(DetailType().apply {
-                                        it.item(i).let {
-                                            detailCode = (it as Element).getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailCode").item(0)?.textContent
-                                            detailSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailSource").item(0)?.textContent
-                                            location = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Location").item(0)?.textContent
-                                            message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
-                                                StringLangType().apply {
-                                                    value = it.textContent
-                                                    lang = it.attributes.getNamedItem("lang")?.textContent
-                                                } }
+                        val blob = DomainBlobMapper.mapToBlob(it.detail)
+                        var data: ByteArray? = blob.content
+                        val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
+                        val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
+
+                        val responseList = MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(
+                            if(encryptedKnownContent.businessContent.contentEncoding == "deflate")
+                                ConnectorIOUtils.decompress(encryptedKnownContent.businessContent.value) else encryptedKnownContent.businessContent.value
+                        )
+
+                        memberDataResponse = responseList.responses.map {
+
+                            MemberDataResponse().apply {
+                                val code1 = it.status.statusCode?.value
+                                val code2 = it.status.statusCode?.statusCode?.value
+
+                                status = MdaStatus(code1, code2)
+
+                                errors = it.status?.statusDetail?.anies?.map {
+                                    FaultType().apply {
+                                        faultCode = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultCode").item(0)?.textContent
+                                        faultSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultSource").item(0)?.textContent
+                                        message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
+                                            StringLangType().apply {
+                                                value = it.textContent
+                                                lang = it.attributes.getNamedItem("lang")?.textContent
+                                            }
                                         }
-                                    })
+
+                                        it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Detail").let {
+                                            if (it.length > 0) { details = DetailsType() }
+                                            for (i in 0 until it.length) {
+                                                details.details.add(DetailType().apply {
+                                                    it.item(i).let {
+                                                        detailCode = (it as Element).getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailCode").item(0)?.textContent
+                                                        detailSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailSource").item(0)?.textContent
+                                                        location = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Location").item(0)?.textContent
+                                                        message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
+                                                            StringLangType().apply {
+                                                                value = it.textContent
+                                                                lang = it.attributes.getNamedItem("lang")?.textContent
+                                                            } }
+                                                    }
+                                                })
+                                            }
+
+                                        }
+                                    }
                                 }
 
                             }
                         }
+
                     }
 
-
                 }
-
-                return
-
             }
-        }
 
     }
 
@@ -449,8 +458,6 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         return true
     }
-
-
 
 
     private fun buildOriginType(hcpNihii: String, hcpName: String): OrigineType =
