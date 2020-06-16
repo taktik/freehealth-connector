@@ -9,7 +9,7 @@ class MemberDataMessage (
     var complete: Boolean? = false,
     var errors: List<MycarenetError>? = null,
     var genericErrors: List<FaultType>? = null,
-    var memberDataResponse: List<MemberDataResponse>? = null,
+    var memberDataResponse: List<MemberDataBatchResponse>? = null,
     var io: String? = null,
     var appliesTo: String? = null,
     var reference: String? = null,

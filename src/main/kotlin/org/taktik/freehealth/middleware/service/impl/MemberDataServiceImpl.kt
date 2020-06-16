@@ -95,6 +95,7 @@ import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.memberdata.MdaStatus
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataAck
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchResponse
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataList
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataMessage
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
@@ -358,12 +359,12 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         ),
                         errors = null,
                         genericErrors = null,
-                        reference = null,
+                        reference = it.detail.reference,
                         appliesTo = null,
                         complete = null,
                         io = null,
                         memberDataResponse = responseList.responses.map {
-                            MemberDataResponse(
+                            MemberDataBatchResponse(
                                 assertions = it.anies.map{
                                     MarshallerHelper(Assertion::class.java, Assertion::class.java).toObject(it)
                                 },
@@ -403,7 +404,10 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                                             }
                                         }
                                     }
-                                }
+                                },
+                                inResponseTo = it.inResponseTo,
+                                issuer = it.issuer.value,
+                                responseId = it.id
                             )
                         },
                         valueHash = it.detail?.hashValue?.let { b64.encodeToString(it)}
