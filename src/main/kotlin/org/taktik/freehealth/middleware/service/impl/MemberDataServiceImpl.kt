@@ -410,7 +410,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     )
 
                 },
-                date = null
+                date = null,
+                genericErrors = null
             )
         }catch (e:SOAPFaultException){
             return MemberDataList(
@@ -422,7 +423,11 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 },
                 acks = null,
                 date = null,
-                memberDataMessageList =  null
+                memberDataMessageList =  null,
+                genericErrors = listOf(FaultType().apply {
+                    faultSource = e.message
+                    faultCode = e.fault?.faultCode
+                })
             )
         }
 
