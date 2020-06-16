@@ -157,7 +157,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
             throw e
         }
 
-        val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, expirationDate ?: LocalDateTime.now().plusMonths(3))
+        val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, expirationDate ?: LocalDateTime.now().plusMonths(3).minusDays(1))
 
         val result = Prescription(Date(), "", prescriptionId!!)
 
