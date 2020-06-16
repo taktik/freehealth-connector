@@ -34,7 +34,6 @@ import be.cin.types.v1.DetailsType
 import be.cin.types.v1.FaultType
 import be.cin.types.v1.StringLangType
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
-import be.fgov.ehealth.messageservices.mycarenet.core.v1.SendTransactionRequest
 import be.fgov.ehealth.mycarenet.commons.core.v3.CareProviderType
 import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType
 import be.fgov.ehealth.mycarenet.commons.core.v3.IdType
@@ -44,11 +43,7 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.OriginType
 import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
-import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataAcknowledge
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
-import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataList
-import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataMessage
-import be.fgov.ehealth.mycarenet.mhm.protocol.v1.SendSubscriptionRequest
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
@@ -98,8 +93,12 @@ import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.memberdata.MdaStatus
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataAck
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataList
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataMessage
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
@@ -109,12 +108,12 @@ import org.taktik.icure.cin.saml.extensions.AttributeQueryList
 import org.taktik.icure.cin.saml.extensions.ExtensionsType
 import org.taktik.icure.cin.saml.extensions.Facet
 import org.taktik.icure.cin.saml.extensions.ResponseList
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.Response
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
-import java.lang.Exception
 import java.net.URI
 import java.time.Instant
 import java.util.*
@@ -301,7 +300,6 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
-
         val getHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
             messageID = URI(IdGeneratorFactory.getIdGenerator("uuid").generateId())
         }
@@ -323,60 +321,56 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val b64 = Base64.getEncoder()
 
-
-        return MemberDataList().apply {
-
-            mycarenetConversation = MycarenetConversation().apply {
-                this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
-                this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
-                response?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
-            }
-
-            acks = response.`return`.tAckResponses?.map {
-                MemberDataAcknowledge(it.tAck.resultMajor, it.tAck.resultMinor, it.tAck.resultMessage).apply {
-                    io = it.tAck.issuer.replace("urn:nip:issuer:io:".toRegex(), "")
-                    reference = it.tAck.reference
-                    appliesTo = it.tAck.appliesTo
-                    valueHash = b64.encodeToString(it.tAck.value)
-                }
-            } ?: listOf()
-
-            memberDataMessageList = response.`return`.msgResponses?.map { it ->
-                MemberDataMessage().apply {
-
-                    commonOutput = commonOutput
-
-                    valueHash = it.detail?.hashValue?.let {
-                        b64.encodeToString(it)
+        return try {
+            MemberDataList(
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
+                    this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
+                    response?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                },
+                acks = response.`return`.tAckResponses?.map {
+                    MemberDataAck(
+                        major = it.tAck.resultMajor,
+                        minor = it.tAck.resultMinor,
+                        message = it.tAck.resultMessage,
+                        date = null
+                    )
+                },
+                memberDataMessageList = response.`return`.msgResponses?.map {
+                    var data: ByteArray? = if (it.detail.contentEncoding == "deflate") ConnectorIOUtils.decompress(DomainBlobMapper.mapToBlob(it.detail).content) else DomainBlobMapper.mapToBlob(it.detail).content
+                    val responseList = if (it.detail.contentEncryption == "encryptedForKnownRecipient") {
+                        val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
+                        val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
+                        MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(
+                            if (encryptedKnownContent.businessContent.contentEncoding == "deflate")
+                                ConnectorIOUtils.decompress(encryptedKnownContent.businessContent.value) else encryptedKnownContent.businessContent.value
+                        )
+                    } else {
+                        MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(data)
                     }
 
-                    try {
-                        var data: ByteArray? = if (it.detail.contentEncoding == "deflate") ConnectorIOUtils.decompress(DomainBlobMapper.mapToBlob(it.detail).content) else DomainBlobMapper.mapToBlob(it.detail).content
-
-                        val responseList = if (it.detail.contentEncryption == "encryptedForKnownRecipient") {
-                            val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
-                            val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
-                            MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(
-                                if (encryptedKnownContent.businessContent.contentEncoding == "deflate")
-                                    ConnectorIOUtils.decompress(encryptedKnownContent.businessContent.value) else encryptedKnownContent.businessContent.value
-                            )
-                        } else {
-                            MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(data)
-                        }
-
-                        responseList.responses.map {
-
-                            log.info("Xml value:" + ConnectorXmlUtils.toString(it))
-
-                            MemberDataResponse().apply {
-                                val code1 = it.status.statusCode?.value
-                                val code2 = it.status.statusCode?.statusCode?.value
-
-                                assertions = listOf()
-
-                                status = MdaStatus(code1, code2)
-
+                    MemberDataMessage(
+                        commonOutput = CommonOutput(
+                            inputReference = it.commonOutput.inputReference,
+                            outputReference = it.commonOutput.outputReference,
+                            nipReference = it.commonOutput.nipReference
+                        ),
+                        errors = null,
+                        genericErrors = null,
+                        reference = null,
+                        appliesTo = null,
+                        complete = null,
+                        io = null,
+                        memberDataResponse = responseList.responses.map {
+                            MemberDataResponse(
+                                assertions = it.anies.map{
+                                    MarshallerHelper(Assertion::class.java, Assertion::class.java).toObject(it)
+                                },
+                                status = MdaStatus(
+                                    it.status.statusCode?.value,
+                                    it.status.statusCode?.statusCode?.value
+                                ),
                                 errors = it.status?.statusDetail?.anies?.map {
                                     FaultType().apply {
                                         faultCode = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultCode").item(0)?.textContent
@@ -410,24 +404,26 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                                         }
                                     }
                                 }
-                            }
-                        }
-                    } catch (e: SOAPFaultException) {
-                        MemberDataResponse().apply {
-                            mycarenetConversation = MycarenetConversation().apply {
-                                this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
-                                this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
-                                response?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                                soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
-                            }
-                            errors = listOf(FaultType().apply {
-                                faultSource = e.message
-                                faultCode = e.fault?.faultCode
-                            })
-                        }
-                    }
-                }
-            }
+                            )
+                        },
+                        valueHash = it.detail?.hashValue?.let { b64.encodeToString(it)}
+                    )
+
+                },
+                date = null
+            )
+        }catch (e:SOAPFaultException){
+            return MemberDataList(
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
+                    this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
+                    response?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                },
+                acks = null,
+                date = null,
+                memberDataMessageList =  null
+            )
         }
 
     }

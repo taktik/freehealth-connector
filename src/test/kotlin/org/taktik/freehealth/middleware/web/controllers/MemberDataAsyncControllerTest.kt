@@ -14,6 +14,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataList
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.freehealth.middleware.dto.dmg.DmgMessage
 import org.taktik.freehealth.middleware.dto.memberdata.MemberDataBatchRequestDto
@@ -64,12 +65,11 @@ class MemberDataAsyncControllerTest: EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val results = regOa.map {
             val messages = this.restTemplate.exchange("http://localhost:$port/mda/async/messages" +
-                "?hcpNihii=$nihii5" +
+                "?hcpNihii=84450277111" +
                 "&hcpSsin=$ssin5" +
                 "&hcpName={name5}" +
                 "&messageNames=$it",
-                HttpMethod.POST, HttpEntity<List<String>>(listOf(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<MemberDataResponse>>() {}, name5)
-
+                HttpMethod.POST, HttpEntity<List<MemberDataResponse>>(listOf(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<MemberDataList>>() {}, name5)
         }
     }
 }
