@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
+import com.google.gson.Gson
 import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
@@ -16,6 +17,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
+import org.taktik.freehealth.middleware.dto.memberdata.MemberDataBatchRequestDto
+import org.taktik.freehealth.middleware.dto.memberdata.MemberInfoDto
 
 import java.io.File
 import java.time.Instant
@@ -26,6 +29,7 @@ import java.time.Instant
 class MemberDataControllerTest : EhealthTest() {
     @LocalServerPort
     private val port: Int = 0
+    private val gson = Gson()
 
     @Autowired
     private val restTemplate: TestRestTemplate? = null
@@ -37,6 +41,8 @@ class MemberDataControllerTest : EhealthTest() {
         600 to listOf("45021812602","72072320188","16020808228","15011820591","0615007639744","54071402460","27101406159","86052640376","45021812602","92070850968","26120934416","51120124705","48062301752","14011618454","42032920621","88091034505","??","0609003009338","54071402460","27101406159"),
         900 to listOf("73050819368","50010403034","19081826340","17012401843","0446347301700","28030407427","81082855769","50010403034","73050819368","26011100128","24060902854","95021931359","91020551103","17012401843","31011514068","96020250510","51010604775","0386015000200","28030407427","11011238210")
     )
+
+
     private fun getNisses(idx: Int) = listOf(nisses[100]!![idx], nisses[300]!![idx], nisses[500]!![idx], nisses[600]!![idx], nisses[900]!![idx])
 
     private fun assertErrors(scenario: String, error: String, results: MemberDataResponse?) {
@@ -58,8 +64,8 @@ class MemberDataControllerTest : EhealthTest() {
     @Before
     fun setUp() {
         try {
-            System.setProperty("mycarenet.license.password", this.javaClass.getResourceAsStream("/org/taktik/freehealth/middleware/mycarenet.license").reader(Charsets.UTF_8).readText()) } catch (e: NullPointerException) {
-            System.setProperty("mycarenet.license.password", File("src/test/resources/org/taktik/freehealth/middleware/mycarenet.license").reader(Charsets.UTF_8).readText())
+            System.setProperty("mycarenet.license.password", this.javaClass.getResourceAsStream("/org/taktik/freehealth/middleware/mycarenet.license").reader(Charsets.UTF_8).readText().trimEnd()) } catch (e: NullPointerException) {
+            System.setProperty("mycarenet.license.password", File("src/test/resources/org/taktik/freehealth/middleware/mycarenet.license").reader(Charsets.UTF_8).readText().trimEnd())
         }
     }
 
@@ -706,17 +712,9 @@ class MemberDataControllerTest : EhealthTest() {
 
         val genIns: List<MemberDataResponse> = results.map { it.body }
 
-        genIns.forEach {
-
-
-
-
-
-
-
-
-
-
-        }
+        genIns.forEach {}
     }
+
+
+
 }

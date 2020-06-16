@@ -87,7 +87,6 @@ class CreatePrescriptionTest {
     }
 
     fun testCreatePrescription(medication: Medication) {
-        assertKmehrValid(medication)
         val infos = createTestPrescription(listOf(medication))
         Assert.assertTrue(infos.rid.trim() != "")
     }
@@ -101,11 +100,4 @@ class CreatePrescriptionTest {
         return infos
     }
 
-    fun assertKmehrValid(medication: Medication) {
-        val os = ByteArrayOutputStream()
-        JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createMarshaller().marshal(recipeService.getKmehrPrescription(patient, hcp, listOf(medication), null), os)
-        val prescription = os.toByteArray()
-        validator.validatePrescription(prescription, recipeService.inferPrescriptionType(listOf(medication), null))
-
-    }
 }

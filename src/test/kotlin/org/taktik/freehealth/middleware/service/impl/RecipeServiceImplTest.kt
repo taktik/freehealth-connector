@@ -71,6 +71,7 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.TelecomType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.UnitType
 import org.taktik.connector.business.recipe.utils.KmehrHelper
+import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelper.toDaytime
 import org.taktik.connector.business.recipe.utils.KmehrValidator
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.freehealth.middleware.MyTestsConfiguration
@@ -166,7 +167,7 @@ class RecipeServiceImplTest {
 
 	@Test
 	fun toDaytime_time() {
-		val daytime = recipeService.toDaytime(RegimenItem().apply {
+		val daytime = toDaytime(RegimenItem().apply {
 			timeOfDay = 120000
 		})
 		assertEquals(XMLGregorianCalendarImpl.parse("12:00:00"), daytime.time)
@@ -174,7 +175,7 @@ class RecipeServiceImplTest {
 
 	@Test
 	fun toDaytime_periodAfternoon_16h() {
-		val daytime = recipeService.toDaytime(RegimenItem().apply {
+		val daytime = toDaytime(RegimenItem().apply {
 			dayPeriod = Code("CD-DAYPERIOD", "afternoon")
 		})
 		assertEquals(XMLGregorianCalendarImpl.parse("16:00:00"), daytime.time)
@@ -182,7 +183,7 @@ class RecipeServiceImplTest {
 
 	@Test
 	fun toDaytime_periodEvening_19h() {
-		val daytime = recipeService.toDaytime(RegimenItem().apply {
+		val daytime = toDaytime(RegimenItem().apply {
 			dayPeriod = Code("CD-DAYPERIOD", "evening")
 		})
 		assertEquals(XMLGregorianCalendarImpl.parse("19:00:00"), daytime.time)
@@ -190,7 +191,7 @@ class RecipeServiceImplTest {
 
 	@Test
 	fun toDaytime_periodNight_22h() {
-		val daytime = recipeService.toDaytime(RegimenItem().apply {
+		val daytime = toDaytime(RegimenItem().apply {
 			dayPeriod = Code("CD-DAYPERIOD", "night")
 		})
 		assertEquals(XMLGregorianCalendarImpl.parse("22:00:00"), daytime.time)
@@ -198,14 +199,14 @@ class RecipeServiceImplTest {
 
 	@Test(expected = RecipeServiceImpl.UnsupportedCodeValueException::class)
 	fun toDaytime_periodAftermeal_unsupported() {
-		recipeService.toDaytime(RegimenItem().apply {
+		toDaytime(RegimenItem().apply {
 			dayPeriod = Code("CD-DAYPERIOD", "aftermeal")
 		})
 	}
 
 	@Test(expected = RecipeServiceImpl.UnsupportedCodeValueException::class)
 	fun toDaytime_periodBetweenmeals_unsupported() {
-		recipeService.toDaytime(RegimenItem().apply {
+		toDaytime(RegimenItem().apply {
 			dayPeriod = Code("CD-DAYPERIOD", "betweenmeals")
 		})
 	}
@@ -216,12 +217,12 @@ class RecipeServiceImplTest {
 		val recipeDayPeriods = RecipeCDDAYPERIODvalues.values().map { it.value().value() }.toCollection(mutableSetOf()).toSet()
 		assertTrue("problem with recipe customizations: connector adds unknown codes ${recipeDayPeriods - kmehrDayPeriods}", (recipeDayPeriods - kmehrDayPeriods).isEmpty())
 		recipeDayPeriods.forEach {
-			assertEquals(it, recipeService.toDaytime(RegimenItem().apply { dayPeriod = Code("CD-DAYPERIOD", it) }).dayperiod.cd.value.value())
+			assertEquals(it, toDaytime(RegimenItem().apply { dayPeriod = Code("CD-DAYPERIOD", it) }).dayperiod.cd.value.value())
 		}
 		(kmehrDayPeriods - recipeDayPeriods).forEach {
 			val time: XMLGregorianCalendar?
 			try {
-				time = recipeService.toDaytime(RegimenItem().apply { dayPeriod = Code("CD-DAYPERIOD", it) }).time
+				time = toDaytime(RegimenItem().apply { dayPeriod = Code("CD-DAYPERIOD", it) }).time
 				assertThat(it, time, Matchers.notNullValue())
 			} catch (e: RecipeServiceImpl.UnsupportedCodeValueException) {
 				// ok
@@ -231,7 +232,7 @@ class RecipeServiceImplTest {
 
 	@Test
 	fun toDayTime_periodBeforeBreakfast_codeTypeVersionOk() {
-		val daytime = recipeService.toDaytime(RegimenItem().apply {
+		val daytime = toDaytime(RegimenItem().apply {
 			dayPeriod = Code("CD-DAYPERIOD", "beforebreakfast")
 		})
 		assertEquals(daytime.dayperiod.cd.s, "CD-DAYPERIOD")

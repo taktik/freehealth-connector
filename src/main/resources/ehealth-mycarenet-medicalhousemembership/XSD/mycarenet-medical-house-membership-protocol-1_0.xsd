@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Copyright (c) eHealth -->
+<xs:schema version="1.0" targetNamespace="urn:be:fgov:ehealth:mycarenet:medicalhousemembership:protocol:v1" xmlns="urn:be:fgov:ehealth:mycarenet:medicalhousemembership:protocol:v1" attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:protocol="urn:be:fgov:ehealth:mycarenet:commons:protocol:v3" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:appinfo>Implementation-Title: XSD MyCarenet Medical House Membership
+            Specification-Version: 1.0
+            Implementation-Version: 1.0.1
+            Build-Time: 20190802-1552</xs:appinfo>
+    </xs:annotation>
+    <!-- core elements and types -->
+    <xs:import namespace="urn:be:fgov:ehealth:mycarenet:commons:protocol:v3" schemaLocation="../../ehealth-mycarenetcommons/XSD/mycarenet-commons-protocol-3_0.xsd"/>
+    <!--eHealth commons protocol -->
+    <xs:element name="SendSubscriptionRequest" type="protocol:SendRequestType"/>
+    <xs:element name="SendSubscriptionResponse" type="protocol:SendResponseType"/>
+    <xs:element name="CancelSubscriptionRequest" type="protocol:SendRequestType"/>
+    <xs:element name="CancelSubscriptionResponse" type="protocol:SendResponseType"/>
+    <xs:element name="NotifySubscriptionClosureRequest" type="protocol:SendRequestType"/>
+    <xs:element name="NotifySubscriptionClosureResponse" type="protocol:SendResponseType"/>
+</xs:schema>

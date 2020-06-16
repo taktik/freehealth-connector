@@ -272,7 +272,7 @@ class RecipeExamplesTest(val recipeService: RecipeService) {
 
     fun toXmlPrescription(prescriptionExample: PrescriptionExample, config: KmehrPrescriptionConfig = createBaseConfig(prescriptionExample.hcp.nihii!!), skipPrescriptionTypeCheck: Boolean = false): String {
         val os = ByteArrayOutputStream()
-		val kmehrPrescription = recipeService.getKmehrPrescription(prescriptionExample.patient, prescriptionExample.hcp, prescriptionExample.medications, prescriptionExample.deliveryDate, config)
+		val kmehrPrescription = recipeService.getKmehrPrescription(prescriptionExample.patient, prescriptionExample.hcp, prescriptionExample.medications, prescriptionExample.deliveryDate, config, "doctor")
 		JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(kmehrPrescription, os)
         val prescription = os.toByteArray()
 		if (!skipPrescriptionTypeCheck) {

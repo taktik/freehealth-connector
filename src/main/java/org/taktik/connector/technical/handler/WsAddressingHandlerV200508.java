@@ -69,15 +69,15 @@ public class WsAddressingHandlerV200508 extends AbstractSOAPHandler {
       }
 
       if (header.getFrom() != null && !header.getFrom().isEmpty()) {
-         soapHeader.addChildElement(FROM).setTextContent(header.getFrom().toString());
+         soapHeader.addChildElement(FROM).setTextContent(header.getFrom());
       }
 
       if (header.getReplyTo() != null && !header.getReplyTo().isEmpty()) {
-         soapHeader.addChildElement(REPLYTO).addChildElement(ADDRESS).setTextContent(header.getReplyTo().toString());
+         soapHeader.addChildElement(REPLYTO).addChildElement(ADDRESS).setTextContent(header.getReplyTo());
       }
 
       if (header.getFaultTo() != null && !header.getFaultTo().isEmpty()) {
-         soapHeader.addChildElement(FAULTTO).addChildElement(ADDRESS).setTextContent(header.getFaultTo().toString());
+         soapHeader.addChildElement(FAULTTO).addChildElement(ADDRESS).setTextContent(header.getFaultTo());
       }
 
    }

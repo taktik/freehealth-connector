@@ -263,7 +263,7 @@ public class ValidationUtils {
       }
    }
 
-   public static void validateExpirationDate(String expirationDateText, String days) throws IntegrationModuleValidationException {
+   public static void validateExpirationDate(String expirationDateText) throws IntegrationModuleValidationException {
       if (expirationDateText == null) {
          String label = I18nHelper.getLabel("error.validation.expirationdate1", (Object[])null);
          throw new IntegrationModuleValidationException(label, label);
@@ -279,7 +279,7 @@ public class ValidationUtils {
          }
 
          Calendar maxDate = Calendar.getInstance();
-         maxDate.add(6, Integer.parseInt(days));
+         maxDate.add(Calendar.DAY_OF_YEAR, 365);
          String label;
          if (expirationDate.after(maxDate)) {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");

@@ -92,7 +92,7 @@ public class GenAsyncServiceImpl implements GenAsyncService {
    protected static GenericRequest build(SAMLToken token, String serviceName) throws TechnicalConnectorException {
       GenericRequest request = new GenericRequest();
       request.setEndpoint(getProperty("endpoint.genericasync.", serviceName, true));
-      HandlerChain chain = HandlerChainUtil.buildChainWithValidator("validation.incoming.message.genasync.", "/mycarenet-genasync/XSD/mycarenet-genasync-v1.xsd");
+      HandlerChain chain = HandlerChainUtil.buildChainWithValidator("validation.incoming.message.genasync.", "/mycarenet-genasync/XSD/GenericAsync-V4.xsd");
       chain.register(HandlerPosition.SECURITY, new SAMLHolderOfKeyHandler(token, getDuration("security.outgoing.message.genasync.timestamp.", serviceName, 30L)));
       chain.register(HandlerPosition.SECURITY, new IncomingSecurityHandler(getDuration("security.incoming.message.genasync.timestamp.created.ttl.", serviceName, 30L), getDuration("security.incoming.message.genasync.timestamp.expires.ttl.", serviceName, 30L)));
       chain.register(HandlerPosition.SECURITY, new SOAPHeaderLoggerHandler());
