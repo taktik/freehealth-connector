@@ -23,7 +23,7 @@ interface EfactService {
         hcpNihii: String,
         hcpSsin: String,
         hcpFirstName: String,
-        hcpLastName: String,
+        hcpLastName: String?,
         language: String,
         limit: Int,
         hcpQuality: String

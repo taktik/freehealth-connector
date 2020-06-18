@@ -111,7 +111,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam ssin: String,
         @RequestParam firstName: String,
-        @RequestParam lastName: String,
+        @RequestParam lastName: String?,
         @RequestParam hcpQuality: String,
         @RequestParam limit: Int?
                     ) =

@@ -293,7 +293,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         hcpNihii: String,
         hcpSsin: String,
         hcpFirstName: String,
-        hcpLastName: String,
+        hcpLastName: String?,
         language: String,
         limit: Int,
         hcpQuality: String
@@ -460,7 +460,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
     }
 
 
-    private fun buildOriginType(nihii: String, ssin: String, firstName: String, lastName: String, hcpQuality: String): OrigineType =
+    private fun buildOriginType(nihii: String, ssin: String, firstName: String, lastName: String?, hcpQuality: String): OrigineType =
         OrigineType().apply {
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
 
