@@ -472,7 +472,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                 }
             }
             careProvider = CareProviderType().apply {
-                if (hcpQuality === "gardpost" || hcpQuality === "medicalhouse") {
+                if (hcpQuality == "guardpost" || hcpQuality == "medicalhouse") {
                     this.nihii = NihiiType().apply {
                         quality = hcpQuality
                         value = ValueRefString().apply { value = nihii.padEnd(11, '0') }
