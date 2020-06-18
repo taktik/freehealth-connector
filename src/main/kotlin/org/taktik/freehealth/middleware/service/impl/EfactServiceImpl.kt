@@ -219,7 +219,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         return batch
     }
 
-    override fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch, isGuardPost: Boolean): EfactSendResponse {
+    override fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch, hcpQuality: String): EfactSendResponse {
         requireNotNull(keystoreId) { "Keystore id cannot be null" }
         requireNotNull(tokenId) { "Token id cannot be null" }
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
@@ -252,7 +252,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                 isIsTest = isTest!!
             }
             origin =
-                buildOriginType(sanitizedBatch.sender!!.nihii!!.toString().padEnd(11, '0'), sanitizedBatch.sender!!.ssin!!.toString(), sanitizedBatch.sender!!.firstName!!, sanitizedBatch.sender!!.lastName!!, isGuardPost)
+                buildOriginType(sanitizedBatch.sender!!.nihii!!.toString().padEnd(11, '0'), sanitizedBatch.sender!!.ssin!!.toString(), sanitizedBatch.sender!!.firstName!!, sanitizedBatch.sender!!.lastName!!, hcpQuality)
             this.inputReference = inputReference
         }
 
@@ -296,7 +296,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         hcpLastName: String,
         language: String,
         limit: Int,
-        isGuardPost: Boolean
+        hcpQuality: String
     ): List<EfactMessage> {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -318,7 +318,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             request = be.cin.mycarenet.esb.common.v2.RequestType().apply {
                 isIsTest = isTest
             }
-            origin = buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, isGuardPost)
+            origin = buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, hcpQuality)
             this.inputReference = inputReference
         }
 
@@ -406,7 +406,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         hcpFirstName: String,
         hcpLastName: String,
         valueHashes: List<String>,
-        isGuardPost: Boolean
+        hcpQuality: String
     ): Boolean {
         if (valueHashes.isEmpty()) {
             return true
@@ -419,7 +419,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
         val confirm =
             BuilderFactory.getRequestObjectBuilder("invoicing")
-                .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, isGuardPost),
+                .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, hcpQuality),
                                                listOf(),
                                                valueHashes.map { valueHash -> java.util.Base64.getDecoder().decode(valueHash) })
 
@@ -437,7 +437,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         hcpFirstName: String,
         hcpLastName: String,
         valueHashes: List<String>,
-        isGuardPost: Boolean
+        hcpQuality: String
     ): Boolean {
         if (valueHashes.isEmpty()) {
             return true
@@ -449,7 +449,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
         val confirm =
             BuilderFactory.getRequestObjectBuilder("invoicing")
-                .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, isGuardPost),
+                .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, hcpQuality),
                     valueHashes.map { valueHash -> java.util.Base64.getDecoder().decode(valueHash) },
                     listOf()
                     )
@@ -460,7 +460,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
     }
 
 
-    private fun buildOriginType(nihii: String, ssin: String, firstName: String, lastName: String, isGuardPost: Boolean): OrigineType =
+    private fun buildOriginType(nihii: String, ssin: String, firstName: String, lastName: String, hcpQuality: String): OrigineType =
         OrigineType().apply {
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
 
@@ -472,14 +472,13 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                 }
             }
             careProvider = CareProviderType().apply {
-                if (isGuardPost) {
+                if (hcpQuality === "gardpost" || hcpQuality === "medicalhouse") {
                     this.nihii = NihiiType().apply {
-                        quality = "guardpost"
+                        quality = hcpQuality
                         value = ValueRefString().apply { value = nihii.padEnd(11, '0') }
                     }
                     organization = IdType().apply {
                         this.nihii = NihiiType().apply { value = ValueRefString().apply { value = nihii.padEnd(11, '0') } }
-                        this.ssin = ValueRefString().apply { value = ssin }
                         this.name = ValueRefString().apply { value = "$firstName $lastName" }
                     }
                 } else {
