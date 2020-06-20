@@ -75,7 +75,7 @@ interface MemberDataService {
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        mdaMessagesHashes: List<String>
+        mdaMessagesReference: List<String>
     ): Boolean
 
     fun confirmMemberDataAcks(

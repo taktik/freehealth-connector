@@ -266,14 +266,14 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
-        @RequestBody mdaMessagesHashes: List<String>) : Boolean?{
+        @RequestBody mdaMessagesReference: List<String>) : Boolean?{
         return memberDataService.confirmMemberDataMessages(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
             hcpNihii = hcpNihii,
             hcpName = hcpName,
-            mdaMessagesHashes = mdaMessagesHashes)
+            mdaMessagesReference = mdaMessagesReference)
         }
 
 

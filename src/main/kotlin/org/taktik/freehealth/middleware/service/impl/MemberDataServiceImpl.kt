@@ -24,6 +24,7 @@ import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
 import be.cin.mycarenet.esb.common.v2.CommonInput
 import be.cin.mycarenet.esb.common.v2.OrigineType
+import be.cin.nip.async.generic.Confirm
 import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Post
@@ -56,11 +57,6 @@ import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
 import ma.glasnost.orika.MapperFacade
 import net.sf.saxon.xpath.XPathFactoryImpl
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.NameIDType
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Subject
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.SubjectConfirmation
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.SubjectConfirmationDataType
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.AttributeQuery
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
@@ -110,6 +106,11 @@ import org.taktik.icure.cin.saml.extensions.ExtensionsType
 import org.taktik.icure.cin.saml.extensions.Facet
 import org.taktik.icure.cin.saml.extensions.ResponseList
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.NameIDType
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Subject
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.SubjectConfirmation
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.SubjectConfirmationDataType
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.AttributeQuery
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.Response
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -437,21 +438,20 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
     }
 
-    override fun confirmMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, mdaMessagesHashes: List<String>): Boolean {
-        if (mdaMessagesHashes.isEmpty()) {
+    override fun confirmMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, mdaMessagesReference: List<String>): Boolean {
+        if (mdaMessagesReference.isEmpty()) {
             return true
         }
+
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for MDA operations")
 
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
-        val confirm =
-            BuilderFactory.getRequestObjectBuilder("mda")
-                .buildConfirmRequestWithHashes(
-                    buildOriginType(hcpNihii, hcpName),
-                    mdaMessagesHashes.map { it -> ConnectorXmlUtils.toByteArray(it) },
-                    listOf())
+
+        val confirm = Confirm()
+        confirm.origin = buildOriginType(hcpNihii, hcpName)
+        confirm.msgRefValues.addAll(mdaMessagesReference)
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
 

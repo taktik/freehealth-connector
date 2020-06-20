@@ -72,4 +72,17 @@ class MemberDataAsyncControllerTest: EhealthTest() {
                 HttpMethod.POST, HttpEntity<List<MemberDataResponse>>(listOf(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<MemberDataList>>() {}, name5)
         }
     }
+
+    @Test
+    fun confirmMessage(){
+        val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
+
+        val messages = this.restTemplate.exchange("http://localhost:$port/mda/async/confirm/messages" +
+                "?hcpNihii=84450277111" +
+                "&hcpSsin=$ssin5" +
+                "&hcpName={name5}" +
+                "&mdaMessagesReference="+ listOf(""),
+                HttpMethod.POST, HttpEntity<List<MemberDataResponse>>(listOf(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<Boolean>() {}, name5)
+
+    }
 }
