@@ -139,7 +139,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             }
         })) {
             if (invoice.items.isNotEmpty()) {
-                val destCode = iv.getDestCode(invoice.ioCode!!, batch.sender!!, true)
+                val destCode = iv.getDestCode(invoice.ioCode!!, batch.sender!!, false)
                 val codesPerOA: MutableList<Long> = metadata.codesPerOAMap.getOrPut(destCode) { LinkedList() }
                 val amountPerOA: Array<Long> = metadata.amountPerOAMap.getOrPut(destCode) { arrayOf(0L) }  //An array to pass it by reference
                 val recordsCountPerOA: Array<Long> = metadata.recordsCountPerOAMap.getOrPut(destCode) { arrayOf(0L) }  //An array to pass it by reference
