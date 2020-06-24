@@ -5,5 +5,5 @@ class MemberInfoDto(
     var io: String? = null,
     var ioMembership: String? = null,
     var hospitalized: Boolean = false,
-    var uniqId: String
+    var uniqId: String? = null
 )

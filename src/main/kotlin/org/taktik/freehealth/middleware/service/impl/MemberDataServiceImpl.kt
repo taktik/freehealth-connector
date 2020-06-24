@@ -177,8 +177,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val istest = config.getProperty("endpoint.dmg.notification.v1").contains("-acpt")
         val author = makeAuthor(hcpNihii, hcpName)
-        val inputReference =
-            IdGeneratorFactory.getIdGenerator().generateId()//.let { if (istest) "T" + it.substring(1) else it }
+        val inputReference = IdGeneratorFactory.getIdGenerator().generateId()//.let { if (istest) "T" + it.substring(1) else it }
         val now = DateTime().withMillisOfSecond(0)
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
@@ -198,7 +197,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val samlFacets = mdaRequest.facets?.map { mapper.map(it, Facet::class.java) }
 
         val attrQueries = mdaRequest.members.map {
-            val inputRef = it.uniqId
+            val inputRef = it.uniqId!!
             val requestId = IdGeneratorFactory.getIdGenerator("xsid").generateId()
             getAttrQuery(inputRef, issueInstant, samlFacets, it.hospitalized, requestType, hcpNihii, it.ssin, it.io, it.ioMembership, startDate, endDate)
         }
