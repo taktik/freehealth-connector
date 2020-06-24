@@ -222,7 +222,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?,
         @RequestParam(required = false) requestType: String?,
-        @PathVariable io: String,
+        @PathVariable io: String?,
         @RequestBody mdaRequest: MemberDataBatchRequestDto
                              ): GenAsyncResponse {
         val startDate: Instant = date?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
@@ -232,7 +232,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
             hcpQuality = hcpQuality ?: "medicalhouse",
             hcpNihii = hcpNihii,
             hcpName = hcpName,
-            io = io,
+            io = io ?: null,
             startDate = startDate,
             endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
             passPhrase = passPhrase,
