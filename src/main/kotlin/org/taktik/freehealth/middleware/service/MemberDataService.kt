@@ -52,7 +52,6 @@ interface MemberDataService {
         hcpNihii: String,
         hcpName: String,
         requestType: String = "information",
-        io: String?,
         startDate: Instant,
         endDate: Instant,
         passPhrase: String,

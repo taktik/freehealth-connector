@@ -210,7 +210,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
                                                requestType= requestType)
     }
 
-    @PostMapping("/async/request/{io}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @PostMapping("/async/request", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendMemberDataRequestAsync(
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -222,7 +222,6 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?,
         @RequestParam(required = false) requestType: String?,
-        @PathVariable io: String?,
         @RequestBody mdaRequest: MemberDataBatchRequestDto
                              ): GenAsyncResponse {
         val startDate: Instant = date?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
@@ -232,7 +231,6 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
             hcpQuality = hcpQuality ?: "medicalhouse",
             hcpNihii = hcpNihii,
             hcpName = hcpName,
-            io = io ?: null,
             startDate = startDate,
             endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
             passPhrase = passPhrase,

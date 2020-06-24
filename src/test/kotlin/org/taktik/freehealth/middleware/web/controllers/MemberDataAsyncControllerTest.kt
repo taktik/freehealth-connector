@@ -20,6 +20,7 @@ import org.taktik.freehealth.middleware.dto.dmg.DmgMessage
 import org.taktik.freehealth.middleware.dto.memberdata.MemberDataBatchRequestDto
 import org.taktik.freehealth.middleware.dto.memberdata.MemberInfoDto
 import sun.rmi.runtime.Log
+import java.util.*
 
 
 @RunWith(SpringRunner::class)
@@ -48,12 +49,12 @@ class MemberDataAsyncControllerTest: EhealthTest() {
     @Test
     fun sendMemberDataRequest() {
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
-        val str = this.restTemplate.exchange("http://localhost:$port/mda/async/request/900" +
+        val str = this.restTemplate.exchange("http://localhost:$port/mda/async/request" +
             "?hcpNihii=84450277111" +
             "&hcpSsin=$ssin5" +
             "&hcpName={name5}" +
             "&hcpQuality=medicalhouse",
-            HttpMethod.POST, HttpEntity<MemberDataBatchRequestDto>(MemberDataBatchRequestDto(asyncNisses[900]?.map { MemberInfoDto(ssin = it) } ?: listOf()), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, name5)
+            HttpMethod.POST, HttpEntity<MemberDataBatchRequestDto>(MemberDataBatchRequestDto(asyncNisses[900]?.map { MemberInfoDto(ssin = it, uniqId = UUID.randomUUID().toString()) } ?: listOf()), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, name5)
 
         Assertions.assertThat(str).isNotNull
     }
