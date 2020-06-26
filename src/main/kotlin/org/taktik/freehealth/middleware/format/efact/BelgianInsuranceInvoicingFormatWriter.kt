@@ -102,7 +102,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         ws200.write("200", 920000)
         ws200.write("2001", 0)
-        ws200.write("201", 1)
+        ws200.write("201", 2)//version2
         ws200.write("2011", 0)
         ws200.write("202", fileVersion)
         ws200.write("2021", 0)
