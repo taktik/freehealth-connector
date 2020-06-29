@@ -177,7 +177,9 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("4091", 0)
         ws.write("410", modulo)
         ws.write("4101", 0)
-        ws.write("411", "")
+        ws.write("411", "+")
+        ws.write("412", 0)
+        ws.write("413", "")
 
         ws.writeFieldsWithoutCheckSum()
     }
@@ -216,7 +218,9 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("5091", 0)
         ws.write("510", modulo)
         ws.write("5101", 0)
-        ws.write("511", "")
+        ws.write("511", "+")
+        ws.write("512", 0)
+        ws.write("513", "")
 
         ws.writeFieldsWithoutCheckSum()
     }
