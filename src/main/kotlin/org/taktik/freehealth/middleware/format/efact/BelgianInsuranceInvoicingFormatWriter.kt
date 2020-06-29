@@ -380,7 +380,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         //ws.write("16", if (sender.isMedicalHouse) 0 else if (icd.gnotionNihii == null || icd.gnotionNihii?.let { it.isEmpty() } == true) 1 else 4)
         ws.write("16",
                  when {
-                     sender.isMedicalHouse -> 0
+                     sender.isMedicalHouse && icd.codeNomenclature != 109594L -> 0
                      icd.gnotionNihii?.isNotEmpty() == true -> 4
                      icd.internshipNihii?.isNotEmpty() == true -> 5
                      else -> 1
