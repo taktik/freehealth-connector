@@ -307,8 +307,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
         @RequestParam(required = false) therLinkType: String?,
-        @RequestParam(required = false) from: Instant?,
-        @RequestParam(required = false) to: Instant?
+        @RequestParam(required = false) from: Long?,
+        @RequestParam(required = false) to: Long?
     ): TherapeuticLinkMessageDto = hubService.getTherapeuticLinks(
         endpoint = endpoint,
         keystoreId = keystoreId,

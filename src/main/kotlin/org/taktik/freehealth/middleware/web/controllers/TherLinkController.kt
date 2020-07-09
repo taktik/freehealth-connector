@@ -70,8 +70,8 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
         @RequestParam patientLastName: String,
         @RequestParam(required = false) eidCardNumber: String?,
         @RequestParam(required = false) isiCardNumber: String?,
-        @RequestParam(required = false) startDate: Date?,
-        @RequestParam(required = false) endDate: Date?,
+        @RequestParam(required = false) startDate: Long?,
+        @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) type: String?
     ) = therLinkService.hasTherapeuticLink(
     keystoreId = keystoreId,
@@ -105,8 +105,8 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
         @RequestParam patientLastName: String,
         @RequestParam(required = false) eidCardNumber: String?,
         @RequestParam(required = false) isiCardNumber: String?,
-        @RequestParam(required = false) startDate: Date?,
-        @RequestParam(required = false) endDate: Date?,
+        @RequestParam(required = false) startDate: Long?,
+        @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) type: String?,
         @RequestParam(required = false) sign: Boolean?
     ) = therLinkService.getAllTherapeuticLinks(
@@ -207,8 +207,8 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
         @RequestParam patientLastName: String,
         @RequestParam(required = false) eidCardNumber: String?,
         @RequestParam(required = false) isiCardNumber: String?,
-        @RequestParam(required = false) start: Date?,
-        @RequestParam(required = false) end: Date?,
+        @RequestParam(required = false) start: Long?,
+        @RequestParam(required = false) end: Long?,
         @RequestParam(required = false) therLinkType: String?,
         @RequestParam(required = false) comment: String?,
         @RequestParam(required = false) sign: Boolean?,
