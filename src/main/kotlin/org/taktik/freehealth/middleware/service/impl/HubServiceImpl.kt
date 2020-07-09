@@ -288,7 +288,9 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         patientSsin: String,
         patientEidCardNumber: String?,
         patientIsiCardNumber: String?,
-        hubPackageId: String?
+        hubPackageId: String?,
+        from: Long?,
+        to: Long?
     ): PutTherapeuticLinkResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -329,6 +331,8 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                 })
                             }
                         }
+                        from?.let { startdate = DateTime(it) }
+                        to?.let { enddate = DateTime(it) }
                     }
                 })
     }
@@ -405,8 +409,8 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         hcpZip: String,
         patientSsin: String,
         therLinkType: String?,
-        from: Instant?,
-        to: Instant?,
+        from: Long?,
+        to: Long?,
         hubPackageId: String?
     ): TherapeuticLinkMessage {
         val samlToken =
@@ -439,8 +443,8 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                             })
                         })
                         // We have to disable dates due to a bug in RSW
-                        // begindate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
-                        // enddate = from?.let { DateTime(it.toEpochMilli()) } ?: DateTime.now()
+                        // begindate = from?.let { DateTime(it) } ?: DateTime.now()
+                        // enddate = from?.let { DateTime(it) } ?: DateTime.now()
                     }
                 })
         val errors = therapeuticLinkResponse.acknowledge.errors.map {
@@ -767,8 +771,8 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                             }
                         transaction = TransactionWithPeriodType().apply {
                             if(isGlobal) { searchtype = LocalSearchType.GLOBAL }
-                            from?.let { begindate = DateTime(from) }
-                            to?.let { enddate = DateTime(to) }
+                            from?.let { begindate = DateTime(it) }
+                            to?.let { enddate = DateTime(it) }
                             if (!StringUtils.isEmpty(authorNihii) || !StringUtils.isEmpty(authorSsin)) {
                                 author = AuthorType().apply {
                                     hcparties.add(HcpartyType().apply {
@@ -987,8 +991,8 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             GetPatientAuditTrailRequest().apply{
                 request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null, true)
                 select = SelectGetPatientAuditTrailType().apply {
-                    from?.let {begindate = DateTime(from) }
-                    to?.let { enddate = DateTime(to) }
+                    from?.let { begindate = DateTime(it) }
+                    to?.let { enddate = DateTime(it) }
                     ssin?.let{ patient =
                         PatientIdType().apply {
                             ids.add(IDPATIENT().apply {

@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import org.taktik.connector.business.therlink.domain.HasTherapeuticLinkMessage
 import org.taktik.connector.business.therlink.domain.ProofTypeValues
 import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkDto
 import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkMessageDto
@@ -167,8 +166,8 @@ fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultExc
         @RequestParam patientLastName: String,
         @RequestParam(required = false) eidCardNumber: String?,
         @RequestParam(required = false) isiCardNumber: String?,
-        @RequestParam(required = false) start: Date?,
-        @RequestParam(required = false) end: Date?,
+        @RequestParam(required = false) start: Long?,
+        @RequestParam(required = false) end: Long?,
         @RequestParam(required = false) therLinkType: String?,
         @RequestParam(required = false) comment: String?,
         @RequestParam(required = false) sign: Boolean?,
