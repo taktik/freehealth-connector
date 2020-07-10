@@ -36,5 +36,5 @@ class InvoiceSender {
         get() = nihii != null && nihii!!.toString().startsWith("8") && Arrays.asList("111", "110", "100", "101", "001", "010", "011").contains(nihii!!.toString().substring(8))
 
     var isSpecialist: Boolean = false
-        get() = nihii!! % 1000L >= 10
+        get() = nihii!!.toString().length == 11 && nihii!! % 1000L >= 10
 }
