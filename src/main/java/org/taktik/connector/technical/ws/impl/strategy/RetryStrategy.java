@@ -21,7 +21,7 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
       GenericRequest genericRequest = invokeStrategyContext.getRequest();
       RetryStrategy.RetryContext ctx = new RetryStrategy.RetryContext(this.getCurrentEndpoint(genericRequest));
       int alternatives = distributor.getAmountOfAlternatives(ctx.endpoint);
-
+      boolean alternateHasBeenQueried = false;
       for(int i = 0; i < alternatives; ++i) {
          String activeEndpoint = distributor.getActiveEndpoint(ctx.endpoint);
          if (!ctx.invokedEndpoints.contains(activeEndpoint)) {
@@ -30,10 +30,11 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
 
             try {
                invokeStrategyContext.setResponse(super.call(genericRequest));
-               this.activatePolling(ctx);
+               if (alternateHasBeenQueried) { this.activatePolling(ctx); }
                return false;
             } catch (RetryNextEndpointException var8) {
                this.retryNext(ctx, activeEndpoint, var8);
+               alternateHasBeenQueried = true;
             } catch (TechnicalConnectorException var9) {
                invokeStrategyContext.setException(var9);
                return true;
@@ -52,11 +53,8 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
    }
 
    private void activatePolling(RetryStrategy.RetryContext ctx) {
-      if (ctx.alternativeActivated) {
-         LOG.debug("Activating status page polling!");
-         distributor.activatePolling();
-      }
-
+      LOG.debug("Activating status page polling!");
+      distributor.updatePollingBehaviour();
    }
 
    private void retryNext(RetryStrategy.RetryContext ctx, String activeEndpoint, RetryNextEndpointException e) {
@@ -64,18 +62,15 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
 
       try {
          distributor.activateNextEndPoint(activeEndpoint);
-         ctx.alternativeActivated = true;
       } catch (NoNextEndpointException var5) {
          LOG.error("Unable to activate alternative", var5);
       }
 
-      ctx.lastException = e;
    }
 
    private static class RetryContext {
       String endpoint;
       Exception lastException;
-      boolean alternativeActivated;
       List<String> invokedEndpoints = new ArrayList();
 
       RetryContext(String endpoint) {

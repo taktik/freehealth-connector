@@ -33,9 +33,11 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.connector.business.domain.common.GenAsyncResponse
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataList
 import org.taktik.freehealth.middleware.dto.memberdata.FacetDto
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.freehealth.middleware.dto.memberdata.MemberDataBatchRequestDto
+import org.taktik.freehealth.middleware.dto.memberdata.MemberDataListDto
 import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponseDto
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MemberDataService
@@ -185,20 +187,18 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
                                                requestType= requestType)
     }
 
-    @PostMapping("/async/request/{io}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun sendMemberDataRequest(
+    @PostMapping("/async/request", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun sendMemberDataRequestAsync(
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
-        @RequestParam hcpSsin: String,
         @RequestParam hcpName: String,
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?,
         @RequestParam(required = false) requestType: String?,
-        @PathVariable io: String,
         @RequestBody mdaRequest: MemberDataBatchRequestDto
                              ): GenAsyncResponse {
         val startDate: Instant = date?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
@@ -207,9 +207,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
             tokenId = tokenId,
             hcpQuality = hcpQuality ?: "medicalhouse",
             hcpNihii = hcpNihii,
-            hcpSsin = hcpSsin,
             hcpName = hcpName,
-            io = io,
             startDate = startDate,
             endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
             passPhrase = passPhrase,
@@ -220,20 +218,55 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
     }
 
     @PostMapping("/async/messages", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getMemberDataMessage(
+    fun getMemberDataMessageAsync(
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
-        @RequestParam hcpSsin: String,
         @RequestParam hcpName: String,
-        @RequestParam messageNames: List<String>?) = memberDataService.getMemberDataMessages(
+        @RequestParam messageNames: List<String>?) : MemberDataList? {
+            return memberDataService.getMemberDataMessages(
+                keystoreId = keystoreId,
+                tokenId = tokenId,
+                passPhrase = passPhrase,
+                hcpNihii = hcpNihii,
+                hcpName = hcpName,
+                messageNames = messageNames)
+        }
+
+    @PostMapping("/async/confirm/messages", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun confirmMemberDataMessagesAsync(
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpName: String,
+        @RequestBody mdaMessagesReference: List<String>) : Boolean?{
+        return memberDataService.confirmMemberDataMessages(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
             hcpNihii = hcpNihii,
-            hcpSsin = hcpSsin,
             hcpName = hcpName,
-            messageNames = messageNames)
+            mdaMessagesReference = mdaMessagesReference)
+        }
+
+
+    @PostMapping("/async/confirm/acks", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun confirmMemberDataAcksAsync(
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpName: String,
+        @RequestBody mdaAcksHashes: List<String>): Boolean?{
+        return memberDataService.confirmMemberDataAcks(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
+            hcpName = hcpName,
+            mdaAcksHashes = mdaAcksHashes)
+    }
 
 }

@@ -1,23 +1,23 @@
 package be.fgov.ehealth.technicalconnector.bootstrap.bcp;
 
+import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.CacheInformation;
+import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.EndPointInformation;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.ConfigValidator;
 import org.taktik.connector.technical.exception.NoNextEndpointException;
-import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.CacheInformation;
-import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.EndPointInformation;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class EndpointDistributor {
    public static final String PROP_POLLING_INTERVAL = "be.fgov.ehealth.technicalconnector.bootstrap.bcp.polling.interval.minutes";
@@ -26,22 +26,14 @@ public final class EndpointDistributor {
    private static final Log log = LogFactory.getLog(EndpointDistributor.class);
    private static ConfigValidator config = ConfigFactory.getConfigValidator();
    private Timer timer;
-   private Map<String, String> url2Service;
-   private Map<String, List<String>> service2AllEndpoints;
-   private Map<String, String> service2ActiveEndpoint;
-   private Map<String, String> service2DefaultEndpoint;
-   private Map<String, CacheInformation> service2CacheInformation;
+   private Map<String, String> url2Service = new ConcurrentHashMap<>();
+   private Map<String, List<String>> service2AllEndpoints = new ConcurrentHashMap<>();
+   private Map<String, String> service2ActiveEndpoint = new ConcurrentHashMap<>();
+   private Map<String, String> service2DefaultEndpoint = new ConcurrentHashMap<>();
+   private Map<String, CacheInformation> service2CacheInformation = new ConcurrentHashMap<>();
 
    public static EndpointDistributor getInstance() {
       return EndpointDistributor.EndpointDistributorSingleton.INSTANCE.getEndpointDistributor();
-   }
-
-   private EndpointDistributor() {
-      this.url2Service = new HashMap<>();
-      this.service2AllEndpoints = new HashMap<>();
-      this.service2ActiveEndpoint = new HashMap<>();
-      this.service2DefaultEndpoint = new HashMap<>();
-      this.service2CacheInformation = new HashMap<>();
    }
 
    public String getService(String currentEndpoint) {
@@ -53,7 +45,7 @@ public final class EndpointDistributor {
    }
 
    public boolean mustCache(String currentEndpoint) {
-      String service = (String)this.url2Service.get(currentEndpoint);
+      String service = this.url2Service.get(currentEndpoint);
       return StringUtils.isNotEmpty(service) && this.service2CacheInformation.containsKey(service);
    }
 
@@ -61,7 +53,7 @@ public final class EndpointDistributor {
       return (CacheInformation)this.service2CacheInformation.get(this.url2Service.get(currentEndpoint));
    }
 
-   public void activatePolling() {
+   public void updatePollingBehaviour() {
       if (this.isBCPMode() && config.getBooleanProperty(PROP_POLLING_ACTIVATED, Boolean.TRUE)) {
          if (this.timer == null) {
             this.timer = new Timer(true);
@@ -125,7 +117,9 @@ public final class EndpointDistributor {
       this.service2DefaultEndpoint = info.getService2DefaultEndpoint();
       this.service2CacheInformation = info.getService2CacheInformation();
 
-      activatePolling();
+      log.warn("Finished setting new endpoints");
+
+      updatePollingBehaviour();
    }
 
    protected void reset() {
@@ -140,7 +134,9 @@ public final class EndpointDistributor {
    }
 
    public boolean isBCPMode() {
-      return !this.service2ActiveEndpoint.equals(this.service2DefaultEndpoint);
+      return this.service2ActiveEndpoint.entrySet().stream().anyMatch(it ->
+              (it.getValue() != null && (!this.service2DefaultEndpoint.containsKey(it.getKey()) || this.service2DefaultEndpoint.get(it.getKey()) == null || !this.service2DefaultEndpoint.get(it.getKey()).equals(it.getValue())))
+      );
    }
 
    public static boolean update() {

@@ -24,6 +24,7 @@ import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
 import be.cin.mycarenet.esb.common.v2.CommonInput
 import be.cin.mycarenet.esb.common.v2.OrigineType
+import be.cin.nip.async.generic.Confirm
 import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Post
@@ -34,9 +35,6 @@ import be.cin.types.v1.DetailsType
 import be.cin.types.v1.FaultType
 import be.cin.types.v1.StringLangType
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
-import be.fgov.ehealth.messageservices.core.v1.RetrieveTransactionRequest
-import be.fgov.ehealth.messageservices.core.v1.SelectRetrieveTransactionType
-import be.fgov.ehealth.messageservices.core.v1.TransactionType
 import be.fgov.ehealth.mycarenet.commons.core.v3.CareProviderType
 import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType
 import be.fgov.ehealth.mycarenet.commons.core.v3.IdType
@@ -47,15 +45,10 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
-import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationResponse
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
-import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
 import com.google.gson.Gson
@@ -64,21 +57,13 @@ import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
 import ma.glasnost.orika.MapperFacade
 import net.sf.saxon.xpath.XPathFactoryImpl
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.NameIDType
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Subject
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.SubjectConfirmation
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.SubjectConfirmationDataType
-import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.AttributeQuery
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.taktik.connector.business.dmg.builders.ResponseObjectBuilderFactory
 import org.taktik.connector.business.domain.common.GenAsyncResponse
-import org.taktik.connector.business.domain.dmg.DmgAcknowledge
-import org.taktik.connector.business.domain.dmg.DmgsList
 import org.taktik.connector.business.genericasync.builders.BuilderFactory
 import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
 import org.taktik.connector.business.memberdata.builders.impl.ResponseObjectBuilderImpl
@@ -86,11 +71,10 @@ import org.taktik.connector.business.memberdata.validators.impl.MemberDataXmlVal
 import org.taktik.connector.business.mycarenetcommons.mapper.SendRequestMapper
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
-import org.taktik.connector.business.mycarenetdomaincommons.builders.RequestBuilderFactory
-import org.taktik.connector.business.mycarenetdomaincommons.domain.Blob
 import org.taktik.connector.business.mycarenetdomaincommons.mapper.DomainBlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
+import org.taktik.connector.business.mycarenetdomaincommons.util.WsAddressingUtil
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.handler.domain.WsAddressingHeader
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
@@ -105,9 +89,13 @@ import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.memberdata.MdaStatus
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataAck
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchResponse
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataList
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataMessage
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
-import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponseDto
+import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
@@ -117,6 +105,12 @@ import org.taktik.icure.cin.saml.extensions.AttributeQueryList
 import org.taktik.icure.cin.saml.extensions.ExtensionsType
 import org.taktik.icure.cin.saml.extensions.Facet
 import org.taktik.icure.cin.saml.extensions.ResponseList
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.NameIDType
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Subject
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.SubjectConfirmation
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.SubjectConfirmationDataType
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.AttributeQuery
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.Response
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -127,6 +121,7 @@ import java.time.Instant
 import java.util.*
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.ws.soap.SOAPFaultException
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 
@@ -147,17 +142,16 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
     private val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
     private val memberDataService = org.taktik.connector.business.memberdata.service.impl.MemberDataServiceImpl()
 
-    private fun makeAuthor(hcpNihii: String, hcpSsin: String, hcpName: String): AuthorType {
+    private fun makeAuthor(hcpNihii: String, hcpName: String): AuthorType {
         return AuthorType().apply {
-            hcparties.add(makeHcparty(hcpNihii, hcpSsin, hcpName))
+            hcparties.add(makeHcparty(hcpNihii, hcpName))
         }
     }
 
-    private fun makeHcparty(hcpNihii: String, hcpSsin: String, hcpName: String): HcpartyType {
+    private fun makeHcparty(hcpNihii: String, hcpName: String): HcpartyType {
         return HcpartyType().apply {
             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
-            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
+            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "medicalhouse" })
             name = hcpName
         }
     }
@@ -167,26 +161,23 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         tokenId: UUID,
         hcpQuality: String,
         hcpNihii: String,
-        hcpSsin: String,
         hcpName: String,
         requestType: String,
-        io: String?,
         startDate: Instant,
         endDate: Instant,
         passPhrase: String,
         hospitalized: Boolean?,
         mdaRequest: MemberDataBatchRequest
-                                      ): GenAsyncResponse {
-        val encryptRequest = true
+    ): GenAsyncResponse {
+        val encryptRequest = false
         validateQuality(hcpQuality)
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for MDA operations")
 
         val istest = config.getProperty("endpoint.dmg.notification.v1").contains("-acpt")
-        val author = makeAuthor(hcpNihii, hcpSsin, hcpName)
-        val inputReference =
-            IdGeneratorFactory.getIdGenerator().generateId()//.let { if (istest) "T" + it.substring(1) else it }
+        val author = makeAuthor(hcpNihii, hcpName)
+        val inputReference = IdGeneratorFactory.getIdGenerator().generateId()//.let { if (istest) "T" + it.substring(1) else it }
         val now = DateTime().withMillisOfSecond(0)
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
@@ -206,9 +197,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val samlFacets = mdaRequest.facets?.map { mapper.map(it, Facet::class.java) }
 
         val attrQueries = mdaRequest.members.map {
-            val inputRef = "" + IdGeneratorFactory.getIdGenerator().generateId()
+            val inputRef = it.uniqId!!
             val requestId = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-            getAttrQuery(inputRef, issueInstant, samlFacets, it.hospitalized, requestType, hcpNihii, it.ssin, io, it.ioMembership, startDate, endDate)
+            getAttrQuery(inputRef, issueInstant, samlFacets, it.hospitalized, requestType, hcpNihii, it.ssin, it.io, it.ioMembership, startDate, endDate)
         }
 
         val unEncryptedQuery = ConnectorXmlUtils.toByteArray(AttributeQueryList().apply { attributeQueries.addAll(attrQueries) })
@@ -218,11 +209,11 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val marshallerHelper = MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java)
 
         val marshallRequest = marshallerHelper.toObject(unEncryptedQuery)?.apply {
-            this.detail = unEncryptedQuery?.let {aqb -> BlobMapper.mapBlobTypefromBlob(blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA")) }
+            this.detail = unEncryptedQuery?.let { aqb -> BlobMapper.mapBlobTypefromBlob(blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA")) }
         }?.let { marshallerHelper.toXMLByteArray(it) }
 
 
-        val blob = unEncryptedQuery.let {aqb ->
+        val blob = unEncryptedQuery.let { aqb ->
             if (encryptRequest) {
                 val identifierTypeString = config.getProperty("memberdata.keydepot.identifiertype", "CBE")
                 val identifierValue = config.getLongProperty("memberdata.keydepot.identifiervalue", 820563481L)
@@ -262,9 +253,18 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = packageInfo.packageName }
                 }
                 careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
-                    this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                        quality = hcpQuality
-                        value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
+                    nihii =
+                        be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                            quality = hcpQuality; value =
+                            be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                        }
+
+                    organization = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                        nihii =
+                            be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                                quality = hcpQuality; value =
+                                be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                            }
                     }
                 }
             }
@@ -291,9 +291,10 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         }
     }
 
-    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpSsin: String, hcpName: String, messageNames: List<String>?) {
+    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, messageNames: List<String>?): MemberDataList? {
 
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw MissingTokenException("Cannot obtain token for MDA operations")
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+            ?: throw MissingTokenException("Cannot obtain token for MDA operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
@@ -313,31 +314,170 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 isInclude = true
                 max = 100
             }
-            origin = buildOriginType(hcpNihii, hcpSsin, hcpName, hcpName)
+            origin = buildOriginType(hcpNihii, hcpName)
         }
+
         val response = genAsyncService.getRequest(samlToken, get, getHeader)
 
         val b64 = Base64.getEncoder()
 
-        response.`return`.msgResponses?.map{it ->
-            val blob = DomainBlobMapper.mapToBlob(it.detail)
-            var data: ByteArray? = blob.content
-            val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
-            val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
-            val responseList = MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(
-                if(encryptedKnownContent.businessContent.contentEncoding == "deflate")
-                    ConnectorIOUtils.decompress(encryptedKnownContent.businessContent.value) else encryptedKnownContent.businessContent.value
+        return try {
+            MemberDataList(
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
+                    this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
+                    response?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                },
+                acks = response.`return`.tAckResponses?.map {
+                    MemberDataAck(
+                        major = it.tAck.resultMajor,
+                        minor = it.tAck.resultMinor,
+                        message = it.tAck.resultMessage,
+                        date = null
+                    )
+                },
+                memberDataMessageList = response.`return`.msgResponses?.map {
+                    var data: ByteArray? = if (it.detail.contentEncoding == "deflate") ConnectorIOUtils.decompress(DomainBlobMapper.mapToBlob(it.detail).content) else DomainBlobMapper.mapToBlob(it.detail).content
+                    val responseList = if (it.detail.contentEncryption == "encryptedForKnownRecipient") {
+                        val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
+                        val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
+                        MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(
+                            if (encryptedKnownContent.businessContent.contentEncoding == "deflate")
+                                ConnectorIOUtils.decompress(encryptedKnownContent.businessContent.value) else encryptedKnownContent.businessContent.value
+                        )
+                    } else {
+                        MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(data)
+                    }
+
+                    MemberDataMessage(
+                        commonOutput = CommonOutput(
+                            inputReference = it.commonOutput.inputReference,
+                            outputReference = it.commonOutput.outputReference,
+                            nipReference = it.commonOutput.nipReference
+                        ),
+                        errors = null,
+                        genericErrors = null,
+                        reference = it.detail.reference,
+                        appliesTo = null,
+                        complete = null,
+                        io = null,
+                        memberDataResponse = responseList.responses.map {
+                            MemberDataBatchResponse(
+                                assertions = it.anies.map{
+                                    MarshallerHelper(Assertion::class.java, Assertion::class.java).toObject(it)
+                                },
+                                status = MdaStatus(
+                                    it.status.statusCode?.value,
+                                    it.status.statusCode?.statusCode?.value
+                                ),
+                                errors = it.status?.statusDetail?.anies?.map {
+                                    FaultType().apply {
+                                        faultCode = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultCode").item(0)?.textContent
+                                        faultSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultSource").item(0)?.textContent
+                                        message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
+                                            StringLangType().apply {
+                                                value = it.textContent
+                                                lang = it.attributes.getNamedItem("lang")?.textContent
+                                            }
+                                        }
+
+                                        it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Detail").let {
+                                            if (it.length > 0) {
+                                                details = DetailsType()
+                                            }
+                                            for (i in 0 until it.length) {
+                                                details.details.add(DetailType().apply {
+                                                    it.item(i).let {
+                                                        detailCode = (it as Element).getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailCode").item(0)?.textContent
+                                                        detailSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailSource").item(0)?.textContent
+                                                        location = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Location").item(0)?.textContent
+                                                        message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
+                                                            StringLangType().apply {
+                                                                value = it.textContent
+                                                                lang = it.attributes.getNamedItem("lang")?.textContent
+                                                            }
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    }
+                                },
+                                inResponseTo = it.inResponseTo,
+                                issuer = it.issuer.value,
+                                responseId = it.id
+                            )
+                        },
+                        valueHash = it.detail?.hashValue?.let { b64.encodeToString(it)}
+                    )
+
+                },
+                date = null,
+                genericErrors = null
             )
-            responseList.responses.map {
-                it
-            }
+        }catch (e:SOAPFaultException){
+            return MemberDataList(
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
+                    this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
+                    response?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                },
+                acks = null,
+                date = null,
+                memberDataMessageList =  null,
+                genericErrors = listOf(FaultType().apply {
+                    faultSource = e.message
+                    faultCode = e.fault?.faultCode
+                })
+            )
         }
-
-
 
     }
 
-    private fun buildOriginType(nihii: String, ssin: String, firstname: String, lastname: String): OrigineType =
+    override fun confirmMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, mdaMessagesReference: List<String>): Boolean {
+        if (mdaMessagesReference.isEmpty()) {
+            return true
+        }
+
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for MDA operations")
+
+        val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
+
+        val confirm = Confirm()
+        confirm.origin = buildOriginType(hcpNihii, hcpName)
+        confirm.msgRefValues.addAll(mdaMessagesReference)
+
+        genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
+
+        return true
+    }
+
+    override fun confirmMemberDataAcks(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, mdaAcksHashes: List<String>): Boolean {
+        if (mdaAcksHashes.isEmpty()) {
+            return true
+        }
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for MDA operations")
+
+        val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
+        val confirm =
+            BuilderFactory.getRequestObjectBuilder("mda")
+                .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpName),
+                    listOf(),
+                    mdaAcksHashes.map { valueHash -> Base64.getDecoder().decode(valueHash) })
+
+        genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
+
+        return true
+    }
+
+
+    private fun buildOriginType(hcpNihii: String, hcpName: String): OrigineType =
         OrigineType().apply {
             `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
                 name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.dmg.package.name") }
@@ -349,10 +489,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
                 this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
                     quality = "medicalhouse"
-                    value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = nihii }
-                }
-                physicalPerson = be.cin.mycarenet.esb.common.v2.IdType().apply {
-                    this.ssin = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = ssin }
+                    value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
                 }
             }
         }
@@ -374,7 +511,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         hospitalized: Boolean?,
         requestType: String?,
         facets: List<Facet>?
-                              ): MemberDataResponse {
+    ): MemberDataResponse {
         val encryptRequest = true
         validateQuality(hcpQuality)
 
@@ -392,7 +529,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
         val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword)
 
-        log.info("getMemberData called with principal "+(principal?._id?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
+        log.info("getMemberData called with principal " + (principal?._id
+            ?: "<ANONYMOUS>") + " and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
 
         val inputRef = "" + IdGeneratorFactory.getIdGenerator().generateId()
         val requestId = IdGeneratorFactory.getIdGenerator("xsid").generateId()
@@ -420,13 +558,13 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         }
                         name = ValueRefString().apply { value = packageInfo.packageName }
                     }
-                    config.getProperty("mycarenet.${PropertyUtil.retrieveProjectNameToUse("genins","mycarenet.")}.site.id")?.let{
+                    config.getProperty("mycarenet.${PropertyUtil.retrieveProjectNameToUse("genins", "mycarenet.")}.site.id")?.let {
                         if (it.isNotBlank()) {
                             siteID = ValueRefString().apply { value = it }
                         }
                     }
                     careProvider = CareProviderType().apply {
-                        if((hcpQuality == "guardpost")||(hcpQuality == "medicalhouse")) {
+                        if ((hcpQuality == "guardpost") || (hcpQuality == "medicalhouse")) {
                             // nihii11 is required with guardpost
                             nihii =
                                 NihiiType().apply {
@@ -440,7 +578,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                                         ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
                                     }
                             }
-                        }else{
+                        } else {
                             nihii =
                                 NihiiType().apply {
                                     quality = hcpQuality; value =
@@ -463,7 +601,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             this.issueInstant = issueInstantDateTime
 
 
-            this.detail = unEncryptedQuery.let {aqb ->
+            this.detail = unEncryptedQuery.let { aqb ->
                 if (encryptRequest) {
                     val identifierTypeString = config.getProperty("memberdata.keydepot.identifiertype", "CBE")
                     val identifierValue = config.getLongProperty("memberdata.keydepot.identifiervalue", 820563481L)
@@ -479,13 +617,13 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
                     crypto.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, mbEtk, ConnectorXmlUtils.toByteArray(
                         EncryptedKnownContent().apply {
-                        replyToEtk = keyDepotManager.getETK(credential, keystoreId).encoded
-                        businessContent = BusinessContent().apply {
-                            id = detailId
-                            value = aqb
-                            contentType = "text/xml"
-                        }
-                    })).let {
+                            replyToEtk = keyDepotManager.getETK(credential, keystoreId).encoded
+                            businessContent = BusinessContent().apply {
+                                id = detailId
+                                value = aqb
+                                contentType = "text/xml"
+                            }
+                        })).let {
                         BlobMapper.mapBlobTypefromBlob(blobBuilder.build(it, "none", detailId, "text/xml", "MDA", "encryptedForKnownBED"))
                     }
                 } else BlobMapper.mapBlobTypefromBlob(blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA"))
@@ -498,7 +636,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val xmlRequest = marshallerHelper.toXMLByteArray(request)
 
         val unencryptedXmlRequest = marshallerHelper.toObject(xmlRequest)?.apply {
-            this.detail = unEncryptedQuery?.let {aqb -> BlobMapper.mapBlobTypefromBlob(blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA")) }
+            this.detail = unEncryptedQuery?.let { aqb -> BlobMapper.mapBlobTypefromBlob(blobBuilder.build(aqb, "none", detailId, "text/xml", "MDA")) }
         }?.let { marshallerHelper.toXMLByteArray(it) }
 
         return ResponseObjectBuilderImpl().handleConsultationResponse(consultMemberData, crypto)?.let {
@@ -514,7 +652,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     this.transactionRequest = (unencryptedXmlRequest ?: xmlRequest).toString(Charsets.UTF_8)
 
                     consultMemberData.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    consultMemberData.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    soapRequest = MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java).toXMLByteArray(request).toString(Charsets.UTF_8)
                 },
                 errors = it.response.status?.statusDetail?.anies?.map {
                     FaultType().apply {
@@ -528,7 +666,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         }
 
                         it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Detail").let {
-                            if (it.length > 0) { details = DetailsType() }
+                            if (it.length > 0) {
+                                details = DetailsType()
+                            }
                             for (i in 0 until it.length) {
                                 details.details.add(DetailType().apply {
                                     it.item(i).let {
@@ -539,20 +679,22 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                                             StringLangType().apply {
                                                 value = it.textContent
                                                 lang = it.attributes.getNamedItem("lang")?.textContent
-                                            } }
+                                            }
+                                        }
                                     }
                                 })
                             }
 
                         }
-                    }                },
+                    }
+                },
                 commonOutput = it.consultationResponse?.`return`?.commonOutput
-                              )?.apply {
+            )?.apply {
                 this.errors?.forEach {
-                it.details?.details?.forEach { d ->
-                    this.myCarenetErrors += extractError(unEncryptedQuery, code1, code2, d.location, d.detailCode).toList()
+                    it.details?.details?.forEach { d ->
+                        this.myCarenetErrors += extractError(unEncryptedQuery, code1, code2, d.location, d.detailCode).toList()
+                    }
                 }
-            }
             }
         } ?: MemberDataResponse()
     }
@@ -580,87 +722,87 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 hcpQuality == "psychiatrichouse" ||
                 hcpQuality == "guardpost" ||
                 hcpQuality == "ambulanceservice"
-               ) { "hcpQuality is invalid" }
+        ) { "hcpQuality is invalid" }
     }
 
     private fun getAttrQuery(inputRef: String,
-        issueInstant: XMLGregorianCalendarImpl,
-        facets: List<Facet>?,
-        hospitalized: Boolean?,
-        requestType: String?,
-        hcpNihii: String,
-        patientSsin: String?,
-        io: String?,
-        ioMembership: String?,
-        startDate: Instant,
-        endDate: Instant) = AttributeQuery().apply {
-            id = "_$inputRef"
-            this.issueInstant = issueInstant
-            this.version = "2.0"
-            extensions = ExtensionsType().apply {
-                this.facets.addAll(facets ?: listOf(
-                    Facet().apply {
-                        id = "urn:be:cin:nippin:insurability"
-                        dimensions.add(Facet.Dimension().apply {
-                            id = "requestType"
-                            value = if(requestType == "invoicing") "invoicing" else "information"
-                        })
-                        dimensions.add(Facet.Dimension().apply {
-                            id = "contactType"; value =
-                            if (hospitalized == true) "hospitalized" else "other"
-                        })
-                    },
-                    Facet().apply {
-                        id = "urn:be:cin:nippin:chronicCondition"
-                    },
-                    Facet().apply {
-                        id = "urn:be:cin:nippin:carePath"
-                        dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "diabetes" })
-                        dimensions.add(Facet.Dimension().apply {
-                            id = "carePathType"; value =
-                            "renalinsufficiency"
-                        })
-                    },
-                    Facet().apply {
-                        id = "urn:be:cin:nippin:referencePharmacy"
-                    }))
-            }
-            issuer = NameIDType().apply {
-                this.format = "urn:be:cin:nippin:nihii11"
-                this.value = hcpNihii.padEnd(11, '0')
-            }
-            subject = Subject().apply {
-                this.nameID = NameIDType().apply {
-                    when {
-                        patientSsin != null && io == null -> {
-                            format = "urn:be:fgov:person:ssin"
-                            value = patientSsin
-                        }
-                        patientSsin != null && io != null -> {
-                            format = "urn:be:cin:nippin:member:ssin@mut"
-                            value = "$patientSsin@$io"
-                        }
-                        ioMembership != null && io != null -> {
-                            format = "urn:be:cin:nippin:careReceiver:registrationNumber@mut"
-                            value = "$ioMembership@$io"
-                        }
+                             issueInstant: XMLGregorianCalendarImpl,
+                             facets: List<Facet>?,
+                             hospitalized: Boolean?,
+                             requestType: String?,
+                             hcpNihii: String,
+                             patientSsin: String?,
+                             io: String?,
+                             ioMembership: String?,
+                             startDate: Instant,
+                             endDate: Instant) = AttributeQuery().apply {
+        id = "_$inputRef"
+        this.issueInstant = issueInstant
+        this.version = "2.0"
+        extensions = ExtensionsType().apply {
+            this.facets.addAll(facets ?: listOf(
+                Facet().apply {
+                    id = "urn:be:cin:nippin:insurability"
+                    dimensions.add(Facet.Dimension().apply {
+                        id = "requestType"
+                        value = if (requestType == "invoicing") "invoicing" else "information"
+                    })
+                    dimensions.add(Facet.Dimension().apply {
+                        id = "contactType"; value =
+                        if (hospitalized == true) "hospitalized" else "other"
+                    })
+                },
+                Facet().apply {
+                    id = "urn:be:cin:nippin:chronicCondition"
+                },
+                Facet().apply {
+                    id = "urn:be:cin:nippin:carePath"
+                    dimensions.add(Facet.Dimension().apply { id = "carePathType"; value = "diabetes" })
+                    dimensions.add(Facet.Dimension().apply {
+                        id = "carePathType"; value =
+                        "renalinsufficiency"
+                    })
+                },
+                Facet().apply {
+                    id = "urn:be:cin:nippin:referencePharmacy"
+                }))
+        }
+        issuer = NameIDType().apply {
+            this.format = "urn:be:cin:nippin:nihii11"
+            this.value = hcpNihii.padEnd(11, '0')
+        }
+        subject = Subject().apply {
+            this.nameID = NameIDType().apply {
+                when {
+                    patientSsin != null && io == null -> {
+                        format = "urn:be:fgov:person:ssin"
+                        value = patientSsin
+                    }
+                    patientSsin != null && io != null -> {
+                        format = "urn:be:cin:nippin:member:ssin@mut"
+                        value = "$patientSsin@$io"
+                    }
+                    ioMembership != null && io != null -> {
+                        format = "urn:be:cin:nippin:careReceiver:registrationNumber@mut"
+                        value = "$ioMembership@$io"
                     }
                 }
-                subjectConfirmations.add(SubjectConfirmation().apply {
-                    method = "urn:be:cin:nippin:memberIdentification"
-                    subjectConfirmationData = SubjectConfirmationDataType().apply {
-                        startDate.let {
-                            notBefore =
-                                XMLGregorianCalendarImpl(DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)).toGregorianCalendar())
-                        }
-                        endDate.let {
-                            notOnOrAfter =
-                                XMLGregorianCalendarImpl(DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)).toGregorianCalendar())
-                        }
-                    }
-                })
             }
+            subjectConfirmations.add(SubjectConfirmation().apply {
+                method = "urn:be:cin:nippin:memberIdentification"
+                subjectConfirmationData = SubjectConfirmationDataType().apply {
+                    startDate.let {
+                        notBefore =
+                            XMLGregorianCalendarImpl(DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)).toGregorianCalendar())
+                    }
+                    endDate.let {
+                        notOnOrAfter =
+                            XMLGregorianCalendarImpl(DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)).toGregorianCalendar())
+                    }
+                }
+            })
         }
+    }
 
 
     private fun extractError(sendTransactionRequest: ByteArray, code1: String?, code2: String?, errorUrl: String?, detailCode: String?): Set<MycarenetError> {
@@ -677,22 +819,22 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             (expr.evaluate(
                 builder.parse(ByteArrayInputStream(sendTransactionRequest)),
                 XPathConstants.NODESET
-                          ) as NodeList).let { it ->
+            ) as NodeList).let { it ->
                 if (it.length > 0) {
                     var node = it.item(0)
-                    val textContent = if (node.hasChildNodes() && node.childNodes.length>1) ConnectorXmlUtils.toString(node) else node.textContent
+                    val textContent = if (node.hasChildNodes() && node.childNodes.length > 1) ConnectorXmlUtils.toString(node) else node.textContent
                     var base = "/" + nodeDescr(node)
                     while (node.parentNode != null && node.parentNode is Element) {
                         base = "/${nodeDescr(node.parentNode)}$base"
                         node = node.parentNode
                     }
                     var elements =
-                        MemberDataErrors.values.filter {(it.path == null || it.path == base) && it.code == code1 && (code2 == null || it.subCode == code2) && (detailCode == null || it.detailCode == detailCode) }
+                        MemberDataErrors.values.filter { (it.path == null || it.path == base) && it.code == code1 && (code2 == null || it.subCode == code2) && (detailCode == null || it.detailCode == detailCode) }
 
                     if (elements.isEmpty()) {
-                        val oBase = base.replace(Regex("\\[.+?\\]"),"")
+                        val oBase = base.replace(Regex("\\[.+?\\]"), "")
                         elements =
-                            MemberDataErrors.values.filter {(it.path == null || it.path == oBase) && it.code == code1 && (code2 == null || it.subCode == code2) && (detailCode == null || it.detailCode == detailCode) }
+                            MemberDataErrors.values.filter { (it.path == null || it.path == oBase) && it.code == code1 && (code2 == null || it.subCode == code2) && (detailCode == null || it.detailCode == detailCode) }
                     }
 
                     elements.forEach { it.value = textContent }
@@ -705,8 +847,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                                                                     )
-                              )
+                        )
+                    )
                 }
             }
             result
@@ -717,10 +859,10 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val result = mutableSetOf<MycarenetError>()
 
         e.fault.detail.detailEntries.forEach { it ->
-            if(it != null) {
+            if (it != null) {
                 val detailEntry = it as DetailEntry1_1Impl
                 val codeElements = detailEntry.getElementsByTagName("Code")
-                for (i in 0..(codeElements.length - 1)){
+                for (i in 0..(codeElements.length - 1)) {
                     val codeElement = codeElements?.item(i) as ElementImpl
                     result.addAll(MemberDataErrors.values.filter { it.code == codeElement.value })
                 }
@@ -757,5 +899,5 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 }
 
 private fun Element.getElementsByTagNameWithOrWithoutNs(ns: String, name: String): NodeList {
-    return this.getElementsByTagNameNS(ns, name).let { if(it.length>0) it else this.getElementsByTagName(name) }
+    return this.getElementsByTagNameNS(ns, name).let { if (it.length > 0) it else this.getElementsByTagName(name) }
 }

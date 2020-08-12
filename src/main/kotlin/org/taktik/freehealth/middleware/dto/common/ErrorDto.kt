@@ -20,10 +20,10 @@
 
 package org.taktik.freehealth.middleware.dto.common
 
-class ErrorDto {
-    var code: String? = null
-    var descr: String? = null
-    var url: String? = null
-    var zone: String? = null
+class ErrorDto(
+    var code: String? = null,
+    var descr: String? = null,
+    var url: String? = null,
+    var zone: String? = null,
     var codeDescription: Map<String, String>? = null
-}
+              )
