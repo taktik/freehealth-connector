@@ -113,6 +113,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestParam firstName: String,
         @RequestParam lastName: String?,
         @RequestParam hcpQuality: String,
+        @RequestParam(required = false) isGuardPost: Boolean?,
         @RequestParam limit: Int?
                     ) =
         efactService.loadMessages(
@@ -125,7 +126,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             hcpLastName = lastName,
             language = language,
             limit = limit ?: Integer.MAX_VALUE,
-            hcpQuality = hcpQuality
+            hcpQuality = if(isGuardPost == true){ "guardpost" }else { hcpQuality }
                                  )
 
     @PutMapping("/confirm/acks/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -138,6 +139,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestParam firstName: String,
         @RequestParam lastName: String,
         @RequestParam hcpQuality: String,
+        @RequestParam(required = false) isGuardPost: Boolean?,
         @RequestBody valueHashes: List<String>
                ) =
         efactService.confirmAcks(
@@ -149,7 +151,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             hcpFirstName = firstName,
             hcpLastName = lastName,
             valueHashes = valueHashes,
-            hcpQuality = hcpQuality
+            hcpQuality = if(isGuardPost == true){ "guardpost" }else { hcpQuality }
         )
 
     @PutMapping("/confirm/msgs/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -162,6 +164,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestParam firstName: String,
         @RequestParam lastName: String,
         @RequestParam hcpQuality: String,
+        @RequestParam(required = false) isGuardPost: Boolean?,
         @RequestBody valueHashes: List<String>
     ) =
         efactService.confirmMessages(
@@ -173,6 +176,6 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             hcpFirstName = firstName,
             hcpLastName = lastName,
             valueHashes = valueHashes,
-            hcpQuality = hcpQuality
+            hcpQuality = if(isGuardPost == true){ "guardpost" }else { hcpQuality }
         )
 }
