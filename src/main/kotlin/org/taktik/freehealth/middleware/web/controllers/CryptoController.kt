@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import io.swagger.annotations.ApiOperation
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -37,7 +38,8 @@ import java.util.UUID
 @RestController
 @RequestMapping("/crypto")
 class CryptoController(val cryptoService: CryptoService) {
-    @PostMapping("/encrypt/{identifier}/{id}", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @ApiOperation(value = "Encrypt data", httpMethod = "POST", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PostMapping("/encrypt/{identifier}/{id}", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE], produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun encrypt(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
@@ -45,9 +47,11 @@ class CryptoController(val cryptoService: CryptoService) {
         @PathVariable(value = "id") id: String,
         @RequestParam(value = "applicationId", required = false) applicationId: String?,
         @RequestBody plainData: ByteArray
-               ) = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId ?: "" }, plainData)
+               ): ByteArray? = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId ?: "" }, plainData)
 
-    @PostMapping("/encryptFile/{identifier}/{id}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+
+    @ApiOperation(value = "Encrypt data", httpMethod = "POST", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PostMapping("/encryptFile/{identifier}/{id}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun encryptFile(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
@@ -55,20 +59,22 @@ class CryptoController(val cryptoService: CryptoService) {
         @PathVariable(value = "id") id: String,
         @RequestParam(value = "applicationId", required = false) applicationId: String?,
         @RequestParam plainData: MultipartFile
-               ) = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId ?: "" }, plainData.bytes)
+               ): ByteArray? = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId ?: "" }, plainData.bytes)
 
 
-    @PostMapping("/decrypt", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @ApiOperation(value = "Decrypt data", httpMethod = "POST", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PostMapping("/decrypt", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE], produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun decrypt(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestBody encryptedData: ByteArray
-               ) = cryptoService.decrypt(keystoreId, passPhrase, encryptedData)
+               ): ByteArray? = cryptoService.decrypt(keystoreId, passPhrase, encryptedData)
 
-    @PostMapping("/decryptFile", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @ApiOperation(value = "Decrypt data", httpMethod = "POST", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PostMapping("/decryptFile", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun decryptFile(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestBody encryptedData: MultipartFile
-               ) = cryptoService.decrypt(keystoreId, passPhrase, encryptedData.bytes)
+               ): ByteArray? = cryptoService.decrypt(keystoreId, passPhrase, encryptedData.bytes)
 }

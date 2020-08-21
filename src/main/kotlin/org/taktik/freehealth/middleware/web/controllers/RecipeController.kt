@@ -121,10 +121,10 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
         @RequestParam hcpSsin: String,
         @RequestParam hcpName: String,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
-        patientId: String,
-        executorId: String,
+        @RequestParam patientId: String,
+        @RequestParam executorId: String,
         @PathVariable rid: String,
-        text: String
+        @RequestParam text: String
     ) = recipeService.sendNotification(
         keystoreId = keystoreId,
         tokenId = tokenId,

@@ -78,17 +78,17 @@ class MhmController(val mhmService: MhmService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
-        @RequestParam(required = false) patientSsin: String?,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam(required = false) io: String?,
-        @RequestParam(required = false) ioMembership: String?,
         @RequestParam startDate: Int,
         @RequestParam isTrial: Boolean,
         @RequestParam signatureType: String,
-        @RequestParam isRecovery: Boolean?,
-        @RequestParam isTestForNotify: Boolean?
+        @RequestParam(required = false) patientSsin: String?,
+        @RequestParam(required = false) io: String?,
+        @RequestParam(required = false) ioMembership: String?,
+        @RequestParam(required = false) isRecovery: Boolean?,
+        @RequestParam(required = false) isTestForNotify: Boolean?
     ) : StartSubscriptionResultWithResponse? {
         return mhmService.sendSubscription(
             keystoreId = keystoreId,
@@ -116,13 +116,13 @@ class MhmController(val mhmService: MhmService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
-        @RequestParam(required = false) patientSsin: String?,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
+        @RequestParam reference: String,
+        @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) io: String?,
-        @RequestParam(required = false) ioMembership: String?,
-        @RequestParam reference: String
+        @RequestParam(required = false) ioMembership: String?
     ) : CancelSubscriptionResultWithResponse? {
       return mhmService.cancelSubscription(
           keystoreId = keystoreId,
@@ -147,16 +147,16 @@ class MhmController(val mhmService: MhmService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
-        @RequestParam(required = false) patientSsin: String?,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam(required = false) io: String?,
-        @RequestParam(required = false) ioMembership: String?,
         @RequestParam reference: String,
         @RequestParam endDate: Int,
         @RequestParam reason: String,
-        @RequestParam decisionType : String
+        @RequestParam decisionType : String,
+        @RequestParam(required = false) patientSsin: String?,
+        @RequestParam(required = false) io: String?,
+        @RequestParam(required = false) ioMembership: String?
     ): EndSubscriptionResultWithResponse? {
       return mhmService.notifySubscriptionClosure(
           keystoreId = keystoreId,

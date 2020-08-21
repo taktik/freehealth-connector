@@ -151,13 +151,13 @@ class EattestV2Controller(val eattestService: EattestV2Service) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
+        @RequestParam eAttestRef : String,
+        @RequestParam reason : String,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
-        @RequestParam(required = false) traineeSupervisorLastName: String?,
-        @RequestParam eAttestRef : String,
-        @RequestParam reason : String
+        @RequestParam(required = false) traineeSupervisorLastName: String?
                   ): SendAttestResult? =
         eattestService.cancelAttest(
             keystoreId,
@@ -182,7 +182,7 @@ class EattestV2Controller(val eattestService: EattestV2Service) {
        )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 
     @DeleteMapping("/send/{patientSsin}/verbose")
-    fun cancelAttesWithResponse(
+    fun cancelAttestWithResponse(
         @PathVariable patientSsin: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -195,13 +195,13 @@ class EattestV2Controller(val eattestService: EattestV2Service) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
+        @RequestParam eAttestRef : String,
+        @RequestParam reason : String,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
-        @RequestParam(required = false) traineeSupervisorLastName: String?,
-        @RequestParam eAttestRef : String,
-        @RequestParam reason : String
+        @RequestParam(required = false) traineeSupervisorLastName: String?
                     ) =
         eattestService.cancelAttest(
             keystoreId,
