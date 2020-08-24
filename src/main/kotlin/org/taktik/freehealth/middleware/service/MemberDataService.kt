@@ -21,10 +21,9 @@
 package org.taktik.freehealth.middleware.service
 
 import org.taktik.connector.business.domain.common.GenAsyncResponse
-import org.taktik.connector.business.domain.dmg.DmgsList
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataList
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
-import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponseDto
 import org.taktik.icure.cin.saml.extensions.Facet
 import java.time.Instant
 import java.util.UUID
@@ -51,10 +50,8 @@ interface MemberDataService {
         tokenId: UUID,
         hcpQuality: String,
         hcpNihii: String,
-        hcpSsin: String,
         hcpName: String,
         requestType: String = "information",
-        io: String?,
         startDate: Instant,
         endDate: Instant,
         passPhrase: String,
@@ -67,8 +64,25 @@ interface MemberDataService {
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
-        hcpSsin: String,
         hcpName: String,
         messageNames: List<String>?
-    )
+    ): MemberDataList?
+
+    fun confirmMemberDataMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpName: String,
+        mdaMessagesReference: List<String>
+    ): Boolean
+
+    fun confirmMemberDataAcks(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpName: String,
+        mdaAcksHashes: List<String>
+    ): Boolean
 }

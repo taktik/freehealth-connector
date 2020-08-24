@@ -14,10 +14,13 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataList
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.freehealth.middleware.dto.dmg.DmgMessage
 import org.taktik.freehealth.middleware.dto.memberdata.MemberDataBatchRequestDto
 import org.taktik.freehealth.middleware.dto.memberdata.MemberInfoDto
+import sun.rmi.runtime.Log
+import java.util.*
 
 
 @RunWith(SpringRunner::class)
@@ -46,12 +49,12 @@ class MemberDataAsyncControllerTest: EhealthTest() {
     @Test
     fun sendMemberDataRequest() {
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
-        val str = this.restTemplate.exchange("http://localhost:$port/mda/async/request/900" +
-            "?hcpNihii=$nihii5" +
+        val str = this.restTemplate.exchange("http://localhost:$port/mda/async/request" +
+            "?hcpNihii=84450277111" +
             "&hcpSsin=$ssin5" +
             "&hcpName={name5}" +
             "&hcpQuality=medicalhouse",
-            HttpMethod.POST, HttpEntity<MemberDataBatchRequestDto>(MemberDataBatchRequestDto(asyncNisses[900]?.map { MemberInfoDto(ssin = it) } ?: listOf()), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, name5)
+            HttpMethod.POST, HttpEntity<MemberDataBatchRequestDto>(MemberDataBatchRequestDto(asyncNisses[900]?.map { MemberInfoDto(ssin = it, uniqId = UUID.randomUUID().toString()) } ?: listOf()), createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, name5)
 
         Assertions.assertThat(str).isNotNull
     }
@@ -63,15 +66,24 @@ class MemberDataAsyncControllerTest: EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
         val results = regOa.map {
             val messages = this.restTemplate.exchange("http://localhost:$port/mda/async/messages" +
-                "?hcpNihii=$nihii5" +
+                "?hcpNihii=84450277111" +
                 "&hcpSsin=$ssin5" +
                 "&hcpName={name5}" +
                 "&messageNames=$it",
-                HttpMethod.POST, HttpEntity<List<String>>(listOf(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<MemberDataResponse>>() {}, name5)
-
-            Assertions.assertThat(messages.body).isNotEmpty()
-            println(messages.body)
+                HttpMethod.POST, HttpEntity<List<MemberDataResponse>>(listOf(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<List<MemberDataList>>() {}, name5)
         }
+    }
+
+    @Test
+    fun confirmMessage(){
+        val (keystoreId, tokenId, passPhrase) = registerMmH(restTemplate!!, port, nihii5!!, password5!!)
+
+        val messages = this.restTemplate.exchange("http://localhost:$port/mda/async/confirm/messages" +
+                "?hcpNihii=84450277111" +
+                "&hcpSsin=$ssin5" +
+                "&hcpName={name5}" +
+                "&mdaMessagesReference="+ listOf(""),
+                HttpMethod.POST, HttpEntity<List<MemberDataResponse>>(listOf(), createHeaders(null, null, keystoreId, tokenId, passPhrase)), object : ParameterizedTypeReference<Boolean>() {}, name5)
 
     }
 }

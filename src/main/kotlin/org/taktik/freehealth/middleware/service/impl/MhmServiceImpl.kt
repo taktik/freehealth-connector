@@ -2,6 +2,7 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
+import be.cin.types.v1.FaultType
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import be.fgov.ehealth.messageservices.mycarenet.core.v1.RequestType
 import be.fgov.ehealth.messageservices.mycarenet.core.v1.SendTransactionRequest
@@ -17,6 +18,7 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
+import be.fgov.ehealth.mycarenet.mhm.protocol.v1.CancelSubscriptionRequest
 import be.fgov.ehealth.mycarenet.mhm.protocol.v1.NotifySubscriptionClosureRequest
 import be.fgov.ehealth.mycarenet.mhm.protocol.v1.SendSubscriptionRequest
 import be.fgov.ehealth.mycarenet.mhm.protocol.v1.SendSubscriptionResponse
@@ -73,6 +75,7 @@ import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.technical.config.ConfigFactory
+import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
@@ -99,6 +102,7 @@ import java.time.Instant
 import java.util.UUID
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.ws.soap.SOAPFaultException
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
@@ -207,7 +211,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
             this.issueInstant = DateTime()
             this.routing = RoutingType().apply {
                 careReceiver = CareReceiverIdType().apply {
-                    ssin = patientSsin
+                    patientSsin?.let {
+                        ssin = patientSsin
+                    }
+                    ioMembership?.let {
+                        mutuality = io
+                        regNrWithMut = ioMembership
+                    }
                 }
                 this.referenceDate = now
             }
@@ -219,35 +229,65 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         log.info("Sending subscription request {}", ConnectorXmlUtils.toString(sendSubscripionRequest))
         MhmXmlValidatorImpl().validate(sendSubscripionRequest)
 
-        val marshallerHelper = MarshallerHelper(SendSubscriptionRequest::class.java, SendSubscriptionRequest::class.java)
-        val xmlRequest = marshallerHelper.toXMLByteArray(sendSubscripionRequest)
+        return try {
+            val marshallerHelper = MarshallerHelper(SendSubscriptionRequest::class.java, SendSubscriptionRequest::class.java)
+            val xmlRequest = marshallerHelper.toXMLByteArray(sendSubscripionRequest)
 
-        val sendSubscriptionResponse = freehealthMhmService.sendSubscription(samlToken, sendSubscripionRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:SendSubscription")
+            val sendSubscriptionResponse = freehealthMhmService.sendSubscription(samlToken, sendSubscripionRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:SendSubscription")
 
-        log.info("Response: "+ConnectorXmlUtils.toString(sendSubscriptionResponse.`return`))
+            log.info("Response: " + ConnectorXmlUtils.toString(sendSubscriptionResponse.`return`))
 
-        val sendTransactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toObject(sendSubscriptionResponse.`return`.detail.value)
+            val sendTransactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toObject(sendSubscriptionResponse.`return`.detail.value)
 
-        val xades = sendSubscriptionResponse.`return`.xadesT?.value
-        val signatureVerificationResult = xades.let {
-            val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T)
-            val options = emptyMap<String, Any>()
-            builder.verify(sendSubscriptionResponse.`return`.detail.value, it, options)
-        } ?: SignatureVerificationResult().apply {
-            errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
-        }
+            val xades = sendSubscriptionResponse.`return`.xadesT?.value
+            val signatureVerificationResult = xades.let {
+                val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T)
+                val options = emptyMap<String, Any>()
+                builder.verify(sendSubscriptionResponse.`return`.detail.value, it, options)
+            } ?: SignatureVerificationResult().apply {
+                errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
+            }
 
-        val errors = sendTransactionResponse.acknowledge.errors?.flatMap { e ->
-            e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
-                extractError(unencryptedRequest, ec, e.url)
-            } ?: setOf()
-        }
-        val commonOutput = sendSubscriptionResponse.`return`.commonOutput
+            val errors = sendTransactionResponse.acknowledge.errors?.flatMap { e ->
+                e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
+                    extractError(unencryptedRequest, ec, e.url)
+                } ?: setOf()
+            }
+            val commonOutput = sendSubscriptionResponse.`return`.commonOutput
 
-        return sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
-            StartSubscriptionResultWithResponse(
+            sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
+                StartSubscriptionResultWithResponse(
+                    xades = xades,
+                    commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
+                    mycarenetConversation = MycarenetConversation().apply {
+                        this.transactionResponse =
+                            MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse)
+                                .toString(Charsets.UTF_8)
+                        this.transactionRequest =
+                            MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
+                                .toString(Charsets.UTF_8)
+                        sendSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                        soapRequest = MarshallerHelper(SendSubscriptionRequest::class.java, SendSubscriptionRequest::class.java).toXMLByteArray(sendSubscripionRequest).toString(Charsets.UTF_8)
+                    },
+                    kmehrMessage = unencryptedRequest,
+                    reference = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaagreement" } }?.let {
+                        it.item?.find { it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "decisionreference" } }.let {
+                            it?.contents?.firstOrNull()?.ids?.firstOrNull()?.value
+                        }
+                    },
+                    subscriptionsStartDate = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaagreement" } }?.let {
+                        it.item?.find { it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "agreementstartdate" } }.let {
+                            it?.contents?.firstOrNull()?.date.let {
+                                it?.toString("yyyyMMdd")!!.toInt()
+                            }
+                        }
+                    },
+                    inscriptionDate = startDate,
+                    errors = errors,
+                    genericErrors = null
+                )
+            } ?: StartSubscriptionResultWithResponse(
                 xades = xades,
-                commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse =
                         MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse)
@@ -256,42 +296,32 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                         MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
                             .toString(Charsets.UTF_8)
                     sendSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    sendSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    soapRequest = MarshallerHelper(SendSubscriptionRequest::class.java, SendSubscriptionRequest::class.java).toXMLByteArray(sendSubscripionRequest).toString(Charsets.UTF_8)
                 },
                 kmehrMessage = unencryptedRequest,
-                reference = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaagreement" } }?.let {
-                    it.item?.find{it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "decisionreference" }}.let{
-                        it?.contents?.firstOrNull()?.ids?.firstOrNull()?.value
-                    }
-                },
-               subscriptionsStartDate = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaagreement" } }?.let {
-                   it.item?.find{it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "agreementstartdate" }}.let{
-                       it?.contents?.firstOrNull()?.date.let {
-                           it?.toString("yyyyMMdd")!!.toInt()
-                       }
-                   }
-               },
-               inscriptionDate = startDate,
-               errors = errors
+                reference = null,
+                subscriptionsStartDate = null,
+                inscriptionDate = null,
+                errors = errors,
+                genericErrors = null
             )
-        } ?: StartSubscriptionResultWithResponse(
-            xades = xades,
-            mycarenetConversation = MycarenetConversation().apply {
-                this.transactionResponse =
-                    MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse)
-                        .toString(Charsets.UTF_8)
-                this.transactionRequest =
-                    MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
-                        .toString(Charsets.UTF_8)
-                sendSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                sendSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
-            },
-            kmehrMessage = unencryptedRequest,
-            reference = null,
-            subscriptionsStartDate = null,
-            inscriptionDate = null,
-            errors = errors
-        )
+        } catch (e:SOAPFaultException) {
+            StartSubscriptionResultWithResponse(
+                xades = null,
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
+                    soapRequest = MarshallerHelper(SendSubscriptionRequest::class.java, SendSubscriptionRequest::class.java).toXMLByteArray(sendSubscripionRequest).toString(Charsets.UTF_8)
+                },
+                kmehrMessage = unencryptedRequest,
+                reference = null,
+                subscriptionsStartDate = null,
+                inscriptionDate = null,
+                genericErrors = listOf(FaultType().apply {
+                    faultSource = e.message
+                    faultCode = e.fault?.faultCode
+                })
+            )
+        }
     }
 
 
@@ -371,7 +401,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
             this.issueInstant = DateTime()
             this.routing = RoutingType().apply {
                 careReceiver = CareReceiverIdType().apply {
-                    ssin = patientSsin
+                    patientSsin?.let {
+                        ssin = patientSsin
+                    }
+                    ioMembership?.let {
+                        mutuality = io
+                        regNrWithMut = ioMembership
+                    }
                 }
                 this.referenceDate = now
             }
@@ -381,6 +417,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         }
 
         log.info("Sending cancel subscription request {}", ConnectorXmlUtils.toString(sendCancelSubscripionRequest))
+        return try {
         val sendCancelSubscriptionResponse = freehealthMhmService.cancelSubscription(samlToken, sendCancelSubscripionRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:CancelSubscription")
 
         log.info("Response: "+ConnectorXmlUtils.toString(sendCancelSubscriptionResponse.`return`))
@@ -415,7 +452,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                         MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
                             .toString(Charsets.UTF_8)
                     sendCancelSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    sendCancelSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    soapRequest = MarshallerHelper(CancelSubscriptionRequest::class.java, CancelSubscriptionRequest::class.java).toXMLByteArray(sendCancelSubscripionRequest).toString(Charsets.UTF_8)
                 },
                 kmehrMessage = unencryptedRequest,
                 decisionReference = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maacancellation" } }?.let {
@@ -426,7 +463,8 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 subscriptionsCancelDate = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maacancellation" } }?.let {
                     it.date.toString("yyyyMMdd")!!.toInt()
                 },
-                errors = errors
+                errors = errors,
+                genericErrors = null
             )
         } ?: CancelSubscriptionResultWithResponse(
             xades = xades,
@@ -438,13 +476,29 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
                         .toString(Charsets.UTF_8)
                 sendCancelSubscriptionResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                sendCancelSubscriptionResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                soapRequest = MarshallerHelper(CancelSubscriptionRequest::class.java, CancelSubscriptionRequest::class.java).toXMLByteArray(sendCancelSubscripionRequest).toString(Charsets.UTF_8)
             },
             kmehrMessage = unencryptedRequest,
             decisionReference = null,
             subscriptionsCancelDate = null,
-            errors = errors
+            errors = errors,
+            genericErrors = null
         )
+        } catch (e:SOAPFaultException) {
+            CancelSubscriptionResultWithResponse(
+                xades = null,
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
+                    soapRequest = MarshallerHelper(CancelSubscriptionRequest::class.java, CancelSubscriptionRequest::class.java).toXMLByteArray(sendCancelSubscripionRequest).toString(Charsets.UTF_8)
+                },
+                kmehrMessage = unencryptedRequest,
+                genericErrors = listOf(FaultType().apply {
+                    faultSource = e.message
+                    faultCode = e.fault?.faultCode
+                })
+            )
+        }
+
     }
 
     override fun notifySubscriptionClosure(keystoreId: UUID,
@@ -529,7 +583,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
             this.issueInstant = DateTime()
             this.routing = RoutingType().apply {
                 careReceiver = CareReceiverIdType().apply {
-                    ssin = patientSsin
+                    patientSsin?.let {
+                        ssin = patientSsin
+                    }
+                    ioMembership?.let {
+                        mutuality = io
+                        regNrWithMut = ioMembership
+                    }
                 }
                 this.referenceDate = now
             }
@@ -539,32 +599,62 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         }
 
         log.info("Sending notify subscription closure request {}", ConnectorXmlUtils.toString(sendNotifySubscripionClosureRequest))
-        val sendNotifySubscriptionClosureResponse = freehealthMhmService.notifySubscriptionClosure(samlToken, sendNotifySubscripionClosureRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:NotifySubscriptionClosure")
 
-        log.info("Response: "+ConnectorXmlUtils.toString(sendNotifySubscriptionClosureResponse.`return`))
+        return try {
+            val sendNotifySubscriptionClosureResponse = freehealthMhmService.notifySubscriptionClosure(samlToken, sendNotifySubscripionClosureRequest, "urn:be:fgov:ehealth:mycarenet:medicalHouseMembership:protocol:v1:NotifySubscriptionClosure")
 
-        val sendTransactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toObject(sendNotifySubscriptionClosureResponse.`return`.detail.value)
+            log.info("Response: " + ConnectorXmlUtils.toString(sendNotifySubscriptionClosureResponse.`return`))
 
-        val xades = sendNotifySubscriptionClosureResponse.`return`.xadesT?.value
-        val signatureVerificationResult = xades.let {
-            val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T)
-            val options = emptyMap<String, Any>()
-            builder.verify(sendNotifySubscriptionClosureResponse.`return`.detail.value, it, options)
-        } ?: SignatureVerificationResult().apply {
-            errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
-        }
+            val sendTransactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toObject(sendNotifySubscriptionClosureResponse.`return`.detail.value)
 
-        val errors = sendTransactionResponse.acknowledge.errors?.flatMap { e ->
-            e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
-                extractError(unencryptedRequest, ec, e.url)
-            } ?: setOf()
-        }
-        val commonOutput = sendNotifySubscriptionClosureResponse.`return`.commonOutput
+            val xades = sendNotifySubscriptionClosureResponse.`return`.xadesT?.value
+            val signatureVerificationResult = xades.let {
+                val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T)
+                val options = emptyMap<String, Any>()
+                builder.verify(sendNotifySubscriptionClosureResponse.`return`.detail.value, it, options)
+            } ?: SignatureVerificationResult().apply {
+                errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
+            }
 
-        return sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
-            EndSubscriptionResultWithResponse(
+            val errors = sendTransactionResponse.acknowledge.errors?.flatMap { e ->
+                e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
+                    extractError(unencryptedRequest, ec, e.url)
+                } ?: setOf()
+            }
+            val commonOutput = sendNotifySubscriptionClosureResponse.`return`.commonOutput
+
+            return sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
+                EndSubscriptionResultWithResponse(
+                    xades = xades,
+                    commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
+                    mycarenetConversation = MycarenetConversation().apply {
+                        this.transactionResponse =
+                            MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse)
+                                .toString(Charsets.UTF_8)
+                        this.transactionRequest =
+                            MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
+                                .toString(Charsets.UTF_8)
+                        sendNotifySubscriptionClosureResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                        soapRequest = MarshallerHelper(NotifySubscriptionClosureRequest::class.java, NotifySubscriptionClosureRequest::class.java).toXMLByteArray(sendNotifySubscripionClosureRequest).toString(Charsets.UTF_8)
+                    },
+                    kmehrMessage = unencryptedRequest,
+                    reference = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaclosure" } }?.let {
+                        it.item?.find { it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "decisionreference" } }.let {
+                            it?.contents?.firstOrNull()?.ids?.firstOrNull()?.value
+                        }
+                    },
+                    subscriptionsEndDate = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaclosure" } }?.let {
+                        it.item?.find { it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "agreementenddate" } }.let {
+                            it?.contents?.firstOrNull()?.date.let {
+                                it?.toString("yyyyMMdd")!!.toInt()
+                            }
+                        }
+                    },
+                    errors = errors,
+                    genericErrors = null
+                )
+            } ?: EndSubscriptionResultWithResponse(
                 xades = xades,
-                commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse =
                         MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse)
@@ -573,40 +663,28 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                         MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
                             .toString(Charsets.UTF_8)
                     sendNotifySubscriptionClosureResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    sendNotifySubscriptionClosureResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    soapRequest = MarshallerHelper(NotifySubscriptionClosureRequest::class.java, NotifySubscriptionClosureRequest::class.java).toXMLByteArray(sendNotifySubscripionClosureRequest).toString(Charsets.UTF_8)
                 },
                 kmehrMessage = unencryptedRequest,
-                reference = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaclosure" } }?.let {
-                    it.item?.find{it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "decisionreference" }}.let{
-                        it?.contents?.firstOrNull()?.ids?.firstOrNull()?.value
-                    }
-                },
-                subscriptionsEndDate = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaclosure" } }?.let {
-                    it.item?.find{it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "agreementenddate" }}.let{
-                        it?.contents?.firstOrNull()?.date.let {
-                            it?.toString("yyyyMMdd")!!.toInt()
-                        }
-                    }
-                },
-                errors = errors
+                errors = errors,
+                subscriptionsEndDate = null,
+                reference = null,
+                genericErrors = null
             )
-        } ?: EndSubscriptionResultWithResponse(
-            xades = xades,
-            mycarenetConversation = MycarenetConversation().apply {
-                this.transactionResponse =
-                    MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse)
-                        .toString(Charsets.UTF_8)
-                this.transactionRequest =
-                    MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest)
-                        .toString(Charsets.UTF_8)
-                sendNotifySubscriptionClosureResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                sendNotifySubscriptionClosureResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
-            },
-            kmehrMessage = unencryptedRequest,
-            errors = errors,
-            subscriptionsEndDate = null,
-            reference = null
-        )
+        } catch (e:SOAPFaultException) {
+            EndSubscriptionResultWithResponse(
+                xades = null,
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
+                    soapRequest = MarshallerHelper(NotifySubscriptionClosureRequest::class.java, NotifySubscriptionClosureRequest::class.java).toXMLByteArray(sendNotifySubscripionClosureRequest).toString(Charsets.UTF_8)
+                },
+                kmehrMessage = unencryptedRequest,
+                genericErrors = listOf(FaultType().apply {
+                    faultSource = e.message
+                    faultCode = e.fault?.faultCode
+                })
+            )
+        }
 
     }
 
@@ -692,11 +770,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
                     ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                     patient = PersonType().apply {
-                        patientSsin?.let {
-                            ids.add(IDPATIENT().apply {
-                                s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value = it
-                            })
-                        }
+                        ids.add(IDPATIENT().apply {
+                                s = IDPATIENTschemes.ID_PATIENT;
+                                sv = "1.0";
+                                patientSsin?.let {
+                                    value = it
+                                }
+                        })
                         firstnames.add(patientFirstName)
                         familyname = patientLastName
                         sex =
@@ -905,11 +985,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
                     ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                     patient = PersonType().apply {
-                        patientSsin?.let {
-                            ids.add(IDPATIENT().apply {
-                                s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value = it
-                            })
-                        }
+                        ids.add(IDPATIENT().apply {
+                            s = IDPATIENTschemes.ID_PATIENT;
+                            sv = "1.0";
+                            patientSsin?.let {
+                                value = it
+                            }
+                        })
                         firstnames.add(patientFirstName)
                         familyname = patientLastName
                         sex =
@@ -1080,11 +1162,13 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
                     ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                     patient = PersonType().apply {
-                        patientSsin?.let {
-                            ids.add(IDPATIENT().apply {
-                                s = IDPATIENTschemes.ID_PATIENT; sv = "1.0"; value = it
-                            })
-                        }
+                        ids.add(IDPATIENT().apply {
+                            s = IDPATIENTschemes.ID_PATIENT;
+                            sv = "1.0";
+                            patientSsin?.let {
+                                value = it
+                            }
+                        })
                         firstnames.add(patientFirstName)
                         familyname = patientLastName
                         sex =

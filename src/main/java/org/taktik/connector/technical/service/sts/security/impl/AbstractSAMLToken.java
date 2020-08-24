@@ -79,4 +79,9 @@ public abstract class AbstractSAMLToken extends AbstractExtendedCredential imple
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.INVALID_TOKEN, new Object[]{"token is expired."});
       }
    }
+
+   @Override
+   public String getQuality() {
+      return credential instanceof AbstractExtendedCredential ? ((AbstractExtendedCredential) credential).getQuality() : super.getQuality();
+   }
 }

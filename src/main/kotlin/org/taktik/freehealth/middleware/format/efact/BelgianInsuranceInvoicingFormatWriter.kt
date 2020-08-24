@@ -102,7 +102,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         ws200.write("200", 920000)
         ws200.write("2001", 0)
-        ws200.write("201", 1)
+        ws200.write("201", 2)//version2
         ws200.write("2011", 0)
         ws200.write("202", fileVersion)
         ws200.write("2021", 0)
@@ -177,7 +177,9 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("4091", 0)
         ws.write("410", modulo)
         ws.write("4101", 0)
-        ws.write("411", "")
+        ws.write("411", "+")
+        ws.write("412", 0)
+        ws.write("413", "")
 
         ws.writeFieldsWithoutCheckSum()
     }
@@ -216,7 +218,9 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("5091", 0)
         ws.write("510", modulo)
         ws.write("5101", 0)
-        ws.write("511", "")
+        ws.write("511", "+")
+        ws.write("512", 0)
+        ws.write("513", "")
 
         ws.writeFieldsWithoutCheckSum()
     }
@@ -376,10 +380,11 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("13",990)
         if (sender.isMedicalHouse) ws.write("14", sender.nihii)
         if (!sender.isMedicalHouse) ws.write("15", icd.doctorIdentificationNumber)
+        if (sender.isMedicalHouse && icd.codeNomenclature == 109594L) ws.write("15", sender.nihii)
         //ws.write("16", if (sender.isMedicalHouse) 0 else if (icd.gnotionNihii == null || icd.gnotionNihii?.let { it.isEmpty() } == true) 1 else 4)
         ws.write("16",
                  when {
-                     sender.isMedicalHouse -> 0
+                     sender.isMedicalHouse && icd.codeNomenclature != 109594L -> 0
                      icd.gnotionNihii?.isNotEmpty() == true -> 4
                      icd.internshipNihii?.isNotEmpty() == true -> 5
                      else -> 1
@@ -401,6 +406,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("47",
             when {
                 invoicingMonth >= 7 && invoicingYear >= 2019 -> "+0000000"
+                invoicingYear >= 2020 -> "+0000000"
                 else -> "00000000"
             })
         //ws.write("49",icd.gnotionNihii)

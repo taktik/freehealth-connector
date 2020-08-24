@@ -613,7 +613,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetTransactionRequest().apply {
-                    request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, breakTheGlassReason, true)
+                    request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, breakTheGlassReason, true)
                     select = SelectGetTransactionType().apply {
                         patient =
                             PatientIdType().apply {
@@ -927,6 +927,68 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                      ): RequestListType {
         require(breakTheGlassReason == null || breakTheGlassReason.length in 10..200) { "Invalid break the glass reason" }
         return RequestListType().apply {
+            date = DateTime.now()
+            time = DateTime.now()
+            id =
+                IDKMEHR().apply {
+                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                    "$hcpNihii.${Instant.now().toEpochMilli()}"
+                }
+            author = AuthorType().apply {
+                hcparties.add(HcpartyType().apply {
+                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
+                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.1"; value = "persphysician" })
+
+                    if (encrypted) {
+                        ids.add(IDHCPARTY().apply {
+                            s = IDHCPARTYschemes.ID_ENCRYPTION_ACTOR; sv = "1.0"; value =
+                            hcpNihii.substring(0, 8)
+                        })
+                        cds.add(CDHCPARTY().apply {
+                            s = CDHCPARTYschemes.CD_ENCRYPTION_ACTOR; sv = "1.1"; value =
+                            IdentifierType.NIHII.getType(48)
+                        })
+                    }
+                    firstname = hcpFirstName
+                    familyname = hcpLastName
+                    addresses.add(AddressType().apply {
+                        cds.add(CDADDRESS().apply { s = CDADDRESSschemes.CD_ADDRESS; sv = "1.1"; value = "work" })
+                        country =
+                            CountryType().apply {
+                                cd =
+                                    CDCOUNTRY().apply { s = CDCOUNTRYschemes.CD_FED_COUNTRY; sv = "1.2"; value = "be" }
+                            }
+                        zip = hcpZip
+                        nis = nisCodesPerZip[hcpZip]
+                    })
+                })
+                if(StringUtils.isNotEmpty(hubPackageId ?: config.getProperty("hub.package.id") ?: "ACC_")) {
+                    hcparties.add(HcpartyType().apply {
+                        ids.add(IDHCPARTY().apply {
+                            s = IDHCPARTYschemes.LOCAL; sl = "endusersoftwareinfo"; sv =
+                            "1.0"; value = hubPackageId ?: config.getProperty("hub.package.id") ?: "ACC_"
+                        })
+                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.1"; value = "application" })
+                    })
+                }
+            }
+            breakTheGlassReason?.let { breaktheglass = it }
+        }
+    }
+
+    private fun createRequestType(
+        hcpLastName: String,
+        hcpFirstName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpZip: String,
+        hubPackageId: String?,
+        breakTheGlassReason: String?,
+        encrypted: Boolean = false
+                                     ): RequestType {
+        require(breakTheGlassReason == null || breakTheGlassReason.length in 10..200) { "Invalid break the glass reason" }
+        return RequestType().apply {
             date = DateTime.now()
             time = DateTime.now()
             id =

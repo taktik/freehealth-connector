@@ -34,5 +34,6 @@ class StartSubscriptionResultWithResponse(
     var xades: ByteArray?,
     mycarenetConversation: MycarenetConversation? = null,
     var kmehrMessage: ByteArray?,
-    var errors: List<MycarenetError>? = null
+    var errors: List<MycarenetError>? = null,
+    var genericErrors: List<FaultType>? = null
                                          ): StartSubscriptionResult(reference, subscriptionsStartDate, inscriptionDate, commonOutput, mycarenetConversation)
