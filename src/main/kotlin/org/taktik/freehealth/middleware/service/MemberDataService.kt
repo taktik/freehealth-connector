@@ -33,7 +33,7 @@ interface MemberDataService {
         tokenId: UUID,
         hcpQuality: String,
         hcpNihii: String,
-        hcpSsin: String,
+        hcpSsin: String?,
         hcpName: String,
         passPhrase: String,
         patientSsin: String?,
