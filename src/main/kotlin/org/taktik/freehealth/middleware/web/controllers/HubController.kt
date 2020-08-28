@@ -234,7 +234,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
         @RequestParam(required = false) patientEidCardNumber: String?,
-        @RequestParam(required = false) patientIsiCardNumber: String?
+        @RequestParam(required = false) patientIsiCardNumber: String?,
+        @RequestParam(required = false) from: Long?,
+        @RequestParam(required = false) to: Long?
     ) = hubService.registerTherapeuticLink(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -248,7 +250,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpZip = hcpZip,
         patientSsin = patientSsin,
         patientEidCardNumber = patientEidCardNumber,
-        patientIsiCardNumber = patientIsiCardNumber
+        patientIsiCardNumber = patientIsiCardNumber,
+        from = from,
+        to = to
     )
 
     @DeleteMapping("/therlink/{hcpNihii}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -296,8 +300,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
         @RequestParam(required = false) therLinkType: String?,
-        @RequestParam(required = false) from: Instant?,
-        @RequestParam(required = false) to: Instant?
+        @RequestParam(required = false) from: Long?,
+        @RequestParam(required = false) to: Long?
     ): TherapeuticLinkMessageDto = hubService.getTherapeuticLinks(
         endpoint = endpoint,
         keystoreId = keystoreId,
