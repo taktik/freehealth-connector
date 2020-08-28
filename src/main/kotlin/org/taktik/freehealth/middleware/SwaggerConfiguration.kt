@@ -34,5 +34,5 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 class SwaggerConfiguration {
     @Bean
     fun api(): Docket =
-        Docket(DocumentationType.SWAGGER_2).securitySchemes(listOf(BasicAuth("basicAuth"))).select().apis(RequestHandlerSelectors.any()).paths(PathSelectors.regex("^/(ab|admin|chap4|consent|consultrn|crypto|gmd|eatt.+|efact|ehb.+|genins|hub|mda|mhm|recip.+|sts|tarif|therlink)/.+")).build()
+        Docket(DocumentationType.SWAGGER_2).securitySchemes(listOf(BasicAuth("basicAuth"))).select().apis(RequestHandlerSelectors.any()).paths(PathSelectors.regex("^/(ab|admin|chap4|consent|consultrn|crypto|gmd|eatt.+|efact|ehb.+|genins|hub|mda|mhm|recip.+|sts|tarif|therlink)(/.*)?")).build()
 }
