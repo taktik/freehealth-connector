@@ -299,11 +299,11 @@ class RecipeExamplesTest(val recipeService: RecipeService) {
                     time = DatatypeFactory.newInstance().newXMLGregorianCalendar("09:00:00")
                     messageId = "8e1c4ea4-3825-48e4-bcc2b8cadfa7a897"
                 }
-                iCure.apply {
+                softwarePackage.apply {
                     name = "ID-MEDISOFT"
                     version = "versie 1.23.25.0"
                     id = "8e1c4ea4-3825-48e4-bcc2b8cadfa7a897"
-                    prettyName = "MySoftware"
+                    vendorName = "MySoftware"
                     phone = "02/100.11.12"
                     mail = "tom@mysoftware.com"
                 }

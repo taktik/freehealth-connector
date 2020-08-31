@@ -24,7 +24,7 @@ import javax.xml.datatype.XMLGregorianCalendar
 
 class KmehrPrescriptionConfig {
     val header = Header()
-    val iCure = ICure()
+    val softwarePackage = SoftwarePackage()
     val prescription = Prescription()
 
     inner class Header {
@@ -37,18 +37,18 @@ class KmehrPrescriptionConfig {
         fun getIdKmehr() = this@KmehrPrescriptionConfig.prescription.inami + '.' + _idKhmerId
     }
 
-    inner class Prescription {
+    class Prescription {
         var inami: String? = null
         var language: String? = null
         var substanceDb: String? = null
     }
 
-    inner class ICure {
+    class SoftwarePackage {
         var name: String? = null
         var version: String? = null
         var phone: String? = null
         var mail: String? = null
         var id: String? = null
-        var prettyName: String? = null
+        var vendorName: String? = null
     }
 }

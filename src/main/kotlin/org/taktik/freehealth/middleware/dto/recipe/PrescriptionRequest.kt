@@ -36,5 +36,10 @@ class PrescriptionRequest(
     var executorId:String? = null,
     val deliveryDate: Long? = null,
     val expirationDate: Long? = null,
+    val vendorName: String? = null,
+    val packageName: String? = null,
+    val packageVersion: String? = null,
+    val vendorEmail: String? = null,
+    val vendorPhone: String? = null,
     val vision: String? = null
 )
