@@ -54,6 +54,11 @@ interface RecipeV4Service {
         executorId: String?,
         samVersion: String?,
         deliveryDate: LocalDateTime?,
+        vendorName: String?,
+        packageName: String?,
+        packageVersion: String?,
+        vendorEmail: String?,
+        vendorPhone: String?,
         vision: String?,
         expirationDate: LocalDateTime?
                             ): Prescription
