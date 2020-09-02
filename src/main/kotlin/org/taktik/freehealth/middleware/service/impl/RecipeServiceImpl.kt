@@ -25,21 +25,17 @@ package org.taktik.freehealth.middleware.service.impl
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.kmehr.v20161201.Utils.Companion.makeDateTypeFromFuzzyLong
 import org.taktik.connector.business.domain.kmehr.v20161201.Utils.Companion.makeXGC
 import org.taktik.connector.business.domain.kmehr.v20161201.Utils.Companion.makeXMLGregorianCalendarFromFuzzyLong
-import org.taktik.connector.business.domain.kmehr.v20161201.Utils.Companion.makeXMLGregorianCalendarFromHHMMSSLong
 import org.taktik.connector.business.domain.kmehr.v20161201.be.ehealth.logic.recipe.xsd.v20160906.RecipeNotification
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDADMINISTRATIONUNIT
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDCOUNTRY
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDCOUNTRYschemes
-import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDDAYPERIOD
-import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDDAYPERIODvalues
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDDRUGROUTE
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes.CD_HCPARTY
@@ -72,7 +68,6 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.CountryType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
-import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDDAYPERIODvalues
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDHEADING
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDINNCLUSTER
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDITEM
@@ -82,7 +77,6 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipebasicIDKMEHR
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipecompoundprescriptionType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipecontentType
-import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipedayperiodType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipefolderType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeheaderType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeitemType
@@ -120,7 +114,6 @@ import org.taktik.freehealth.middleware.domain.recipe.Feedback
 import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
-import org.taktik.freehealth.middleware.domain.recipe.RegimenItem
 import org.taktik.freehealth.middleware.drugs.dto.MppId
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
 import org.taktik.freehealth.middleware.dto.Address
@@ -363,11 +356,11 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                 }
                 messageId = "${prescription.inami}-${hcp.ssin}-$_idKhmerId"
             }
-            iCure.apply {
+            softwarePackage.apply {
                 name = icureName
                 version = icureVersion
                 id = name + "-" + version
-                prettyName = icureName
+                vendorName = icureName
                 phone = "+3223335840"
                 mail = "support@icure.eu"
             }
@@ -397,8 +390,8 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                         },
                         IDKMEHR().apply {
                             s = LOCAL
-                            sl = config.iCure.name
-                            sv = config.iCure.version
+                            sl = config.softwarePackage.name
+                            sv = config.softwarePackage.version
                             value = config.header.messageId
                         }
                 ))
@@ -412,21 +405,21 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
                             },
                             HcpartyType().apply {
                                 cds.add(CDHCPARTY().apply { s = CD_HCPARTY; sv = versions["CD-HCPARTY"]; value = "application" })
-                                name = config.iCure.prettyName
+                                name = config.softwarePackage.vendorName
                                 telecoms.addAll(listOf(
                                         TelecomType().apply {
                                             cds.addAll(listOf(
                                                     CDTELECOM().apply { s = CD_ADDRESS; sv = versions["CD-ADDRESS"]; value = "work" },
                                                     CDTELECOM().apply { s = CD_TELECOM; sv = versions["CD-TELECOM"]; value = "phone" }
                                             ))
-                                            telecomnumber = config.iCure.phone
+                                            telecomnumber = config.softwarePackage.phone
                                         },
                                         TelecomType().apply {
                                             cds.addAll(listOf(
                                                     CDTELECOM().apply { s = CD_ADDRESS; sv = versions["CD-ADDRESS"]; value = "work" },
                                                     CDTELECOM().apply { s = CD_TELECOM; sv = versions["CD-TELECOM"]; value = "email" }
                                             ))
-                                            telecomnumber = config.iCure.mail
+                                            telecomnumber = config.softwarePackage.mail
                                         }
                                 ))
                             }

@@ -84,6 +84,11 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
             samVersion = prescription.samVersion,
             deliveryDate = prescription.deliveryDate?.let {FuzzyValues.getLocalDateTime(it)},
             expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)},
+            vendorName = prescription.vendorName,
+            packageName = prescription.packageName,
+            packageVersion = prescription.packageVersion,
+            vendorEmail = prescription.vendorEmail,
+            vendorPhone = prescription.vendorPhone,
             vision = prescription.vision
                                         )
 

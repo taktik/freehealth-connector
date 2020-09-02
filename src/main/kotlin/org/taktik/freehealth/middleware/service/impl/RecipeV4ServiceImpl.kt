@@ -73,7 +73,6 @@ import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.utils.FuzzyValues
 import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelper
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -134,6 +133,11 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         executorId: String?,
         samVersion: String?,
         deliveryDate: LocalDateTime?,
+        vendorName: String?,
+        packageName: String?,
+        packageVersion: String?,
+        vendorEmail: String?,
+        vendorPhone: String?,
         vision: String?,
         expirationDate: LocalDateTime?): Prescription {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
@@ -142,7 +146,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val selectedType: String = inferPrescriptionType(medications, prescriptionType)
 
-        val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality)
+        val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName, packageName, packageVersion, vendorEmail, vendorPhone)
 
         val os = ByteArrayOutputStream()
         JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(m, os)
@@ -164,7 +168,19 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         return result
     }
 
-    fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, samVersion: String?, deliveryDate: LocalDateTime?, hcpQuality: String): Kmehrmessage {
+    fun getKmehrPrescription(
+        patient: Patient,
+        hcp: HealthcareParty,
+        medications: List<Medication>,
+        samVersion: String?,
+        deliveryDate: LocalDateTime?,
+        hcpQuality: String,
+        vendorName: String?,
+        packageName: String?,
+        packageVersion: String?,
+        vendorEmail: String?,
+        vendorPhone: String?
+                            ): Kmehrmessage {
         val config = KmehrPrescriptionConfig().apply {
             prescription.apply {
                 inami = hcp.nihii!!.replace("[^0-9]".toRegex(), "")
@@ -181,13 +197,13 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                 messageId = "${prescription.inami}-${hcp.ssin}-$_idKhmerId"
                 this.samVersion = samVersion
             }
-            iCure.apply {
-                name = icureName
-                version = icureVersion
+            softwarePackage.apply {
+                name = vendorName
+                version = packageName
                 id = name + "-" + version
-                prettyName = icureName
-                phone = "+3223335840"
-                mail = "support@icure.eu"
+                this.vendorName = vendorName
+                phone = vendorPhone
+                mail = vendorEmail
             }
         }
         return getKmehrPrescription(patient, hcp, medications, deliveryDate, config, hcpQuality)
@@ -257,8 +273,8 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                     },
                     IDKMEHR().apply {
                         s = IDKMEHRschemes.LOCAL
-                        sl = config.iCure.name
-                        sv = config.iCure.version
+                        sl = config.softwarePackage.name
+                        sv = config.softwarePackage.version
                         value = config.header.messageId
                     }
                                  ))
@@ -272,21 +288,21 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                         },
                         HcpartyType().apply {
                             cds.add(CDHCPARTY().apply { s(CDHCPARTYschemes.CD_HCPARTY); value = "application" })
-                            name = config.iCure.prettyName
+                            name = config.softwarePackage.vendorName
                             telecoms.addAll(listOf(
                                 TelecomType().apply {
                                     cds.addAll(listOf(
                                         CDTELECOM().apply { s(CDTELECOMschemes.CD_ADDRESS); value = "work" },
                                         CDTELECOM().apply { s(CDTELECOMschemes.CD_TELECOM); value = "phone" }
                                                      ))
-                                    telecomnumber = config.iCure.phone
+                                    telecomnumber = config.softwarePackage.phone
                                 },
                                 TelecomType().apply {
                                     cds.addAll(listOf(
                                         CDTELECOM().apply { s(CDTELECOMschemes.CD_ADDRESS); value = "work" },
                                         CDTELECOM().apply { s(CDTELECOMschemes.CD_TELECOM); value = "email" }
                                                      ))
-                                    telecomnumber = config.iCure.mail
+                                    telecomnumber = config.softwarePackage.mail
                                 }
                                                   ))
                         }
