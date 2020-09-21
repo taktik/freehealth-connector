@@ -163,7 +163,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
 
         val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, expirationDate ?: LocalDateTime.now().plusMonths(3).minusDays(1))
 
-        val result = Prescription(Date(), "", prescriptionId!!)
+        val result = Prescription(Date(), "", prescriptionId!!, false, null, false, m)
 
         return result
     }
@@ -269,6 +269,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                 ids.addAll(listOf(
                     IDKMEHR().apply {
                         s = IDKMEHRschemes.ID_KMEHR
+                        sv = "1.0"
                         value = config.header.getIdKmehr()
                     },
                     IDKMEHR().apply {
