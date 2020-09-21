@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.domain.recipe
 
+import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import java.io.Serializable
 import java.util.Date
 
@@ -36,5 +37,6 @@ open class Prescription(
     var rid: String,
     var isFeedbackAllowed: Boolean = false,
     var patientId: String? = null,
-    var notificationWasSent: Boolean? = null
+    var notificationWasSent: Boolean? = null,
+    var requestXml: Kmehrmessage? = null
 ) : Serializable
