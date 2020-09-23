@@ -98,6 +98,7 @@ import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20190301.makeDateTypeFromFuzzyLong
 import org.taktik.connector.business.domain.kmehr.v20190301.makeXGC
 import org.taktik.connector.business.domain.kmehr.v20190301.makeXMLGregorianCalendarFromFuzzyLong
+import org.taktik.connector.business.domain.kmehr.v20190301.makeXmlGregorianCalendar
 import org.taktik.connector.business.domain.kmehr.v20190301.s
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.mapPeriodToFrequency
@@ -162,7 +163,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
             throw e
         }
 
-        val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, expirationDate ?: LocalDateTime.now().plusMonths(3).minusDays(1))
+        val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, vendorName, expirationDate ?: LocalDateTime.now().plusMonths(3).minusDays(1))
 
         val result = Prescription(Date(), "", prescriptionId!!, false, null, false, ConnectorXmlUtils.toString(m))
 
@@ -255,7 +256,8 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         return false
     }
 
-    fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig, hcpQuality: String, expirationDate: LocalDateTime?): Kmehrmessage {
+    fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig, hcpQuality: String,
+        expirationDate: LocalDateTime?): Kmehrmessage {
 
         val language = config.prescription.language
         return Kmehrmessage().apply {

@@ -196,7 +196,8 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 samlToken.quality,
                 passPhrase,
-                message.toDocumentMessage()
+                message.toDocumentMessage(),
+                true
                                            ).apply {
                 contentContext.contentSpecification.let {
                     it.isPublicationReceipt =

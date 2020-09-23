@@ -54,7 +54,7 @@ public final class EndpointDistributor {
    }
 
    public void updatePollingBehaviour() {
-      if (this.isBCPMode() && config.getBooleanProperty(PROP_POLLING_ACTIVATED, Boolean.TRUE)) {
+      if ((this.isBCPMode() || this.service2AllEndpoints.size() == 0) && config.getBooleanProperty(PROP_POLLING_ACTIVATED, Boolean.TRUE)) {
          if (this.timer == null) {
             this.timer = new Timer(true);
             this.timer.schedule(new EndpointDistributor.StatusPollingTimerTask(), new Date(), TimeUnit.MILLISECONDS.convert(config.getLongProperty(PROP_POLLING_INTERVAL, 1L), TimeUnit.MINUTES));
@@ -141,7 +141,7 @@ public final class EndpointDistributor {
 
    public static boolean update() {
       try {
-         return EndpointUpdater.update();
+         return EndpointDistributor.getInstance() != null && EndpointDistributor.getInstance().service2AllEndpoints.size() > 0 ? EndpointUpdater.update() : EndpointUpdater.forceUpdate();
       } catch (Exception ex) {
          log.error("Unable to update endpoints", ex);
          return false;
@@ -155,7 +155,7 @@ public final class EndpointDistributor {
       }
 
       public void run() {
-         log.debug("Update endpoints through Timer");
+         log.warn("Update endpoints through Timer");
          EndpointDistributor.update();
       }
    }

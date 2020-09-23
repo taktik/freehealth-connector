@@ -82,16 +82,16 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         patientLastName: String,
         eidCardNumber: String?,
         isiCardNumber: String?,
-        startDate: Date?,
-        endDate: Date?,
+        startDate: Long?,
+        endDate: Long?,
         type: String?,
         sign: Boolean?
                                        ): TherapeuticLinkMessage? {
         val linkBuilder = TherapeuticLink.Builder()
             .withHcParty(makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName))
             .withPatient(makePatient(patientSsin, eidCardNumber, isiCardNumber, patientFirstName, patientLastName))
-            .withStartDateTime(startDate?.let { DateTime(it.time) })
-            .withEndDateTime(endDate?.let { DateTime(it.time) })
+            .withStartDateTime(startDate?.let { DateTime(it) })
+            .withEndDateTime(endDate?.let { DateTime(it) })
             .withStatus(TherapeuticLinkStatus.ACTIVE)
 
         type?.let { linkBuilder.withType(it) }
@@ -189,8 +189,8 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         patientLastName: String,
         eidCardNumber: String?,
         isiCardNumber: String?,
-        startDate: Date?,
-        endDate: Date?,
+        startDate: Long?,
+        endDate: Long?,
         therLinkType: String?
         ): HasTherapeuticLinkMessage? {
         val samlToken =
@@ -210,8 +210,8 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                             therLinkType ?: "gpconsultation",
                             makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
                             makePatient(patientSsin, eidCardNumber, isiCardNumber, patientFirstName, patientLastName),
-                            startDate?.let { DateTime(it.time) }, //Maybe not supported
-                            endDate?.let { DateTime(it.time) }, //Maybe not supported
+                            startDate?.let { DateTime(it) }, //Maybe not supported
+                            endDate?.let { DateTime(it) }, //Maybe not supported
                             null
                                            )
                                                                                                          ))
@@ -259,8 +259,8 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         patientLastName: String,
         eidCardNumber: String?,
         isiCardNumber: String?,
-        start: Date?,
-        end: Date?,
+        start: Long?,
+        end: Long?,
         therLinkType: String?,
         comment: String?,
         sign: Boolean?,
@@ -276,8 +276,8 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                 therLinkType ?: "gpconsultation",
                 makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
                 makePatient(patientSsin, eidCardNumber, isiCardNumber, patientFirstName, patientLastName),
-                start?.let { DateTime(it.time) },
-                end?.let { DateTime(it.time) },
+                start?.let { DateTime(it) },
+                end?.let { DateTime(it) },
                 comment
                                )
 
@@ -342,8 +342,8 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         patientLastName: String,
         eidCardNumber: String?,
         isiCardNumber: String?,
-        start: Date?,
-        end: Date?,
+        start: Long?,
+        end: Long?,
         therLinkType: String?,
         comment: String?,
         sign: Boolean?,
@@ -363,8 +363,8 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                     patientFirstName,
                     patientLastName
                            ),
-                start?.let { DateTime(it.time) },
-                end?.let { DateTime(it.time) },
+                start?.let { DateTime(it) },
+                end?.let { DateTime(it) },
                 comment
                                )
                             )?.let { revokeLink(keystoreId, tokenId, passPhrase, it, sign, proofType) }

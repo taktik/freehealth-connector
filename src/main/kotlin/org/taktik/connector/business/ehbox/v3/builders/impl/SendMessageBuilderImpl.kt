@@ -76,9 +76,10 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
         keystore: KeyStore,
         quality: String,
         passPhrase: String,
-        document: DocumentMessage<Message>
+        document: DocumentMessage<Message>,
+        eH2eBox: Boolean
                              ): SendMessageRequest {
-        return this.buildCommonMessage(keystoreId, keystore, quality, passPhrase, document)
+        return this.buildCommonMessage(keystoreId, keystore, quality, passPhrase, document, eH2eBox)
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class, IOException::class)
@@ -87,14 +88,15 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
         keystore: KeyStore,
         quality: String,
         passPhrase: String,
-        document: org.taktik.connector.business.ehbox.api.domain.Message<Message>
+        document: org.taktik.connector.business.ehbox.api.domain.Message<Message>,
+        eH2eBox: Boolean
                                   ): SendMessageRequest {
         val isDocumentEncrypted = document.isEncrypted
         val destinationEtkSet = HashSet<EncryptionToken>()
         val sendMessageRequest = SendMessageRequest()
         sendMessageRequest.publicationId = document.publicationId
         this.processSender(sendMessageRequest, document.sender)
-        this.processDestinations(keystoreId, quality, keystore, passPhrase, document, sendMessageRequest, destinationEtkSet)
+        this.processDestinations(keystoreId, quality, keystore, passPhrase, document, sendMessageRequest, destinationEtkSet, eH2eBox)
         this.processContent(keystoreId, keystore, quality, passPhrase, document, isDocumentEncrypted, sendMessageRequest, destinationEtkSet)
         return sendMessageRequest
     }
@@ -449,11 +451,12 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
         passPhrase: String,
         document: org.taktik.connector.business.ehbox.api.domain.Message<Message>,
         sendMessageRequest: SendMessageRequest,
-        destinationEtkSet: MutableSet<EncryptionToken>
+        destinationEtkSet: MutableSet<EncryptionToken>,
+        eH2eBox: Boolean
                                    ) {
 
         for (addressee in document.getDestinations()) {
-            val destination = this.buildDestination(addressee)
+            val destination = this.buildDestination(addressee, eH2eBox)
             sendMessageRequest.destinationContexts.add(destination)
             if (document.isEncrypted) {
                 val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, quality)
@@ -503,14 +506,14 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
         }
     }
 
-    private fun buildDestination(addressee: Addressee): DestinationContextType {
+    private fun buildDestination(addressee: Addressee, eH2eBox: Boolean): DestinationContextType {
         val destination = DestinationContextType()
         destination.id = addressee.id
         destination.quality = addressee.quality
         destination.type = addressee.type
         destination.subType = addressee.subType
         destination.isOoOProcessed = addressee.isOoOProcessed
-        if (addressee.firstName != null && addressee.lastName != null) {
+        if (!eH2eBox && addressee.firstName != null && addressee.lastName != null) {
             val user = User()
             user.firstName = addressee.firstName
             user.lastName = addressee.lastName
