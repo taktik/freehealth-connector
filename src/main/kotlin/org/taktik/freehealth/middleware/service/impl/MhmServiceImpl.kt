@@ -270,12 +270,12 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                         soapRequest = MarshallerHelper(SendSubscriptionRequest::class.java, SendSubscriptionRequest::class.java).toXMLByteArray(sendSubscripionRequest).toString(Charsets.UTF_8)
                     },
                     kmehrMessage = unencryptedRequest,
-                    reference = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaagreement" } }?.let {
+                    reference = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && (it.value == "maaagreement" || it.value == "maa") } }?.let {
                         it.item?.find { it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "decisionreference" } }.let {
                             it?.contents?.firstOrNull()?.ids?.firstOrNull()?.value
                         }
                     },
-                    subscriptionsStartDate = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET && it.value == "maaagreement" } }?.let {
+                    subscriptionsStartDate = folder.transactions.find { it.cds.any { it.s == CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET &&(it.value == "maaagreement" || it.value == "maa") } }?.let {
                         it.item?.find { it.cds.any { it.s == CDITEMschemes.CD_ITEM_MYCARENET && it.value == "agreementstartdate" } }.let {
                             it?.contents?.firstOrNull()?.date.let {
                                 it?.toString("yyyyMMdd")!!.toInt()
