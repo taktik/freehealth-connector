@@ -121,8 +121,8 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
             val request = CreatePrescriptionRequest()
             request.securedCreatePrescriptionRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(params)))
 
-            //request.programId = vendorName ?: "freehealth-connector"
-            request.programId = propertyHandler.getProperty("programIdentification") ?: "freehealth-connector"
+            request.programId = vendorName ?: "freehealth-connector"
+            //request.programId = propertyHandler.getProperty("programIdentification") ?: "freehealth-connector"
             request.id = "id" + UUID.randomUUID().toString()
             request.issueInstant = DateTime.now()
 
