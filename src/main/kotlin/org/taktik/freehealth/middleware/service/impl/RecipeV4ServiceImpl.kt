@@ -103,6 +103,7 @@ import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.mapPeriodToFrequency
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDaytime
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDurationType
+import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.freehealth.middleware.dao.CodeDao
 import org.taktik.freehealth.middleware.drugs.dto.MppId
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
@@ -146,7 +147,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val selectedType: String = inferPrescriptionType(medications, prescriptionType)
 
-        val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName, packageName, packageVersion, vendorEmail, vendorPhone)
+        val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName, packageName, packageVersion, vendorEmail, vendorPhone, expirationDate)
 
         val os = ByteArrayOutputStream()
         JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(m, os)
@@ -163,7 +164,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
 
         val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, expirationDate ?: LocalDateTime.now().plusMonths(3).minusDays(1))
 
-        val result = Prescription(Date(), "", prescriptionId!!, false, null, false, m)
+        val result = Prescription(Date(), "", prescriptionId!!, false, null, false, ConnectorXmlUtils.toString(m))
 
         return result
     }
@@ -179,7 +180,8 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         packageName: String?,
         packageVersion: String?,
         vendorEmail: String?,
-        vendorPhone: String?
+        vendorPhone: String?,
+        expirationDate: LocalDateTime?
                             ): Kmehrmessage {
         val config = KmehrPrescriptionConfig().apply {
             prescription.apply {
@@ -206,7 +208,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                 mail = vendorEmail
             }
         }
-        return getKmehrPrescription(patient, hcp, medications, deliveryDate, config, hcpQuality)
+        return getKmehrPrescription(patient, hcp, medications, deliveryDate, config, hcpQuality, expirationDate)
     }
 
     fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String {
@@ -253,7 +255,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         return false
     }
 
-    fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig, hcpQuality: String): Kmehrmessage {
+    fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig, hcpQuality: String, expirationDate: LocalDateTime?): Kmehrmessage {
 
         val language = config.prescription.language
         return Kmehrmessage().apply {
@@ -367,6 +369,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                     }
                     isIscomplete = true
                     isIsvalidated = true
+                    expirationdate = expirationDate?.let { makeXMLGregorianCalendarFromFuzzyLong(FuzzyValues.getFuzzyDate(it, ChronoUnit.DAYS)) }
                     headingsAndItemsAndTexts.add(HeadingType().apply {
                         ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "1" })
                         cds.add(CDHEADING().apply { s = CDHEADINGschemes.CD_HEADING; value = "prescription" })
