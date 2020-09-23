@@ -22,6 +22,7 @@ import be.fgov.ehealth.recipe.protocol.v4.RevokePrescriptionRequest
 import be.fgov.ehealth.recipe.protocol.v4.RevokePrescriptionResponse
 import be.fgov.ehealth.recipe.protocol.v4.SendNotificationRequest
 import be.fgov.ehealth.recipe.protocol.v4.SendNotificationResponse
+import be.recipe.services.prescriber.CreatePrescription
 import org.taktik.connector.business.recipeprojects.common.utils.EndpointResolver
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.connector.business.recipeprojects.core.services.GenericWebserviceCaller
@@ -87,6 +88,16 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
         samlToken: SAMLToken,
         credential: Credential,
         request: CreatePrescriptionRequest): CreatePrescriptionResponse? {
+        return GenericWebserviceCaller.callGenericWebservice(samlToken,
+                                                             credential,
+                                                             request, CreatePrescriptionResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:createPrescription\"")
+    }
+
+    @Throws(IntegrationModuleException::class)
+    fun createPrescriptionV4(
+        samlToken: SAMLToken,
+        credential: Credential,
+        request: CreatePrescription): CreatePrescriptionResponse? {
         return GenericWebserviceCaller.callGenericWebservice(samlToken,
                                                              credential,
                                                              request, CreatePrescriptionResponse::class.java, EndpointResolver.getEndpointUrlString("endpoint.recipe.prescriber.v4"), this.javaClass.getName(), true, true, true, true, "\"urn:be:fgov:ehealth:recipe:protocol:v4:createPrescription\"")
