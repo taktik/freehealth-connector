@@ -88,6 +88,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         prescription: ByteArray,
         prescriptionType: String,
         vision: String?,
+        vendorName: String?,
         expirationDate: LocalDateTime
                                    ): String? {
         ValidationUtils.validatePatientIdNotBlank(patientId)
@@ -119,7 +120,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
             val request = CreatePrescriptionRequest()
             request.securedCreatePrescriptionRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(params)))
 
-            request.programId = propertyHandler.getProperty("programIdentification") ?: "freehealth-connector"
+            request.programId = vendorName ?: "freehealth-connector"
             request.id = "id" + UUID.randomUUID().toString()
             request.issueInstant = DateTime.now()
 
