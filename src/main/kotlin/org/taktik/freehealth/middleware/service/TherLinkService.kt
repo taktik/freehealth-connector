@@ -41,8 +41,8 @@ interface TherLinkService {
         patientLastName: String,
         eidCardNumber: String?,
         isiCardNumber: String?,
-        startDate: Date?,
-        endDate: Date?,
+        startDate: Long?,
+        endDate: Long?,
         type: String?,
         sign: Boolean?
     ): TherapeuticLinkMessage?
@@ -56,6 +56,7 @@ interface TherLinkService {
     ): TherapeuticLinkMessage?
 
     fun doesLinkExist(keystoreId: UUID, tokenId: UUID, passPhrase: String, therLink: TherapeuticLink): TherapeuticLink?
+
     fun registerTherapeuticLink(
         keystoreId: UUID,
         tokenId: UUID,
@@ -69,8 +70,8 @@ interface TherLinkService {
         patientLastName: String,
         eidCardNumber: String?,
         isiCardNumber: String?,
-        start: Date?,
-        end: Date?,
+        start: Long?,
+        end: Long?,
         therLinkType: String?,
         comment: String?,
         sign: Boolean?,
@@ -90,8 +91,8 @@ interface TherLinkService {
         patientLastName: String,
         eidCardNumber: String?,
         isiCardNumber: String?,
-        start: Date?,
-        end: Date?,
+        start: Long?,
+        end: Long?,
         therLinkType: String?,
         comment: String?,
         sign: Boolean?,
@@ -119,7 +120,7 @@ interface TherLinkService {
         patientLastName: String,
         eidCardNumber: String?,
         isiCardNumber: String?,
-        startDate: Date?,
-        endDate: Date?,
+        startDate: Long?,
+        endDate: Long?,
         therLinkType: String?): HasTherapeuticLinkMessage?
 }

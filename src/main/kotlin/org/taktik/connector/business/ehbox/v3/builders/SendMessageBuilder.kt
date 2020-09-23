@@ -33,8 +33,12 @@ import java.util.UUID
 interface SendMessageBuilder {
     @Throws(IOException::class, EhboxBusinessConnectorException::class, TechnicalConnectorException::class)
     fun buildMessage(keystoreId: UUID,
-        keystore: KeyStore,
-        quality: String,
-        passPhrase: String,
-        document: DocumentMessage<Message>): SendMessageRequest
+                     keystore: KeyStore,
+                     quality: String,
+                     passPhrase: String,
+                     document: DocumentMessage<Message>,
+                     // User and Mandate elements are allowed in ehBox messages, but not in eh2Ebox specifications;
+                     // see pg. 9:
+                     // https://www.ehealth.fgov.be/ehealthplatform/file/view/6fe35988ac15c50a85612144deb56533?filename=eH2eBox%20-%20Cookbook%20v1.4%20dd%2020042020.pdf
+                     eH2eBox: Boolean = false): SendMessageRequest
 }
