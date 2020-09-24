@@ -98,6 +98,7 @@ import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20190301.makeDateTypeFromFuzzyLong
 import org.taktik.connector.business.domain.kmehr.v20190301.makeXGC
 import org.taktik.connector.business.domain.kmehr.v20190301.makeXMLGregorianCalendarFromFuzzyLong
+import org.taktik.connector.business.domain.kmehr.v20190301.makeXmlGregorianCalendar
 import org.taktik.connector.business.domain.kmehr.v20190301.s
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.mapPeriodToFrequency
@@ -146,7 +147,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val selectedType: String = inferPrescriptionType(medications, prescriptionType)
 
-        val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName, packageName, packageVersion, vendorEmail, vendorPhone)
+        val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName, packageName, packageVersion, vendorEmail, vendorPhone, expirationDate)
 
         val os = ByteArrayOutputStream()
         JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(m, os)
@@ -161,7 +162,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
             throw e
         }
 
-        val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, expirationDate ?: LocalDateTime.now().plusMonths(3).minusDays(1))
+        val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, vendorName, expirationDate ?: LocalDateTime.now().plusMonths(3).minusDays(1))
 
         val result = Prescription(Date(), "", prescriptionId!!)
 
@@ -179,7 +180,8 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         packageName: String?,
         packageVersion: String?,
         vendorEmail: String?,
-        vendorPhone: String?
+        vendorPhone: String?,
+        expirationDate: LocalDateTime?
                             ): Kmehrmessage {
         val config = KmehrPrescriptionConfig().apply {
             prescription.apply {
@@ -206,7 +208,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                 mail = vendorEmail
             }
         }
-        return getKmehrPrescription(patient, hcp, medications, deliveryDate, config, hcpQuality)
+        return getKmehrPrescription(patient, hcp, medications, deliveryDate, config, hcpQuality, expirationDate)
     }
 
     fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String {
@@ -253,7 +255,8 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         return false
     }
 
-    fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig, hcpQuality: String): Kmehrmessage {
+    fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig, hcpQuality: String,
+        expirationDate: LocalDateTime?): Kmehrmessage {
 
         val language = config.prescription.language
         return Kmehrmessage().apply {
@@ -334,7 +337,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                     cds.add(CDTRANSACTION().apply { s(CDTRANSACTIONschemes.CD_TRANSACTION); value = "pharmaceuticalprescription" })
                     date = config.header.date
                     time = config.header.time
-                    // expirationDate?.let { expirationdate = makeXGC(expirationDate.time) } // deprecated as of Kmehr 1.18 - 20161201
+                    expirationDate?.let { expirationdate = makeXmlGregorianCalendar(expirationDate) }
                     author = AuthorType().apply {
                         hcparties.add(HcpartyType().apply {
                             ids.add(IDHCPARTY().apply { s =

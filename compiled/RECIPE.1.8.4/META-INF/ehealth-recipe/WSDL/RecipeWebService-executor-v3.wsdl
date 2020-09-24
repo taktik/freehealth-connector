@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="RecipeExecutorWebservice" targetNamespace="urn:be:fgov:ehealth:recipe:protocol:v3" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:recipe="urn:be:fgov:ehealth:recipe:protocol:v3" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/">
+  <documentation>Version 3.0</documentation>
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="urn:be:fgov:ehealth:recipe:protocol:v3" schemaLocation="../XSD/ehealth-recipe-protocol-3_0.xsd" />
+    </xsd:schema>
+  </types>
+  <message name="RevokePrescriptionForExecutorRequest">
+    <part name="body" element="recipe:RevokePrescriptionForExecutorRequest" />
+  </message>
+  <message name="RevokePrescriptionForExecutorResponse">
+    <part name="body" element="recipe:RevokePrescriptionForExecutorResponse" />
+  </message>
+  <message name="AliveCheckRequest">
+    <part name="body" element="recipe:AliveCheckRequest" />
+  </message>
+  <message name="AliveCheckResponse">
+    <part name="body" element="recipe:AliveCheckResponse" />
+  </message>
+  <message name="CreateFeedbackRequest">
+    <part name="body" element="recipe:CreateFeedbackRequest" />
+  </message>
+  <message name="CreateFeedbackResponse">
+    <part name="body" element="recipe:CreateFeedbackResponse" />
+  </message>
+  <message name="GetPrescriptionForExecutorRequest">
+    <part name="body" element="recipe:GetPrescriptionForExecutorRequest" />
+  </message>
+  <message name="GetPrescriptionForExecutorResponse">
+    <part name="body" element="recipe:GetPrescriptionForExecutorResponse" />
+  </message>
+  <message name="MarkAsArchivedRequest">
+    <part name="body" element="recipe:MarkAsArchivedRequest" />
+  </message>
+  <message name="MarkAsArchivedResponse">
+    <part name="body" element="recipe:MarkAsArchivedResponse" />
+  </message>
+  <message name="MarkAsDeliveredRequest">
+    <part name="body" element="recipe:MarkAsDeliveredRequest" />
+  </message>
+  <message name="MarkAsDeliveredResponse">
+    <part name="body" element="recipe:MarkAsDeliveredResponse" />
+  </message>
+  <message name="MarkAsUnDeliveredRequest">
+    <part name="body" element="recipe:MarkAsUnDeliveredRequest" />
+  </message>
+  <message name="MarkAsUnDeliveredResponse">
+    <part name="body" element="recipe:MarkAsUnDeliveredResponse" />
+  </message>
+  <message name="ListNotificationsRequest">
+    <part name="body" element="recipe:ListNotificationsRequest" />
+  </message>
+  <message name="ListNotificationsResponse">
+    <part name="body" element="recipe:ListNotificationsResponse" />
+  </message>
+  <portType name="RecipeExecutorPortType">
+    <operation name="revokePrescriptionForExecutor">
+      <input message="recipe:RevokePrescriptionForExecutorRequest" />
+      <output message="recipe:RevokePrescriptionForExecutorResponse" />
+    </operation>
+    <operation name="aliveCheck">
+      <input message="recipe:AliveCheckRequest" />
+      <output message="recipe:AliveCheckResponse" />
+    </operation>
+    <operation name="createFeedback">
+      <input message="recipe:CreateFeedbackRequest" />
+      <output message="recipe:CreateFeedbackResponse" />
+    </operation>
+    <operation name="getPrescriptionForExecutor">
+      <input message="recipe:GetPrescriptionForExecutorRequest" />
+      <output message="recipe:GetPrescriptionForExecutorResponse" />
+    </operation>
+    <operation name="markAsArchived">
+      <input message="recipe:MarkAsArchivedRequest" />
+      <output message="recipe:MarkAsArchivedResponse" />
+    </operation>
+    <operation name="markAsDelivered">
+      <input message="recipe:MarkAsDeliveredRequest" />
+      <output message="recipe:MarkAsDeliveredResponse" />
+    </operation>
+    <operation name="markAsUnDelivered">
+      <input message="recipe:MarkAsUnDeliveredRequest" />
+      <output message="recipe:MarkAsUnDeliveredResponse" />
+    </operation>
+    <operation name="listNotifications">
+      <input message="recipe:ListNotificationsRequest" />
+      <output message="recipe:ListNotificationsResponse" />
+    </operation>
+  </portType>
+  <binding name="RecipeExecutorSoapBinding" type="recipe:RecipeExecutorPortType">
+    <soap11:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="revokePrescriptionForExecutor">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v3:RevokePrescriptionForExecutor" />
+      <input>
+        <soap11:body use="literal" />
+      </input>
+      <output>
+        <soap11:body use="literal" />
+      </output>
+    </operation>
+    <operation name="aliveCheck">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v3:AliveCheck" />
+      <input>
+        <soap11:body use="literal" />
+      </input>
+      <output>
+        <soap11:body use="literal" />
+      </output>
+    </operation>
+    <operation name="createFeedback">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v3:CreateFeedback" />
+      <input>
+        <soap11:body use="literal" />
+      </input>
+      <output>
+        <soap11:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getPrescriptionForExecutor">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v3:GetPrescriptionForExecutor" />
+      <input>
+        <soap11:body use="literal" />
+      </input>
+      <output>
+        <soap11:body use="literal" />
+      </output>
+    </operation>
+    <operation name="markAsArchived">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v3:MarkAsArchived" />
+      <input>
+        <soap11:body use="literal" />
+      </input>
+      <output>
+        <soap11:body use="literal" />
+      </output>
+    </operation>
+    <operation name="markAsDelivered">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v3:MarkAsDelivered" />
+      <input>
+        <soap11:body use="literal" />
+      </input>
+      <output>
+        <soap11:body use="literal" />
+      </output>
+    </operation>
+    <operation name="markAsUnDelivered">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v3:MarkAsUnDelivered" />
+      <input>
+        <soap11:body use="literal" />
+      </input>
+      <output>
+        <soap11:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listNotifications">
+      <soap11:operation style="document" soapAction="urn:be:fgov:ehealth:recipe:protocol:v3:ListNotifications" />
+      <input>
+        <soap11:body use="literal" />
+      </input>
+      <output>
+        <soap11:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="RecipeExecutorService">
+    <port name="RecipeExecutorServiceSOAP11" binding="recipe:RecipeExecutorSoapBinding">
+      <soap11:address location="https://services.ehealth.fgov.be/recipe/executor/v3" />
+    </port>
+  </service>
+</definitions>

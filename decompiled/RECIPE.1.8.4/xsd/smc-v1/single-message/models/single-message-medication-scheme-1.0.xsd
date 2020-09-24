@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.apb.be/standards/smoa/schema/model/v1" xmlns:code="http://www.apb.be/standards/smoa/schema/code/v1" xmlns:smoa="http://www.apb.be/standards/smoa/schema/v1" targetNamespace="http://www.apb.be/standards/smoa/schema/model/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:include schemaLocation="single-message-abstract-message-model-1.0.xsd" />
+	<xsd:import namespace="http://www.apb.be/standards/smoa/schema/v1" schemaLocation="../common/single-message-common-1.0.xsd" />
+	<xsd:import namespace="http://www.apb.be/standards/smoa/schema/code/v1" schemaLocation="single-message-code-type-1.0.xsd" />
+
+	<xsd:complexType name="AdministrationInstructionsFrequencyType">
+		<xsd:sequence>
+			<xsd:element name="nominator" type="smoa:DurationType" minOccurs="0" />
+			<xsd:element name="denominator" type="smoa:DurationType" minOccurs="0" />
+			<xsd:element name="text" type="xsd:string" minOccurs="0" />
+			<xsd:element name="periodicity" type="code:Abstract-PeriodicityType" minOccurs="0" />
+			<xsd:element name="administrationMoment" type="xsd:string" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="AdministrationType">
+		<xsd:sequence>
+			<xsd:element name="beginmoment" type="smoa:MomentType" minOccurs="0" />
+			<xsd:element name="endmoment" type="smoa:MomentType" minOccurs="0" />
+			<xsd:element name="temporality" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="cd" type="smoa:CD-TEMPORALITY" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="quantity" type="smoa:QuantityType" minOccurs="0" />
+			<xsd:element name="frequency" type="AdministrationInstructionsFrequencyType" minOccurs="0" />
+			<xsd:element name="site" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:choice>
+						<xsd:element name="cd" type="smoa:CD-SITE" />
+						<xsd:element name="text" type="xsd:string" />
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="dayperiod" type="smoa:CD-DAYPERIOD" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="duration" type="smoa:DurationType" minOccurs="0" />
+			<!-- POSOLOGY -->
+			<xsd:element ref="posology" minOccurs="0" />
+			<!-- REGIMEN -->
+			<xsd:element ref="regimen" minOccurs="0" />
+			<xsd:element name="renewal" type="smoa:DurationType" minOccurs="0" />
+			<xsd:element name="route" type="smoa:CD-DRUG-ROUTE" minOccurs="0" />
+			<xsd:element name="instructionforoverdosing" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>to justify voluntary 'overdosing'</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="instructionforpatient" type="xsd:string" minOccurs="0" />
+			<xsd:element name="instructionforreimbursement" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> to indicate the type of reimbursement based on medical justification for treatment </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="issubstitutionallowed" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The pharmacist would be free to choose the medicinal product package the first time a prescription is issued for this drug in INN, but that the pharmacist is supposed to stick to this choice for further deliveries.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="posology" type="PosologyType" substitutionGroup="abstract-Posology" />
+	<xsd:complexType name="PosologyType">
+		<xsd:annotation>
+			<xsd:documentation>quantity of product and frequence of administration per unit of period of time (day, week, hour, month etc...)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="AbstractPosologyType">
+				<xsd:choice>
+					<xsd:sequence>
+						<xsd:annotation>
+							<xsd:documentation>Structured expression of the ordered posology</xsd:documentation>
+						</xsd:annotation>
+						<xsd:element name="low" type="xsd:decimal" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Number of pharmaceutical product units per administration/intake e.g. 2, unit of pharmaceutical product, e.g. ml, puff,drop. can be empty which means "one piece" of the pharmaceutical product as present in the package.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="high" type="xsd:decimal" />
+						<xsd:element name="unit" type="code:Abstract-AdministrationUnitValuesCodeType" />
+						<xsd:element name="takes" type="PosologyTakesType">
+							<xsd:annotation>
+								<xsd:documentation>Number of takes in the given reference period, mostly daily. Only possible when the qty of product is the same for each of the takes, e.g. 2 for twice. Default: one</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+					<xsd:element name="text" type="xsd:string" />
+				</xsd:choice>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="PosologyTakesType">
+		<xsd:sequence>
+			<xsd:element name="low" type="xsd:decimal" minOccurs="0" />
+			<xsd:element name="high" type="xsd:decimal" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="regimen" type="RegimenType" substitutionGroup="abstract-Regimen" />
+	<xsd:complexType name="RegimenType">
+		<xsd:annotation>
+			<xsd:documentation>ordered day regimen of administration applicable either on a precised day or on basis of the frequency </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="AbstractRegimenType">
+				<xsd:sequence maxOccurs="unbounded">
+					<xsd:choice minOccurs="0">
+						<xsd:element name="daynumber" type="xsd:positiveInteger">
+							<xsd:annotation>
+								<xsd:documentation>to be used to precise the day of the week of applicability in case of dosage regimen changing over time</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="date" type="xsd:date">
+							<xsd:annotation>
+								<xsd:documentation>to be used to precise the date of applicability</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="weekday" type="code:Abstract-WeekDayCodeType">
+							<xsd:annotation>
+								<xsd:documentation>to be used to precise the day of the week of applicability</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:choice>
+					<xsd:element name="daytime" type="RegimenDayTimeType" />
+					<xsd:element name="quantity" type="RegimenAdministrationQuantityType">
+						<xsd:annotation>
+							<xsd:documentation>number of pharmaceutical product units per intake / per administration (piece, puff, ml,...)</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="RegimenAdministrationQuantityType">
+		<xsd:sequence>
+			<xsd:element name="decimal" type="xsd:decimal" />
+			<xsd:element name="unit" type="code:Abstract-AdministrationUnitValuesCodeType" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="RegimenDayTimeType">
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:element name="time" type="xsd:time">
+					<xsd:annotation>
+						<xsd:documentation>proposed hour-min of administration</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dayperiod" type="code:Abstract-DayPeriodCodeType">
+					<xsd:annotation>
+						<xsd:documentation>e.g. before noon</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

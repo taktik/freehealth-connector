@@ -1,0 +1,1851 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.apb.be/standards/smoa/schema/v1" targetNamespace="http://www.apb.be/standards/smoa/schema/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+
+	<xsd:simpleType name="BeMedicinalProductRegistrationNumberType">
+		<xsd:annotation>
+			<xsd:documentation>http://www.fagg-afmps.be/nl/items/gegevensbank_vergunde_geneesmiddelen/index.jsp</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int" />
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ActiveSubstanceUnitType"> <!-- TODO -->
+		<xsd:annotation>
+			<xsd:documentation>source: http://www.fagg-afmps.be/nl/binaries/HUM-2011%2E01%2E26_tcm290-27043.zip</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="UI/ML" />
+			<xsd:enumeration value="MG" />
+			<xsd:enumeration value="MG/ML" />
+			<xsd:enumeration value="MG/G" />
+			<xsd:enumeration value="Q.S." />
+			<xsd:enumeration value="..." />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PersonFirstNameType">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PersonNameType">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="80" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="FileNameType">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="256" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="FileType">
+		<xsd:sequence>
+			<xsd:sequence>
+				<xsd:element name="Name" type="FileNameType" />
+				<xsd:element name="MimeType" type="MediaTypeType" />
+				<xsd:element name="Size" type="xsd:string" minOccurs="0" />
+				<xsd:choice>
+					<xsd:element name="Content" type="xsd:base64Binary" />
+					<xsd:element name="URL" type="xsd:string" />
+				</xsd:choice>
+			</xsd:sequence>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="MedicinalProductSerialNumberType">
+		<xsd:restriction base="xsd:string" />
+	</xsd:simpleType>
+
+	<xsd:simpleType name="MedicinalProductUniqueBarcodeType">
+		<xsd:restriction base="xsd:int">
+			<xsd:pattern value="[0-9]{7}[0-9]{8}[0-9]{1}">
+				<xsd:annotation>
+					<xsd:documentation>
+						Bron stagegids versie 2010-2011 KLAV LTD BAF KOVAG KAVA De Westvlaamse
+						De unieke baarcode bestaat uit 16 cyfers
+						CNK 7 cijfers
+						Volgnummer 8 cijfers
+						Controlegetal 1 cijfer
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="NihiiPharmacyNumberType">
+		<xsd:restriction base="xsd:string" />
+	</xsd:simpleType>
+
+	<xsd:complexType name="MetaDataListType">
+		<xsd:sequence>
+			<xsd:element name="metaData" type="MetaDataType" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="MetaDataType">
+		<xsd:sequence>
+			<xsd:element name="key" type="xsd:string" />
+			<xsd:element name="value" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="CD-TIMEUNIT">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="a" />
+			<xsd:enumeration value="mo" />
+			<xsd:enumeration value="wk" />
+			<xsd:enumeration value="d" />
+			<xsd:enumeration value="hr" />
+			<xsd:enumeration value="min" />
+			<xsd:enumeration value="s" />
+			<xsd:enumeration value="ms" />
+			<xsd:enumeration value="us" />
+			<xsd:enumeration value="ns" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="DurationType">
+		<xsd:sequence>
+			<xsd:element name="decimal" type="xsd:decimal" />
+			<xsd:element name="unit" type="CD-TIMEUNIT" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="QuantityPrefix">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="ana" />
+			<xsd:enumeration value="ana ad" />
+			<xsd:enumeration value="ad" />
+			<xsd:enumeration value="qs" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="QuantityType">
+		<xsd:sequence>
+			<xsd:element name="decimal" type="xsd:decimal" />
+			<xsd:element name="unit">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:token">
+						<xsd:enumeration value="%" />
+						<xsd:enumeration value="%vv" />
+						<xsd:enumeration value="%wv" />
+						<xsd:enumeration value="%ww" />
+						<xsd:enumeration value="1000/mm3" />
+						<xsd:enumeration value="mg/dl" />
+						<xsd:enumeration value="amp" />
+						<xsd:enumeration value="bag" />
+						<xsd:enumeration value="bitperminute" />
+						<xsd:enumeration value="bol" />
+						<xsd:enumeration value="bot" />
+						<xsd:enumeration value="box" />
+						<xsd:enumeration value="c" />
+						<xsd:enumeration value="can" />
+						<xsd:enumeration value="cap" />
+						<xsd:enumeration value="cc" />
+						<xsd:enumeration value="cm" />
+						<xsd:enumeration value="cmm" />
+						<xsd:enumeration value="cnt" />
+						<xsd:enumeration value="ctr" />
+						<xsd:enumeration value="daily" />
+						<xsd:enumeration value="day" />
+						<xsd:enumeration value="spoon" />
+						<xsd:enumeration value="week" />
+						<xsd:enumeration value="month" />
+						<xsd:enumeration value="degree" />
+						<xsd:enumeration value="dis" />
+						<xsd:enumeration value="drm" />
+						<xsd:enumeration value="fl" />
+						<xsd:enumeration value="fld" />
+						<xsd:enumeration value="flo" />
+						<xsd:enumeration value="ftc" />
+						<xsd:enumeration value="fts" />
+						<xsd:enumeration value="g/dl" />
+						<xsd:enumeration value="mg" />
+						<xsd:enumeration value="mg/ml" />
+						<xsd:enumeration value="mg/l" />
+						<xsd:enumeration value="mg/m2" />
+						<xsd:enumeration value="minute" />
+						<xsd:enumeration value="mm" />
+						<xsd:enumeration value="mm/h" />
+						<xsd:enumeration value="mmhg" />
+						<xsd:enumeration value="second" />
+						<xsd:enumeration value="millisecond" />
+						<xsd:enumeration value="hour" />
+						<xsd:enumeration value="goutte" />
+						<xsd:enumeration value="ml" />
+						<xsd:enumeration value="ctg" />
+						<xsd:enumeration value="gal" />
+						<xsd:enumeration value="gm" />
+						<xsd:enumeration value="gr" />
+						<xsd:enumeration value="in" />
+						<xsd:enumeration value="inc" />
+						<xsd:enumeration value="jar" />
+						<xsd:enumeration value="kg" />
+						<xsd:enumeration value="kit" />
+						<xsd:enumeration value="l" />
+						<xsd:enumeration value="lb" />
+						<xsd:enumeration value="lm" />
+						<xsd:enumeration value="loz" />
+						<xsd:enumeration value="mcg" />
+						<xsd:enumeration value="mcl" />
+						<xsd:enumeration value="mcm" />
+						<xsd:enumeration value="mcn" />
+						<xsd:enumeration value="meq" />
+						<xsd:enumeration value="mic" />
+						<xsd:enumeration value="mil" />
+						<xsd:enumeration value="min" />
+						<xsd:enumeration value="mis" />
+						<xsd:enumeration value="mmo" />
+						<xsd:enumeration value="mol" />
+						<xsd:enumeration value="nl" />
+						<xsd:enumeration value="nmg" />
+						<xsd:enumeration value="nmo" />
+						<xsd:enumeration value="ns" />
+						<xsd:enumeration value="oz" />
+						<xsd:enumeration value="pel" />
+						<xsd:enumeration value="pg" />
+						<xsd:enumeration value="pkg" />
+						<xsd:enumeration value="pnu" />
+						<xsd:enumeration value="ppm" />
+						<xsd:enumeration value="pt" />
+						<xsd:enumeration value="qs" />
+						<xsd:enumeration value="qt" />
+						<xsd:enumeration value="sat" />
+						<xsd:enumeration value="spr" />
+						<xsd:enumeration value="sqc" />
+						<xsd:enumeration value="stp" />
+						<xsd:enumeration value="sup" />
+						<xsd:enumeration value="syr" />
+						<xsd:enumeration value="tab" />
+						<xsd:enumeration value="tbl" />
+						<xsd:enumeration value="tes" />
+						<xsd:enumeration value="ton" />
+						<xsd:enumeration value="tpn" />
+						<xsd:enumeration value="trc" />
+						<xsd:enumeration value="tro" />
+						<xsd:enumeration value="tsp" />
+						<xsd:enumeration value="tub" />
+						<xsd:enumeration value="umg" />
+						<xsd:enumeration value="unt" />
+						<xsd:enumeration value="vil" />
+						<xsd:enumeration value="vpr" />
+						<xsd:enumeration value="waf" />
+						<xsd:enumeration value="x" />
+						<xsd:enumeration value="ydl" />
+						<xsd:enumeration value="yds" />
+						<xsd:enumeration value="ondemand" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType mixed="false" name="TextType">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="language" type="xsd:language" use="optional" />
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="MomentType">
+		<xsd:choice>
+			<xsd:choice>
+				<xsd:element name="year" type="xsd:gYear" />
+				<xsd:element name="yearmonth" type="xsd:gYearMonth" />
+			</xsd:choice>
+			<xsd:sequence>
+				<xsd:element name="date" type="xsd:date" />
+				<xsd:element minOccurs="0" name="time" type="xsd:time" />
+			</xsd:sequence>
+			<xsd:element name="text" type="xsd:string" />
+		</xsd:choice>
+	</xsd:complexType>
+
+	<xsd:simpleType name="MediaTypeType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="text/html" />
+			<xsd:enumeration value="text/plain" />
+			<xsd:enumeration value="text/rtf" />
+			<xsd:enumeration value="text/sgml" />
+			<xsd:enumeration value="text/x-hl7-ft" />
+			<xsd:enumeration value="text/xml" />
+			<xsd:enumeration value="application/pdf" />
+			<xsd:enumeration value="application/x-tar" />
+			<xsd:enumeration value="application/zip" />
+			<xsd:enumeration value="application/msword" />
+			<xsd:enumeration value="image/gif" />
+			<xsd:enumeration value="image/jpeg" />
+			<xsd:enumeration value="image/tiff" />
+			<xsd:enumeration value="image/g3fax" />
+			<xsd:enumeration value="image/png" />
+			<xsd:enumeration value="audio/basic" />
+			<xsd:enumeration value="audio/k32adpcm" />
+			<xsd:enumeration value="audio/mp3" />
+			<xsd:enumeration value="model/vrml" />
+			<xsd:enumeration value="multipart/x-hl7-cda-level1" />
+			<xsd:enumeration value="video/mpeg" />
+			<xsd:enumeration value="video/x-avi" />
+			<xsd:enumeration value="kmb/transaction" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="OxygenTherapies">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="GAS" />
+			<xsd:enumeration value="LIQUID" />
+			<xsd:enumeration value="OXYGENCONCENTRATOR" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="ServiceType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="PCDH" />
+			<xsd:enumeration value="TIP" />
+			<xsd:enumeration value="CM" />
+			<xsd:enumeration value="UNCLASSIFIED" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="MessageType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="ERROR" />
+			<xsd:enumeration value="WARNING" />
+			<xsd:enumeration value="INFO" />
+			<xsd:enumeration value="REQUEST" />
+			<xsd:enumeration value="UNCLASSIFIED" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="CbeType">
+		<xsd:restriction base="xsd:token">
+			<xsd:pattern value="0(\d){9}"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="RizivInamiType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(\d){11}" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CnkType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(\d){7}" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="BelgiumSsnType">
+		<xsd:restriction base="xsd:token">
+			<xsd:pattern value="(\d){11}" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="UuidType">
+		<xsd:restriction base="xsd:token">
+			<xsd:annotation>
+				<xsd:documentation>Please refer to http://en.wikipedia.org/wiki/UUID for an explanation.</xsd:documentation>
+			</xsd:annotation>
+			<xsd:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="CD-PERIODICITY">
+		<xsd:restriction base="xsd:token" />
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="CD-ADMINISTRATIONUNIT">
+		<xsd:restriction base="xsd:token" />
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="CD-DRUG-ROUTE">
+		<xsd:restriction base="xsd:token" />
+	</xsd:simpleType>
+	
+	<!-- <xsd:simpleType name="CD-LIFECYCLE">
+		<xsd:restriction base="xsd:token">
+            <xsd:enumeration value="aborted"/>
+			<xsd:enumeration value="active"/>
+			<xsd:enumeration value="added"/>
+			<xsd:enumeration value="administrated"/>
+			<xsd:enumeration value="cancelled"/>
+			<xsd:enumeration value="completed"/>
+			<xsd:enumeration value="corrected"/>
+			<xsd:enumeration value="delivered"/>
+			<xsd:enumeration value="substituted"/>
+			<xsd:enumeration value="inactive"/>
+			<xsd:enumeration value="planned"/>
+			<xsd:enumeration value="prescribed"/>
+			<xsd:enumeration value="reported"/>
+			<xsd:enumeration value="refused"/>
+			<xsd:enumeration value="switched"/>
+            <xsd:enumeration value="suspended"/>
+            <xsd:enumeration value="stopped"/>
+		</xsd:restriction>
+	</xsd:simpleType> -->
+
+	<xsd:simpleType name="CD-TEMPORALITY">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="oneshot" />
+			<xsd:enumeration value="acute" />
+			<xsd:enumeration value="chronic" />
+			<xsd:enumeration value="reactivation" />
+			<xsd:enumeration value="remission" />
+			<xsd:enumeration value="subacute" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CD-SITE">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="BE" />
+			<xsd:enumeration value="blood" />
+			<xsd:enumeration value="BN" />
+			<xsd:enumeration value="BU" />
+			<xsd:enumeration value="CT" />
+			<xsd:enumeration value="LA" />
+			<xsd:enumeration value="LAC" />
+			<xsd:enumeration value="LACF" />
+			<xsd:enumeration value="LD" />
+			<xsd:enumeration value="LE" />
+			<xsd:enumeration value="LEJ" />
+			<xsd:enumeration value="LF" />
+			<xsd:enumeration value="LG" />
+			<xsd:enumeration value="LH" />
+			<xsd:enumeration value="LIJ" />
+			<xsd:enumeration value="LLAQ" />
+			<xsd:enumeration value="LLFA" />
+			<xsd:enumeration value="LMFA" />
+			<xsd:enumeration value="LN" />
+			<xsd:enumeration value="LPC" />
+			<xsd:enumeration value="LSC" />
+			<xsd:enumeration value="LT" />
+			<xsd:enumeration value="LUA" />
+			<xsd:enumeration value="LUAQ" />
+			<xsd:enumeration value="LUFA" />
+			<xsd:enumeration value="LVG" />
+			<xsd:enumeration value="LVL" />
+			<xsd:enumeration value="NB" />
+			<xsd:enumeration value="OD" />
+			<xsd:enumeration value="OS" />
+			<xsd:enumeration value="OU" />
+			<xsd:enumeration value="PA" />
+			<xsd:enumeration value="PERIN" />
+			<xsd:enumeration value="RA" />
+			<xsd:enumeration value="RAC" />
+			<xsd:enumeration value="RACF" />
+			<xsd:enumeration value="RD" />
+			<xsd:enumeration value="RE" />
+			<xsd:enumeration value="REJ" />
+			<xsd:enumeration value="RF" />
+			<xsd:enumeration value="RG" />
+			<xsd:enumeration value="RH" />
+			<xsd:enumeration value="RIJ" />
+			<xsd:enumeration value="RLAQ" />
+			<xsd:enumeration value="RLFA" />
+			<xsd:enumeration value="RMFA" />
+			<xsd:enumeration value="RN" />
+			<xsd:enumeration value="RPC" />
+			<xsd:enumeration value="RSC" />
+			<xsd:enumeration value="RT" />
+			<xsd:enumeration value="RUA" />
+			<xsd:enumeration value="RUAQ" />
+			<xsd:enumeration value="RUFA" />
+			<xsd:enumeration value="RVG" />
+			<xsd:enumeration value="RVL" />
+            <!-- Ortho -->
+			<xsd:enumeration value="lk" />
+			<xsd:enumeration value="rk" />
+			<xsd:enumeration value="lhip" />
+			<xsd:enumeration value="rhip" />
+            <!-- Ortho End -->
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CD-CONTACT-PERSON">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="FATHER" />
+			<xsd:enumeration value="MOTHER" />
+			<xsd:enumeration value="CHILD" />
+			<xsd:enumeration value="BROTHER" />
+			<xsd:enumeration value="BROTHERINLAW" />
+			<xsd:enumeration value="SISTER" />
+			<xsd:enumeration value="SISTERINLAW" /> <!-- ADDED BY SMC, NOT IN KMEHR -->
+			<xsd:enumeration value="GRANDPARENT" />
+			<xsd:enumeration value="HUSBAND" />
+			<xsd:enumeration value="SPOUSE" />
+			<xsd:enumeration value="PARTNER" />
+			<xsd:enumeration value="LAWYER" />
+			<xsd:enumeration value="NOTARY" />
+			<xsd:enumeration value="TUTOR" />
+			<xsd:enumeration value="EMPLOYER" />
+			<xsd:enumeration value="GUARDIAN" /> <!-- ADDED BY SMC, NOT IN KMEHR -->
+			<xsd:enumeration value="NEPHEW" /> <!-- ADDED BY SMC, NOT IN KMEHR -->
+			<xsd:enumeration value="NIECE" /> <!-- ADDED BY SMC, NOT IN KMEHR -->
+			<xsd:enumeration value="UNCLE" /> <!-- ADDED BY SMC, NOT IN KMEHR -->
+			<xsd:enumeration value="AUNT" /> <!-- ADDED BY SMC, NOT IN KMEHR -->
+			<xsd:enumeration value="FRIEND" /> <!-- ADDED BY SMC, NOT IN KMEHR -->
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CD-TELECOM">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="FAX" />
+			<xsd:enumeration value="EMAIL" />
+			<xsd:enumeration value="MOBILE" />
+			<xsd:enumeration value="PHONE" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CD-SEX">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="CHANGED" />
+			<xsd:enumeration value="FEMALE" />
+			<xsd:enumeration value="MALE" />
+			<xsd:enumeration value="UNKNOWN" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CD-ADDRESS">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="HOME" />
+			<xsd:enumeration value="WORK" />
+			<xsd:enumeration value="VACATION" />
+			<xsd:enumeration value="OTHER" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CD-WEEKDAY">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="MONDAY" />
+			<xsd:enumeration value="TUESDAY" />
+			<xsd:enumeration value="WEDNESDAY" />
+			<xsd:enumeration value="THURSDAY" />
+			<xsd:enumeration value="FRIDAY" />
+			<xsd:enumeration value="SATURDAY" />
+			<xsd:enumeration value="SUNDAY" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CD-DAYPERIOD">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="AFTERBREAKFAST" />
+			<xsd:enumeration value="AFTERDINNER" />
+			<xsd:enumeration value="AFTERLUNCH" />
+			<xsd:enumeration value="AFTERMEAL" />
+			<xsd:enumeration value="AFTERNOON" />
+			<xsd:enumeration value="BEFOREBREAKFAST" />
+			<xsd:enumeration value="BEFOREDINNER" />
+			<xsd:enumeration value="BEFORELUNCH" />
+			<xsd:enumeration value="BETWEENBREAKFASTANDLUNCH" />
+			<xsd:enumeration value="BETWEENDINNERANDSLEEP" />
+			<xsd:enumeration value="BETWEENLUNCHANDDINNER" />
+			<xsd:enumeration value="BETWEENMEALS" />
+			<xsd:enumeration value="DURINGBREAKFAST" />
+			<xsd:enumeration value="DURINGDINNER" />
+			<xsd:enumeration value="DURINGLUNCH" />
+			<xsd:enumeration value="EVENING" />
+			<xsd:enumeration value="MORNING" />
+			<xsd:enumeration value="NIGHT" />
+			<xsd:enumeration value="THEHOUROFSLEEP" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CD-HCPARTY">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="deptanatomopathology" />
+			<xsd:enumeration value="deptanesthesiology" />
+			<xsd:enumeration value="deptbacteriology" />
+			<xsd:enumeration value="deptcardiology" />
+			<xsd:enumeration value="deptdermatology" />
+			<xsd:enumeration value="deptdietetics" />
+			<xsd:enumeration value="deptemergency" />
+			<xsd:enumeration value="deptgastroenterology" />
+			<xsd:enumeration value="deptgeneralpractice" />
+			<xsd:enumeration value="deptgenetics" />
+			<xsd:enumeration value="deptgeriatry" />
+			<xsd:enumeration value="deptgynecology" />
+			<xsd:enumeration value="depthematology" />
+			<xsd:enumeration value="deptintensivecare" />
+			<xsd:enumeration value="deptkinesitherapy" />
+			<xsd:enumeration value="deptlaboratory" />
+			<xsd:enumeration value="deptmedicine" />
+			<xsd:enumeration value="deptmolecularbiology" />
+			<xsd:enumeration value="deptneonatalogy" />
+			<xsd:enumeration value="deptnephrology" />
+			<xsd:enumeration value="deptneurology" />
+			<xsd:enumeration value="deptnte" />
+			<xsd:enumeration value="deptnuclear" />
+			<xsd:enumeration value="deptoncology" />
+			<xsd:enumeration value="deptophtalmology" />
+			<xsd:enumeration value="deptpediatry" />
+			<xsd:enumeration value="deptpharmacy" />
+			<xsd:enumeration value="deptphysiotherapy" />
+			<xsd:enumeration value="deptpneumology" />
+			<xsd:enumeration value="deptpsychiatry" />
+			<xsd:enumeration value="deptradiology" />
+			<xsd:enumeration value="deptradiotherapy" />
+			<xsd:enumeration value="deptrhumatology" />
+			<xsd:enumeration value="deptstomatology" />
+			<xsd:enumeration value="deptsurgery" />
+			<xsd:enumeration value="depttoxicology" />
+			<xsd:enumeration value="depturology" />
+			<xsd:enumeration value="orghospital" />
+			<xsd:enumeration value="orginsurance" />
+			<xsd:enumeration value="orglaboratory" />
+			<xsd:enumeration value="orgpublichealth" />
+			<xsd:enumeration value="persbiologist" />
+			<xsd:enumeration value="persdentist" />
+			<xsd:enumeration value="persnurse" />
+			<xsd:enumeration value="persparamedical" />
+			<xsd:enumeration value="perspharmacist" />
+			<xsd:enumeration value="persphysician" />
+			<xsd:enumeration value="perssocialworker" />
+			<xsd:enumeration value="perstechnician" />
+			<xsd:enumeration value="persadministrative" />
+			<xsd:enumeration value="persmidwife" />
+			<xsd:enumeration value="ecaresafe" />
+			<xsd:enumeration value="application" />
+			<xsd:enumeration value="hub" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CD-COUNTRY">
+		<xsd:restriction base="xsd:token">
+			<xsd:annotation>
+				<xsd:documentation>http://www.iso.org/iso/english_country_names_and_code_elements</xsd:documentation>
+			</xsd:annotation>
+			<xsd:enumeration value="AD">
+				<xsd:annotation>
+					<xsd:documentation>ANDORRA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AE">
+				<xsd:annotation>
+					<xsd:documentation>UNITED ARAB EMIRATES</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AF">
+				<xsd:annotation>
+					<xsd:documentation>AFGHANISTAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AG">
+				<xsd:annotation>
+					<xsd:documentation>ANTIGUA AND BARBUDA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AI">
+				<xsd:annotation>
+					<xsd:documentation>ANGUILLA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AL">
+				<xsd:annotation>
+					<xsd:documentation>ALBANIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AM">
+				<xsd:annotation>
+					<xsd:documentation>ARMENIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AN">
+				<xsd:annotation>
+					<xsd:documentation>NETHERLANDS ANTILLES</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AO">
+				<xsd:annotation>
+					<xsd:documentation>ANGOLA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AQ">
+				<xsd:annotation>
+					<xsd:documentation>ANTARCTICA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AR">
+				<xsd:annotation>
+					<xsd:documentation>ARGENTINA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AS">
+				<xsd:annotation>
+					<xsd:documentation>AMERICAN SAMOA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AT">
+				<xsd:annotation>
+					<xsd:documentation>AUSTRIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AU">
+				<xsd:annotation>
+					<xsd:documentation>AUSTRALIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AW">
+				<xsd:annotation>
+					<xsd:documentation>ARUBA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AX">
+				<xsd:annotation>
+					<xsd:documentation>ÅLAND ISLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="AZ">
+				<xsd:annotation>
+					<xsd:documentation>AZERBAIJAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BA">
+				<xsd:annotation>
+					<xsd:documentation>BOSNIA AND HERZEGOVINA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BB">
+				<xsd:annotation>
+					<xsd:documentation>BARBADOS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BD">
+				<xsd:annotation>
+					<xsd:documentation>BANGLADESH</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BE">
+				<xsd:annotation>
+					<xsd:documentation>BELGIUM</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BF">
+				<xsd:annotation>
+					<xsd:documentation>BURKINA FASO</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BG">
+				<xsd:annotation>
+					<xsd:documentation>BULGARIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BH">
+				<xsd:annotation>
+					<xsd:documentation>BAHRAIN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BI">
+				<xsd:annotation>
+					<xsd:documentation>BURUNDI</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BJ">
+				<xsd:annotation>
+					<xsd:documentation>BENIN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BL">
+				<xsd:annotation>
+					<xsd:documentation>SAINT BARTHELEMY</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BM">
+				<xsd:annotation>
+					<xsd:documentation>BERMUDA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BN">
+				<xsd:annotation>
+					<xsd:documentation>BRUNEI DARUSSALAM</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BO">
+				<xsd:annotation>
+					<xsd:documentation>BOLIVIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BR">
+				<xsd:annotation>
+					<xsd:documentation>BRAZIL</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BS">
+				<xsd:annotation>
+					<xsd:documentation>BAHAMAS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BT">
+				<xsd:annotation>
+					<xsd:documentation>BHUTAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BV">
+				<xsd:annotation>
+					<xsd:documentation>BOUVET ISLAND</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BW">
+				<xsd:annotation>
+					<xsd:documentation>BOTSWANA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BY">
+				<xsd:annotation>
+					<xsd:documentation>BELARUS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="BZ">
+				<xsd:annotation>
+					<xsd:documentation>BELIZE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CA">
+				<xsd:annotation>
+					<xsd:documentation>CANADA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CC">
+				<xsd:annotation>
+					<xsd:documentation>COCOS (KEELING) ISLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CD">
+				<xsd:annotation>
+					<xsd:documentation>CONGO, THE DEMOCRATIC REPUBLIC OF THE </xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CF">
+				<xsd:annotation>
+					<xsd:documentation>CENTRAL AFRICAN REPUBLIC</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CG">
+				<xsd:annotation>
+					<xsd:documentation>CONGO</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CH">
+				<xsd:annotation>
+					<xsd:documentation>SWITZERLAND</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CI">
+				<xsd:annotation>
+					<xsd:documentation>COTE D'IVOIRE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CK">
+				<xsd:annotation>
+					<xsd:documentation>COOK ISLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CL">
+				<xsd:annotation>
+					<xsd:documentation>CHILE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CM">
+				<xsd:annotation>
+					<xsd:documentation>CAMEROON</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CN">
+				<xsd:annotation>
+					<xsd:documentation>CHINA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CO">
+				<xsd:annotation>
+					<xsd:documentation>COLOMBIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CR">
+				<xsd:annotation>
+					<xsd:documentation>COSTA RICA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CU">
+				<xsd:annotation>
+					<xsd:documentation>CUBA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CV">
+				<xsd:annotation>
+					<xsd:documentation>CAPE VERDE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CX">
+				<xsd:annotation>
+					<xsd:documentation>CHRISTMAS ISLAND</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CY">
+				<xsd:annotation>
+					<xsd:documentation>CYPRUS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CZ">
+				<xsd:annotation>
+					<xsd:documentation>CZECH REPUBLIC</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="DE">
+				<xsd:annotation>
+					<xsd:documentation>GERMANY</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="DJ">
+				<xsd:annotation>
+					<xsd:documentation>DJIBOUTI</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="DK">
+				<xsd:annotation>
+					<xsd:documentation>DENMARK</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="DM">
+				<xsd:annotation>
+					<xsd:documentation>DOMINICA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="DO">
+				<xsd:annotation>
+					<xsd:documentation>DOMINICAN REPUBLIC</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="DZ">
+				<xsd:annotation>
+					<xsd:documentation>ALGERIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="EC">
+				<xsd:annotation>
+					<xsd:documentation>ECUADOR</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="EE">
+				<xsd:annotation>
+					<xsd:documentation>ESTONIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="EG">
+				<xsd:annotation>
+					<xsd:documentation>EGYPT</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="EH">
+				<xsd:annotation>
+					<xsd:documentation>WESTERN SAHARA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="ER">
+				<xsd:annotation>
+					<xsd:documentation>ERITREA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="ES">
+				<xsd:annotation>
+					<xsd:documentation>SPAIN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="ET">
+				<xsd:annotation>
+					<xsd:documentation>ETHIOPIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="FI">
+				<xsd:annotation>
+					<xsd:documentation>FINLAND</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="FJ">
+				<xsd:annotation>
+					<xsd:documentation>FIJI</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="FK">
+				<xsd:annotation>
+					<xsd:documentation>FALKLAND ISLANDS (MALVINAS)</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="FM">
+				<xsd:annotation>
+					<xsd:documentation>MICRONESIA, FEDERATED STATES OF</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="FO">
+				<xsd:annotation>
+					<xsd:documentation>FAROE ISLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="FR">
+				<xsd:annotation>
+					<xsd:documentation>FRANCE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GA">
+				<xsd:annotation>
+					<xsd:documentation>GABON</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GB">
+				<xsd:annotation>
+					<xsd:documentation>UNITED KINGDOM</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GD">
+				<xsd:annotation>
+					<xsd:documentation>GRENADA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GE">
+				<xsd:annotation>
+					<xsd:documentation>GEORGIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GF">
+				<xsd:annotation>
+					<xsd:documentation>FRENCH GUIANA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GG">
+				<xsd:annotation>
+					<xsd:documentation>GUERNSEY</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GH">
+				<xsd:annotation>
+					<xsd:documentation>GHANA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GI">
+				<xsd:annotation>
+					<xsd:documentation>GIBRALTAR</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GL">
+				<xsd:annotation>
+					<xsd:documentation>GREENLAND</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GM">
+				<xsd:annotation>
+					<xsd:documentation>GAMBIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GN">
+				<xsd:annotation>
+					<xsd:documentation>GUINEA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GP">
+				<xsd:annotation>
+					<xsd:documentation>GUADELOUPE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GQ">
+				<xsd:annotation>
+					<xsd:documentation>EQUATORIAL GUINEA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GR">
+				<xsd:annotation>
+					<xsd:documentation>GREECE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GS">
+				<xsd:annotation>
+					<xsd:documentation>SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GT">
+				<xsd:annotation>
+					<xsd:documentation>GUATEMALA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GU">
+				<xsd:annotation>
+					<xsd:documentation>GUAM</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GW">
+				<xsd:annotation>
+					<xsd:documentation>GUINEA-BISSAU</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="GY">
+				<xsd:annotation>
+					<xsd:documentation>GUYANA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="HK">
+				<xsd:annotation>
+					<xsd:documentation>HONG KONG</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="HM">
+				<xsd:annotation>
+					<xsd:documentation>HEARD ISLAND AND MCDONALD ISLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="HN">
+				<xsd:annotation>
+					<xsd:documentation>HONDURAS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="HR">
+				<xsd:annotation>
+					<xsd:documentation>CROATIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="HT">
+				<xsd:annotation>
+					<xsd:documentation>HAITI</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="HU">
+				<xsd:annotation>
+					<xsd:documentation>HUNGARY</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="ID">
+				<xsd:annotation>
+					<xsd:documentation>INDONESIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="IE">
+				<xsd:annotation>
+					<xsd:documentation>IRELAND</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="IL">
+				<xsd:annotation>
+					<xsd:documentation>ISRAEL</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="IM">
+				<xsd:annotation>
+					<xsd:documentation>ISLE OF MAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="IN">
+				<xsd:annotation>
+					<xsd:documentation>INDIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="IO">
+				<xsd:annotation>
+					<xsd:documentation>BRITISH INDIAN OCEAN TERRITORY</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="IQ">
+				<xsd:annotation>
+					<xsd:documentation>IRAQ</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="IR">
+				<xsd:annotation>
+					<xsd:documentation>IRAN, ISLAMIC REPUBLIC OF</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="IS">
+				<xsd:annotation>
+					<xsd:documentation>ICELAND</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="IT">
+				<xsd:annotation>
+					<xsd:documentation>ITALY</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="JE">
+				<xsd:annotation>
+					<xsd:documentation>JERSEY</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="JM">
+				<xsd:annotation>
+					<xsd:documentation>JAMAICA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="JO">
+				<xsd:annotation>
+					<xsd:documentation>JORDAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="JP">
+				<xsd:annotation>
+					<xsd:documentation>JAPAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="KE">
+				<xsd:annotation>
+					<xsd:documentation>KENYA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="KG">
+				<xsd:annotation>
+					<xsd:documentation>KYRGYZSTAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="KH">
+				<xsd:annotation>
+					<xsd:documentation>CAMBODIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="KI">
+				<xsd:annotation>
+					<xsd:documentation>KIRIBATI</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="KM">
+				<xsd:annotation>
+					<xsd:documentation>COMOROS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="KN">
+				<xsd:annotation>
+					<xsd:documentation>SAINT KITTS AND NEVIS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="KP">
+				<xsd:annotation>
+					<xsd:documentation>KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="KR">
+				<xsd:annotation>
+					<xsd:documentation>KOREA, REPUBLIC OF</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="KW">
+				<xsd:annotation>
+					<xsd:documentation>KUWAIT</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="KY">
+				<xsd:annotation>
+					<xsd:documentation>CAYMAN ISLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="KZ">
+				<xsd:annotation>
+					<xsd:documentation>KAZAKHSTAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="LA">
+				<xsd:annotation>
+					<xsd:documentation>LAO PEOPLE'S DEMOCRATIC REPUBLIC</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="LB">
+				<xsd:annotation>
+					<xsd:documentation>LEBANON</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="LC">
+				<xsd:annotation>
+					<xsd:documentation>SAINT LUCIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="LI">
+				<xsd:annotation>
+					<xsd:documentation>LIECHTENSTEIN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="LK">
+				<xsd:annotation>
+					<xsd:documentation>SRI LANKA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="LR">
+				<xsd:annotation>
+					<xsd:documentation>LIBERIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="LS">
+				<xsd:annotation>
+					<xsd:documentation>LESOTHO</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="LT">
+				<xsd:annotation>
+					<xsd:documentation>LITHUANIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="LU">
+				<xsd:annotation>
+					<xsd:documentation>LUXEMBOURG</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="LV">
+				<xsd:annotation>
+					<xsd:documentation>LATVIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="LY">
+				<xsd:annotation>
+					<xsd:documentation>LIBYAN ARAB JAMAHIRIYA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MA">
+				<xsd:annotation>
+					<xsd:documentation>MOROCCO</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MC">
+				<xsd:annotation>
+					<xsd:documentation>MONACO</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MD">
+				<xsd:annotation>
+					<xsd:documentation>MOLDOVA, REPUBLIC OF</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="ME">
+				<xsd:annotation>
+					<xsd:documentation>MONTENEGRO</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MF">
+				<xsd:annotation>
+					<xsd:documentation>SAINT MARTIN (FRENCH PART)</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MG">
+				<xsd:annotation>
+					<xsd:documentation>MADAGASCAR</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MH">
+				<xsd:annotation>
+					<xsd:documentation>MARSHALL ISLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MK">
+				<xsd:annotation>
+					<xsd:documentation>MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="ML">
+				<xsd:annotation>
+					<xsd:documentation>MALI</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MM">
+				<xsd:annotation>
+					<xsd:documentation>MYANMAR</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MN">
+				<xsd:annotation>
+					<xsd:documentation>MONGOLIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MO">
+				<xsd:annotation>
+					<xsd:documentation>MACAO</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MP">
+				<xsd:annotation>
+					<xsd:documentation>NORTHERN MARIANA ISLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MQ">
+				<xsd:annotation>
+					<xsd:documentation>MARTINIQUE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MR">
+				<xsd:annotation>
+					<xsd:documentation>MAURITANIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MS">
+				<xsd:annotation>
+					<xsd:documentation>MONTSERRAT</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MT">
+				<xsd:annotation>
+					<xsd:documentation>MALTA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MU">
+				<xsd:annotation>
+					<xsd:documentation>MAURITIUS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MV">
+				<xsd:annotation>
+					<xsd:documentation>MALDIVES</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MW">
+				<xsd:annotation>
+					<xsd:documentation>MALAWI</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MX">
+				<xsd:annotation>
+					<xsd:documentation>MEXICO</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MY">
+				<xsd:annotation>
+					<xsd:documentation>MALAYSIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="MZ">
+				<xsd:annotation>
+					<xsd:documentation>MOZAMBIQUE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="NA">
+				<xsd:annotation>
+					<xsd:documentation>NAMIBIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="NC">
+				<xsd:annotation>
+					<xsd:documentation>NEW CALEDONIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="NE">
+				<xsd:annotation>
+					<xsd:documentation>NIGER</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="NF">
+				<xsd:annotation>
+					<xsd:documentation>NORFOLK ISLAND</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="NG">
+				<xsd:annotation>
+					<xsd:documentation>NIGERIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="NI">
+				<xsd:annotation>
+					<xsd:documentation>NICARAGUA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="NL">
+				<xsd:annotation>
+					<xsd:documentation>NETHERLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="NO">
+				<xsd:annotation>
+					<xsd:documentation>NORWAY</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="NP">
+				<xsd:annotation>
+					<xsd:documentation>NEPAL</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="NR">
+				<xsd:annotation>
+					<xsd:documentation>NAURU</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="NU">
+				<xsd:annotation>
+					<xsd:documentation>NIUE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="NZ">
+				<xsd:annotation>
+					<xsd:documentation>NEW ZEALAND</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="OM">
+				<xsd:annotation>
+					<xsd:documentation>OMAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PA">
+				<xsd:annotation>
+					<xsd:documentation>PANAMA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PE">
+				<xsd:annotation>
+					<xsd:documentation>PERU</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PF">
+				<xsd:annotation>
+					<xsd:documentation>FRENCH POLYNESIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PG">
+				<xsd:annotation>
+					<xsd:documentation>PAPUA NEW GUINEA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PH">
+				<xsd:annotation>
+					<xsd:documentation>PHILIPPINES</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PK">
+				<xsd:annotation>
+					<xsd:documentation>PAKISTAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PL">
+				<xsd:annotation>
+					<xsd:documentation>POLAND</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PM">
+				<xsd:annotation>
+					<xsd:documentation>SAINT PIERRE AND MIQUELON</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PN">
+				<xsd:annotation>
+					<xsd:documentation>PITCAIRN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PR">
+				<xsd:annotation>
+					<xsd:documentation>PUERTO RICO</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PS">
+				<xsd:annotation>
+					<xsd:documentation>PALESTINIAN TERRITORY, OCCUPIED</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PT">
+				<xsd:annotation>
+					<xsd:documentation>PORTUGAL</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PW">
+				<xsd:annotation>
+					<xsd:documentation>PALAU</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="PY">
+				<xsd:annotation>
+					<xsd:documentation>PARAGUAY</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="QA">
+				<xsd:annotation>
+					<xsd:documentation>QATAR</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="RE">
+				<xsd:annotation>
+					<xsd:documentation>REUNION</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="RO">
+				<xsd:annotation>
+					<xsd:documentation>ROMANIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="RS">
+				<xsd:annotation>
+					<xsd:documentation>SERBIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="RU">
+				<xsd:annotation>
+					<xsd:documentation>RUSSIAN FEDERATION</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="RW">
+				<xsd:annotation>
+					<xsd:documentation>RWANDA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SA">
+				<xsd:annotation>
+					<xsd:documentation>SAUDI ARABIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SB">
+				<xsd:annotation>
+					<xsd:documentation>SOLOMON ISLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SC">
+				<xsd:annotation>
+					<xsd:documentation>SEYCHELLES</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SD">
+				<xsd:annotation>
+					<xsd:documentation>SUDAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SE">
+				<xsd:annotation>
+					<xsd:documentation>SWEDEN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SG">
+				<xsd:annotation>
+					<xsd:documentation>SINGAPORE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SH">
+				<xsd:annotation>
+					<xsd:documentation>SAINT HELENA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SI">
+				<xsd:annotation>
+					<xsd:documentation>SLOVENIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SJ">
+				<xsd:annotation>
+					<xsd:documentation>SVALBARD AND JAN MAYEN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SK">
+				<xsd:annotation>
+					<xsd:documentation>SLOVAKIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SL">
+				<xsd:annotation>
+					<xsd:documentation>SIERRA LEONE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SM">
+				<xsd:annotation>
+					<xsd:documentation>SAN MARINO</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SN">
+				<xsd:annotation>
+					<xsd:documentation>SENEGAL</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SO">
+				<xsd:annotation>
+					<xsd:documentation>SOMALIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SR">
+				<xsd:annotation>
+					<xsd:documentation>SURINAME</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="ST">
+				<xsd:annotation>
+					<xsd:documentation>SAO TOME AND PRINCIPE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SV">
+				<xsd:annotation>
+					<xsd:documentation>EL SALVADOR</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SY">
+				<xsd:annotation>
+					<xsd:documentation>SYRIAN ARAB REPUBLIC</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="SZ">
+				<xsd:annotation>
+					<xsd:documentation>SWAZILAND</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TC">
+				<xsd:annotation>
+					<xsd:documentation>TURKS AND CAICOS ISLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TD">
+				<xsd:annotation>
+					<xsd:documentation>CHAD</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TF">
+				<xsd:annotation>
+					<xsd:documentation>FRENCH SOUTHERN TERRITORIES</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TG">
+				<xsd:annotation>
+					<xsd:documentation>TOGO</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TH">
+				<xsd:annotation>
+					<xsd:documentation>THAILAND</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TJ">
+				<xsd:annotation>
+					<xsd:documentation>TAJIKISTAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TK">
+				<xsd:annotation>
+					<xsd:documentation>TOKELAU</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TL">
+				<xsd:annotation>
+					<xsd:documentation>TIMOR-LESTE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TM">
+				<xsd:annotation>
+					<xsd:documentation>TURKMENISTAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TN">
+				<xsd:annotation>
+					<xsd:documentation>TUNISIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TO">
+				<xsd:annotation>
+					<xsd:documentation>TONGA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TR">
+				<xsd:annotation>
+					<xsd:documentation>TURKEY</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TT">
+				<xsd:annotation>
+					<xsd:documentation>TRINIDAD AND TOBAGO</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TV">
+				<xsd:annotation>
+					<xsd:documentation>TUVALU</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TW">
+				<xsd:annotation>
+					<xsd:documentation>TAIWAN, PROVINCE OF CHINA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="TZ">
+				<xsd:annotation>
+					<xsd:documentation>TANZANIA, UNITED REPUBLIC OF</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="UA">
+				<xsd:annotation>
+					<xsd:documentation>UKRAINE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="UG">
+				<xsd:annotation>
+					<xsd:documentation>UGANDA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="UM">
+				<xsd:annotation>
+					<xsd:documentation>UNITED STATES MINOR OUTLYING ISLANDS</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="US">
+				<xsd:annotation>
+					<xsd:documentation>UNITED STATES</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="UY">
+				<xsd:annotation>
+					<xsd:documentation>URUGUAY</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="UZ">
+				<xsd:annotation>
+					<xsd:documentation>UZBEKISTAN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="VA">
+				<xsd:annotation>
+					<xsd:documentation>HOLY SEE (VATICAN CITY STATE)</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="VC">
+				<xsd:annotation>
+					<xsd:documentation>SAINT VINCENT AND THE GRENADINES</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="VE">
+				<xsd:annotation>
+					<xsd:documentation>VENEZUELA, PLURINATIONAL STATE OF</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="VG">
+				<xsd:annotation>
+					<xsd:documentation>VIRGIN ISLANDS, BRITISH</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="VI">
+				<xsd:annotation>
+					<xsd:documentation>VIRGIN ISLANDS, U.S.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="VN">
+				<xsd:annotation>
+					<xsd:documentation>VIET NAM</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="VU">
+				<xsd:annotation>
+					<xsd:documentation>VANUATU</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="WF">
+				<xsd:annotation>
+					<xsd:documentation>WALLIS AND FUTUNA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="WS">
+				<xsd:annotation>
+					<xsd:documentation>SAMOA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="YE">
+				<xsd:annotation>
+					<xsd:documentation>YEMEN</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="YT">
+				<xsd:annotation>
+					<xsd:documentation>MAYOTTE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="ZA">
+				<xsd:annotation>
+					<xsd:documentation>SOUTH AFRICA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="ZM">
+				<xsd:annotation>
+					<xsd:documentation>ZAMBIA</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="ZW">
+				<xsd:annotation>
+					<xsd:documentation>ZIMBABWE</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

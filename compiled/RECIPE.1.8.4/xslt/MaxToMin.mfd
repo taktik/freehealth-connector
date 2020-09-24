@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="22">
+	<resources/>
+	<component name="defaultmap1" blackbox="0" uid="1" editable="1">
+		<properties SelectedLanguage="xslt2" UseWindowsPathConvention="0"/>
+		<structure>
+			<children>
+				<component name="INSZ" library="core" uid="9" kind="6">
+					<properties/>
+					<sources>
+						<datapoint/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="96"/>
+					</targets>
+					<view ltx="624" lty="484" rbx="696" rby="523"/>
+					<data>
+						<input datatype="string" previewvalue="INSZ" usepreviewvalue="1"/>
+						<wsdl/>
+						<parameter usageKind="input" name="INSZ" optional="1"/>
+					</data>
+				</component>
+				<component name="single-message-oa-1.0" library="xml" uid="2" kind="14">
+					<properties XSLTTargetEncoding="UTF-8"/>
+					<view ltx="26" rbx="593" rby="1317"/>
+					<data>
+						<root scrollposition="1">
+							<header>
+								<namespaces>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/v1"/>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/model/v1"/>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/id/v1"/>
+									<namespace uid="http://www.altova.com/mapforce"/>
+								</namespaces>
+							</header>
+							<entry name="FileInstance" ns="3" expanded="1">
+								<entry name="document" ns="3" expanded="1" casttotargettypemode="cast-in-subtree">
+									<entry name="single-message" expanded="1">
+										<entry name="unsigned" expanded="1">
+											<entry name="header" outkey="156" expanded="1">
+												<entry name="messageCreateDate" outkey="157"/>
+												<entry name="sender" outkey="158" expanded="1">
+													<entry name="refPharmacy" ns="1" outkey="159" expanded="1"/>
+													<entry name="refCareService" ns="1" expanded="1"/>
+													<entry name="refPharmacy" outkey="160" expanded="1"/>
+												</entry>
+												<entry name="messageId" outkey="161"/>
+											</entry>
+											<entry name="eventFolder" expanded="1">
+												<entry name="events" expanded="1">
+													<entry name="event" outkey="162" expanded="1" displayselectionmode="all">
+														<entry name="id" outkey="163"/>
+													</entry>
+													<entry name="event" expanded="1">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}PharmaceuticalCareEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+														<entry name="pharmacyId" expanded="1"/>
+													</entry>
+												</entry>
+												<entry name="entitySpace" expanded="1">
+													<entry name="entity" displayselectionmode="all"/>
+													<entry name="entity" outkey="164" expanded="1">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/model/v1}DeliveredMedicationHumanType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+														<entry name="dGUID" ns="1" outkey="165"/>
+														<entry name="deliveryDate" ns="1" outkey="166"/>
+														<entry name="quantity" ns="1" outkey="167"/>
+														<entry name="medicationConsumerPatient" ns="1" expanded="1">
+															<entry name="person" ns="1" expanded="1">
+																<entry name="id" ns="1" expanded="1">
+																	<condition>
+																		<expression>
+																			<function name="equal" library="core">
+																				<expression>
+																					<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																				</expression>
+																				<expression>
+																					<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}InszIdType" datatype="QName"/>
+																				</expression>
+																			</function>
+																		</expression>
+																	</condition>
+																	<entry name="insz" ns="2" outkey="252"/>
+																</entry>
+															</entry>
+														</entry>
+														<entry name="medicinalProduct" ns="1">
+															<entry name="id" ns="1" expanded="1">
+																<condition>
+																	<expression>
+																		<function name="equal" library="core">
+																			<expression>
+																				<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																			</expression>
+																			<expression>
+																				<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}CnkIdType" datatype="QName"/>
+																			</expression>
+																		</function>
+																	</expression>
+																</condition>
+																<entry name="cnk" ns="2" outkey="253"/>
+															</entry>
+														</entry>
+														<entry name="magistral" ns="1">
+															<entry name="preparation" ns="1" expanded="1">
+																<entry name="substance" ns="1">
+																	<entry name="dose" ns="1" expanded="1">
+																		<entry name="quantity" ns="1" outkey="254"/>
+																		<entry name="unit" ns="1" outkey="255"/>
+																	</entry>
+																</entry>
+																<entry name="quantity" ns="1" outkey="172" expanded="1"/>
+																<entry name="pharmForm" ns="1" outkey="173"/>
+																<entry name="unit" ns="1" outkey="256"/>
+															</entry>
+														</entry>
+														<entry name="patientPrescription" ns="1">
+															<entry name="recipeLines" ns="1" expanded="1">
+																<entry name="recipeLine" ns="1" expanded="1">
+																	<entry name="posology" ns="1">
+																		<entry name="low" ns="1" outkey="175"/>
+																		<entry name="high" ns="1" outkey="176"/>
+																		<entry name="unit" ns="1" outkey="177"/>
+																		<entry name="takes" ns="1" expanded="1">
+																			<entry name="low" ns="1" outkey="178"/>
+																			<entry name="high" ns="1" outkey="179"/>
+																		</entry>
+																		<entry name="text" ns="1" outkey="180"/>
+																	</entry>
+																	<entry name="regimen" ns="1" expanded="1">
+																		<entry name="regimenDate" ns="1" expanded="1">
+																			<entry name="date" ns="1" outkey="257"/>
+																			<entry name="weekday" ns="1" outkey="258"/>
+																		</entry>
+																		<entry name="regimenDayTime" ns="1" expanded="1">
+																			<entry name="time" ns="1" outkey="259"/>
+																			<entry name="dayperiod" ns="1" outkey="260"/>
+																		</entry>
+																		<entry name="regimenAdministrationQuantity" ns="1" expanded="1">
+																			<entry name="value" ns="1" outkey="261"/>
+																			<entry name="unit" ns="1" outkey="262"/>
+																		</entry>
+																	</entry>
+																</entry>
+															</entry>
+														</entry>
+													</entry>
+												</entry>
+											</entry>
+										</entry>
+									</entry>
+								</entry>
+							</entry>
+						</root>
+						<document schema="..\xsd\smc-v2\single-message\maindoc\single-message-oa-1.0.xsd" instanceroot="{http://www.apb.be/standards/smoa/schema/v1}single-message"/>
+						<wsdl/>
+					</data>
+				</component>
+				<component name="single-message-oa-1.0" library="xml" uid="3" kind="14">
+					<properties XSLTTargetEncoding="UTF-8" XSLTDefaultOutput="1"/>
+					<view ltx="715" rbx="1272" rby="1317"/>
+					<data>
+						<root scrollposition="1">
+							<header>
+								<namespaces>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/v1"/>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/model/v1"/>
+									<namespace uid="http://www.altova.com/mapforce"/>
+								</namespaces>
+							</header>
+							<entry name="FileInstance" ns="2" expanded="1">
+								<entry name="document" ns="2" expanded="1" casttotargettypemode="cast-in-subtree">
+									<entry name="single-message" expanded="1">
+										<entry name="unsigned" expanded="1">
+											<entry name="header" inpkey="30" expanded="1">
+												<entry name="messageCreateDate" inpkey="31"/>
+												<entry name="sender" inpkey="33" expanded="1">
+													<entry name="refPharmacy" ns="1" inpkey="130" expanded="1"/>
+													<entry name="refPharmacy" inpkey="131" expanded="1"/>
+												</entry>
+												<entry name="messageId" inpkey="132"/>
+											</entry>
+											<entry name="eventFolder" expanded="1">
+												<entry name="events" expanded="1">
+													<entry name="event" displayselectionmode="all"/>
+													<entry name="event" inpkey="263">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}MedicationDeliveryEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+														<entry name="id" inpkey="264"/>
+														<entry name="deliveries">
+															<entry name="deliveredMedicationHumanHistory" ns="1" inpkey="265">
+																<entry name="patient" ns="1">
+																	<entry name="patientIDType" ns="1" inpkey="266"/>
+																	<entry name="patientID" ns="1" inpkey="267"/>
+																</entry>
+																<entry name="pharmaceuticalInformation" ns="1">
+																	<entry name="product" ns="1">
+																		<entry name="Description">
+																			<entry name="MagistralPreparation">
+																				<entry name="MagistralComposition">
+																					<entry name="MagistralCompositionForm">
+																						<entry name="GalenicForm" inpkey="268"/>
+																						<entry name="Quantity" inpkey="269"/>
+																						<entry name="Unit" inpkey="270"/>
+																					</entry>
+																					<entry name="MagistralComposition">
+																						<entry name="Quantity" inpkey="271"/>
+																						<entry name="Unit" inpkey="272"/>
+																					</entry>
+																				</entry>
+																			</entry>
+																			<entry name="ProductCode" inpkey="273"/>
+																		</entry>
+																		<entry name="Dispensation">
+																			<entry name="AdministrationInstructions">
+																				<entry name="Posology">
+																					<entry name="Takes">
+																						<entry name="Low" inpkey="274"/>
+																						<entry name="High" inpkey="275"/>
+																					</entry>
+																					<entry name="PosologyText" inpkey="276"/>
+																					<entry name="Low" inpkey="277"/>
+																					<entry name="High" inpkey="278"/>
+																					<entry name="Unit" inpkey="279"/>
+																				</entry>
+																				<entry name="Regimen">
+																					<entry name="DayTime">
+																						<entry name="Time" inpkey="280"/>
+																						<entry name="DayPeriod" inpkey="281"/>
+																					</entry>
+																					<entry name="Quantity">
+																						<entry name="Amount" inpkey="282"/>
+																						<entry name="AdministrationUnit" inpkey="283"/>
+																					</entry>
+																					<entry name="Weekday" inpkey="284"/>
+																					<entry name="Date" inpkey="285"/>
+																				</entry>
+																			</entry>
+																			<entry name="NumberOfBoxes" inpkey="286"/>
+																		</entry>
+																	</entry>
+																	<entry name="deliveryDate" ns="1" inpkey="287"/>
+																</entry>
+																<entry name="dGUID" ns="1" inpkey="288"/>
+															</entry>
+														</entry>
+														<entry name="refPharmacy" inpkey="289"/>
+													</entry>
+												</entry>
+												<entry name="entitySpace">
+													<entry name="entity" expanded="1"/>
+												</entry>
+											</entry>
+										</entry>
+									</entry>
+								</entry>
+							</entry>
+						</root>
+						<document schema="..\xsd\smc-v2\single-message\maindoc\single-message-oa-1.0.xsd" instanceroot="{http://www.apb.be/standards/smoa/schema/v1}single-message"/>
+						<wsdl/>
+					</data>
+				</component>
+			</children>
+			<graph directed="1">
+				<edges>
+					<edge edgekey="187">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+				</edges>
+				<vertices>
+					<vertex vertexkey="96">
+						<edges>
+							<edge vertexkey="266" edgekey="290"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="156">
+						<edges>
+							<edge vertexkey="30" edgekey="188"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="157">
+						<edges>
+							<edge vertexkey="31" edgekey="189"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="158">
+						<edges>
+							<edge vertexkey="33" edgekey="190"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="159">
+						<edges>
+							<edge vertexkey="130" edgekey="187"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="160">
+						<edges>
+							<edge vertexkey="131" edgekey="192"/>
+							<edge vertexkey="289" edgekey="291"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="161">
+						<edges>
+							<edge vertexkey="132" edgekey="193"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="162">
+						<edges>
+							<edge vertexkey="263" edgekey="292"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="163">
+						<edges>
+							<edge vertexkey="264" edgekey="293"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="164">
+						<edges>
+							<edge vertexkey="265" edgekey="294"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="165">
+						<edges>
+							<edge vertexkey="288" edgekey="295"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="166">
+						<edges>
+							<edge vertexkey="287" edgekey="296"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="167">
+						<edges>
+							<edge vertexkey="286" edgekey="297"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="172">
+						<edges>
+							<edge vertexkey="271" edgekey="298"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="173">
+						<edges>
+							<edge vertexkey="268" edgekey="299"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="175">
+						<edges>
+							<edge vertexkey="277" edgekey="300"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="176">
+						<edges>
+							<edge vertexkey="278" edgekey="301"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="177">
+						<edges>
+							<edge vertexkey="279" edgekey="302"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="178">
+						<edges>
+							<edge vertexkey="274" edgekey="303"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="179">
+						<edges>
+							<edge vertexkey="275" edgekey="304"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="180">
+						<edges>
+							<edge vertexkey="276" edgekey="305"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="252">
+						<edges>
+							<edge vertexkey="267" edgekey="306"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="253">
+						<edges>
+							<edge vertexkey="273" edgekey="307"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="254">
+						<edges>
+							<edge vertexkey="269" edgekey="308"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="255">
+						<edges>
+							<edge vertexkey="270" edgekey="309"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="256">
+						<edges>
+							<edge vertexkey="272" edgekey="310"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="257">
+						<edges>
+							<edge vertexkey="285" edgekey="311"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="258">
+						<edges>
+							<edge vertexkey="284" edgekey="312"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="259">
+						<edges>
+							<edge vertexkey="280" edgekey="313"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="260">
+						<edges>
+							<edge vertexkey="281" edgekey="314"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="261">
+						<edges>
+							<edge vertexkey="282" edgekey="315"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="262">
+						<edges>
+							<edge vertexkey="283" edgekey="316"/>
+						</edges>
+					</vertex>
+				</vertices>
+			</graph>
+		</structure>
+	</component>
+</mapping>

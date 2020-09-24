@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:insurability:protocol:v2"
+           xmlns:ic="urn:be:fgov:ehealth:insurability:core:v2"
+           xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v1"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:ns1="urn:be:fgov:ehealth:insurability:protocol:v2"
+           targetNamespace="urn:be:fgov:ehealth:insurability:protocol:v2"
+           elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD 21. Insurability
+ Specification-Version: 2.0
+ Implementation-Version: 2.0.0-SNAPSHOT
+ Build-Time: 20150903-0002 
+ </xs:appinfo>
+ </xs:annotation>
+	<!-- core elements and types -->
+	<xs:import namespace="urn:be:fgov:ehealth:insurability:core:v2" schemaLocation="insurabilityservices_core-2_0.xsd"/>
+	<!--eHealth protocol element -->
+	<xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v1" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-1_7.xsd"/>
+	<!-- protocol elements -->
+	<!-- GetInsurabilityForPharmacist -->
+	<xs:element name="GetInsurabilityForPharmacistRequest" type="GetInsurabilityForPharmacistRequestType"/>
+	<xs:element name="GetInsurabilityForPharmacistResponse" type="GetInsurabilityForPharmacistResponseType"/>
+	<!-- Consultation service -->
+	<!-- GetInsurabilityForPharmacist -->
+	<xs:complexType name="GetInsurabilityForPharmacistRequestType">
+		<xs:annotation>
+			<xs:documentation>GetInsurabilityForPharmacistRequestType</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="protocol:RequestType">
+				<xs:sequence>
+					<xs:element name="CommonInput" type="ic:CommonInputType"/>
+					<xs:element name="RecordCommonInput" type="ic:RecordCommonInputType"/>
+					<xs:element name="InsurabilityRequest" type="ic:InsurabilityForPharmacistRequestType"/>
+					<xs:element name="ExtendedInformation" type="ic:SamlAttributeType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetInsurabilityForPharmacistResponseType">
+		<xs:annotation>
+			<xs:documentation>GetInsurabilityForPharmacistRequestType</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="protocol:ResponseType">
+				<xs:sequence minOccurs="0">
+					<xs:element name="CommonOutput" type="ic:CommonOutputType"/>
+					<xs:element name="RecordCommonOutput" type="ic:RecordCommonOutputType"/>
+					<xs:element name="ReturnInfo" type="ic:ReturnInfoType"/>
+					<xs:element name="InsurabilityResponse" type="ic:InsurabilityForPharmacistResponseType"/>
+					<xs:element name="ExtendedInformation" type="ic:SamlAttributeType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

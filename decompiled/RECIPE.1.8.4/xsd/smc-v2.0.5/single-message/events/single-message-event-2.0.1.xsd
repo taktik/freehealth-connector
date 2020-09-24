@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.apb.be/standards/smoa/schema/v1"
+            xmlns:id="http://www.apb.be/standards/smoa/schema/id/v1"
+            xmlns:model="http://www.apb.be/standards/smoa/schema/model/v1"
+            xmlns:smoa="http://www.apb.be/standards/smoa/schema/v1"
+            targetNamespace="http://www.apb.be/standards/smoa/schema/v1"
+            elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+    <xsd:include schemaLocation="../common/single-message-common-2.0.2.xsd"/>
+    <xsd:import namespace="http://www.apb.be/standards/smoa/schema/id/v1"
+                schemaLocation="../models/single-message-id-type-1.0.xsd"/>
+    <xsd:import namespace="http://www.apb.be/standards/smoa/schema/model/v1"
+                schemaLocation="../models/single-message-message-model-2.0.1.xsd"/>
+    <!-- helper types -->
+    <xsd:complexType name="deliveriesType">
+        <xsd:sequence>
+            <xsd:element ref="model:abstract-DeliveredMedication" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="referenceType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="SUBJECT_SSIN"/>
+            <xsd:enumeration value="VALIDATION_ERROR"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="OrganizationIdType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="NIHII"/>
+            <xsd:enumeration value="CBE"/>
+            <xsd:enumeration value="EHP"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="PersonIdType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="INSS"/>
+            <xsd:enumeration value="NIHII"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="OrganizationRoleType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ORG_HOSPITAL"/>
+            <xsd:enumeration value="ORG_NURSING"/>
+            <xsd:enumeration value="ORG_PHARMACY"/>
+            <xsd:enumeration value="ORG_HOMECARE"/>
+            <xsd:enumeration value="ORG_RESIDENTIALCARE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="PersonRoleType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="PHYSICIAN"/>
+            <xsd:enumeration value="PHARMACIST"/>
+            <xsd:enumeration value="NURSE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="AvailabilityStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ACTIVE"/>
+            <xsd:enumeration value="ENDED"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="FormatCode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="KMEHR_20120401"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="AbstractStatus" abstract="true">
+        <xsd:sequence>
+            <xsd:element name="code" type="xsd:string" minOccurs="1"/>
+            <xsd:element name="message" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="error">
+        <xsd:complexContent>
+            <xsd:extension base="AbstractStatus">
+                <xsd:sequence>
+                    <xsd:element name="reference" type="xsd:string" minOccurs="1"/>
+                    <xsd:element name="referenceType" type="referenceType" minOccurs="1"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="status">
+        <xsd:complexContent>
+            <xsd:extension base="AbstractStatus">
+                <xsd:sequence>
+                    <xsd:element name="error" type="error" minOccurs="0" maxOccurs="unbounded">
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="PaginationInfo">
+        <xsd:sequence>
+            <xsd:element name="paginationIndex" type="xsd:int" minOccurs="1"/>
+            <xsd:element name="paginationSize" type="xsd:int" minOccurs="1"/>
+            <xsd:element name="recordCount" type="xsd:int" minOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="AbstractAuthor" abstract="true"/>
+
+    <xsd:complexType name="Organization">
+        <xsd:complexContent>
+            <xsd:extension base="AbstractAuthor">
+                <xsd:sequence>
+                    <xsd:element name="name" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="organizationId" type="xsd:string" minOccurs="1"/>
+                    <xsd:element name="organizationIdType" type="OrganizationIdType" minOccurs="1"/>
+                    <xsd:element name="role" type="OrganizationRoleType" minOccurs="1"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="PersonIdentifier">
+        <xsd:sequence>
+            <xsd:element name="idType" type="PersonIdType" minOccurs="1"/>
+            <xsd:element name="idValue" type="xsd:string" minOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Person">
+        <xsd:complexContent>
+            <xsd:extension base="AbstractAuthor">
+                <xsd:sequence>
+                    <xsd:element name="personId" type="PersonIdentifier" minOccurs="1" maxOccurs="unbounded"/>
+                    <xsd:element name="firstName" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="lastName" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="role" type="PersonRoleType" minOccurs="1"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Author">
+        <xsd:choice minOccurs="1">
+            <xsd:element name="organization" type="Organization"/>
+            <xsd:element name="person" type="Person"/>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="AbstractDataEntry">
+        <xsd:sequence>
+            <xsd:element name="dguid" type="UuidType" minOccurs="1"/>
+            <xsd:element name="dataEntryId" type="xsd:string" minOccurs="1"/>
+            <xsd:element name="dataEntryVersion" type="xsd:int" minOccurs="0"/>
+            <xsd:element name="availabilityStatus" type="AvailabilityStatus" minOccurs="1"/>
+            <xsd:element name="formatCode" type="FormatCode" minOccurs="1"/>
+            <xsd:element name="metaDataList" type="MetaDataListType" minOccurs="0"/>
+            <xsd:choice>
+                <xsd:element name="businessData" type="xsd:base64Binary" minOccurs="1"/>
+                <xsd:element name="encryptedData" type="model:EncryptedDataType" minOccurs="1"/>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="DataEntryRequest">
+        <xsd:complexContent>
+            <xsd:extension base="AbstractDataEntry">
+                <xsd:sequence>
+                    <xsd:element name="reference" type="xsd:string" minOccurs="1"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="DataEntryResponse">
+        <xsd:complexContent>
+            <xsd:extension base="AbstractDataEntry">
+                <xsd:sequence>
+                    <xsd:element name="author" type="Author" minOccurs="1"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="MedicationSchemeResponse">
+        <xsd:sequence>
+            <xsd:element name="sguid" type="UuidType" minOccurs="1"/>
+            <xsd:element name="version" type="xsd:int" minOccurs="1"/>
+            <xsd:element name="lastUpdated" type="xsd:dateTime" minOccurs="1"/>
+            <xsd:element name="paginationInfo" type="PaginationInfo" minOccurs="1"/>
+            <xsd:element name="dataEntry" type="DataEntryResponse" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="metaData" type="MetaDataListType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="updatedBy" type="Author" minOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <!-- ABSTRACT BASE EVENT -->
+    <xsd:complexType name="AbstractEventType" abstract="true">
+        <xsd:sequence>
+            <xsd:element name="id" type="UuidType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!-- ACTUAL EVENT TYPES AS EXISTING IN ORIGINAL SMC, NOT USED IN GFDDPP FIRST PHASE -->
+    <xsd:complexType name="ArchivePrescriptionEventType">
+        <xsd:annotation>
+            <xsd:documentation>The ID if de session GUI</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="AbstractEventType">
+                <xsd:sequence>
+                    <xsd:element name="executorId" type="ID"/>
+                    <xsd:element name="rid" type="xsd:string"/>
+                    <xsd:element name="markAsDeliverTime" type="xsd:dateTime"/>
+                    <xsd:element name="archiveStandardVersion" type="xsd:string"/>
+                    <xsd:element name="archiveStandard" type="xsd:base64Binary"/>
+                    <xsd:element name="sguid" type="xsd:string"/>
+                    <xsd:element name="dguid" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="ID">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="Type" type="xsd:string"/>
+                <xsd:attribute name="IdType" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="ArchivePrescriptionCommentEventType">
+        <xsd:annotation>
+            <xsd:documentation>The ID if de session GUI</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="AbstractEventType">
+                <xsd:sequence>
+                    <xsd:element name="executorId" type="ID"/>
+                    <xsd:element name="rid" type="xsd:string"/>
+                    <xsd:element name="prescriptionCommentTime" type="xsd:dateTime"/>
+                    <xsd:element name="prescriptionCommentVersion" type="xsd:string"/>
+                    <xsd:element name="prescriptionComment" type="xsd:base64Binary"/>
+                    <xsd:element name="sguid" type="xsd:string"/>
+                    <xsd:element name="dguid" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="MedicationDeliveryEventType">
+        <xsd:complexContent>
+            <xsd:extension base="AbstractEventType">
+                <xsd:sequence>
+                    <xsd:element ref="model:abstract-Pharmacy"/>
+                    <xsd:element name="deliveries" type="deliveriesType" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="RegisterExportEventType">
+        <xsd:complexContent>
+            <xsd:extension base="AbstractEventType">
+                <xsd:sequence>
+                    <xsd:element ref="model:abstract-Pharmacy"/>
+                    <xsd:element name="beginDate" type="xsd:date"/>
+                    <xsd:element name="endDate" type="xsd:date"/>
+                    <xsd:element name="deliveries" type="deliveriesType" minOccurs="0"/>
+                    <xsd:element name="incoming" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element ref="model:abstract-IncomingMedication" minOccurs="0"
+                                             maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <!-- SUPPORTED IN GFDDPP FIRST PHASE -->
+    <xsd:complexType name="PharmaceuticalCareEventType">
+        <xsd:annotation>
+            <xsd:documentation>The maximal data set of a patient pharmaceutical care session. The ID is the session
+                GUID.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="AbstractEventType">
+                <xsd:sequence>
+                    <xsd:element name="sessionDateTime" type="xsd:dateTime"/>
+                    <xsd:element name="pharmacyId" type="id:NihiiIdType"/>
+                    <xsd:element ref="model:max-Patient"/>
+                    <!-- can only be the maximal data set representation of a patient -->
+                    <xsd:element name="dispensedForSamePrescription" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <!-- <xsd:element ref="model:abstract-Prescription" minOccurs="0"/> -->
+                                <xsd:element ref="model:hcparty"/>
+                                <xsd:element name="product" maxOccurs="unbounded">
+                                    <!-- TODO waar is de dispensation ID? -->
+                                    <xsd:complexType>
+                                        <xsd:complexContent>
+                                            <xsd:extension base="model:MaxSetProductType">
+                                                <xsd:attribute name="onSubstanceName" type="xsd:boolean"
+                                                               use="required"/>
+                                            </xsd:extension>
+                                        </xsd:complexContent>
+                                    </xsd:complexType>
+                                </xsd:element>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="dispensedWithoutPrescription" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="product" type="model:MaxSetProductType" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="pharmaceuticalCareActivities" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="drugRelatedProblem" type="model:DrugRelatedProblemType"
+                                             maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="metaDataList" type="MetaDataListType" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="BvacEventType">
+        <xsd:annotation>
+            <xsd:documentation>The ID is the session GUID.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="AbstractEventType">
+                <xsd:sequence>
+                    <xsd:element name="PharmacyList" type="model:PharmacyList" maxOccurs="1"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <!-- MINIMAL DATASET -->
+    <xsd:complexType name="MedicationHistoryEvent">
+        <xsd:complexContent>
+            <xsd:extension base="AbstractEventType">
+                <xsd:sequence>
+                    <xsd:element name="historyDate" type="xsd:dateTime" minOccurs="0"/>
+                    <xsd:element ref="model:medicationHistoryEntity" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element name="dataLocation" type="model:DataLocationType" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ContinuedPharmaceuticalCareDossierEvent">
+        <xsd:annotation>
+            <xsd:documentation>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="AbstractEventType">
+                <xsd:sequence>
+                    <xsd:element ref="model:min-Patient" />
+                    <xsd:element name="pharmacyId" type="id:NihiiIdType"/>
+                    <xsd:element name="dguid" type="UuidType" minOccurs="0"/>
+                    <xsd:element name="ContentDateTime" type="xsd:dateTime"/>
+                    <xsd:element name="ContentType" type="xsd:string"/>
+                    <xsd:element name="ContentInfo" minOccurs="0" type="InfoListType" />
+                    <xsd:element name="ContentData" type="xsd:base64Binary"/>
+                    <xsd:element name="metaDataList" minOccurs="0" type="MetaDataListType" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ContinuedPharmaceuticalCareEntity" >
+        <xsd:annotation>
+            <xsd:documentation>
+                EventType used by PCDH to respond to a "ContinuedPharmaceuticalCare" getData request
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="AbstractEventType">
+                <xsd:sequence>
+                    <xsd:element name="sguid" type="UuidType" minOccurs="0"/>
+                    <xsd:element name="dguid" type="UuidType" minOccurs="0"/>
+                    <xsd:element name="ContentDateTime" type="xsd:dateTime"/>
+                    <xsd:element name="ContentType" type="xsd:string"/>
+                    <xsd:element name="ContentInfo" minOccurs="0" type="InfoListType" />
+                    <xsd:element name="ContentData" type="xsd:base64Binary"/>
+                    <xsd:element name="metaDataList" minOccurs="0" type="MetaDataListType" />
+                    <xsd:element name="tipQualityIndicator" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ContinuedPharmaceuticalCareResponse">
+        <xsd:complexContent>
+            <xsd:extension base="AbstractEventType">
+                <xsd:sequence>
+                    <xsd:element ref="model:min-Patient" />
+                    <xsd:element name="currentDateTime" type="xsd:dateTime" minOccurs="1"/>
+                    <xsd:element name="entity" type="ContinuedPharmaceuticalCareEntity" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element name="dataLocation" type="model:DataLocationType" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    
+    
+    <xsd:complexType name="AbstractMedicationSchemeResponse">
+        <xsd:complexContent>
+            <xsd:extension base="AbstractEventType">
+                <xsd:sequence>
+                    <xsd:element name="clientMessageId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="serverMessageId" type="UuidType" minOccurs="1"/>
+                    <xsd:element name="status" type="status" minOccurs="1"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="MedicationSchemeTimestampsResponse">
+        <xsd:annotation>
+            <xsd:documentation>
+                EventType used by PCDH to respond to a "medicationscheme_timestamps" getData request
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="AbstractMedicationSchemeResponse">
+                <xsd:sequence>
+                    <xsd:element name="currentDateTime" type="xsd:dateTime" minOccurs="1"/>
+                    <xsd:element name="subjectTimestamp" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="subjectId" type="xsd:string" minOccurs="1"/>
+                                <xsd:element name="lastUpdated" type="xsd:dateTime" minOccurs="1"/>
+                                <xsd:element name="version" type="xsd:int"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+        <!-- ID of this thing is the UUID -->
+    </xsd:complexType>
+
+    <xsd:complexType name="MedicationSchemeEntriesResponse">
+        <xsd:annotation>
+            <xsd:documentation>
+                EventType used by PCDH to respond to a "medicationscheme_entries" getData Request
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="AbstractMedicationSchemeResponse">
+                <xsd:sequence>
+                    <xsd:element name="subjectId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="medicationScheme" type="MedicationSchemeResponse" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+        <!-- ID of this thing is the UUID -->
+    </xsd:complexType>
+
+    <xsd:complexType name="MedicationSchemeEntriesRequest">
+        <xsd:annotation>
+            <xsd:documentation>
+                EventType representing the request to store a medicationEntry
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="AbstractEventType">
+                <xsd:sequence>
+                    <xsd:element name="clientMessageId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="subjectId" type="xsd:string" minOccurs="1"/>
+                    <xsd:element name="version" type="xsd:int" minOccurs="0"/>
+                    <xsd:element name="currentDateTime" type="xsd:dateTime" minOccurs="1"/>
+                    <xsd:element name="dataEntry" type="DataEntryRequest" minOccurs="1" maxOccurs="unbounded"/>
+                    <xsd:element name="metaData" type="MetaDataListType" minOccurs="0" maxOccurs="1"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+</xsd:schema>

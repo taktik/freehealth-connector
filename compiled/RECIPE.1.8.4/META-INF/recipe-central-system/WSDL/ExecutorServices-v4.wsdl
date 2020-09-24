@@ -1,0 +1,330 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<definitions
+	xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+	xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http:/services.recipe.be/executor" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http:/services.recipe.be/executor"
+	name="ExecutorServices">
+	<types>
+		<xsd:schema>
+			<xsd:import namespace="http:/services.recipe.be/executor"
+				schemaLocation="../XSD/ExecutorServices-v4.xsd" />
+		</xsd:schema>
+	</types>
+	<message name="createFeedback">
+		<part name="parameters" element="tns:createFeedback" />
+	</message>
+	<message name="createFeedbackResponse">
+		<part name="parameters" element="tns:createFeedbackResponse" />
+	</message>
+	<message name="getPrescriptionForExecutor">
+		<part name="parameters" element="tns:getPrescriptionForExecutor" />
+	</message>
+	<message name="getPrescriptionForExecutorResponse">
+		<part name="parameters" element="tns:getPrescriptionForExecutorResponse" />
+	</message>
+	<message name="markAsArchived">
+		<part name="parameters" element="tns:markAsArchived" />
+	</message>
+	<message name="markAsArchivedResponse">
+		<part name="parameters" element="tns:markAsArchivedResponse" />
+	</message>
+	<message name="markAsDelivered">
+		<part name="parameters" element="tns:markAsDelivered" />
+	</message>
+	<message name="markAsDeliveredResponse">
+		<part name="parameters" element="tns:markAsDeliveredResponse" />
+	</message>
+	<message name="markAsUnDelivered">
+		<part name="parameters" element="tns:markAsUnDelivered" />
+	</message>
+	<message name="markAsUnDeliveredResponse">
+		<part name="parameters" element="tns:markAsUnDeliveredResponse" />
+	</message>
+	<message name="listNotifications">
+		<part name="parameters" element="tns:listNotifications" />
+	</message>
+	<message name="listNotificationsResponse">
+		<part name="parameters" element="tns:listNotificationsResponse" />
+	</message>
+	<message name="uploadFile">
+		<part name="parameters" element="tns:uploadFile" />
+	</message>
+	<message name="uploadFileResponse">
+		<part name="parameters" element="tns:uploadFileResponse" />
+	</message>
+	<message name="ping">
+		<part name="parameters" element="tns:ping" />
+	</message>
+	<message name="pingResponse">
+		<part name="parameters" element="tns:pingResponse" />
+	</message>
+	<message name="revokePrescription">
+		<part name="parameters" element="tns:revokePrescription" />
+	</message>
+	<message name="revokePrescriptionResponse">
+		<part name="parameters" element="tns:revokePrescriptionResponse" />
+	</message>
+	<message name="listOpenPrescriptions">
+		<part name="parameters" element="tns:listOpenPrescriptions" />
+	</message>
+	<message name="listOpenPrescriptionsResponse">
+		<part name="parameters" element="tns:listOpenPrescriptionsResponse" />
+	</message>
+	<message name="putRidsInProcess">
+		<part name="parameters" element="tns:putRidsInProcess" />
+	</message>
+	<message name="putRidsInProcessResponse">
+		<part name="parameters" element="tns:putRidsInProcessResponse" />
+	</message>
+	<message name="listRidsInProcess">
+		<part name="parameters" element="tns:listRidsInProcess" />
+	</message>
+	<message name="listRidsInProcessResponse">
+		<part name="parameters" element="tns:listRidsInProcessResponse" />
+	</message>
+	<message name="listReservations">
+		<part name="parameters" element="tns:listReservations" />
+	</message>
+	<message name="listReservationsResponse">
+		<part name="parameters" element="tns:listReservationsResponse" />
+	</message>
+	<message name="getPrescriptionStatus">
+		<part name="parameters" element="tns:getPrescriptionStatus" />
+	</message>
+	<message name="getPrescriptionStatusResponse">
+		<part name="parameters" element="tns:getPrescriptionStatusResponse" />
+	</message>
+	<message name="listRidsHistory">
+		<part name="parameters" element="tns:listRidsHistory" />
+	</message>
+	<message name="listRidsHistoryResponse">
+		<part name="parameters" element="tns:listRidsHistoryResponse" />
+	</message>
+	<message name="listRelations">
+		<part name="parameters" element="tns:listRelations" />
+	</message>
+	<message name="listRelationsResponse">
+		<part name="parameters" element="tns:listRelationsResponse" />
+	</message>
+	<portType name="ExecutorServices">
+		<operation name="createFeedback">
+			<input message="tns:createFeedback" />
+			<output message="tns:createFeedbackResponse" />
+		</operation>
+		<operation name="getPrescriptionForExecutor">
+			<input message="tns:getPrescriptionForExecutor" />
+			<output message="tns:getPrescriptionForExecutorResponse" />
+		</operation>
+		<operation name="markAsArchived">
+			<input message="tns:markAsArchived" />
+			<output message="tns:markAsArchivedResponse" />
+		</operation>
+		<operation name="markAsDelivered">
+			<input message="tns:markAsDelivered" />
+			<output message="tns:markAsDeliveredResponse" />
+		</operation>
+		<operation name="markAsUnDelivered">
+			<input message="tns:markAsUnDelivered" />
+			<output message="tns:markAsUnDeliveredResponse" />
+		</operation>
+		<operation name="listNotifications">
+			<input message="tns:listNotifications" />
+			<output message="tns:listNotificationsResponse" />
+		</operation>
+		<operation name="uploadFile">
+			<input message="tns:uploadFile" />
+			<output message="tns:uploadFileResponse" />
+		</operation>
+		<operation name="ping">
+			<input message="tns:ping" />
+			<output message="tns:pingResponse" />
+		</operation>
+		<operation name="revokePrescription">
+			<input message="tns:revokePrescription" />
+			<output message="tns:revokePrescriptionResponse" />
+		</operation>
+		<operation name="listOpenPrescriptions">
+			<input message="tns:listOpenPrescriptions" />
+			<output message="tns:listOpenPrescriptionsResponse" />
+		</operation>
+		<operation name="putRidsInProcess">
+			<input message="tns:putRidsInProcess" />
+			<output message="tns:putRidsInProcessResponse" />
+		</operation>
+		<operation name="listRidsInProcess">
+			<input message="tns:listRidsInProcess" />
+			<output message="tns:listRidsInProcessResponse" />
+		</operation>
+		<operation name="listReservations">
+			<input message="tns:listReservations" />
+			<output message="tns:listReservationsResponse" />
+		</operation>
+		<operation name="getPrescriptionStatus">
+			<input message="tns:getPrescriptionStatus" />
+			<output message="tns:getPrescriptionStatusResponse" />
+		</operation>
+		<operation name="listRidsHistory">
+			<input message="tns:listRidsHistory" />
+			<output message="tns:listRidsHistoryResponse" />
+		</operation>
+		<operation name="listRelations">
+			<input message="tns:listRelations" />
+			<output message="tns:listRelationsResponse" />
+		</operation>
+	</portType>
+	<binding name="ExecutorServicesPortBinding" type="tns:ExecutorServices">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"
+			style="document" />
+		<operation name="createFeedback">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="getPrescriptionForExecutor">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="markAsArchived">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="markAsDelivered">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="markAsUnDelivered">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="listNotifications">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="uploadFile">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="ping">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="revokePrescription">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="listOpenPrescriptions">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="putRidsInProcess">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="listRidsInProcess">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="listReservations">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="getPrescriptionStatus">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="listRidsHistory">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="listRelations">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+	</binding>
+	<service name="ExecutorServices">
+		<port name="ExecutorServicesPort" binding="tns:ExecutorServicesPortBinding">
+			<soap:address
+				location="http://localhost:8080/be-recipe-services-executor/v4/ExecutorServices?WSDL" />
+		</port>
+	</service>
+</definitions>

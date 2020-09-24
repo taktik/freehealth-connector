@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Oracle JAX-WS 2.1.5. -->
+<xs:schema xmlns:tns="http://services.recipe.be" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://services.recipe.be">
+
+    <xs:element name="RecipeException" nillable="true" type="tns:recipeExceptionDetails"/>
+
+    <xs:element name="getException" type="tns:getException"/>
+
+    <xs:element name="getExceptionResponse" type="tns:getExceptionResponse"/>
+
+    <xs:element name="getPrescriptionForPatient" type="tns:getPrescriptionForPatient"/>
+
+    <xs:element name="getPrescriptionForPatientResponse" type="tns:getPrescriptionForPatientResponse"/>
+
+    <xs:element name="listPatientPrescription" type="tns:listPatientPrescription"/>
+
+    <xs:element name="listPatientPrescriptionResponse" type="tns:listPatientPrescriptionResponse"/>
+
+    <xs:element name="ping" type="tns:ping"/>
+
+    <xs:element name="pingResponse" type="tns:pingResponse"/>
+
+    <xs:element name="recipeError" type="tns:recipeError"/>
+
+    <xs:element name="recipeExceptionDetails" type="tns:recipeExceptionDetails"/>
+
+    <xs:element name="revokePrescription" type="tns:revokePrescription"/>
+
+    <xs:element name="revokePrescriptionResponse" type="tns:revokePrescriptionResponse"/>
+
+    <xs:element name="updateFeedbackFlag" type="tns:updateFeedbackFlag"/>
+
+    <xs:element name="updateFeedbackFlagResponse" type="tns:updateFeedbackFlagResponse"/>
+
+    <xs:element name="uploadFile" type="tns:uploadFile"/>
+
+    <xs:element name="uploadFileResponse" type="tns:uploadFileResponse"/>
+
+    <xs:complexType name="ping">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="pingResponse">
+        <xs:sequence>
+            <xs:element name="PingResult" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="updateFeedbackFlag">
+        <xs:sequence>
+            <xs:element name="UpdateFeedbackFlagParam" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="updateFeedbackFlagResponse">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="recipeExceptionDetails">
+        <xs:sequence>
+            <xs:element name="code" type="xs:string" minOccurs="0"/>
+            <xs:element name="errorMap">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="key" minOccurs="0" type="xs:string"/>
+                                    <xs:element name="value" minOccurs="0" type="tns:recipeError"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="recipeError">
+        <xs:sequence>
+            <xs:element name="message" type="xs:string" minOccurs="0"/>
+            <xs:element name="resolution" type="xs:string" minOccurs="0"/>
+            <xs:element name="severity" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="getException">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="getExceptionResponse">
+        <xs:sequence>
+            <xs:element name="GetExceptionResult" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="listPatientPrescription">
+        <xs:sequence>
+            <xs:element name="ListPatientPrescriptionsParamSealed" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="listPatientPrescriptionResponse">
+        <xs:sequence>
+            <xs:element name="ListPatientPrescriptionsResultSealed" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="revokePrescription">
+        <xs:sequence>
+            <xs:element name="RevokePrescriptionParam" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="revokePrescriptionResponse">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="getPrescriptionForPatient">
+        <xs:sequence>
+            <xs:element name="GetPrescriptionForPatientParamSealed" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="getPrescriptionForPatientResponse">
+        <xs:sequence>
+            <xs:element name="GetPrescriptionForPatientResultSealed" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="uploadFile">
+        <xs:sequence>
+            <xs:element name="UploadFileParam" type="xs:base64Binary" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="uploadFileResponse">
+        <xs:sequence/>
+    </xs:complexType>
+</xs:schema>

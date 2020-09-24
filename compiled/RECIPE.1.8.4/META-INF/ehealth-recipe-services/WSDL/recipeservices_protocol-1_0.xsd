@@ -1,0 +1,428 @@
+<!-- CVS Version 1.13 --><!-- edited with XMLSpy v2009 (http://www.altova.com) by Smals-MVM ASBL/VZW (Smals-MVM ASBL/VZW) --><xs:schema targetNamespace="urn:be:fgov:ehealth:recipe:protocol:v1" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0" xmlns="urn:be:fgov:ehealth:recipe:protocol:v1" xmlns:core="urn:be:fgov:ehealth:commons:core:v1" xmlns:rc="urn:be:fgov:ehealth:recipe:core:v1" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> 
+	<!-- core elements and types --> 
+	<xs:import namespace="urn:be:fgov:ehealth:commons:core:v1" schemaLocation="ehealth-commons-schema-core-1_4.xsd"/> 
+	<xs:import namespace="urn:be:fgov:ehealth:recipe:core:v1" schemaLocation="recipeservices_core-1_0.xsd"/> 
+	<!--eHealth protocol element--> 
+	<xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v1" schemaLocation="ehealth-commons-schema-protocol-1_4.xsd"/> 
+	<!-- protocol elements --> 
+	<!-- Common --> 
+	<!-- AliveCheck --> 
+	<xs:element name="AliveCheckRequest" type="AliveCheckRequestType"/> 
+	<xs:element name="AliveCheckResponse" type="AliveCheckResponseType"/> 
+	<!-- Technical Services --> 
+	<!-- UploadFilePatient --> 
+	<xs:element name="UploadFilePatientRequest" type="UploadFileRequestType"/> 
+	<xs:element name="UploadFilePatientResponse" type="UploadFileResponseType"/> 
+	<!-- UploadFilePrescriber --> 
+	<xs:element name="UploadFilePrescriberRequest" type="UploadFileRequestType"/> 
+	<xs:element name="UploadFilePrescriberResponse" type="UploadFileResponseType"/> 
+	<!-- UploadFileExecutor --> 
+	<xs:element name="UploadFileExecutorRequest" type="UploadFileRequestType"/> 
+	<xs:element name="UploadFileExecutorResponse" type="UploadFileResponseType"/> 
+	<!-- Prescriber Services --> 
+	<!-- CreatePrescription Service --> 
+	<xs:element name="CreatePrescriptionRequest" type="CreatePrescriptionRequestType"/> 
+	<xs:element name="CreatePrescriptionResponse" type="CreatePrescriptionResponseType"/> 
+	<!-- SendNotification Service --> 
+	<xs:element name="SendNotificationRequest" type="SendNotificationRequestType"/> 
+	<xs:element name="SendNotificationResponse" type="SendNotificationResponseType"/> 
+	<!-- ListFeedbacks Service --> 
+	<xs:element name="ListFeedbacksRequest" type="ListFeedbacksRequestType"/> 
+	<xs:element name="ListFeedbacksResponse" type="ListFeedbacksResponseType"/> 
+	<!-- RevokePrescription --> 
+	<xs:element name="RevokePrescriptionRequest" type="RevokePrescriptionRequestType"/> 
+	<xs:element name="RevokePrescriptionResponse" type="RevokePrescriptionResponseType"/> 
+	<!-- ListOpenPrescriptions --> 
+	<xs:element name="ListOpenPrescriptionsRequest" type="ListOpenPrescriptionsRequestType"/> 
+	<xs:element name="ListOpenPrescriptionsResponse" type="ListOpenPrescriptionsResponseType"/> 
+	<!-- UpdateFeedbackFlag --> 
+	<xs:element name="UpdateFeedbackFlagRequest" type="UpdateFeedbackFlagRequestType"/> 
+	<xs:element name="UpdateFeedbackFlagResponse" type="UpdateFeedbackFlagResponseType"/> 
+	<!-- GetPrescriptionForPrescriber --> 
+	<xs:element name="GetPrescriptionForPrescriberRequest" type="GetPrescriptionForPrescriberRequestType"/> 
+	<xs:element name="GetPrescriptionForPrescriberResponse" type="GetPrescriptionForPrescriberResponseType"/> 
+	<!-- Executor Services --> 
+	<!-- RevokePrescription --> 
+	<xs:element name="RevokePrescriptionForExecutorRequest" type="RevokePrescriptionForExecutorRequestType"/> 
+	<xs:element name="RevokePrescriptionForExecutorResponse" type="RevokePrescriptionForExecutorResponseType"/> 
+	<!-- GetPrescriptionForExecutor --> 
+	<xs:element name="GetPrescriptionForExecutorRequest" type="GetPrescriptionForExecutorRequestType"/> 
+	<xs:element name="GetPrescriptionForExecutorResponse" type="GetPrescriptionForExecutorResponseType"/> 
+	<!-- CreateFeedback --> 
+	<xs:element name="CreateFeedbackRequest" type="CreateFeedbackRequestType"/> 
+	<xs:element name="CreateFeedbackResponse" type="CreateFeedbackResponseType"/> 
+	<!-- MarkAsDelivered --> 
+	<xs:element name="MarkAsDeliveredRequest" type="MarkAsDeliveredRequestType"/> 
+	<xs:element name="MarkAsDeliveredResponse" type="MarkAsDeliveredResponseType"/> 
+	<!-- MarkAsArchived --> 
+	<xs:element name="MarkAsArchivedRequest" type="MarkAsArchivedRequestType"/> 
+	<xs:element name="MarkAsArchivedResponse" type="MarkAsArchivedResponseType"/> 
+	<!-- MarkAsUnDelivered --> 
+	<xs:element name="MarkAsUnDeliveredRequest" type="MarkAsUnDeliveredRequestType"/> 
+	<xs:element name="MarkAsUnDeliveredResponse" type="MarkAsUnDeliveredResponseType"/> 
+	<!-- ListNotifications --> 
+	<xs:element name="ListNotificationsRequest" type="ListNotificationsRequestType"/> 
+	<xs:element name="ListNotificationsResponse" type="ListNotificationsResponseType"/> 
+	<!-- Patient Services --> 
+	<!-- UpdatePatientFeedbackFlag --> 
+	<xs:element name="UpdatePatientFeedbackFlagRequest" type="UpdatePatientFeedbackFlagRequestType"/> 
+	<xs:element name="UpdatePatientFeedbackFlagResponse" type="UpdatePatientFeedbackFlagResponseType"/> 
+	<!-- ListPatientPrescriptions --> 
+	<xs:element name="ListPatientPrescriptionsRequest" type="ListPatientPrescriptionsRequestType"/> 
+	<xs:element name="ListPatientPrescriptionsResponse" type="ListPatientPrescriptionsResponseType"/> 
+	<!-- RevokePatientPrescription --> 
+	<xs:element name="RevokePatientPrescriptionRequest" type="RevokePatientPrescriptionRequestType"/> 
+	<xs:element name="RevokePatientPrescriptionResponse" type="RevokePatientPrescriptionResponseType"/> 
+	<!-- GetPrescriptionForPatient --> 
+	<xs:element name="GetPrescriptionForPatientRequest" type="GetPrescriptionForPatientRequestType"/> 
+	<xs:element name="GetPrescriptionForPatientResponse" type="GetPrescriptionForPatientResponseType"/> 
+	<!-- protocol types --> 
+	<!-- Common --> 
+	<!-- AliveCheck --> 
+	<xs:complexType name="AliveCheckRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"/> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="AliveCheckResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"> 
+				<xs:sequence minOccurs="0"> 
+					<xs:element name="AliveCheckResult" type="xs:string"/> 
+					<!--xs:element name="SecuredAliveCheckResult" type="rc:SecuredContentType"/--> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- UploadFile --> 
+	<xs:complexType name="UploadFileRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredUploadFileRequest" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="UploadFileResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"/> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- Prescriber Services --> 
+	<!-- CreatePrescription --> 
+	<xs:complexType name="CreatePrescriptionRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredCreatePrescriptionRequest" type="rc:SecuredContentType"/> 
+					<xs:element name="AdministrativeInformation" type="rc:CreatePrescriptionAdministrativeInformationType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="CreatePrescriptionResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"> 
+				<xs:sequence minOccurs="0"> 
+					<xs:element name="SecuredCreatePrescriptionResponse" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- SendNotification --> 
+	<xs:complexType name="SendNotificationRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredSendNotificationRequest" type="rc:SecuredContentType"/> 
+					<xs:element name="AdministrativeInformation" type="rc:SendNotificationAdministrativeInformationType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="SendNotificationResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"/> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- ListFeedbacks --> 
+	<xs:complexType name="ListFeedbacksRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredListFeedbacksRequest" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="ListFeedbacksResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"> 
+				<xs:sequence minOccurs="0"> 
+					<xs:element name="SecuredListFeedbacksResponse" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- RevokePrescription --> 
+	<xs:complexType name="RevokePrescriptionRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredRevokePrescriptionRequest" type="rc:SecuredContentType"/> 
+					<xs:element name="AdministrativeInformation" type="rc:PrescriberServiceAdministrativeInformationType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="RevokePrescriptionResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"/> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- ListOpenPrescriptions --> 
+	<xs:complexType name="ListOpenPrescriptionsRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredListOpenPrescriptionsRequest" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="ListOpenPrescriptionsResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"> 
+				<xs:sequence minOccurs="0"> 
+					<xs:element name="SecuredListOpenPrescriptionsResponse" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- UpdateFeedbackFlag --> 
+	<xs:complexType name="UpdateFeedbackFlagRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredUpdateFeedbackFlagRequest" type="rc:SecuredContentType"/> 
+					<xs:element name="AdministrativeInformation" type="rc:PrescriberServiceAdministrativeInformationType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="UpdateFeedbackFlagResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"/> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- GetPrescriptionForPrescriber --> 
+	<xs:complexType name="GetPrescriptionForPrescriberRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredGetPrescriptionForPrescriberRequest" type="rc:SecuredContentType"/> 
+					<xs:element name="AdministrativeInformation" type="rc:PrescriberServiceAdministrativeInformationType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="GetPrescriptionForPrescriberResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"> 
+				<xs:sequence minOccurs="0"> 
+					<xs:element name="SecuredGetPrescriptionForPrescriberResponse" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- Executor Services --> 
+	<!-- RevokePrescription --> 
+	<xs:complexType name="RevokePrescriptionForExecutorRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredRevokePrescriptionRequest" type="rc:SecuredContentType"/> 
+					<xs:element name="AdministrativeInformation" type="rc:ExecutorServiceAdministrativeInformationType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="RevokePrescriptionForExecutorResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"/> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- GetPrescriptionForExecutor --> 
+	<xs:complexType name="GetPrescriptionForExecutorRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredGetPrescriptionForExecutorRequest" type="rc:SecuredContentType"/> 
+					<xs:element name="AdministrativeInformation" type="rc:ExecutorServiceAdministrativeInformationType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="GetPrescriptionForExecutorResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"> 
+				<xs:sequence minOccurs="0"> 
+					<xs:element name="SecuredGetPrescriptionForExecutorResponse" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- CreateFeedback --> 
+	<xs:complexType name="CreateFeedbackRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredCreateFeedbackRequest" type="rc:SecuredContentType"/> 
+					<xs:element name="AdministrativeInformation" type="rc:ExecutorServiceAdministrativeInformationType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="CreateFeedbackResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"/> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- MarkAsDelivered --> 
+	<xs:complexType name="MarkAsDeliveredRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredMarkAsDeliveredRequest" type="rc:SecuredContentType"/> 
+					<xs:element name="AdministrativeInformation" type="rc:ExecutorServiceAdministrativeInformationType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="MarkAsDeliveredResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"/> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- MarkAsArchived --> 
+	<xs:complexType name="MarkAsArchivedRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredMarkAsArchivedRequest" type="rc:SecuredContentType"/> 
+					<xs:element name="AdministrativeInformation" type="rc:ExecutorServiceAdministrativeInformationType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="MarkAsArchivedResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"/> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- MarkAsUnDelivered --> 
+	<xs:complexType name="MarkAsUnDeliveredRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredMarkAsUnDeliveredRequest" type="rc:SecuredContentType"/> 
+					<xs:element name="AdministrativeInformation" type="rc:ExecutorServiceAdministrativeInformationType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="MarkAsUnDeliveredResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"/> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- ListNotifications --> 
+	<xs:complexType name="ListNotificationsRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredListNotificationsRequest" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="ListNotificationsResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"> 
+				<xs:sequence minOccurs="0"> 
+					<xs:element name="SecuredListNotificationsResponse" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- Patient Services --> 
+	<!-- UpdatePatientFeedbackFlag --> 
+	<xs:complexType name="UpdatePatientFeedbackFlagRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredUpdatePatientFeedbackFlagRequest" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="UpdatePatientFeedbackFlagResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"/> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- ListPatientPrescriptions --> 
+	<xs:complexType name="ListPatientPrescriptionsRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredListPatientPrescriptionsRequest" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="ListPatientPrescriptionsResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"> 
+				<xs:sequence minOccurs="0"> 
+					<xs:element name="SecuredListPatientPrescriptionsResponse" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- RevokePatientPrescription --> 
+	<xs:complexType name="RevokePatientPrescriptionRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredRevokePatientPrescriptionRequest" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="RevokePatientPrescriptionResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"/> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<!-- GetPrescriptionForPatient --> 
+	<xs:complexType name="GetPrescriptionForPatientRequestType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:RequestType"> 
+				<xs:sequence> 
+					<xs:element name="SecuredGetPrescriptionForPatientRequest" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+	<xs:complexType name="GetPrescriptionForPatientResponseType"> 
+		<xs:complexContent> 
+			<xs:extension base="protocol:ResponseType"> 
+				<xs:sequence minOccurs="0"> 
+					<xs:element name="SecuredGetPrescriptionForPatientResponse" type="rc:SecuredContentType"/> 
+				</xs:sequence> 
+			</xs:extension> 
+		</xs:complexContent> 
+	</xs:complexType> 
+</xs:schema>

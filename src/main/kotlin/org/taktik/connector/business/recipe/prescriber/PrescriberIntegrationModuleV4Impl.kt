@@ -17,6 +17,7 @@ import be.fgov.ehealth.recipe.protocol.v4.ListRidsHistoryRequest
 import be.fgov.ehealth.recipe.protocol.v4.ListRidsHistoryResponse
 import be.fgov.ehealth.recipe.protocol.v4.PutVisionForPrescriberRequest
 import be.fgov.ehealth.recipe.protocol.v4.PutVisionForPrescriberResponse
+import be.recipe.services.prescriber.CreatePrescription
 import be.recipe.services.prescriber.CreatePrescriptionParam
 import be.recipe.services.prescriber.CreatePrescriptionResult
 import be.recipe.services.prescriber.GetPrescriptionStatusParam
@@ -30,6 +31,7 @@ import be.recipe.services.prescriber.PutVisionResult
 import be.recipe.services.prescriber.ValidationPropertiesParam
 import be.recipe.services.prescriber.ValidationPropertiesResult
 import com.sun.xml.internal.ws.client.ClientTransportException
+import org.apache.commons.lang.RandomStringUtils
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
@@ -52,6 +54,7 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.MarshallerHelper
+import org.taktik.connector.technical.validator.SessionValidator
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
@@ -76,6 +79,7 @@ import javax.xml.xpath.XPathFactory
 class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService: KeyDepotService) : PrescriberIntegrationModuleImpl(stsService, keyDepotService), PrescriberIntegrationModuleV4 {
     private val log = LoggerFactory.getLogger(PrescriberIntegrationModuleV4Impl::class.java)
     private val recipePrescriberServiceV4 = RecipePrescriberServiceV4Impl()
+    private val useNewCall = false
 
     override fun createPrescription(
         keystore: KeyStore,
@@ -88,6 +92,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         prescription: ByteArray,
         prescriptionType: String,
         vision: String?,
+        vendorName: String?,
         expirationDate: LocalDateTime
                                    ): String? {
         ValidationUtils.validatePatientIdNotBlank(patientId)
@@ -116,23 +121,40 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
             log.info("Recip-e v4 prescription is {}", prescription.toString(Charsets.UTF_8))
             log.info("Recip-e v4 message is {}", ConnectorXmlUtils.toString(params))
 
-            val request = CreatePrescriptionRequest()
-            request.securedCreatePrescriptionRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(params)))
+            val response: CreatePrescriptionResponse? = if (useNewCall) {
+                val request = CreatePrescription()
+                request.createPrescriptionParamSealed = sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(params))
 
-            request.programId = propertyHandler.getProperty("programIdentification") ?: "freehealth-connector"
-            request.id = "id" + UUID.randomUUID().toString()
-            request.issueInstant = DateTime.now()
+                request.keyId = key.keyId
+                request.prescriptionType = prescriptionType
+                request.documentId = generateRid(prescriptionType)
+                request.prescriptionVersion = extractPrescriptionVersionFromKmehr(prescription)
+                request.referenceSourceVersion = extractReferenceSourceVersionFromKmehr(prescription)
+                request.programIdentification = vendorName ?: "freehealth-connector"
+                request.mguid = UUID.randomUUID().toString()
 
-            val adminValue = CreatePrescriptionAdministrativeInformationType()
-            adminValue.keyIdentifier = key.keyId.toByteArray()
-            adminValue.prescriptionVersion = extractPrescriptionVersionFromKmehr(prescription)
-            adminValue.referenceSourceVersion = extractReferenceSourceVersionFromKmehr(prescription)
-            adminValue.prescriptionType = prescriptionType
-            request.administrativeInformation = adminValue
+                log.info("Recip-e v4 request is {}", ConnectorXmlUtils.toString(request))
 
-            log.info("Recip-e v4 request is {}", ConnectorXmlUtils.toString(request))
+                recipePrescriberServiceV4.createPrescriptionV4(samlToken, credential, request) ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON, "Unknown error in recipe")
+            } else {
+                val request = CreatePrescriptionRequest()
+                request.securedCreatePrescriptionRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(params)))
 
-            val response: CreatePrescriptionResponse? = recipePrescriberServiceV4.createPrescription(samlToken, credential, request) ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON, "Unknown error in recipe")
+                request.programId = vendorName ?: "freehealth-connector"
+                request.id = "id" + UUID.randomUUID().toString()
+                request.issueInstant = DateTime.now()
+
+                val adminValue = CreatePrescriptionAdministrativeInformationType()
+                adminValue.keyIdentifier = key.keyId.toByteArray()
+                adminValue.prescriptionVersion = extractPrescriptionVersionFromKmehr(prescription)
+                adminValue.referenceSourceVersion = extractReferenceSourceVersionFromKmehr(prescription)
+                adminValue.prescriptionType = prescriptionType
+                request.administrativeInformation = adminValue
+
+                log.info("Recip-e v4 request is {}", ConnectorXmlUtils.toString(request))
+
+                recipePrescriberServiceV4.createPrescription(samlToken, credential, request) ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON, "Unknown error in recipe")
+            }
 
             response?.let { r ->
                 helper.unsealWithSymmKey(r.securedCreatePrescriptionResponse.securedContent, symmKey)?.also {
@@ -146,12 +168,15 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         }
     }
 
+    private fun generateRid(prescriptionType: String) =
+        ("BE" + prescriptionType + "JNT" + RandomStringUtils.random(5, true, false).toUpperCase()).replace('I', 'J').replace('O', 'A').replace('U', 'V')
+
     override fun getData(
-    keystore: KeyStore,
-    samlToken: SAMLToken,
-    passPhrase: String,
-    credential: KeyStoreCredential,
-    param: GetPrescriptionStatusParam
+        keystore: KeyStore,
+        samlToken: SAMLToken,
+        passPhrase: String,
+        credential: KeyStoreCredential,
+        param: GetPrescriptionStatusParam
                         ): GetPrescriptionStatusResult? {
         RidValidator.validateRid(param.rid)
         return try {

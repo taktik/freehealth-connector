@@ -127,6 +127,9 @@ fun makeXmlGregorianCalendar(instant: Instant): XMLGregorianCalendar {
     return XMLGregorianCalendarImpl.createDateTime(dateTime.year, dateTime.monthValue, dateTime.dayOfMonth, dateTime.hour, dateTime.minute, dateTime.second, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED)
 }
 
+fun makeXmlGregorianCalendar(dateTime: LocalDateTime): XMLGregorianCalendar {
+    return XMLGregorianCalendarImpl.createDateTime(dateTime.year, dateTime.monthValue, dateTime.dayOfMonth, dateTime.hour, dateTime.minute, dateTime.second, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED)
+}
 
 fun makeFuzzyLongFromXMLGregorianCalendar(cal: XMLGregorianCalendar?): Long? {
     return makeFuzzyIntFromXMLGregorianCalendar(cal)?.let {
