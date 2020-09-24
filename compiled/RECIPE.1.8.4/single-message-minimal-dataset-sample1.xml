@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<smc:single-message xmlns:code="http://www.apb.be/standards/smoa/schema/code/v1" xmlns:id="http://www.apb.be/standards/smoa/schema/id/v1" xmlns:model="http://www.apb.be/standards/smoa/schema/model/v1" xmlns:smc="http://www.apb.be/standards/smoa/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.apb.be/standards/smoa/schema/v1 xsd/smc-v1/single-message/maindoc/single-message-oa-1.0.xsd">
+	<smc:unsigned>
+		<smc:header>
+			<smc:version>1.0</smc:version>
+			<smc:messageCreateDate>2012-10-09T10:00:00</smc:messageCreateDate>
+			<smc:messageID>12345678-1234-1234-1234-0123456789AB</smc:messageID>
+			<smc:sender>
+				<model:refCareService>
+					<model:careServiceId xsi:type="id:CbeIdType">
+						<id:cbe>0123456789</id:cbe>
+					</model:careServiceId>
+				</model:refCareService>
+			</smc:sender>
+		</smc:header>
+		<smc:eventFolder>
+			<smc:events>
+				<smc:event xsi:type="smc:MedicationHistoryEvent">
+					<model:medicationHistoryEntity>
+						<model:entityId xsi:type="id:EntityIdType">
+							<id:id>12345678-1234-1234-1234-0123456789AB</id:id><!-- dispensation GUID -->
+							<id:version>1</id:version>
+						</model:entityId>
+						<model:sessionID>12345678-1234-1234-1234-0123456789AB</model:sessionID><!-- session GUID -->
+						<model:deliveryDate>2012-10-08T09:00:00</model:deliveryDate>
+						<model:pharmacyId><!-- optional, will NOT be there on receipt in connector module -->
+							<id:nihiiPharmacyNumber>12345678</id:nihiiPharmacyNumber>
+						</model:pharmacyId>
+						<model:min-Patient>
+							<model:personId xsi:type="id:InssIdType">
+								<id:id>83041412345</id:id>
+							</model:personId>
+							<model:name>Homer</model:name>
+							<model:name>J</model:name>
+							<model:familyName>Simpson</model:familyName>
+						</model:min-Patient>
+						<model:encryptedContent>
+							<model:product>VGhpcyBpcyBvbmx5IGEgc21hbGwgdGVzdCwgbm90aGluZyB0byBzZWUgaGVyZSE=</model:product>
+							<model:encryptionKeyId>123</model:encryptionKeyId>
+						</model:encryptedContent>
+						<model:metaDataList>
+							<smc:metaData>
+								<smc:key>HasDelphiCareRun</smc:key>
+								<smc:value>FALSE</smc:value>
+							</smc:metaData>
+						</model:metaDataList>
+						<model:tipQualityIndicator>5</model:tipQualityIndicator>
+					</model:medicationHistoryEntity>
+				</smc:event>
+			</smc:events>
+		</smc:eventFolder>
+	</smc:unsigned>
+</smc:single-message>

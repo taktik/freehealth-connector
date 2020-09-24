@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.apb.be/standards/smoa/schema/model/v1" xmlns:id="http://www.apb.be/standards/smoa/schema/id/v1" targetNamespace="http://www.apb.be/standards/smoa/schema/model/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:import namespace="http://www.apb.be/standards/smoa/schema/id/v1" schemaLocation="single-message-abstract-id-type-1.0.xsd" />
+	
+	<!-- Base where every entity extends from -->
+	<xsd:element name="abstract-Entity" type="AbstractEntityType" abstract="true" />
+	<xsd:complexType name="AbstractEntityType" abstract="true">
+		<xsd:sequence>
+			<xsd:element name="entityId" type="id:Abstract-EntityIdType" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Telecom -->
+	<xsd:element name="abstract-Telecom" type="AbstractTelecomType" abstract="true" />
+	<xsd:complexType name="AbstractTelecomType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Pharmacy  -->
+	<xsd:element name="abstract-Pharmacy" type="AbstractPharmacyType" abstract="true" />
+	<xsd:complexType name="AbstractPharmacyType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Care Service -->
+	<xsd:element name="abstract-CareService" type="AbstractCareServiceType" abstract="true" />
+	<xsd:complexType name="AbstractCareServiceType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Address -->
+	<xsd:element name="abstract-Address" type="AbstractAddressType" abstract="true" />
+	<xsd:complexType name="AbstractAddressType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<!-- Person  -->
+	<xsd:element name="abstract-Person" type="AbstractPersonType" abstract="true" />
+	<xsd:complexType name="AbstractPersonType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<!-- MedicinalProduct -->
+	<xsd:element name="abstract-MedicinalProduct" type="AbstractMedicinalProductType" abstract="true" />
+	<xsd:complexType name="AbstractMedicinalProductType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Raw Material -->
+	<xsd:element name="abstract-RawMaterial" type="AbstractRawMaterialType" abstract="true" />
+	<xsd:complexType name="AbstractRawMaterialType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Status Message -->
+	<xsd:element name="abstract-StatusMessage" type="AbstractStatusMessageType" abstract="true" />
+	<xsd:complexType name="AbstractStatusMessageType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Substance Product -->
+	<xsd:element name="abstract-SubstanceProduct" type="AbstractSubstanceProductType" abstract="true" />
+	<xsd:complexType name="AbstractSubstanceProductType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Preparation -->
+	<xsd:element name="abstract-Preparation" type="AbstractPreparationType" abstract="true" />
+	<xsd:complexType name="AbstractPreparationType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Prescription Line in Recipe /R -->
+	<xsd:element name="abstract-RecipeLine" type="AbstractRecipeLineType" abstract="true" />
+	<xsd:complexType name="AbstractRecipeLineType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Posology -->
+	<xsd:element name="abstract-Posology" type="AbstractPosologyType" abstract="true" />
+	<xsd:complexType name="AbstractPosologyType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Regimen -->
+	<xsd:element name="abstract-Regimen" type="AbstractRegimenType" abstract="true" />
+	<xsd:complexType name="AbstractRegimenType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Attest -->
+	<xsd:element name="abstract-Attest" type="AbstractAttestType" abstract="true" />
+	<xsd:complexType name="AbstractAttestType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Magistral Certificate -->
+	<xsd:element name="abstract-MagistralCertificate" type="AbstractMagistralCertificateType" abstract="true" />
+	<xsd:complexType name="AbstractMagistralCertificateType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<!-- Incoming Medication -->
+	<xsd:element name="abstract-IncomingMedication" type="AbstractIncomingMedicationType" abstract="true" />
+	<xsd:complexType name="AbstractIncomingMedicationType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Supplier -->
+	<xsd:element name="abstract-Supplier" type="AbstractSupplierType" abstract="true" />
+	<xsd:complexType name="AbstractSupplierType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Patient -->
+	<xsd:element name="abstract-Patient" type="AbstractPatientType" abstract="true" />
+	<xsd:complexType name="AbstractPatientType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Care Provider -->
+	<xsd:element name="abstract-CareProvider" type="AbstractCareProviderType" abstract="true" />
+	<xsd:complexType name="AbstractCareProviderType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Pharmacist -->
+	<xsd:element name="abstract-Pharmacist" type="AbstractPharmacistType" abstract="true" />
+	<xsd:complexType name="AbstractPharmacistType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Data Location (TECHNICAL) -->
+	<xsd:element name="abstract-DataLocation" type="AbstractDataLocationType" abstract="true" />
+	<xsd:complexType name="AbstractDataLocationType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<!-- Delivered Medication -->
+	<xsd:element name="abstract-DeliveredMedication" type="AbstractDeliveredMedicationType" abstract="true" />
+	<xsd:complexType name="AbstractDeliveredMedicationType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!-- Still those extending from delivered medication... -->
+	<xsd:complexType name="AbstractDeliveredMedicationVeterinairType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractDeliveredMedicationType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AbstractDeliveredMedicationHumanType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractDeliveredMedicationType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AbstractDeliveredMedicationHumanHistoryType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractDeliveredMedicationType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Prescription -->
+	<xsd:element name="abstract-Prescription" type="AbstractPrescriptionType" abstract="true" />
+	<xsd:complexType name="AbstractPrescriptionType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Veterinary Prescription extends Prescription -->
+	<xsd:element name="abstract-VeterinaryPrescription" type="AbstractVeterinaryPrescriptionType" abstract="true" />
+	<xsd:complexType name="AbstractVeterinaryPrescriptionType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractPrescriptionType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Human Prescription extends Prescription -->
+	<xsd:element name="abstract-HumanPrescription" type="AbstractHumanPrescriptionType" abstract="true" />
+	<xsd:complexType name="AbstractHumanPrescriptionType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractPrescriptionType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Those that extend Human Prescription -->
+	<xsd:complexType name="AbstractPatientPrescriptionType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractHumanPrescriptionType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AbstractSpecialPrescriptionType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractHumanPrescriptionType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AbstractDeferredPrescriptionType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractHumanPrescriptionType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<!-- Medication Consumer -->
+	<xsd:element name="abstract-MedicationConsumer" type="AbstractMedicationConsumerType" abstract="true" />
+	<xsd:complexType name="AbstractMedicationConsumerType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEntityType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!-- Still those extending from medication consumer... -->
+	<xsd:complexType name="AbstractMedicationConsumerPatientType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractMedicationConsumerType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AbstractMedicationConsumerAnimalOwnerType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractMedicationConsumerType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AbstractMedicationConsumerUrgentieTrousseType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractMedicationConsumerType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AbstractMedicationConsumerPatientGroupType" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractMedicationConsumerType" />
+		</xsd:complexContent>
+	</xsd:complexType>
+</xsd:schema>
