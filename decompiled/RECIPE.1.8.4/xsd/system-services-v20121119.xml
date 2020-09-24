@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:systemServices xmlns:p="http://services.gfddpp.be/systemservices/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://services.gfddpp.be/systemservices/v1 system-services-v20121119.xsd ">
+  <version>2012-12-31T12:00:00</version>
+  <systemServicesList>
+    <systemServicesEntry>
+      <system>
+        <serviceName>serviceName</serviceName>
+        <URI>URI</URI>
+      </system>
+      <service>
+        <systemIdType>systemIdType</systemIdType>
+        <systemId>systemId</systemId>
+      </service>
+    </systemServicesEntry>
+  </systemServicesList>
+</p:systemServices>

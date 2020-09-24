@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="XACMLSAMLProtocol" targetNamespace="urn:oasis:xacml:2.0:saml:protocol:schema:os:wsdl" xmlns:tns="urn:oasis:xacml:2.0:saml:protocol:schema:os:wsdl" xmlns:xacml-samlp="urn:oasis:xacml:2.0:saml:protocol:schema:os" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+  xmlns:xacml-saml="urn:oasis:xacml:2.0:saml:assertion:schema:os" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="urn:oasis:names:tc:SAML:2.0:protocol" schemaLocation="../XSD/saml-schema-protocol-2.0.xsd" />
+      <xsd:import namespace="urn:oasis:xacml:2.0:saml:protocol:schema:os" schemaLocation="../XSD/access_control-xacml-2.0-saml-protocol-schema-os.xsd" />
+      <xsd:import namespace="urn:oasis:xacml:2.0:saml:assertion:schema:os" schemaLocation="../XSD/access_control-xacml-2.0-saml-assertion-schema-os.xsd" />
+    </xsd:schema>
+  </types>
+  <message name="XACMLAuthzDecisionQuery">
+    <part name="body" element="xacml-samlp:XACMLAuthzDecisionQuery" />
+  </message>
+  <message name="ResponseMessage">
+    <part name="body" element="samlp:Response" />
+  </message>
+  <portType name="AuthzServicePortType">
+    <operation name="AuthzDecisionQuery">
+      <input message="tns:XACMLAuthzDecisionQuery" />
+      <output message="tns:ResponseMessage" />
+    </operation>
+  </portType>
+  <binding name="AuthzServiceSoapBinding" type="tns:AuthzServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="AuthzDecisionQuery">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="AuthzService">
+    <documentation>This is per-installation data</documentation>
+    <port name="AuthzServicePort" binding="tns:AuthzServiceSoapBinding">
+      <soap:address location="http://my.org/XACMLSAMLServer/AuthzService" />
+    </port>
+  </service>
+</definitions>

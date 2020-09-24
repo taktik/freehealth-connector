@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+Copyright Notice
+(c) 2001-2006 BEA Systems, Inc., BMC Software, CA, Inc., 
+International Business Machines Corporation, Layer 7 Technologies, 
+Microsoft Corporation, Inc., Novell, Inc. and VeriSign, Inc. All 
+rights reserved.
+
+Permission to copy, display, perform, modify and distribute 
+WS-AUTHORIZATION.XSD (the "Document"), and to authorize others 
+to do the foregoing, in any medium without fee or royalty is hereby 
+granted for the purpose of developing and evaluating the Document. 
+
+BEA Systems, BMC Software, CA Inc., IBM, Layer 7 Technologies, 
+Microsoft, Novell and VeriSign (collectively, the "Authors") each 
+agree to grant a license to third parties, under royalty-free and 
+otherwise reasonable, non-discriminatory terms and conditions, to 
+their respective essential patent claims that they deem necessary 
+to implement the Document.  
+
+THE DOCUMENT IS PROVIDED "AS IS," AND THE AUTHORS MAKE NO 
+REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT 
+NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS 
+OF THE DOCUMENT IS SUITABLE FOR ANY PURPOSE; NOR THAT THE 
+IMPLEMENTATION OF SUCH CONTENTS WILL NOT INFRINGE ANY THIRD PARTY 
+PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS. 
+
+THE AUTHORS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, 
+INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE 
+DOCUMENT OR THE PERFORMANCE OR IMPLEMENTATION OF THE CONTENTS 
+THEREOF. 
+
+You may remove these disclaimers from your modified versions of the 
+Document provided that you effectively disclaim all warranties and 
+liabilities on behalf of all copyright holders in the copies of any 
+such modified versions you distribute. 
+
+The name and trademarks of the Authors may NOT be used in any manner, 
+including advertising or publicity pertaining to the Document or its 
+contents without specific, written prior permission. Title to 
+copyright in the Document will at all times remain with the 
+Authors. 
+
+No other rights are granted by implication, estoppel or otherwise.
+
+  --> 
+
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' 
+		   xmlns:tns='http://schemas.xmlsoap.org/ws/2006/12/authorization'
+		   targetNamespace='http://schemas.xmlsoap.org/ws/2006/12/authorization'
+		   elementFormDefault='qualified' >
+  
+  <!-- Section 9.2 -->
+  <xs:element name='AdditionalContext' type='tns:AdditionalContextType' />
+  <xs:complexType name='AdditionalContextType' >
+	<xs:sequence>
+	  <xs:element name='ContextItem' type='tns:ContextItemType' minOccurs='0' maxOccurs='unbounded' />
+	  <xs:any namespace='##other' processContents='lax' minOccurs='0' maxOccurs='unbounded' />
+	</xs:sequence>
+	<xs:anyAttribute namespace='##other' processContents='lax' />
+  </xs:complexType>
+
+  <xs:complexType name='ContextItemType' >
+	<xs:choice minOccurs='0'>
+	  <xs:element name='Value' type='xs:string' minOccurs='1' maxOccurs='1' />
+	  <xs:any namespace='##other' processContents='lax' minOccurs='1' maxOccurs='1' />
+	</xs:choice>
+	<xs:attribute name='Name' type='xs:anyURI' use='required' />
+	<xs:attribute name='Scope' type='xs:anyURI' use='optional' />
+	<xs:anyAttribute namespace='##other' processContents='lax' />	
+  </xs:complexType>
+
+  <!-- Section 9.3 -->
+  <xs:element name='ClaimType' type='tns:ClaimType' />
+  <xs:complexType name='ClaimType' >
+	<xs:choice minOccurs='0'>
+	  <xs:element name='Value' type='xs:string' minOccurs='1' maxOccurs='1' />
+	  <xs:any namespace='##other' processContents='lax' minOccurs='1' maxOccurs='1' />
+	</xs:choice>
+	<xs:attribute name='Uri' type='xs:anyURI' use='required' />
+	<xs:attribute name='Optional' type='xs:boolean' use='optional' />
+	<xs:anyAttribute namespace='##other' processContents='lax' />	
+  </xs:complexType>
+
+</xs:schema>

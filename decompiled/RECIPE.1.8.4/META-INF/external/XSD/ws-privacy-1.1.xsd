@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 
+ Copyright Notice
+(c) 2001-2006 BEA Systems, Inc., BMC Software, CA, Inc., 
+International Business Machines Corporation, Layer 7 Technologies, 
+Microsoft Corporation, Inc., Novell, Inc. and VeriSign, Inc. All 
+rights reserved.
+
+Permission to copy, display, perform, modify and distribute  
+WS-PRIVACY.XSD (the "Document"), and to authorize others 
+to do the foregoing, in any medium without fee or royalty is hereby 
+granted for the purpose of developing and evaluating the Document. 
+
+BEA Systems, BMC Software, CA Inc., IBM, Layer 7 Technologies, 
+Microsoft, Novell and VeriSign (collectively, the "Authors") each 
+agree to grant a license to third parties, under royalty-free and 
+otherwise reasonable, non-discriminatory terms and conditions, to 
+their respective essential patent claims that they deem necessary 
+to implement the Document.  
+
+THE DOCUMENT IS PROVIDED "AS IS," AND THE AUTHORS MAKE NO 
+REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT 
+NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS 
+OF THE DOCUMENT IS SUITABLE FOR ANY PURPOSE; NOR THAT THE 
+IMPLEMENTATION OF SUCH CONTENTS WILL NOT INFRINGE ANY THIRD PARTY 
+PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS. 
+
+THE AUTHORS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, 
+INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE 
+DOCUMENT OR THE PERFORMANCE OR IMPLEMENTATION OF THE CONTENTS 
+THEREOF. 
+
+You may remove these disclaimers from your modified versions of the 
+Document provided that you effectively disclaim all warranties and 
+liabilities on behalf of all copyright holders in the copies of any 
+such modified versions you distribute. 
+
+The name and trademarks of the Authors may NOT be used in any manner, 
+including advertising or publicity pertaining to the Document or its 
+contents without specific, written prior permission. Title to 
+copyright in the Document will at all times remain with the 
+Authors. 
+
+No other rights are granted by implication, estoppel or otherwise.
+
+  --> 
+
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' 
+		   xmlns:tns='http://schemas.xmlsoap.org/ws/2006/12/privacy'
+		   xmlns:wsa='http://www.w3.org/2005/08/addressing'
+		   targetNamespace='http://schemas.xmlsoap.org/ws/2006/12/privacy' 
+		   elementFormDefault='qualified' >
+
+  <xs:import namespace='http://www.w3.org/2005/08/addressing' 
+			 schemaLocation='ws-addr.xsd' />
+
+  <!-- Section 12.1 -->
+  <xs:element name='ProtectData' type='tns:ProtectDataType' />
+  
+  <xs:complexType name='ProtectDataType' >
+	<xs:sequence>
+	  <xs:any namespace='##any' processContents='lax' minOccurs='0' maxOccurs='unbounded' />
+	</xs:sequence>
+	<xs:anyAttribute namespace='##other' processContents='lax' />
+  </xs:complexType>
+
+  <!-- Section 12.2 -->
+  <xs:element name='EnumerateParameters' type='tns:EnumerateParametersType' />
+  <xs:simpleType name='ListOfQName'>
+	  <xs:list itemType='xs:QName' />
+  </xs:simpleType>
+  <xs:complexType name='EnumerateParametersType' >
+	<xs:simpleContent>
+	  <xs:extension base='tns:ListOfQName' >
+		<xs:anyAttribute namespace='##other' processContents='lax' />
+	  </xs:extension>
+	</xs:simpleContent>
+  </xs:complexType>
+
+  <xs:element name='FaultOnUnacceptedRstParameters' type='tns:ExtensibleElement' />
+  <xs:element name='EnumerateAllClaims' type='tns:ExtensibleElement' />
+
+  <xs:complexType name='ExtensibleElement' >
+	<xs:sequence>
+	  <xs:any namespace='##any' processContents='lax' minOccurs='0' maxOccurs='unbounded' />
+	</xs:sequence>
+	<xs:anyAttribute namespace='##other' processContents='lax' />
+  </xs:complexType>
+
+  <!-- Section 12.3 -->
+  <xs:element name='PrivacyPolicyEndpoint' type='tns:PrivacyPolicyEndpointType' />
+  <xs:complexType name='PrivacyPolicyEndpointType' >
+	<xs:complexContent>
+	  <xs:extension base='wsa:EndpointReferenceType' >
+		<xs:attribute name='SupportsMex' type='xs:boolean' use='optional' />
+	  </xs:extension>
+	</xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>
