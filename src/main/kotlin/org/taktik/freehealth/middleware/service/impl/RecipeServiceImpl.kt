@@ -369,7 +369,6 @@ class RecipeServiceImpl(private val codeDao: CodeDao, private val drugsLogic: Dr
     }
 
     override fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig, hcpQuality: String): Kmehrmessage {
-
         val language = config.prescription.language
         return Kmehrmessage().apply {
             header = RecipeheaderType().apply {

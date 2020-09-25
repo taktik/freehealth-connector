@@ -33,6 +33,8 @@ interface PrescriberIntegrationModuleV4 : PrescriberIntegrationModule {
         prescriptionType: String,
         visibility: String? = null,
         vendorName: String?,
+        packageName: String?,
+        packageVersion: String?,
         expirationDate: LocalDateTime = LocalDateTime.now().plusMonths(3)
                           ): String?
 
