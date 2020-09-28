@@ -103,7 +103,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
 
         return try {
             val propertyHandler: PropertyHandler = PropertyHandler.getInstance()
-            val expDateAsString = expirationDate.format(DateTimeFormatter.ofPattern("YYYY-MM-dd"))
+            val expDateAsString = expirationDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             ValidationUtils.validateExpirationDate(expDateAsString)
             //performValidation(prescription, prescriptionType, expDateAsString)
             val helper = MarshallerHelper(CreatePrescriptionResult::class.java, CreatePrescriptionParam::class.java)
