@@ -174,7 +174,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
-                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
+                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value ?: it.message))
             } ?: MessageOperationResponse(false, Error("999", e.message))
         }
     }

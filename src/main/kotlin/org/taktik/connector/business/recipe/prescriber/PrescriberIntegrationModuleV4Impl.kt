@@ -93,6 +93,8 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         prescriptionType: String,
         vision: String?,
         vendorName: String?,
+        packageName: String?,
+        packageVersion: String?,
         expirationDate: LocalDateTime
                                    ): String? {
         ValidationUtils.validatePatientIdNotBlank(patientId)
@@ -101,7 +103,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
 
         return try {
             val propertyHandler: PropertyHandler = PropertyHandler.getInstance()
-            val expDateAsString = expirationDate.format(DateTimeFormatter.ofPattern("YYYY-MM-dd"))
+            val expDateAsString = expirationDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             ValidationUtils.validateExpirationDate(expDateAsString)
             //performValidation(prescription, prescriptionType, expDateAsString)
             val helper = MarshallerHelper(CreatePrescriptionResult::class.java, CreatePrescriptionParam::class.java)
@@ -130,7 +132,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
                 request.documentId = generateRid(prescriptionType)
                 request.prescriptionVersion = extractPrescriptionVersionFromKmehr(prescription)
                 request.referenceSourceVersion = extractReferenceSourceVersionFromKmehr(prescription)
-                request.programIdentification = vendorName ?: "freehealth-connector"
+                request.programIdentification = "${vendorName?:"freehealth-connector"}(${packageName?:"freehealth-connector"}/${packageVersion?:""})"
                 request.mguid = UUID.randomUUID().toString()
 
                 log.info("Recip-e v4 request is {}", ConnectorXmlUtils.toString(request))
@@ -140,7 +142,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
                 val request = CreatePrescriptionRequest()
                 request.securedCreatePrescriptionRequest = createSecuredContentType(sealRequest(getCrypto(credential), etkRecipes[0] as EncryptionToken, helper.toXMLByteArray(params)))
 
-                request.programId = vendorName ?: "freehealth-connector"
+                request.programId = "${vendorName?:"freehealth-connector"}(${packageName?:"freehealth-connector"}/${packageVersion?:""})"
                 request.id = "id" + UUID.randomUUID().toString()
                 request.issueInstant = DateTime.now()
 

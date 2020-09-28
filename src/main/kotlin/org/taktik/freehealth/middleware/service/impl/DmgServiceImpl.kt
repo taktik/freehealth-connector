@@ -142,7 +142,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 "<reg:bankAccount bic=\"replaceWithBic\" iban=\"replaceWithIban\"/>\n" +
                 "</reg:registration>\n" +
                 "</reg:registrations>").replace("replaceWithDateYYYY-MM-DD".toRegex(),
-                                                DateTime().toString("YYYY-MM-dd")
+                                                DateTime().toString("yyyy-MM-dd")
                                                )
                 .replace("replaceWithNihiiNumber".toRegex(), hcpNihii).replace("replaceWithBic".toRegex(), bic)
                 .replace("replaceWithIban".toRegex(), iban.toUpperCase())
