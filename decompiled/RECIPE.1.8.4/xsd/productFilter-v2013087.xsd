@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!-- Generated using Flame-Ware Solutions XML-2-xs v2.0 at http://www.flame-ware.com/Products/XML-2-xs/ -->
+<xs:schema id="product-filter" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+
+	<xs:complexType name="productList">
+		<xs:sequence>
+			<xs:element name="white-list" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="medicines" type="medicines" minOccurs="0" />
+						<xs:element name="preparations" type="preparations" minOccurs="0" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="black-list" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ranges" type="ranges" minOccurs="0" />
+						<xs:element name="medicines" type="medicines" minOccurs="0" />
+						<xs:element name="preparations" type="preparations" minOccurs="0" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ranges">
+		<xs:sequence>
+			<xs:element ref="abstractRange" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Product type -->
+
+	<!-- medicine -->
+	<xs:complexType name="medicines">
+		<xs:sequence>
+			<xs:element name="medicine" type="medicine" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="medicine">
+		<xs:sequence>
+			<xs:element name="product-id" type="xs:string" minOccurs="0" />
+			<xs:element name="category" type="xs:string" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- preparation -->
+
+	<xs:complexType name="preparations">
+		<xs:sequence>
+			<xs:element name="preparation" type="preparation" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="preparation">
+		<xs:sequence>
+			<xs:element name="product-id" type="xs:string" minOccurs="0" />
+			<xs:element name="type" type="xs:string" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Abstract Range Definition -->
+	<xs:element name="abstractRange" type="rangesType" abstract="true" />
+	<xs:complexType name="rangesType">
+		<xs:sequence>
+			<xs:element name="range" type="range" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="range">
+		<xs:sequence>
+			<xs:element name="start" type="xs:string" minOccurs="0" />
+			<xs:element name="end" type="xs:string" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Range type -->
+
+	<!-- medicines ranges -->
+	<xs:element name="medicinesRanges" type="medicinesRanges" substitutionGroup="abstractRange" />
+	<xs:complexType name="medicinesRanges">
+		<xs:complexContent>
+			<xs:extension base="rangesType" />
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- preparation ranges -->
+	<xs:element name="preparationsRanges" type="preparationsRanges" substitutionGroup="abstractRange" />
+	<xs:complexType name="preparationsRanges">
+		<xs:complexContent>
+			<xs:extension base="rangesType" />
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- product filter -->
+	<xs:element name="product-filter" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="version" type="xs:dateTime" />
+				<xs:element name="precedence" type="xs:string" />
+				<xs:element name="productList" type="productList" minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.apb.be/standards/smoa/schema/code/v1" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.apb.be/standards/smoa/schema/code/v1" version="1.0">
+	<xsd:complexType name="Abstract-CountryCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-AddressKindCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-TelecomKindCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-PrescriberCategoryCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-SexCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-ProfessionCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-MedicinalProductCategoryCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-ActiveSubstanceCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-DiseaseCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-PharmFormCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-SpecialPrescriptionCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-MutualityNumberCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-AdministrationUnitValuesCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-WeekDayCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-DayPeriodCodeType" abstract="true" />
+	<xsd:complexType name="Abstract-PeriodicityType" abstract="true" />
+</xsd:schema>

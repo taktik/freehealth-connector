@@ -148,7 +148,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val selectedType: String = inferPrescriptionType(medications, prescriptionType)
 
-        val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName, packageName, packageVersion, vendorEmail, vendorPhone, expirationDate)
+        val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName ?: "phyMedispringTopaz/1.0-freehealth-connector", packageName, packageVersion, vendorEmail, vendorPhone, expirationDate)
 
         val os = ByteArrayOutputStream()
         JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(m, os)
@@ -163,7 +163,10 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
             throw e
         }
 
-        val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, vendorName, expirationDate ?: LocalDateTime.now().plusMonths(3).minusDays(1))
+        val unconstrainedDate = expirationDate ?: deliveryDate?.plusMonths(3)?.minusDays(1) ?: LocalDateTime.now().plusMonths(3).minusDays(1)
+        val limitDate =  LocalDateTime.now().plusYears(1).minusDays(1)
+
+        val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, vendorName ?: "phyMedispringTopaz/1.0-freehealth-connector", packageName, packageVersion, if (unconstrainedDate.isAfter(limitDate)) limitDate else unconstrainedDate)
 
         val result = Prescription(Date(), "", prescriptionId!!, false, null, false, ConnectorXmlUtils.toString(m))
 

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema id="assuralia-bvac-config" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xs:element name="tip-insurer-cfg">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="insurer" maxOccurs="unbounded" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element type="xs:string" name="name" maxOccurs="1" minOccurs="1" />
+							<xs:element type="xs:string" name="CBFA" maxOccurs="1" minOccurs="0" />
+							<xs:element type="xs:string" name="requestor-id" maxOccurs="1" minOccurs="0" />
+							<xs:element type="xs:string" name="end-point-type" maxOccurs="1" minOccurs="1" />
+							<xs:element type="xs:string" name="encryption-key" maxOccurs="1" minOccurs="0" />
+							<xs:element type="xs:string" name="transport-key" maxOccurs="1" minOccurs="0" />
+							<xs:element name="parties" type="parties" maxOccurs="1" minOccurs="0" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="parties">
+		<xs:sequence>
+			<xs:element name="party" maxOccurs="unbounded" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element type="xs:string" name="name" maxOccurs="1" minOccurs="0"/>
+						<xs:element type="xs:string" name="requestor-id" maxOccurs="1" minOccurs="0" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

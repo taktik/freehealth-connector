@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.apb.be/standards/smoa/schema/v1" xmlns:kmehr="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" xmlns:id="http://www.apb.be/standards/smoa/schema/id/v1" xmlns:model="http://www.apb.be/standards/smoa/schema/model/v1" targetNamespace="http://www.apb.be/standards/smoa/schema/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:include schemaLocation="../common/single-message-common-2.0.xsd"/>
+	<xsd:import namespace="http://www.apb.be/standards/smoa/schema/id/v1" schemaLocation="../models/single-message-id-type-1.0.xsd"/>
+	<xsd:import namespace="http://www.apb.be/standards/smoa/schema/model/v1" schemaLocation="../models/single-message-message-model-2.0.1.xsd"/>
+	<xsd:import namespace="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" schemaLocation="../external/kmehr/ehealth-kmehr/XSD/kmehr_elements-1_1.xsd"/>
+	<!-- helper types -->
+	<xsd:complexType name="deliveriesType">
+		<xsd:sequence>
+			<xsd:element ref="model:abstract-DeliveredMedication" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- ABSTRACT BASE EVENT -->
+	<xsd:complexType name="AbstractEventType" abstract="true">
+		<xsd:sequence>
+			<xsd:element name="id" type="UuidType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- ACTUAL EVENT TYPES AS EXISTING IN ORIGINAL SMC, NOT USED IN GFDDPP FIRST PHASE -->
+	<xsd:complexType name="PharmaceuticalPrescriptionEventType">
+		<xsd:annotation>
+			<xsd:documentation>recipe-executor-sdk-0.4.0.zip, int spec v1.7, section 5.3.11</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEventType">
+				<xsd:sequence>
+					<xsd:element name="recipeId" type="id:RecipeIdType"/>
+					<xsd:element name="creationDate" type="xsd:dateTime"/>
+					<xsd:element name="patientId" type="xsd:long" minOccurs="0"/>
+					<xsd:element name="encryptionKeyId" type="xsd:string"/>
+					<xsd:element name="encryptionKey" type="xsd:base64Binary" minOccurs="0"/>
+					<xsd:element name="kmehrPrescription" type="kmehr:kmehrmessageType" minOccurs="0"/>
+					<xsd:element name="kmehrSealedForUnknown" type="xsd:base64Binary" minOccurs="0"/>
+					<xsd:element name="prescriptionType" type="xsd:string" minOccurs="0"/>
+					<xsd:element name="timestampingId" type="xsd:string" minOccurs="0"/>
+					<xsd:element name="prescriberId" type="xsd:long"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="MedicationDeliveryEventType">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEventType">
+				<xsd:sequence>
+					<xsd:element ref="model:abstract-Pharmacy"/>
+					<xsd:element name="deliveries" type="deliveriesType" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="RegisterExportEventType">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEventType">
+				<xsd:sequence>
+					<xsd:element ref="model:abstract-Pharmacy"/>
+					<xsd:element name="beginDate" type="xsd:date"/>
+					<xsd:element name="endDate" type="xsd:date"/>
+					<xsd:element name="deliveries" type="deliveriesType" minOccurs="0"/>
+					<xsd:element name="incoming" minOccurs="0">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element ref="model:abstract-IncomingMedication" minOccurs="0" maxOccurs="unbounded"/>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!-- SUPPORTED IN GFDDPP FIRST PHASE -->
+	<xsd:complexType name="PharmaceuticalCareEventType">
+		<xsd:annotation>
+			<xsd:documentation>The maximal data set of a patient pharmaceutical care session. The ID is the session GUID.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEventType">
+				<xsd:sequence>
+					<xsd:element name="sessionDateTime" type="xsd:dateTime"/>
+					<xsd:element name="pharmacyId" type="id:NihiiIdType"/>
+					<xsd:element ref="model:max-Patient"/>
+					<!-- can only be the maximal data set representation of a patient -->
+					<xsd:element name="dispensedForSamePrescription" minOccurs="0" maxOccurs="unbounded">
+						<xsd:complexType>
+							<xsd:sequence>
+								<!-- <xsd:element ref="model:abstract-Prescription" minOccurs="0"/> -->
+								<xsd:element ref="model:hcparty"/>
+								<xsd:element name="product" maxOccurs="unbounded">
+									<!-- TODO waar is de dispensation ID? -->
+									<xsd:complexType>
+										<xsd:complexContent>
+											<xsd:extension base="model:MaxSetProductType">
+												<xsd:attribute name="onSubstanceName" type="xsd:boolean" use="required"/>
+											</xsd:extension>
+										</xsd:complexContent>
+									</xsd:complexType>
+								</xsd:element>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="dispensedWithoutPrescription" minOccurs="0">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="product" type="model:MaxSetProductType" maxOccurs="unbounded"/>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="pharmaceuticalCareActivities" minOccurs="0">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="drugRelatedProblem" type="model:DrugRelatedProblemType" maxOccurs="unbounded"/>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="metaDataList" type="MetaDataListType" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="BvacEventType">
+		<xsd:annotation>
+			<xsd:documentation>The ID is the session GUID.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEventType">
+				<xsd:sequence>
+					<xsd:element name="PharmacyList" type="model:PharmacyList" maxOccurs="1"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!-- MINIMAL DATASET -->
+	<xsd:complexType name="MedicationHistoryEvent">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEventType">
+				<xsd:sequence>
+					<xsd:element name="historyDate" type="xsd:dateTime" minOccurs="0"/>
+					<xsd:element ref="model:medicationHistoryEntity" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element name="dataLocation" type="model:DataLocationType" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!-- EXTRA TYPE AS ILLUSTRATION ONLY SUPPORTED IN PCDH/TIP -->
+	<xsd:complexType name="ContinuedPharmaceuticalCareDossierEvent">
+		<xsd:annotation>
+			<xsd:documentation>
+				This type is another care data type purely for illustration purposes supported in PCDH/TIP.
+				The ID element is functionally not optional here (even though optional in XSD terms) and should be mapped to session ID.
+				Use JXPath library from apache commons!!!
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="AbstractEventType">
+				<xsd:sequence>
+					<xsd:element ref="model:min-Patient"/>
+					<xsd:element name="pharmacyId" type="id:NihiiIdType"/>
+					<xsd:element name="encryptedContent" type="model:EncryptedContentType"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+		<!-- ID of this thing is the UUID -->
+	</xsd:complexType>
+</xsd:schema>

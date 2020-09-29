@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="XACML30SAML20Protocol" 
+  targetNamespace="urn:oasis:names:tc:xacml:3.0:profile:saml2.0:v2:schema:protocol:wd-14:wsdl" 
+  xmlns:tns="urn:oasis:names:tc:xacml:3.0:profile:saml2.0:v2:schema:protocol:wd-14:wsdl" 
+  xmlns:xacml-samlp="urn:oasis:names:tc:xacml:3.0:profile:saml2.0:v2:schema:protocol:wd-14" 
+  xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="urn:oasis:names:tc:SAML:2.0:protocol" schemaLocation="../XSD/saml-schema-protocol-2.0.xsd" />
+      <xsd:import namespace="urn:oasis:names:tc:xacml:3.0:profile:saml2.0:v2:schema:protocol:wd-14" schemaLocation="../XSD/xacml-3.0-profile-saml2.0-v2-schema-protocol-wd-14.xsd" />
+    </xsd:schema>
+  </types>
+  <message name="XACMLAuthzDecisionQuery">
+    <part name="body" element="xacml-samlp:XACMLAuthzDecisionQuery" />
+  </message>
+  <message name="XACMLPolicyQuery">
+    <part name="body" element="xacml-samlp:XACMLPolicyQuery" />
+  </message>
+  <message name="ResponseMessage">
+    <part name="body" element="samlp:Response" />
+  </message>
+  <portType name="PolicyDecisionPointPortType">
+    <operation name="execute">
+      <input message="tns:XACMLAuthzDecisionQuery" />
+      <output message="tns:ResponseMessage" />
+    </operation>
+  </portType>
+  <portType name="PolicyAdministrationPointPortType">
+    <operation name="execute">
+      <input message="tns:XACMLPolicyQuery" />
+      <output message="tns:ResponseMessage" />
+    </operation>
+  </portType>
+  <binding name="PolicyDecisionPointSoapBinding" type="tns:PolicyDecisionPointPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="execute">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <binding name="PolicyAdministrationPointSoapBinding" type="tns:PolicyAdministrationPointPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="execute">
+      <soap:operation soapAction="http://www.oasis-open.org/committees/security" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="PolicyDecisionPointService">
+    <documentation>This is per-installation data</documentation>
+    <port name="PolicyDecisionPointPort" binding="tns:PolicyDecisionPointSoapBinding">
+      <soap:address location="http://my.org/XACMLSAMLServer/PolicyDecisionPoint" />
+    </port>
+  </service>
+  <service name="PolicyAdministrationPointService">
+    <documentation>This is per-installation data</documentation>
+    <port name="PolicyAdministrationPointPort" binding="tns:PolicyAdministrationPointSoapBinding">
+      <soap:address location="http://my.org/XACMLSAMLServer/PolicyAdministrationPoint" />
+    </port>
+  </service>
+</definitions>
