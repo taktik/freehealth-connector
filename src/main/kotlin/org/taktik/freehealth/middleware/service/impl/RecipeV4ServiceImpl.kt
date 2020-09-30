@@ -165,7 +165,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         val unconstrainedDate = expirationDate ?: deliveryDate?.plusMonths(3)?.minusDays(1) ?: LocalDateTime.now().plusMonths(3).minusDays(1)
         val limitDate =  LocalDateTime.now().plusYears(1).minusDays(1)
 
-        val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, vendorName ?: "phyMedispringTopaz/1.0-freehealth-connector", packageName, packageVersion, if (unconstrainedDate.isAfter(limitDate)) limitDate else unconstrainedDate)
+        val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, vendorName ?: "phyMedispringTopaz", packageName, packageVersion ?: "1.0-freehealth-connector", if (unconstrainedDate.isAfter(limitDate)) limitDate else unconstrainedDate)
 
         val result = Prescription(Date(), "", prescriptionId!!)
 
