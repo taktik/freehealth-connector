@@ -203,8 +203,8 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                 this.samVersion = samVersion
             }
             softwarePackage.apply {
-                name = vendorName
-                version = packageName
+                name = packageName
+                version = packageVersion
                 id = name + "-" + version
                 this.vendorName = vendorName
                 phone = vendorPhone
