@@ -104,6 +104,7 @@ import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.mapPeriodToFrequency
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDaytime
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDurationType
+import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.freehealth.middleware.dao.CodeDao
 import org.taktik.freehealth.middleware.drugs.dto.MppId
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
@@ -167,7 +168,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
 
         val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, vendorName ?: "phyMedispringTopaz", packageName, packageVersion ?: "1.0-freehealth-connector", if (unconstrainedDate.isAfter(limitDate)) limitDate else unconstrainedDate)
 
-        val result = Prescription(Date(), "", prescriptionId!!)
+        val result = Prescription(Date(), "", prescriptionId!!, false, null, false, ConnectorXmlUtils.toString(m))
 
         return result
     }
@@ -275,6 +276,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                 ids.addAll(listOf(
                     IDKMEHR().apply {
                         s = IDKMEHRschemes.ID_KMEHR
+                        sv = "1.0"
                         value = config.header.getIdKmehr()
                     },
                     IDKMEHR().apply {
