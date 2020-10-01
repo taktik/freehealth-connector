@@ -1,7 +1,5 @@
 package org.taktik.freehealth.middleware.service.impl
 
-import be.cin.encrypted.BusinessContent
-import be.cin.encrypted.EncryptedKnownContent
 import be.cin.types.v1.FaultType
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import be.fgov.ehealth.messageservices.mycarenet.core.v1.RequestType
@@ -10,18 +8,15 @@ import be.fgov.ehealth.messageservices.mycarenet.core.v1.SendTransactionResponse
 import be.fgov.ehealth.mycarenet.commons.core.v3.CareProviderType
 import be.fgov.ehealth.mycarenet.commons.core.v3.CareReceiverIdType
 import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType
-import be.fgov.ehealth.mycarenet.commons.core.v3.IdType
 import be.fgov.ehealth.mycarenet.commons.core.v3.LicenseType
 import be.fgov.ehealth.mycarenet.commons.core.v3.NihiiType
 import be.fgov.ehealth.mycarenet.commons.core.v3.OriginType
 import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
-import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
 import be.fgov.ehealth.mycarenet.mhm.protocol.v1.CancelSubscriptionRequest
 import be.fgov.ehealth.mycarenet.mhm.protocol.v1.NotifySubscriptionClosureRequest
 import be.fgov.ehealth.mycarenet.mhm.protocol.v1.SendSubscriptionRequest
-import be.fgov.ehealth.mycarenet.mhm.protocol.v1.SendSubscriptionResponse
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENT
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENTschemes
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDERRORMYCARENETschemes
@@ -33,7 +28,6 @@ import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDSEX
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDSEXvalues
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDSTANDARD
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDTRANSACTION
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDTRANSACTIONCARENET
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDTRANSACTIONschemes
 import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.IDHCPARTYschemes
@@ -63,21 +57,17 @@ import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerification
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult
 import com.google.gson.Gson
 import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.mhm.validator.impl.MhmXmlValidatorImpl
-import org.taktik.connector.business.mycarenet.attest.domain.AttestV2BuilderResponse
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
 import org.taktik.connector.business.mycarenet.attest.mappers.BlobMapper
 import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.technical.config.ConfigFactory
-import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
-import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
@@ -92,13 +82,11 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MhmService
 import org.taktik.freehealth.middleware.service.STSService
-import org.taktik.freehealth.utils.FuzzyValues
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
 import java.math.BigDecimal
-import java.time.Instant
 import java.util.UUID
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
@@ -183,7 +171,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
             val packageInfo =
-                McnConfigUtil.retrievePackageInfo("medicalhousemembership", principal?.mcnLicense, principal?.mcnPassword)
+                McnConfigUtil.retrievePackageInfo("medicalhousemembership", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
             this.commonInput = CommonInputType().apply {
                 request =
@@ -373,7 +361,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
             val packageInfo =
-                McnConfigUtil.retrievePackageInfo("medicalhousemembership", principal?.mcnLicense, principal?.mcnPassword)
+                McnConfigUtil.retrievePackageInfo("medicalhousemembership", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
             this.commonInput = CommonInputType().apply {
                 request =
@@ -555,7 +543,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
 
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
             val packageInfo =
-                McnConfigUtil.retrievePackageInfo("medicalhousemembership", principal?.mcnLicense, principal?.mcnPassword)
+                McnConfigUtil.retrievePackageInfo("medicalhousemembership", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
             this.commonInput = CommonInputType().apply {
                 request =
