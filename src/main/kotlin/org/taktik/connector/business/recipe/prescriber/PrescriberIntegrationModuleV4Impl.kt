@@ -119,6 +119,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
             params.patientId = patientId
             params.expirationDate = expDateAsString
             params.vision = vision
+            params.prescriberId = nihii
 
             log.info("Recip-e v4 prescription is {}", prescription.toString(Charsets.UTF_8))
             log.info("Recip-e v4 message is {}", ConnectorXmlUtils.toString(params))
