@@ -342,7 +342,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                     cds.add(CDTRANSACTION().apply { s(CDTRANSACTIONschemes.CD_TRANSACTION); value = "pharmaceuticalprescription" })
                     date = config.header.date
                     time = config.header.time
-                    // expirationDate?.let { expirationdate = makeXGC(expirationDate.time) } // deprecated as of Kmehr 1.18 - 20161201
+                    expirationDate?.let { expirationdate = makeXmlGregorianCalendar(expirationDate) }
                     author = AuthorType().apply {
                         hcparties.add(HcpartyType().apply {
                             ids.add(IDHCPARTY().apply { s =
@@ -374,7 +374,6 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                     }
                     isIscomplete = true
                     isIsvalidated = true
-                    expirationdate = expirationDate?.let { makeXMLGregorianCalendarFromFuzzyLong(FuzzyValues.getFuzzyDate(it, ChronoUnit.DAYS)) }
                     headingsAndItemsAndTexts.add(HeadingType().apply {
                         ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "1" })
                         cds.add(CDHEADING().apply { s = CDHEADINGschemes.CD_HEADING; value = "prescription" })
