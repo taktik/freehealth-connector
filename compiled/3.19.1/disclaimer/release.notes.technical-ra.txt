@@ -1,0 +1,93 @@
+***************************************************************************
+* eHealth Technical Connector Registration Authority (RA)   RELEASE NOTES *
+***************************************************************************
+3.19.1 release (mars 2020)
+ . N/A
+
+3.19.0 release (mars 2020)
+ . N/A
+
+3.18.0 release (september 2019)
+ . N/A
+
+ Note: Some minor refactoring (clean code, avoiding string concat)
+
+3.17.1 release (april 2019) 
+   . bug-fix    b.e.t.ra.RaWalkThroughIntegrationTest        fix test to avoid creation of dummy key/pair entry
+
+3.17.0 (april 2019)
+ . internal release
+    
+3.15.1 release (april 2018)
+  . change                      migration from ra v1 to ra v2 services
+
+3.15.0 release (april 2018)
+ . internal release
+   
+3.14.2 release (february 2017)
+  . N/A
+  
+3.14.2-beta-1 release (november 2017)
+  . N/A
+
+3.14.2-beta-0 internal release (november 2017)
+
+3.13.1 release (july 2017)
+  . N/A
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . improvement b.e.f.t.ra.service.impl.AuthenticationCertificate..Impl          Use of the cache class instead of map for caching
+
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . improvement b.e.f.t.ra.domain.DistinguishedName                               minor refactoring (clean code)
+
+3.10.4 release (september 2016)
+  . N/A
+
+3.10.3 release
+  . internal release
+
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release
+  . internal release
+
+3.10.0 release (june 2016)
+  . improvement b.e.f.t.ra.domain.Contract                                        minor refactoring (clean code)
+  . improvement b.e.f.t.ra.domain.NewCertifcatedContract                          minor refactoring (clean code)
+  . improvement b.e.f.t.ra.domain.Organization                                    minor refactoring (clean code)
+  . improvement b.e.f.t.ra.domain.RevokeCertificateContract                       minor refactoring (clean code)
+  . added       b.e.f.t.ra.builders.BuilderFactory                                adding new method to obtain a InformationBuilder
+  . improvement b.e.f.t.ra.builders.ContractBuilder                               adding option forOrganization(b.e.f.t.ra.domain.Organization)
+  . bug-fix     b.e.f.t.ra.builders.ContractBuilder                               contact details are correctly passed to the Concract
+  . improvement b.e.f.t.ra.builders.EncryptionTokenBuilder                        minor refactoring (clean code)
+  . added       b.e.f.t.ra.builders.InformationBuilder                            adding new Builder for listing of existing applicationIds,revocable certificates and associatedOrganizations
+  . added       b.e.f.t.ra.service.AuthenticationCertificateRegistrationService   adding new methods required by the InformationBuilder
+  . improvement b.e.f.t.ra.service.impl.AuthenticationCertificate..Impl           adding implementation for the new methods (InformationBuilder)
+                                                                                  adding cache reducing number of RA calls
+  . bug-fix     b.e.f.t.ra.service.impl.AuthenticationCertificate..Impl           passing correct params with the revoke cert method
+  . bug-fix     b.e.f.t.ra.service.ServiceFactory                                 removed typo in the exposed properties
+  . improvement b.e.f.t.ra.utils.KeyStoreUtils                                    minor refactoring (clean code)
+  . improvement b.e.f.t.ra.utils.RaUtils                                          minor refactoring (clean code)
+  . removed     b.e.f.t.ra.utils.Slf4jLogChute                                    moved to technical-core
+  . bug-fix     /templates/*.html
+  . improvement                                                                   uniformisation of all connector versions
+
+3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+3.4.0-beta-10 release
+  . bug-fix     b.e.f.t.ra.domain.DistinguishedName                               fixed issue with creating a DistinguishedName based on a X500Principal 	
+  . bug-fix     b.e.f.t.ra.builders.BuilderFactory                                adding credential as parameter for the encryption token builder
+  . bug-fix     b.e.f.t.ra.builders.EncryptionTokenBuilder                        added initialization of Credential
+  . bug-fix     b.e.f.t.ra.builders.ContractBuilder                               added initialization of contract type
+
+3.4.0-beta-9 release
+  initial release

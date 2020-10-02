@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:consultRN:1_0:protocol" xmlns:crnco="urn:be:fgov:ehealth:consultRN:1_0:core" xmlns:pt="urn:be:fgov:ehealth:commons:1_0:protocol"
+  xmlns:co="urn:be:fgov:ehealth:commons:1_0:core" targetNamespace="urn:be:fgov:ehealth:consultRN:1_0:protocol"
+  version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: ConsultRN XSD webservices
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.7
+ Build-Time: 20171219-1300 
+ </xs:appinfo>
+ </xs:annotation>
+  <xs:import namespace="urn:be:fgov:ehealth:commons:1_0:protocol" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-1_0.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:commons:1_0:core" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-core-1_0.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:consultRN:1_0:core" schemaLocation="ehealth-consultrn-commons-core-1_0.xsd" />
+  <xs:complexType name="ConsultRnRequestType">
+    <xs:annotation>
+      <xs:documentation>Standard structure of consultRN request</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="pt:RequestType">
+        <xs:sequence>
+          <xs:element name="Organisation" type="co:IdentifierType" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>information about the author of the request</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ApplicationID" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ConsultRnReplyType">
+    <xs:annotation>
+      <xs:documentation>standard structure of consult RN reply</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="pt:ResponseType">
+        <xs:sequence>
+          <xs:element name="ErrorInformation" type="crnco:ErrorType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

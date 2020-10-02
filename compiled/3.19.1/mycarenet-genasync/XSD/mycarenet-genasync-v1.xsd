@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xsd:schema elementFormDefault="qualified" targetNamespace="urn:be:cin:nip:async:generic" xmlns:common="urn:be:cin:mycarenet:esb:common:v2" xmlns:tns="urn:be:cin:nip:async:generic" xmlns:types="urn:be:cin:types:v1" xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:import namespace="urn:be:cin:types:v1" schemaLocation="../../mycarenet-commons/XSD/commonTypes-v1.3.xsd" />
+  <xsd:import namespace="urn:be:cin:mycarenet:esb:common:v2" schemaLocation="../../mycarenet-commons/XSD/commonInfo-v2.3.xsd" />
+  <xsd:import namespace="http://www.w3.org/2005/05/xmlmime" schemaLocation="../../external/XSD/xmlmime.xsd" />
+  
+  <xsd:element name="post">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="CommonInput" type="common:CommonInputType" />
+        <xsd:element name="Detail" type="types:Blob" />
+        <xsd:element name="Xades-t" minOccurs="0" type="xmime:base64Binary">
+          <xsd:annotation>
+            <xsd:documentation>
+              The signature in xades-t form, base64 encoded
+              to preserve the internal signature.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="internalPostResponse" type="tns:internalPostResponse" />
+  <xsd:complexType name="internalPostResponse">
+    <xsd:sequence>
+      <xsd:element name="return" type="tns:postResponseReturn" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="postResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="return" type="tns:TAck" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="postResponseReturn">
+    <xsd:sequence>
+      <xsd:element name="TAck" type="tns:TAck" />
+      <xsd:element name="Xades-t" minOccurs="0" type="xmime:base64Binary">
+        <xsd:annotation>
+          <xsd:documentation>
+            The signature in xades-t form, base64 encoded
+            to preserve the internal signature.
+            Optional when the input was emtpy.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="get">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="Origin" type="common:OrigineType" />
+        <xsd:element name="QueryParameters" type="tns:QueryParameters" minOccurs="0" />
+        <xsd:element name="MsgQuery" type="tns:MsgQuery" />
+        <xsd:element name="TAckQuery" type="tns:Query" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="QueryParameters">
+    <xsd:sequence>
+      <xsd:element name="includeIOs" type="types:StringList" />
+      <xsd:element name="excludeIOs" type="types:StringList" />
+    </xsd:sequence>
+    <xsd:attribute name="Reference" type="xsd:string" />
+  </xsd:complexType>
+
+  <xsd:complexType name="Query">
+    <xsd:sequence>
+      <xsd:element name="Max" default="100" type="xsd:int" minOccurs="0" />
+    </xsd:sequence>
+    <xsd:attribute name="Include" type="xsd:boolean" default="true" />
+  </xsd:complexType>
+
+  <xsd:complexType name="MsgQuery">
+    <xsd:complexContent>
+      <xsd:extension base="tns:Query">
+        <xsd:sequence>
+          <xsd:element name="MessageNames" type="types:StringList">
+            <xsd:annotation>
+              <xsd:documentation>Empty means all.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:element name="getResponse" type="tns:getResponse" />
+
+  <xsd:complexType name="getResponse">
+    <xsd:sequence>
+      <xsd:element name="return" type="tns:Responses" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Responses">
+    <xsd:sequence>
+      <xsd:element name="MsgResponse" type="tns:MsgResponse" minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="TAckResponse" type="tns:TAckResponse" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+    <xsd:attribute name="MsgCount" type="xsd:int" use="required" />
+    <xsd:attribute name="TAckCount" type="xsd:int" use="required" />
+  </xsd:complexType>
+
+  <xsd:complexType name="MsgResponse">
+    <xsd:sequence>
+      <xsd:element name="CommonOutput" type="common:CommonOutputType" />
+      <xsd:element name="Detail" type="types:Blob" />
+      <xsd:element name="Xades-t" type="xmime:base64Binary">
+        <xsd:annotation>
+          <xsd:documentation>
+            The signature in xades-t form, base64 encoded to
+            preserve the internal signature.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="TAckResponse">
+    <xsd:sequence>
+      <xsd:element name="TAck" type="tns:TAck" />
+      <xsd:element name="Xades-t" type="xmime:base64Binary">
+        <xsd:annotation>
+          <xsd:documentation>
+            The signature in xades-t form, base64 encoded to
+            preserve the internal signature.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="fault" type="types:FaultType" />
+
+  <xsd:complexType name="TAck">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:base64Binary">
+        <xsd:annotation>
+          <xsd:documentation>
+            The content is the hmac-sha256 of the request
+            with the content of the ResultMajor as key (UTF8
+            encoded).
+            This way it references both the messages it applies to and the result, this
+            is required because the
+            xades-t only signs the
+            decoded content
+            which does not include the result attributes.
+          </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="Issuer" type="xsd:anyURI" use="required" />
+        <xsd:attribute name="AppliesTo" type="xsd:string" use="required" />
+        <xsd:attributeGroup ref="tns:Result" />
+        <xsd:attribute name="Id" type="xsd:NCName" />
+        <xsd:attribute name="Reference" type="xsd:string" />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:attributeGroup name="Result">
+    <xsd:attribute name="ResultMajor" type="xsd:anyURI" use="required" />
+    <xsd:attribute name="ResultMinor" type="xsd:anyURI" />
+    <xsd:attribute name="ResultMessage" type="xsd:string" />
+  </xsd:attributeGroup>
+
+  <xsd:element name="confirm">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="Origin" type="common:OrigineType" />
+        <xsd:element name="MsgHashValues" type="types:Base64BinaryList" minOccurs="0" />
+        <xsd:element name="MsgRefValues" type="types:StringList" minOccurs="0" />
+        <xsd:element name="TAckContents" type="types:Base64BinaryList" minOccurs="0" />
+        <xsd:element name="TAckReferences" type="types:StringList" minOccurs="0" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="confirmResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

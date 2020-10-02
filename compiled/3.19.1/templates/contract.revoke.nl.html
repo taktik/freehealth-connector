@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>eHealth-platform Certificaten Gebruikersvoorwaarden</title>
+</head>
+  <body>
+    <h2 style="background-color: #C0C0C0">
+      Signaletiekgegevens certificaat
+    </h2>
+   Certificaateigenaar: $!identity.firstName $!identity.middleName $identity.name<br>
+	 Type certificaat: 
+	#if($cert.naturalPerson)
+    Persoonlijk
+    #else
+    Organisatie
+    #end
+    <br>Identifier certificaat: ${oids.get("CN").replace("\","")}<br>
+
+    <h2 style="background-color: #C0C0C0">
+      Reden tot herroeping van het certificaat
+    </h2>
+    $reason $!reasonDetail<br>&#65279;
+ 
+    #parse ("/templates/terms.nl.html")
+  </body>
+</html>
