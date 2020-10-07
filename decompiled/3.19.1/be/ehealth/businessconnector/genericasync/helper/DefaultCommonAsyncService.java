@@ -60,7 +60,7 @@ public class DefaultCommonAsyncService implements CommonAsyncService {
       options.put("followNestedManifest", true);
 
       try {
-         return SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T).verify((byte[])signedByteArray, (byte[])xadesT, options);
+         return SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T).verify(signedByteArray, xadesT, options);
       } catch (TechnicalConnectorException var9) {
          throw new GenAsyncBusinessConnectorException(GenAsyncBusinessConnectorExceptionValues.SIGNATURE_VALIDATION_ERROR, var9, new Object[]{var9.getMessage()});
       }

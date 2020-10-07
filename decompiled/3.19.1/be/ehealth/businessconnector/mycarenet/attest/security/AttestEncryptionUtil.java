@@ -16,7 +16,7 @@ public class AttestEncryptionUtil<X> {
    private static final Logger LOG = LoggerFactory.getLogger(AttestEncryptionUtil.class);
 
    public byte[] handleEncryption(X request, Crypto crypto, String detailId) throws TechnicalConnectorException, TransformerException, UnsupportedEncodingException, JAXBException {
-      Marshaller marshaller = JAXBContext.newInstance(new Class[]{request.getClass()}).createMarshaller();
+      Marshaller marshaller = JAXBContext.newInstance(request.getClass()).createMarshaller();
       DOMResult res = new DOMResult();
       marshaller.marshal(request, res);
       return BusinessContentEncryptor.encrypt((Document)res.getNode(), crypto, detailId);

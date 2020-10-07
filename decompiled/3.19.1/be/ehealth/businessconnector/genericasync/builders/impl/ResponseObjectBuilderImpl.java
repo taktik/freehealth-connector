@@ -164,7 +164,7 @@ public class ResponseObjectBuilderImpl implements ResponseObjectBuilder {
          options.put("followNestedManifest", followNestedManifest);
 
          try {
-            return SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T).verify((byte[])signedByteArray, (byte[])xadesT, options);
+            return SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES_T).verify(signedByteArray, xadesT, options);
          } catch (TechnicalConnectorException var7) {
             throw new GenAsyncBusinessConnectorException(GenAsyncBusinessConnectorExceptionValues.SIGNATURE_VALIDATION_ERROR, var7, new Object[]{var7.getMessage()});
          }

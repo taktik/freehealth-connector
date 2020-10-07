@@ -74,7 +74,7 @@ public class ResponseObjectBuilderImpl implements ResponseObjectBuilder, Configu
          SignatureBuilder builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES);
          Element sigElement = ConnectorXmlUtils.toElement(xadesTByteArray);
          Map<String, Object> optionMap = new HashMap();
-         result.put("result.signature.verification", builder.verify((byte[])this.reassemblyMessage(originalResult, sigElement), (byte[])xadesTByteArray, optionMap));
+         result.put("result.signature.verification", builder.verify(this.reassemblyMessage(originalResult, sigElement), xadesTByteArray, optionMap));
       } else {
          result.put("result.has.signature", false);
       }
