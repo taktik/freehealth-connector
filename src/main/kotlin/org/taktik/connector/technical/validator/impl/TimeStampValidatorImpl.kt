@@ -97,9 +97,8 @@ class TimeStampValidatorImpl : TimeStampValidator, ConfigurableImplementation {
         this.aliases = ArrayList()
         val aliasList = this.getAliases()
         if (aliasList != null) {
-            this.aliases!!.addAll(aliasList)
+            this.aliases!!.addAll(aliasList.sortedByDescending { it })
         }
-
     }
 
     override fun setKeyStore(keyStore: KeyStore?) {
