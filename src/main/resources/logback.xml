@@ -6,8 +6,8 @@
 	<logger name="be.fgov.ehealth.etee.crypto.decrypt" level="ERROR" />
 
 	<logger name="org.taktik.connector.technical" level="WARN" />
-	<logger name="org.taktik.connector.technical.ws.impl" level="DEBUG"/>
-	<logger name="org.taktik.connector.technical.validator" level="DEBUG" />
+	<logger name="org.taktik.connector.technical.ws.impl" level="INFO"/>
+	<logger name="org.taktik.connector.technical.validator" level="INFO" />
 	<logger name="org.taktik.connector.technical.service.etee.impl.CryptoImpl" level="ERROR" />
 
 	<logger name="org.taktik.freehealth.middleware.service.impl" level="INFO" />
