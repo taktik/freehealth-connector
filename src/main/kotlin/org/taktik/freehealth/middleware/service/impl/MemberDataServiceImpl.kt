@@ -320,23 +320,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val response = genAsyncService.getRequest(samlToken, get, getHeader)
 
         val b64 = Base64.getEncoder()
-
+        val listOfMdaDecryptedResponseContent : ArrayList<String> = arrayListOf()
         return try {
             MemberDataList(
-                mycarenetConversation = MycarenetConversation().apply {
-                    this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
-                    this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
-                    response?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
-                },
-                acks = response.`return`.tAckResponses?.map {
-                    MemberDataAck(
-                        major = it.tAck.resultMajor,
-                        minor = it.tAck.resultMinor,
-                        message = it.tAck.resultMessage,
-                        date = null
-                    )
-                },
                 memberDataMessageList = response.`return`.msgResponses?.map {
                     var data: ByteArray? = if (it.detail.contentEncoding == "deflate") ConnectorIOUtils.decompress(DomainBlobMapper.mapToBlob(it.detail).content) else DomainBlobMapper.mapToBlob(it.detail).content
                     val responseList = if (it.detail.contentEncryption == "encryptedForKnownRecipient") {
@@ -349,6 +335,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     } else {
                         MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(data)
                     }
+
+                    listOfMdaDecryptedResponseContent.add(ConnectorXmlUtils.toString(responseList))
 
                     MemberDataMessage(
                         commonOutput = CommonOutput(
@@ -413,6 +401,21 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     )
 
                 },
+                acks = response.`return`.tAckResponses?.map {
+                    MemberDataAck(
+                        major = it.tAck.resultMajor,
+                        minor = it.tAck.resultMinor,
+                        message = it.tAck.resultMessage,
+                        date = null
+                    )
+                },
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
+                    this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
+                    response?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                    this.decryptedResponseContent = listOfMdaDecryptedResponseContent
+                },
                 date = null,
                 genericErrors = null
             )
@@ -423,6 +426,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
                     response?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                    this.decryptedResponseContent = listOfMdaDecryptedResponseContent
                 },
                 acks = null,
                 date = null,
