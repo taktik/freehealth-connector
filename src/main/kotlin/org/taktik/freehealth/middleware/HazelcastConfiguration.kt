@@ -90,8 +90,6 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
             maxSizeConfig = MaxSizeConfig(128, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)
             evictionPolicy = EvictionPolicy.LRU
         })
-
-
     }
 
     @Bean

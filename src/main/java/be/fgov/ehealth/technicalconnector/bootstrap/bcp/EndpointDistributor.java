@@ -36,6 +36,15 @@ public final class EndpointDistributor {
       return EndpointDistributor.EndpointDistributorSingleton.INSTANCE.getEndpointDistributor();
    }
 
+
+   public Map<String, String> getService2ActiveEndpoint() {
+      return service2ActiveEndpoint;
+   }
+
+   public Map<String, String> getService2DefaultEndpoint() {
+      return service2DefaultEndpoint;
+   }
+
    public String getService(String currentEndpoint) {
       return (String)this.url2Service.get(currentEndpoint);
    }
