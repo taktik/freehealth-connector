@@ -533,7 +533,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @PathVariable sl: String,
         @RequestParam id: String,
         @RequestParam(required = false) hubPackageId: String?,
-        @RequestParam(required = false) breakTheGlassReason: String?
+        @RequestParam(required = false) breakTheGlassReason: String?,
+        @RequestParam(required = false) externalHubId: String?,
+        @RequestParam(required = false) externalHubName: String?
     ): Kmehrmessage? = hubService.getTransactionSet(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -547,6 +549,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpZip = hcpZip,
         ssin = ssin,
         breakTheGlassReason = breakTheGlassReason,
+        externalHubId = externalHubId,
+        externalHubName = externalHubName,
         sv = sv,
         sl = sl,
         value = id
@@ -568,7 +572,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @PathVariable sl: String,
         @RequestParam id: String,
         @RequestParam(required = false) hubPackageId: String?,
-        @RequestParam(required = false) breakTheGlassReason: String?
+        @RequestParam(required = false) breakTheGlassReason: String?,
+        @RequestParam(required = false) externalHubId: String?,
+        @RequestParam(required = false) externalHubName: String?
     ): Kmehrmessage? = hubService.getTransactionSet(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -582,6 +588,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpZip = hcpZip,
         ssin = ssin,
         breakTheGlassReason = breakTheGlassReason,
+        externalHubId = externalHubId,
+        externalHubName = externalHubName,
         sv = sv,
         sl = sl,
         value = id
