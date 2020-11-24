@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.service.impl
 
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
+import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
@@ -79,9 +80,6 @@ import java.math.BigInteger
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.util.Date
-import java.util.Properties
-import java.util.UUID
 import javax.xml.bind.JAXBContext
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.HeaderType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.HeadingType
@@ -100,15 +98,23 @@ import org.taktik.connector.business.domain.kmehr.v20190301.makeXGC
 import org.taktik.connector.business.domain.kmehr.v20190301.makeXMLGregorianCalendarFromFuzzyLong
 import org.taktik.connector.business.domain.kmehr.v20190301.makeXmlGregorianCalendar
 import org.taktik.connector.business.domain.kmehr.v20190301.s
+import org.taktik.connector.business.recipe.prescriber.PrescriberIntegrationModuleImpl
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.mapPeriodToFrequency
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDaytime
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDurationType
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.freehealth.middleware.dao.CodeDao
+import org.taktik.freehealth.middleware.domain.recipe.Feedback
 import org.taktik.freehealth.middleware.drugs.dto.MppId
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
 import org.taktik.freehealth.middleware.dto.Address
+import java.lang.Long
+import java.nio.charset.Charset
+import java.util.*
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Executors
 
 @Service
 class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: STSService, private val drugsLogic: DrugsLogic, private val recipeService: RecipeService, private val keyDepotService: KeyDepotService) : RecipeV4Service {
@@ -116,8 +122,66 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
     private val kmehrHelper = KmehrHelper(Properties().apply { load(RecipeServiceImpl::class.java.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
 
     private val ridCache = CacheBuilder.newBuilder().build<String, GetPrescriptionForPrescriberResult>()
+    private val feedbacksCache : Cache<String, SortedSet<Feedback>>
     private val icureName = "freehealth-connector"
     private val icureVersion = "1.0.0"
+
+    init {
+        feedbacksCache = CacheBuilder.newBuilder().build<String, SortedSet<Feedback>>()
+    }
+
+    override fun listOpenPrescriptionV4(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patientId: String): List<Prescription> {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+
+        val service = PrescriberIntegrationModuleV4Impl(stsService, keyDepotService)
+        val ridList = service.listOpenPrescription(samlToken, credential, hcpNihii, patientId)
+
+        val es = Executors.newFixedThreadPool(5)
+        try {
+            val getFeedback = es.submit<List<Feedback>> { listFeedbacksV4(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase) }
+            val futures = es.invokeAll<GetPrescriptionForPrescriberResult>(ridList.map { rid -> Callable<GetPrescriptionForPrescriberResult> { ridCache[rid, { service!!.getPrescription(samlToken, credential, keystore, passPhrase, hcpNihii, rid) }] } })
+            val result = futures.map { f -> f.get() }.map { r -> Prescription(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId) }
+
+            try {
+                for (d in getFeedback.get()) {
+                    feedbacksCache[d.rid!!, { TreeSet() }].add(d)
+                }
+            } catch (e: ExecutionException) {
+                log.error("Unexpected error", e)
+            }
+
+            es.shutdown()
+            return result
+        } catch (e: InterruptedException) {
+            log.error("Unexpected error", e)
+        }
+
+        return emptyList()
+
+    }
+
+    override fun listFeedbacksV4(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String): List<Feedback> {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val service = PrescriberIntegrationModuleV4Impl(stsService, keyDepotService)
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val feedbackItemList = service!!.listFeedback(samlToken, credential, hcpNihii, true)
+        return feedbackItemList.map { Feedback(it.rid, Long.parseLong(it.sentBy), it.sentDate?.time, it.content?.toString(Charset.forName("UTF-8"))) }
+    }
+
+    override fun revokePrescriptionV4(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, rid: String, reason: String) {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val service = PrescriberIntegrationModuleV4Impl(stsService, keyDepotService)
+        service.revokePrescription(samlToken, credential, hcpNihii, rid, reason)
+    }
 
     override fun createPrescriptionV4(keystoreId: UUID,
         tokenId: UUID,

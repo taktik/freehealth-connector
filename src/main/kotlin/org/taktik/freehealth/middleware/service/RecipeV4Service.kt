@@ -23,10 +23,14 @@ package org.taktik.freehealth.middleware.service
 import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.domain.common.Patient
+import org.taktik.freehealth.middleware.domain.recipe.Feedback
 import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.dto.HealthcareParty
+import java.security.KeyStoreException
+import java.security.cert.CertificateExpiredException
 import java.time.LocalDateTime
 import java.util.UUID
+import java.util.zip.DataFormatException
 
 /**
  * Created with IntelliJ IDEA.
@@ -62,4 +66,40 @@ interface RecipeV4Service {
         vision: String?,
         expirationDate: LocalDateTime?
                             ): Prescription
+
+    @Throws(ConnectorException::class)
+    fun listOpenPrescriptionV4(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String,
+        patientId: String
+    ): List<Prescription>
+
+    @Throws(ConnectorException::class, DataFormatException::class, KeyStoreException::class, CertificateExpiredException::class)
+    fun listFeedbacksV4(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String
+    ): List<Feedback>
+
+    @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
+    fun revokePrescriptionV4(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String,
+        rid: String,
+        reason: String
+    )
 }
