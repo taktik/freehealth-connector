@@ -212,7 +212,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val selectedType: String = inferPrescriptionType(medications, prescriptionType)
 
-        val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName ?: "phyMedispringTopaz/1.0-freehealth-connector", packageName, packageVersion, vendorEmail, vendorPhone, expirationDate)
+        val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName ?: "phyMedispringTopaz", packageName, packageVersion ?: "1.0-freehealth-connector", vendorEmail, vendorPhone, expirationDate)
 
         val os = ByteArrayOutputStream()
         JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(m, os)

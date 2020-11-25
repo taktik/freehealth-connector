@@ -286,9 +286,9 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         assert(formattedCreationDate.length == 8)
 
         val tc1String = getInsurabilityParameters(patient, InsuranceParameter.tc1)
-        val ct1 = if (tc1String != null) Integer.valueOf(tc1String) else 0
+        val ct1 = if (tc1String != null && tc1String != "") Integer.valueOf(tc1String) else 0
         val tc2String = getInsurabilityParameters(patient, InsuranceParameter.tc2)
-        val ct2 = if (tc2String != null) Integer.valueOf(tc2String) else 0
+        val ct2 = if (tc2String != null && tc2String != "") Integer.valueOf(tc2String) else 0
         var noSIS: String? = if (patient.ssin != null) patient.ssin else ""
         noSIS = noSIS!!.replace("[^0-9]".toRegex(), "")
 
@@ -447,9 +447,9 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         noSIS = noSIS!!.replace("[^0-9]".toRegex(), "")
 
         val tc1String = getInsurabilityParameters(patient, InsuranceParameter.tc1)
-        val ct1 = if (tc1String != null) Integer.valueOf(tc1String) else 0
+        val ct1 = if (tc1String != null && tc1String != "") Integer.valueOf(tc1String) else 0
         val tc2String = getInsurabilityParameters(patient, InsuranceParameter.tc2)
-        val ct2 = if (tc2String != null) Integer.valueOf(tc2String) else 0
+        val ct2 = if (tc2String != null && tc2String != "") Integer.valueOf(tc2String) else 0
 
         ws.write("2", recordNumber)
         ws.write("3", 0)

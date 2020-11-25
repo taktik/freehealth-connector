@@ -59,11 +59,8 @@ class TimeStampValidatorImpl : TimeStampValidator, ConfigurableImplementation {
 
         var signatureValid = false
         var lastException: Exception? = null
-        val `i$` = this.aliases!!.iterator()
 
-        while (`i$`.hasNext()) {
-            val alias = `i$`.next()
-
+        for (alias in this.aliases!!) {
             try {
                 val ttsaCert = this.keyStore!!.getCertificate(alias) as X509Certificate
                 LOG.debug("Trying to validate timestamp against certificate with alias [" + alias + "] : [" + ttsaCert.subjectX500Principal.getName("RFC1779") + "]")
@@ -76,7 +73,6 @@ class TimeStampValidatorImpl : TimeStampValidator, ConfigurableImplementation {
                 lastException = var9
                 LOG.debug("TimeStampToken not valid with certificate-alias [" + alias + "]: " + var9.message)
             }
-
         }
 
         if (!signatureValid) {
@@ -101,9 +97,8 @@ class TimeStampValidatorImpl : TimeStampValidator, ConfigurableImplementation {
         this.aliases = ArrayList()
         val aliasList = this.getAliases()
         if (aliasList != null) {
-            this.aliases!!.addAll(aliasList)
+            this.aliases!!.addAll(aliasList.sortedByDescending { it })
         }
-
     }
 
     override fun setKeyStore(keyStore: KeyStore?) {

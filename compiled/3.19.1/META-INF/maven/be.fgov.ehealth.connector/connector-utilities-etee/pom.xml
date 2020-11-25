@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>be.fgov.ehealth.connector</groupId>
+    <artifactId>connector-utilities-master</artifactId>
+    <version>3.19.1</version>
+  </parent>
+
+  <artifactId>connector-utilities-etee</artifactId>
+  <name>${project.artifactId}</name>
+  <description>Connector utilities etee</description>
+  <packaging>jar</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack xsd</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>be.fgov.ehealth.xsd</groupId>
+                  <artifactId>xsd-etee-etkdepot</artifactId>
+                  <version>1.0.1</version>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>be.fgov.ehealth.xsd</groupId>
+                  <artifactId>xsd-etee-kgss</artifactId>
+                  <version>1.2.0</version>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>be.fgov.ehealth.xsd</groupId>
+                  <artifactId>xsd-etee-ra</artifactId>
+                  <version>2.0.2</version>
+                </artifactItem>
+              </artifactItems>
+              <includes>**/*.xsd</includes>
+              <excludes>ehealth-commons-schema-core-1_0.xsd,**/ehealth-monitoring/**,**/ehealth-errors-schema-service*.xsd</excludes>
+              <outputDirectory>target/generated-resources</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>unpack xsd-racommons</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>be.fgov.ehealth.etee</groupId>
+                  <artifactId>etee-racommons</artifactId>
+                  <version>20152.0.0</version>
+                </artifactItem>
+              </artifactItems>
+              <includes>**/*.xsd</includes>
+              <outputDirectory>target/generated-resources/ehealth-etee/XSD</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-core</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-common</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-external</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+
+</project>

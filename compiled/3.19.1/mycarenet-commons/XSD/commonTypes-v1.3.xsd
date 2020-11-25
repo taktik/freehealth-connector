@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<schema elementFormDefault="qualified" targetNamespace="urn:be:cin:types:v1" xmlns:tns="urn:be:cin:types:v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion" xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+  xmlns="http://www.w3.org/2001/XMLSchema">
+  <import schemaLocation="../../external/XSD/xml.xsd" namespace="http://www.w3.org/XML/1998/namespace" />
+  <import schemaLocation="../../external/XSD/xmlmime.xsd" namespace="http://www.w3.org/2005/05/xmlmime" />
+
+  <annotation>
+    <documentation>
+      * v1.0: Initial version
+      * v1.1:
+      - Added String List
+      - Made IO list an open list
+      - Added blob-type
+      - Removed sendertype
+      - Removed limited strings
+      * v1.2: Relaxed blob compression
+      * v1.3: Added new attributes to Issuer
+    </documentation>
+  </annotation>
+  
+  <simpleType name="StringList">
+    <annotation>
+      <documentation>
+<![CDATA[
+A list of strings.
+]]>
+      </documentation>
+    </annotation>
+    <list itemType="string" />
+  </simpleType>
+
+  <simpleType name="Base64BinaryList">
+    <annotation>
+      <documentation>
+<![CDATA[
+A list of byte-arrays.
+]]>
+      </documentation>
+    </annotation>
+    <list itemType="base64Binary" />
+  </simpleType>
+
+  <complexType name="StringLangType">
+    <annotation>
+      <documentation>
+<![CDATA[ 
+An (xml) type that has a string as content/value and the language as attribute/field.
+]]>
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+        <attribute ref="xml:lang" />
+      </extension>
+    </simpleContent>
+  </complexType>
+
+  <complexType name="DetailType">
+    <annotation>
+      <documentation>
+<![CDATA[
+A single detail line of a fault.
+]]>
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="DetailCode" type="string">
+        <annotation>
+          <documentation xml:lang="en">Contains a detail code.</documentation>
+        </annotation>
+      </element>
+      <element name="DetailSource" type="string" />
+      <element name="Location" type="string" minOccurs="0">
+        <annotation>
+          <documentation xml:lang="en">Contains the location of the fault. This could be an XPath expression.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="Message" type="tns:StringLangType" minOccurs="0">
+        <annotation>
+          <documentation xml:lang="en">Contains a human-readable message.</documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+  <complexType name="FaultType">
+    <annotation>
+      <documentation>
+<![CDATA[
+Contains the fault information.
+<p>
+The fault always consists of main fault information and detailed information.
+It is used for both SOAP Faults and Java Exceptions.
+</p>
+]]>
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="FaultCode" type="string" />
+      <element name="FaultSource" type="string">
+        <annotation>
+          <documentation xml:lang="en">Contains the name of the subsystem that caused the error event to
+            occur.
+          </documentation>
+        </annotation>
+      </element>
+      <element name="Message" type="tns:StringLangType">
+        <annotation>
+          <documentation xml:lang="en">A human-readable error message.</documentation>
+        </annotation>
+      </element>
+      <element name="Details" type="tns:DetailsType" />
+    </sequence>
+  </complexType>
+  <complexType name="DetailsType">
+    <annotation>
+      <documentation>
+<![CDATA[
+Contains a list with details of a fault.
+]]>
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="Detail" type="tns:DetailType" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+  </complexType>
+  <complexType name="PeriodType">
+    <annotation>
+      <documentation>
+<![CDATA[
+A standard period consisting of a start and end date, both required.
+]]>
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="Start" type="date" />
+      <element name="End" type="date" />
+    </sequence>
+  </complexType>
+  <complexType name="CareReceiverIdType">
+    <annotation>
+      <documentation>
+<![CDATA[
+Universal way of identifying a care receiver.
+A care receiver can be identified in one of the following ways:
+<ul>
+	<li>SSIN only</li>
+	<li>Mutuality code (e.g. 312) and registration number with the mutuality</li>
+	<li>SSIN, Mutuality code (e.g. 312) and registration number with the mutuality</li>
+</ul>
+The most common case it the SSIN only.
+]]>
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="Ssin" type="string" minOccurs="0" />
+      <element name="RegNrWithMut" type="string" minOccurs="0" />
+      <element name="Mutuality" type="string" minOccurs="0" />
+    </sequence>
+  </complexType>
+
+  <complexType name="Blob">
+    <simpleContent>
+      <extension base="base64Binary" xmime:expectedContentTypes="application/octet-stream">
+        <annotation>
+          <documentation>
+          <![CDATA[
+			A Binary Large Object with technical metadata.
+			<p>
+			Can contain large abound of binary data, which can be transported via MTOM/XOP when used in web services.
+			It contains attributes/fields that provide technical data.
+			</p><p>
+			The content/value contains the binary data, first compressed via deflate and then base 64 encoded.
+			</p>
+		  ]]>
+          </documentation>
+        </annotation>
+        <attribute name="ContentType" type="string" use="required" />
+        <attribute name="ContentEncoding" type="string" default="deflate" />
+        <attribute name="MessageName" type="string" use="required" />
+        <attribute name="HashValue" type="base64Binary" />
+        <attribute name="Id" type="NCName" />
+        <attribute name="Reference" type="string" />
+        <attribute name="Issuer" type="anyURI" />
+      </extension>
+    </simpleContent>
+  </complexType>
+
+</schema>

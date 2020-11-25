@@ -79,8 +79,6 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.TransactionType
 import be.fgov.ehealth.standards.kmehr.schema.v1.UnitType
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
-import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError
-import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult
 import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTransformer
 import com.google.gson.Gson
 import org.apache.commons.codec.binary.Base64
@@ -245,7 +243,7 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
                 blob.messageName = "E-ATTEST"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword)
+                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
                 this.commonInput = CommonInputType().apply {
                     request =

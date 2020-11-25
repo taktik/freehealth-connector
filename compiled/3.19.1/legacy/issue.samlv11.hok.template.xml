@@ -1,0 +1,25 @@
+<samlp:Request xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion" IssueInstant="${NotBefore}" MajorVersion="1" MinorVersion="1" RequestID="request-${uuid}">
+  <samlp:AttributeQuery>
+    <saml:Subject>
+      <saml:NameIdentifier Format="${nameid.format}" NameQualifier="${nameid.qualifier}">${nameid.value}</saml:NameIdentifier>
+      <saml:SubjectConfirmation>
+        <saml:ConfirmationMethod>urn:oasis:names:tc:SAML:1.0:cm:holder-of-key</saml:ConfirmationMethod>
+        <saml:SubjectConfirmationData>
+          <saml:Assertion xmlns="" xmlns:ns4="urn:oasis:names:tc:SAML:1.0:protocol" AssertionID="assertion-${uuid}" IssueInstant="${NotBefore}" Issuer="${nameid.value}" MajorVersion="1" MinorVersion="1">
+            <saml:Conditions NotBefore="${NotBefore}" NotOnOrAfter="${NotOnOrAfter}" />
+            <saml:AttributeStatement>
+              <saml:Subject>
+                <saml:NameIdentifier Format="${nameid.format}" NameQualifier="${nameid.qualifier}">${nameid.value}</saml:NameIdentifier>
+              </saml:Subject>
+            </saml:AttributeStatement>
+          </saml:Assertion>
+        </saml:SubjectConfirmationData>
+        <ds:KeyInfo>
+          <ds:X509Data>
+            <ds:X509Certificate>${holder.of.key}</ds:X509Certificate>
+          </ds:X509Data>
+        </ds:KeyInfo>
+      </saml:SubjectConfirmation>
+    </saml:Subject>
+  </samlp:AttributeQuery>
+</samlp:Request>

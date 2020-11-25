@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================================================================================
+	* Owner					: Crossroad Bank for Social Security (CBSS)
+	* Description				: This XML schema document contains a set of XML types and content model fragments used to model legal person data within the CBSS domain. 
+	* Revision History		: 09/09/2017 4.0 Merge Person and PersonIss to new Person
+	*								  20/09/2017 4.0 Changes for BeSt address and CBSS Contact address
+	*								  18/01/2018 4.0 Refactor xsd groups
+	*								  28/03/2018 4.0 Add anomalies to PersonResponseType
+	*
+	* ====================================================================================================================================
+-->
+<!-- Copyright (c) eHealth -->
+<xsd:schema xmlns:common="urn:be:fgov:ehealth:rn:commons:business:v1" xmlns:base="urn:be:fgov:ehealth:rn:baselegaldata:v1" 
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:be:fgov:ehealth:rn:personlegaldata:v1" 
+			xmlns:reg="urn:be:fgov:ehealth:rn:registries:commons:v1" targetNamespace="urn:be:fgov:ehealth:rn:personlegaldata:v1" 
+			elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-rn-personlegaldata
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.0
+ Build-Time: 20200302-1715 
+ </xs:appinfo>
+ </xs:annotation>
+	<xsd:import namespace="urn:be:fgov:ehealth:rn:commons:business:v1" schemaLocation="../../ehealth-rn-common/XSD/ehealth-rn-commons-business-1_0.xsd"/>
+	<xsd:import namespace="urn:be:fgov:ehealth:rn:registries:commons:v1" schemaLocation="../../ehealth-rnregistries-common/XSD/ehealth-rnregistries-commons-1_0.xsd"/>
+	<xsd:import namespace="urn:be:fgov:ehealth:rn:baselegaldata:v1" schemaLocation="../../ehealth-rn-baselegaldata/XSD/ehealth-rn-baselegaldata-1_0.xsd"/>
+	<xsd:complexType name="PersonResponseType">
+		<xsd:annotation>
+			<xsd:documentation>Type encapsulating all legaldata of a person specific for the PersonService</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Ssin" type="common:SsinType"  minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The identification number of the person</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="NobilityTitle" type="base:NobilityTitleBaseType" minOccurs="0"/>
+			<xsd:element name="Name" type="base:NameInfoBaseType" minOccurs="0"/>
+			<xsd:element name="Nationalities" type="base:NationalitiesBaseType" minOccurs="0"/>
+			<xsd:element name="Birth" type="base:BirthInfoBaseType" minOccurs="0"/>
+			<xsd:element name="Decease" type="base:DeceaseInfoBaseType" minOccurs="0"/>
+			<xsd:element name="Gender" type="base:GenderInfoBaseType" minOccurs="0"/>
+			<xsd:element name="CivilStates" type="base:CivilStatesBaseType" minOccurs="0"/>
+			<xsd:element name="Address" type="base:AddressBaseType" minOccurs="0"/>
+			<xsd:element name="ContactAddress" type="base:ContactAddressBaseType" minOccurs="0"/>
+			<xsd:element name="Administrator" type="base:AdministratorBaseType" minOccurs="0"/>
+			<xsd:element name="Subregister" type="base:SubregisterBaseType" minOccurs="0"/>
+			<xsd:element name="LegalCohabitation" type="base:LegalCohabitationBaseType" minOccurs="0"/>
+			<xsd:element name="Anomalies" type="reg:AnomaliesType" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="Register" type="reg:PersonRegisterType" use="optional">
+			<xsd:annotation>
+				<xsd:documentation>Element identifying the register which is the authentic source of the legal data of this person. Will always be present if PersonLegalDataContentFragment is present.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="RegisterInceptionDate" type="xsd:date" use="optional">
+			<xsd:annotation>
+				<xsd:documentation>Date the person last entered the CBSS registries. Only present for BIS (creation date), RAD (last RAD-in date) and RAN (last RAN-in date) numbers</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+</xsd:schema>

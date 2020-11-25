@@ -2,11 +2,15 @@
 <configuration scan="true" scanPeriod="30 seconds">
 	<include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-	<logger name="org.taktik.freehealth.middleware.service.impl" level="INFO" />
-	<logger name="org.taktik.connector.technical.ws.impl" level="DEBUG"/>
-	<logger name="org.taktik.connector.technical.ws" level="WARN" />
-	<logger name="org.taktik.connector.technical.ws.impl" level="WARN" />
 	<logger name="be.fgov.ehealth.etee.crypto" level="WARN" />
+	<logger name="be.fgov.ehealth.etee.crypto.decrypt" level="ERROR" />
+
+	<logger name="org.taktik.connector.technical" level="WARN" />
+	<logger name="org.taktik.connector.technical.ws.impl" level="INFO"/>
+	<logger name="org.taktik.connector.technical.validator" level="INFO" />
+	<logger name="org.taktik.connector.technical.service.etee.impl.CryptoImpl" level="ERROR" />
+
+	<logger name="org.taktik.freehealth.middleware.service.impl" level="INFO" />
+
 	<logger name="org.taktik.connector.business.hubv3.service" level="DEBUG" />
-	<logger name="org.taktik.connector.technical.validator" level="DEBUG" />
 </configuration>

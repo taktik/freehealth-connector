@@ -46,7 +46,7 @@ import java.util.*
 class RecipeController(val recipeService: RecipeService, val recipeV4Service: RecipeV4Service) {
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun createPrescription(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody prescription: PrescriptionRequest): Prescription =
-        recipeService.createPrescription(
+        recipeV4Service.createPrescriptionV4(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,
@@ -61,8 +61,16 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
             prescriptionType = prescription.prescriptionType,
             notification = prescription.notification,
             executorId = prescription.executorId,
-            deliveryDate = prescription.deliveryDate?.let {FuzzyValues.getLocalDateTime(it)}
-        )
+            samVersion = prescription.samVersion,
+            deliveryDate = prescription.deliveryDate?.let {FuzzyValues.getLocalDateTime(it)},
+            expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)},
+            vendorName = prescription.vendorName,
+            packageName = prescription.packageName,
+            packageVersion = prescription.packageVersion,
+            vendorEmail = prescription.vendorEmail,
+            vendorPhone = prescription.vendorPhone,
+            vision = prescription.vision
+                                            )
 
     @PostMapping("/v4", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun createPrescriptionV4(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody prescription: PrescriptionRequest): Prescription =

@@ -46,8 +46,6 @@ public class CreatePrescriptionParam extends PartyIdentification {
    protected String vision;
 
    protected String prescriberId;
-   @XmlElement(required = true)
-
 
    public byte[] getPrescription() {
       return this.prescription;

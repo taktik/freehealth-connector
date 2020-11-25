@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:rn:personservice:protocol:v1" 
+           xmlns:co="urn:be:fgov:ehealth:rn:commons:v1" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2"
+		   xmlns:coc="urn:be:fgov:ehealth:rn:commons:business:v1"
+           xmlns:core="urn:be:fgov:ehealth:rn:personservice:core:v1" 
+           targetNamespace="urn:be:fgov:ehealth:rn:personservice:protocol:v1" 
+           elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-rnconsult-person
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.0-SNAPSHOT
+ Build-Time: 20200302-1719 
+ </xs:appinfo>
+ </xs:annotation>
+	<xs:annotation/>
+	<xs:import namespace="urn:be:fgov:ehealth:rn:personservice:core:v1" schemaLocation="ehealth-rnconsult-personservice-core-1_0.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:rn:commons:business:v1" schemaLocation="../../ehealth-rn-common/XSD/ehealth-rn-commons-business-1_0.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:rn:commons:v1" schemaLocation="../../ehealth-rn-common/XSD/ehealth-rn-commons-1_0.xsd"/><!-- | Request Elements. -->
+	<xs:element name="SearchPersonBySsinRequest" type="SearchPersonBySsinRequestType">
+		<xs:annotation>
+			<xs:documentation>Request to get the current information about an individual</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SearchPersonPhoneticallyRequest" type="SearchPersonPhoneticallyRequestType">
+		<xs:annotation>
+			<xs:documentation>Request to get the current information about an individual based on phonetic criteria</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- | Response Elements. -->
+	<xs:element name="SearchPersonBySsinResponse" type="SearchPersonBySsinResponseType">
+		<xs:annotation>
+			<xs:documentation>Response that give the current information about an individual</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SearchPersonPhoneticallyResponse" type="SearchPersonPhoneticallyResponseType">
+		<xs:annotation>
+			<xs:documentation>Response that give the current information about individual found</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- | Request Types. -->
+	<xs:complexType name="SearchPersonBySsinRequestType">
+		<xs:annotation>
+			<xs:documentation>Request type</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="protocol:RequestType">
+				<xs:sequence>
+					<xs:element name="ApplicationId" type="co:ApplicationIdType"/>
+					<xs:element name="Criteria" type="core:SearchPersonBySsinCriteriaType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SearchPersonPhoneticallyRequestType">
+		<xs:annotation>
+			<xs:documentation>Type defining the criteria comprised in the request type for the searchPhonetic operation of the Person Service</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="protocol:RequestType">
+				<xs:sequence>
+					<xs:element name="ApplicationId" type="co:ApplicationIdType"/>
+					<xs:element name="Criteria" type="core:SearchPersonPhoneticallyCriteriaType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- | Response Types. -->
+	<xs:complexType name="SearchPersonBySsinResponseType">
+		<xs:annotation>
+			<xs:documentation>Response type for full ssin history for a single ssin</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="protocol:StatusResponseType">
+				<xs:sequence>
+					<xs:element name="Ssin" type="coc:SsinWithCanceledAndReplacesStatusType" minOccurs="0"/>
+					<xs:element name="Result" type="core:PersonResponseResultType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SearchPersonPhoneticallyResponseType">
+		<xs:annotation>
+			<xs:documentation>Type defining the structure of the person information fetched based on phonetic search criteria</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="protocol:StatusResponseType">
+				<xs:sequence>
+						<xs:element name="Result" type="core:PersonResponseResultsType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>
