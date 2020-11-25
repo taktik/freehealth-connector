@@ -849,7 +849,9 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         breakTheGlassReason: String?,
         sv: String,
         sl: String,
-        value: String
+        value: String,
+        externalHubId: String?,
+        externalHubName: String?
     ): Kmehrmessage? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -877,6 +879,26 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                     this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
                                     sl; this.value = value
                                 }
+                            
+                            if(StringUtils.isNotEmpty(externalHubId)) {
+                                author = AuthorType().apply {
+                                    hcparties.add(HcpartyType().apply {
+                                        ids.add(IDHCPARTY().apply {
+                                            this.s = IDHCPARTYschemes.ID_HCPARTY
+                                            this.sv = "1.0"
+                                            this.value = externalHubId
+                                        })
+                                        cds.add(CDHCPARTY().apply {
+                                            this.s = CDHCPARTYschemes.CD_HCPARTY
+                                            this.sv = "1.1"
+                                            this.value = "hub"
+                                        })
+                                        if(StringUtils.isNotEmpty(externalHubName)){
+                                            name = externalHubName
+                                        }
+                                    })
+                                }
+                            }
                         }
                     }
                 })

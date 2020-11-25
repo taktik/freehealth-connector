@@ -9,7 +9,8 @@ class MycarenetConversation(
     soapRequest: String? = null,
     soapResponse: String? = null,
     var transactionRequest: String? = null,
-    var transactionResponse: String? = null
+    var transactionResponse: String? = null,
+    var decryptedResponseContent: ArrayList<String>? = arrayListOf()
                            ) {
 
     var soapRequest: String? = soapRequest
