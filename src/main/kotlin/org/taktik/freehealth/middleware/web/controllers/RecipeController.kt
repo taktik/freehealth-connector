@@ -37,15 +37,16 @@ import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedba
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.recipe.PrescriptionRequest
 import org.taktik.freehealth.middleware.service.RecipeService
+import org.taktik.freehealth.middleware.service.RecipeV4Service
 import org.taktik.freehealth.utils.FuzzyValues
 import java.util.*
 
 @RestController
 @RequestMapping("/recipe")
-class RecipeController(val recipeService: RecipeService) {
+class RecipeController(val recipeService: RecipeService, val recipeV4Service: RecipeV4Service) {
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun createPrescription(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody prescription: PrescriptionRequest): Prescription =
-        recipeService.createPrescription(
+        recipeV4Service.createPrescriptionV4(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,
@@ -60,8 +61,44 @@ class RecipeController(val recipeService: RecipeService) {
             prescriptionType = prescription.prescriptionType,
             notification = prescription.notification,
             executorId = prescription.executorId,
-            deliveryDate = prescription.deliveryDate?.let {FuzzyValues.getLocalDateTime(it)}
-        )
+            samVersion = prescription.samVersion,
+            deliveryDate = prescription.deliveryDate?.let {FuzzyValues.getLocalDateTime(it)},
+            expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)},
+            vendorName = prescription.vendorName,
+            packageName = prescription.packageName,
+            packageVersion = prescription.packageVersion,
+            vendorEmail = prescription.vendorEmail,
+            vendorPhone = prescription.vendorPhone,
+            vision = prescription.vision
+                                            )
+
+    @PostMapping("/v4", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun createPrescriptionV4(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody prescription: PrescriptionRequest): Prescription =
+        recipeV4Service.createPrescriptionV4(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            hcpQuality = hcpQuality,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpName = hcpName,
+            passPhrase = passPhrase,
+            patient = prescription.patient!!,
+            hcp = prescription.hcp!!,
+            feedback = prescription.feedback!!,
+            medications = prescription.medications!!,
+            prescriptionType = prescription.prescriptionType,
+            notification = prescription.notification,
+            executorId = prescription.executorId,
+            samVersion = prescription.samVersion,
+            deliveryDate = prescription.deliveryDate?.let {FuzzyValues.getLocalDateTime(it)},
+            expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)},
+            vendorName = prescription.vendorName,
+            packageName = prescription.packageName,
+            packageVersion = prescription.packageVersion,
+            vendorEmail = prescription.vendorEmail,
+            vendorPhone = prescription.vendorPhone,
+            vision = prescription.vision
+                                        )
 
     @GetMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listOpenPrescriptions(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Prescription> =
@@ -97,10 +134,10 @@ class RecipeController(val recipeService: RecipeService) {
         @RequestParam hcpSsin: String,
         @RequestParam hcpName: String,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
-        patientId: String,
-        executorId: String,
+        @RequestParam patientId: String,
+        @RequestParam executorId: String,
         @PathVariable rid: String,
-        text: String
+        @RequestParam text: String
     ) = recipeService.sendNotification(
         keystoreId = keystoreId,
         tokenId = tokenId,

@@ -65,7 +65,7 @@ class AdminController(val addressbookService: AddressbookService) {
             throw IllegalAccessException("You are not an administrator. This illegal access attempt has been logged")
         }
         val distributor = EndpointDistributor.getInstance()
-        return EndpointDistributorStatusDto(mustPoll = distributor.mustPoll(), isBcpMode = distributor.isBCPMode)
+        return EndpointDistributorStatusDto(mustPoll = distributor.mustPoll(), isBcpMode = distributor.isBCPMode, active = distributor.service2ActiveEndpoint, default = distributor.service2DefaultEndpoint)
     }
 
     @PostMapping("/bcp", produces = [MediaType.APPLICATION_JSON_VALUE])

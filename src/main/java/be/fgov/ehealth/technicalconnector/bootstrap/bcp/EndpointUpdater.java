@@ -33,13 +33,14 @@ public final class EndpointUpdater {
       String onlineSha2 = ConnectorIOUtils.getResourceAsString(endpoint + ".sha2");
       if (!onlineSha2.equals(loadedSha2)) {
          String content = ConnectorIOUtils.getResourceAsString(endpoint + ".xml");
+         LOG.warn("Updating endpoints : changes have been detected");
          update(content);
          write(content, loadedXmlLocation);
          write(onlineSha2, loadedSha2Location);
          loadedSha2 = onlineSha2;
          return true;
       } else {
-         LOG.debug("No change detected");
+         LOG.info("Updating endpoints : No change detected");
          return false;
       }
    }

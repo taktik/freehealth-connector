@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.apb.be/standards/smoa/schema/id/v1" xmlns:smoa="http://www.apb.be/standards/smoa/schema/v1" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.apb.be/standards/smoa/schema/id/v1" version="1.0">
+	<xsd:include schemaLocation="single-message-abstract-id-type-1.0.xsd" />
+	<xsd:import namespace="http://www.apb.be/standards/smoa/schema/v1" schemaLocation="../common/single-message-common-1.0.xsd" />
+
+	<xsd:complexType name="EntityIdType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-EntityIdType">
+				<xsd:sequence>
+					<xsd:element name="id" type="smoa:UuidType" />
+					<xsd:element name="version" type="xsd:int" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Abstract-PersonIdType -->
+	<xsd:complexType name="InssIdType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-PersonIdType">
+				<xsd:sequence>
+					<xsd:element name="id" type="smoa:BelgiumSsnType" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="LocalIdType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-PersonIdType">
+				<xsd:sequence>
+					<xsd:element name="id" type="xsd:string" /> <!-- TODO add length restriction? -->
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Abstract-CareProviderIdType -->
+	<xsd:complexType name="RizivIdType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-CareProviderIdType">
+				<xsd:sequence>
+					<xsd:element name="riziv" type="smoa:RizivInamiType" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Abstract-PharmacyIdType -->
+	<xsd:complexType name="NihiiIdType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-PharmacyIdType">
+				<xsd:sequence>
+					<xsd:element name="nihiiPharmacyNumber" type="smoa:NihiiPharmacyNumberType" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Abstract-CareServiceIdType -->
+	<xsd:complexType name="CbeIdType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-CareServiceIdType">
+				<xsd:sequence>
+					<xsd:element name="cbe" type="smoa:CbeType" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Abstract-MedicinalProductIdType -->
+	<xsd:complexType name="CnkIdType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-MedicinalProductIdType">
+				<xsd:sequence>
+					<xsd:element name="cnk" type="smoa:CnkType" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="BeRegistrationIdType">
+		<xsd:annotation>
+			<xsd:documentation>
+				http://www.fagg-afmps.be/nl/items/gegevensbank_vergunde_geneesmiddelen/index.jsp
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-MedicinalProductIdType">
+				<xsd:sequence>
+					<xsd:element name="cti" type="smoa:BeMedicinalProductRegistrationNumberType" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AtcDddSystemIdType">
+		<xsd:annotation>
+			<xsd:documentation>
+				http://www.bcfi.be/Folia/2006/F33N04C.cfm
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-MedicinalProductIdType">
+				<xsd:sequence>
+					<xsd:element name="atc" type="xsd:string" />
+					<xsd:element name="ddd" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>		
+	
+	<!-- Abstract-RawMaterialIdType -->
+	<xsd:complexType name="RawMaterialAuthorizationNumber">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-RawMaterialIdType">
+				<xsd:sequence>
+					<xsd:element name="authorizationNr" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="RawMaterialCNKNumber">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-RawMaterialIdType">
+				<xsd:sequence>
+					<xsd:element name="cnk" type="smoa:CnkType" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Abstract-SubstanceProductIdType -->
+	<xsd:complexType name="SubstanceProductId">
+		<xsd:annotation>
+			<xsd:documentation>
+				documentation: Vos_Demo_MARCH_2010__NL.pdf
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-SubstanceProductIdType">
+				<xsd:sequence>
+					<xsd:element name="inn" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- "Abstract-RecipeIdType" -->
+	<xsd:complexType name="LocalPrescriptionIdType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-PrescriptionIdType">
+				<xsd:sequence>
+					<xsd:element name="officinaOrderNumber" type="xsd:int" />
+					<xsd:element name="officina" type="Abstract-PharmacyIdType" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="RecipeIdType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-PrescriptionIdType">
+				<xsd:sequence>
+					<xsd:element name="rid" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>		
+	
+	<!-- "Abstract-AttestIdType" -->
+	<xsd:complexType name="AttestIdType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-AttestIdType">
+				<xsd:sequence>
+					<xsd:element name="attestNumber" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- "MagistralCertificateIdType" -->
+	<xsd:complexType name="MagistralCertificateIdType">
+		<xsd:complexContent>
+			<xsd:extension base="Abstract-MagistralCertificateIdType">
+				<xsd:sequence>
+					<xsd:element name="attestNumber" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+</xsd:schema>

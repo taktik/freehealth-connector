@@ -17,7 +17,13 @@ import org.taktik.icure.cin.saml.org.w3._2000._09.xmldsig_.Signature
 import java.io.Serializable
 import java.util.ArrayList
 
-class AssertionDto(var issuer: NameIDType? = null, var signature: Signature? = null, var subject: Subject? = null,
-    var conditions: Conditions? = null, var advice: AdviceType? = null,
+class AssertionDto(
+    var issuer: NameIDType? = null,
+    var signature: Signature? = null,
+    var subject: Subject? = null,
+    var conditions: Conditions? = null,
+    var advice: AdviceType? = null,
     var statementsAndAuthnStatementsAndAuthzDecisionStatements: List<StatementAbstractType> = ArrayList(),
-    var version: String? = null, var id: String? = null, var issueInstant: Long? = null) : Serializable
+    var version: String? = null,
+    var id: String? = null,
+    var issueInstant: Long? = null) : Serializable

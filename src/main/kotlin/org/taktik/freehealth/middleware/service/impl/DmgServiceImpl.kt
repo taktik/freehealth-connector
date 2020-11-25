@@ -142,7 +142,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 "<reg:bankAccount bic=\"replaceWithBic\" iban=\"replaceWithIban\"/>\n" +
                 "</reg:registration>\n" +
                 "</reg:registrations>").replace("replaceWithDateYYYY-MM-DD".toRegex(),
-                                                DateTime().toString("YYYY-MM-dd")
+                                                DateTime().toString("yyyy-MM-dd")
                                                )
                 .replace("replaceWithNihiiNumber".toRegex(), hcpNihii).replace("replaceWithBic".toRegex(), bic)
                 .replace("replaceWithIban".toRegex(), iban.toUpperCase())
@@ -196,7 +196,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             this.routing = SendRequestMapper.mapRouting(Routing(careReceiver, DateTime()))
             this.detail = SendRequestMapper.mapBlobToBlobType(blob)
 
-            this.xades = BlobUtil.generateXades(this.detail, credential, "mcn.registration")
+            this.xades = BlobUtil.generateXades(credential, this.detail, "mcn.registration")
         }
 
         val start = System.currentTimeMillis()

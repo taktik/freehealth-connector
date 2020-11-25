@@ -30,7 +30,10 @@ object Segment400Record95Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "4091", "Code erreur", null, "N", pos, 2)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "410", "Lien T80 Z98 N controle par mutuelle", "mutualityControlNumber", "N", pos, 2)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "4101", "Code erreur", null, "N", pos, 2)
-              register(ZONE_DESCRIPTIONS_BY_ZONE, "411", "Reserve", null, "A", pos, 271)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "411", "Signe montant demand compte C", null, "A", pos, 1)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "412", "Montant demand compte C", null, "N", pos, 11)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "4121", "Code erreur", null, "N", pos, 2)
+            register(ZONE_DESCRIPTIONS_BY_ZONE, "413", "Reserve", null, "A", pos, 257)
     }
 
 }

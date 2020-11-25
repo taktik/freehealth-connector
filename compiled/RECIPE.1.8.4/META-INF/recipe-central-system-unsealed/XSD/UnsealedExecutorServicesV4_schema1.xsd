@@ -1,0 +1,730 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="http:/services.recipe.be/executor"
+	xmlns:ns1="http:/services.recipe.be/executor" xmlns:tns="http:/services.recipe.be/executor"
+	xmlns:core="http:/services.recipe.be/core" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:import namespace="http:/services.recipe.be/core"
+		schemaLocation="recipe-core.xsd" />
+
+	<xs:element name="createFeedback" type="tns:createFeedback" />
+	<xs:element name="createFeedbackParam" type="tns:createFeedbackParam" />
+	<xs:element name="createFeedbackResponse" type="tns:createFeedbackResponse" />
+	<xs:element name="createFeedbackResult" type="tns:createFeedbackResult" />
+
+	<xs:element name="getPrescriptionForExecutor" type="tns:getPrescriptionForExecutor" />
+	<xs:element name="getPrescriptionForExecutorParam" type="tns:getPrescriptionForExecutorParam" />
+	<xs:element name="getPrescriptionForExecutorResponse" type="tns:getPrescriptionForExecutorResponse" />
+	<xs:element name="getPrescriptionForExecutorResult" type="tns:getPrescriptionForExecutorResult" />
+	<xs:element name="getPrescriptionForExecutorResponseUnsealed" type="tns:getPrescriptionForExecutorResponseUnsealed" />
+
+	<xs:element name="listNotifications" type="tns:listNotifications" />
+	<xs:element name="listNotificationsParam" type="tns:listNotificationsParam" />
+	<xs:element name="listNotificationsResponse" type="tns:listNotificationsResponse" />
+	<xs:element name="listNotificationsResult" type="tns:ListNotificationsResult" />
+	<xs:element name="listNotificationsItem" type="tns:ListNotificationsItem" />
+
+	<xs:element name="markAsArchived" type="tns:markAsArchived" />
+	<xs:element name="markAsArchivedParam" type="tns:markAsArchivedParam" />
+	<xs:element name="markAsArchivedResponse" type="tns:markAsArchivedResponse" />
+	<xs:element name="markAsArchivedResult" type="tns:markAsArchivedResult" />
+
+	<xs:element name="markAsDelivered" type="tns:markAsDelivered" />
+	<xs:element name="markAsDeliveredParam" type="tns:markAsDeliveredParam" />
+	<xs:element name="markAsDeliveredResponse" type="tns:markAsDeliveredResponse" />
+	<xs:element name="markAsDeliveredResult" type="tns:markAsDeliveredResult" />
+
+	<xs:element name="markAsUnDelivered" type="tns:markAsUnDelivered" />
+	<xs:element name="markAsUndeliveredParam" type="tns:markAsUndeliveredParam" />
+	<xs:element name="markAsUndeliveredResult" type="tns:markAsUndeliveredResult" />
+	<xs:element name="markAsUnDeliveredResponse" type="tns:markAsUnDeliveredResponse" />
+
+	<xs:element name="revokePrescription" type="tns:revokePrescription" />
+	<xs:element name="revokePrescriptionParam" type="tns:revokePrescriptionParam" />
+	<xs:element name="revokePrescriptionResponse" type="tns:revokePrescriptionResponse" />
+	<xs:element name="revokePrescriptionResult" type="tns:revokePrescriptionResult" />
+
+	<xs:element name="listOpenPrescriptions" type="tns:listOpenPrescriptions" />
+	<xs:element name="listOpenPrescriptionsParam" type="tns:listOpenPrescriptionsParam" />
+	<xs:element name="listOpenPrescriptionsResponse" type="tns:listOpenPrescriptionsResponse" />
+	<xs:element name="listOpenPrescriptionsResult" type="tns:listOpenPrescriptionsResult" />
+
+	<xs:element name="listReservations" type="tns:listReservations" />
+	<xs:element name="listReservationsParam" type="tns:listReservationsParam" />
+	<xs:element name="listReservationsResponse" type="tns:listReservationsResponse" />
+	<xs:element name="listReservationsResult" type="tns:listReservationsResult" />
+
+	<xs:element name="listRidsInProcess" type="tns:listRidsInProcess" />
+	<xs:element name="listRidsInProcessParam" type="tns:listRidsInProcessParam" />
+	<xs:element name="listRidsInProcessResponse" type="tns:listRidsInProcessResponse" />
+	<xs:element name="listRidsInProcessResult" type="tns:listRidsInProcessResult" />
+
+	<xs:element name="putRidsInProcess" type="tns:putRidsInProcess" />
+	<xs:element name="putRidsInProcessParam" type="tns:putRidsInProcessParam" />
+	<xs:element name="putRidsInProcessResponse" type="tns:putRidsInProcessResponse" />
+	<xs:element name="putRidsInProcessResult" type="tns:putRidsInProcessResult" />
+
+	<xs:element name="getPrescriptionStatus" type="tns:getPrescriptionStatus" />
+	<xs:element name="getPrescriptionStatusParam" type="tns:getPrescriptionStatusParam" />
+	<xs:element name="getPrescriptionStatusResponse" type="tns:getPrescriptionStatusResponse" />
+	<xs:element name="getPrescriptionStatusResult" type="tns:getPrescriptionStatusResult" />
+
+	<xs:element name="listRidsHistory" type="tns:listRidsHistory" />
+	<xs:element name="listRidsHistoryParam" type="tns:listRidsHistoryParam" />
+	<xs:element name="listRidsHistoryResponse" type="tns:listRidsHistoryResponse" />
+	<xs:element name="listRidsHistoryResult" type="tns:listRidsHistoryResult" />
+
+	<xs:element name="listRelations" type="tns:listRelations" />
+	<xs:element name="listRelationsParam" type="tns:listRelationsParam" />
+	<xs:element name="listRelationsResponse" type="tns:listRelationsResponse" />
+	<xs:element name="listRelationsResult" type="tns:listRelationsResult" />
+	<xs:element name="listRelationsItem" type="tns:listRelationsItem" />
+
+	<xs:element name="RecipeException" nillable="true" type="core:recipeExceptionDetails" />
+	<xs:element name="recipeError" type="core:recipeError" />
+	<xs:element name="recipeExceptionDetails" type="core:recipeExceptionDetails" />
+
+	<xs:complexType name="createFeedback">
+		<xs:sequence>
+			<xs:element name="CreateFeedbackParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="createFeedbackParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="rid" minOccurs="1">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:minLength value="12" />
+								<xs:maxLength value="12" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="content" type="xs:base64Binary" minOccurs="1" />
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="createFeedbackResponse">
+		<xs:sequence>
+			<xs:element name="CreateFeedbackResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="createFeedbackResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="revokePrescription">
+		<xs:sequence>
+			<xs:element name="RevokePrescriptionParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="revokePrescriptionParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="rid" minOccurs="1">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:length value="12" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="reason" type="xs:string" minOccurs="1" />
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="revokePrescriptionResponse">
+		<xs:sequence>
+			<xs:element name="RevokePrescriptionResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="revokePrescriptionResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<xs:complexType name="listNotifications">
+		<xs:sequence>
+			<xs:element name="ListNotificationsParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listNotificationsParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="readFlag" type="xs:boolean" minOccurs="1" />
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listNotificationsResponse">
+		<xs:sequence>
+			<xs:element name="ListNotificationsResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ListNotificationsResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence>
+					<xs:element name="notifications" type="tns:ListNotificationsItem" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+
+	</xs:complexType>
+
+	<xs:complexType name="ListNotificationsItem">
+		<xs:sequence>
+			<xs:element name="sentBy" type="xs:string" minOccurs="0" />
+			<xs:element name="sentDate" type="xs:dateTime" minOccurs="0" />
+			<xs:element name="content" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="getPrescriptionForExecutor">
+		<xs:sequence>
+			<xs:element name="GetPrescriptionForExecutorParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="DisablePatientInsurabilityCheckParam" type="xs:boolean" minOccurs="0" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="getPrescriptionForExecutorParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="rid" minOccurs="0" maxOccurs="1">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:length value="12" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+					<xs:element name="version" type="xs:string" minOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="getPrescriptionForExecutorResponse">
+		<xs:sequence>
+			<xs:element name="GetPrescriptionForExecutorResult" type="tns:getPrescriptionForExecutorResult" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="getPrescriptionForExecutorResponseUnsealed">
+		<xs:sequence>
+			<xs:element name="GetPrescriptionForExecutorResult" type="tns:getPrescriptionForExecutorResult" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="getPrescriptionForExecutorResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence>
+					<xs:element name="getPrescriptionForExecutorResultSealed" type="xs:base64Binary" minOccurs="0" />
+					<xs:element name="getPrescriptionForExecutorUnsealedResultPart" type="tns:getPrescriptionForExecutorUnsealedResultPart" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="getPrescriptionForExecutorUnsealedResultPart">
+		<xs:sequence>
+			<xs:element name="patientId" type="xs:string" minOccurs="0" />
+			<xs:element name="prescriptionType" type="xs:string" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="getPrescriptionForExecutorResultUnsealed">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence>
+					<xs:element name="creationDate" type="xs:dateTime" minOccurs="0" />
+					<xs:element name="encryptionKeyId" type="xs:string" minOccurs="0" />
+					<xs:element name="feedbackAllowed" type="xs:boolean" />
+					<xs:element name="patientId" type="xs:long" minOccurs="0" />
+					<xs:element name="prescriberId" type="xs:long" />
+					<xs:element name="prescription" type="xs:base64Binary" minOccurs="0" />
+					<xs:element name="prescriptionType" type="xs:string" minOccurs="0" />
+					<xs:element name="rid" type="xs:string" minOccurs="0" />
+					<xs:element name="expirationDate" type="xs:dateTime" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="getOpenPrescriptionForExecutor">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence>
+					<xs:element name="creationDate" type="xs:dateTime" minOccurs="0" />
+					<xs:element name="encryptionKeyId" type="xs:string" minOccurs="0" />
+					<xs:element name="feedbackAllowed" type="xs:boolean" />
+					<xs:element name="patientId" type="xs:string" minOccurs="0" />
+					<xs:element name="prescriberId" type="xs:string" />
+					<xs:element name="prescription" type="xs:base64Binary" minOccurs="0" />
+					<xs:element name="prescriptionType" type="xs:string" minOccurs="0" />
+					<xs:element name="rid" type="xs:string" minOccurs="0" />
+					<xs:element name="expirationDate" type="xs:dateTime" minOccurs="0" />
+					<xs:element name="prescriptionStatus" type="core:prescriptionStatus" minOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="markAsUnDelivered">
+		<xs:sequence>
+			<xs:element name="MarkAsUndeliveredParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="markAsUndeliveredParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="rid" minOccurs="1">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:length value="12" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="markAsUnDeliveredResponse">
+		<xs:sequence>
+			<xs:element name="markAsUnDeliveredResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="markAsUndeliveredResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="markAsDelivered">
+		<xs:sequence>
+			<xs:element name="MarkAsDeliveredParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="markAsDeliveredParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="rid" minOccurs="1">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:length value="12" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="markAsDeliveredResponse">
+		<xs:sequence>
+			<xs:element name="MarkAsDeliveredResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="markAsDeliveredResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="markAsArchived">
+		<xs:sequence>
+			<xs:element name="MarkAsArchivedParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="markAsArchivedParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="rid" minOccurs="1">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:length value="12" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="markAsArchivedResponse">
+		<xs:sequence>
+			<xs:element name="MarkAsArchivedResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="markAsArchivedResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listOpenPrescriptions">
+		<xs:sequence>
+			<xs:element name="ListOpenPrescriptionsParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listOpenPrescriptionsParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+					<xs:element name="mandateHolderId" type="xs:string" minOccurs="0" maxOccurs="1" />
+					<xs:element name="page" type="core:Page" minOccurs="0" maxOccurs="1" />
+					<xs:element name="session" type="xs:base64Binary" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listOpenPrescriptionsResponse">
+		<xs:sequence>
+			<xs:element name="ListOpenPrescriptionsResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listOpenPrescriptionsResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence>
+					<xs:element name="prescriptions" type="tns:getOpenPrescriptionForExecutor" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="hasMoreResults" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+					<xs:element name="session" type="xs:base64Binary" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listReservations">
+		<xs:sequence>
+			<xs:element name="ListReservationsParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listReservationsParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+					<xs:element name="startDate" type="xs:dateTime" minOccurs="1" />
+					<xs:element name="page" type="core:Page" minOccurs="0" maxOccurs="1" />
+					<xs:element name="session" type="xs:base64Binary" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listReservationsResponse">
+		<xs:sequence>
+			<xs:element name="ListReservationsResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listReservationsResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence>
+					<xs:element name="items" type="tns:listReservationsResultItem" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="hasMoreResults" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+					<xs:element name="session" type="xs:base64Binary" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listReservationsResultItem">
+		<xs:sequence>
+			<xs:element name="rid" type="xs:string" minOccurs="1" />
+			<xs:element name="executorId" type="xs:string" minOccurs="0" />
+			<xs:element name="creationDateReservation" type="xs:dateTime" minOccurs="0" />
+			<xs:element name="lastUpdateReservation" type="xs:dateTime" minOccurs="0" />
+			<xs:element name="prescription" type="tns:getOpenPrescriptionForExecutor" minOccurs="0" />
+			<xs:element name="creationDate" type="xs:dateTime" minOccurs="0" />
+			<xs:element name="expirationDate" type="xs:dateTime" minOccurs="0" />
+			<xs:element name="prescriptionStatus" type="core:prescriptionStatus" minOccurs="1" />
+			<xs:element name="patientId" type="xs:string" minOccurs="1" />
+			<xs:element name="prescriberId" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listRidsInProcess">
+		<xs:sequence>
+			<xs:element name="ListRidsInProcessParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listRidsInProcessParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+					<xs:element name="page" type="core:Page" minOccurs="0" maxOccurs="1" />
+					<xs:element name="session" type="xs:base64Binary" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listRidsInProcessResponse">
+		<xs:sequence>
+			<xs:element name="ListRidsInProcessResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listRidsInProcessResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence>
+					<xs:element name="rids" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="hasMoreResults" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+					<xs:element name="session" type="xs:base64Binary" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="putRidsInProcess">
+		<xs:sequence>
+			<xs:element name="PutRidsInProcessParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="putRidsInProcessParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="rids" minOccurs="1" maxOccurs="10" type="xs:string" />
+					<xs:element name="symmKey" minOccurs="1" type="xs:base64Binary" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="putRidsInProcessResponse">
+		<xs:sequence>
+			<xs:element name="PutRidsInProcessResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="putRidsInProcessResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence>
+					<xs:element name="item" type="tns:putRidsInProcessResultItem" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="putRidsInProcessResultItem">
+		<xs:sequence>
+			<xs:element name="rid" type="xs:string" minOccurs="1" />
+			<xs:element name="prescriptionStatus" type="core:prescriptionStatus" minOccurs="1" />
+			<xs:element name="statusUpdater" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="getPrescriptionStatus">
+		<xs:sequence>
+			<xs:element name="GetPrescriptionStatusParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="getPrescriptionStatusParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="rid" minOccurs="1">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:length value="12" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="getPrescriptionStatusResponse">
+		<xs:sequence>
+			<xs:element name="GetPrescriptionStatusResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="getPrescriptionStatusResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence>
+					<xs:element name="prescriptionStatus" type="core:prescriptionStatus" minOccurs="0" />
+					<xs:element name="executorId" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listRidsHistory">
+		<xs:sequence>
+			<xs:element name="ListRidsHistoryParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listRidsHistoryParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+					<xs:element name="activeResults" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+					<xs:element name="page" type="core:Page" minOccurs="0" maxOccurs="1" />
+					<xs:element name="session" type="xs:base64Binary" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listRidsHistoryResponse">
+		<xs:sequence>
+			<xs:element name="ListRidsHistoryResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listRidsHistoryResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence>
+					<xs:element name="items" type="tns:listRidsHistoryResultItem" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="hasMoreResults" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+					<xs:element name="session" type="xs:base64Binary" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listRidsHistoryResultItem">
+		<xs:sequence>
+			<xs:element name="rid" type="xs:string" minOccurs="1" />
+			<xs:element name="prescriptionStatus" type="core:prescriptionStatus" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listRelations">
+		<xs:sequence>
+			<xs:element name="ListRelationsParamSealed" type="xs:base64Binary" minOccurs="1" />
+			<xs:element name="ProgramIdentification" type="xs:string" minOccurs="1" />
+			<xs:element name="Mguid" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listRelationsParam">
+		<xs:complexContent>
+			<xs:extension base="core:partyIdentification">
+				<xs:sequence>
+					<xs:element name="symmKey" type="xs:base64Binary" minOccurs="1" />
+					<xs:element name="mandateHolderId" type="xs:string" minOccurs="1" />
+					<xs:element name="page" type="core:Page" minOccurs="0" maxOccurs="1" />
+					<xs:element name="session" type="xs:base64Binary" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listRelationsResponse">
+		<xs:sequence>
+			<xs:element name="ListRelationsResultSealed" type="xs:base64Binary" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="listRelationsResult">
+		<xs:complexContent>
+			<xs:extension base="core:ResponseType">
+				<xs:sequence>
+					<xs:element name="items" type="tns:listRelationsItem" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="hasMoreResults" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+					<xs:element name="session" type="xs:base64Binary" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listRelationsItem">
+		<xs:sequence>
+			<xs:element name="patientId" type="xs:string" minOccurs="1" />
+			<xs:element name="mandateHolderId" type="xs:string" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

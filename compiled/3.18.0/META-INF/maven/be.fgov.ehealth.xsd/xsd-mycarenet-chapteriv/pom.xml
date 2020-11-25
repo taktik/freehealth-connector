@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- Information about the master eclipse project -->
+    <parent>
+        <groupId>be.fgov.ehealth.xsd</groupId>
+        <artifactId>xsd-parent</artifactId>
+        <version>1.7.10</version>
+    </parent>
+    <groupId>be.fgov.ehealth.xsd</groupId>
+    <!-- General attributes -->
+    <modelVersion>4.0.0</modelVersion>
+    <!-- groupId is inherited from master pom -->
+    <artifactId>xsd-mycarenet-chapteriv</artifactId>
+    <version>1.0.0</version>
+    <name>XSD MyCarenet Chapter IV</name>
+    <description>project containing xsd and wsdl for the chapter 4 (chapiv) project</description>
+
+
+    <!-- Packaging CAN NOT BE CHANGED -->
+    <packaging>jar</packaging>
+    <url>${sonar.projectdoc.url.prefix}/${groupId}</url>
+    <!-- Configuration of source control management -->
+    <scm>
+        <connection>scm:svn:http://svn15.smals-mvm.be/svn/xsd/tags/xsd-mycarenet-chapteriv-1.0.0</connection>
+        <developerConnection>scm:svn:http://svn15.smals-mvm.be/svn/xsd/tags/xsd-mycarenet-chapteriv-1.0.0</developerConnection>
+        <url>http://svn15.smals-mvm.be/viewvc/xsd/tags/xsd-mycarenet-chapteriv-1.0.0</url>
+    </scm>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack common eHealth XSDs from XSD Repository</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <excludeTransitive>true</excludeTransitive>
+                            <includes>**/ehealth-commons*.xsd,**/ehealth-errors*.xsd,**/ehealth-monitoring*.xsd,**/xml.xsd,**/xmldsig*.xsd,**/oasis-sstc-saml-schema-assertion-1.1.xsd</includes>
+                            <excludes>**/*ehealth-commons-schema-encryption*.xsd</excludes>
+                            <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.8.3</version>
+                <executions>
+                    <execution>
+                        <id>Generate JAva Xml Bindings</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <schemaIncludes>
+                        <include>**/ehealth-*/XSD/*.xsd</include>
+                    </schemaIncludes>
+                    <bindingIncludes>
+                        <include>bindingsupport-basic.xjb</include>
+                    </bindingIncludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+
+        <XSD.versioning.includes>**/ehealth-chapteriv/XSD/*.xsd</XSD.versioning.includes>
+        <WSDL.versioning.includes>**/ehealth-chapteriv/WSDL/*.wsdl</WSDL.versioning.includes>
+
+        <xsd-commons.version.major>1</xsd-commons.version.major>
+        <xsd-commons.version.minor>4</xsd-commons.version.minor>
+        <xsd-commons.version.patch>0</xsd-commons.version.patch>
+        <xsd-commons.version>${xsd-commons.version.major}.${xsd-commons.version.minor}.${xsd-commons.version.patch}</xsd-commons.version>
+
+        <xsd-monitoring.version.major>2</xsd-monitoring.version.major>
+        <xsd-monitoring.version.minor>0</xsd-monitoring.version.minor>
+        <xsd-monitoring.version.patch>1</xsd-monitoring.version.patch>
+        <xsd-monitoring.version>${xsd-monitoring.version.major}.${xsd-monitoring.version.minor}.${xsd-monitoring.version.patch}</xsd-monitoring.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>xsd-commons</artifactId>
+            <version>${xsd-commons.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>xsd-errors</artifactId>
+            <version>${xsd-errors.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>xsd-monitoring</artifactId>
+            <version>${xsd-monitoring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>xsd-external</artifactId>
+            <version>${xsd-external.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- Configuration of profiles MUST BE CONFIGURED -->
+    <profiles>
+        <profile>
+            <!-- Must be activated in Continuum Build Definitions to publish web site of snapshot artifacts -->
+            <id>continuum-snapshot</id>
+            <distributionManagement>
+                <site>
+                    <id>website</id>
+                    <name>${artifactId}</name>
+                    <url>${projectDocSnapshot}${project.groupId}/${project.artifactId}</url>
+                </site>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <!-- Must be activated in Continuum Build Definitions to publish web site of release artifacts -->
+            <id>continuum-release</id>
+            <distributionManagement>
+                <site>
+                    <id>website</id>
+                    <name>${artifactId}-${version}</name>
+                    <url>${projectDocRelease}${project.groupId}/${project.artifactId}-${project.version}</url>
+                </site>
+            </distributionManagement>
+        </profile>
+    </profiles>
+</project>

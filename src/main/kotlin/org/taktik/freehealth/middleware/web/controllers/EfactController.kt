@@ -43,15 +43,13 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
-        @RequestParam(required = false) isGuardPost: Boolean?,
         @RequestBody batch: InvoicesBatch
                  ) =
         efactService.sendBatch(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
-            batch = batch,
-            isGuardPost = isGuardPost ?: false
+            batch = batch
         )
 
     @PostMapping("/flat", produces = [MediaType.TEXT_PLAIN_VALUE])
@@ -91,8 +89,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestParam ssin: String,
         @RequestParam firstName: String,
         @RequestParam lastName: String,
-        @RequestParam limit: Int?,
-        @RequestParam isGuardPost: Boolean?
+        @RequestParam limit: Int?
                     ) =
         efactService.loadMessages(
             keystoreId = keystoreId,
@@ -103,8 +100,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             hcpFirstName = firstName,
             hcpLastName = lastName,
             language = language,
-            limit = limit ?: Integer.MAX_VALUE,
-            isGuardPost = isGuardPost ?: false
+            limit = limit ?: Integer.MAX_VALUE
                                  )
 
     @PutMapping("/confirm/acks/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -116,7 +112,6 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestParam ssin: String,
         @RequestParam firstName: String,
         @RequestParam lastName: String,
-        @RequestParam(required = false) isGuardPost: Boolean?,
         @RequestBody valueHashes: List<String>
                ) =
         efactService.confirmAcks(
@@ -127,8 +122,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             hcpSsin = ssin,
             hcpFirstName = firstName,
             hcpLastName = lastName,
-            valueHashes = valueHashes,
-            isGuardPost = isGuardPost ?: false
+            valueHashes = valueHashes
         )
 
     @PutMapping("/confirm/msgs/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -140,7 +134,6 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestParam ssin: String,
         @RequestParam firstName: String,
         @RequestParam lastName: String,
-        @RequestParam(required = false) isGuardPost: Boolean?,
         @RequestBody valueHashes: List<String>
     ) =
         efactService.confirmMessages(
@@ -151,7 +144,6 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             hcpSsin = ssin,
             hcpFirstName = firstName,
             hcpLastName = lastName,
-            valueHashes = valueHashes,
-            isGuardPost = isGuardPost ?: false
+            valueHashes = valueHashes
         )
 }

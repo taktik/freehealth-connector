@@ -1,37 +1,50 @@
 package be.recipe.services.prescriber;
 
+import be.recipe.services.core.ResponseType;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-@XmlRootElement(
-   namespace = "http:/services.recipe.be/prescriber"
-)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
-   name = "GetListOpenPrescriptionResult"
+   name = "getListOpenPrescriptionResult",
+   propOrder = {"prescriptions", "hasMoreResults", "session"}
 )
-public class GetListOpenPrescriptionResult {
-   @XmlElement(
-      name = "prescriptions"
-   )
-   private List<String> listOfPrescriptions = null;
-
-   public GetListOpenPrescriptionResult() {
-   }
-
-   public GetListOpenPrescriptionResult(List<String> listOfPrescriptions) {
-      this.setPrescriptions(listOfPrescriptions);
-   }
+@XmlRootElement(
+   name = "getListOpenPrescriptionResult"
+)
+public class GetListOpenPrescriptionResult extends ResponseType {
+   protected List<String> prescriptions;
+   protected Boolean hasMoreResults;
+   protected byte[] session;
 
    public List<String> getPrescriptions() {
-      return this.listOfPrescriptions;
+      if (this.prescriptions == null) {
+         this.prescriptions = new ArrayList();
+      }
+
+      return this.prescriptions;
    }
 
-   public void setPrescriptions(List<String> listOfPrescriptions) {
-      this.listOfPrescriptions = listOfPrescriptions;
+   public Boolean isHasMoreResults() {
+      return this.hasMoreResults;
+   }
+
+   public void setHasMoreResults(Boolean value) {
+      this.hasMoreResults = value;
+   }
+
+   public byte[] getSession() {
+      return this.session;
+   }
+
+   public void setSession(byte[] value) {
+      this.session = value;
+   }
+
+   public Boolean getHasMoreResults() {
+      return this.hasMoreResults;
    }
 }

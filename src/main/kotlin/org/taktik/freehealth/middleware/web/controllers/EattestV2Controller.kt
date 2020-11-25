@@ -31,12 +31,14 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
-import org.taktik.freehealth.middleware.service.EattestService
-import java.util.*
+import org.taktik.freehealth.middleware.exception.MissingTokenException
+import org.taktik.freehealth.middleware.service.EattestV2Service
+import java.util.UUID
+import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/eattestv2")
-class EattestV2Controller(val eattestService: EattestService) {
+class EattestV2Controller(val eattestService: EattestV2Service) {
     @PostMapping("/send/{patientSsin}/verbose", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendAttestWithResponse(
         @PathVariable patientSsin: String,
@@ -149,13 +151,13 @@ class EattestV2Controller(val eattestService: EattestService) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
+        @RequestParam eAttestRef : String,
+        @RequestParam reason : String,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
-        @RequestParam(required = false) traineeSupervisorLastName: String?,
-        @RequestParam eAttestRef : String,
-        @RequestParam reason : String
+        @RequestParam(required = false) traineeSupervisorLastName: String?
                   ): SendAttestResult? =
         eattestService.cancelAttest(
             keystoreId,
@@ -180,7 +182,7 @@ class EattestV2Controller(val eattestService: EattestService) {
        )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 
     @DeleteMapping("/send/{patientSsin}/verbose")
-    fun cancelAttesWithResponse(
+    fun cancelAttestWithResponse(
         @PathVariable patientSsin: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -193,13 +195,13 @@ class EattestV2Controller(val eattestService: EattestService) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
+        @RequestParam eAttestRef : String,
+        @RequestParam reason : String,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
-        @RequestParam(required = false) traineeSupervisorLastName: String?,
-        @RequestParam eAttestRef : String,
-        @RequestParam reason : String
+        @RequestParam(required = false) traineeSupervisorLastName: String?
                     ) =
         eattestService.cancelAttest(
             keystoreId,

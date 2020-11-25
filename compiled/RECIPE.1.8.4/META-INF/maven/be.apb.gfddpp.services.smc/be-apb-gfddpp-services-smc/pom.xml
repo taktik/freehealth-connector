@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>be.business.connector</groupId>
+		<artifactId>be-business-connector</artifactId>
+		<version>1.8.4</version>
+	</parent>
+	<groupId>be.apb.gfddpp.services.smc</groupId>
+	<artifactId>be-apb-gfddpp-services-smc</artifactId>
+	<name>GFD DPP WS SMC</name>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>be.fgov.ehealth.connector</groupId>
+			<artifactId>connector-utilities-kmehr</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>be.fgov.ehealth.connector</groupId>
+			<artifactId>connector-utilities-external</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<id>sm</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/smc-v2.0.5/single-message/events/single-message-event-2.0.1.xsd</source>
+								<source>${basedir}/src/main/resources/xsd/smc-v2.0.5/single-message/maindoc/single-message-oa-1.0.xsd</source>
+								<source>${basedir}/src/main/resources/xsd/smc-v2.0.5/single-message/maindoc/single-message-folder-1.0.xsd</source>
+								<source>${basedir}/src/main/resources/xsd/smc-v2.0.5/single-message/maindoc/single-message-oa-layout1.0.xsd</source>
+								<source>${basedir}/src/main/resources/xsd/smc-v2.0.5/single-message/models/single-message-message-model-2.0.1.xsd</source>
+								<source>${basedir}/src/main/resources/xsd/system-services-v20121119.xsd</source>
+								<source>${basedir}/src/main/resources/xsd/system-services-v20130708.xsd</source>
+								<source>${basedir}/src/main/resources/xsd/system-services-v20130927.xsd</source>
+								<source>${basedir}/src/main/resources/xsd/archiving-v.0.1.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>assuralia</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<packageName>be.apb.gfddpp.assuralia</packageName>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/assuralia-request-parameters-v20130916.xsd</source>
+								<source>${basedir}/src/main/resources/xsd/assuralia-single-message-map.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>Bvac</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<packageName>be.apb.gfddpp.assuralia.bvac</packageName>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/assuralia-bvac-configuration-v20130923.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>batch</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<packageName>be.apb.gfddpp.assuralia.batch</packageName>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/assuralia-batches-bvac-list-v20130926.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>tipsys-audit</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<packageName>be.apb.gfddpp.common.binding</packageName>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/tipsys-audit.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>motivation</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<packageName>be.apb.gfddpp.motivation</packageName>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/motivation.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>product-filterr</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<packageName>be.apb.gfddpp.productfilter</packageName>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/productFilter-v2013087.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>register-data</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<packageName>be.apb.gfddpp.rtrn.registerdata</packageName>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/return-registerdata-to-softwarevendors.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>service-router</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<packageName>be.apb.gfddpp.servicerouter</packageName>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/service-router/service-router-v20130201.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>patient-signature</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<packageName>be.apb.standards.gfddpp.patient.signature</packageName>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/patient-signature.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>request-messsage-params</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<packageName>be.apb.standards.gfddpp.request</packageName>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/request-message-parameters-v20160808.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>request-configuration</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<packageName>be.apb.standards.gfddpp.request.configuration</packageName>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/request-configuration-v20121116.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>tipsys-errors</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<packageName>be.apb.gfddpp.tipsys.errors</packageName>
+							<clearOutputDir>false</clearOutputDir>
+							<sources>
+								<source>${basedir}/src/main/resources/xsd/tipsys-errors.xsd</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>sdk</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-shade-plugin</artifactId>
+						<version>2.3</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>shade</goal>
+								</goals>
+								<configuration>
+									<shadedArtifactAttached>true</shadedArtifactAttached>
+									<shadedClassifierName>all-in-one</shadedClassifierName>
+									<filters>
+										<filter>
+											<artifact>*:*</artifact>
+											<excludes>
+												<exclude>META-INF/*.SF</exclude>
+												<exclude>META-INF/*.DSA</exclude>
+												<exclude>META-INF/*.RSA</exclude>
+												<exclude>*.cmd</exclude>
+											</excludes>
+										</filter>
+									</filters>
+									<echo message="EXCLUDE - EHEALTH JARS!" />
+									<artifactSet>
+										<excludes>
+											<exclude>be.fgov.*:*</exclude>
+											<exclude>joda-time:joda-time</exclude>
+											<exclude>be.fedict*:*</exclude>
+											<exclude>commons-*:*</exclude>
+											<exclude>log4j:*</exclude>
+											<exclude>com.sun.xml.wss:*</exclude>
+											<exclude>javax.*:*</exclude>
+											<exclude>com.sun.*:*</exclude>
+											<exclude>net.sf.*:*</exclude>
+											<exclude>org.*:*</exclude>
+											<exclude>relaxngDatatype:relaxngDatatype:ja</exclude>
+											<exclude>relaxngDatatype*:*</exclude>
+											<exclude>junit:junit*</exclude>
+											<exclude>com.googlecode.*:*</exclude>
+										</excludes>
+									</artifactSet>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>xjc</id>
+								<configuration>
+									<tasks>
+										<delete dir="target/generated-sources/jaxb/be/fgov" includeemptydirs="true"/>
+										<delete dir="target/classes/be/fgov" includeemptydirs="true"/>
+									</tasks>
+								</configuration>
+								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>ikvm</id>
+								<configuration>
+									<tasks>
+										<available file="${java.home}/../jre6" property="jre_home" value="${java.home}/../jre6" />
+										<available file="${java.home}/../jre" property="jre_home" value="${java.home}/../jre" />
+										<available file="${env.IKVM_HOME}/bin/ikvmc.exe" property="ikvm.skip" value="false" />
+										<echo message="Checking if IKVM is setup in : ${env.IKVM_HOME} (skip = ${ikvm.skip})" />
+										<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+										<property name="master.dir" value="../be-business-connector-master/src/main/resources" />
+										<property name="repo.dir" value="~/.m2/repository" />
+										<if>
+											<equals arg1="${ikvm.skip}" arg2="false" />
+											<then>
+												<echo message="IKVM will be executed" />
+												<exec executable="${env.IKVM_HOME}/bin/ikvmc.exe">
+													<arg value="-classloader:ikvm.runtime.AppDomainAssemblyClassLoader" />
+													<arg value="-sharedclassloader" />
+													<arg value="-target:library" />
+													<arg value="-out:target/${project.artifactId}.dll" />
+													<arg value="-version:1.7.0.0" />
+													<arg value="-fileversion:1.7.0.0" />
+													<arg value="-keyfile:recipe-dotnet-sign-key.snk" />
+													<arg value="target/${project.artifactId}-${project.version}-all-in-one.jar" />
+													<arg value="${jre_home}/lib/ext/sunpkcs11.jar" />
+												</exec>
+												<echo message="DLL copy to master" />
+												<copy file="target/${project.artifactId}.dll" todir="${master.dir}/businessconnectordlls" />
+												<copy todir="${temp.dir}/src/core" includeEmptyDirs="false">
+													<fileset dir="src/main/java" />
+												</copy>
+												<!-- COPY JAR TO MASTER -->
+												<copy todir="${master.dir}/businessconnectorlib" file="target/${project.artifactId}-${project.version}.jar" />
+											</then>
+											<else>
+												<echo message="IKVM compilation skipped, please setup correctly IKVM_HOME env variable" />
+											</else>
+										</if>
+									</tasks>
+								</configuration>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

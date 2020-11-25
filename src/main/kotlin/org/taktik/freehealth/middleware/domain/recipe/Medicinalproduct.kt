@@ -27,6 +27,7 @@ import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 class Medicinalproduct : Serializable {
+    var samId: String? = null
     var intendedcds: List<Code> = LinkedList()
     var deliveredcds: List<Code> = LinkedList()
     var intendedname: String? = null

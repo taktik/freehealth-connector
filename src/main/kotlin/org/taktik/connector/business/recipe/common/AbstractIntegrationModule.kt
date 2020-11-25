@@ -46,9 +46,7 @@ import org.taktik.connector.technical.service.kgss.domain.KeyResult
 import org.taktik.connector.technical.service.kgss.impl.KgssServiceImpl
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
-import java.io.File
 import java.security.Key
-import java.security.KeyStore
 import java.security.Security
 import java.util.Arrays
 import java.util.regex.Pattern
@@ -60,9 +58,9 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
     var oldDataSealer: DataSealer? = null
     var oldDataUnsealer: DataUnsealer? = null
 
-    protected var etkHelper: ETKHelper? = null
+    protected lateinit var etkHelper: ETKHelper
         private set
-    protected var symmKey: Key? = null
+    protected lateinit var symmKey: Key
         private set
 
     private val kgssService = KgssServiceImpl()
@@ -86,13 +84,15 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
             MessageDumper.getInstance().init(propertyHandler)
             System.setProperty("javax.xml.soap.SOAPFactory", "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl")
 
-            // Extra debug information
-            if (log.isDebugEnabled) {
-                log.debug("Curdir : " + File(".").canonicalPath)
-                log.debug("Support P12 keystores : " + KeyStore.getInstance("PKCS12"))
+            try {
+                log.info("Init recipe encryption - create symmKey")
+                symmKey = encryptionUtils.generateSecretKey()
+                log.info("Init recipe encryption - init etkHelper")
+                etkHelper = ETKHelper(keyDepotService)
+            } catch (t: Throwable) {
+                log.error("Exception occured when initializing the encryption util: ", t)
+                Exceptionutils.errorHandler(t, "error.initialization")
             }
-            initEncryption();
-            log.info("End Init abstractIntegrationModule!")
         } catch (t: Throwable) {
             log.error("Exception in init abstractIntegrationModule: ", t)
             Exceptionutils.errorHandler(t)
@@ -101,20 +101,6 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
 
     private fun initCaching() {
 
-    }
-
-    @Throws(IntegrationModuleException::class)
-    private fun initEncryption() {
-        try {
-            log.info("Init the encryption - create symmKey")
-            symmKey = encryptionUtils.generateSecretKey()
-
-            log.info("Init the encryption - init etkHelper")
-            etkHelper = ETKHelper(keyDepotService)
-        } catch (t: Throwable) {
-            log.error("Exception occured when initializing the encryption util: ", t)
-            Exceptionutils.errorHandler(t, "error.initialization")
-        }
     }
 
     @Synchronized
@@ -230,12 +216,12 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
 
 
     @Throws(IntegrationModuleException::class)
-    protected fun unsealPrescriptionForUnknown(key: KeyResult, protectedMessage: ByteArray): ByteArray {
-        return unsealForUnknown(key, protectedMessage)
+    protected fun unsealPrescriptionForUnknown(crypto: Crypto, key: KeyResult, protectedMessage: ByteArray): ByteArray {
+        return unsealForUnknown(crypto, key, protectedMessage)
     }
 
-    private fun unsealForUnknown(key: KeyResult, protectedMessage: ByteArray): ByteArray {
-        return ByteArray(0)
+    private fun unsealForUnknown(crypto: Crypto, key: KeyResult, protectedMessage: ByteArray): ByteArray {
+        return crypto.unsealForUnknown(key.secretKey, protectedMessage);
     }
 
     @Throws(IntegrationModuleException::class)
@@ -260,6 +246,7 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
     companion object {
         val EHEALTH_SUCCESS_CODE_100 = "100"
         val EHEALTH_SUCCESS_CODE_200 = "200"
+        val EHEALTH_SUCCESS_URN = "urn:be:fgov:ehealth:2.0:status:Success"
         val RID_PATTERN = "BE([PKN])([P0-9])([0-9A-Z]){8}"
     }
 }

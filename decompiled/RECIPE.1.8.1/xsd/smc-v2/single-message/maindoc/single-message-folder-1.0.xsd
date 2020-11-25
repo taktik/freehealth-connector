@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.apb.be/standards/smoa/schema/v1" xmlns:model="http://www.apb.be/standards/smoa/schema/model/v1" targetNamespace="http://www.apb.be/standards/smoa/schema/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:include schemaLocation="../events/single-message-event-2.0.xsd"/>
+	<xsd:import namespace="http://www.apb.be/standards/smoa/schema/model/v1" schemaLocation="../models/single-message-abstract-message-model-1.0.xsd"/>
+	<!-- "Body" of the Single Message -->
+	<xsd:element name="abstract-Folder" type="AbstractFolderType" abstract="true"/>
+	<xsd:complexType name="AbstractFolderType" abstract="true"/>
+	<!-- Event folder -->
+	<xsd:element name="eventFolder" type="EventFolderType" substitutionGroup="abstract-Folder"/>
+	<xsd:complexType name="EventFolderType">
+		<xsd:complexContent>
+			<xsd:extension base="AbstractFolderType">
+				<xsd:sequence>
+					<xsd:element name="events" minOccurs="0">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="event" type="AbstractEventType" minOccurs="0" maxOccurs="unbounded"/>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="entitySpace" minOccurs="0">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="entity" type="model:AbstractEntityType" minOccurs="0" maxOccurs="unbounded"/>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+</xsd:schema>

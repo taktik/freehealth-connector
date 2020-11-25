@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!-- Generated using Flame-Ware Solutions XML-2-XSD v2.0 at http://www.flame-ware.com/Products/XML-2-XSD/ -->
+<xs:schema id="product-filter" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xs:element name="medicines">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="medicine" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="product-id" type="xs:string" minOccurs="0" />
+							<xs:element name="category" type="xs:string" minOccurs="0" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="preparations">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="preparation" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="product-id" type="xs:string" minOccurs="0" />
+							<xs:element name="type" type="xs:string" minOccurs="0" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="productList">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element ref="medicines" />
+			<xs:element ref="preparations" />
+			<xs:element name="white-list">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="medicines" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element ref="preparations" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="black-list">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ranges" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="range" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="start" type="xs:string" minOccurs="0" />
+												<xs:element name="end" type="xs:string" minOccurs="0" />
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element ref="medicines" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element ref="preparations" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:element name="product-filter" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="version" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="precedence" type="xs:string" />
+				<xs:element name="productList" type="productList" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+
+	</xs:element>
+</xs:schema>

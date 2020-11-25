@@ -34,9 +34,9 @@ public class Blob implements Serializable {
    @XmlAttribute(
            name = "ContentEncryption"
    )
-   protected ContentEncryptionType contentEncryption;
+   protected String contentEncryption;
    @XmlAttribute(
-           name = "Etk"
+           name = "ContentEncryption"
    )
    protected byte[] etk;
    @XmlAttribute(
@@ -92,13 +92,9 @@ public class Blob implements Serializable {
       this.contentEncoding = value;
    }
 
-   public ContentEncryptionType getContentEncryption() {
-      return this.contentEncryption;
-   }
+   public String getContentEncryption() { return contentEncryption; }
 
-   public void setContentEncryption(ContentEncryptionType value) {
-      this.contentEncryption = value;
-   }
+   public void setContentEncryption(String contentEncryption) { this.contentEncryption = contentEncryption; }
 
    public byte[] getEtk() {
       return this.etk;

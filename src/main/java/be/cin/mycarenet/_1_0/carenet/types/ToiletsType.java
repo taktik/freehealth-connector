@@ -9,18 +9,17 @@ import javax.xml.bind.annotation.XmlValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
-   name = "ToiletsType",
-   propOrder = {"value"}
+        name = "ToiletsType",
+        propOrder = {"value"}
 )
 public class ToiletsType implements Serializable {
    private static final long serialVersionUID = 1L;
    @XmlValue
    protected String value;
    @XmlAttribute(
-      name = "Frequency",
-      required = true
+           name = "Frequency"
    )
-   protected ToiletsFrequencyType frequency;
+   protected String frequency;
 
    public String getValue() {
       return this.value;
@@ -30,11 +29,11 @@ public class ToiletsType implements Serializable {
       this.value = value;
    }
 
-   public ToiletsFrequencyType getFrequency() {
+   public String getFrequency() {
       return this.frequency;
    }
 
-   public void setFrequency(ToiletsFrequencyType value) {
+   public void setFrequency(String value) {
       this.frequency = value;
    }
 }

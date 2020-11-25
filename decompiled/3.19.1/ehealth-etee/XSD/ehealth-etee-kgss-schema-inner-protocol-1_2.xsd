@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="urn:be:fgov:ehealth:etee:kgss:1_0:protocol" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:be:fgov:ehealth:etee:kgss:1_0:protocol" elementFormDefault="qualified">
+
+  <!-- "Create, store safely and return a new secret key. The access to this key must be limited according to the given AccesToken (thus before sealing or encrypting data)." -->
+  <xs:element name="GetNewKeyRequestContent">
+    <xs:complexType>
+      <xs:sequence>
+        <!-- The AccessControlList containing the list of entities allowed to receive the new key. -->
+        <xs:element name="AllowedReader" type="CredentialType" maxOccurs="unbounded" />
+        <xs:element name="ExludedReader" type="CredentialType" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="ETK" type="xs:base64Binary" />
+        <xs:element name="DeletionStrategy" type="DeletionStrategyType" minOccurs="0" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <!-- "Here your NewKey with its NewKeyIdentifier." -->
+  <xs:element name="GetNewKeyResponseContent">
+    <xs:complexType>
+      <xs:sequence minOccurs="0">
+        <!-- The identifier of the key, which will be send to the reader by an out-of-bound manner. -->
+        <xs:element name="NewKeyIdentifier" type="xs:base64Binary" />
+        <!-- The encryption key -->
+        <xs:element name="NewKey" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetKeyRequestContent">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="KeyIdentifier" type="xs:base64Binary">
+          <xs:annotation>
+            <xs:documentation>Reference to the key stored in the KGSS.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:choice>
+          <xs:element name="ETK" type="xs:base64Binary" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The ETK serving to encrypt the response.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:sequence minOccurs="0">
+            <xs:element name="KeyEncryptionKey" type="xs:base64Binary">
+              <xs:annotation>
+                <xs:documentation>The key serving to encrypt the response.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="KeyEncryptionKeyIdentifier" type="xs:base64Binary" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>Reference from the callers system supplying the KeyEncryptionKey.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetKeyResponseContent">
+    <xs:complexType>
+      <xs:sequence minOccurs="0">
+        <!-- The encryption key -->
+        <xs:element name="Key" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <!-- The CredentialType represents a credential, e.g. 'is a pharmacist' . TODO: we could use "saml:AttributeType" as type for CredentialType, but then changes in SamlAttribute version will ripple through this interface and the Saml.xsd must be imported here. 
+    -> this is not necessary and should be avoided. -->
+  <xs:complexType name="CredentialType">
+    <xs:sequence>
+      <!-- The namespace identifies the type of Credential attribute, e.g. urn:be:fgov:ehealth:certified-namespace urn:be:fgov:ehealth:identification-namespace -->
+      <xs:element name="Namespace" type="xs:string" />
+      <!-- A namespace identifying the type of credential, e.g. for urn:be:fgov:ehealth:certified-namespace : urn:be:fgov:ehealth:doctor-nihii e.g. for urn:be:fgov:ehealth:identification-namespace : urn:be:fgov:ehealth:person-ssin -->
+      <xs:element name="Name" type="xs:string" />
+      <!-- the value for the credential TODO this may be optional (we can not specify the NIHII-PHARMACY value) -->
+      <xs:element name="Value" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="DeletionStrategyType" />
+</xs:schema>

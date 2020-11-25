@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:tns="https://gfddpp.services.be/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="https://gfddpp.services.be/" version="1.0">
+	<xs:element name="SingleMessageMap" type="tns:SingleMessageMap"/>
+	<xs:complexType name="SingleMessageMap">
+		<xs:sequence>
+			<xs:element name="Key" type="xs:base64Binary"/>
+			<xs:element name="EncryptedSingleMessage" type="xs:base64Binary"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

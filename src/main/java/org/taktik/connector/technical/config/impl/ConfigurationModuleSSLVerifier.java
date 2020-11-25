@@ -50,7 +50,7 @@ public class ConfigurationModuleSSLVerifier implements ConfigurationModule {
       public X509Certificate[] getAcceptedIssuers() {
          ConfigurationModuleSSLVerifier.LOG.warn("SSL verifcation disabled! DO NOT USE THIS IN PRODUCTION.");
          ConfigurationModuleSSLVerifier.LOG.debug("getAcceptedIssuers() : empty list");
-         return null;
+         return new X509Certificate[0];
       }
 
       public void checkClientTrusted(X509Certificate[] certs, String authType) {

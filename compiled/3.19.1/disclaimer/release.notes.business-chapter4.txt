@@ -1,0 +1,115 @@
+**************************************************
+* eHealth Business Chapter IV RELEASE NOTES      *
+**************************************************
+3.17.1 release (april 2019)
+ . change             update to latest kmehr version 1.28
+                            - Modified class:           
+                                chapter4/src/main/java/be/ehealth/businessconnector/chapterIV/service/ServiceFactory.java
+                                chapter4/src/main/java/be/ehealth/businessconnector/chapterIV/validators/impl/Chapter4XmlValidatorImpl.java
+                                chapter4/src/test/java/be/ehealth/businessconnector/chapterIV/validators/impl/AbstractValidatorImplTest.java
+. improvement             remove unused tests
+                            - Modified class:           
+                                chapter4/src/test/java/be/ehealth/businessconnector/chapterIV/builders/impl/ResponseBuilderIntegrationTest.java
+                                chapter4/src/test/net/be/ehealth/businessconnector/chapterIV/builders/impl/ResponseBuilderIntegrationTest.cs                                
+
+3.17.0 internal release (april 2019)
+                                
+3.13.1 release (july 2017)
+  . improvement               moved some dependencies from mycarenetcommons to mycarenetdomaincommons
+                              Were modified as a result:
+                              chapter4/src/main/java/be/ehealth/businessconnector/chapterIV/builders/impl/CommonBuilderImpl.java
+                              chapter4/src/main/java/be/ehealth/businessconnector/chapterIV/mappers/CommonInputMapper.java
+                              chapter4/src/main/resources/dozer/chapter4-commoninput.xml
+                              chapter4/src/test/java/be/ehealth/businessconnector/chapterIV/mappers/CommonInputMapperTest.java
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017) 
+  .  bugfix                    fixed soapAction in askChap4MedicalAdvisorAgreement method to 'urn:be:fgov:ehealth:chap4:protocol:v1:AskChap4MedicalAdvisorAgreement' , no impact on behaviour
+  .  improvement               using new McnPackageInfo class and corresponding utility methods
+  .  improvement               minor refactoring of debug statement in CommonBuilderImpl , using String(byte[]) constructor.
+  .  improvement               replaced deprecated seal methods with correct methods
+  .  improvement               now using HandlerChainUtil.buildChainWithValidator in ServiceFactory
+   . improvement               fixed losing stacktrace in KmehrValidatorImpl , ChapterIVBusinessConnectorException now also takes original exception as parameter in constructor
+   . improvement               now clones content when creating new TimeStampResponse and kmehrResponseBytes and in Document.content
+   . improvement               Default values added for the endpoint and the input validation
+   . improvement               Minor refactoring in ServiceFactory and ResponseBuilderImpl
+   . improvement               Map of the class and their corresponding xsd in Chapter4XmlValidatorImpl becomes protected instead of private.
+ 
+3.12.0 internal release (mai 2017)
+ 
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . update                  using technical connector 3.11.0
+
+3.10.4 release (september 2016)
+  . using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  . internal release
+  
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+  .   change                  added bootstrapping
+
+3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)  
+3.4.0-beta-9 release
+  .   change                  new kmehr version 1.14
+  .   change                  mappers replaced by common version from technical connector
+  .   using latest version of technical connector 3.4.0-beta-9               
+ 
+
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+  
+3.4.0-beta-7 release
+  . using latest version of technical connector 3.4.0-beta-7
+	
+3.4.0 beta-6 release
+  . using latest version of technical connector 3.4.0-beta-6
+	
+3.4.0 beta-5 release
+ .    change                    kmehr config properties changed ( see release notes kmehrcommons )  
+ .    change                    Crypto properties are now retrieved from session when needed. methods with crypto as parameter are deprecated
+ .    change                    changed hashcode implementation of ChapterIVBuilderResponse
+ .    change                    now using factory to create GenericWsSender instead of constructor
+ .    change                    ChapterIVReferences.equals use EqualsBuilder now to avoid cyclomatic complexity
+ .    improvement               replaced new GenericWsSenderImpl() with factory method in service
+
+3.4.0 beta-4 release
+ .    bugfix                    fixed nullpointer if niss number is not provided for patient 
+ .    change                    updated service to use new code to configure HandlerChain
+
+3.4.0 beta release
+ .  change                    using HcPartyUtils to create kmehrId 
+ .    change                    refactored calling of KeyDepotManager
+ .  change                    using main config file for Acl control list 
+ .    change                    default builders now use generic builders , configured in property file 
+ .    change                    kmehr id prefix now configured with HcPartyUtil.retrieveMainAuthorId : following property needed kmehr.chapterIV.identifier.id.idhcparty=${user.nihii}
+ .  change                    ChapterIVReferences, ChapterIVBuilderResponse is now serializable. 
+ .    change                    refactored ChapterIVKmehrResponseWithTimeStampInfo to be serializable , constructor has changed ( old constructor still exists for backwards compatibility )
+ 
+
+3.3.2 beta release
+ .    improvement                added extra methods to be able to unseal messages which throw unseal exceptions that are not blocking for the unsealing ( like an expired certificate ) 
+ .    change                    handling of unsealExceptions changed : when the unsealResult contains the unsealed message , the errors are just logged as warnings , and the processing continues.
+ .    change                    now generates kmehr id with nihii number as prefix and random number as suffix
+ .    improvement                some checkstyle fixes , without code behaviour changes
+
+3.3.1 beta release
+ .    change                    moved ChapterIvServiceImplementationFactory to impl package 
+
+3.3.0 beta release
+ .    change                    Some property names have changed :     chapterIV.package.license.username => chapterIV.package.licence.username
+ .    improvement                empty tag <Cbe/> is removed
+ .    improvement                logging standardized on sl4j 
+ .    improvement                now uses standard configuration for kmehrbuilder , see javadoc HcPartyUtil
+ .    improvement                now uses standard configuration for mycarenet CommonInput see javadoc be.ehealth.business.mycarenetcommons.builders.CommonBuilder

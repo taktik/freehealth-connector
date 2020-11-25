@@ -272,7 +272,7 @@ class RecipeExamplesTest(val recipeService: RecipeService) {
 
     fun toXmlPrescription(prescriptionExample: PrescriptionExample, config: KmehrPrescriptionConfig = createBaseConfig(prescriptionExample.hcp.nihii!!), skipPrescriptionTypeCheck: Boolean = false): String {
         val os = ByteArrayOutputStream()
-		val kmehrPrescription = recipeService.getKmehrPrescription(prescriptionExample.patient, prescriptionExample.hcp, prescriptionExample.medications, prescriptionExample.deliveryDate, config)
+		val kmehrPrescription = recipeService.getKmehrPrescription(prescriptionExample.patient, prescriptionExample.hcp, prescriptionExample.medications, prescriptionExample.deliveryDate, config, "doctor")
 		JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(kmehrPrescription, os)
         val prescription = os.toByteArray()
 		if (!skipPrescriptionTypeCheck) {
@@ -299,11 +299,11 @@ class RecipeExamplesTest(val recipeService: RecipeService) {
                     time = DatatypeFactory.newInstance().newXMLGregorianCalendar("09:00:00")
                     messageId = "8e1c4ea4-3825-48e4-bcc2b8cadfa7a897"
                 }
-                iCure.apply {
+                softwarePackage.apply {
                     name = "ID-MEDISOFT"
                     version = "versie 1.23.25.0"
                     id = "8e1c4ea4-3825-48e4-bcc2b8cadfa7a897"
-                    prettyName = "MySoftware"
+                    vendorName = "MySoftware"
                     phone = "02/100.11.12"
                     mail = "tom@mysoftware.com"
                 }

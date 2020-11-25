@@ -24,7 +24,7 @@ import org.taktik.freehealth.middleware.dto.Code
 
 sealed class CompoundPrescription(var galenicForm : GalenicForm? = null, var quantity : KmehrQuantity? = null) {
 
-    class Compounds(val compounds : MutableList<Compound> = mutableListOf()) : CompoundPrescription()
+    data class Compounds(var compounds : MutableList<Compound> = mutableListOf()) : CompoundPrescription()
     data class MagistralText(var text : String? = null) : CompoundPrescription()
 
     sealed class FormularyReference : CompoundPrescription() {

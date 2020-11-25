@@ -1,0 +1,68 @@
+<xs:schema targetNamespace="urn:be:fgov:ehealth:commons:core:v1" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.4" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:commons:core:v1"> 
+	<xs:complexType name="IdentifierType"> 
+		<xs:sequence> 
+			<xs:element name="Id" type="xs:string"/> 
+			<xs:element name="Type" type="xs:string"/> 
+			<xs:element name="SubType" type="xs:string" minOccurs="0"/> 
+		</xs:sequence> 
+	</xs:complexType> 
+	<xs:complexType name="PeriodType"> 
+		<xs:sequence> 
+			<xs:element name="BeginDate" type="xs:date"/> 
+			<xs:element name="EndDate" type="xs:date" minOccurs="0"/> 
+		</xs:sequence> 
+	</xs:complexType> 
+	<xs:complexType name="LocalisedString"> 
+		<xs:simpleContent> 
+			<xs:extension base="xs:string"> 
+				<xs:attribute name="Lang" type="core:LangageType" use="optional"/> 
+			</xs:extension> 
+		</xs:simpleContent> 
+	</xs:complexType> 
+	<xs:complexType name="StatusType"> 
+		<xs:sequence> 
+			<xs:element name="Code" type="xs:string"/> 
+			<xs:element name="Message" type="core:LocalisedString" maxOccurs="unbounded"/> 
+		</xs:sequence> 
+	</xs:complexType> 
+	<xs:simpleType name="LangageType"> 
+		<xs:restriction base="xs:string"> 
+			<xs:enumeration value="FR"/> 
+			<xs:enumeration value="NL"/> 
+			<xs:enumeration value="EN"/> 
+			<xs:enumeration value="DE"/> 
+			<xs:enumeration value="NA"/> 
+		</xs:restriction> 
+	</xs:simpleType> 
+	<xs:complexType name="AddressType"> 
+		<xs:sequence> 
+			<xs:element name="Street"> 
+				<xs:complexType> 
+					<xs:sequence> 
+						<xs:element name="Description" type="core:LocalisedString" maxOccurs="unbounded"/> 
+					</xs:sequence> 
+				</xs:complexType> 
+			</xs:element> 
+			<xs:element name="HouseNumber" type="xs:string" minOccurs="0"/> 
+			<xs:element name="PostBox" type="xs:string" minOccurs="0"/> 
+			<xs:element name="Municipality"> 
+				<xs:complexType> 
+					<xs:sequence> 
+						<xs:element name="ZipCode" type="xs:string"/> 
+						<xs:element name="InsCode" type="xs:string" minOccurs="0"/> 
+						<xs:element name="Description" type="core:LocalisedString" maxOccurs="unbounded"/> 
+					</xs:sequence> 
+				</xs:complexType> 
+			</xs:element> 
+			<xs:element name="Country" minOccurs="0"> 
+				<xs:complexType> 
+					<xs:sequence> 
+						<xs:element name="Code" type="xs:string" minOccurs="0"/> 
+						<xs:element name="Abbreviation" type="xs:string" minOccurs="0"/> 
+						<xs:element name="Description" type="core:LocalisedString" minOccurs="0" maxOccurs="unbounded"/> 
+					</xs:sequence> 
+				</xs:complexType> 
+			</xs:element> 
+		</xs:sequence> 
+	</xs:complexType> 
+</xs:schema>

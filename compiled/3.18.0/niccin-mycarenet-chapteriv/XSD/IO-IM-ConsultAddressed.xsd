@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid XML Studio Developer Edition (Trial) 9.0.11.3078 (http://www.liquid-technologies.com)-->
+<schema xmlns:tns="urn:be:cin:io:sealed:medicalAdvisorAgreement:consult:v1" 
+     xmlns:common="urn:be:cin:mycarenet:esb:common:v2" xmlns:types="urn:be:cin:types:v1" 
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd" elementFormDefault="qualified" targetNamespace="urn:be:cin:io:sealed:medicalAdvisorAgreement:consult:v1" xmlns="http://www.w3.org/2001/XMLSchema">
+    <import schemaLocation="commonTypes-v1.xsd" namespace="urn:be:cin:types:v1" />
+	<element name="Request" type="tns:RequestType" />
+    <complexType name="RequestType">
+        <sequence>
+            <element name="CareReceiver" type="types:CareReceiverIdType" />
+            <element name="AgreementStartDate" type="date" />
+            <element name="UnsealKeyId" type="string" />
+            <element name="SealedContent" type="base64Binary" />
+        </sequence>
+    </complexType>
+</schema>

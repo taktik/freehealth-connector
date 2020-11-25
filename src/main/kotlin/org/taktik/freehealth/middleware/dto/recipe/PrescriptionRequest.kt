@@ -23,14 +23,23 @@ package org.taktik.freehealth.middleware.dto.recipe
 import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.dto.HealthcareParty
+import java.time.LocalDateTime
 
 class PrescriptionRequest(
     var patient: Patient? = null,
     var hcp: HealthcareParty? = null,
-    var feedback: Boolean? = null,
-    var medications: List<Medication>? = null,
-    var prescriptionType: String? = null,
-    var notification: String? = null,
-    var executorId: String? = null,
-    var deliveryDate: Long? = null //yyyyMMdd
+    var feedback:Boolean? = null,
+    var medications:List<Medication>? = null,
+    var prescriptionType:String? = null,
+    var notification:String? = null,
+    var samVersion:String? = null,
+    var executorId:String? = null,
+    val deliveryDate: Long? = null,
+    val expirationDate: Long? = null,
+    val vendorName: String? = null,
+    val packageName: String? = null,
+    val packageVersion: String? = null,
+    val vendorEmail: String? = null,
+    val vendorPhone: String? = null,
+    val vision: String? = null
 )

@@ -2,12 +2,9 @@ package org.taktik.connector.technical.ws.domain;
 
 import org.taktik.connector.technical.exception.InstantiationException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
-import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.handler.CertificateCallback;
 import org.taktik.connector.technical.handler.SAMLHolderOfKeyHandler;
 import org.taktik.connector.technical.handler.SAMLSenderVouchesHandler;
-import org.taktik.connector.technical.handler.SoapActionHandler;
-import org.taktik.connector.technical.handler.WsAddressingHandlerV200508;
 import org.taktik.connector.technical.handler.domain.WsAddressingHeader;
 import org.taktik.connector.technical.service.sts.SAMLTokenFactory;
 import org.taktik.connector.technical.service.sts.security.Credential;
@@ -20,19 +17,18 @@ import org.taktik.connector.technical.utils.ConfigurableFactoryHelper;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import org.taktik.connector.technical.utils.MarshallerHelper;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
+import org.taktik.connector.technical.ws.feature.EndpointFeature;
 import org.taktik.connector.technical.ws.feature.GenericFeature;
+import org.taktik.connector.technical.ws.feature.SOAPActionFeature;
+import org.taktik.connector.technical.ws.feature.WSAddressingV200508Feature;
 import org.taktik.connector.technical.ws.feature.XOPFeature;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import javax.activation.DataHandler;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -41,8 +37,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.ws.handler.Handler;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
+import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.handler.soap.SOAPHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -54,21 +50,12 @@ public final class GenericRequest {
    private static final DocumentBuilder DOC_BUILDER;
    private Document payload;
    private Map<String, DataHandler> handlers = new HashMap();
-   private Map<String, Object> requestMap = new HashMap();
-   private List<Handler> beforeSecurity = new ArrayList();
-   private List<Handler> afterSecurity = new ArrayList();
-   private List<Handler> securityHandler = new ArrayList();
-   private Map<Class, Object> activeFeatures = new HashMap();
-   private List<Handler> featureHandlers = new ArrayList();
+   private FeatureLoader featureLoader = new FeatureLoader();
+   private HandlerChain handlerChain = new HandlerChain();
 
    public GenericRequest setEndpoint(String endpoint) {
-      try {
-         new URL(endpoint);
-         this.requestMap.put("javax.xml.ws.service.endpoint.address", endpoint);
-         return this;
-      } catch (MalformedURLException var3) {
-         throw new IllegalArgumentException(var3.getMessage(), var3);
-      }
+      this.featureLoader.register(new EndpointFeature(endpoint));
+      return this;
    }
 
    public GenericRequest setPayload(Document payload) {
@@ -78,7 +65,7 @@ public final class GenericRequest {
 
    public GenericRequest setPayload(Document payload, GenericFeature... features) {
       this.payload = payload;
-      this.process(features);
+      this.featureLoader.register(features);
       return this;
    }
 
@@ -127,11 +114,10 @@ public final class GenericRequest {
    }
 
    public GenericRequest setPayload(Object payload, GenericFeature... features) {
-      this.process(features);
-      XOPFeature mtomFeature = this.getFeature(XOPFeature.class);
+      this.featureLoader.register(features);
       Class<?> payloadClazz = payload.getClass();
       if (payloadClazz.isAnnotationPresent(XmlRootElement.class)) {
-         MarshallerHelper helper = getHelper(payloadClazz, mtomFeature);
+         MarshallerHelper helper = getHelper(payloadClazz, this.featureLoader.getFeature(XOPFeature.class));
          this.payload = helper.toDocument(payload);
          this.handlers = helper.getDataHandlersMap();
       } else {
@@ -145,88 +131,35 @@ public final class GenericRequest {
             Marshaller marshaller = JaxbContextFactory.getJaxbContextForClass(jaxbElement.getDeclaredType()).createMarshaller();
             marshaller.marshal(jaxbElement, doc);
             this.payload = doc;
-         } catch (JAXBException var8) {
-            throw new IllegalArgumentException("PayLoadclass [" + payloadClazz + "] is not annotated with @XMLRootElement or is not a JAXBElement class.", var8);
+         } catch (JAXBException var7) {
+            throw new IllegalArgumentException("PayLoadclass [" + payloadClazz + "] is not annotated with @XMLRootElement or is not a JAXBElement class.", var7);
          }
       }
 
       return this;
-   }
-
-   private <T extends GenericFeature> T getFeature(Class<T> clazz) {
-      Iterator i$ = this.activeFeatures.entrySet().iterator();
-
-      Entry entry;
-      do {
-         if (!i$.hasNext()) {
-            return (T)this.activeFeatures.get(clazz);
-         }
-
-         entry = (Entry)i$.next();
-      } while(!clazz.isAssignableFrom((Class)entry.getKey()));
-
-      return (T)entry.getValue();
-   }
-
-   private boolean hasFeature(Class<?> clazz) {
-      Iterator i$ = this.activeFeatures.keySet().iterator();
-
-      Class key;
-      do {
-         if (!i$.hasNext()) {
-            return this.activeFeatures.containsKey(clazz);
-         }
-
-         key = (Class)i$.next();
-      } while(!clazz.isAssignableFrom(key));
-
-      return true;
-   }
-
-   private void process(GenericFeature... features) {
-      GenericFeature[] arr$ = features;
-      int len$ = features.length;
-
-      for(int i$ = 0; i$ < len$; ++i$) {
-         GenericFeature feature = arr$[i$];
-         if (feature != null) {
-            this.activeFeatures.put(feature.getClass(), feature);
-            this.requestMap.put(feature.getID(), feature.isEnabled());
-            this.featureHandlers.addAll(feature.getHandlers());
-         }
-      }
-
    }
 
    private static MarshallerHelper getHelper(Class<?> payloadClazz, XOPFeature feature) {
       return feature == null ? new MarshallerHelper(payloadClazz, payloadClazz, false, false) : new MarshallerHelper(payloadClazz, payloadClazz, false, feature.isEnabled(), feature.getThreshold());
    }
 
-   public GenericRequest setSoapAction(String soapAction) throws TechnicalConnectorException {
-      if (StringUtils.isNotBlank(soapAction)) {
-         this.requestMap.put("javax.xml.ws.soap.http.soapaction.use", Boolean.TRUE);
-         this.requestMap.put("javax.xml.ws.soap.http.soapaction.uri", soapAction);
-         this.securityHandler.add(new SoapActionHandler());
-      } else {
-         LOG.warn("soapAction is Blank [" + soapAction + "]");
-      }
+   public GenericRequest setSoapAction(String soapAction) {
+      this.setSoapAction(soapAction, true);
+      return this;
+   }
 
+   public GenericRequest setSoapAction(String soapAction, boolean wsiCompliant) {
+      this.featureLoader.register(new SOAPActionFeature(soapAction, wsiCompliant));
       return this;
    }
 
    public Map<String, Object> getRequestMap() {
-      return this.requestMap;
+      return this.featureLoader.getRequestMap();
    }
 
    public GenericRequest setWSAddressing(WsAddressingHeader header) throws TechnicalConnectorException {
-      if (header != null) {
-         this.requestMap.put("org.taktik.connector.technical.handler.WsAddressingHandlerV200508.use", Boolean.TRUE);
-         this.requestMap.put("org.taktik.connector.technical.handler.WsAddressingHandlerV200508", header);
-         this.securityHandler.add(new WsAddressingHandlerV200508());
-         return this;
-      } else {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, new Object[]{"WsAddressing object is null."});
-      }
+      this.featureLoader.register(new WSAddressingV200508Feature(header));
+      return this;
    }
 
    /** @deprecated */
@@ -279,29 +212,39 @@ public final class GenericRequest {
 
    private GenericRequest processAsX509(Credential cred) throws TechnicalConnectorException {
       LOG.debug("Using X509 Security");
-      this.securityHandler.add(new CertificateCallback(cred));
+      this.handlerChain.register(HandlerPosition.SECURITY, new CertificateCallback(cred));
       return this;
    }
 
-   private GenericRequest processAsSAML(Credential cred) throws TechnicalConnectorException {
+   private GenericRequest processAsSAML(Credential cred) {
       if (cred instanceof SAMLHolderOfKeyToken) {
          LOG.debug("Using HolderOfKey Credential");
-         this.securityHandler.add(new SAMLHolderOfKeyHandler((SAMLToken)cred));
+         this.handlerChain.register(HandlerPosition.SECURITY, new SAMLHolderOfKeyHandler((SAMLToken)cred));
       } else {
          if (!(cred instanceof SAMLSenderVouchesCredential)) {
             throw new IllegalArgumentException("Unsupported credential of type [" + cred.getClass().getName() + "]");
          }
 
          LOG.debug("Using SenderVouches Credential");
-         this.securityHandler.add(new SAMLSenderVouchesHandler((SAMLSenderVouchesCredential)cred));
+         this.handlerChain.register(HandlerPosition.SECURITY, new SAMLSenderVouchesHandler((SAMLSenderVouchesCredential)cred));
       }
 
       return this;
    }
 
    public GenericRequest addDefaulHandlerChain() throws TechnicalConnectorException {
-      this.beforeSecurity.addAll((new ConfigurableFactoryHelper("connector.defaulthandlerchain.beforesecurity", null)).getImplementations());
-      this.afterSecurity.addAll((new ConfigurableFactoryHelper("connector.defaulthandlerchain.aftersecurity", null)).getImplementations());
+      List<SOAPHandler> beforeSecurityList = (new ConfigurableFactoryHelper("connector.defaulthandlerchain.beforesecurity", null)).getImplementations();
+
+      for (SOAPHandler handler : beforeSecurityList) {
+         this.handlerChain.register(HandlerPosition.BEFORE, handler);
+      }
+
+      List<SOAPHandler> afterSecurityList = (new ConfigurableFactoryHelper("connector.defaulthandlerchain.aftersecurity", null)).getImplementations();
+
+      for (SOAPHandler handler : afterSecurityList) {
+         this.handlerChain.register(HandlerPosition.AFTER, handler);
+      }
+
       return this;
    }
 
@@ -312,9 +255,7 @@ public final class GenericRequest {
    }
 
    public GenericRequest addHandlerChain(HandlerChain handlers) {
-      this.beforeSecurity.addAll(handlers.getHandlers(HandlerPosition.BEFORE));
-      this.afterSecurity.addAll(handlers.getHandlers(HandlerPosition.AFTER));
-      this.afterSecurity.addAll(handlers.getHandlers(HandlerPosition.SECURITY));
+      this.handlerChain.add(handlers);
       return this;
    }
 
@@ -326,40 +267,25 @@ public final class GenericRequest {
 
    /** @deprecated */
    @Deprecated
-   public List<Handler> getAfterSecurityHandlerChain() {
-      return this.afterSecurity;
+   public List<Handler<?>> getAfterSecurityHandlerChain() {
+      return this.handlerChain.getHandlers(HandlerPosition.AFTER);
    }
 
    /** @deprecated */
    @Deprecated
-   public List<Handler> getBeforeSecurityHandlerChain() {
-      return this.beforeSecurity;
+   public List<Handler<?>> getBeforeSecurityHandlerChain() {
+      return this.handlerChain.getHandlers(HandlerPosition.BEFORE);
    }
 
    /** @deprecated */
    @Deprecated
-   public List<Handler> getSecurityHandlerChain() {
-      return this.securityHandler;
+   public List<Handler<?>> getSecurityHandlerChain() {
+      return this.handlerChain.getHandlers(HandlerPosition.SECURITY);
    }
 
-   public Handler<?>[] getHandlerchain() {
-      Handler<?>[] result = new Handler[0];
-      if (this.beforeSecurity != null && !this.beforeSecurity.isEmpty()) {
-         result = (Handler[]) ArrayUtils.addAll(result, this.beforeSecurity.toArray(new Handler[0]));
-      }
-
-      if (this.securityHandler != null) {
-         result = (Handler[]) ArrayUtils.addAll(result, this.securityHandler.toArray(new Handler[0]));
-      }
-
-      if (this.afterSecurity != null && !this.afterSecurity.isEmpty()) {
-         result = (Handler[]) ArrayUtils.addAll(result, this.afterSecurity.toArray(new Handler[0]));
-      }
-
-      if (this.featureHandlers != null && !this.featureHandlers.isEmpty()) {
-         result = (Handler[]) ArrayUtils.addAll(result, this.featureHandlers.toArray(new Handler[0]));
-      }
-
+   public Handler<? extends MessageContext>[] getHandlerchain() {
+      this.handlerChain.add(this.featureLoader.getHandlerChain());
+      Handler<?>[] result = this.handlerChain.getHandlers();
       result = HandlersLoader.addingDefaultHandlers(result);
       return result;
    }
@@ -370,7 +296,7 @@ public final class GenericRequest {
    }
 
    public boolean isXopEnabled() {
-      return this.hasFeature(XOPFeature.class);
+      return this.featureLoader.hasFeature(XOPFeature.class);
    }
 
    public GenericRequest addDataHandler(String id, byte[] byteArray) {
@@ -385,27 +311,6 @@ public final class GenericRequest {
          DOC_BUILDER = dbf.newDocumentBuilder();
       } catch (Exception var1) {
          throw new InstantiationException("Unable to create DocumentBuilder", var1);
-      }
-   }
-
-   // $FF: synthetic class
-   static class SyntheticClass_1 {
-      // $FF: synthetic field
-      static final int[] $SwitchMap$be$ehealth$technicalconnector$ws$domain$TokenType = new int[TokenType.values().length];
-
-      static {
-         try {
-            $SwitchMap$be$ehealth$technicalconnector$ws$domain$TokenType[TokenType.SAML.ordinal()] = 1;
-         } catch (NoSuchFieldError var2) {
-            ;
-         }
-
-         try {
-            $SwitchMap$be$ehealth$technicalconnector$ws$domain$TokenType[TokenType.X509.ordinal()] = 2;
-         } catch (NoSuchFieldError var1) {
-            ;
-         }
-
       }
    }
 }

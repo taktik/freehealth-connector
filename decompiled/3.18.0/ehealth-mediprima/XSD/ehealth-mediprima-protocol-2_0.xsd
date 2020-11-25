@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:mediprima:protocol:v2" xmlns:cc="urn:be:fgov:ehealth:mediprima:core:v2" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="urn:be:fgov:ehealth:mediprima:protocol:v2" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="2.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-mediprima-consultation
+ Specification-Version: 2.0
+ Implementation-Version: 2.0.1
+ Build-Time: 20190514-1534 
+ </xs:appinfo>
+ </xs:annotation>
+  <!-- core elements and types -->
+  <xs:import namespace="urn:be:fgov:ehealth:mediprima:core:v2" schemaLocation="ehealth-mediprima-core-2_0.xsd" />
+  <!--eHealth protocol element -->
+  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd" />
+  <!-- protocol elements -->
+  <xs:element name="ConsultCarmedInterventionRequest" type="ConsultCarmedInterventionRequestType" />
+  <xs:element name="ConsultCarmedInterventionResponse" type="ConsultCarmedInterventionResponseType" />
+  <!-- protocol types -->
+  <xs:complexType name="ConsultCarmedInterventionRequestType">
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="SelectionCriteria" type="cc:ConsultCarmedDataType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ConsultCarmedInterventionResponseType">
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence>
+          <xs:element name="SelectionCriteria" type="cc:ConsultCarmedDataType" />
+          <xs:element name="Result" type="cc:CarmedAttributedListType" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

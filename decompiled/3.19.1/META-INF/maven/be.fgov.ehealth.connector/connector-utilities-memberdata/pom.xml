@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>be.fgov.ehealth.connector</groupId>
+		<artifactId>connector-utilities-master</artifactId>
+		<version>3.19.1</version>
+	</parent>
+
+	<artifactId>connector-utilities-memberdata</artifactId>
+	<name>${project.artifactId}</name>
+	<description>Connector utilities member data</description>
+
+
+	
+	<packaging>jar</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<!-- unpack the needed xsd by the project -->
+					<execution>
+						<id>unpack xsds from xsd-connector</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>be.fgov.ehealth.connector</groupId>
+									<artifactId>connector-utilities-external</artifactId>
+									<version>${project.version}</version>
+								</artifactItem>
+							</artifactItems>
+							<includes>**/*.xsd</includes>
+							<outputDirectory>target/generated-resources</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+						<!-- TODO check if we have to this because of a bug in xjc -->
+						<id>delete empty object assertion ObjectFactory that would override the one from utilities-external</id>
+						<phase>process-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <delete>
+                                    <fileset dir="${project.build.directory}/generated-sources/xjc/oasis/names/tc/saml/_2_0/assertion">
+                                        <include name="ObjectFactory.java" />
+                                    </fileset>
+                                </delete>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+		</plugins>
+	</build>
+    
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>connector-utilities-core</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>connector-utilities-external</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+
+</project>

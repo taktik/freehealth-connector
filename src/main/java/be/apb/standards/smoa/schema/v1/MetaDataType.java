@@ -7,18 +7,16 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
-   name = "MetaDataType",
-   propOrder = {"key", "value"}
+        name = "MetaDataType",
+        propOrder = {"key", "value", "valuebase64"}
 )
 public class MetaDataType {
    @XmlElement(
-      required = true
+           required = true
    )
    protected String key;
-   @XmlElement(
-      required = true
-   )
    protected String value;
+   protected byte[] valuebase64;
 
    public String getKey() {
       return this.key;
@@ -34,5 +32,13 @@ public class MetaDataType {
 
    public void setValue(String value) {
       this.value = value;
+   }
+
+   public byte[] getValuebase64() {
+      return this.valuebase64;
+   }
+
+   public void setValuebase64(byte[] value) {
+      this.valuebase64 = value;
    }
 }

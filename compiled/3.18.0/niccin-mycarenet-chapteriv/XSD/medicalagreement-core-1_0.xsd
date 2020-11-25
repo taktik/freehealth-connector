@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 rel. 2 (http://www.altova.com) by SMALS-MVM ASBL/VZW (SMALS-MVM ASBL/VZW) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:cd="http://www.ehealth.fgov.be/standards/kmehr/cd/v1" xmlns:id="http://www.ehealth.fgov.be/standards/kmehr/id/v1" xmlns:kmehr="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" xmlns="http://www.ehealth.fgov.be/medicalagreement/core/v1" targetNamespace="http://www.ehealth.fgov.be/medicalagreement/core/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:import namespace="http://www.ehealth.fgov.be/standards/kmehr/id/v1" schemaLocation="../../ehealth-kmehr/XSD/id-1_29.xsd"/>
+	<xsd:import namespace="http://www.ehealth.fgov.be/standards/kmehr/cd/v1" schemaLocation="../../ehealth-kmehr/XSD/cd-1_29.xsd"/>
+	<xsd:import namespace="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" schemaLocation="../../ehealth-kmehr/XSD/kmehr-1_29.xsd"/>
+	<!-- Common Request Type and Element -->
+	<xsd:complexType name="kmehrrequesttype">
+		<xsd:sequence>
+			<xsd:element name="kmehrmessage" type="kmehr:kmehrmessageType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="acknowledgetype">
+		<xsd:sequence>
+			<xsd:element name="iscomplete" type="xsd:boolean"/>
+			<xsd:element name="error" type="kmehr:errorType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="warning" type="kmehr:errorType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="kmehrresponsetype">
+		<xsd:sequence>
+			<xsd:element name="request">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="kmehrmessage" type="kmehr:kmehrmessageType"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="acknowledge" type="acknowledgetype"/>
+			<xsd:element name="kmehrmessage" type="kmehr:kmehrmessageType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="kmehrrequest" type="kmehrrequesttype"/>
+	<xsd:element name="kmehrresponse" type="kmehrresponsetype"/>
+</xsd:schema>

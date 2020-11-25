@@ -1,0 +1,37 @@
+<!-- edited with XMLSpy v2009 (http://www.altova.com) by Smals-MVM ASBL/VZW (Smals-MVM ASBL/VZW) --><xs:schema targetNamespace="urn:be:fgov:ehealth:etee:commons:1_0:etee" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:commons:1_0:core" xmlns:protocol="urn:be:fgov:ehealth:commons:1_0:protocol" xmlns:etee="urn:be:fgov:ehealth:etee:commons:1_0:etee"> 
+	<xs:import namespace="urn:be:fgov:ehealth:commons:1_0:core" schemaLocation="ehealth-commons-schema-core-1_0.xsd"/> 
+  
+  <xs:complexType name="EteeResponseType"> 
+      <xs:sequence> 
+            <xs:element name="Status"> 
+              <xs:complexType> 
+                <xs:sequence> 
+                  <xs:element name="Code" type="xs:string"/> 
+                  <xs:element name="Message" type="xs:string"/> 
+                </xs:sequence> 
+              </xs:complexType> 
+            </xs:element>    
+      <xs:element name="Error" type="etee:ErrorType" minOccurs="0" maxOccurs="unbounded"/> 
+    </xs:sequence> 
+    <xs:attribute name="Id" type="xs:string"/> 
+  </xs:complexType> 
+  
+    <xs:complexType name="ErrorType"> 
+      <xs:sequence> 
+        <xs:element name="Code" type="xs:string"/> 
+        <!-- TODO change to xs:string met attribute xml:lang --> 
+        <xs:element name="Message" type="core:LocalisedString" maxOccurs="unbounded"/> 
+      </xs:sequence> 
+    </xs:complexType> 
+ 
+    <xs:element name="ApplicationErrors"> 
+      <xs:complexType>        
+        <xs:sequence> 
+          <xs:element name="Code" type="xs:string"/> 
+          <xs:element name="Message" type="core:LocalisedString" maxOccurs="unbounded"/> 
+        </xs:sequence> 
+        <xs:attribute name="FaultId" type="xs:string"/>    
+      </xs:complexType> 
+    </xs:element> 
+  
+</xs:schema>

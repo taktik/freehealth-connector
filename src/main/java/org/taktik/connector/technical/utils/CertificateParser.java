@@ -29,6 +29,8 @@ public class CertificateParser {
    private String id;
    private String application;
    private String owner;
+   private List<String> ouList;
+   private List<String> cnList;
 
    public CertificateParser(X509Certificate cert) throws TechnicalConnectorException {
       this(cert.getSubjectX500Principal().getName("RFC2253"));
@@ -39,47 +41,28 @@ public class CertificateParser {
       this.id = "";
       this.application = "";
       this.owner = "";
+      this.ouList = new ArrayList<>();
+      this.cnList = new ArrayList<>();
       LdapName name = null;
 
       try {
          name = new LdapName(subject);
-      } catch (InvalidNameException var10) {
-         LOG.error(TechnicalConnectorExceptionValues.INVALID_CERTIFICATE.getMessage(), var10);
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.INVALID_CERTIFICATE, var10, new Object[0]);
+      } catch (InvalidNameException var7) {
+         LOG.error(TechnicalConnectorExceptionValues.INVALID_CERTIFICATE.getMessage(), var7);
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.INVALID_CERTIFICATE, var7);
       }
 
-      List<Rdn> rdnList = name.getRdns();
-      List<String> ouList = new ArrayList<>();
-      List<String> cnList = new ArrayList<>();
-
-      for (Rdn rdn : rdnList) {
-         if (rdn.getType().equals("OU")) {
-            ouList.add(this.getValue(rdn.getValue()));
-         }
-
-         if (rdn.getType().equals("CN")) {
-            cnList.add(this.getValue(rdn.getValue()));
-         }
-
-         if (rdn.getType().equals(SERIALNUMBER_OID_ATTRIBUTE_TYPE)) {
-            this.type = IdentifierType.SSIN.getType(48);
-            this.id = this.getValue(rdn.getValue());
-            break;
-         }
-      }
-
-      if (StringUtils.isEmpty(this.id)) {
-
-         for (String ou : ouList) {
-            LOG.debug("Analysing OU:" + ou);
+      if (this.processRDNs(name.getRdns()) != CertificateParser.CertType.EID) {
+         for (String ou : this.ouList) {
+            LOG.debug("Analysing OU:{}", ou);
             if (Pattern.matches("([A-Z(-|_)]+=[0-9]+)", ou)) {
                String[] splittedOU = ou.split("=");
                this.id = splittedOU[1];
                this.type = splittedOU[0];
-            } else if (!"eHealth-platform Belgium".equals(ou)) {
+            } else if (!"eHealth-platform Belgium".equals(ou) && !"Federal Government".equals(ou)) {
                LOG.debug("Analysing OU {} for ApplicationId.", ou);
 
-               for (String cn : cnList) {
+               for (String cn : this.cnList) {
                   if (cn.endsWith(ou)) {
                      LOG.debug("ApplicationId is present.");
                      this.application = ou;
@@ -89,17 +72,40 @@ public class CertificateParser {
                }
             }
          }
-
       }
+   }
+
+   private CertificateParser.CertType processRDNs(List<Rdn> rdnList) {
+      Iterator i$ = rdnList.iterator();
+
+      Rdn rdn;
+      do {
+         if (!i$.hasNext()) {
+            return CertificateParser.CertType.NO_EID;
+         }
+
+         rdn = (Rdn)i$.next();
+         if (rdn.getType().equals("OU")) {
+            this.ouList.add(this.getValue(rdn.getValue()));
+         }
+
+         if (rdn.getType().equals("CN")) {
+            this.cnList.add(this.getValue(rdn.getValue()));
+         }
+      } while(!rdn.getType().equals(SERIALNUMBER_OID_ATTRIBUTE_TYPE));
+
+      this.type = IdentifierType.SSIN.getType(48);
+      this.id = this.getValue(rdn.getValue());
+      return CertificateParser.CertType.EID;
    }
 
    private String getValue(Object value) {
       if (value instanceof String) {
          return (String)value;
       } else if (value instanceof byte[]) {
-         return this.convertToString((byte[])((byte[])value));
+         return this.convertToString((byte[])value);
       } else {
-         LOG.error("Unsupported value [" + value.getClass() + "]");
+         LOG.error("Unsupported value [{}]", value.getClass());
          return "";
       }
    }
@@ -111,7 +117,7 @@ public class CertificateParser {
             return ((DERPrintableString)content).getString();
          }
 
-         LOG.error("Unsupported ASN1Object :" + content.getClass());
+         LOG.error("Unsupported ASN1Object :{}", content.getClass());
       } catch (Exception var3) {
          LOG.error("Error while converting to String", var3);
       }
@@ -134,11 +140,11 @@ public class CertificateParser {
    }
 
    public final String getOwner() {
-      return this.owner;
+      return owner;
    }
 
    public final IdentifierType getIdentifier() {
-      return IdentifierType.lookup(this.type, (String)null, 48);
+      return IdentifierType.lookup(this.type, null, 48);
    }
 
    public final String getId() {
@@ -147,5 +153,10 @@ public class CertificateParser {
 
    static {
       SERIALNUMBER_OID_ATTRIBUTE_TYPE = BCStyle.SN.getId();
+   }
+
+   private static enum CertType {
+      EID,
+      NO_EID;
    }
 }

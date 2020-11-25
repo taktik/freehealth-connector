@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="basicHFS" 
+          targetNamespace="urn:be:smals:hfs:basic:1_0" 
+          xmlns:basic="urn:be:smals:hfs:basic:1_0" 
+          xmlns:basicMessage="urn:be:smals:hfs:basic:message:1_0" 
+          xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+          xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+          xmlns:xmime="http://www.w3.org/2005/05/xmlmime" 
+          xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+          xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+          xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"
+          >
+  <wsp:Policy wsu:Id="MTOMPolicy" >
+    <wsoma:OptimizedMimeSerialization />
+  </wsp:Policy>
+  
+    <wsdl:types>
+        <xsd:schema targetNamespace="urn:be:smals:hfs:basic:1_0">
+    		<xsd:import namespace="urn:be:smals:hfs:basic:message:1_0" schemaLocation="../XSD/hfs-schema-basicMessage-1_0.xsd" />
+	   </xsd:schema>
+    </wsdl:types>
+  
+    <wsdl:message name="createDirectoryRequest">
+        <wsdl:part name="createDirectoryRequest" element="basicMessage:createDirectoryRequest"/>
+    </wsdl:message>
+    <wsdl:message name="createDirectoryResponse">
+        <wsdl:part name="createDirectoryResponse" element="basicMessage:createDirectoryResponse"/>
+    </wsdl:message>
+
+    <wsdl:message name="directoryListRequest">
+        <wsdl:part name="directoryListRequest" element="basicMessage:directoryListRequest"/>
+    </wsdl:message>
+    <wsdl:message name="directoryListResponse">
+        <wsdl:part name="directoryListResponse" element="basicMessage:directoryListResponse"/>
+    </wsdl:message>
+
+    <wsdl:message name="uploadFileRequest">
+        <wsdl:part name="uploadFileRequest" element="basicMessage:uploadFileRequest"/>
+    </wsdl:message>
+    <wsdl:message name="uploadFileResponse">
+        <wsdl:part name="uploadFileResponse" element="basicMessage:uploadFileResponse"/>
+    </wsdl:message>
+  
+    <wsdl:message name="downloadFileRequest">
+        <wsdl:part name="downloadFileRequest" element="basicMessage:downloadFileRequest"/>
+    </wsdl:message>
+    <wsdl:message name="downloadFileResponse">
+        <wsdl:part name="downloadFileResponse" element="basicMessage:downloadFileResponse"/>
+    </wsdl:message>
+  
+    <wsdl:message name="deleteFileRequest">
+        <wsdl:part name="deleteFileRequest" element="basicMessage:deleteFileRequest"/>
+    </wsdl:message>
+    <wsdl:message name="deleteFileResponse">
+        <wsdl:part name="deleteFileResponse" element="basicMessage:deleteFileResponse"/>
+    </wsdl:message>
+  
+
+    <wsdl:portType name="HFSBasicPortType">
+        <wsdl:operation name="createDirectory">
+            <wsdl:input message="basic:createDirectoryRequest"/>
+            <wsdl:output message="basic:createDirectoryResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="directoryList">
+            <wsdl:input message="basic:directoryListRequest"/>
+            <wsdl:output message="basic:directoryListResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="uploadFile">
+            <wsdl:input message="basic:uploadFileRequest"/>
+            <wsdl:output message="basic:uploadFileResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="downloadFile">
+            <wsdl:input message="basic:downloadFileRequest"/>
+            <wsdl:output message="basic:downloadFileResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="deleteFile">
+            <wsdl:input message="basic:deleteFileRequest"/>
+            <wsdl:output message="basic:deleteFileResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>  
+
+  
+	<wsdl:binding name="HFSBasicSoapBinding" type="basic:HFSBasicPortType">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <wsp:PolicyReference URI="#MTOMPolicy" wsdl:required="true" />
+      <wsdl:operation name="createDirectory">
+        <soap:operation soapAction="urn:be:smals:hfs:basic:createDirectory" style="document"/>
+        <wsdl:input>
+          <soap:body use="literal"/>
+        </wsdl:input>
+        <wsdl:output>
+          <soap:body use="literal"/>
+        </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="directoryList">
+        <soap:operation soapAction="urn:be:smals:hfs:basic:directoryList" style="document"/>
+        <wsdl:input>
+          <soap:body use="literal"/>
+        </wsdl:input>
+        <wsdl:output>
+          <soap:body use="literal"/>
+        </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="uploadFile">
+        <soap:operation soapAction="urn:be:smals:hfs:basic:uploadFile" style="document"/>
+        <wsdl:input>
+          <soap:body use="literal"/>
+        </wsdl:input>
+        <wsdl:output>
+          <soap:body use="literal"/>
+        </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="downloadFile">
+        <soap:operation soapAction="urn:be:smals:hfs:basic:downloadFile" style="document"/>
+        <wsdl:input>
+          <soap:body use="literal"/>
+        </wsdl:input>
+        <wsdl:output>
+          <soap:body use="literal"/>
+        </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="deleteFile">
+        <soap:operation soapAction="urn:be:smals:hfs:basic:deleteFile" style="document"/>
+        <wsdl:input>
+          <soap:body use="literal"/>
+        </wsdl:input>
+        <wsdl:output>
+          <soap:body use="literal"/>
+        </wsdl:output>
+      </wsdl:operation>
+    </wsdl:binding>
+    
+  <wsdl:service name="basic_1_0">
+    <wsdl:port name="HFSBasicPort" binding="basic:HFSBasicSoapBinding">
+      <soap:address location="http://test.smals.be/hfs/basic/v1"/>
+    </wsdl:port>
+  </wsdl:service>
+    
+</wsdl:definitions>

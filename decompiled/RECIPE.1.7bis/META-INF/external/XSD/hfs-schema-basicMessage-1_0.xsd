@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="urn:be:smals:hfs:basic:message:1_0" 
+		   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+		   xmlns:basicMessage="urn:be:smals:hfs:basic:message:1_0" 
+		   xmlns:protocol="urn:be:smals:hfs:protocol:1_0" 
+		   xmlns:core="urn:be:smals:hfs:core:1_0"
+           xmlns:xmime="http://www.w3.org/2005/05/xmlmime" 
+       >
+        
+  <xs:import namespace="urn:be:smals:hfs:core:1_0" schemaLocation="hfs-schema-core-1_0.xsd"/>
+  <xs:import namespace="urn:be:smals:hfs:protocol:1_0" schemaLocation="hfs-schema-protocol-1_0.xsd"/>
+
+
+  <!-- Create directory -->
+  
+  <xs:complexType name="CreateDirectoryRequestType">
+    <xs:annotation>
+      <xs:documentation>Directory creation request. If the directory name contains sub-directory names separated by a "/", the sub-directories are created.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="directoryName" type="core:DirectoryNameType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="createDirectoryRequest" type="basicMessage:CreateDirectoryRequestType" />
+  
+  <xs:complexType name="CreateDirectoryResponseType">
+    <xs:annotation>
+      <xs:documentation>Directory creation response</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:ResponseType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="createDirectoryResponse" type="basicMessage:CreateDirectoryResponseType" />
+  
+
+  <!-- Directory list -->
+  
+  <xs:complexType name="DirectoryListRequestType">
+    <xs:annotation>
+      <xs:documentation>Directory list request.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="directoryName" type="core:DirectoryNameType" />
+          <xs:element name="fileName" type="core:FileNameType" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="directoryListRequest" type="basicMessage:DirectoryListRequestType" />
+  
+  <xs:complexType name="FileInformationType">
+    <xs:sequence>
+      <xs:element name="fileIdentification" type="core:FileIdentificationType" />
+      <xs:element name="fileName" type="core:FileNameType" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="DirectoryListResponseType">
+    <xs:annotation>
+      <xs:documentation>Directory list response</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:ResponseType">
+        <xs:sequence>
+          <xs:element name="fileInformations" type="basicMessage:FileInformationType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="directoryListResponse" type="basicMessage:DirectoryListResponseType" />
+  
+  
+  <!-- Upload file -->
+  
+  <xs:complexType name="UploadFileRequestType">
+    <xs:annotation>
+      <xs:documentation>Upload a file request.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="directoryName" type="core:DirectoryNameType" />
+          <xs:element name="fileName" type="core:FileNameType" />
+<!--          <xs:element name="fileContent" type="core:AnyDataType" xmime:expectedContentTypes="*/*"/>-->
+          <xs:element name="fileContent"
+                     type="xs:base64Binary"
+                     xmime:expectedContentTypes="*/*" />          
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="uploadFileRequest" type="basicMessage:UploadFileRequestType" />
+  
+  <xs:complexType name="UploadFileResponseType">
+    <xs:annotation>
+      <xs:documentation>Upload a file response</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:ResponseType">
+        <xs:sequence>
+          <xs:element name="fileIdentification" type="core:FileIdentificationType" />
+          <xs:element name="fileSignature" type="core:FileSignatureType" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="uploadFileResponse" type="basicMessage:UploadFileResponseType" />
+  
+
+  <!-- Download file -->
+  
+  <xs:complexType name="DownloadFileRequestType">
+    <xs:annotation>
+      <xs:documentation>Download a file based on its identification number.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="fileIdentification" type="core:FileIdentificationType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="downloadFileRequest" type="basicMessage:DownloadFileRequestType" />
+  
+  <xs:complexType name="DownloadFileResponseType">
+    <xs:annotation>
+      <xs:documentation>Download a file response</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:ResponseType">
+        <xs:sequence>
+<!--          <xs:element name="fileContent" type="core:AnyDataType" />-->
+          <xs:element name="fileContent"
+                     type="xs:base64Binary"
+                     xmime:expectedContentTypes="*/*" />          
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="downloadFileResponse" type="basicMessage:DownloadFileResponseType" />
+
+
+  <!-- Delete file -->
+  
+  <xs:complexType name="DeleteFileRequestType">
+    <xs:annotation>
+      <xs:documentation>Delete a file based on its identification number.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="fileIdentification" type="core:FileIdentificationType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="deleteFileRequest" type="basicMessage:DeleteFileRequestType" />
+  
+  <xs:complexType name="DeleteFileResponseType">
+    <xs:annotation>
+      <xs:documentation>Delete a file response</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:ResponseType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="deleteFileResponse" type="basicMessage:DeleteFileResponseType" />
+  
+</xs:schema>

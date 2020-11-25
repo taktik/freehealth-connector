@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>eHealth-platform Certificaten Gebruikersvoorwaarden</title>
+</head>
+  <body>
+    <h2 style="background-color: #C0C0C0">
+     Gegevens certificaat aanvraag
+    </h2>
+    <br>
+    Common Name (CN) : ${oids.get("CN").replace("\","")}<br>
+    #foreach( $ou in ${oids.get("OU")} )
+    Organizational Unit (OU) : ${ou.replace("\","")}<br>
+    #end
+    Organization (O) :  ${oids.get("O")}<br>
+    Country (C) :  ${oids.get("C")}<br><br>
+
+    <h2 style="background-color: #C0C0C0">
+      Contactgegevens
+    </h2>
+    <br>
+    E-mail (persoonlijk)* : $contact.emailPrivate<br>
+    E-mail (algemeen)    : $!contact.emailGeneral<br>
+    Telefoonnummer (persoonlijk)* : $contact.phonePrivate<br>
+    Telefoonnummer (algemeen) : $!contact.phoneGeneral<br>
+    <br>
+
+    #parse( "/templates/terms.nl.html" )
+
+
+    <br>
+    <br>
+  </body>
+</html>

@@ -1,13 +1,16 @@
 package org.taktik.connector.technical.ws.domain;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.soap.SOAPHandler;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class HandlerChain {
-   private Map<HandlerPosition, List<SOAPHandler<?>>> registeredHandlers = new HashMap();
+   private Map<HandlerPosition, List<SOAPHandler<?>>> registeredHandlers = new EnumMap(HandlerPosition.class);
 
    public HandlerChain() {
       this.registeredHandlers.put(HandlerPosition.BEFORE, new ArrayList());
@@ -22,18 +25,49 @@ public class HandlerChain {
    }
 
    public HandlerChain register(HandlerPosition position, SOAPHandler<?> handler) {
-      List<SOAPHandler<?>> resultHandler = (List)this.registeredHandlers.get(position);
+      List<SOAPHandler<?>> resultHandler = this.registeredHandlers.get(position);
       resultHandler.add(handler);
       return this;
    }
 
    public HandlerChain unregisterHandler(HandlerPosition position, SOAPHandler<?> handler) {
-      List<SOAPHandler<?>> resultHandler = (List)this.registeredHandlers.get(position);
+      List<SOAPHandler<?>> resultHandler = this.registeredHandlers.get(position);
       resultHandler.remove(handler);
       return this;
    }
 
-   public List<SOAPHandler<?>> getHandlers(HandlerPosition position) {
-      return (List)this.registeredHandlers.get(position);
+   public HandlerChain add(HandlerChain handlers) {
+      this.add(handlers, HandlerPosition.BEFORE);
+      this.add(handlers, HandlerPosition.SECURITY);
+      this.add(handlers, HandlerPosition.AFTER);
+      return this;
+   }
+
+   private void add(HandlerChain handlers, HandlerPosition position) {
+      this.registeredHandlers.get(position).addAll(handlers.getSOAPHandlers(position));
+   }
+
+   private List<SOAPHandler<?>> getSOAPHandlers(HandlerPosition position) {
+      return this.registeredHandlers.get(position);
+   }
+
+   public List<Handler<?>> getHandlers(HandlerPosition position) {
+      List<Handler<?>> handlers = new ArrayList();
+      Iterator i$ = ((List)this.registeredHandlers.get(position)).iterator();
+
+      while(i$.hasNext()) {
+         SOAPHandler<?> handler = (SOAPHandler)i$.next();
+         handlers.add(handler);
+      }
+
+      return handlers;
+   }
+
+   public Handler<?>[] getHandlers() {
+      Handler<?>[] handlers = new Handler[0];
+      handlers = (Handler[]) ArrayUtils.addAll(handlers, this.getHandlers(HandlerPosition.BEFORE).toArray());
+      handlers = (Handler[]) ArrayUtils.addAll(handlers, this.getHandlers(HandlerPosition.SECURITY).toArray());
+      handlers = (Handler[]) ArrayUtils.addAll(handlers, this.getHandlers(HandlerPosition.AFTER).toArray());
+      return handlers;
    }
 }

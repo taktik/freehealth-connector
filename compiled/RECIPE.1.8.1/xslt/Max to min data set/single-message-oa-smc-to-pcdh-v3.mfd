@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="22">
+	<resources/>
+	<component name="defaultmap1" blackbox="0" uid="1" editable="1">
+		<properties SelectedLanguage="xslt2"/>
+		<structure>
+			<children>
+				<component name="MaxDataSet" library="xml" uid="2" kind="14">
+					<properties XSLTTargetEncoding="UTF-8"/>
+					<view rbx="428" rby="1454"/>
+					<data>
+						<root scrollposition="1">
+							<header>
+								<namespaces>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/v1"/>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/model/v1"/>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/id/v1"/>
+									<namespace/>
+									<namespace uid="http://www.altova.com/mapforce"/>
+								</namespaces>
+							</header>
+							<entry name="FileInstance" ns="4" expanded="1">
+								<entry name="document" ns="4" expanded="1" casttotargettypemode="cast-in-subtree">
+									<entry name="single-message" outkey="100" expanded="1">
+										<entry name="unsigned" outkey="101" expanded="1">
+											<entry name="header" outkey="9" expanded="1"/>
+											<entry name="eventFolder" outkey="102" expanded="1">
+												<entry name="events" outkey="103" expanded="1">
+													<entry name="event" displayselectionmode="all"/>
+													<entry name="event" outkey="10" expanded="1">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}PharmaceuticalCareEventType" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+														<entry name="id" outkey="11"/>
+														<entry name="sessionDateTime" outkey="73"/>
+														<entry name="pharmacyId" outkey="39"/>
+														<entry name="max-Patient" ns="1" outkey="74" expanded="1">
+															<entry name="identification" ns="1" expanded="1">
+																<entry name="entityId" ns="1" displayselectionmode="all"/>
+																<entry name="entityId" ns="1" outkey="12">
+																	<condition>
+																		<expression>
+																			<function name="equal" library="core">
+																				<expression>
+																					<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																				</expression>
+																				<expression>
+																					<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}EntityIdType" datatype="QName"/>
+																				</expression>
+																			</function>
+																		</expression>
+																	</condition>
+																</entry>
+																<entry name="personId" ns="1" displayselectionmode="all"/>
+																<entry name="personId" ns="1" outkey="24" expanded="1">
+																	<condition>
+																		<expression>
+																			<function name="equal" library="core">
+																				<expression>
+																					<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																				</expression>
+																				<expression>
+																					<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}InssIdType" datatype="QName"/>
+																				</expression>
+																			</function>
+																		</expression>
+																	</condition>
+																	<entry name="id" ns="2" outkey="123"/>
+																</entry>
+																<entry name="personId" ns="1" outkey="25" expanded="1">
+																	<condition>
+																		<expression>
+																			<function name="equal" library="core">
+																				<expression>
+																					<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																				</expression>
+																				<expression>
+																					<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}LocalIdType" datatype="QName"/>
+																				</expression>
+																			</function>
+																		</expression>
+																	</condition>
+																	<entry name="id" ns="2" outkey="126"/>
+																</entry>
+																<entry name="name" ns="1" outkey="14"/>
+																<entry name="familyName" ns="1" outkey="15"/>
+															</entry>
+														</entry>
+														<entry name="dispensedForSamePrescription" expanded="1">
+															<entry name="product" outkey="40" expanded="1">
+																<entry name="onSubstanceName" ns="3" type="attribute" outkey="41"/>
+																<entry name="description" ns="1" outkey="42"/>
+																<entry name="dispensation" ns="1" outkey="43"/>
+																<entry name="dispensationGUID" ns="1" outkey="75"/>
+															</entry>
+														</entry>
+														<entry name="dispensedWithoutPrescription" expanded="1">
+															<entry name="product" outkey="45" expanded="1">
+																<entry name="description" ns="1" outkey="46"/>
+																<entry name="dispensation" ns="1" outkey="47"/>
+																<entry name="dispensationGUID" ns="1" outkey="94"/>
+															</entry>
+														</entry>
+														<entry name="metaDataList" outkey="76"/>
+													</entry>
+												</entry>
+												<entry name="entitySpace" outkey="77" expanded="1"/>
+											</entry>
+										</entry>
+									</entry>
+								</entry>
+							</entry>
+						</root>
+						<document schema="..\..\xsd\smc-v2.0.1\single-message\maindoc\single-message-oa-1.0.xsd" inputinstance="..\..\xsd\smc-v2.0.1\single-message-maximal-dataset-sample.xml" outputinstance="..\..\xsd\smc-v2.0.1\single-message-maximal-dataset-sample.xml" instanceroot="{http://www.apb.be/standards/smoa/schema/v1}single-message"/>
+						<wsdl/>
+					</data>
+				</component>
+				<component name="MinDataSet" library="xml" uid="3" kind="14">
+					<properties XSLTTargetEncoding="UTF-8" XSLTDefaultOutput="1"/>
+					<view ltx="689" rbx="1190" rby="1454"/>
+					<data>
+						<root scrollposition="1">
+							<header>
+								<namespaces>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/v1"/>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/model/v1"/>
+									<namespace uid="http://www.apb.be/standards/smoa/schema/id/v1"/>
+									<namespace/>
+									<namespace uid="http://www.altova.com/mapforce"/>
+								</namespaces>
+							</header>
+							<entry name="FileInstance" ns="4" expanded="1">
+								<entry name="document" ns="4" expanded="1" casttotargettypemode="cast-in-subtree">
+									<entry name="single-message" inpkey="96" expanded="1">
+										<entry name="unsigned" inpkey="97" expanded="1">
+											<entry name="header" inpkey="1" expanded="1"/>
+											<entry name="eventFolder" inpkey="98" expanded="1">
+												<entry name="events" inpkey="99" expanded="1">
+													<entry name="event" displayselectionmode="all"/>
+													<entry name="event" inpkey="2" expanded="1">
+														<condition>
+															<expression>
+																<function name="equal" library="core">
+																	<expression>
+																		<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																	</expression>
+																	<expression>
+																		<constant value="{http://www.apb.be/standards/smoa/schema/v1}MedicationHistoryEvent" datatype="QName"/>
+																	</expression>
+																</function>
+															</expression>
+														</condition>
+														<entry name="medicationHistoryEntity" ns="1" inpkey="28" expanded="1">
+															<entry name="entityId" ns="1" displayselectionmode="all"/>
+															<entry name="entityId" ns="1" expanded="1">
+																<condition>
+																	<expression>
+																		<function name="equal" library="core">
+																			<expression>
+																				<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																			</expression>
+																			<expression>
+																				<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}EntityIdType" datatype="QName"/>
+																			</expression>
+																		</function>
+																	</expression>
+																</condition>
+																<entry name="id" ns="2" inpkey="150"/>
+															</entry>
+															<entry name="sessionID" ns="1" inpkey="29"/>
+															<entry name="deliveryDate" ns="1" inpkey="60"/>
+															<entry name="pharmacyId" ns="1" inpkey="30"/>
+															<entry name="min-Patient" ns="1" inpkey="61" expanded="1">
+																<entry name="entityId" ns="1" displayselectionmode="all"/>
+																<entry name="entityId" ns="1" inpkey="4" expanded="1">
+																	<condition>
+																		<expression>
+																			<function name="equal" library="core">
+																				<expression>
+																					<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																				</expression>
+																				<expression>
+																					<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}EntityIdType" datatype="QName"/>
+																				</expression>
+																			</function>
+																		</expression>
+																	</condition>
+																</entry>
+																<entry name="personId" ns="1" displayselectionmode="all"/>
+																<entry name="personId" ns="1" inpkey="132" expanded="1">
+																	<condition>
+																		<expression>
+																			<function name="equal" library="core">
+																				<expression>
+																					<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																				</expression>
+																				<expression>
+																					<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}InssIdType" datatype="QName"/>
+																				</expression>
+																			</function>
+																		</expression>
+																	</condition>
+																	<entry name="id" ns="2" inpkey="122"/>
+																</entry>
+																<entry name="personId" ns="1" inpkey="134" expanded="1">
+																	<condition>
+																		<expression>
+																			<function name="equal" library="core">
+																				<expression>
+																					<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																				</expression>
+																				<expression>
+																					<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}LocalIdType" datatype="QName"/>
+																				</expression>
+																			</function>
+																		</expression>
+																	</condition>
+																	<entry name="id" ns="2" inpkey="125"/>
+																</entry>
+																<entry name="name" ns="1" inpkey="7"/>
+																<entry name="familyName" ns="1" inpkey="8"/>
+															</entry>
+															<entry name="product" ns="1" inpkey="31" expanded="1">
+																<entry name="prescribed" ns="3" type="attribute" inpkey="152"/>
+																<entry name="onSubstanceName" ns="3" type="attribute" inpkey="32"/>
+																<entry name="description" ns="1" inpkey="33"/>
+																<entry name="dispensation" ns="1" inpkey="34"/>
+															</entry>
+															<entry name="metaDataList" ns="1" inpkey="62"/>
+														</entry>
+														<entry name="medicationHistoryEntity" ns="1" inpkey="35" expanded="1" clone="1">
+															<entry name="entityId" ns="1" displayselectionmode="all"/>
+															<entry name="entityId" ns="1" expanded="1">
+																<condition>
+																	<expression>
+																		<function name="equal" library="core">
+																			<expression>
+																				<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																			</expression>
+																			<expression>
+																				<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}EntityIdType" datatype="QName"/>
+																			</expression>
+																		</function>
+																	</expression>
+																</condition>
+																<entry name="id" ns="2" inpkey="93"/>
+															</entry>
+															<entry name="sessionID" ns="1" inpkey="63"/>
+															<entry name="deliveryDate" ns="1" inpkey="64"/>
+															<entry name="pharmacyId" ns="1" inpkey="65"/>
+															<entry name="min-Patient" ns="1" expanded="1">
+																<entry name="entityId" ns="1" displayselectionmode="all"/>
+																<entry name="entityId" ns="1" inpkey="66" expanded="1">
+																	<condition>
+																		<expression>
+																			<function name="equal" library="core">
+																				<expression>
+																					<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																				</expression>
+																				<expression>
+																					<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}EntityIdType" datatype="QName"/>
+																				</expression>
+																			</function>
+																		</expression>
+																	</condition>
+																</entry>
+																<entry name="personId" ns="1" displayselectionmode="all"/>
+																<entry name="personId" ns="1" inpkey="67" expanded="1">
+																	<condition>
+																		<expression>
+																			<function name="equal" library="core">
+																				<expression>
+																					<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																				</expression>
+																				<expression>
+																					<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}InssIdType" datatype="QName"/>
+																				</expression>
+																			</function>
+																		</expression>
+																	</condition>
+																	<entry name="id" ns="2" inpkey="128"/>
+																</entry>
+																<entry name="personId" ns="1" inpkey="68" expanded="1">
+																	<condition>
+																		<expression>
+																			<function name="equal" library="core">
+																				<expression>
+																					<attribute ns="http://www.w3.org/2001/XMLSchema-instance" name="type"/>
+																				</expression>
+																				<expression>
+																					<constant value="{http://www.apb.be/standards/smoa/schema/id/v1}LocalIdType" datatype="QName"/>
+																				</expression>
+																			</function>
+																		</expression>
+																	</condition>
+																	<entry name="id" ns="2" inpkey="129"/>
+																</entry>
+																<entry name="name" ns="1" inpkey="69"/>
+																<entry name="familyName" ns="1" inpkey="70"/>
+															</entry>
+															<entry name="product" ns="1" inpkey="36">
+																<entry name="description" ns="1" inpkey="37"/>
+																<entry name="dispensation" ns="1" inpkey="38"/>
+															</entry>
+															<entry name="metaDataList" ns="1" inpkey="71"/>
+														</entry>
+													</entry>
+												</entry>
+												<entry name="entitySpace" inpkey="72"/>
+											</entry>
+										</entry>
+									</entry>
+								</entry>
+							</entry>
+						</root>
+						<document schema="..\..\xsd\smc-v2.0.1\single-message\maindoc\single-message-oa-1.0.xsd" inputinstance="..\..\xsd\smc-v2.0.1\single-message-minimal-dataset-sample.xml" outputinstance="..\..\xsd\smc-v2.0.1\single-message-minimal-dataset-sample.xml" instanceroot="{http://www.apb.be/standards/smoa/schema/v1}single-message"/>
+						<wsdl/>
+					</data>
+				</component>
+				<component name="constant" library="core" uid="5" kind="2">
+					<properties/>
+					<targets>
+						<datapoint pos="0" key="153"/>
+					</targets>
+					<view ltx="615" lty="634" rbx="667" rby="652"/>
+					<data>
+						<constant value="true" datatype="anySimpleType"/>
+						<wsdl/>
+					</data>
+				</component>
+			</children>
+			<graph directed="1">
+				<edges>
+					<edge edgekey="16">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="17">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="48">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="49">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="50">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="51">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="52">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="79">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="80">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="82">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="83">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+					<edge edgekey="84">
+						<data>
+							<dataconnection type="2"/>
+						</data>
+					</edge>
+				</edges>
+				<vertices>
+					<vertex vertexkey="9">
+						<edges>
+							<edge vertexkey="1" edgekey="16"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="10">
+						<edges>
+							<edge vertexkey="2" edgekey="18"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="11">
+						<edges>
+							<edge vertexkey="29" edgekey="53"/>
+							<edge vertexkey="63" edgekey="85"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="12">
+						<edges>
+							<edge vertexkey="4" edgekey="17"/>
+							<edge vertexkey="66" edgekey="80"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="14">
+						<edges>
+							<edge vertexkey="7" edgekey="22"/>
+							<edge vertexkey="69" edgekey="86"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="15">
+						<edges>
+							<edge vertexkey="8" edgekey="23"/>
+							<edge vertexkey="70" edgekey="87"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="24">
+						<edges>
+							<edge vertexkey="132" edgekey="142"/>
+							<edge vertexkey="67" edgekey="149"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="25">
+						<edges>
+							<edge vertexkey="134" edgekey="143"/>
+							<edge vertexkey="68" edgekey="145"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="39">
+						<edges>
+							<edge vertexkey="30" edgekey="51"/>
+							<edge vertexkey="65" edgekey="82"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="40">
+						<edges>
+							<edge vertexkey="28" edgekey="54"/>
+							<edge vertexkey="31" edgekey="55"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="41">
+						<edges>
+							<edge vertexkey="32" edgekey="56"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="42">
+						<edges>
+							<edge vertexkey="33" edgekey="50"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="43">
+						<edges>
+							<edge vertexkey="34" edgekey="48"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="45">
+						<edges>
+							<edge vertexkey="36" edgekey="58"/>
+							<edge vertexkey="35" edgekey="92"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="46">
+						<edges>
+							<edge vertexkey="37" edgekey="49"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="47">
+						<edges>
+							<edge vertexkey="38" edgekey="52"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="73">
+						<edges>
+							<edge vertexkey="60" edgekey="88"/>
+							<edge vertexkey="64" edgekey="89"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="74">
+						<edges>
+							<edge vertexkey="61" edgekey="90"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="75">
+						<edges>
+							<edge vertexkey="150" edgekey="151"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="76">
+						<edges>
+							<edge vertexkey="62" edgekey="83"/>
+							<edge vertexkey="71" edgekey="79"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="77">
+						<edges>
+							<edge vertexkey="72" edgekey="84"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="94">
+						<edges>
+							<edge vertexkey="93" edgekey="95"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="100">
+						<edges>
+							<edge vertexkey="96" edgekey="104"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="101">
+						<edges>
+							<edge vertexkey="97" edgekey="105"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="102">
+						<edges>
+							<edge vertexkey="98" edgekey="106"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="103">
+						<edges>
+							<edge vertexkey="99" edgekey="107"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="123">
+						<edges>
+							<edge vertexkey="122" edgekey="140"/>
+							<edge vertexkey="128" edgekey="146"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="126">
+						<edges>
+							<edge vertexkey="125" edgekey="141"/>
+							<edge vertexkey="129" edgekey="147"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="153">
+						<edges>
+							<edge vertexkey="152" edgekey="154"/>
+						</edges>
+					</vertex>
+				</vertices>
+			</graph>
+		</structure>
+	</component>
+</mapping>

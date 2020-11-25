@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:km="http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
+	xmlns="http://services.recipe.be"
+	elementFormDefault="unqualified"
+	targetNamespace="http://services.recipe.be">
+	<xs:import  namespace="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" schemaLocation="../xsd-kmehr-1.17.1/ehealth-kmehr/XSD/kmehr-1_17.xsd" />
+	<xs:element name="notification">
+	  <xs:complexType>
+	    <xs:sequence>
+	      <xs:element name="text" type="xs:string" maxOccurs="1" minOccurs="0"/>
+	      <xs:element name="kmehrmessage"  xmlns="http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
+	       type="kmehrmessageType" maxOccurs="1" minOccurs="0"/>
+	    </xs:sequence>
+	  </xs:complexType>
+	</xs:element>
+</xs:schema> 

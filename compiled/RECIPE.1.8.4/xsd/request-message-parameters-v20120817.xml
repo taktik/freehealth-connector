@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:getDataRequestParameters xmlns:p="http://services.gfddpp.be" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://services.gfddpp.be request-message-parameters-v20120817.xsd ">
+  <patient>
+    <patientId>81112623980</patientId>
+    <patientIdType>INSS</patientIdType>
+  </patient>
+  <requestor>
+    <requestorType>NIHIIPHARMACY</requestorType>
+    <requestorId>62599147</requestorId>
+  </requestor>
+  <dataType>StatusMessage</dataType>
+  <version>1.0</version>
+</p:getDataRequestParameters>

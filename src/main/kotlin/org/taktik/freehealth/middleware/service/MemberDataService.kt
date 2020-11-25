@@ -20,10 +20,12 @@
 
 package org.taktik.freehealth.middleware.service
 
+import org.taktik.connector.business.domain.common.GenAsyncResponse
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchRequest
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataList
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.icure.cin.saml.extensions.Facet
 import java.time.Instant
-import java.util.Date
 import java.util.UUID
 
 interface MemberDataService {
@@ -31,7 +33,7 @@ interface MemberDataService {
         tokenId: UUID,
         hcpQuality: String,
         hcpNihii: String,
-        hcpSsin: String,
+        hcpSsin: String?,
         hcpName: String,
         passPhrase: String,
         patientSsin: String?,
@@ -42,4 +44,45 @@ interface MemberDataService {
         hospitalized: Boolean? = null,
         requestType: String?,
         facets: List<Facet>? = null): MemberDataResponse
+
+    fun sendMemberDataRequest(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpName: String,
+        requestType: String = "information",
+        startDate: Instant,
+        endDate: Instant,
+        passPhrase: String,
+        hospitalized: Boolean? = false,
+        mdaRequest: MemberDataBatchRequest
+                             ): GenAsyncResponse
+
+    fun getMemberDataMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpName: String,
+        messageNames: List<String>?
+    ): MemberDataList?
+
+    fun confirmMemberDataMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpName: String,
+        mdaMessagesReference: List<String>
+    ): Boolean
+
+    fun confirmMemberDataAcks(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpName: String,
+        mdaAcksHashes: List<String>
+    ): Boolean
 }

@@ -53,14 +53,14 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
         @RequestParam firstName: String,
         @PathVariable lastName: String,
         @RequestParam gender: Gender,
-        @RequestParam dateOfBirth: Long
-    ) = hubService.putPatient(
+        @RequestParam dateOfBirth: Long,
+        @RequestParam(required = false) hubPackageId: String?
+        ) = hubService.putPatient(
         endpoint = endpoint,
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -88,9 +88,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
-        @PathVariable patientSsin: String
+        @PathVariable patientSsin: String,
+        @RequestParam(required = false) hubPackageId: String?
     ) = hubService.getPatient(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -140,9 +140,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam(required = false) patientEidCardNumber: String?,
         @RequestParam(required = false) patientIsiCardNumber: String?
                               ) = hubService.registerPatientConsent(
@@ -172,9 +172,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam(required = false) patientEidCardNumber: String?,
         @RequestParam(required = false) patientIsiCardNumber: String?
                               ) = hubService.revokePatientConsent(
@@ -203,9 +203,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
-        @PathVariable patientSsin: String
+        @PathVariable patientSsin: String,
+        @RequestParam(required = false) hubPackageId: String?
     ): Consent? = hubService.getPatientConsent(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -230,9 +230,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @PathVariable hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam(required = false) patientEidCardNumber: String?,
         @RequestParam(required = false) patientIsiCardNumber: String?,
         @RequestParam(required = false) from: Long?,
@@ -265,9 +265,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @PathVariable hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam(required = false) patientEidCardNumber: String?,
         @RequestParam(required = false) patientIsiCardNumber: String?
                              ) = hubService.revokeTherapeuticLink(
@@ -296,9 +296,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @PathVariable hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam(required = false) therLinkType: String?,
         @RequestParam(required = false) from: Long?,
         @RequestParam(required = false) to: Long?
@@ -332,9 +332,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam(required = false) from: Long?,
         @RequestParam(required = false) to: Long?,
         @RequestParam(required = false) authorNihii: String?,
@@ -373,15 +373,15 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
-        @RequestParam(required = false) breakTheGlassReason: String?,
-        @RequestParam(required = false) externalHubId: String?,
-        @RequestParam(required = false) externalHubName: String?,
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
-        @RequestParam id: String
+        @RequestParam id: String,
+        @RequestParam(required = false) hubPackageId: String?,
+        @RequestParam(required = false) breakTheGlassReason: String?,
+        @RequestParam(required = false) externalHubId: String?,
+        @RequestParam(required = false) externalHubName: String?
     ): Kmehrmessage? {
         return hubService.getTransaction(
             endpoint = endpoint,
@@ -414,15 +414,15 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
-        @RequestParam(required = false) breakTheGlassReason: String?,
-        @RequestParam(required = false) externalHubId: String?,
-        @RequestParam(required = false) externalHubName: String?,
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
-        @RequestParam id: String
+        @RequestParam id: String,
+        @RequestParam(required = false) hubPackageId: String?,
+        @RequestParam(required = false) breakTheGlassReason: String?,
+        @RequestParam(required = false) externalHubId: String?,
+        @RequestParam(required = false) externalHubName: String?
     ): Kmehrmessage? {
         return hubService.getTransaction(
             endpoint = endpoint,
@@ -455,13 +455,13 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
-        @RequestParam(required = false) breakTheGlassReason: String?,
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
-        @RequestParam id: String
+        @RequestParam id: String,
+        @RequestParam(required = false) hubPackageId: String?,
+        @RequestParam(required = false) breakTheGlassReason: String?
     ): String {
         return hubService.revokeTransaction(
             endpoint = endpoint,
@@ -492,12 +492,12 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable hubId: Long,
-        @RequestParam(required = false) hubApplication: String?,
         @PathVariable patientSsin: String,
-        @RequestBody message: ByteArray
+        @RequestBody message: ByteArray,
+        @RequestParam(required = false) hubPackageId: String?,
+        @RequestParam(required = false) hubApplication: String?
     ): PutTransactionResponseDto {
         return hubService.putTransaction(
             endpoint = endpoint,
@@ -527,13 +527,13 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
-        @RequestParam(required = false) breakTheGlassReason: String?,
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
-        @RequestParam id: String
+        @RequestParam id: String,
+        @RequestParam(required = false) hubPackageId: String?,
+        @RequestParam(required = false) breakTheGlassReason: String?
     ): Kmehrmessage? = hubService.getTransactionSet(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -562,13 +562,13 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
-        @RequestParam(required = false) breakTheGlassReason: String?,
         @PathVariable ssin: String,
         @PathVariable sv: String,
         @PathVariable sl: String,
-        @RequestParam id: String
+        @RequestParam id: String,
+        @RequestParam(required = false) hubPackageId: String?,
+        @RequestParam(required = false) breakTheGlassReason: String?
     ): Kmehrmessage? = hubService.getTransactionSet(
         endpoint = endpoint,
         keystoreId = keystoreId,
@@ -597,12 +597,12 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
         @PathVariable hubId: Long,
-        @RequestParam(required = false) hubApplication: String?,
         @PathVariable patientSsin: String,
-        @RequestBody message: ByteArray
+        @RequestBody message: ByteArray,
+        @RequestParam(required = false) hubPackageId: String?,
+        @RequestParam(required = false) hubApplication: String?
     ): PutTransactionSetResponse = hubService.putTransactionSet(
         endpoint = endpoint,
         hubId = hubId,
@@ -630,8 +630,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
-        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam hcpZip: String,
+        @RequestParam(required = false) hubPackageId: String?,
         @RequestParam(required = false) from: Long?,
         @RequestParam(required = false) to: Long?,
         @RequestParam(required = false) authorNihii: String?,
@@ -679,9 +679,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam sv: String, //trn to manage
         @RequestParam sl: String, //trn to manage
         @RequestParam value: String, //trn to manage
+        @RequestParam accessRight: String, //allow, disallow
         @RequestParam (required = false) accessNihii: String?, //hcp to allow/disallow
         @RequestParam (required = false) accessSsin: String?, //hcp to allow/disallow
-        @RequestParam accessRight: String, //allow, disallow
         @RequestParam (required = false) hubPackageId: String?
     ): PutAccessRightResponse = hubService.putAccessRight(
         endpoint = endpoint,

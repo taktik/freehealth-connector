@@ -2,36 +2,42 @@ package be.apb.standards.smoa.schema.model.v1;
 
 import be.apb.standards.smoa.schema.id.v1.AbstractPrescriptionIdType;
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
-   name = "KmehrPrescriptionType",
-   propOrder = {"id", "kmehrPrescription"}
+		name = "KmehrPrescriptionType",
+		propOrder = {"id", "any"}
 )
 public class KmehrPrescriptionType extends AbstractPrescriptionType {
-   @XmlElement(
-      required = true
-   )
-   protected AbstractPrescriptionIdType id;
-   protected Kmehrmessage kmehrPrescription;
+	@XmlElement(
+			required = true
+	)
+	protected AbstractPrescriptionIdType id;
+	protected Kmehrmessage kmehrPrescription;
+	@XmlAnyElement(
+			lax = true
+	)
+	protected Object any;
 
-   public AbstractPrescriptionIdType getId() {
-      return this.id;
-   }
+	public AbstractPrescriptionIdType getId() {
+		return this.id;
+	}
 
-   public void setId(AbstractPrescriptionIdType value) {
-      this.id = value;
-   }
+	public void setId(AbstractPrescriptionIdType value) {
+		this.id = value;
+	}
 
-   public Kmehrmessage getKmehrPrescription() {
-      return this.kmehrPrescription;
-   }
+	public Object getAny() {
+		return this.any;
+	}
 
-   public void setKmehrPrescription(Kmehrmessage value) {
-      this.kmehrPrescription = value;
-   }
+	public void setAny(Object value) {
+		this.any = value;
+	}
 }

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="urn:be:fgov:ehealth:etee:ra:aqdr:1_0:protocol" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="urn:be:fgov:ehealth:etee:ra:aqdr:1_0:protocol" elementFormDefault="qualified">
+  <xs:element name="EHActorQualitiesDataRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="SSIN" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="EntityType" type="EntityType" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="EntityType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Natural"/>
+      <xs:enumeration value="Legal"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="EHActorQualitiesDataResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="SSIN" type="xs:long"/>
+        <xs:element name="Authorization" type="xs:boolean"/>
+        <xs:choice minOccurs="0">
+          <xs:element name="NaturalPerson" type="NaturalPerson"/>
+          <xs:element name="LegalPerson" type="LegalPerson"/>
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="LegalPerson">
+    <xs:sequence>
+      <xs:element name="Organization" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="NameFr" type="xs:string"/>
+            <xs:element name="NameNl" type="xs:string"/>
+            <xs:element name="Identifier">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Type" type="xs:string"/>
+                  <xs:element name="ID" type="xs:string"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="AAOrganizationAuth" type="xs:base64Binary"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="NaturalPerson">
+    <xs:sequence>
+      <xs:element name="Quality" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Name" type="xs:string"/>
+            <xs:element name="NIHII" type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="AAPersonalAuth" type="xs:base64Binary"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="Language">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="FR"/>
+      <xs:enumeration value="NL"/>
+      <xs:enumeration value="EN"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

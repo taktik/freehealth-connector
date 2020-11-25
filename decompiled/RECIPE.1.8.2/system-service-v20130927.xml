@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<systemServices>
+  <version>2012-12-13T12:12:12</version>
+  <systemServicesList>
+    <systemServicesEntry>
+      <system>
+        <systemType>str1234</systemType>
+        <systemId>str1234</systemId>
+      </system>
+      <service>
+        <serviceName>str1234</serviceName>
+        <URI>str1234</URI>
+      </service>
+      <contractList>
+        <contractEntry>
+          <contractType>str1234</contractType>
+          <contractPartyList>
+            <contractPartyEntry>
+              <contractPartyType>str1234</contractPartyType>
+              <contractPartyID>str1234</contractPartyID>
+            </contractPartyEntry>
+          </contractPartyList>
+        </contractEntry>
+      </contractList>
+    </systemServicesEntry>
+  </systemServicesList>
+</systemServices>

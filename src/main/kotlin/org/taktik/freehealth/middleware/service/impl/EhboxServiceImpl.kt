@@ -39,6 +39,7 @@ import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.freehealth.middleware.domain.common.Error
+import org.taktik.freehealth.middleware.dto.common.ErrorDto
 import org.taktik.freehealth.middleware.dto.ehbox.AltKeystore
 import org.taktik.freehealth.middleware.dto.ehbox.BoxInfo
 import org.taktik.freehealth.middleware.dto.ehbox.DocumentMessage
@@ -93,8 +94,8 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
-                BoxInfo(error = Error(be?.code, be?.messages?.firstOrNull()?.value))
-            } ?: BoxInfo(error = Error("999", e.message))
+                BoxInfo(error = ErrorDto(be?.code, be?.messages?.firstOrNull()?.value))
+            } ?: BoxInfo(error = ErrorDto("999", e.message))
         }
     }
 
@@ -173,7 +174,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
-                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
+                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value ?: it.message))
             } ?: MessageOperationResponse(false, Error("999", e.message))
         }
     }
@@ -195,7 +196,8 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 samlToken.quality,
                 passPhrase,
-                message.toDocumentMessage()
+                message.toDocumentMessage(),
+                true
                                            ).apply {
                 contentContext.contentSpecification.let {
                     it.isPublicationReceipt =

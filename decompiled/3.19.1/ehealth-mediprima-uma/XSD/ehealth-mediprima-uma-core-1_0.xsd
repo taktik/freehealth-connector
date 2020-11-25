@@ -1,0 +1,98 @@
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2" xmlns="urn:be:fgov:ehealth:mediprima:uma:core:v1" xmlns:core="urn:be:fgov:ehealth:commons:core:v2"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="urn:be:fgov:ehealth:mediprima:uma:core:v1" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-mediprima-uma
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.0
+ Build-Time: 20180214-1348 
+ </xs:appinfo>
+ </xs:annotation>
+  <!--eHealth core element -->
+  <xs:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-core-2_0.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd" />
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd" />
+  <!-- MediPrima UMA services types -->
+  <xs:element name="RegistryStatus" type="RegistryStatusType" /> 
+  <xs:complexType name="AttestationType">
+        <xs:annotation>
+          <xs:documentation>Attestation information</xs:documentation>
+        </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Author" type="core:AuthorType"/>
+      <xs:element name="BeneficiarySsin" type="xs:string"/>
+      <xs:element name="ValidityPeriod" type="PeriodType"/>
+      <xs:element name="MedicalCover" type="MedicalCoverType"/>
+      <xs:element name="AttestationNumber" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CriteriaType">
+       <xs:annotation>
+          <xs:documentation>Search criteria </xs:documentation>
+       </xs:annotation>
+    <xs:sequence>
+      <xs:element name="BeneficiarySsin" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>SSIN of the beneficiary</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice>
+        <xs:element name="AttestationNumber" type="xs:string">
+        </xs:element>       
+        <xs:sequence>  
+            <xs:element name="Period" type="PeriodType">
+              <xs:annotation>
+                <xs:documentation>Period used to retrieve attestation(s)</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          <xs:element name="MedicalCover" type="MedicalCoverType" minOccurs="0"/>
+        </xs:sequence>        
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ErrorType">
+        <xs:annotation>
+          <xs:documentation>Error detail</xs:documentation>
+        </xs:annotation>
+      <xs:sequence>
+      <xs:element name="Origin" type="xs:string">
+      </xs:element>
+      <xs:element name="Code" type="xs:string"/>
+    <xs:element name="Message" type="NameType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="MedicalCoverType">
+    <xs:annotation>
+      <xs:documentation>Representation of all the covers of a medical card</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <xs:complexType name="NameType">
+          <xs:annotation>
+          <xs:documentation>String (with language attribute)</xs:documentation>
+        </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute ref="xml:lang" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="PeriodType">
+        <xs:annotation>
+          <xs:documentation>Period with start date and optional end date</xs:documentation>
+        </xs:annotation>
+    <xs:sequence>
+      <xs:element name="StartDate" type="xs:date" />
+      <xs:element name="EndDate" type="xs:date" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="RegistryStatusType">
+        <xs:annotation>
+          <xs:documentation>RegistryStatus will contain extra information about errors or warning</xs:documentation>
+        </xs:annotation>
+      <xs:sequence>
+      <xs:element name="ErrorDetail" type="ErrorType" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

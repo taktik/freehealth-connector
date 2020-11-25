@@ -15,10 +15,10 @@ public final class McnConfigUtil {
       throw new UnsupportedOperationException();
    }
 
-   public static McnPackageInfo retrievePackageInfo(String componentName, String licenseUsername, String licensePassword) {
+   public static McnPackageInfo retrievePackageInfo(String componentName, String licenseUsername, String licensePassword, String packageName) {
       String userName = licenseUsername != null ? licenseUsername : configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_USERNAME, "${mycarenet.license.username}");
       String password = licensePassword != null ? licensePassword : configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_PASSWORD, "${mycarenet.license.password}");
-      String name = configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_NAME, "${package.name}");
-      return new McnPackageInfo(userName, password, name);
+      String name = packageName != null ? packageName : configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_NAME, "${package.name}");
+      return new McnPackageInfo(userName.trim(), password.trim(), name);
    }
 }

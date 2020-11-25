@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:tns="https://gfddpp.services.be/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="https://gfddpp.services.be/" version="1.0">
+	<xs:element name="AssuraliaRequestParameters" type="tns:AssuraliaRequestParameters"/>
+	<xs:complexType name="AssuraliaRequestParameters">
+		<xs:sequence>
+			<xs:element name="BVACDocumentID" type="xs:string" minOccurs="0"/>
+			<xs:element name="CBFA" type="xs:string"/>
+			<xs:element name="RequestorId" type="xs:string"/>
+			<xs:element name="SignatureType" type="tns:SignatureType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SignatureType">
+		<xs:sequence>
+			<xs:element name="DateTime" type="xsd:dateTime"/>
+			<xs:element name="Signature" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -42,7 +42,7 @@ class EattestV2ControllerTest : EhealthTest() {
 
 
     private fun assertResults(scenario: String, results: List<String?>) {
-        println(scenario + "\n====================")
+        println("$scenario\n====================")
 
         results.forEachIndexed { index, it ->
             Assertions.assertThat(it?.length ?: 0 > 2 && it!!.startsWith("{"))

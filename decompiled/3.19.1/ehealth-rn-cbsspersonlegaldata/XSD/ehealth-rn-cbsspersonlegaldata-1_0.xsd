@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================================================================================
+	* Owner					: Crossroad Bank for Social Security (CBSS)
+	* Description				: This XML schema document contains a set of XML types and content model fragments used to model legal person data within the CBSS domain. 
+	* Revision History		: 20/09/2017 4.0 Changes for BeSt address and CBSS Contact address
+	*								  18/01/2018 4.0 Refactor xsd groups
+	*								  25/01/2018 4.0 Replace CBSS by Cbss
+	*								  28/03/2018 4.0 Add anomalies to PersonResponseType
+	*
+	* ====================================================================================================================================
+-->
+<!-- Copyright (c) eHealth -->
+<xsd:schema xmlns:common="urn:be:fgov:ehealth:rn:commons:business:v1" xmlns:base="urn:be:fgov:ehealth:rn:baselegaldata:v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:be:fgov:ehealth:rn:cbsspersonlegaldata:v1" xmlns:reg="urn:be:fgov:ehealth:rn:registries:commons:v1" targetNamespace="urn:be:fgov:ehealth:rn:cbsspersonlegaldata:v1" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="4.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-rn-cbsspersonlegaldata
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.0
+ Build-Time: 20200303-0928 
+ </xs:appinfo>
+ </xs:annotation>
+	<xsd:import namespace="urn:be:fgov:ehealth:rn:commons:business:v1" schemaLocation="../../ehealth-rn-common/XSD/ehealth-rn-commons-business-1_0.xsd"/>
+	<xsd:import namespace="urn:be:fgov:ehealth:rn:registries:commons:v1" schemaLocation="../../ehealth-rnregistries-common/XSD/ehealth-rnregistries-commons-1_0.xsd"/>
+	<xsd:import namespace="urn:be:fgov:ehealth:rn:baselegaldata:v1" schemaLocation="../../ehealth-rn-baselegaldata/XSD/ehealth-rn-baselegaldata-1_0.xsd"/>
+
+	<xsd:complexType name="CbssPersonResponseType">
+		<xsd:annotation>
+			<xsd:documentation>Type encapsulating all legaldata of a person specific for the CbssPersonService</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Ssin" type="common:SsinType">
+				<xsd:annotation>
+					<xsd:documentation>The identification number of the person</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Name" type="base:NameInfoBaseType"/>
+			<xsd:element name="Nationalities" type="base:NationalitiesBaseType" minOccurs="0"/>
+			<xsd:element name="Birth" type="base:BirthInfoBaseType" minOccurs="0"/>
+			<xsd:element name="Decease" type="base:DeceaseInfoBaseType" minOccurs="0"/>
+			<xsd:element name="Gender" type="base:GenderInfoBaseType" minOccurs="0"/>
+			<xsd:element name="CivilStates" type="base:CivilStatesBaseType" minOccurs="0"/>
+			<xsd:element name="Address" type="base:AddressCbssBaseType" minOccurs="0"/>
+			<xsd:element name="ContactAddress" type="base:ContactAddressBaseType" minOccurs="0"/>
+			<xsd:element name="Anomalies" type="reg:AnomaliesType" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="Register" type="reg:PersonRegisterType">
+			<xsd:annotation>
+				<xsd:documentation>Element identifying the register which is the authentic source of the legal data of this person.  Will always be present if CbssPersonLegalDataContentFragment is present.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="RegisterInceptionDate" type="xsd:date">
+			<xsd:annotation>
+				<xsd:documentation>Date the person last entered the CBSS registries. Only present for BIS (creation date), RAD (last RAD-in date) and RAN (last RAN-in date) numbers</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="CbssUpdatePersonResponseType">
+		<xsd:annotation>
+			<xsd:documentation>Type encapsulating all legaldata of a person specific for the CbssPersonService</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Ssin" type="common:SsinType">
+				<xsd:annotation>
+					<xsd:documentation>The identification number of the person</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Name" type="base:NameInfoWithUpdateStatusType"/>
+			<xsd:element name="Nationalities" type="base:NationalitiesWithUpdateStatusType" minOccurs="0"/>
+			<xsd:element name="Birth" type="base:BirthInfoWithUpdateStatusType" minOccurs="0"/>
+			<xsd:element name="Decease" type="base:DeceaseInfoWithUpdateStatusType" minOccurs="0"/>
+			<xsd:element name="Gender" type="base:GenderInfoWithUpdateStatusType" minOccurs="0"/>
+			<xsd:element name="CivilStates" type="base:CivilStatesWithUpdateStatusType" minOccurs="0"/>
+			<xsd:element name="Address" type="base:AddressCbssWithUpdateStatusType" minOccurs="0"/>
+			<xsd:element name="ContactAddress" type="base:ContactAddressWithUpdateStatusType" minOccurs="0"/>
+			<xsd:element name="Anomalies" type="reg:AnomaliesType" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="Register" type="reg:PersonRegisterType">
+			<xsd:annotation>
+				<xsd:documentation>Element identifying the register which is the authentic source of the legal data of this person.  Will always be present if CbssPersonLegalDataContentFragment is present.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="RegisterInceptionDate" type="xsd:date">
+			<xsd:annotation>
+				<xsd:documentation>Date the person last entered the CBSS registries. Only present for BIS (creation date), RAD (last RAD-in date) and RAN (last RAN-in date) numbers</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="CbssPersonRequestType">
+		<xsd:annotation>
+			<xsd:documentation>Type containing the data necessary to create a new person or update person data</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Name" type="base:NameInfoDeclarationType" minOccurs="0"/>
+			<xsd:element name="Nationalities" type="base:NationalitiesDeclarationType" minOccurs="0"/>
+			<xsd:element name="Birth" type="base:BirthInfoDeclarationType" minOccurs="0"/>
+			<xsd:element name="Decease" type="base:DeceaseInfoDeclarationType" minOccurs="0"/>
+			<xsd:element name="Gender" type="base:GenderInfoDeclarationType" minOccurs="0"/>
+			<xsd:element name="CivilStates" type="base:CivilStatesDeclarationType" minOccurs="0"/>
+			<xsd:element name="Address" type="base:AddressDeclarationType" minOccurs="0"/>
+			<xsd:element name="ContactAddress" type="base:ContactAddressDeclarationType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

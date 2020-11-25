@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="urn:be:fgov:ehealth:consultrn:core:v2"
+  xmlns="urn:be:fgov:ehealth:consultrn:core:v2"
+  xmlns:commons_core="urn:be:fgov:ehealth:consultrn:commons:core:v3"
+  elementFormDefault="qualified" attributeFormDefault="unqualified"
+  version="2.0">
+  <xs:annotation>
+    <xs:appinfo>
+ Implementation-Title: ConsultRN XSD manageperson
+ Specification-Version: 2.2
+ Implementation-Version: 2.2.1
+ Build-Time: 20170704-1243 
+ </xs:appinfo>
+  </xs:annotation>
+ <xs:import namespace="urn:be:fgov:ehealth:consultrn:commons:core:v3" schemaLocation="../../ehealth-consultrn-commons/XSD/ehealth-consultrn-commons-core-3_1.xsd"/>
+  <xs:complexType name="ResultType">
+    <xs:annotation>
+          <xs:documentation>Result returned by backend response</xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="NewlyRegisteredPerson" type="commons_core:PersonResponseType">
+        <xs:annotation>
+          <xs:documentation>The data of the BIS person being registered. Create successful.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ExistingPersons" type="ExistingPersonsType"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="ExistingPersonsType">
+    <xs:annotation>
+      <xs:documentation>List of persons that match the criteria used in the create. Create unsuccessful.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+       <xs:element name="ExistingPerson" type="commons_core:PersonResponseType" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

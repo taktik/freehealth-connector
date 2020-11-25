@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2" xmlns:mon="urn:be:fgov:ehealth:monitoring:protocol:v2" xmlns:core="urn:be:fgov:ehealth:monitoring:core:v2"
+  targetNamespace="urn:be:fgov:ehealth:monitoring:protocol:v2" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="2.0">
+  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:monitoring:core:v2" schemaLocation="ehealth-monitoring-schema-core-2_0.xsd" />
+  <xs:import schemaLocation="ehealth-monitoring-schema-nonamespace-2_0.xsd" />
+  <xs:element name="AliveCheckRequest" type="mon:AliveCheckRequestType" />
+  <xs:complexType name="AliveCheckRequestType">
+    <xs:annotation>
+      <xs:appinfo>v2.0: compliant to eHealth SOA Commons Profile 2.0</xs:appinfo>
+      <xs:documentation>Input type of aliveCheck operation</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="AliveCheckResponse" type="mon:AliveCheckResponseType" />
+  <xs:complexType name="AliveCheckResponseType">
+    <xs:annotation>
+      <xs:appinfo>v2.0: compliant to eHealth SOA Commons Profile 2.0</xs:appinfo>
+      <xs:documentation>Output type of aliveCheck operation</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence maxOccurs="1">
+          <xs:element ref="MonitoringXML" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>
