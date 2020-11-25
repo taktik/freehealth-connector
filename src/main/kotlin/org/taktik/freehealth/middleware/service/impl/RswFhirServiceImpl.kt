@@ -21,6 +21,7 @@ import org.taktik.freehealth.middleware.service.RswFhirService
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.icure.fhir.entities.r4.binary.Binary
 import org.taktik.icure.fhir.entities.r4.bundle.Bundle
+import org.taktik.icure.fhir.entities.r4.operationoutcome.OperationOutcome
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -47,12 +48,12 @@ fun HttpURLConnection.postForm(form: List<Pair<String, String>>): InputStream? {
 
 @Service
 class RswFhirServiceImpl(val stsService: STSService) : RswFhirService {
-    val certFactory: CertificateFactory = CertificateFactory.getInstance("X.509")
-    val baseSearchUrl = "https://jacc.reseausantewallon.be/proxy/fhir/caresets/AllergyIntolerance?patient:Patient.identifier=https://www.ehealth.fgov.be/standards/fhir/NamingSystem/ssin"
-    val issuer = "idp.rsw.vault"
-    val audience = "api.rsw.clientid.fhir.careset"
-    val objectMapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
-    var rswPublicKey: PublicKey? = null
+    private val certFactory: CertificateFactory = CertificateFactory.getInstance("X.509")
+    private val issuer = "idp.rsw.vault"
+    private val audience = "api.rsw.clientid.fhir.careset"
+    private val objectMapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
+    private var rswPublicKey: PublicKey? = null
+    private val fhirSearchEndpoint = "https://www.ehealth.fgov.be/standards/fhir/NamingSystem/ssin|"
 
     override fun search(nihii: String,
         clientId: String,
@@ -60,14 +61,14 @@ class RswFhirServiceImpl(val stsService: STSService) : RswFhirService {
         clientSecret: String,
         keystoreId: UUID,
         passPhrase: String,
-        patientSsin: String): ByteArray {
+        patientSsin: String): Bundle {
 
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val privateKey = hokPrivateKeys.entries.mapNotNull { it.value }.firstOrNull()
 
         val accessToken = obtainAccessToken(clientId, clientSecret, nihii) ?: throw IllegalArgumentException("Cannot get access token")
-        val bundle = loadFHIRSearchResult(clientType, nihii, accessToken, patientSsin)
+        val bundle = loadFHIRSearchResult(clientType, nihii, accessToken, patientSsin) ?: throw IllegalArgumentException("Cannot load fhir")
 
         val multipart = Base64.getDecoder().decode(bundle.entry.mapNotNull { it.resource as? Binary }.first().data!!)
 
@@ -92,7 +93,8 @@ class RswFhirServiceImpl(val stsService: STSService) : RswFhirService {
             val recInfo = parser.recipientInfos.recipients.firstOrNull()
             val recipient = JceKeyTransEnvelopedRecipient(privateKey!!)
 
-            recInfo?.getContentStream(recipient)?.contentStream?.readBytes() //<-- Error here: bad padding: data hash wrong
+            val content = recInfo?.getContentStream(recipient)?.contentStream?.readBytes() //<-- Error here: bad padding: data hash wrong
+            (MimeMessage(session, ByteArrayInputStream(content)).content as? Multipart)?.let { objectMapper.readValue(it.getBodyPart(0).inputStream.readBytes(), Bundle::class.java) }
         } ?: throw IllegalStateException("Cannot decode data")
     }
 
@@ -105,8 +107,11 @@ class RswFhirServiceImpl(val stsService: STSService) : RswFhirService {
     private fun loadFHIRSearchResult(clientType: String,
         nihii: String,
         accessToken: String,
-        patientSsin: String) = objectMapper.readValue(
-            (URL("$baseSearchUrl|${patientSsin}").openConnection() as? HttpURLConnection)?.apply {
+        patientSsin: String): Bundle? {
+        return objectMapper.readValue(
+            (URL("https://jacc.reseausantewallon.be/proxy/fhir/caresets/AllergyIntolerance?patient:Patient.identifier=${
+                URLEncoder.encode(fhirSearchEndpoint, Charsets.UTF_8.name())
+            }${patientSsin}").openConnection() as? HttpURLConnection)?.apply {
                 requestMethod = "GET"
                 setRequestProperty("Accept", "application/json")
                 setRequestProperty("SENDER-ENCRYPTION-ACTOR-ID", nihii)
@@ -115,11 +120,18 @@ class RswFhirServiceImpl(val stsService: STSService) : RswFhirService {
                 setRequestProperty("Authorization", "Bearer $accessToken")
             }?.let {
                 if (it.responseCode != 200) {
-                    throw RuntimeException("Rsw Vault Fhir Api Call Failed : HTTP Error code : $it.responseCode - $it.responseMessage")
+                    val diagnostics = objectMapper.readValue(it.errorStream.readBytes(), Bundle::class.java).entry.map { it.resource }.let {
+                        it.filterIsInstance(OperationOutcome::class.java).firstOrNull()?.issue?.firstOrNull()?.diagnostics ?:
+                        it.filterIsInstance(Binary::class.java).firstOrNull()?.data?.let { Base64.getDecoder().decode(it).let {
+                            try { objectMapper.readValue(it, OperationOutcome::class.java).issue.firstOrNull()?.diagnostics } catch (e:Exception) { it.toString(Charsets.UTF_8) }
+                        } }
+                    } ?: it.responseMessage
+                    throw RuntimeException("Rsw Vault Fhir Api Call Failed : HTTP Error code : ${it.responseCode} - $diagnostics")
                 } else {
                     it.inputStream.readBytes()
                 }
             } ?: throw RuntimeException("Cannot create Fhir Api URL"), Bundle::class.java)
+        }
 
     private fun obtainAccessToken(clientId: String, clientSecret: String, nihii: String) =
         (URL("https://jacc.reseausantewallon.be/is4acc/careset/v1/token").openConnection() as? HttpURLConnection)?.postForm( //Request token
