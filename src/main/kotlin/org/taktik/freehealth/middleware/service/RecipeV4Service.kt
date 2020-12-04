@@ -41,7 +41,7 @@ import java.util.zip.DataFormatException
  */
 interface RecipeV4Service {
     @Throws(ConnectorException::class)
-    fun createPrescriptionV4(
+    fun createPrescription(
         keystoreId: UUID,
         tokenId: UUID,
         hcpQuality: String,
@@ -65,10 +65,10 @@ interface RecipeV4Service {
         vendorPhone: String?,
         vision: String?,
         expirationDate: LocalDateTime?
-                            ): Prescription
+                          ): Prescription
 
     @Throws(ConnectorException::class)
-    fun listOpenPrescriptionV4(
+    fun listOpenPrescriptions(
         keystoreId: UUID,
         tokenId: UUID,
         hcpQuality: String,
@@ -77,10 +77,10 @@ interface RecipeV4Service {
         hcpName: String,
         passPhrase: String,
         patientId: String
-    ): List<Prescription>
+                             ): List<Prescription>
 
     @Throws(ConnectorException::class, DataFormatException::class, KeyStoreException::class, CertificateExpiredException::class)
-    fun listFeedbacksV4(
+    fun listFeedbacks(
         keystoreId: UUID,
         tokenId: UUID,
         hcpQuality: String,
@@ -88,10 +88,10 @@ interface RecipeV4Service {
         hcpSsin: String,
         hcpName: String,
         passPhrase: String
-    ): List<Feedback>
+                     ): List<Feedback>
 
     @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
-    fun revokePrescriptionV4(
+    fun revokePrescription(
         keystoreId: UUID,
         tokenId: UUID,
         hcpQuality: String,
@@ -101,5 +101,5 @@ interface RecipeV4Service {
         passPhrase: String,
         rid: String,
         reason: String
-    )
+                          )
 }

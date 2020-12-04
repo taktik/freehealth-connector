@@ -98,7 +98,6 @@ import org.taktik.connector.business.domain.kmehr.v20190301.makeXGC
 import org.taktik.connector.business.domain.kmehr.v20190301.makeXMLGregorianCalendarFromFuzzyLong
 import org.taktik.connector.business.domain.kmehr.v20190301.makeXmlGregorianCalendar
 import org.taktik.connector.business.domain.kmehr.v20190301.s
-import org.taktik.connector.business.recipe.prescriber.PrescriberIntegrationModuleImpl
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.mapPeriodToFrequency
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDaytime
@@ -130,7 +129,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         feedbacksCache = CacheBuilder.newBuilder().build<String, SortedSet<Feedback>>()
     }
 
-    override fun listOpenPrescriptionV4(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patientId: String): List<Prescription> {
+    override fun listOpenPrescriptions(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patientId: String): List<Prescription> {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
@@ -141,7 +140,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
 
         val es = Executors.newFixedThreadPool(5)
         try {
-            val getFeedback = es.submit<List<Feedback>> { listFeedbacksV4(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase) }
+            val getFeedback = es.submit<List<Feedback>> { listFeedbacks(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase) }
             val futures = es.invokeAll<GetPrescriptionForPrescriberResult>(ridList.map { rid -> Callable<GetPrescriptionForPrescriberResult> { ridCache[rid, { service!!.getPrescription(samlToken, credential, keystore, passPhrase, hcpNihii, rid) }] } })
             val result = futures.map { f -> f.get() }.map { r -> Prescription(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId) }
 
@@ -163,7 +162,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
 
     }
 
-    override fun listFeedbacksV4(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String): List<Feedback> {
+    override fun listFeedbacks(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String): List<Feedback> {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
@@ -174,7 +173,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         return feedbackItemList.map { Feedback(it.rid, Long.parseLong(it.sentBy), it.sentDate?.time, it.content?.toString(Charset.forName("UTF-8"))) }
     }
 
-    override fun revokePrescriptionV4(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, rid: String, reason: String) {
+    override fun revokePrescription(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, rid: String, reason: String) {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
@@ -183,7 +182,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         service.revokePrescription(samlToken, credential, hcpNihii, rid, reason)
     }
 
-    override fun createPrescriptionV4(keystoreId: UUID,
+    override fun createPrescription(keystoreId: UUID,
         tokenId: UUID,
         hcpQuality: String,
         hcpNihii: String,

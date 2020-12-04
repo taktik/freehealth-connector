@@ -46,7 +46,7 @@ import java.util.*
 class RecipeController(val recipeService: RecipeService, val recipeV4Service: RecipeV4Service) {
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun createPrescription(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody prescription: PrescriptionRequest): Prescription =
-        recipeV4Service.createPrescriptionV4(
+        recipeV4Service.createPrescription(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,
@@ -70,11 +70,11 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
             vendorEmail = prescription.vendorEmail,
             vendorPhone = prescription.vendorPhone,
             vision = prescription.vision
-                                            )
+                                          )
 
     @PostMapping("/v4", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun createPrescriptionV4(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody prescription: PrescriptionRequest): Prescription =
-        recipeV4Service.createPrescriptionV4(
+        recipeV4Service.createPrescription(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,
@@ -98,7 +98,7 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
             vendorEmail = prescription.vendorEmail,
             vendorPhone = prescription.vendorPhone,
             vision = prescription.vision
-                                        )
+                                          )
 
     @GetMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listOpenPrescriptions(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Prescription> =
@@ -114,7 +114,7 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
 
     @GetMapping("/patient", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listOpenPrescriptionsByPatient(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam patientId: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Prescription> =
-        recipeService.listOpenPrescriptions(
+        recipeV4Service.listOpenPrescriptions(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,
@@ -154,7 +154,7 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
 
     @DeleteMapping("/{rid}")
     fun revokePrescription(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @PathVariable rid: String, @RequestParam reason: String) =
-        recipeService.revokePrescription(
+        recipeV4Service.revokePrescription(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,
@@ -182,7 +182,7 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
 
     @GetMapping("/all/feedbacks", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listFeedbacks(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Feedback> =
-        recipeService.listFeedbacks(
+        recipeV4Service.listFeedbacks(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,
