@@ -35,7 +35,7 @@ public final class ConfigFactory {
    }
 
    public static ConfigValidator getConfigValidator() {
-      return getConfigValidator((List)null);
+      return getConfigValidator(null);
    }
 
    public static ConfigValidator getConfigValidator(List<String> expectedProps) {
