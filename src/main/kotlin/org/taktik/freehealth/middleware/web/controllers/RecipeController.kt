@@ -114,7 +114,7 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
 
     @GetMapping("/patient", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listOpenPrescriptionsByPatient(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestParam patientId: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Prescription> =
-        recipeV4Service.listOpenPrescriptions(
+        recipeService.listOpenPrescriptions(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,
@@ -154,7 +154,7 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
 
     @DeleteMapping("/{rid}")
     fun revokePrescription(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @PathVariable rid: String, @RequestParam reason: String) =
-        recipeV4Service.revokePrescription(
+        recipeService.revokePrescription(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,
@@ -182,7 +182,7 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
 
     @GetMapping("/all/feedbacks", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listFeedbacks(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Feedback> =
-        recipeV4Service.listFeedbacks(
+        recipeService.listFeedbacks(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,
