@@ -1,20 +1,26 @@
 package be.fgov.ehealth.technicalconnector.bootstrap.bcp;
 
+import org.apache.commons.io.Charsets;
 import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.ConfigValidator;
 import org.taktik.connector.technical.enumeration.Charset;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
+import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.parser.StatusPageParser;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.verifier.StatusPageSignatureVerifier;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class EndpointUpdater {
    private static final Logger LOG = LoggerFactory.getLogger(EndpointUpdater.class);
@@ -49,7 +55,14 @@ public final class EndpointUpdater {
       String endpoint = determineEndpoint();
       String onlineSha2 = ConnectorIOUtils.getResourceAsString(endpoint + ".sha2");
       String content = ConnectorIOUtils.getResourceAsString(endpoint + ".xml");
-      update(content);
+      if (!update(content)) {
+         InputStream serviceListStream = EndpointUpdater.class.getResourceAsStream("/servicelist.xml");
+         try {
+            EndpointDistributor.getInstance().update(StatusPageParser.parse(IOUtils.toString(serviceListStream, UTF_8)));
+         } catch (IOException e) {
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.UNEXPECTED_ERROR, e);
+         }
+      }
       write(content, loadedXmlLocation);
       write(onlineSha2, loadedSha2Location);
       loadedSha2 = onlineSha2;
@@ -76,13 +89,14 @@ public final class EndpointUpdater {
 
    }
 
-   private static void update(String xml) throws TechnicalConnectorException {
-      if (true /*StatusPageSignatureVerifier.isValid(xml)*/) {
+   private static boolean update(String xml) throws TechnicalConnectorException {
+      if (StatusPageSignatureVerifier.isValid(xml)) {
          EndpointDistributor.getInstance().update(StatusPageParser.parse(xml));
+         return true;
       } else {
          LOG.error("Unable to update endpoint. For more information see logs.");
       }
-
+      return false;
    }
 
    private static String determineEndpoint() {
