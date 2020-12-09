@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ServiceList xmlns="urn:be:fgov:ehealth:bcp:protocol:v1" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" Environment="Acceptation" Id="_ff309c30-34ae-4fa4-a5ac-02e86d165ca2" IssueInstant="2020-09-22T12:21:17.841+02:00">
+    <Service Id="uddi:ehealth-fgov-be:business:kgss:v1" Name="ETEE KGSS V1">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/Kgss/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/Kgss/v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:etkdepot:v1" Name="ETEE ETKDEPOT V1">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/EtkDepot/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/EtkDepot/v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:iamattributeauthority:v1" Name="I.AM AA">
+        <Endpoint Order="0" Status="INACTIVE">https://services-acpt.ehealth2.be/IAM/AttributeAuthority/v1</Endpoint>
+        <Endpoint Order="1" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/IAM/AttributeAuthority/v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:iamsaml11tokenservice:v1" Name="I.AM STS SAML11">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/IAM/Saml11TokenService/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/IAM/Saml11TokenService/v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:iamsecuritytokenservice:v1" Name="I.AM STS WSTRUST">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/IAM/SecurityTokenService/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/IAM/SecurityTokenService/v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:metahub:v2" Name="METAHUB V2">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/MetaHub/v2</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/MetaHub/v2</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:timestampauthority:v1" Name="TSA V1">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/TimestampAuthority/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/TimestampAuthority/v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:timestampauthority:v2" Name="TSA V2">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/TimestampAuthority/v2</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/TimestampAuthority/v2</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:insurability:v2" Name="INSURABILITY V2">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/Insurability/v2</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://pilot.mycarenet.be:9443/ehealth/bcp/insurability</Endpoint>
+        <Endpoint Order="2" Status="INACTIVE">https://services-acpt.ehealth2.be/Insurability/v2</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:genericinsurability:v1" Name="MCN GENERIC INSURABILITY V1">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/GenericInsurability/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://pilot.mycarenet.be:9443/ehealth/bcp/genericinsurability/v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:mycareneteattest:v1" Name="MCN EATTEST V1">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/MyCareNet/eAttest/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://pilot.mycarenet.be:9443/ehealth/bcp/eattest/v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:mycareneteattest:v2" Name="MCN EATTEST V2">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/MyCareNet/eAttest/v2</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://pilot.mycarenet.be:9443/ehealth/bcp/eattest/v2</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:memberdata:v1" Name="MCN MEMBERDATA V1">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/MyCareNet/MemberData/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://pilot.mycarenet.be:9443/mycarenet/bed/bcp/memberData</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:mycarenettarification:v1" Name="MCN TARIFICATION V1">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/MyCareNet/Tarification/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://pilot.mycarenet.be:9443/ehealth/bcp/tarification/v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:mycarenettarificationmediprima:v1" Name="MCN TARIFICATION MEDIPRIMA V1">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/MyCareNet/TarificationMediPrima/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://pilot.mycarenet.be:9443/ehealth/bcp/TarificationMediPrima/v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:chapterivchapterivagreementadmission:v1" Name="MCN CHAPIV ADMISSION V1">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/ChapterIV/ChapterIVAgreementAdmission/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://pilot.mycarenet.be:9443/ehealth/bcp/ChapterIVAgreementAdmission/v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:chapterivchapterivagreementconsultation:v1" Name="MCN CHAPIV CONSULTATION V1">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/ChapterIV/ChapterIVAgreementConsultation/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://pilot.mycarenet.be:9443/ehealth/bcp/ChapterIVAgreementConsultation/v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:recip-eexecutor:v3" Name="RECIP-E Executor v3">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/Recip-e/v3/Executor_v3</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/Recip-e/v3/Executor_v3</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:recip-eexecutor:v4" Name="RECIP-E Executor v4">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/Recip-e/v4/Executor</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/Recip-e/v4/Executor</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:recip-eprescriber:v1" Name="RECIP-E Prescriber v1">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/Recip-e/v1/Prescriber_v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/Recip-e/v1/Prescriber_v1</Endpoint>
+    </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:recip-eprescriber:v4" Name="RECIP-E Prescriber v4">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/Recip-e/v4/Prescriber</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/Recip-e/v4/Prescriber</Endpoint>
+    </Service>
+    <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="xmldsig-4fa9d5fe-7c20-4b5b-8919-857ec28e3e2b">
+        <ds:SignedInfo>
+            <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+            <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+            <ds:Reference URI="#_ff309c30-34ae-4fa4-a5ac-02e86d165ca2">
+                <ds:Transforms>
+                    <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                    <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                </ds:Transforms>
+                <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                <ds:DigestValue>XcoQU5JbrEhojisjpNpH3EyRfjXVlF4qXcAmuvo9pbI=</ds:DigestValue>
+            </ds:Reference>
+            <ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xmldsig-fca9d6f2-0eeb-4e0b-9add-1757802d3beb-xades-signedprops">
+                <ds:Transforms>
+                    <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                </ds:Transforms>
+                <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                <ds:DigestValue>SpqPDRSGGKKCHIwASTKi+B2UcarfZavCqxsEj30sCwA=</ds:DigestValue>
+            </ds:Reference>
+        </ds:SignedInfo>
+        <ds:SignatureValue>
+            WwCrRtilyGpYQlqExiUlp7JtmB/jiePP+O5NQUfGqTZ94lVdiYIfTL1Z2CpaA4lVE+uhFR0vubDc&#13;
+            ymVQm0lHNa9L/Ga7CulLX+qShvJFDOeGx9CIZ3UysTIJXDIsxeTwO2IGcFfZlcJG4BAVWGTfAuyJ&#13;
+            tjbyG4pdja15GJgENhs7UZuzAKj/DTfFw1/vxXS86/VUWCrTgybZZkDU8a9pIpDICMazN6CSb9xz&#13;
+            JsKt8LqXL5663aX4m+7eEwIZF2C48LTcVPVpJhX0w0HwtgB33q/wg8WkiMYGEQ8tpm6T59065/6f&#13;
+            P7QKSUZGJ00IfpyII4uweZPlS/FRphpGXc9/Pw==
+        </ds:SignatureValue>
+        <ds:KeyInfo>
+            <ds:X509Data>
+                <ds:X509Certificate>
+                    MIIGsDCCBJigAwIBAgIIHqRHA6INag0wDQYJKoZIhvcNAQELBQAwczELMAkGA1UEBhMCQkUxETAP&#13;
+                    BgNVBAoMCFpFVEVTIFNBMQwwCgYDVQQFEwMwMDExQzBBBgNVBAMMOlRFU1QtWmV0ZXNDb25maWRl&#13;
+                    bnMtZUhlYWx0aCBhY2NlcHRhbmNlIHRlc3QtaXNzdWluZyBDQSAwMDEwHhcNMjAwOTIyMDk1MjQz&#13;
+                    WhcNMjEwOTIzMDk1MjQzWjCBvTELMAkGA1UEBhMCQkUxGzAZBgNVBAoMEkZlZGVyYWwgR292ZXJu&#13;
+                    bWVudDEUMBIGA1UECwwLU0VSVklDRUxJU1QxFzAVBgNVBAsMDkNCRT0wODA5Mzk0NDI3MRkwFwYD&#13;
+                    VQQLDBBFSEVBTFRILVBMQVRGT1JNMSEwHwYDVQQLDBhlSGVhbHRoLXBsYXRmb3JtIEJlbGdpdW0x&#13;
+                    JDAiBgNVBAMMG0NCRT0wODA5Mzk0NDI3LCBTRVJWSUNFTElTVDCCASIwDQYJKoZIhvcNAQEBBQAD&#13;
+                    ggEPADCCAQoCggEBAMlhv4CijJzSpmKht0hkg7xnl/12vqeGbIBMwCgXaP/JaJZf1Cte0h9jZUzd&#13;
+                    dlKJcaR5h5FJsS76C0BbG8LZXjGlrHJ+3wgJWjA0qwnBnXqbjF5NKA0ooxLDpBZstjk83IImd8/x&#13;
+                    Leq284vXL24Iw/Ixpl8uXzTmBaV/0SC1xysuoB6RzIDGkB+MnxOvYv2WtXRlM7wfKWv+DkCwzphK&#13;
+                    b4Yi8o48yxh7Kl9EYfn2s3z9K8qBltGwAXNjCP5uQVuTkq2yzgQpCdF4CjiFeQRv0uI4JA/KskTK&#13;
+                    CIWXuoRhJ82LtukGCKKGx/uSIS8u+jPEWi/33t5JKk7+AALAmaDMq3ECAwEAAaOCAfswggH3MAwG&#13;
+                    A1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUIOvsuXQtmiFnXp+b4df1AyQG/gAwOwYIKwYBBQUHAQEE&#13;
+                    LzAtMCsGCCsGAQUFBzABhh9odHRwOi8vZWhhY2MudHNwLnpldGVzLmNvbS9vY3NwMIH8BgNVHSAE&#13;
+                    gfQwgfEwge4GD4g3BgEEAYL0ZgIBAgIDEzCB2jAxBggrBgEFBQcCARYlaHR0cDovL2VoYWNjLnRz&#13;
+                    cC56ZXRlcy5jb20vcmVwb3NpdG9yeTCBpAYIKwYBBQUHAgIwgZcegZQAVABoAGkAcwAgAGkAcwAg&#13;
+                    AGEAIAB0AGUAcwB0ACAAYwBlAHIAdABpAGYAaQBjAGEAdABlAC4AIABJAHQAIABzAGgAbwB1AGwA&#13;
+                    ZAAgAG4AbwB0ACAAYgBlACAAdQBzAGUAZAAgAGYAbwByACAAbwBwAGUAcgBhAHQAaQBvAG4AYQBs&#13;
+                    ACAAcAB1AHIAcABvAHMAZQBzMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDA8BgNVHR8E&#13;
+                    NTAzMDGgL6AthitodHRwOi8vZWhhY2MudHNwLnpldGVzLmNvbS96Y3B0cGtpc3ViY2EuY3JsMB0G&#13;
+                    A1UdDgQWBBTnHNIPpVubyYVYrRN2qktPV8yCbTAOBgNVHQ8BAf8EBAMCBeAwDQYJKoZIhvcNAQEL&#13;
+                    BQADggIBADOjL59tC17LOj77wCdn8DGYafflquuYm2+RQmuIuiCXuZM8Ifb0aN4VHLXrjVNm68Gk&#13;
+                    pzy3gLXAbjQKMfQEsojY91au6iHMBguk8RcH8Pwko54qx97OAyuLUhGh9wfql8o7NXq0BvPzqT+k&#13;
+                    vrqK4kWEfrlcfmn7U9E15/oOHNxOWOPxshj46XQs8MD8FTUI1jA4vq2yPViVnG5+CHnU2yC4D3DL&#13;
+                    nnMtGk1oD50H2INwHECu/w5R4FrabkozHXcJlayn5hVlJgIT+V+hdPJmckxiHbAkmXlf2YzXNPaH&#13;
+                    NSwdw++Dq0MPMk9wNG/um5jxRmpRKwAbEQtcc1eyXw4eT9poOV+n3v6a/q+bICrJG7MW6E4SQjWI&#13;
+                    f+RbdK7wLWF8Y77U+Zopt9+4klVGWiTAMrRWWbDUSb4UXH3wEdsmOqGsHu+s44tN9R1rZgjcXSUB&#13;
+                    PH1Wc8q6TkDIv3c/cI21XQlCXVZJmATURuqvM2aXtnqBvraJHdIYQGlXmABXIotNub5vmDdH7sFt&#13;
+                    QfmYedXYdTdE/ahVglUsZDAzT4ADZZYbx/KHjqhhhNRONoR7+J3ofehEmaBuN7ypaO2dU3zl95jI&#13;
+                    D+Eg9mHDAj1gV5jKZRWHy6FQwjoZa3F0RT8DiecMILEsMBDQkM/4O78+HskfIcEzuezW0Z4KT19E&#13;
+                    lDJ5no3X
+                </ds:X509Certificate>
+            </ds:X509Data>
+            <ds:X509Data>
+                <ds:X509Certificate>
+                    MIIHCTCCBPGgAwIBAgIIH64EuAFjVXIwDQYJKoZIhvcNAQELBQAwcDELMAkGA1UEBhMCQkUxETAP&#13;
+                    BgNVBAoMCFpFVEVTIFNBMQwwCgYDVQQFEwMwMDExQDA+BgNVBAMMN1RFU1QtWmV0ZXNDb25maWRl&#13;
+                    bnMtZUhlYWx0aCBhY2NlcHRhbmNlIHRlc3Qtcm9vdCBDQSAwMDEwHhcNMTkwMTI4MTY0ODI0WhcN&#13;
+                    MjkwMTI1MTY0ODI0WjBzMQswCQYDVQQGEwJCRTERMA8GA1UECgwIWkVURVMgU0ExDDAKBgNVBAUT&#13;
+                    AzAwMTFDMEEGA1UEAww6VEVTVC1aZXRlc0NvbmZpZGVucy1lSGVhbHRoIGFjY2VwdGFuY2UgdGVz&#13;
+                    dC1pc3N1aW5nIENBIDAwMTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAMZWYHaztj3L&#13;
+                    Pkjq4EjvK+06HPnCzmxXifKjn94i8OeN8fQyWvyUaMElKw74qZvOuX3L84ZthqAU3OSomTuck3rR&#13;
+                    UwOg212FUG3xC0sc3bX0h5SIc5FOH4ko9yD7YQNSqwmb6DG1lHZZKgDm8Ijk9DjuR5pmQydsJPQp&#13;
+                    qs12lkzwopmhVi9UibueCDs096EDoVNeU9zSfd2LAi5MAdQKlJODSk1yUK8V0miMp16KjpdwitMb&#13;
+                    mT5bEGJwGY+u6HjbtHY9t61kgZVOZjzXvYoQmlVs7qgsBAcNSDx8sGQhU3NiBTkOT28PiVP5dTJO&#13;
+                    ZQLC/gIvA8ngGJ/hNlEYkm4eELhPrEFO73b9yshJAjP3rclr5HR6mo8x6TBCwLzGs+eVHqmRb7tE&#13;
+                    7he8xmPSu9M/xwN1RRU5tW3sRsKtBYPkoAEnzt8xpJjFG81JqdRNwJWqtGGmjREu3+S0e7+dXnaI&#13;
+                    KU5UbvYQeeAtUgcg0YT7LEk7YxsIEQ9Dq/c9fvJ+EOmN+MOcFfPYT5Jo/IppBMbOcVwsrM2DFmg8&#13;
+                    WvKJo5OiA+j/mRGB3aa4o/ToqN2oAv5A08fYrmF+P40uDK4hpOBgX/PswXpe949LLOduqXUoD0K8&#13;
+                    vtjS3xMMPS5PH6BstNFf8+tRBeaMZ3dS/sirI8WHcu6CssNOmCljX1E06YzDPbNXAgMBAAGjggGi&#13;
+                    MIIBnjASBgNVHRMBAf8ECDAGAQH/AgEAMB8GA1UdIwQYMBaAFGXiamy4HJzZOiUuy9TlUUktNpM+&#13;
+                    MDsGCCsGAQUFBwEBBC8wLTArBggrBgEFBQcwAYYfaHR0cDovL2VoYWNjLnRzcC56ZXRlcy5jb20v&#13;
+                    b2NzcDCBvgYDVR0gBIG2MIGzMIGwBgRVHSAAMIGnMIGkBggrBgEFBQcCAjCBlx6BlABUAGgAaQBz&#13;
+                    ACAAaQBzACAAYQAgAHQAZQBzAHQAIABjAGUAcgB0AGkAZgBpAGMAYQB0AGUALgAgAEkAdAAgAHMA&#13;
+                    aABvAHUAbABkACAAbgBvAHQAIABiAGUAIAB1AHMAZQBkACAAZgBvAHIAIABvAHAAZQByAGEAdABp&#13;
+                    AG8AbgBhAGwAIABwAHUAcgBwAG8AcwBlAHMwOgYDVR0fBDMwMTAvoC2gK4YpaHR0cDovL2VoYWNj&#13;
+                    LnRzcC56ZXRlcy5jb20vemNwdHBraXJjYS5jcmwwHQYDVR0OBBYEFCDr7Ll0LZohZ16fm+HX9QMk&#13;
+                    Bv4AMA4GA1UdDwEB/wQEAwIBBjANBgkqhkiG9w0BAQsFAAOCAgEAbFXn+Nf8nh6HOM5wUGHQZkOT&#13;
+                    fXZRHMHc18r8ofyyXCtaGB4kRQH54bzlv36yjSNDK52tfuVjOKFp/39zP1H9hXazblG4Knu6tg9/&#13;
+                    5IoZld0zYM6/cFWv23LBrBGZ/tuC/5KZ5ohRR2FX3TssiZXqFGJ0HSOfTJ0ryZwTtHvicG4zLCoC&#13;
+                    HH6OIZNFH3E/VX0Iz7RdvtMgdGW5VjrvqtFFkcsHCULZSy2JyBwpj6nZ+tp0XEL9gqOBHM1sZt/l&#13;
+                    2Vngw1NvWX6n0KkM6gJRnglRitQga637E4+20KGYEWAGmbQqWgP4iAtLQDSBivhSTasZYAdBQAKT&#13;
+                    N423P5sja9/zEamZhGZHzarCZX45n5PFb3v7/eCIMX76+oP+kKk6qwJyOVoBqlsBnFvJwpPRtAbC&#13;
+                    KOTLTFOF2ltJ1XqwaTxSOr/TQ5cq/Hetugr5uJurq6Z/3QY/H6CzaFZ6W+8Rp5KdCE950swlCTLN&#13;
+                    piOGbIxQ0J+wmaa4fFaExhEOIK1WSvXaZVdDmMJKpjYQ1STnw2L6Kbw1xs4Hj34sYqcnNkkbaoGO&#13;
+                    HEsawku0FGWnXLrDetsjGeP3JzPrFSv0BJMcfu7CRpNCqRSuq2szsRaVnF+DGJmeh+LnLu62R38W&#13;
+                    ZmsTRpQCtd54MMh+UtHWog053oVk8gunK/pZIxYsSRKCnf/AIHg=
+                </ds:X509Certificate>
+            </ds:X509Data>
+        </ds:KeyInfo>
+        <ds:Object>
+            <QualifyingProperties xmlns="http://uri.etsi.org/01903/v1.3.2#" Target="#xmldsig-4fa9d5fe-7c20-4b5b-8919-857ec28e3e2b">
+                <SignedProperties Id="xmldsig-fca9d6f2-0eeb-4e0b-9add-1757802d3beb-xades-signedprops">
+                    <SignedSignatureProperties>
+                        <SigningTime>2020-09-22T12:21:18.380+02:00</SigningTime>
+                        <SigningCertificate>
+                            <Cert>
+                                <CertDigest>
+                                    <ns2:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                                    <ns2:DigestValue>n7OhkjX5ro8N8d7BRMX7KP+DZGNc43G4ehimmHY+kVI=</ns2:DigestValue>
+                                </CertDigest>
+                                <IssuerSerial>
+                                    <ns2:X509IssuerName>CN=TEST-ZetesConfidens-eHealth acceptance test-issuing CA 001,2.5.4.5=#1303303031,O=ZETES SA,C=BE</ns2:X509IssuerName>
+                                    <ns2:X509SerialNumber>2207967798247647757</ns2:X509SerialNumber>
+                                </IssuerSerial>
+                            </Cert>
+                        </SigningCertificate>
+                    </SignedSignatureProperties>
+                </SignedProperties>
+            </QualifyingProperties>
+        </ds:Object>
+    </ds:Signature>
+</ServiceList>

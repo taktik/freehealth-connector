@@ -56,7 +56,7 @@ public final class EndpointUpdater {
       String onlineSha2 = ConnectorIOUtils.getResourceAsString(endpoint + ".sha2");
       String content = ConnectorIOUtils.getResourceAsString(endpoint + ".xml");
       if (!update(content)) {
-         InputStream serviceListStream = EndpointUpdater.class.getResourceAsStream("/servicelist.xml");
+         InputStream serviceListStream = EndpointUpdater.class.getResourceAsStream(config.getProperty("servicelist.fallback.resourcelocation"));
          try {
             EndpointDistributor.getInstance().update(StatusPageParser.parse(IOUtils.toString(serviceListStream, UTF_8)));
          } catch (IOException e) {
