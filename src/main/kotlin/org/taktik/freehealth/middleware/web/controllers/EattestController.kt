@@ -31,12 +31,13 @@ import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
 import org.taktik.freehealth.middleware.service.EattestService
+import org.taktik.freehealth.middleware.service.EattestV2Service
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/eattest")
-class EattestController(val eattestService: EattestService) {
+class EattestController(val eattestService: EattestV2Service) {
     @PostMapping("/send/{patientSsin}/verbose", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendAttestWithResponse(
         @PathVariable patientSsin: String,
@@ -60,7 +61,7 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam(required = false) guardPostSsin: String?,
         @RequestParam(required = false) guardPostName: String?,
         @RequestBody attest: Eattest
-    ) = eattestService.sendAttest(
+    ) = eattestService.sendAttestV2(
         keystoreId,
         tokenId,
         hcpNihii,
@@ -68,6 +69,7 @@ class EattestController(val eattestService: EattestService) {
         hcpFirstName,
         hcpLastName,
         hcpCbe,
+        "",
         traineeSupervisorSsin,
         traineeSupervisorNihii,
         traineeSupervisorFirstName,
@@ -107,7 +109,7 @@ class EattestController(val eattestService: EattestService) {
         @RequestParam(required = false) guardPostSsin: String?,
         @RequestParam(required = false) guardPostName: String?,
         @RequestBody attest: Eattest
-    ): SendAttestResult? = eattestService.sendAttest(
+    ): SendAttestResult? = eattestService.sendAttestV2(
         keystoreId,
         tokenId,
         hcpNihii,
@@ -115,6 +117,7 @@ class EattestController(val eattestService: EattestService) {
         hcpFirstName,
         hcpLastName,
         hcpCbe,
+        "",
         traineeSupervisorSsin,
         traineeSupervisorNihii,
         traineeSupervisorFirstName,
