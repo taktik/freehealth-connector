@@ -283,7 +283,13 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             msgQuery = MsgQuery().apply {
                 isInclude = true
                 max = 100
-                messageNames?.let { this.messageNames.addAll(it) }
+
+                if (messageNames.isNullOrEmpty()) {
+                    this.messageNames.add("MDA")
+                }
+                else {
+                    messageNames.let { this.messageNames.addAll(it) }
+                }
             }
             tAckQuery = Query().apply {
                 isInclude = true
