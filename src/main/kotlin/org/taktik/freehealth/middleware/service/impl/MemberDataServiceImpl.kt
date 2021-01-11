@@ -530,7 +530,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for Genins operations")
+                ?: throw MissingTokenException("Cannot obtain token for MDA operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
@@ -540,7 +540,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         assert(patientSsin != null || io != null && ioMembership != null)
 
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+        val packageInfo = McnConfigUtil.retrievePackageInfo("memberdata", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
         log.info("getMemberData called with principal " + (principal?._id
             ?: "<ANONYMOUS>") + " and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
@@ -561,7 +561,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val request = MemberDataConsultationRequest().apply {
             commonInput = CommonInputType().apply {
                 request =
-                    RequestType().apply { isIsTest = true /*config.getProperty("endpoint.genins")?.contains("-acpt") ?: false*/ }
+                    RequestType().apply { isIsTest = config.getProperty("endpoint.memberdata").contains("-acpt") }
                 inputReference = inputRef
                 origin = OriginType().apply {
                     `package` = PackageType().apply {
