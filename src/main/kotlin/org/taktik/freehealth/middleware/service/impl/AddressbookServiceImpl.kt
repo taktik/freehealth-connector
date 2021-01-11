@@ -51,17 +51,27 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
-        queryLastName: String,
+        queryLastName: String?,
         queryFirstName: String?,
-        type: String
+        queryEmailAddress: String?,
+        queryZipCode: String?,
+        queryCity: String?,
+        type: String,
+        limit: Int
     ): List<HealthcareParty> {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Addressbook operations")
         val searchProfessionals =
             freehealthTokenAddressbookService.searchProfessionals(samlToken, SearchProfessionalsRequest().apply {
-                firstName = queryFirstName; lastName = queryLastName; issueInstant = DateTime.now(); profession = type
-                offset = 0; maxElements = 100
+                firstName = queryFirstName
+                lastName = queryLastName
+                eMail = queryEmailAddress
+                zipCode = queryZipCode
+                city = queryCity
+                issueInstant = DateTime.now()
+                profession = if (queryEmailAddress != null) null else type
+                offset = 0; maxElements = limit
             })
         return searchProfessionals.healthCareProfessionals.filter {
             queryFirstName == null || it.firstName != null && it.firstName.startsWith(
