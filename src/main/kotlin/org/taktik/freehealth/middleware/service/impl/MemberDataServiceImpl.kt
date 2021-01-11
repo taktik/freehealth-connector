@@ -656,6 +656,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             MemberDataResponse(
                 it.assertions,
                 MdaStatus(code1, code2),
+                issuer = it.response.issuer,
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse =
                         MarshallerHelper(Response::class.java, Response::class.java).toXMLByteArray(it.response)
