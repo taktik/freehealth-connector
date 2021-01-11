@@ -48,7 +48,6 @@ interface MemberDataService {
     fun sendMemberDataRequest(
         keystoreId: UUID,
         tokenId: UUID,
-        hcpQuality: String,
         hcpNihii: String,
         hcpName: String,
         requestType: String = "information",

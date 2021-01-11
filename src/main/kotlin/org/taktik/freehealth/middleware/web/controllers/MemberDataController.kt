@@ -205,7 +205,6 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         return memberDataService.sendMemberDataRequest(
             keystoreId = keystoreId,
             tokenId = tokenId,
-            hcpQuality = hcpQuality ?: "medicalhouse",
             hcpNihii = hcpNihii,
             hcpName = hcpName,
             startDate = startDate,

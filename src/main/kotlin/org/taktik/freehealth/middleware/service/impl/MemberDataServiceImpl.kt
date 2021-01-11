@@ -159,7 +159,6 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
     override fun sendMemberDataRequest(
         keystoreId: UUID,
         tokenId: UUID,
-        hcpQuality: String,
         hcpNihii: String,
         hcpName: String,
         requestType: String,
@@ -170,12 +169,13 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         mdaRequest: MemberDataBatchRequest
     ): GenAsyncResponse {
         val encryptRequest = false
-        validateQuality(hcpQuality)
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for MDA operations")
 
-        val istest = config.getProperty("endpoint.dmg.notification.v1").contains("-acpt")
+        validateQuality(samlToken.quality)
+
+        val istest = config.getProperty("endpoint.genericasync.mda.v1").contains("pilot.")
         val author = makeAuthor(hcpNihii, hcpName)
         val inputReference = IdGeneratorFactory.getIdGenerator().generateId()//.let { if (istest) "T" + it.substring(1) else it }
         val now = DateTime().withMillisOfSecond(0)
@@ -183,8 +183,6 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
-        val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
         val postHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:post:msg")).apply {
             faultTo = "http://www.w3.org/2005/08/addressing/anonymous"
@@ -244,30 +242,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             request = be.cin.mycarenet.esb.common.v2.RequestType().apply {
                 isIsTest = istest!!
             }
-            origin = OrigineType().apply {
-                `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
-                    license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
-                        username = packageInfo.userName
-                        password = packageInfo.password
-                    }
-                    name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = packageInfo.packageName }
-                }
-                careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
-                    nihii =
-                        be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                            quality = hcpQuality; value =
-                            be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
-                        }
-
-                    organization = be.cin.mycarenet.esb.common.v2.IdType().apply {
-                        nihii =
-                            be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                                quality = hcpQuality; value =
-                                be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
-                            }
-                    }
-                }
-            }
+            origin = buildOriginType(samlToken.quality, hcpNihii, hcpName)
 
             this.inputReference = inputReference
         }
@@ -314,7 +289,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 isInclude = true
                 max = 100
             }
-            origin = buildOriginType(hcpNihii, hcpName)
+            origin = buildOriginType(samlToken.quality, hcpNihii, hcpName)
         }
 
         val response = genAsyncService.getRequest(samlToken, get, getHeader)
@@ -452,7 +427,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
 
         val confirm = Confirm()
-        confirm.origin = buildOriginType(hcpNihii, hcpName)
+        confirm.origin = buildOriginType(samlToken.quality, hcpNihii, hcpName)
         confirm.msgRefValues.addAll(mdaMessagesReference)
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
@@ -471,7 +446,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
         val confirm =
             BuilderFactory.getRequestObjectBuilder("mda")
-                .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpName),
+                .buildConfirmRequestWithHashes(buildOriginType(samlToken.quality, hcpNihii, hcpName),
                     listOf(),
                     mdaAcksHashes.map { valueHash -> Base64.getDecoder().decode(valueHash) })
 
@@ -480,24 +455,52 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         return true
     }
 
+    private fun buildOriginType(hcpQuality: String, hcpNihii: String, hcpName: String): OrigineType {
+        val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+        val packageInfo = McnConfigUtil.retrievePackageInfo("genericasync.mda", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
-    private fun buildOriginType(hcpNihii: String, hcpName: String): OrigineType =
-        OrigineType().apply {
+        return OrigineType().apply {
             `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
-                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.dmg.package.name") }
+                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.mda.package.name") }
                 license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
-                    username = config.getProperty("mycarenet.license.username")
-                    password = config.getProperty("mycarenet.license.password")
+                    username = packageInfo.userName
+                    password = packageInfo.password
                 }
+                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = packageInfo.packageName }
             }
             careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
-                this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                    quality = "medicalhouse"
-                    value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
+                if (hcpQuality == "guardpost" || hcpQuality == "medicalhouse") {
+                    nihii =
+                        be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                            quality = hcpQuality
+                            value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                        }
+                    organization = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                        name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpName }
+                        nihii =
+                            be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                                quality = hcpQuality
+                                value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                            }
+                    }
+                } else {
+                    nihii =
+                        be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                            quality = hcpQuality
+                            value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
+                        }
+                    physicalPerson = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                        name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpName }
+                        nihii =
+                            be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                                quality = hcpQuality
+                                value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
+                            }
+                    }
                 }
             }
         }
-
+    }
 
     override fun getMemberData(
         keystoreId: UUID,
