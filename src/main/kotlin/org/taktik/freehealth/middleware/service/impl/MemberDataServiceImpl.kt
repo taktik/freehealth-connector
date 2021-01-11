@@ -165,7 +165,6 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         startDate: Instant,
         endDate: Instant,
         passPhrase: String,
-        hospitalized: Boolean?,
         mdaRequest: MemberDataBatchRequest
     ): GenAsyncResponse {
         val encryptRequest = false
@@ -178,7 +177,6 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val istest = config.getProperty("endpoint.genericasync.mda.v1").contains("pilot.")
         val author = makeAuthor(hcpNihii, hcpName)
         val inputReference = IdGeneratorFactory.getIdGenerator().generateId()//.let { if (istest) "T" + it.substring(1) else it }
-        val now = DateTime().withMillisOfSecond(0)
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
@@ -240,7 +238,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val ci = CommonInput().apply {
             request = be.cin.mycarenet.esb.common.v2.RequestType().apply {
-                isIsTest = istest!!
+                isIsTest = istest
             }
             origin = buildOriginType(samlToken.quality, hcpNihii, hcpName)
 

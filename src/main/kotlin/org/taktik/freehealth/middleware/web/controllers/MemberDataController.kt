@@ -197,7 +197,6 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) endDate: Long?,
-        @RequestParam(required = false) hospitalized: Boolean?,
         @RequestParam(required = false) requestType: String?,
         @RequestBody mdaRequest: MemberDataBatchRequestDto
                              ): GenAsyncResponse {
@@ -210,7 +209,6 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
             startDate = startDate,
             endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
             passPhrase = passPhrase,
-            hospitalized = hospitalized,
             requestType = requestType ?: "information",
             mdaRequest = mapper.map(mdaRequest, MemberDataBatchRequest::class.java)
                                                       )
