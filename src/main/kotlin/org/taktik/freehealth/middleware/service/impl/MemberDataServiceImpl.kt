@@ -374,7 +374,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                                 inResponseTo = it.inResponseTo,
                                 issuer = it.issuer.value,
                                 responseId = it.id
-                            )
+                            ).apply {
+                                this.myCarenetErrors += extractErrors(status, this.errors)
+                            }
                         },
                         valueHash = it.detail?.hashValue?.let { b64.encodeToString(it)}
                     )
@@ -865,6 +867,35 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             }
             result
         } ?: setOf()
+    }
+
+    private fun extractErrors(status: MdaStatus?, faultTypes: List<FaultType>?): List<MycarenetError>  {
+        val mycarenetErrors = mutableListOf<MycarenetError>()
+
+        faultTypes?.forEach { faultType ->
+            faultType.details.details.forEach { detail ->
+                var errors = MemberDataErrors.values.filter {
+                    it.code == status?.code1
+                        && (status?.code2 == null || it.subCode == status.code2)
+                        && it.faultCode == faultType.faultCode
+                        && it.detailCode == detail.detailCode
+                }
+
+                if (errors.isNotEmpty()) {
+                    mycarenetErrors.addAll(errors)
+                } else {
+                    mycarenetErrors.add(MycarenetError(
+                        code = status?.code1,
+                        subCode = status?.code2,
+                        path = detail.location,
+                        msgFr = "Erreur générique, xpath invalide",
+                        msgNl = "Onbekend foutmelding, xpath ongeldig"
+                    ))
+                }
+            }
+        }
+
+        return mycarenetErrors
     }
 
     private fun extractError(e: javax.xml.ws.soap.SOAPFaultException): Set<MycarenetError> {
