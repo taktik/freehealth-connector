@@ -23,7 +23,7 @@ public class StatusResponseType extends ResponseType implements Serializable {
    )
    protected Status status;
 
-   public Status getStatus() {
+   public StatusResponseType getStatus() {
       return this.status;
    }
 
