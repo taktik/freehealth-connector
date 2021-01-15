@@ -25,7 +25,7 @@ interface ConsultRnV2Service {
         middleName: String? = null,
         gender: String = "UNKNOWN",
         countryCode: Int = 0,
-        cityCode: Int = 0,
+        cityCode: String ? = null,
         tolerance: Int = 0,
         limit: Int = 20
     ) : SearchPersonPhoneticallyResponse
