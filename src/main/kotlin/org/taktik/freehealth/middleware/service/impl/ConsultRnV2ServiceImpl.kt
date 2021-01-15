@@ -2,6 +2,8 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinRequest
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinResponse
+import be.fgov.ehealth.rn.baselegaldata.v1.GenderCodeType
+import be.fgov.ehealth.rn.baselegaldata.v1.GivenNameType
 import be.fgov.ehealth.rn.cbsspersonlegaldata.v1.CbssPersonRequestType
 import be.fgov.ehealth.rn.cbsspersonservice.core.v1.RegisterPersonDeclarationType
 import be.fgov.ehealth.rn.cbsspersonservice.protocol.v1.RegisterPersonRequest
@@ -23,8 +25,10 @@ import org.springframework.stereotype.Service
 import org.taktik.connector.business.consultrnv2.exception.inscriptionservice.CbssPersonServiceException
 import org.taktik.connector.business.consultrnv2.exception.personservice.SearchPersonBySsinException
 import org.taktik.connector.business.consultrnv2.exception.personservice.SearchPersonPhoneticallyException
+import org.taktik.connector.business.consultrnv2.exception.ssinInformationservice.ConsultCurrentSsinException
 import org.taktik.connector.business.consultrnv2.service.impl.ConsultrnCBSSPersonServiceImpl
 import org.taktik.connector.business.consultrnv2.service.impl.ConsultrnPersonServiceImpl
+import org.taktik.connector.business.domain.chapter4.AgreementTransaction
 import org.taktik.connector.business.ssinhistory.service.impl.SsinHistoryTokenServiceImpl
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
@@ -74,7 +78,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 criteria = SearchPersonPhoneticallyCriteriaType().apply {
                     this.name = PhoneticName().apply {
                         this.lastName = lastName
-                        this.givenNames //todo
+                        this.givenNames//todo
                     }
 
                     this.birth = PhoneticBirth().apply {
@@ -82,7 +86,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                     }
 
                     this.gender = PhoneticGender().apply {
-                        this.genderCode //todo
+                        this.genderCode
                     }
 
                     this.address = PhoneticAddress().apply {
@@ -122,6 +126,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
         }
 
     }
+
     override fun consultCurrentSsin(keystoreId: UUID, tokenId: UUID, passPhrase: String, ssin: String): ConsultCurrentSsinResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -131,8 +136,8 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
             id = "ID${System.currentTimeMillis()}"
             issueInstant = DateTime.now()
             this.ssin = ssin
-        })}catch (ex: ){
-
+        })}catch (ex: ConsultCurrentSsinException){
+            ex.consultCurrentSsinResponse
         }
     }
 }
