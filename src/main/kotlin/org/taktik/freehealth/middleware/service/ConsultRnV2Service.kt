@@ -23,11 +23,11 @@ interface ConsultRnV2Service {
         lastName: String,
         firstName: String? = null,
         middleName: String? = null,
-        gender: String = "UNKNOWN",
-        countryCode: Int = 0,
+        gender: String? = "UNKNOWN",
+        countryCode: Int? = 0,
         cityCode: String ? = null,
-        tolerance: Int = 0,
-        limit: Int = 20
+        tolerance: Int? = 0,
+        limit: Int? = 20
     ) : SearchPersonPhoneticallyResponse
 
     fun registerPerson(
