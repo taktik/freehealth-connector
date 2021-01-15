@@ -1,7 +1,6 @@
 package org.taktik.connector.business.consultrnv2.exception.inscriptionservice;
 
 import be.fgov.ehealth.rn.cbsspersonservice.protocol.v1.RegisterPersonResponse;
-import be.fgov.ehealth.rn.personservice.protocol.v1.SearchPersonBySsinResponse;
 import org.taktik.connector.business.common.exception.EhealthServiceV2Exception;
 
 public class CbssPersonServiceException extends EhealthServiceV2Exception {

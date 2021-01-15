@@ -12,7 +12,6 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
 import org.taktik.connector.technical.validator.EhealthReplyValidator;
-import org.taktik.connector.technical.validator.SessionValidator;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 
 public class ConsultrnPersonServiceImpl implements ConsultrnPersonService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
@@ -20,8 +19,8 @@ public class ConsultrnPersonServiceImpl implements ConsultrnPersonService, Confi
    private static final String SOAP_ACTION_SEARCH_PERSON_PHONETICALLY = "urn:be:fgov:ehealth:rn:personservice:protocol:v1:searchPersonPhonetically";
    private ConsultrnService service;
 
-   public ConsultrnPersonServiceImpl(SessionValidator sessionValidator, EhealthReplyValidator replyValidator) {
-      this.service = new ConsultrnService(sessionValidator, replyValidator);
+   public ConsultrnPersonServiceImpl(EhealthReplyValidator replyValidator) {
+      this.service = new ConsultrnService(replyValidator);
    }
 
    public void bootstrap() {

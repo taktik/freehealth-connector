@@ -10,15 +10,14 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
 import org.taktik.connector.technical.validator.EhealthReplyValidator;
-import org.taktik.connector.technical.validator.SessionValidator;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 
 public class ConsultrnCBSSPersonServiceImpl implements ConsultrnCBSSPersonService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
    private static final String SOAP_ACTION_REGISTER_PERSON = "urn:be:fgov:ehealth:rn:cbsspersonservice:protocol:v1:registerPerson";
    private ConsultrnService service;
 
-   public ConsultrnCBSSPersonServiceImpl(SessionValidator sessionValidator, EhealthReplyValidator replyValidator) {
-      this.service = new ConsultrnService(sessionValidator, replyValidator);
+   public ConsultrnCBSSPersonServiceImpl(EhealthReplyValidator replyValidator) {
+      this.service = new ConsultrnService(replyValidator);
    }
 
    public void bootstrap() {

@@ -6,7 +6,6 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.validator.EhealthReplyValidator;
-import org.taktik.connector.technical.validator.SessionValidator;
 import org.taktik.connector.technical.ws.ServiceFactory;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import org.taktik.connector.technical.ws.domain.GenericResponse;
@@ -14,17 +13,14 @@ import org.taktik.connector.technical.ws.domain.GenericResponse;
 import javax.xml.soap.SOAPException;
 
 public class ConsultrnService {
-   private SessionValidator sessionValidator;
    private EhealthReplyValidator replyValidator;
 
-   public ConsultrnService(SessionValidator sessionValidator, EhealthReplyValidator replyValidator) {
-      this.sessionValidator = sessionValidator;
+   public ConsultrnService(EhealthReplyValidator replyValidator) {
       this.replyValidator = replyValidator;
    }
 
    public <T extends StatusResponseType> T doOperation(GenericRequest service, SAMLToken token, Object request, String soapAction, Class<T> clazz) throws TechnicalConnectorException {
       try {
-         this.sessionValidator.validateToken(token);
          service.setPayload(request);
          GenericResponse wsResponse = ServiceFactory.getGenericWsSender().send(service);
          T response = wsResponse.asObject(clazz);
