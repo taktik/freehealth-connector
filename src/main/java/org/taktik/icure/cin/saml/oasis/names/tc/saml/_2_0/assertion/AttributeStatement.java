@@ -54,7 +54,7 @@ public class AttributeStatement
         @XmlElement(name = "Attribute", type = Attribute.class),
         @XmlElement(name = "EncryptedAttribute", type = EncryptedElementType.class)
     })
-    protected List<Serializable> attributesAndEncryptedAttributes;
+    protected List<AttributeOrEncryptedAttribute> attributesAndEncryptedAttributes;
 
     /**
      * Gets the value of the attributesAndEncryptedAttributes property.
@@ -79,9 +79,9 @@ public class AttributeStatement
      *
      *
      */
-    public List<Serializable> getAttributesAndEncryptedAttributes() {
+    public List<AttributeOrEncryptedAttribute> getAttributesAndEncryptedAttributes() {
         if (attributesAndEncryptedAttributes == null) {
-            attributesAndEncryptedAttributes = new ArrayList<Serializable>();
+            attributesAndEncryptedAttributes = new ArrayList<AttributeOrEncryptedAttribute>();
         }
         return this.attributesAndEncryptedAttributes;
     }
