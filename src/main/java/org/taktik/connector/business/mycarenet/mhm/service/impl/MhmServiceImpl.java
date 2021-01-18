@@ -13,7 +13,6 @@ import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValue
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
 import org.taktik.connector.technical.validator.EhealthReplyValidator;
-import org.taktik.connector.technical.validator.SessionValidator;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import org.taktik.connector.technical.ws.domain.GenericResponse;
 
@@ -21,11 +20,8 @@ import javax.xml.soap.SOAPException;
 
 public class MhmServiceImpl implements MhmService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
    private static final Logger LOG = LoggerFactory.getLogger(MhmServiceImpl.class);
-   private SessionValidator sessionValidator;
 
-   public MhmServiceImpl(SessionValidator sessionValidator, EhealthReplyValidator replyValidator) {
-      this.sessionValidator = sessionValidator;
-   }
+   public MhmServiceImpl(EhealthReplyValidator replyValidator) { }
 
    public MhmServiceImpl() {
       LOG.debug("creating AttestServiceImpl for bootstrapping purposes");
@@ -33,7 +29,6 @@ public class MhmServiceImpl implements MhmService, ConfigurationModuleBootstrap.
 
    public final SendSubscriptionResponse sendSubscription(SAMLToken token, SendRequestType request) throws TechnicalConnectorException {
       try {
-         this.sessionValidator.validateToken(token);
          GenericRequest service = ServiceFactory.getSubscriptionPort(token);
          service.setPayload(request);
          GenericResponse xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service);

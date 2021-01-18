@@ -65,7 +65,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
 
     }
 
-    override fun searchPersonPhonetically(keystoreId: UUID, tokenId: UUID, passPhrase: String, dateOfBirth: Int, lastName: String, firstName: String?, middleName: String?, gender: String, countryCode: Int, cityCode: String?, tolerance: Int, limit: Int): SearchPersonPhoneticallyResponse {
+    override fun searchPersonPhonetically(keystoreId: UUID, tokenId: UUID, passPhrase: String, dateOfBirth: Int, lastName: String, firstName: String?, middleName: String?, gender: String?, countryCode: Int?, cityCode: String?, tolerance: Int?, limit: Int?): SearchPersonPhoneticallyResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Rn consult operations")
@@ -91,7 +91,9 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
 
                     this.address = PhoneticAddress().apply {
                         this.cityCode = cityCode
-                        this.countryCode = countryCode
+                        if (countryCode != null) {
+                            this.countryCode = countryCode
+                        }
                     }
 
                     this.maximumResultCount = limit

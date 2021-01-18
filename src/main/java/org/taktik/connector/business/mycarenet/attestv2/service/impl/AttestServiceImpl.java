@@ -8,7 +8,6 @@ import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValue
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
 import org.taktik.connector.technical.validator.EhealthReplyValidator;
-import org.taktik.connector.technical.validator.SessionValidator;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import org.taktik.connector.technical.ws.domain.GenericResponse;
 import be.fgov.ehealth.mycarenet.attest.protocol.v2.CancelAttestationRequest;
@@ -22,10 +21,9 @@ import org.slf4j.LoggerFactory;
 
 public class AttestServiceImpl implements AttestService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
    private static final Logger LOG = LoggerFactory.getLogger(AttestServiceImpl.class);
-   private SessionValidator sessionValidator;
 
-   public AttestServiceImpl(SessionValidator sessionValidator, EhealthReplyValidator replyValidator) {
-      this.sessionValidator = sessionValidator;
+   public AttestServiceImpl(EhealthReplyValidator replyValidator) {
+
    }
 
    public AttestServiceImpl() {
@@ -34,7 +32,6 @@ public class AttestServiceImpl implements AttestService, ConfigurationModuleBoot
 
    public final SendAttestationResponse sendAttestion(SAMLToken token, SendRequestType request) throws TechnicalConnectorException {
       try {
-         this.sessionValidator.validateToken(token);
          GenericRequest service = ServiceFactory.getAttestPort(token);
          service.setPayload((Object)request);
          GenericResponse xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service);
@@ -46,7 +43,6 @@ public class AttestServiceImpl implements AttestService, ConfigurationModuleBoot
 
    public CancelAttestationResponse cancelAttestion(SAMLToken token, SendRequestType request) throws TechnicalConnectorException {
       try {
-         this.sessionValidator.validateToken(token);
          GenericRequest service = ServiceFactory.getAttestPort(token);
          service.setPayload((Object)request);
          GenericResponse xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service);

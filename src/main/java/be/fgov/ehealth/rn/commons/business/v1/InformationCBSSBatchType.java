@@ -1,6 +1,5 @@
 package be.fgov.ehealth.rn.commons.business.v1;
 
-import be.ehealth.technicalconnector.adapter.XmlDateTimeAdapter;
 import java.io.Serializable;
 import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -10,6 +9,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.joda.time.DateTime;
+import org.taktik.connector.technical.adapter.XmlDateTimeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(

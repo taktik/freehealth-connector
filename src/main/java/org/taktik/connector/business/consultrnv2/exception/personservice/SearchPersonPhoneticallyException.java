@@ -1,6 +1,5 @@
 package org.taktik.connector.business.consultrnv2.exception.personservice;
 
-import be.fgov.ehealth.commons.protocol.v2.StatusResponseType;
 import be.fgov.ehealth.rn.personservice.protocol.v1.SearchPersonPhoneticallyResponse;
 import org.taktik.connector.business.common.exception.EhealthServiceV2Exception;
 
@@ -9,7 +8,7 @@ public class SearchPersonPhoneticallyException extends EhealthServiceV2Exception
     private final SearchPersonPhoneticallyResponse searchPersonPhoneticallyResponse;
 
     public SearchPersonPhoneticallyException(SearchPersonPhoneticallyResponse response){
-        super(response.getStatus());
+        super(response);
         this.searchPersonPhoneticallyResponse = response;
     }
     public SearchPersonPhoneticallyResponse getSearchPersonPhoneticallyResponse() { return searchPersonPhoneticallyResponse; }

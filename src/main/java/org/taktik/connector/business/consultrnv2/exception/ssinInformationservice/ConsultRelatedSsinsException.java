@@ -8,7 +8,7 @@ public class ConsultRelatedSsinsException extends EhealthServiceV2Exception {
     private final ConsultRelatedSsinsResponse consultRelatedSsinsResponse;
 
     public ConsultRelatedSsinsException(ConsultRelatedSsinsResponse response){
-        super(response.getStatus());
+        super(response);
         this.consultRelatedSsinsResponse = response;
     }
 

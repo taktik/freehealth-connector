@@ -18,7 +18,7 @@ import java.util.*
 @RequestMapping("/consultrnv2")
 class ConsultrnV2Controller(val consultRnV2Service: ConsultRnV2Service, val mapper: MapperFacade){
 
-    @GetMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @GetMapping("/bySsin/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun searchPersonBySsin(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -31,7 +31,7 @@ class ConsultrnV2Controller(val consultRnV2Service: ConsultRnV2Service, val mapp
         ssin
     )
 
-    @GetMapping("/{dateOfBirth}/{lastName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    @GetMapping("/phonetically/{dateOfBirth}/{lastName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun searchPersonPhonetically(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,

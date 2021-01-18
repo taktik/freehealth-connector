@@ -8,7 +8,7 @@ public class CbssPersonServiceException extends EhealthServiceV2Exception {
     private final RegisterPersonResponse registerPersonResponse;
 
     public CbssPersonServiceException(RegisterPersonResponse response){
-        super(response.getStatus());
+        super(response);
         this.registerPersonResponse = response;
     }
 

@@ -54,7 +54,6 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.MarshallerHelper
-import org.taktik.connector.technical.validator.SessionValidator
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
