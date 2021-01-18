@@ -914,7 +914,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                         cds.add(CDCONTENT().apply {
                                             s =
                                                 CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                            "NIHDI-CLAIM-NORM"; value = code.norm.toString()
+                                            "NIHDI-CLAIM-NORM"; value = code.requestorNorm.toString()
                                         })
                                     },
                                     code.relativeService?.let {
