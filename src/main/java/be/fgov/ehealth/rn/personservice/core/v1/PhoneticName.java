@@ -21,7 +21,8 @@ public class PhoneticName implements Serializable {
    )
    protected String lastName;
    @XmlElement(
-      name = "GivenName"
+      name = "GivenName",
+      required = true
    )
    protected List givenNames;
    @XmlElement(

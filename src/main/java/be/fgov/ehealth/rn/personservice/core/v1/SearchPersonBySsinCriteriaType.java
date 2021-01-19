@@ -1,6 +1,5 @@
 package be.fgov.ehealth.rn.personservice.core.v1;
 
-import be.fgov.ehealth.rn.commons.v1.SsinType;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -18,13 +17,13 @@ public class SearchPersonBySsinCriteriaType implements Serializable {
       name = "Ssin",
       required = true
    )
-   protected SsinType ssin;
+   protected String ssin;
 
-   public SsinType getSsin() {
+   public String getSsin() {
       return this.ssin;
    }
 
-   public void setSsin(SsinType value) {
+   public void setSsin(String value) {
       this.ssin = value;
    }
 }

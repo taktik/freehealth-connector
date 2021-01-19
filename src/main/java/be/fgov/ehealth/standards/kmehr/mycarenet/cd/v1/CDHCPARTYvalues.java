@@ -248,7 +248,17 @@ public enum CDHCPARTYvalues {
    @XmlEnumValue("persclinicalpsychologist")
    PERSCLINICALPSYCHOLOGIST("persclinicalpsychologist"),
    @XmlEnumValue("persclinicalorthopedagogist")
-   PERSCLINICALORTHOPEDAGOGIST("persclinicalorthopedagogist");
+   PERSCLINICALORTHOPEDAGOGIST("persclinicalorthopedagogist"),
+   @XmlEnumValue("orgretirementhome")
+   ORGRETIREMENTHOME("orgretirementhome"),
+   @XmlEnumValue("orgrevalidationcenter")
+   ORGREVALIDATIONCENTER("orgrevalidationcenter"),
+   @XmlEnumValue("orgshelteredliving")
+   ORGSHELTEREDLIVING("orgshelteredliving"),
+   @XmlEnumValue("orgpsychiatriccarehome")
+   ORGPSYCHIATRICCAREHOME("orgpsychiatriccarehome"),
+   @XmlEnumValue("orgpolyclinic")
+   ORGPOLYCLINIC("orgpolyclinic");
 
    private final String value;
 

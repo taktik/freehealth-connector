@@ -3,7 +3,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:rn:personservice:core:v1" 
            targetNamespace="urn:be:fgov:ehealth:rn:personservice:core:v1" 
            xmlns:base="urn:be:fgov:ehealth:rn:baselegaldata:v1" 
-           xmlns:co="urn:be:fgov:ehealth:rn:commons:v1" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2"
+           xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2"
 		   xmlns:coc="urn:be:fgov:ehealth:rn:commons:business:v1" 
            xmlns:person="urn:be:fgov:ehealth:rn:personlegaldata:v1" elementFormDefault="qualified" 
            attributeFormDefault="unqualified" version="1.0">
@@ -11,17 +11,16 @@
  <xs:appinfo>
  Implementation-Title: xsd-rnconsult-person
  Specification-Version: 1.0
- Implementation-Version: 1.0.0-SNAPSHOT
- Build-Time: 20200302-1719 
+ Implementation-Version: 1.0.5
+ Build-Time: 20200728-1033 
  </xs:appinfo>
  </xs:annotation>
 	<xs:import namespace="urn:be:fgov:ehealth:rn:baselegaldata:v1" schemaLocation="../../ehealth-rn-baselegaldata/XSD/ehealth-rn-baselegaldata-1_0.xsd"/>
-		<xs:import namespace="urn:be:fgov:ehealth:rn:commons:v1" schemaLocation="../../ehealth-rn-common/XSD/ehealth-rn-commons-1_0.xsd"/>
 	<xs:import namespace="urn:be:fgov:ehealth:rn:commons:business:v1" schemaLocation="../../ehealth-rn-common/XSD/ehealth-rn-commons-business-1_0.xsd"/>
 	<xs:import namespace="urn:be:fgov:ehealth:rn:personlegaldata:v1" schemaLocation="../../ehealth-rn-personlegaldata/XSD/ehealth-rn-personlegaldata-1_0.xsd"/>
 	<xs:complexType name="SearchPersonBySsinCriteriaType">
 		<xs:sequence>
-			<xs:element name="Ssin" type="co:SsinType">
+			<xs:element name="Ssin" type="coc:SsinType">
 				<xs:annotation>
 					<xs:documentation>The NR / BIS / RAD / RAN number used to fetch person information</xs:documentation>
 				</xs:annotation>
@@ -41,8 +40,6 @@
 			<xs:element name="maximumResultCount" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:unsignedShort">
-						<xs:minInclusive value="1"/>
-						<xs:maxInclusive value="50"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -62,12 +59,10 @@
 			<xs:element name="LastName">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:minLength value="1"/>
-						<xs:maxLength value="128"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="GivenName" type="base:GivenNameType" minOccurs="0" maxOccurs="3"/>
+			<xs:element name="GivenName" type="base:GivenNameType" minOccurs="1" maxOccurs="3"/>
 			<xs:element name="GivenNameMatching" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>Element specifying the behavior of the searchPersonPhonetically capability.</xs:documentation>
@@ -81,7 +76,6 @@
 			<xs:element name="Variation" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:unsignedShort">
-						<xs:maxInclusive value="99"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

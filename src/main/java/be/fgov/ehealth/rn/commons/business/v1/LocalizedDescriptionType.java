@@ -17,9 +17,10 @@ public class LocalizedDescriptionType implements Serializable {
    @XmlValue
    protected String value;
    @XmlAttribute(
-      name = "Language"
+      name = "lang",
+      namespace = "http://www.w3.org/XML/1998/namespace"
    )
-   protected LanguageType language;
+   protected String lang;
 
    public String getValue() {
       return this.value;
@@ -29,11 +30,11 @@ public class LocalizedDescriptionType implements Serializable {
       this.value = value;
    }
 
-   public LanguageType getLanguage() {
-      return this.language;
+   public String getLang() {
+      return this.lang;
    }
 
-   public void setLanguage(LanguageType value) {
-      this.language = value;
+   public void setLang(String value) {
+      this.lang = value;
    }
 }

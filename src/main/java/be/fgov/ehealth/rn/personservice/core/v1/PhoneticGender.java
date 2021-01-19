@@ -1,11 +1,9 @@
 package be.fgov.ehealth.rn.personservice.core.v1;
 
-import be.fgov.ehealth.rn.baselegaldata.v1.GenderCodeType;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -19,16 +17,13 @@ public class PhoneticGender implements Serializable {
       name = "GenderCode",
       required = true
    )
-   @XmlSchemaType(
-      name = "string"
-   )
-   protected GenderCodeType genderCode;
+   protected String genderCode;
 
-   public GenderCodeType getGenderCode() {
+   public String getGenderCode() {
       return this.genderCode;
    }
 
-   public void setGenderCode(GenderCodeType value) {
+   public void setGenderCode(String value) {
       this.genderCode = value;
    }
 }

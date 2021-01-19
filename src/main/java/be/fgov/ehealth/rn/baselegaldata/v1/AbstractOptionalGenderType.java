@@ -22,10 +22,7 @@ public abstract class AbstractOptionalGenderType implements Serializable {
    @XmlElement(
       name = "GenderCode"
    )
-   @XmlSchemaType(
-      name = "string"
-   )
-   protected GenderCodeType genderCode;
+   protected String genderCode;
    @XmlElement(
       name = "InceptionDate",
       type = String.class
@@ -36,11 +33,11 @@ public abstract class AbstractOptionalGenderType implements Serializable {
    )
    protected DateTime inceptionDate;
 
-   public GenderCodeType getGenderCode() {
+   public String getGenderCode() {
       return this.genderCode;
    }
 
-   public void setGenderCode(GenderCodeType value) {
+   public void setGenderCode(String value) {
       this.genderCode = value;
    }
 

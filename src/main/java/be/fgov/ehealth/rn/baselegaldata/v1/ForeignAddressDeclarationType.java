@@ -55,7 +55,6 @@ public class ForeignAddressDeclarationType implements Serializable {
    protected String boxNumber;
    @XmlElement(
       name = "InceptionDate",
-      required = true,
       type = String.class
    )
    @XmlJavaTypeAdapter(XmlDateAdapter.class)

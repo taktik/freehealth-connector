@@ -1,7 +1,6 @@
 package be.fgov.ehealth.rn.baselegaldata.v1;
 
 import be.fgov.ehealth.rn.registries.commons.v1.AnomaliesType;
-import be.fgov.ehealth.rn.registries.commons.v1.PersonRegisterType;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -51,7 +50,7 @@ public class PersonIdentificationType implements Serializable {
    @XmlAttribute(
       name = "Register"
    )
-   protected PersonRegisterType register;
+   protected String register;
    @XmlAttribute(
       name = "Deceased"
    )
@@ -121,11 +120,11 @@ public class PersonIdentificationType implements Serializable {
       this.anomalies = value;
    }
 
-   public PersonRegisterType getRegister() {
+   public String getRegister() {
       return this.register;
    }
 
-   public void setRegister(PersonRegisterType value) {
+   public void setRegister(String value) {
       this.register = value;
    }
 

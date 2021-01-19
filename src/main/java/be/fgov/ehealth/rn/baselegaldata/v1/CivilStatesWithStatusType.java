@@ -23,7 +23,7 @@ public class CivilStatesWithStatusType implements Serializable {
    @XmlAttribute(
       name = "Status"
    )
-   protected DatagroupStatusType status;
+   protected String status;
 
    public List getCivilStates() {
       if (this.civilStates == null) {
@@ -33,11 +33,11 @@ public class CivilStatesWithStatusType implements Serializable {
       return this.civilStates;
    }
 
-   public DatagroupStatusType getStatus() {
+   public String getStatus() {
       return this.status;
    }
 
-   public void setStatus(DatagroupStatusType value) {
+   public void setStatus(String value) {
       this.status = value;
    }
 }

@@ -11,8 +11,8 @@
  <xs:appinfo>
  Implementation-Title: xsd-rnconsult-person
  Specification-Version: 1.0
- Implementation-Version: 1.0.0-SNAPSHOT
- Build-Time: 20200302-1719 
+ Implementation-Version: 1.0.5
+ Build-Time: 20200728-1033 
  </xs:appinfo>
  </xs:annotation>
 	<xs:annotation/>

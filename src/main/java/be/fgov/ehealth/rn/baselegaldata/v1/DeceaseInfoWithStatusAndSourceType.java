@@ -15,25 +15,25 @@ public class DeceaseInfoWithStatusAndSourceType extends AbstractOptionalDeceaseT
    @XmlAttribute(
       name = "Status"
    )
-   protected DatagroupStatusType status;
+   protected String status;
    @XmlAttribute(
       name = "Source"
    )
-   protected SourceType source;
+   protected String source;
 
-   public DatagroupStatusType getStatus() {
+   public String getStatus() {
       return this.status;
    }
 
-   public void setStatus(DatagroupStatusType value) {
+   public void setStatus(String value) {
       this.status = value;
    }
 
-   public SourceType getSource() {
+   public String getSource() {
       return this.source;
    }
 
-   public void setSource(SourceType value) {
+   public void setSource(String value) {
       this.source = value;
    }
 }

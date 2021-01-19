@@ -1,78 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-====================================================================================================================================
-	* File Name				: CommonV3.xsd
-	* Author					: Johan Kumps - Peter Van den Bosch
-	* Owner					: Crossroad Bank for Social Security (CBSS)
-	* Domain					: CBSS Registries Public Services
-	* Creation Date			: 31-05-2010
-	* Description				: This XML schema document contains a set of Common XML  type definition and content model fragments for use in CBSS webservices and batch file schema definitions within the CBSS domain. 
-	* Revision History		: 09-03-2011  	String2Type added
-	*														LegalContext added
-	*														DescriptionType refactored + lenght constraint 50 changed to 100
-	*														InformationCustomerType.ticket length constraint 32 changed to 36
-	*														LegalContext + IntegrationContext concepts added
-	*														RuntimeFaultType refactored to CBSSFaultType
-	*														Parameters added to BaseRequestType
-	*                                18-10-2011 		removed String100Type 
-   *                                         				Added InformationNotificationCBSS/InformationNotified
-   *                                         				Increased the max number of occurences of Information in CBSSFaultType from 5 to 15
-	*									25-10-2011	Refactored unbounded business errors to 25
-	*														Refactored SSINType to SsinType
-   *                          09-11-2011 Changed namespace to v3
-   *                                         thorough validation leading to modifications: see CBSS common XSD types.doc
-   *                           18-01-2011          informationNotified: identification renamed to notifiedIdentification (consistency)
-   *                                                          CbeNumberType: changed from 9 or 10 digits, to mandatory 10 digits
-  *                                                          added types for euro amounts, enterprise numbers and business unit numbers
- *                                                          Removed status and business anomalies from BaseResponseType, as the request fields should be copied in the same order in the response
-*                                20-03-2012        Renamed BaseDescriptionType to DescriptionType, removed old DescriptionType
-*                                                        Removed DescriptionStyleParametersType
-*                                                        Removed RegisterCharacterSetType
-*                                 29-05-2012           Really remove RegisterCharacterSetType
-*								  14-11-2013		Added InformationCBSSBatchType
-*								  04-09-2014		Added SenderReceiverType
-*								  07-01-2015		Added SequenceNumberType
-*								  03-07-2015		Added NssoRegistrationNumberType
-*                                 11-09-2015      Modified NssoRegistrationNumberType to allow both 9 long as temporary 10 long numbers starting with 51.
-*                                 16-09-2015      Modified NssoRegistrationNumberType to 10 long numbers starting with 51 or with 0.
-*                                 08-02-2016      Added StatusOkType
-*                                 27-09-2016      Added YearQuarterType format yyyyQx, QuarterPeriodType and OpenQuarterPeriodType
-*                                 04-04-2018      Added DataFiltersType
-*                                 27-11-2018      Added LocalizedDescription(s)Type
-*                                 04-01-2019      Added SsinWithCanceledAndReplacesStatusType and SsinWithCanceledAndReplacedByStatusType
-====================================================================================================================================
--->
 <!-- Copyright (c) eHealth -->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:be:fgov:ehealth:rn:commons:business:v1"
-            targetNamespace="urn:be:fgov:ehealth:rn:commons:business:v1" elementFormDefault="unqualified"
+            xmlns:xml="http://www.w3.org/XML/1998/namespace"
+            targetNamespace="urn:be:fgov:ehealth:rn:commons:business:v1" elementFormDefault="qualified"
             attributeFormDefault="unqualified" version="1.0">
  <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
  <xs:appinfo>
  Implementation-Title: xsd-rn-common
  Specification-Version: 1.0
- Implementation-Version: 1.0.0
- Build-Time: 20200302-1433 
+ Implementation-Version: 1.0.3
+ Build-Time: 20200727-1425 
  </xs:appinfo>
  </xs:annotation>
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd" />
 
     <xsd:element name="Message" type="tns:MessageType" />
 
     <!-- Request / response meta data -->
     <xsd:simpleType name="SeverityType">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="INFORMATION"/>
-            <xsd:enumeration value="WARNING"/>
-            <xsd:enumeration value="FATAL"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="UUIDType">
         <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="TicketType">
         <xsd:restriction base="xsd:string">
-            <xsd:maxLength value="36"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="CbeNumberType">
@@ -80,7 +34,6 @@
             <xsd:documentation>CBE number identifying an enterprise or business unit</xsd:documentation>
         </xsd:annotation>
         <xsd:restriction base="xsd:string">
-            <xsd:pattern value="\d{10}"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="EnterpriseNumberType">
@@ -88,7 +41,6 @@
             <xsd:documentation>CBE enterprise number (starting with 0 or 1)</xsd:documentation>
         </xsd:annotation>
         <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[0-1]\d{9}"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="BusinessUnitNumberType">
@@ -96,37 +48,14 @@
             <xsd:documentation>CBE business unit number (starting with 2-8)</xsd:documentation>
         </xsd:annotation>
         <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[2-8]\d{9}"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="SsinType">
         <xsd:restriction base="xsd:string">
-            <xsd:pattern
-                    value="[0-9][0-9](([0][0-9])|([1][0-2]))(([0-2][0-9])|([3][0-1]))(([0-9]{2}[1-9])|([0-9][1-9][0-9])|([1-9][0-9]{2}))(([0-8][0-9])|([9][0-7]))">
-                <xsd:annotation>
-                    <xsd:documentation xml:lang="FR">Registre National</xsd:documentation>
-                    <xsd:documentation xml:lang="NL">Rijksregister</xsd:documentation>
-                </xsd:annotation>
-            </xsd:pattern>
-            <xsd:pattern
-                    value="[0-9][0-9](([2][0-9])|([3][0-2]))(([0-2][0-9])|([3][0-1]))[0-9]{3}(([0-8][0-9])|([9][0-7]))">
-                <xsd:annotation>
-                    <xsd:documentation xml:lang="FR">Registre Bis : numero Bis</xsd:documentation>
-                    <xsd:documentation xml:lang="NL">Bis register : Bisnummer</xsd:documentation>
-                </xsd:annotation>
-            </xsd:pattern>
-            <xsd:pattern
-                    value="[0-9][0-9](([4][0-9])|([5][0-2]))(([0-2][0-9])|([3][0-1]))[0-9]{3}(([0-8][0-9])|([9][0-7]))">
-                <xsd:annotation>
-                    <xsd:documentation xml:lang="FR">Registre Bis : numero TER</xsd:documentation>
-                    <xsd:documentation xml:lang="NL">Bisregister : Ternummer</xsd:documentation>
-                </xsd:annotation>
-            </xsd:pattern>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="LegalContextType">
         <xsd:restriction base="xsd:string">
-            <xsd:maxLength value="64"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="IntegrationContextType">
@@ -134,7 +63,6 @@
             <xsd:documentation>deprecated type. Use InscriptionContextType instead in new XSDs</xsd:documentation>
         </xsd:annotation>
         <xsd:restriction base="xsd:string">
-            <xsd:maxLength value="64"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="InscriptionContextType">
@@ -144,13 +72,10 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:restriction base="xsd:string">
-            <xsd:maxLength value="64"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="SequenceNumberType">
         <xsd:restriction base="xsd:long">
-            <xsd:minInclusive value="1"/>
-            <xsd:totalDigits value="15"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:complexType name="InformationCBSSType">
@@ -285,14 +210,12 @@
                 <xsd:element name="Sector">
                     <xsd:simpleType>
                         <xsd:restriction base="xsd:unsignedShort">
-                            <xsd:maxInclusive value="999"/>
                         </xsd:restriction>
                     </xsd:simpleType>
                 </xsd:element>
                 <xsd:element name="Institution">
                     <xsd:simpleType>
                         <xsd:restriction base="xsd:unsignedShort">
-                            <xsd:maxInclusive value="999"/>
                         </xsd:restriction>
                     </xsd:simpleType>
                 </xsd:element>
@@ -339,9 +262,6 @@
     </xsd:complexType>
     <xsd:simpleType name="YearQuarterType">
         <xsd:restriction base="xsd:string">
-            <xsd:length value="6"/>
-            <xsd:whiteSpace value="collapse"/>
-            <xsd:pattern value="[1-2]\d{3}Q(1|2|3|4)"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="IncompleteDateType">
@@ -350,30 +270,16 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:restriction base="xsd:string">
-            <xsd:length value="10"/>
-            <xsd:whiteSpace value="collapse"/>
-            <xsd:pattern value="[0-2][0-9]{3}\-[0-1][0-9]\-[0-3][0-9]"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="DescriptionType">
         <xsd:restriction base="xsd:string">
-            <xsd:maxLength value="100"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-    <xsd:simpleType name="LanguageType">
-        <xsd:annotation>
-            <xsd:documentation>Type specifying the language of a given value</xsd:documentation>
-        </xsd:annotation>
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="NL"/>
-            <xsd:enumeration value="FR"/>
-            <xsd:enumeration value="DE"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:complexType name="LocalizedDescriptionType">
         <xsd:simpleContent>
             <xsd:extension base="tns:DescriptionType">
-                <xsd:attribute name="Language" type="tns:LanguageType" use="optional"/>
+                <xsd:attribute ref="xml:lang"/>
             </xsd:extension>
         </xsd:simpleContent>
     </xsd:complexType>
@@ -425,7 +331,6 @@
                 </xsd:annotation>
                 <xsd:simpleType>
                     <xsd:restriction base="xsd:string">
-                        <xsd:maxLength value="256"/>
                     </xsd:restriction>
                 </xsd:simpleType>
             </xsd:element>

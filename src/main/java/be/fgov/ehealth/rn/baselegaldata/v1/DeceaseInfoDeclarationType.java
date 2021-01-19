@@ -14,8 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 public class DeceaseInfoDeclarationType implements Serializable {
    private static final long serialVersionUID = 1L;
    @XmlElement(
-      name = "DeceaseDate",
-      required = true
+      name = "DeceaseDate"
    )
    protected String deceaseDate;
    @XmlElement(

@@ -11,14 +11,13 @@ import be.fgov.ehealth.rn.baselegaldata.v1.NameInfoBaseType
 import be.fgov.ehealth.rn.baselegaldata.v1.NationalitiesBaseType
 import be.fgov.ehealth.rn.baselegaldata.v1.NobilityTitleBaseType
 import be.fgov.ehealth.rn.baselegaldata.v1.SubregisterBaseType
-import be.fgov.ehealth.rn.commons.v1.SsinType
 import be.fgov.ehealth.rn.registries.commons.v1.AnomaliesType
 import java.io.Serializable
 
 class ConsultRnPersonDto(
     var register: String? = null,
     var registerInceptionDate: String? = null,
-    var ssin: SsinType? = null,
+    var ssin: String? = null,
     var nobilityTitle: NobilityTitleBaseType? = null,
     var name: NameInfoBaseType? = null,
     var nationalities: NationalitiesBaseType? = null,

@@ -15,13 +15,13 @@ public class CivilStateInfoWithSourceType extends CivilStateInfoBaseType impleme
    @XmlAttribute(
       name = "Source"
    )
-   protected SourceType source;
+   protected String source;
 
-   public SourceType getSource() {
+   public String getSource() {
       return this.source;
    }
 
-   public void setSource(SourceType value) {
+   public void setSource(String value) {
       this.source = value;
    }
 }

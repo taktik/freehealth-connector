@@ -23,7 +23,7 @@ public class CivilStateInfoDeclarationType implements Serializable {
    @XmlSchemaType(
       name = "unsignedShort"
    )
-   protected int civilStateCode;
+   protected Integer civilStateCode;
    @XmlElement(
       name = "PartnerSsin"
    )
@@ -34,7 +34,6 @@ public class CivilStateInfoDeclarationType implements Serializable {
    protected LocationDeclarationType location;
    @XmlElement(
       name = "InceptionDate",
-      required = true,
       type = String.class
    )
    @XmlJavaTypeAdapter(XmlDateAdapter.class)
@@ -52,11 +51,11 @@ public class CivilStateInfoDeclarationType implements Serializable {
    )
    protected DateTime expiryDate;
 
-   public int getCivilStateCode() {
+   public Integer getCivilStateCode() {
       return this.civilStateCode;
    }
 
-   public void setCivilStateCode(int value) {
+   public void setCivilStateCode(Integer value) {
       this.civilStateCode = value;
    }
 

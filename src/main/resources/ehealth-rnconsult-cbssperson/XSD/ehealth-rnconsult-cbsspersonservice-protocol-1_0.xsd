@@ -11,8 +11,8 @@
  <xs:appinfo>
  Implementation-Title: xsd-rnconsult-cbssperson
  Specification-Version: 1.0
- Implementation-Version: 1.0.0-SNAPSHOT
- Build-Time: 20200303-0932 
+ Implementation-Version: 1.0.3
+ Build-Time: 20200728-1034 
  </xs:appinfo>
  </xs:annotation>
 	<xs:annotation/>

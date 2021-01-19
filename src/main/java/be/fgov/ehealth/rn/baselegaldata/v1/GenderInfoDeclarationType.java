@@ -18,16 +18,11 @@ import org.taktik.connector.technical.adapter.XmlDateAdapter;
 public class GenderInfoDeclarationType implements Serializable {
    private static final long serialVersionUID = 1L;
    @XmlElement(
-      name = "GenderCode",
-      required = true
+      name = "GenderCode"
    )
-   @XmlSchemaType(
-      name = "string"
-   )
-   protected GenderCodeType genderCode;
+   protected String genderCode;
    @XmlElement(
       name = "InceptionDate",
-      required = true,
       type = String.class
    )
    @XmlJavaTypeAdapter(XmlDateAdapter.class)
@@ -36,11 +31,11 @@ public class GenderInfoDeclarationType implements Serializable {
    )
    protected DateTime inceptionDate;
 
-   public GenderCodeType getGenderCode() {
+   public String getGenderCode() {
       return this.genderCode;
    }
 
-   public void setGenderCode(GenderCodeType value) {
+   public void setGenderCode(String value) {
       this.genderCode = value;
    }
 

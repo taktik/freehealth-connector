@@ -104,7 +104,9 @@ public enum CDTRANSACTIONvalues {
    @XmlEnumValue("mea")
    MEA("mea"),
    @XmlEnumValue("perinatal")
-   PERINATAL("perinatal");
+   PERINATAL("perinatal"),
+   @XmlEnumValue("belrai-report")
+   BELRAI_REPORT("belrai-report");
 
    private final String value;
 

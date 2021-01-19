@@ -67,10 +67,9 @@ public class ContactAddressDeclarationType implements Serializable {
    @XmlSchemaType(
       name = "unsignedShort"
    )
-   protected int typeCode;
+   protected Integer typeCode;
    @XmlElement(
       name = "InceptionDate",
-      required = true,
       type = String.class
    )
    @XmlJavaTypeAdapter(XmlDateAdapter.class)
@@ -168,11 +167,11 @@ public class ContactAddressDeclarationType implements Serializable {
       this.boxNumber = value;
    }
 
-   public int getTypeCode() {
+   public Integer getTypeCode() {
       return this.typeCode;
    }
 
-   public void setTypeCode(int value) {
+   public void setTypeCode(Integer value) {
       this.typeCode = value;
    }
 

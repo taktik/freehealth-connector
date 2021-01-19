@@ -24,10 +24,9 @@ public class NationalityInfoDeclarationType implements Serializable {
    @XmlSchemaType(
       name = "unsignedShort"
    )
-   protected int nationalityCode;
+   protected Integer nationalityCode;
    @XmlElement(
       name = "InceptionDate",
-      required = true,
       type = String.class
    )
    @XmlJavaTypeAdapter(XmlDateAdapter.class)
@@ -45,11 +44,11 @@ public class NationalityInfoDeclarationType implements Serializable {
    )
    protected DateTime expiryDate;
 
-   public int getNationalityCode() {
+   public Integer getNationalityCode() {
       return this.nationalityCode;
    }
 
-   public void setNationalityCode(int value) {
+   public void setNationalityCode(Integer value) {
       this.nationalityCode = value;
    }
 

@@ -6,7 +6,6 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -25,10 +24,7 @@ public class BusinessAnomalyType implements Serializable {
       name = "Severity",
       required = true
    )
-   @XmlSchemaType(
-      name = "string"
-   )
-   protected SeverityType severity;
+   protected String severity;
    @XmlElement(
       name = "Description",
       required = true
@@ -47,11 +43,11 @@ public class BusinessAnomalyType implements Serializable {
       this.code = value;
    }
 
-   public SeverityType getSeverity() {
+   public String getSeverity() {
       return this.severity;
    }
 
-   public void setSeverity(SeverityType value) {
+   public void setSeverity(String value) {
       this.severity = value;
    }
 

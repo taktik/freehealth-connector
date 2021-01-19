@@ -14,8 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 public class BirthInfoDeclarationType implements Serializable {
    private static final long serialVersionUID = 1L;
    @XmlElement(
-      name = "BirthDate",
-      required = true
+      name = "BirthDate"
    )
    protected String birthDate;
    @XmlElement(

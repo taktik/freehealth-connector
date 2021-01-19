@@ -15,13 +15,13 @@ public class DeceaseInfoWithUpdateStatusType extends AbstractOptionalDeceaseType
    @XmlAttribute(
       name = "Status"
    )
-   protected UpdateDatagroupStatusType status;
+   protected String status;
 
-   public UpdateDatagroupStatusType getStatus() {
+   public String getStatus() {
       return this.status;
    }
 
-   public void setStatus(UpdateDatagroupStatusType value) {
+   public void setStatus(String value) {
       this.status = value;
    }
 }

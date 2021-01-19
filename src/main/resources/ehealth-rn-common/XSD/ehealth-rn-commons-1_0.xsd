@@ -2,14 +2,13 @@
 <!-- Copyright (c) eHealth -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:rn:commons:v1"
            targetNamespace="urn:be:fgov:ehealth:rn:commons:v1" 
-           xmlns:coc="urn:be:fgov:ehealth:rn:commons:business:v1"
            elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
  <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
  <xs:appinfo>
  Implementation-Title: xsd-rn-common
  Specification-Version: 1.0
- Implementation-Version: 1.0.0
- Build-Time: 20200302-1433 
+ Implementation-Version: 1.0.3
+ Build-Time: 20200727-1425 
  </xs:appinfo>
  </xs:annotation>
     <xs:annotation>
@@ -20,20 +19,10 @@
             Build-Time: 20180627-1659
         </xs:appinfo>
     </xs:annotation>
-    <xs:import namespace="urn:be:fgov:ehealth:rn:commons:business:v1"
-               schemaLocation="ehealth-rn-commons-business-1_0.xsd"/>
+    
     <xs:simpleType name="ApplicationIdType">
         <xs:restriction base="xs:string">
-            <xs:maxLength value="11"/>
         </xs:restriction>
     </xs:simpleType>
-    
-    <xs:complexType name="SsinType">
-    <xs:simpleContent>
-      <xs:extension base="coc:SsinType">
-          <xs:attribute name="Encoded" type="xs:boolean" />
-      </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
   
 </xs:schema>

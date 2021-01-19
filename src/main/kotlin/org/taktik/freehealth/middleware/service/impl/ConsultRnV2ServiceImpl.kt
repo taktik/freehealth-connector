@@ -2,13 +2,10 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinRequest
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinResponse
-import be.fgov.ehealth.rn.baselegaldata.v1.GenderCodeType
-import be.fgov.ehealth.rn.baselegaldata.v1.GivenNameType
 import be.fgov.ehealth.rn.cbsspersonlegaldata.v1.CbssPersonRequestType
 import be.fgov.ehealth.rn.cbsspersonservice.core.v1.RegisterPersonDeclarationType
 import be.fgov.ehealth.rn.cbsspersonservice.protocol.v1.RegisterPersonRequest
 import be.fgov.ehealth.rn.cbsspersonservice.protocol.v1.RegisterPersonResponse
-import be.fgov.ehealth.rn.commons.v1.SsinType
 import be.fgov.ehealth.rn.personservice.core.v1.PhoneticAddress
 import be.fgov.ehealth.rn.personservice.core.v1.PhoneticBirth
 import be.fgov.ehealth.rn.personservice.core.v1.PhoneticGender
@@ -28,7 +25,6 @@ import org.taktik.connector.business.consultrnv2.exception.personservice.SearchP
 import org.taktik.connector.business.consultrnv2.exception.ssinInformationservice.ConsultCurrentSsinException
 import org.taktik.connector.business.consultrnv2.service.impl.ConsultrnCBSSPersonServiceImpl
 import org.taktik.connector.business.consultrnv2.service.impl.ConsultrnPersonServiceImpl
-import org.taktik.connector.business.domain.chapter4.AgreementTransaction
 import org.taktik.connector.business.ssinhistory.service.impl.SsinHistoryTokenServiceImpl
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
@@ -56,7 +52,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 issueInstant = DateTime.now()
                 id = IdGeneratorFactory.getIdGenerator("uuid").generateId()
                 criteria = SearchPersonBySsinCriteriaType().apply {
-                    this.ssin = SsinType().apply { value = ssin }
+                    this.ssin = ssin
                 }
             })
         }catch (ex : SearchPersonBySsinException){
