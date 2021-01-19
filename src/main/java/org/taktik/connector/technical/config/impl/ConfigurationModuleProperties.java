@@ -16,16 +16,16 @@ public class ConfigurationModuleProperties implements ConfigurationModule {
    public void init(Configuration config) throws TechnicalConnectorException {
       LOG.debug("Initializing ConfigurationModule " + this.getClass().getName());
       if (config instanceof ConfigurationImpl) {
-         Properties properties = ((ConfigurationImpl)config).getProperties();
+         Properties properties = ((ConfigurationImpl) config).getProperties();
          if (LOG.isDebugEnabled()) {
             LOG.debug("Current properties are : ");
             Enumeration keys = properties.keys();
-            while(keys.hasMoreElements()) {
+            while (keys.hasMoreElements()) {
                Object key = keys.nextElement();
                LOG.debug(" .{} = [{}]", key, properties.get(key));
+            }
          }
-      }
-
+  }
    }
 
    public void unload() throws TechnicalConnectorException {
