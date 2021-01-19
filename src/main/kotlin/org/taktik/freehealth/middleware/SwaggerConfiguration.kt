@@ -23,6 +23,9 @@ package org.taktik.freehealth.middleware
 import com.fasterxml.classmate.TypeResolver
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.taktik.freehealth.middleware.dto.ehbox.AcknowledgeMessage
+import org.taktik.freehealth.middleware.dto.ehbox.DocumentMessage
+import org.taktik.freehealth.middleware.dto.ehbox.ErrorMessage
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.*
 import springfox.documentation.builders.PathSelectors
 import springfox.documentation.builders.RequestHandlerSelectors
@@ -49,7 +52,10 @@ class SwaggerConfiguration(val typeResolver: TypeResolver) {
                 typeResolver.resolve(AuthnStatement::class.java),
                 typeResolver.resolve(AttributeStatement::class.java),
                 typeResolver.resolve(Attribute::class.java),
-                typeResolver.resolve(EncryptedElementType::class.java)
+                typeResolver.resolve(EncryptedElementType::class.java),
+                typeResolver.resolve(DocumentMessage::class.java),
+                typeResolver.resolve(AcknowledgeMessage::class.java),
+                typeResolver.resolve(ErrorMessage::class.java)
             )
 
             .securitySchemes(listOf(BasicAuth("basicAuth")))
