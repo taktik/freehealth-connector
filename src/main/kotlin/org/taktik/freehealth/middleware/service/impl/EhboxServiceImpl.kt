@@ -169,13 +169,16 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         request.publicationId = UUID.randomUUID().toString().substring(0, 12)
         return try {
             freehealthEhboxService.sendMessage(samlToken, request).let { sendMessageResponse ->
-                if (sendMessageResponse.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
+                if (sendMessageResponse.status?.code == "100")
+                    MessageOperationResponse(true, sendMessageResponse.id)
+                else
+                    MessageOperationResponse(false, null, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
             }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
-                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value ?: it.message))
-            } ?: MessageOperationResponse(false, Error("999", e.message))
+                MessageOperationResponse(false, null, Error(be?.code, be?.messages?.firstOrNull()?.value ?: it.message))
+            } ?: MessageOperationResponse(false, null, Error("999", e.message))
         }
     }
 
@@ -208,13 +211,16 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         request.publicationId = UUID.randomUUID().toString().substring(0, 12)
         return try {
             freehealthEhboxService.sendMessage2Ebox(samlToken, request).let { sendMessageResponse ->
-                if (sendMessageResponse.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
+                if (sendMessageResponse.status?.code == "100")
+                    MessageOperationResponse(true, sendMessageResponse.id)
+                else
+                    MessageOperationResponse(false, null, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
             }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
-                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
-            } ?: MessageOperationResponse(false, Error("999", e.message))
+                MessageOperationResponse(false, null, Error(be?.code, be?.messages?.firstOrNull()?.value))
+            } ?: MessageOperationResponse(false, null, Error("999", e.message))
         }
     }
 
@@ -300,13 +306,16 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         return try {
             freehealthEhboxService.moveMessage(samlToken, mmr)
                 .let { moveMessageResult ->
-                    if (moveMessageResult.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(moveMessageResult.status?.code, moveMessageResult.status?.messages?.joinToString(",")))
+                    if (moveMessageResult.status?.code == "100")
+                        MessageOperationResponse(true, moveMessageResult.id)
+                    else
+                        MessageOperationResponse(false, null, Error(moveMessageResult.status?.code, moveMessageResult.status?.messages?.joinToString(",")))
                 }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
-                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
-            } ?: MessageOperationResponse(false, Error("999", e.message))
+                MessageOperationResponse(false, null, Error(be?.code, be?.messages?.firstOrNull()?.value))
+            } ?: MessageOperationResponse(false, null, Error("999", e.message))
         }
     }
 
@@ -324,13 +333,16 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         mmr.messageIds.addAll(messageIds)
         return try {
             freehealthEhboxService.deleteMessage(samlToken, mmr).let { deleteMessageResult ->
-                if (deleteMessageResult.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(deleteMessageResult.status?.code, deleteMessageResult.status?.messages?.joinToString(",")))
+                if (deleteMessageResult.status?.code == "100")
+                    MessageOperationResponse(true, deleteMessageResult.id)
+                else
+                    MessageOperationResponse(false, null, Error(deleteMessageResult.status?.code, deleteMessageResult.status?.messages?.joinToString(",")))
             }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
-                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
-            } ?: MessageOperationResponse(false, Error("999", e.message))
+                MessageOperationResponse(false, null, Error(be?.code, be?.messages?.firstOrNull()?.value))
+            } ?: MessageOperationResponse(false, null, Error("999", e.message))
         }
     }
 
