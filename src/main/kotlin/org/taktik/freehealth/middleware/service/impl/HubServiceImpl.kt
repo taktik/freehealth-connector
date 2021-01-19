@@ -864,7 +864,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                 stsService.getKeyStore(keystoreId, passPhrase)!!,
                 passPhrase,
                 GetTransactionSetRequest().apply {
-                    request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, breakTheGlassReason, true)
+                    request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, breakTheGlassReason, true)
                     select = SelectGetTransactionType().apply {
                         patient =
                             PatientIdType().apply {
@@ -935,7 +935,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             stsService.getKeyStore(keystoreId, passPhrase)!!,
             passPhrase,
             PutTransactionSetRequest().apply {
-                request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null, true)
+                request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null, true)
                 kmehrmessage =
                     marshallerHelper.toObject(transaction)
             })
@@ -1237,7 +1237,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             stsService.getKeyStore(keystoreId, passPhrase)!!,
             passPhrase,
             RevokeAccessRightRequest().apply {
-                request = createRequestListType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null, true)
+                request = createRequestType(hcpLastName, hcpFirstName, hcpNihii, hcpSsin, hcpZip, hubPackageId, null, true)
                 accessright = SelectRevokeAccessRightType().apply {
                     transaction = TransactionIdType().apply {
                         this.ids.add(IDKMEHR().apply { this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl = sl; this.value = value })
