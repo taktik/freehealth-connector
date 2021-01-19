@@ -1,0 +1,706 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+	elementFormDefault="qualified"
+	targetNamespace="urn:be:cin:mycarenet:1.0:carenet:types"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="urn:be:cin:mycarenet:1.0:carenet:types"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace">
+	<xsd:include schemaLocation="../../mycarenet-genasync/XSD/MyCareNet_XXXXXX_Types.xsd" />
+	<xsd:import
+		namespace="http://www.w3.org/XML/1998/namespace"
+		schemaLocation="../../external/XSD/xml.xsd">
+	</xsd:import>
+
+
+	<xsd:element
+		name="InsurabilityRequestList"
+		type="InsurabilityRequestListType" />
+
+	<xsd:element
+		name="SingleInsurabilityRequest"
+		type="SingleInsurabilityRequestType" />
+
+	<xsd:element
+		name="CareReceiverId"
+		type="CareReceiverIdType" />
+
+	<xsd:element
+		name="InsurabilityRequestDetail"
+		type="InsurabilityRequestDetailType" />
+
+	<xsd:element
+		name="InsurabilityRequestType"
+		type="InsurabilityRequestTypeType">
+		<xsd:annotation>
+			<xsd:documentation> The type of the request: informational or as preparation for
+				invoicing.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+	<xsd:element
+		name="InsurabilityContactType"
+		type="InsurabilityContactTypeType" />
+
+	<xsd:element
+		name="InsurabilityReference"
+		type="InsurabilityReferenceType">
+		<xsd:annotation>
+			<xsd:documentation> An (application) reference, can be up to 25 characters. Only limited
+				list of characters are
+				allowed: 0-9, A-Z, Ö, Ë, Ü, space and the following special
+				characters ' \ . * + , - / : ; = ? ( ) ] [. It is not
+				included in the tracking and
+				tracing.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+	<xsd:element
+		name="InsurabilityResponseList"
+		type="InsurabilityResponseListType" />
+
+	<xsd:element
+		name="SingleInsurabilityResponse"
+		type="SingleInsurabilityResponseType">
+		<xsd:annotation>
+			<xsd:documentation> This element contains the actual data about the insurability of a
+				care receiver. The insurability
+				information is divided in groups.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+	<xsd:element
+		name="CareReceiverDetail"
+		type="CareReceiverDetailType">
+		<xsd:annotation>
+			<xsd:documentation> The care receiver element contains generic information about the
+				care receiver that is not
+				directly related to insurability. It contains the INSS
+				(zone 300), the first name (zone 302), last name (zone 301),
+				the birthday (zone 303)
+				and indicates if the person is male or female (zone 305). The INSS and first name
+				are
+				optional, but the INSS will only be omitted in rare cases.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+	<xsd:element
+		name="InsurabilityResponseDetail"
+		type="InsurabilityResponseDetailType">
+		<xsd:annotation>
+			<xsd:documentation> The details of the insurability response. </xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+	<xsd:element
+		name="GeneralSituation"
+		type="GeneralSituationType" />
+
+	<xsd:element
+		name="Transfer"
+		type="TransferType" />
+
+	<xsd:element
+		name="TransferDate"
+		type="xsd:date" />
+
+	<xsd:element
+		name="Payment"
+		type="PaymentType">
+		<xsd:annotation>
+			<xsd:documentation> This element contains information related to payment. It has payment
+				by IO element that is true
+				when the IO directly pays the care provider. This is zone
+				314 in the CARENET message. The max invoiced elements are
+				the years that the care
+				receiver reached the maximum invoice amount. The max invoice element can occur 0 to
+				3 times
+				and corresponds with the zones 316, 317, 318.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+	<xsd:element
+		name="InsurabilityList"
+		type="InsurabilityListType">
+		<xsd:annotation>
+			<xsd:documentation> The details contains up to 5 detail entries. The truncated attribute
+				indicates if there are more
+				then 5 entries available for the requested period. It is
+				up to the care provider (or web service client) to divide
+				the requested period in
+				multiple requests in order to receive all details. A detail entry contains the
+				registration
+				number of the care receiver with an IO (zones 327, 338…). Also the IO
+				is indicated (zone 322, 333…). The period
+				indicates the begin date (zones 320, 331…)
+				and end date (zones 321, 332…) for which the detail information is
+				applicable. The
+				CT1 (zones 323, 334…) and CT2 (zones 324,335…) are fields that are fields that are
+				required for
+				invoicing. The payment agreement is only provided when the insurability
+				request type was invoicing. The payment
+				agreement is the MD5 hash that is required
+				with the invoice; it corresponds to the zone 328, 339… The actual
+				invoicing is not
+				part of this interface. The date element indicates when the entry was created.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+	<xsd:element
+		name="Hospitalized"
+		type="HospitalizedType" />
+
+	<xsd:element
+		name="PaymentByIo"
+		type="xsd:boolean" />
+
+	<xsd:element
+		name="MaxInvoiced"
+		type="xsd:gYear" />
+
+	<xsd:element
+		name="Hospital"
+		type="HospitalType" />
+
+	<xsd:element
+		name="AdmissionDate"
+		type="xsd:date" />
+
+	<xsd:element
+		name="AdmissionService"
+		type="AdmissionServiceType" />
+
+	<xsd:element
+		name="MedicalContract"
+		type="PeriodType" />
+
+	<xsd:element
+		name="KineContract"
+		type="PeriodType" />
+
+	<xsd:element
+		name="NurseContract"
+		type="PeriodType" />
+
+	<xsd:element
+		name="OriginalDetailFile"
+		type="xsd:base64Binary" />
+
+	<xsd:element
+		name="InsurabilityItem"
+		type="InsurabilityItemType" />
+
+	<xsd:element
+		name="CT1"
+		type="CTType" />
+
+	<xsd:element
+		name="CT2"
+		type="CTType" />
+
+	<xsd:element
+		name="PaymentApproval"
+		type="xsd:string" />
+
+	<xsd:element
+		name="InsurabilityDate"
+		type="xsd:date" />
+
+
+	<xsd:element
+		name="InsuranceOrg"
+		type="InsuranceOrgType" />
+
+	<xsd:element
+		name="SpecialSocialCategory"
+		type="xsd:boolean" />
+
+	<!-- types -->
+
+	<xsd:complexType name="InsurabilityRequestListType">
+		<xsd:sequence>
+			<xsd:element
+				ref="SingleInsurabilityRequest"
+				maxOccurs="unbounded"
+				minOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation> A list of SingleInsurabilityRequest items.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="SingleInsurabilityRequestType">
+		<xsd:sequence>
+			<xsd:element ref="CareReceiverId">
+				<xsd:annotation>
+					<xsd:documentation> The identification of the care receiver.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element ref="InsurabilityRequestDetail">
+				<xsd:annotation>
+					<xsd:documentation> The date of the request </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="MessageHeader" />
+	</xsd:complexType>
+
+
+	<xsd:complexType name="InsurabilityRequestDetailType">
+		<xsd:sequence>
+			<xsd:element ref="InsurabilityRequestType">
+				<xsd:annotation>
+					<xsd:documentation> Indication if the request is informational or intended for
+						invoicing. Only informational is
+						supported for the moment. This is zone 303
+						in the flat file version.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				name="Period"
+				type="PeriodType">
+				<xsd:annotation>
+					<xsd:documentation> The period for which the insurability is requested. The end
+						date is required!
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element ref="InsurabilityContactType">
+				<xsd:annotation>
+					<xsd:documentation> Indication if the request is for ambulatory care or in a day
+						clinic. This is zone 306 in the
+						flat file version.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				ref="InsurabilityReference"
+				maxOccurs="1"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> Optional reference with the insurablity request detail. Will
+						be returned in the responce, but is
+						not used by the system. This is zone 307
+						in the flat file version.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:simpleType name="InsurabilityRequestTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="information" />
+			<xsd:enumeration value="invoicing" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+
+
+	<xsd:simpleType name="InsurabilityContactTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ambulatory_care" />
+			<xsd:enumeration value="hospitalized_for_day" />
+			<xsd:enumeration value="hospitalized_elsewhere" />
+			<xsd:enumeration value="other" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="InsurabilityReferenceType">
+		<xsd:restriction base="AlphanumericalType">
+			<xsd:minLength value="0" />
+			<xsd:maxLength value="25" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="InsurabilityResponseListType">
+		<xsd:sequence>
+			<xsd:element
+				ref="SingleInsurabilityResponse"
+				maxOccurs="unbounded"
+				minOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation> A list of SingleInsurabilityResponse items. This can be used
+						as an intermediate result file that
+						contains all valid, invalid and
+						incomplete requests.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="SingleInsurabilityResponseType">
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:sequence>
+					<xsd:element ref="CareReceiverId">
+						<xsd:annotation>
+							<xsd:documentation> The identification of the care receiver.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element
+						name="MessageFault"
+						type="MessageFaultType"
+						minOccurs="0"
+						maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation> Contains the error that occurred and a reference to
+								the field that contains the error
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+				<xsd:sequence>
+					<xsd:element ref="CareReceiverDetail">
+						<xsd:annotation>
+							<xsd:documentation> Some detailed information about the care receiver.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element ref="InsurabilityResponseDetail" />
+				</xsd:sequence>
+			</xsd:choice>
+			<xsd:element ref="InsurabilityRequestDetail">
+				<xsd:annotation>
+					<xsd:documentation> The same data as the request. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="MessageHeader" />
+	</xsd:complexType>
+
+
+	<xsd:complexType name="InsurabilityResponseDetailType">
+		<xsd:sequence>
+			<xsd:element
+				ref="GeneralSituation"
+				maxOccurs="1"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> Indicates if there is a specific situation concerning the
+						insurability related to the period of
+						the consultation
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element ref="Payment">
+				<xsd:annotation>
+					<xsd:documentation> Some information about the payment </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				ref="Hospitalized"
+				maxOccurs="1"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> Information about the hospitalized state of a patient. Only
+						provided when the insurability
+						contact type is set to
+						&quot;hospitalized_elsewhere&quot;. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				name="MedicalHouse"
+				type="MedicalHouseType"
+				maxOccurs="1"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Some informations about contacts with a medical house (during
+						the requested period).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				ref="InsurabilityList"
+				maxOccurs="1"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> List of insurability information. There can be maximum 5
+						entries in the list. When there are
+						more, then the list is truncated and
+						that is indicated in the attribute of the element.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+	<xsd:complexType name="GeneralSituationType">
+		<xsd:sequence
+			minOccurs="0"
+			maxOccurs="2">
+			<xsd:element ref="Transfer" />
+		</xsd:sequence>
+		<xsd:attribute
+			name="Event"
+			type="EventType"
+			use="required" />
+	</xsd:complexType>
+
+	<xsd:simpleType name="EventType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="changeDuring" />
+			<xsd:enumeration value="multiple" />
+			<xsd:enumeration value="closedBefore" />
+			<xsd:enumeration value="startLater" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="TransferType">
+		<xsd:sequence
+			minOccurs="0"
+			maxOccurs="1">
+			<xsd:annotation>
+				<xsd:documentation />
+			</xsd:annotation>
+			<xsd:element
+				ref="InsuranceOrg"
+				minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation> The code of the insurance organisation to/from who the care
+						receivers transfered.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element ref="TransferDate">
+				<xsd:annotation>
+					<xsd:documentation> The date that the transfer took place. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute
+			name="Direction"
+			type="TransferDirectionType"
+			use="required" />
+	</xsd:complexType>
+
+	<xsd:complexType name="PaymentType">
+		<xsd:sequence>
+			<xsd:element ref="PaymentByIo">
+				<xsd:annotation>
+					<xsd:documentation> Indicates that the insurance organisation will directy pay
+						the care provider (or not)
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				ref="MaxInvoiced"
+				maxOccurs="3"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> A list of up to 3 years where the max invoice limit for the
+						care receiver was reached for the
+						requested period.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				ref="SpecialSocialCategory"
+				maxOccurs="1"
+				minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="HospitalizedType">
+		<xsd:sequence>
+			<xsd:element ref="Hospital">
+				<xsd:annotation>
+					<xsd:documentation> The hospital where the care receiver is admitted.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				ref="AdmissionDate"
+				maxOccurs="1"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> The date the care receiver is admitted. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				ref="AdmissionService"
+				maxOccurs="1"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> The services that is provided by the hostital (indicated by
+						the hospital element) to the care
+						care receiver.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="MedicalHouseType">
+		<xsd:sequence>
+			<xsd:element
+				name="PeriodStart"
+				type="xsd:date">
+				<xsd:annotation>
+					<xsd:documentation>Required. The begin date of the contract with a medical
+						house
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				name="PeriodEnd"
+				type="xsd:date"
+				maxOccurs="1"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>If present, it is the end date of the contract with a medical
+						house
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute
+			name="Nurse"
+			type="xsd:boolean">
+			<xsd:annotation>
+				<xsd:documentation>true if the contract with a medical house contains nurse care
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute
+			name="Medical"
+			type="xsd:boolean">
+			<xsd:annotation>
+				<xsd:documentation>true if the contract with a medical house contains medical care
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute
+			name="Kine"
+			type="xsd:boolean">
+			<xsd:annotation>
+				<xsd:documentation>true if the contract with a medical house contains kinesitherapy
+					care
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="InsurabilityListType">
+		<xsd:sequence>
+			<xsd:element
+				ref="InsurabilityItem"
+				maxOccurs="5"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> And insurability item. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute
+			name="Truncated"
+			type="xsd:boolean" />
+	</xsd:complexType>
+
+	<xsd:simpleType name="TransferDirectionType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="toOtherIo" />
+			<xsd:enumeration value="fromOtherIo" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="HospitalType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{12}" />
+			<xsd:length value="12" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="AdmissionServiceType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{3}" />
+			<xsd:length value="3" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="InsurabilityItemType">
+		<xsd:sequence>
+			<xsd:element
+				name="RegNrWithMut"
+				type="RegNrWithMutType"
+				maxOccurs="1"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> The registration number of the care receiver with the
+						Mutuality
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				name="Mutuality"
+				type="MutualityType">
+				<xsd:annotation>
+					<xsd:documentation> The code of the insurance organisation </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				name="Period"
+				type="PeriodType">
+				<xsd:annotation>
+					<xsd:documentation> The period where the care receiver is covered by the
+						insurance organisation (indicated in the
+						Mutuality element).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				ref="CT1"
+				maxOccurs="1"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> The &quot;code titulaire 1&quot; required for
+						invoicing.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				ref="CT2"
+				maxOccurs="1"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> The &quot;code titulaire 2&quot; required for
+						invoicing.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element
+				ref="PaymentApproval"
+				maxOccurs="1"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> Element linked to insurablity request of the type
+						&quot;invoicing&quot;. Not supported for the
+						moment, will never be
+						provided.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element ref="InsurabilityDate">
+				<xsd:annotation>
+					<xsd:documentation> The date of the information. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

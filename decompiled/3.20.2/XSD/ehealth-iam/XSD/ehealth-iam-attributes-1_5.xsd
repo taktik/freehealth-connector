@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:aa:complextype:v1" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="urn:be:fgov:ehealth:aa:complextype:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.5">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD 19. I.AM Attributes
+ Specification-Version: 1.5
+ Implementation-Version: 1.5.1
+ Build-Time: 20160401-1627 
+ </xs:appinfo>
+ </xs:annotation>
+	<!-- external XSD -->
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd"/>
+	<xs:import namespace="urn:oasis:names:tc:SAML:2.0:assertion" schemaLocation="../../external/XSD/saml-schema-assertion-2.0.xsd"/>
+	<!-- elements -->
+	<xs:element name="Address" type="AddressType"/>
+	<xs:element name="Codification" type="CodificationType"/>
+    <xs:element name="Country" type="CountryType"/>
+	<xs:element name="Description" type="DescriptionType"/>
+    <xs:element name="GIAMIAdministrator" type="GIAMIAdminType"/>
+	<xs:element name="GIAMIEntity" type="GIAMIEntityType"/>
+	<xs:element name="GIAMIOrganization" type="GIAMIOrganizationType"/>
+    <xs:element name="GIAMIQuality" type="GIAMIEntityType"/>
+    <!-- HealthCareAdditionalInformation NEW in 1.5.0 -->
+    <xs:element name="HealthCareAdditionalInformation" type="HealthCareAdditionalInformationType"/>
+    <xs:element name="HealthCareOrganization" type="HealthCareOrganizationType"/>
+    <!-- HealthCareOrganizationV2 NEW in 1.5.0 -->
+    <xs:element name="HealthCareOrganizationV2" type="HealthCareOrganizationTypeV2"/>
+    <xs:element name="HealthCarePerson" type="HealthCarePersonType"/>
+    <!-- HealthCareProfessional NEW in 1.5.0 -->
+    <xs:element name="HealthCareProfessional" type="HealthCareProfessionalType"/>
+    <!-- Individual NEW in 1.5.0 -->
+    <xs:element name="Individual" type="IndividualType"/>
+	<xs:element name="Mandate" type="MandateType"/>
+	<xs:element name="MandateAttributeStatement" type="IAMAttributeStatement"/>
+    <xs:element name="Municipality" type="MunicipalityType"/>
+	<xs:element name="Name" type="NameType"/>
+	<xs:element name="OrganizationAttributeStatement" type="IAMAttributeStatement"/>
+	<xs:element name="OrganizationInfo" type="OrganizationInfoType"/>
+	<xs:element name="OrganizationTypeCode" type="TypeCodeType"/>
+	<xs:element name="OrganizationTypeFriendlyName" type="NameType" nillable="false"/>
+	<xs:element name="PersonWithFunction" type="PersonWithFunctionType"/>
+	<xs:element name="Profession" type="ProfessionType"/>
+	<xs:element name="ProfessionV2" type="ProfessionTypeV2"/>
+    <!-- ProfessionV3 NEW in 1.5.0 -->
+    <xs:element name="ProfessionV3" type="ProfessionTypeV3"/>
+    <!-- ProfessionalAddressbook NEW in 1.5.0 -->
+    <xs:element name="ProfessionalAddressbook" type="ProfessionalAddressbookType"/>
+	<xs:element name="ProfessionCode" type="ProfessionCodeType"/>
+	<xs:element name="ProfessionFriendlyName" type="NameType"/>
+	<xs:element name="QualityAttributeStatement" type="IAMAttributeStatement"/>
+	<xs:element name="QualityTypeCode" type="TypeCodeType"/>
+	<xs:element name="QualityTypeFriendlyName" type="NameType" nillable="false"/>
+	<xs:element name="Responsible" type="ResponsibleType"/>
+	<xs:element name="Speciality" type="SpecialityType"/>
+	<xs:element name="SupportedOrganization" type="SupportedOrganizationType"/>
+	<xs:element name="SupportedOrganizationV2" type="SupportedOrganizationTypeV2"/>
+	<xs:element name="SupportedQuality" type="SupportedQualityType"/>
+	<!-- complextypes -->
+	<xs:complexType name="AddressType">
+		<xs:annotation>
+			<xs:documentation>Full Address of healthcare actor.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BSTCode" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The BST code of the address</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="StreetType"/>
+			<xs:element name="HouseNumber" type="xs:string" minOccurs="0"/>
+			<xs:element name="PostBox" type="xs:string" minOccurs="0"/>
+			<xs:element name="Municipality" type="MunicipalityType"/>
+			<xs:element name="Country" type="CountryType" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="Type" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>e.g. contact, activity, ...</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="BaseNameType">
+		<xs:annotation>
+			<xs:documentation>Localized string.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute ref="xml:lang"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="BaseServiceType">
+		<xs:annotation>
+			<xs:documentation>service, enumerated with resources that have a link with it.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute ref="resourceEnumeration" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="BaseServiceListType">
+		<xs:annotation>
+			<xs:documentation>List of baseservices.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BaseService" type="BaseServiceType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CodificationType">
+		<xs:annotation>
+			<xs:documentation>.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Code" type="xs:string"/>
+			<xs:element name="TypeCode" type="xs:string"/>
+			<xs:element name="AuthenticSource" type="xs:string"/>
+			<xs:element name="Description" type="NameType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CountryType">
+		<xs:annotation>
+			<xs:documentation>Code and description of country of HealthCare Actor.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ISOCode" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Country code following ISO 3166-1</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NSICode" type="xs:string" minOccurs="0"/>
+			<xs:element ref="Description" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DescriptionType">
+		<xs:annotation>
+			<xs:documentation>Localized description.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="BaseNameType"/>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="GIAMIAdminType">
+    <xs:annotation>
+      <xs:documentation>Info on administrator of entity known in CLC.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="saml:AttributeStatement"/>
+    </xs:sequence>
+  </xs:complexType>
+    <xs:complexType name="GIAMIEntityType">
+    <xs:annotation>
+      <xs:documentation>Info on entity known in CLC. Subdivisions and applications informations are not given.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="saml:AttributeStatement"/>
+      <xs:element ref="GIAMIAdministrator" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+    <xs:complexType name="GIAMIOrganizationType">
+    <xs:annotation>
+      <xs:documentation>Info on organization known in CLC.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="GIAMIEntityType">
+        <xs:sequence>
+          <xs:element ref="GIAMIQuality" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+    <!-- HealthCareAdditionalInformationType NEW in 1.5.0 -->
+    <xs:complexType name="HealthCareAdditionalInformationType">
+		<xs:annotation>
+			<xs:documentation>Additional information which provide for example other contact ways for a health care party.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="Type" type="xs:string"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+    <xs:complexType name="HealthCareOrganizationType">
+      <xs:annotation>
+        <xs:documentation>Identifier(s), name(s) and address(es) of a healthcare organization.</xs:documentation>
+      </xs:annotation>
+      <xs:sequence>
+        <xs:element name="Id" type="TypeCodeType" maxOccurs="unbounded"/>
+        <xs:element name="Name" type="NameType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="Address" type="AddressType" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+  </xs:complexType>
+  <!-- HealthCareOrganizationTypeV2 NEW in 1.5.0 -->
+  <xs:complexType name="HealthCareOrganizationTypeV2">
+    <xs:annotation>
+      <xs:documentation>Identifier(s) and name(s) of a healthcare organization.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Id" type="TypeCodeType"/>
+      <xs:element ref="OrganizationTypeCode" maxOccurs="unbounded"/>
+      <xs:element ref="OrganizationTypeFriendlyName" maxOccurs="unbounded"/>
+      <xs:element ref="Name" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+    <xs:complexType name="HealthCarePersonType">
+		<xs:annotation>
+			<xs:documentation>Identity of HealthCare Actor.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LastName" type="xs:string"/>
+			<xs:element name="FirstName" type="xs:string" minOccurs="0"/>
+			<xs:element name="MiddleNames" type="xs:string" minOccurs="0"/>
+			<xs:element ref="saml:Attribute" maxOccurs="unbounded"/>
+			<xs:element name="Professional" type="ProfessionalType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="searchResult"/>
+	</xs:complexType>
+    <!-- HealthCareProfessionalType NEW in 1.5.0 -->
+	<xs:complexType name="HealthCareProfessionalType">
+		<xs:annotation>
+			<xs:documentation>Identifier(s), name(s) and profession(s) of a healthcare professional.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="IndividualType">
+				<xs:sequence>
+					<xs:element name="Profession" type="ProfessionTypeV3" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+ 	<xs:complexType name="IAMAttributeStatement">
+		<xs:annotation>
+			<xs:documentation>Unit of I.AM Attributes.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="saml:AttributeStatementType"/>
+		</xs:complexContent>
+	</xs:complexType>
+    <!-- IndividualType NEW in 1.5.0 -->
+	<xs:complexType name="IndividualType">
+		<xs:annotation>
+			<xs:documentation>Identifier(s), name(s) and other informations of an individual person.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SSIN" type="xs:string" minOccurs="0"/>
+			<xs:element name="LastName" type="xs:string"/>
+			<xs:element name="FirstName" type="xs:string" minOccurs="0"/>
+			<xs:element name="MiddleNames" type="xs:string" minOccurs="0"/>
+			<xs:element name="Language" type="xs:string" minOccurs="0"/>
+			<xs:element name="Gender" type="xs:string" minOccurs="0"/>
+			<xs:element name="BirthDate" type="xs:string" minOccurs="0"/>
+			<xs:element name="DeathDate" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MandateType">
+		<xs:annotation>
+			<xs:documentation>Info on Mandate between two legal entities.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Id" type="xs:string"/>
+			<xs:element name="Period" type="PeriodType"/>
+			<xs:element name="Principal" type="PrincipalType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MunicipalityType">
+		<xs:annotation>
+			<xs:documentation>Code and description on municipality of HealthCare Actor.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ZipCode" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Zip Code of the municipality</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NSICode" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Code of the municipality as known by NSI (National Statistical Institute)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Description" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="NameType">
+		<xs:annotation>
+			<xs:documentation>Localized name.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="BaseNameType"/>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="OrganizationDescriberType">
+		<xs:annotation>
+			<xs:documentation>Metadata on supported organization.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OrganizationTypeCode" type="xs:string"/>
+			<xs:element ref="OrganizationTypeFriendlyName" maxOccurs="unbounded"/>
+			<xs:element name="OrganizationType" type="OrganizationIdentifierType" nillable="false"/>
+			<xs:element ref="saml:Attribute"/>
+			<xs:element name="CheckDigit" type="xs:string" minOccurs="0"/>
+			<xs:element name="Regex" type="xs:string" minOccurs="0"/>
+			<xs:element name="AllowedBaseServices" type="BaseServiceListType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonType">
+		<xs:annotation>
+			<xs:documentation>Identity and function of an occupied physical person in ReMaPH.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Inss" type="xs:string"/>
+			<xs:element name="FirstName" type="xs:string"/>
+			<xs:element name="LastName" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonWithFunctionType">
+		<xs:annotation>
+			<xs:documentation>Identity and function of an occupied physical person in ReMaPH.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="PersonType">
+				<xs:sequence>
+					<xs:element name="Function"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+    <!-- OrganizationAddressbookType NEW in 1.5.0 -->
+  <xs:complexType name="OrganizationAddressbookType">
+    <xs:annotation>
+      <xs:documentation>Organization informations (identifier, contact addresses, addtitional informations, ...) that may be used by Addressbook.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="HealthCareOrganizationTypeV2">
+        <xs:sequence>
+          <xs:element ref="Address" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="HealthCareAdditionalInformation" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+	<xs:complexType name="OrganizationDescriberTypeV2">
+		<xs:annotation>
+			<xs:documentation>Metadata on supported organization v2.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="OrganizationTypeCode" maxOccurs="unbounded"/>
+			<xs:element ref="OrganizationTypeFriendlyName" maxOccurs="unbounded"/>
+			<xs:element ref="saml:Attribute" maxOccurs="unbounded"/>
+			<xs:element name="CheckDigit" type="xs:string" minOccurs="0"/>
+			<xs:element name="Regex" type="xs:string" minOccurs="0"/>
+			<xs:element name="AllowedBaseServices" type="BaseServiceListType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OrganizationIdentifierType">
+		<xs:annotation>
+			<xs:documentation>Type and subtype of organization.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Type" nillable="false"/>
+			<xs:element name="SubType" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OrganizationInfoType">
+		<xs:annotation>
+			<xs:documentation>Name and codification of organization.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="NameType" maxOccurs="unbounded"/>
+			<xs:element name="Codification" type="CodificationType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TypeCodeType">
+		<xs:annotation>
+			<xs:documentation>Type code for code element such as QualityTypeCode, OrganizationTypeCode.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="authenticSource" type="xs:string" use="required"/>
+				<xs:attribute name="type" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="PeriodType">
+		<xs:annotation>
+			<xs:documentation>Period in time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BeginDate" type="xs:date"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PrincipalType">
+		<xs:annotation>
+			<xs:documentation>Name, identifier and isAliveStatus of legal person.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="xs:string"/>
+			<xs:element name="Id" type="xs:string"/>
+			<xs:element name="Type" type="xs:string"/>
+			<xs:element name="Subtype" type="xs:string" minOccurs="0"/>
+			<xs:element name="Status" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+    <!-- ProfessionalAddressbookType NEW in 1.5.0 -->
+	<xs:complexType name="ProfessionalAddressbookType">
+		<xs:annotation>
+			<xs:documentation>Professional informations (nihii number, contact addresses, addtitional informations, ...) that may be used by Addressbook.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Profession" type="ProfessionTypeV3"/>
+			<xs:element ref="Address" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="HealthCareAdditionalInformation" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProfessionalType">
+		<xs:annotation>
+			<xs:documentation>Info on profession and speciality.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ProfessionType">
+				<xs:sequence>
+					<xs:element ref="Speciality" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProfessionCodeType">
+		<xs:annotation>
+			<xs:documentation>Type of profession.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="authenticSource" type="xs:string" use="required"/>
+				<xs:attribute name="type" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="ProfessionType">
+		<xs:annotation>
+			<xs:documentation>Type of profession.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ProfessionCode" type="xs:string"/>
+			<xs:element ref="ProfessionFriendlyName" maxOccurs="unbounded"/>
+			<xs:element ref="saml:Attribute" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProfessionTypeV2">
+		<xs:annotation>
+			<xs:documentation>Type of profession v2.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="ProfessionCode" maxOccurs="unbounded"/>
+			<xs:element ref="ProfessionFriendlyName" maxOccurs="unbounded"/>
+			<xs:element ref="saml:Attribute" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="eMailAddress" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+  <!-- ProfessionTypeV3 NEW in 1.5.0-->
+  <xs:complexType name="ProfessionTypeV3">
+    <xs:annotation>
+      <xs:documentation>Type of profession v3.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="ProfessionCode" maxOccurs="unbounded"/>
+      <xs:element ref="ProfessionFriendlyName" maxOccurs="unbounded"/>
+      <xs:element name="NIHII" type="xs:string" minOccurs="0"/>
+      <xs:element ref="Speciality" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+	<xs:complexType name="QualityDescriberType">
+		<xs:annotation>
+			<xs:documentation>Metadata on supported quality.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="QualityTypeCode" maxOccurs="unbounded"/>
+			<xs:element ref="QualityTypeFriendlyName" maxOccurs="unbounded"/>
+			<xs:element ref="saml:Attribute" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ResponsibleType">
+		<xs:annotation>
+			<xs:documentation>Identity and function of responsible in ReMaPH.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="PersonType">
+				<xs:sequence>
+					<xs:element name="ResponsibleFunction" type="xs:string"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SpecialityType">
+		<xs:annotation>
+			<xs:documentation>Type of speciality.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SpecialityCode" type="xs:string"/>
+			<xs:element name="SpecialityFriendlyName" type="NameType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StreetType">
+		<xs:annotation>
+			<xs:documentation>Code and description of street of HealthCare Actor.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="NSICode" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Code of the street as known by NSI (National Statistical Institute)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Description" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SupportedOrganizationType">
+		<xs:annotation>
+			<xs:documentation>Info on supported organization.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="OrganizationDescriberType">
+				<xs:attribute ref="resourceEnumeration" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SupportedOrganizationTypeV2">
+		<xs:annotation>
+			<xs:documentation>Info on supported organization v2.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="OrganizationDescriberTypeV2">
+				<xs:attribute ref="resourceEnumeration" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SupportedQualityType">
+		<xs:annotation>
+			<xs:documentation>Info on supported quality.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="QualityDescriberType">
+				<xs:attribute ref="resourceEnumeration" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- attributes -->
+	<xs:attribute name="resourceEnumeration" type="xs:string"/>
+</xs:schema>

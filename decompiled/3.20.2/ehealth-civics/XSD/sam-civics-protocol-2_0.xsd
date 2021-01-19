@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<!-- Copyright (c) eHealth -->
+<xs:schema 
+        xmlns="urn:be:fgov:ehealth:samcivics:schemas:v2" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+        xmlns:core="urn:be:fgov:ehealth:samcivics:type:v2" 
+        xmlns:cprotocol="urn:be:fgov:ehealth:commons:protocol:v2" 
+        xmlns:ccore="urn:be:fgov:ehealth:commons:core:v2" 
+        targetNamespace="urn:be:fgov:ehealth:samcivics:schemas:v2" 
+        elementFormDefault="unqualified" 
+        attributeFormDefault="unqualified" 
+        version="2.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD civics
+ Specification-Version: 2.0
+ Implementation-Version: 2.0.0
+ Build-Time: 20170113-1208 
+ </xs:appinfo>
+ </xs:annotation>
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd" />
+    <xs:import namespace="urn:be:fgov:ehealth:samcivics:type:v2" schemaLocation="sam-civics-type-2_0.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-core-2_0.xsd"/>
+	<xs:element name="FindCNKRequest" type="FindCNKRequestType">
+		<xs:annotation>
+			<xs:documentation>Request structure to find information on AMPP based on (part of) a medicinal product name</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FindCNKResponse" type="FindCNKResponseType">
+		<xs:annotation>
+			<xs:documentation>Response structure returning information on AMPP</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FindParagraphTextRequest" type="FindParagraphTextRequestType">
+		<xs:annotation>
+			<xs:documentation>Request structure to find informations on a paragraph</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FindParagraphTextResponse" type="FindParagraphTextResponseType">
+		<xs:annotation>
+			<xs:documentation>Response structure to a paragraph text request </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GetParagraphExclusionsRequest" type="GetParagraphExclusionsRequestType">
+		<xs:annotation>
+			<xs:documentation>Request structure to get paragraph exclusions</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GetParagraphExclusionsResponse" type="GetParagraphExclusionsResponseType">
+		<xs:annotation>
+			<xs:documentation>Response structure for paragraph exclusions</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GetParagraphIncludedSpecialtiesRequest" type="GetParagraphIncludedSpecialtiesRequestType">
+		<xs:annotation>
+			<xs:documentation>Request structure to get all specialties included in a paragraph</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GetParagraphIncludedSpecialtiesResponse" type="GetParagraphIncludedSpecialtiesResponseType">
+		<xs:annotation>
+			<xs:documentation>Response structure returning all specialties included in a paragraph</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GetProfessionalAuthorizationsRequest" type="GetProfessionalAuthorizationsRequestType">
+		<xs:annotation>
+			<xs:documentation>Request structure to get professional authorizations</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GetProfessionalAuthorizationsResponse" type="GetProfessionalAuthorizationsResponseType">
+		<xs:annotation>
+			<xs:documentation>Response structure returning professional authorizations</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GetAddedDocumentsRequest" type="GetAddedDocumentsRequestType">
+		<xs:annotation>
+			<xs:documentation>Request structure to get added documents linked to a paragraph</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GetAddedDocumentsResponse" type="GetAddedDocumentsResponseType">
+		<xs:annotation>
+			<xs:documentation>Response structure returning added documents linked to a paragraph</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FindReimbursementConditionsRequest" type="FindReimbursementConditionsRequestType">
+		<xs:annotation>
+			<xs:documentation>Request structure to find informations on reimbursement conditions</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FindReimbursementConditionsResponse" type="FindReimbursementConditionsResponseType">
+		<xs:annotation>
+			<xs:documentation>Response structure to a reimbursement conditions request </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FindParagraphRequest" type="FindParagraphRequestType">
+		<xs:annotation>
+			<xs:documentation>Request structure to find paragraph for a CNK in reimbursement conditions</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FindParagraphResponse" type="FindParagraphResponseType">
+		<xs:annotation>
+			<xs:documentation>Response structure to a CNK in reimbursement conditions request </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+		<xs:element name="FindPublicCNKRequest" type="FindPublicCNKRequestType">
+		<xs:annotation>
+			<xs:documentation>Request structure to find the public CNK based on a CNK in another delivery environment</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FindPublicCNKResponse" type="FindPublicCNKResponseType">
+		<xs:annotation>
+			<xs:documentation>Response structure returning a public CNK</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="FindCNKRequestType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:RequestType">
+				<xs:sequence>
+					<xs:element name="ProductName" type="xs:string"/>
+					<xs:choice minOccurs="0">
+						<xs:element name="StartDate" type="xs:date"/>
+						<xs:element name="Version" type="xs:integer"/>
+					</xs:choice>
+					<xs:element name="ChapterName" type="xs:string" minOccurs="0"/>
+					<xs:element name="ParagraphName" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute ref="xml:lang" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FindCNKResponseType">
+		<xs:annotation>
+			<xs:documentation>Response structure returning information on AMPP</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="cprotocol:ResponseType">
+				<xs:sequence>
+					<xs:element name="Product" type="core:ProductType" maxOccurs="unbounded"/>
+					<xs:element name="VersionNum" type="xs:integer"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FindParagraphRequestType">
+		<xs:annotation>
+			<xs:documentation>Input structure for request on paragraphs for a CNK from reimbursment</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="cprotocol:RequestType">
+				<xs:sequence>
+					<xs:element name="AmppId" type="xs:long"/>
+					<xs:element name="StartDate" type="xs:date" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FindParagraphResponseType">
+		<xs:annotation>
+			<xs:documentation>Response structure returning for request on paragraphs for a CNK </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="cprotocol:ResponseType">
+				<xs:sequence>
+					<xs:element name="AmppId" type="xs:long"/>
+					<xs:element name="StartDate" type="xs:date"/>
+					<xs:element name="EndDate" type="xs:date" minOccurs="0"/>
+					<xs:element name="FindParagraph" type="core:FindParagraphType" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FindParagraphTextRequestType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:RequestType">
+				<xs:sequence>
+					<xs:element name="ChapterName" type="xs:string"/>
+					<xs:element name="ParagraphName" type="xs:string"/>
+					<xs:choice minOccurs="0">
+						<xs:element name="StartDate" type="xs:date"/>
+						<xs:element name="Version" type="xs:integer"/>
+					</xs:choice>
+					<xs:element name="VerseNum" type="xs:integer" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute ref="xml:lang" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FindParagraphTextResponseType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:ResponseType">
+				<xs:sequence>
+					<xs:element name="Paragraph" type="core:ParagraphAndChildrenType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FindReimbursementConditionsRequestType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:RequestType">
+				<xs:sequence>
+					<xs:choice>
+						<xs:element name="AmppId" type="xs:long"/>
+						<xs:sequence>
+							<xs:element name="ChapterName" type="xs:string"/>
+							<xs:element name="ParagraphName" type="xs:string"/>
+						</xs:sequence>
+					</xs:choice>
+					<xs:choice minOccurs="0">
+						<xs:element name="StartDate" type="xs:date"/>
+						<xs:element name="Version" type="xs:integer"/>
+					</xs:choice>
+				</xs:sequence>
+				<xs:attribute ref="xml:lang" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FindReimbursementConditionsResponseType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:ResponseType">
+				<xs:sequence>
+					<xs:element name="ParagraphAndTherapy" type="core:ParagraphAndTherapyType" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetAddedDocumentsRequestType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:RequestType">
+				<xs:sequence>
+					<xs:element name="ChapterName" type="xs:string"/>
+					<xs:element name="ParagraphName" type="xs:string"/>
+					<xs:choice minOccurs="0">
+						<xs:element name="StartDate" type="xs:date"/>
+						<xs:element name="Version" type="xs:integer"/>
+					</xs:choice>
+					<xs:element name="VerseNum" type="xs:integer" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute ref="xml:lang" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetAddedDocumentsResponseType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:ResponseType">
+				<xs:sequence>
+					<xs:element name="AddedDocument" type="core:AddedDocumentType" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetParagraphExclusionsRequestType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:RequestType">
+				<xs:sequence>
+					<xs:element name="ChapterName" type="xs:string"/>
+					<xs:element name="ParagraphName" type="xs:string"/>
+					<xs:choice minOccurs="0">
+						<xs:element name="StartDate" type="xs:date"/>
+						<xs:element name="Version" type="xs:integer"/>
+					</xs:choice>
+				</xs:sequence>
+				<xs:attribute ref="xml:lang" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetParagraphExclusionsResponseType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:ResponseType">
+				<xs:sequence>
+					<xs:element name="ExcludedParagraph" type="core:ExcludedParagraphType" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="UnstructuredExclusionRule" type="core:UnstructuredExclusionRuleType" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetParagraphIncludedSpecialtiesRequestType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:RequestType">
+				<xs:sequence>
+					<xs:element name="ChapterName" type="xs:string"/>
+					<xs:element name="ParagraphName" type="xs:string"/>
+					<xs:choice minOccurs="0">
+						<xs:element name="StartDate" type="xs:date"/>
+						<xs:element name="Version" type="xs:integer"/>
+					</xs:choice>
+				</xs:sequence>
+				<xs:attribute ref="xml:lang" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetParagraphIncludedSpecialtiesResponseType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:ResponseType">
+				<xs:sequence>
+					<xs:element name="AtmAndChildren" type="core:AtmAndChildrenType" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetProfessionalAuthorizationsRequestType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:RequestType">
+				<xs:sequence>
+					<xs:element name="QualificationListId" type="xs:string"/>
+					<xs:element name="InputDate" type="xs:date" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute ref="xml:lang" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetProfessionalAuthorizationsResponseType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:ResponseType">
+				<xs:sequence>
+					<xs:element name="QualificationListId" type="xs:string"/>
+					<xs:element name="StartDate" type="xs:date"/>
+					<xs:element name="EndDate" type="xs:date" minOccurs="0"/>
+					<xs:element name="Name" type="xs:string"/>
+					<xs:element name="ExclusiveInd" type="xs:string" minOccurs="0"/>
+					<xs:element name="ProfessionalAuthorization" type="core:ProfessionalAuthorizationType" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FindPublicCNKRequestType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:RequestType">
+				<xs:sequence>
+					<xs:element name="CNK" type="xs:long"/>
+					<xs:element name="DeliveryEnvironment" type="xs:string"/>
+					<xs:choice minOccurs="0">
+						<xs:element name="StartDate" type="xs:date"/>
+						<xs:element name="Version" type="xs:integer"/>
+					</xs:choice>
+				</xs:sequence>
+				<xs:attribute ref="xml:lang" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FindPublicCNKResponseType">
+		<xs:complexContent>
+			<xs:extension base="cprotocol:ResponseType">
+				<xs:sequence>
+					<xs:element name="Ampp" type="core:FindAmppType" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

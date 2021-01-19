@@ -1,0 +1,24 @@
+***************************************************************************
+* eHealth Technical Connector Registration Authority (RA) MIGRATION GUIDE *
+***************************************************************************
+3.15.0 release (april 2018)
+  . change                      migration from ra v1 to ra v2 services
+  
+  The interfaces, domain model and the process flow have all changed in version V2.
+  Every v2 use case has a associated integration test in be.fgov.ehealth.technicalconnector.ra.RaWalkThroughIntegrationTest.
+  Use these as code examples to migrate from v1 to v2. 
+  
+  Here is the list of use cases with their associated example method:
+  
+    - Create ETK for an individual                          ==> RaWalkThroughIntegrationTest.walkEid() 
+    - Create ETK for an organisation                        ==> RaWalkThroughIntegrationTest.walkOrganization()
+    - Create ETK for an organisation without application id ==> RaWalkThroughIntegrationTest.walkOrganizationWithoutApplicationId()
+    - Renew an existing ETK                                 ==> seet test RaWalkThroughIntegrationTest.replace()
+    - Revoke an ETK                                         ==> seet test RaWalkThroughIntegrationTest.revoke()
+    
+   In addition you will find examples for following operations:
+    
+    - submitCSRForForeigner         ==> submitCSRForForeigner()
+    - getActorQualities             ==> getActorQualities()
+    - getGenericOrganizationTypes   ==> listOrganization()
+    - getExistingApplicationIds     ==> listApplicationIds()

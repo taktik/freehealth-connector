@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <!-- Parent is the SmalS-MvM master pom -->
+  <parent>
+    <groupId>be.fgov.ehealth.connector</groupId>
+    <artifactId>connector-business-master</artifactId>
+    <version>3.20.2</version>
+  </parent>
+
+  <!-- General attributes -->
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>connector-business-geninsasync</artifactId>
+  <name>Connector Business Generic Insurability Async</name>
+  <description>connector-business-geninsasync</description>
+  <!-- Packaging CAN NOT BE CHANGED -->
+  <packaging>jar</packaging>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-business-genericasync</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-business-genericasync</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-mycarenetgeninsasync</artifactId>
+      <version>${version.utilities}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-business-testcommons</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-business-mycarenetcommons</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack generic async dd</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>connector-business-genericasync</artifactId>
+                  <version>${project.version}</version>
+                  <classifier>tests</classifier>
+                </artifactItem>
+              </artifactItems>
+              <includes>be/ehealth/businessconnector/genericasync/helper/**/*.cs</includes>
+              <outputDirectory>target/generated-net-sources</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- Configuration of profiles MUST BE CONFIGURED -->
+  <profiles>
+    <profile>
+      <id>no-dotnet</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unpack ikvm</id>
+                <phase>disabled</phase>
+              </execution>
+              <execution>
+                <id>unpack ddl</id>
+                <phase>disabled</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>buildDll</id>
+                <phase>disabled</phase>
+              </execution>
+              <execution>
+                <id>buildCSPROJ</id>
+                <phase>disabled</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>make-zip</id>
+                <phase>disabled</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

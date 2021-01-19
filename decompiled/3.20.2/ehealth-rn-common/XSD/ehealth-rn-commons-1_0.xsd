@@ -1,0 +1,28 @@
+<!-- Copyright (c) eHealth -->
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:rn:commons:v1"
+           targetNamespace="urn:be:fgov:ehealth:rn:commons:v1" 
+           elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-rn-common
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.3
+ Build-Time: 20200727-1425 
+ </xs:appinfo>
+ </xs:annotation>
+    <xs:annotation>
+        <xs:appinfo>
+            Implementation-Title: ConsultRN XSD Common
+            Specification-Version: 3.1
+            Implementation-Version: 3.1.0
+            Build-Time: 20180627-1659
+        </xs:appinfo>
+    </xs:annotation>
+    
+    <xs:simpleType name="ApplicationIdType">
+        <xs:restriction base="xs:string">
+        </xs:restriction>
+    </xs:simpleType>
+  
+</xs:schema>

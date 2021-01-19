@@ -1,0 +1,9 @@
+**********************************************************
+* eHealth Business Mycarenet Member Data RELEASE NOTES   *
+**********************************************************
+
+3.17.1 release (april 2019)
+  . Initial release
+  
+3.17.0 internal release (april 2019)
+  
