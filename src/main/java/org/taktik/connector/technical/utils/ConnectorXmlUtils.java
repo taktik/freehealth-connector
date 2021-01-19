@@ -239,6 +239,7 @@ public final class ConnectorXmlUtils {
             transformer = trfactory.newTransformer();
          }
 
+         LOG.debug("Transformer implementation {}", transformer.getClass());
          transformer.setOutputProperty("indent", "yes");
          transformer.setOutputProperty("omit-xml-declaration", "yes");
          transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(1));

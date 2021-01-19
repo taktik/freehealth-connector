@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Vector;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
@@ -75,6 +79,22 @@ public class RecursiveProperties extends SystemOverridenProperties {
          ConnectorIOUtils.closeQuietly((Object)is);
       }
 
+   }
+
+   public synchronized Enumeration<Object> keys() {
+      Enumeration<Object> keysEnum = super.keys();
+      Vector keyList = new Vector();
+
+      while(keysEnum.hasMoreElements()) {
+         keyList.add(keysEnum.nextElement());
+      }
+
+      Collections.sort(keyList, new Comparator<Object>() {
+         public int compare(Object o1, Object o2) {
+            return o1.toString().compareTo(o2.toString());
+         }
+      });
+      return keyList.elements();
    }
 
    public String getProperty(String key, String defaultValue) {

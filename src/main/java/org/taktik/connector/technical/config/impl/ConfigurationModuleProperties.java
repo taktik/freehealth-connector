@@ -3,6 +3,8 @@ package org.taktik.connector.technical.config.impl;
 import org.taktik.connector.technical.config.Configuration;
 import org.taktik.connector.technical.config.ConfigurationModule;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
+
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 import org.slf4j.Logger;
@@ -17,12 +19,10 @@ public class ConfigurationModuleProperties implements ConfigurationModule {
          Properties properties = ((ConfigurationImpl)config).getProperties();
          if (LOG.isDebugEnabled()) {
             LOG.debug("Current properties are : ");
-            Iterator i$ = properties.keySet().iterator();
-
-            while(i$.hasNext()) {
-               Object key = i$.next();
-               LOG.debug(" ." + key + " = [" + properties.getProperty((String)key) + "]");
-            }
+            Enumeration keys = properties.keys();
+            while(keys.hasMoreElements()) {
+               Object key = keys.nextElement();
+               LOG.debug(" .{} = [{}]", key, properties.get(key));
          }
       }
 
