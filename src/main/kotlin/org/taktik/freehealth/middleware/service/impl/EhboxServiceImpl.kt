@@ -166,7 +166,11 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                     readReceipt
                 }
             }
-        request.publicationId = UUID.randomUUID().toString().substring(0, 12)
+
+        if (request.publicationId == null) {
+            request.publicationId = UUID.randomUUID().toString().substring(0, 12)
+        }
+
         return try {
             freehealthEhboxService.sendMessage(samlToken, request).let { sendMessageResponse ->
                 if (sendMessageResponse.status?.code == "100")
