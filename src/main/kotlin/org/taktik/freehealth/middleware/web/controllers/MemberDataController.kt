@@ -221,15 +221,19 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
-        @RequestParam messageNames: List<String>?) : MemberDataList? {
-            return memberDataService.getMemberDataMessages(
-                keystoreId = keystoreId,
-                tokenId = tokenId,
-                passPhrase = passPhrase,
-                hcpNihii = hcpNihii,
-                hcpName = hcpName,
-                messageNames = messageNames)
-        }
+        @RequestParam messageNames: List<String>?,
+        @RequestParam(required = false) reference: String?
+    ) : MemberDataList? {
+        return memberDataService.getMemberDataMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
+            hcpName = hcpName,
+            messageNames = messageNames,
+            reference = reference
+        )
+    }
 
     @PostMapping("/async/confirm/messages", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmMemberDataMessagesAsync(

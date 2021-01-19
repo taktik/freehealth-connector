@@ -63,7 +63,8 @@ interface MemberDataService {
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        messageNames: List<String>?
+        messageNames: List<String>?,
+        reference: String?
     ): MemberDataList?
 
     fun confirmMemberDataMessages(

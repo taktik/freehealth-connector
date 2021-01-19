@@ -26,10 +26,9 @@ import be.cin.mycarenet.esb.common.v2.CommonInput
 import be.cin.mycarenet.esb.common.v2.OrigineType
 import be.cin.nip.async.generic.Confirm
 import be.cin.nip.async.generic.Get
-import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Post
 import be.cin.nip.async.generic.PostResponse
-import be.cin.nip.async.generic.Query
+import be.cin.nip.async.generic.QueryParameters
 import be.cin.types.v1.DetailType
 import be.cin.types.v1.DetailsType
 import be.cin.types.v1.FaultType
@@ -264,7 +263,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         }
     }
 
-    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, messageNames: List<String>?): MemberDataList? {
+    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, messageNames: List<String>?, reference: String?): MemberDataList? {
 
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for MDA operations")
@@ -274,27 +273,18 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
         val getHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
+            faultTo = "http://www.w3.org/2005/08/addressing/anonymous"
+            replyTo = "http://www.w3.org/2005/08/addressing/anonymous"
             messageID = URI(IdGeneratorFactory.getIdGenerator("uuid").generateId())
         }
 
-        val get = Get().apply {
-            msgQuery = MsgQuery().apply {
-                isInclude = true
-                max = 100
+        val requestObjectBuilder = BuilderFactory.getRequestObjectBuilder("mda")
 
-                if (messageNames.isNullOrEmpty()) {
-                    this.messageNames.add("MDA")
-                }
-                else {
-                    messageNames.let { this.messageNames.addAll(it) }
-                }
-            }
-            tAckQuery = Query().apply {
-                isInclude = true
-                max = 100
-            }
-            origin = buildOriginType(samlToken.quality, hcpNihii, hcpName)
-        }
+        val msgQuery = requestObjectBuilder.createMsgQuery(100, true, *messageNames?.toTypedArray() ?: arrayOf("MDA"))
+        val query = requestObjectBuilder.createQuery(100, true)
+        val queryParameters = if (reference != null) QueryParameters().apply { this.reference = reference } else null
+        val originType = buildOriginType(samlToken.quality, hcpNihii, hcpName)
+        val get = requestObjectBuilder.buildGetRequest(originType, msgQuery, query, queryParameters);
 
         val response = genAsyncService.getRequest(samlToken, get, getHeader)
 
