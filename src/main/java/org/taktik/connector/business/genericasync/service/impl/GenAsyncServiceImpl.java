@@ -25,7 +25,6 @@ import org.taktik.connector.technical.handler.SOAPHeaderLoggerHandler;
 import org.taktik.connector.technical.handler.domain.WsAddressingHeader;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
-import org.taktik.connector.technical.validator.SessionValidator;
 import org.taktik.connector.technical.ws.ServiceFactory;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import org.taktik.connector.technical.ws.domain.HandlerChain;
@@ -38,7 +37,6 @@ import java.util.concurrent.TimeUnit;
 public class GenAsyncServiceImpl implements GenAsyncService {
    private static final Logger LOG = LoggerFactory.getLogger(GenAsyncServiceImpl.class);
    private static Configuration config = ConfigFactory.getConfigValidator();
-   private SessionValidator sessionValidator;
    private String serviceName;
    private int threshold;
 

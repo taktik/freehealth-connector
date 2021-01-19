@@ -13,7 +13,6 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
 import org.taktik.connector.technical.validator.EhealthReplyValidator;
-import org.taktik.connector.technical.validator.SessionValidator;
 import be.fgov.ehealth.consultrn._1_0.protocol.SearchBySSINReply;
 import be.fgov.ehealth.consultrn._1_0.protocol.SearchBySSINRequest;
 import be.fgov.ehealth.consultrn._1_0.protocol.SearchPhoneticReply;
