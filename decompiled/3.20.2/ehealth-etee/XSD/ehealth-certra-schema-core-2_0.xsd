@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:certra:core:v2" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:etee="urn:be:fgov:ehealth:etee:commons:core:v2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+  xmlns:core="urn:be:fgov:ehealth:commons:core:v2" targetNamespace="urn:be:fgov:ehealth:certra:core:v2" elementFormDefault="qualified">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD ETEE RA
+ Specification-Version: 2.0
+ Implementation-Version: 2.0.2
+ Build-Time: 20170713-1652 
+ </xs:appinfo>
+ </xs:annotation>
+  
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd" />
+  <xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../external/XSD/xmldsig-core-schema.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-core-2_0.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:etee:commons:core:v2" schemaLocation="ehealth-etee-schema-core-2_0.xsd" />
+
+  <xs:simpleType name="EntityType">
+    <xs:annotation>
+      <xs:documentation>Enumeration of entities to which a certificate can be issued (this is either a natural person entity or an organization entity)</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NaturalPerson"/>
+      <xs:enumeration value="Organization"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="RevocationReasonType">
+    <xs:annotation>
+      <xs:documentation>Enumeration of reasons for revoking a certificate. These reasons are a subset of the possible reasons defined in RFC 5280.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="keyCompromise" />
+      <xs:enumeration value="affiliationChanged" />
+      <xs:enumeration value="superseded" />
+      <xs:enumeration value="cessationOfOperation" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="TextType">
+    <xs:annotation>
+      <xs:documentation>Describes a localized text string that is available in one or more languages.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Value" type="LocalizedString" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="LocalizedString">
+    <xs:annotation>
+      <xs:documentation>String in the locale specified by the xml:lang attribute</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute ref="xml:lang" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  
+  <xs:complexType name="ContactDataType">
+    <xs:annotation>
+      <xs:documentation>The contact data of the person(s) responsible for the certificate.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="EmailPrivate" type="xs:string" />
+      <xs:element name="EmailGeneral" type="xs:string" minOccurs="0" />
+      <xs:element name="PhonePrivate" type="xs:string" />
+      <xs:element name="PhoneGeneral" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CertificateIdentifierType">
+    <xs:annotation>
+      <xs:documentation>This type contains the identification details of a certificate: The health care actor to which the certificate was issued and the optional ApplicationId assigned to the certificate.  </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Actor" type="core:ActorType">
+        <xs:annotation>
+          <xs:documentation>The health care actor that owns the certificate. An actor may be a natural person in case the identifier type is SSIN or an organization in case of other identifier types. An actor is always identified by a single unique identifier.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ApplicationId" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>An optional applicationId that can be used to differentiate multiple certificates assigned to the same actor. Only organizations may make use of this applicationId.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="OrganizationType">
+    <xs:annotation>
+      <xs:documentation>Describes an organization. Organizations are uniquely identified by their identifier and have a name in at least one language.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Name" type="TextType"/>
+      <xs:element name="Identifier" type="core:IdType" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="OrganizationIdentifierType">
+    <xs:annotation>
+      <xs:documentation>Describes the details of an identifier type that can be used by organizations. An identifier has a unique type name and a human readable name in at least one language. Some identifiers have to follow a certain pattern and logic, in those cases the legal values are described through a regular expression and "check digit" algorithm.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Name" type="TextType" />
+      <xs:element name="IdentifierType" type="xs:anyURI" />
+      <xs:element name="ValidationRegEx" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>A regular expression that can be used to validate if the value of an organization identifier has the correct structure. The regular expression will use the Java syntax.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CheckDigitAlgorithm" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>The type of algorithm that must be applied when checking if an identifier of an organization is valid for this type of organization. The list of possible check digit algorithms is described in the cook book and may be updated in the future. If no check digit is present than any value should be considered valid.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AvailableBaseService" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>A list of eHealth base services for which this type of organization is authorized to request access. The list of services which you want to use with a certificate can be specified as part of the GenerateCertificate request but only services listed here will be accepted for this organization type.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="ContractType">
+    <xs:annotation>
+      <xs:documentation>Digital contract that describes the terms and conditions that apply when requesting a new eHealth certificate. The contract also contains the details of the person that will be signing it with his eID.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="DN" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Distinguished name of the CSR for which this contract has been created. ETEE will validate that the distinguished name of the contract matches the distinguished name in the CSR.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Signer" type="core:ActorType">
+        <xs:annotation>
+          <xs:documentation>Identification information of the person that must sign the contract. ETEE will validate that the details of this party match those of the eID that signed the CSR.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Text" type="TextType">
+        <xs:annotation>
+          <xs:documentation>The text of the CSR contract to which the user is agreeing. The text is an HTML5 document that must be presented to the user signing the CSR.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="RevocationContractType">
+    <xs:annotation>
+      <xs:documentation>Digital contract that describes the terms and conditions that apply when revoking an existing eHealth certificate. The contract also contains the details of the person that will be signing it with his eID.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="DN" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Distinguished name of the certificate for which this revocation contract has been created.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Signer" type="core:ActorType">
+        <xs:annotation>
+          <xs:documentation>Identification information of the person that must sign the revocation contract. ETEE will validate that the details of this party match those of the eID that signed the revocation request.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="RevocationReason" type="RevocationReasonType">
+        <xs:annotation>
+          <xs:documentation>The reason the user entered for revoking the certificate.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Text" type="TextType">
+        <xs:annotation>
+          <xs:documentation>The text of the revocation contract to which the user is agreeing. The text is an HTML5 document that must be presented to the user signing the revocation request.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="EHealthCertificateSigningRequestType">
+    <xs:annotation>
+      <xs:documentation>Describes an eHealth CSR. The eHealth CSR wraps a CSR in PKCS#10 format and adds the necessary data needed by the eHealth Certificate Manager service such as the contract, contact data and the eHealth services you want to use with your certificate.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ContactData" type="ContactDataType" />
+      <xs:element name="CSR" type="xs:base64Binary">
+        <xs:annotation>
+          <xs:documentation>A certificate signing request (CSR) in PKCS#10 format and transformed into base64 representation.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Contract" type="ContractType">
+        <xs:annotation>
+          <xs:documentation>The server signed contract as it was returned by the GenerateSignedContract operation.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="BaseServiceUsage" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Optional element that defines for which eHealth base services you want to use the certificate. This will automatically notify these services of the new certificate that needs to be registered.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="CertificateEntityType">
+    <xs:annotation>
+      <xs:documentation>Identification information of the entity to which a certificate is issued</xs:documentation>
+    </xs:annotation>
+      <xs:sequence>
+      <xs:element name="CertificateIdentifier" type="CertificateIdentifierType">
+        <xs:annotation>
+          <xs:documentation>The identifier of this certificate. It contains details about the health care actor to which this certificate was issued and an optional Application ID if that actor has more than one eHealth certificate.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      </xs:sequence>
+            <xs:attribute name="EntityType" type="EntityType">
+        <xs:annotation>
+          <xs:documentation>The type of entity for which this certificate was issued: certificates can be issued to persons or organizations</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+  </xs:complexType>
+  
+  <xs:complexType name="CertificateInfoType">
+    <xs:annotation>
+      <xs:documentation>Contains all the information about an authentication certificate and encryption token as it exists in the RA database.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+        <xs:element name="RequestedDate" type="xs:dateTime">
+          <xs:annotation>
+            <xs:documentation>A time stamp that identifies the moment when the certificate was first requested in the web service.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="PublicKeyIdentifier" type="etee:PublicKeyIdentifier">
+          <xs:annotation>
+            <xs:documentation>The public key identifier hash value of the authentication certificate. This serves as a unique identifier of the certificate and this value will also appear as the "Subject key identifier" extension in the delivered authentication certificate.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="CertificateEntity" type="CertificateEntityType">
+          <xs:annotation>
+            <xs:documentation>Details about the entity for which this certificate was issued. This will contain identification information about the person or organization that requested the certificate.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        
+        <xs:element name="AuthenticationCertificateStatus" type="CertificateStatusType">
+          <xs:annotation>
+            <xs:documentation>The status of the authentication certificate</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ETKStatus" type="ETKStatusType">
+          <xs:annotation>
+            <xs:documentation>The status of the encryption token</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="AutomaticallyValidated" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation>Indicates how the request was validated. When set to true the identity of the requestor was validated automatically, otherwise a manual identity validation was required</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        
+        <xs:element name="AuthenticationCertificateDetails" type="CertificateDetailsType" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>The identification details of the authentication certificate. This element will be missing as long as the certificate has not yet been delivered.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        
+        <xs:element name="Revocable" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation>Can the certificate still be revoked? When set to true the Revoke operation may be called for this certificate</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Replaceable" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation>Can this certificate be replaced right now? When true a replacement certificate can be requested for the same DN using the GenerateCertificate operation</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ReplacementPeriodStartDate" type="xs:dateTime" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>Start date of the period where you are allowed to request a replacement certificate for this certificate. This is the only time that two certificates may be active for the same DN. This replacement period allows clients to replace their certificate before it expires so that they can transition to the new certificate without service interruptions. This element will only be present when an authentication certificate has already been delivered.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        
+        <xs:element name="ContactData" type="ContactDataType">
+          <xs:annotation>
+            <xs:documentation>Contact data of the person or organization responsible for this certificate request</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="BaseServiceUsage" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:documentation>eHealth base services for which this certificate was requested to be used</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CertificateDetailsType">
+    <xs:annotation>
+      <xs:documentation>Type that describes a certificate. A certificate can be uniquely identifier by the combination of its serial number and issuer</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+        <xs:element name="SerialNumber" type="xs:string"/>
+        <xs:element name="DN" type="xs:string" />
+        <xs:element name="IssuerDN" type="xs:string" />
+        <xs:element name="ValidNotBefore" type="xs:dateTime"/>
+        <xs:element name="ValidNotAfter" type="xs:dateTime"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:simpleType name="CertificateStatusType">
+    <xs:annotation>
+      <xs:documentation>Type describing the possible statuses of an authentication certificate</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="IN_PROGRESS"/>
+      <xs:enumeration value="VALID_ACTIVE"/>
+      <xs:enumeration value="REFUSED"/>
+      <xs:enumeration value="REVOKED"/>
+      <xs:enumeration value="EXPIRED"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="ETKStatusType">
+  <xs:annotation>
+      <xs:documentation>Type describing the possible statuses of an encryption token</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NOT_REQUESTED"/>
+      <xs:enumeration value="IN_REQUEST"/>
+      <xs:enumeration value="WAIT_FOR_ACTIVATION"/>
+      <xs:enumeration value="VALID_ACTIVE"/>
+      <xs:enumeration value="REVOKED"/>
+      <xs:enumeration value="EXPIRED"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 sp1 (x64) (http://www.altova.com) by SMALS (SMALS) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:enc="urn:be:fgov:ehealth:commons:enc:v2" xmlns:core="urn:be:fgov:ehealth:commons:core:v2" xmlns:swaref="http://ws-i.org/profiles/basic/1.1/xsd" targetNamespace="urn:be:fgov:ehealth:commons:enc:v2" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
+	<xs:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="ehealth-commons-schema-core-2_0.xsd"/>
+	<xs:import namespace="http://ws-i.org/profiles/basic/1.1/xsd" schemaLocation="../../external/XSD/swaref.xsd"/>
+	<xs:element name="CipherData" type="enc:CipherDataType">
+		<xs:annotation>
+			<xs:documentation>Contains the encrypted content</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="CipherDataType">
+		<xs:annotation>
+			<xs:documentation>Contains the encrypted content type</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element ref="enc:CipherValue"/>
+			<xs:element ref="enc:CipherReference"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:element name="CipherReference" type="enc:CipherReferenceType">
+		<xs:annotation>
+			<xs:documentation>Allows to use SOAP With Attachments for chipered data</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="CipherReferenceType">
+		<xs:annotation>
+			<xs:documentation>Contains the referenceType to use SOAP With Attachments for chipered data</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="enc:URI">
+				<xs:annotation>
+					<xs:documentation>URI of the attachment</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="enc:Digest">
+				<xs:annotation>
+					<xs:documentation>Contains the digest value of the attachment</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="CipherValue">
+		<xs:annotation>
+			<xs:documentation>Base64binary containing the encrypted message.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:base64Binary"/>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Digest" type="enc:DigestType">
+		<xs:annotation>
+			<xs:documentation>Contains the digest value used to secure the attachment</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DigestType">
+		<xs:annotation>
+			<xs:documentation>Type of the digest value used to secure the attachment</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="algorithm" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Algorithm userd for Digest Calculation</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="EncryptedData" type="enc:EncryptedDataType">
+		<xs:annotation>
+			<xs:documentation>Contains all information to send an encrypted message</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="EncryptedDataType">
+		<xs:annotation>
+			<xs:documentation>Contains encrypted data type to send an encrypted message</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="enc:CipherData"/>
+		</xs:sequence>
+		<xs:attribute name="Id" type="xs:ID">
+			<xs:annotation>
+				<xs:documentation>Unique identifier of a message</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="MimeType" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Format of the sealed content (e.g. application/pkcs7,...)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ContentType" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Functional content (e.g. kmerh,ssin,...)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="EncryptedKey" type="enc:EncryptedDataType">
+		<xs:annotation>
+			<xs:documentation>Contains the encrypted data of the initial message which was sent</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="EncryptionMethod" type="enc:EncryptionMethodType">
+		<xs:annotation>
+			<xs:documentation>Endpoint of the encryption method</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="EncryptionMethodType">
+		<xs:annotation>
+			<xs:documentation>Endpoint type of the encryption method</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="Algorithm"  type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:element name="EncryptionPolicy">
+		<xs:annotation>
+			<xs:documentation>Policy to follow to send the response of the message</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="enc:KeyInfo"/>
+			</xs:sequence>
+			<xs:attribute name="MimeType"  type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ETKSearchCriteria" type="enc:ETKSearchCriteriaType">
+		<xs:annotation>
+			<xs:documentation>Contains the search criteria to find the token used for the encryption</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="ETKSearchCriteriaType">
+		<xs:annotation>
+			<xs:documentation>Contains the search criteria type to find the token used for the encryption</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="core:Id" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Key" type="enc:KeyType">
+		<xs:annotation>
+			<xs:documentation>Contains the key used for the encryption if it is not present in ETK depot</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="KeyInfo" type="enc:KeyInfoType">
+		<xs:annotation>
+			<xs:documentation>Contains the information about the key used for the encryption</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="KeyInfoType">
+		<xs:annotation>
+			<xs:documentation>Contains the information type about the key used for the encryption</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element ref="enc:ETKSearchCriteria"/>
+			<xs:element ref="enc:EncryptedKey">
+				<xs:annotation>
+					<xs:documentation>Contains the encrypted Key</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="enc:Key">
+				<xs:annotation>
+					<xs:documentation>Contains the key to use to encrypt the response</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="KeyType">
+		<xs:annotation>
+			<xs:documentation>Contains the type of key used for the encryption.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:base64Binary">
+				<xs:attribute name="Type" use="required">
+					<xs:annotation>
+						<xs:documentation>contains the type of the key (urn:be:fgov:ehealth:etee:etk if an etk is used in side Key) </xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:element name="URI" type="swaref:swaRef">
+		<xs:annotation>
+			<xs:documentation>Link of the attachment</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>
