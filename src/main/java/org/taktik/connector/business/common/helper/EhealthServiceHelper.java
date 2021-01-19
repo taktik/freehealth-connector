@@ -5,7 +5,6 @@ import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValue
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import org.taktik.connector.technical.validator.EhealthReplyValidator;
-import org.taktik.connector.technical.validator.SessionValidator;
 import org.taktik.connector.technical.ws.ServiceFactory;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import be.fgov.ehealth.commons.core.v2.StatusDetail;

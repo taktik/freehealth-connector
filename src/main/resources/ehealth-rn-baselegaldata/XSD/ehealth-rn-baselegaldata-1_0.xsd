@@ -1,0 +1,1147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================================================================================
+	* Owner					: Crossroad Bank for Social Security (CBSS)
+	* Description				: This XML schema document contains a set of XML types and content model fragments used to model legal person data within the CBSS domain. 
+	* Revision History		: 20/09/2017 4.0 Changes for BeSt address and CBSS Contact address
+	* 								  24/10/2017 4.0 Add register type "RAN"
+	*								  24/10/2017 4.0 lastName from 48 to 128 characters
+	*								  13/11/2017 4.0 Add PersonIdentificationResponseType for minimal person identification data
+	*								  17/11/2017 4.0 Add civil state transcription and judgment
+	*								  20/11/2017 4.0 Add genderCode 'X'
+	*								  20/11/2017 4.0 Remove actType from DeceaseGroup
+	*								  23/11/2017 4.0 Add countryCodeISO
+	*								  21/12/2017 4.0 Remove partnerBirthDate
+	*								  02/01/2018 4.0 Make countryCodeISO optional in diplomaticPost, diplomaticAddress, postAddress and temporaryaddress
+	*								  16/01/2018 4.0 Increased length of field bailiffName to 128 chars
+	*								  17/01/2018 4.0 Remove fictional numbers from PersonIdentificationResponseType for phonetic and onAddress search response
+	*								  08/02/2018 4.0 Rename specialNotionName to specialNotionDescription
+	*								  09/02/2018 4.0 Rename judgement to judgment
+	*								  14/02/2018 4.0 Increase length of regionalStreetCode / StreetNameCodeType to 128 (URI)
+	*								  12/03/2018 4.0 Remove genderCode 'X' again: do not provide until standardized code/representation exists
+	*								  28/03/2018 4.0 Add anomalies to personIdentification types
+	*								  17/04/2018 4.0 Add optional inceptionDate to MinimalAdminstratorType, removed administrator for CbssPersonIdentification
+	*								  24/04/2018 4.0 Add source attribute to actual datagroups for PersonInfoGroupService
+	*								  24/04/2018 4.0 Rename partnerReference to partnerFictionalIdentificationNumber
+	*								  08/06/2018 4.0 Change partnerName to MinimalNameInfoType (with optional inceptionDate)
+	*								  27/09/2018 4.0 Remodel anomalies
+	*								  28/09/2018 4.0 Maximum 10 occurrences for actual CivilState and Nationality
+	*								  28/09/2018 4.0 Add status blocks to each data group for the update person result
+	*								  08/10/2018 4.0 Remove BeSt types from address update type, use BOSA BeSt types in address consult type
+	*								  08/10/2018 4.0 Add referenceAddress, rename countryCodeISO to countryIsoCode
+	*								  19/10/2018 4.0 Move PersonRegisterType to RegistriesCommon
+	*								  30/10/2018 4.0 Use new LocationDeclarationType in BirthInfoDeclarationType, DeceaseInfoDeclarationType and CivilStateInfoDeclarationType
+	*								  08/11/2018 4.0 Add pattern to StreetCodeType, CountryCodeISO3166Type and CityCodeType
+	*								  14/11/2018 4.0 Add referenceAddress to MinimalAddressType
+	*								  14/11/2018 4.0 Add BelgianPostalCodeType
+	*								  03/12/2018 4.0 Replace DescriptionType by common:LocalizedDescriptionType
+	*								  09/05/2019 4.0 Remove ResidentialAddressDeclarationType and inline it in ContactAddressDeclarationType, swap position of typeCode and inceptionDate
+	* ====================================================================================================================================
+-->
+<!-- Copyright (c) eHealth -->
+<xsd:schema xmlns:common="urn:be:fgov:ehealth:rn:commons:business:v1"
+            xmlns:tns="urn:be:fgov:ehealth:rn:baselegaldata:v1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:reg="urn:be:fgov:ehealth:rn:registries:commons:v1" targetNamespace="urn:be:fgov:ehealth:rn:baselegaldata:v1" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-rn-baselegaldata
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.0
+ Build-Time: 20200302-1708 
+ </xs:appinfo>
+ </xs:annotation>
+    <xsd:import namespace="urn:be:fgov:ehealth:rn:commons:business:v1" schemaLocation="../../ehealth-rn-common/XSD/ehealth-rn-commons-business-1_0.xsd"/>
+    <xsd:import namespace="urn:be:fgov:ehealth:rn:registries:commons:v1" schemaLocation="../../ehealth-rnregistries-common/XSD/ehealth-rnregistries-commons-1_0.xsd"/>
+    <!--Response content fragments, mainly for PersonInfoGroupService-->
+    <xsd:group name="NameGroup">
+        <xsd:annotation>
+            <xsd:documentation>Model fragment describing the NameInfo part of the person information</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="LastName" type="tns:LastNameType"/>
+            <xsd:element name="GivenName" type="tns:GivenNameType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="InceptionDate" type="xsd:date"/>
+        </xsd:sequence>
+    </xsd:group>
+    <xsd:group name="BirthGroup">
+        <xsd:annotation>
+            <xsd:documentation>Model fragment describing the BirthInfo information as a separate entity</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="BirthDate" type="common:IncompleteDateType" minOccurs="0"/>
+            <xsd:element name="BirthPlace" type="tns:LocationType" minOccurs="0"/>
+            <xsd:element name="ActType" type="tns:ActType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:group>
+    <xsd:group name="DeceaseGroup">
+        <xsd:annotation>
+            <xsd:documentation>Model describing the DeceaseInfo information as a separate entity</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="DeceaseDate" type="common:IncompleteDateType"  minOccurs="0"/>
+            <xsd:element name="DeceasePlace" type="tns:LocationType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:group>
+    <xsd:group name="GenderGroup">
+        <xsd:annotation>
+            <xsd:documentation>Model fragment describing the GenderInfo part of the person information</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="GenderCode" type="tns:GenderCodeType" minOccurs="0"/>
+            <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:group>
+    <xsd:group name="AddressGroup">
+        <xsd:sequence>
+            <xsd:choice minOccurs="0">
+                <xsd:element name="ResidentialAddress" type="tns:ResidentialAddressType" minOccurs="0"/>
+                <xsd:element name="ReferenceAddress" type="tns:ResidentialAddressType" minOccurs="0"/>
+                <xsd:sequence>
+                    <xsd:element name="DiplomaticPost" type="tns:DiplomaticPostType" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation>Diplomatic post responsible for the diplomatic address.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="DiplomaticAddress" type="tns:PlainAddressType" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation>Diplomatic address of the found person</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="PostAddress" type="tns:PlainAddressType" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation>An optional post address of the found person.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:choice>
+            <xsd:element name="TemporaryAddress" type="tns:PlainAddressType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:group>
+    <xsd:group name="AdministratorGroup">
+        <xsd:annotation>
+            <xsd:documentation>Information only available from the NR</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:choice minOccurs="0">
+                <xsd:element name="Location" type="tns:LocationType" minOccurs="0"/>
+                <xsd:element name="SpecialNotion" type="tns:SpecialNotionType" minOccurs="0"/>
+            </xsd:choice>
+            <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:group>
+    <xsd:group name="ContactAddressGroup">
+        <xsd:sequence>
+            <xsd:group ref="tns:MinimalResidentialAddressFragment"/>
+            <xsd:sequence>
+                <xsd:element name="TypeCode" type="tns:ContactAddressTypeType" minOccurs="0"/>
+                <xsd:element name="TypeDescription" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:sequence>
+    </xsd:group>
+    <xsd:group name="SubregisterGroup">
+        <xsd:annotation>
+            <xsd:documentation>Information only available from the NR</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="SubregisterCode" type="tns:NrSubregisterCodeType" minOccurs="0"/>
+            <xsd:element name="SubregisterDescription" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:group>
+    <xsd:group name="LegalCohabitationGroup">
+        <xsd:annotation>
+            <xsd:documentation>Information only available from the NR</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Partner" type="tns:PartnerType" minOccurs="0"/>
+            <xsd:element name="Registration" type="tns:LegalCohabitationRegistrationType" minOccurs="0"/>
+            <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:group>
+    <!--Abstract types from which the service types can extend-->
+    <xsd:complexType name="AbstractOptionalNameType" abstract="true">
+        <xsd:group ref="tns:NameGroup" minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="AbstractOptionalBirthType" abstract="true">
+        <xsd:group ref="tns:BirthGroup" minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="AbstractOptionalDeceaseType" abstract="true">
+        <xsd:group ref="tns:DeceaseGroup" minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="AbstractOptionalGenderType" abstract="true">
+        <xsd:group ref="tns:GenderGroup" minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="AbstractOptionalAddressType" abstract="true">
+        <xsd:group ref="tns:AddressGroup" minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="AbstractOptionalAddressCbssType" abstract="true">
+        <xsd:sequence minOccurs="0">
+            <xsd:element name="ResidentialAddress" type="tns:ResidentialAddressType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="AbstractOptionalAdministratorType" abstract="true">
+        <xsd:group ref="tns:AdministratorGroup" minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="AbstractOptionalContactAddressType" abstract="true">
+        <xsd:group ref="tns:ContactAddressGroup" minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="AbstractOptionalSubregisterType" abstract="true">
+        <xsd:group ref="tns:SubregisterGroup" minOccurs="0"/>
+    </xsd:complexType>
+    <xsd:complexType name="AbstractOptionalLegalCohabitationType" abstract="true">
+        <xsd:group ref="tns:LegalCohabitationGroup" minOccurs="0"/>
+    </xsd:complexType>
+    <!--Minimal person information types (phonetic search, search on address, family members)-->
+    <xsd:complexType name="PersonIdentificationsResponseType">
+        <xsd:sequence>
+            <xsd:element name="PersonIdentification" type="tns:PersonIdentificationType" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="PersonIdentificationType">
+        <xsd:annotation>
+            <xsd:documentation>Type encapsulating all legaldata of a person specific for the PersonService</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Ssin" type="common:SsinType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>The SSIN of the found person (can be different from the ssin comprised in the request in case this ssin was replaced).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:sequence minOccurs="0">
+                <xsd:element name="Name" type="tns:MinimalNameInfoType" minOccurs="0"/>
+                <xsd:element name="Birth" type="tns:MinimalBirthInfoType" minOccurs="0"/>
+                <xsd:element name="Gender" type="tns:MinimalGenderInfoType" minOccurs="0"/>
+                <xsd:element name="Address" type="tns:MinimalAddressType" minOccurs="0"/>
+                <xsd:element name="ContactAddress" type="tns:ContactAddressBaseType" minOccurs="0"/>
+                <xsd:element name="Administrator" type="tns:MinimalAdministratorType" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:element name="Anomalies" type="reg:AnomaliesType" minOccurs="0"/>
+        </xsd:sequence>
+        <xsd:attribute name="Register" type="reg:PersonRegisterType" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Element identifying the register which is the authentic source of the legal data of this person.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Deceased" type="xsd:boolean" use="optional"/>
+    </xsd:complexType>
+    <xsd:complexType name="CbssPersonIdentificationsResponseType">
+        <xsd:sequence>
+            <xsd:element name="PersonIdentification" type="tns:CbssPersonIdentificationType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CbssPersonIdentificationType">
+        <xsd:annotation>
+            <xsd:documentation>Type encapsulating all legaldata of a person specific for the PersonService</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Ssin" type="common:SsinType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>The SSIN of the found person (can be different from the ssin comprised in the request in case this ssin was replaced).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:sequence minOccurs="0">
+                <xsd:element name="Name" type="tns:MinimalNameInfoType" minOccurs="0"/>
+                <xsd:element name="Birth" type="tns:MinimalBirthInfoType" minOccurs="0"/>
+                <xsd:element name="Gender" type="tns:MinimalGenderInfoType" minOccurs="0"/>
+                <xsd:element name="Address" type="tns:AddressCbssBaseType" minOccurs="0"/>
+                <xsd:element name="ContactAddress" type="tns:ContactAddressBaseType" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:element name="Anomalies" type="reg:AnomaliesType" minOccurs="0"/>
+        </xsd:sequence>
+        <xsd:attribute name="Register" type="reg:PersonRegisterType" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Element identifying the register which is the authentic source of the legal data of this person.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Deceased" type="xsd:boolean" use="optional"/>
+    </xsd:complexType>
+    <xsd:complexType name="FamilyMemberIdentificationType">
+        <xsd:annotation>
+            <xsd:documentation>Type encapsulating all legaldata of a person specific for the PersonService</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:choice>
+                <xsd:element name="Ssin" type="common:SsinType" minOccurs="0"/>
+                <xsd:element name="FictionalIdentificationNumber" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>non-SSIN reference used at the NR for family members without NR number</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:maxLength value="11"/>
+                            <xsd:minLength value="1"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:choice>
+            <xsd:element name="Name" type="tns:MinimalNameInfoType" minOccurs="0"/>
+            <xsd:element name="Birth" type="tns:MinimalBirthInfoType" minOccurs="0"/>
+            <xsd:element name="Gender" type="tns:MinimalGenderInfoType" minOccurs="0"/>
+            <xsd:element name="Address" type="tns:MinimalAddressType" minOccurs="0"/>
+            <xsd:element name="ContactAddress" type="tns:ContactAddressBaseType" minOccurs="0"/>
+            <xsd:element name="Administrator" type="tns:MinimalAdministratorType" minOccurs="0"/>
+            <xsd:element name="Anomalies" type="reg:AnomaliesType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="MinimalNameInfoType">
+        <xsd:sequence>
+            <xsd:element name="LastName" type="tns:LastNameType" minOccurs="0"/>
+            <xsd:element name="GivenName" type="tns:GivenNameType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="MinimalBirthInfoType">
+        <xsd:sequence>
+            <xsd:element name="BirthDate" type="common:IncompleteDateType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="MinimalGenderInfoType">
+        <xsd:sequence>
+            <xsd:element name="GenderCode" type="tns:GenderCodeType" minOccurs="0"/>
+            <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="MinimalAddressType">
+        <xsd:sequence>
+            <xsd:choice minOccurs="0">
+                <xsd:element name="ResidentialAddress" type="tns:ResidentialAddressOptionalInceptionDateType" minOccurs="0"/>
+                <xsd:element name="ReferenceAddress" type="tns:ResidentialAddressOptionalInceptionDateType" minOccurs="0"/>
+                <xsd:sequence>
+                    <xsd:element name="DiplomaticPost" type="tns:DiplomaticPostType" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation>Diplomatic post responsible for the diplomatic address.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="DiplomaticAddress" type="tns:PlainAddressOptionalInceptionDateType" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation>Diplomatic address of the found person</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="PostAddress" type="tns:PlainAddressOptionalInceptionDateType" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation>An optional post address of the found person.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:choice>
+            <xsd:element name="TemporaryAddress" type="tns:PlainAddressOptionalInceptionDateType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="MinimalAdministratorType">
+        <xsd:sequence>
+            <xsd:choice>
+                <xsd:element name="Location" type="tns:LocationType" minOccurs="0"/>
+                <xsd:element name="SpecialNotion" type="tns:SpecialNotionType" minOccurs="0"/>
+            </xsd:choice>
+            <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!--Base consultation current situation response types-->
+    <xsd:complexType name="NobilityTitleBaseType">
+        <xsd:annotation>
+            <xsd:documentation>Type describing the nobility title of a person.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="NobilityTitleCode" minOccurs="0" type="tns:NobilityTitleCodeType"/>
+            <xsd:element name="NobilityTitleDescription" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="InceptionDate" minOccurs="0" type="xsd:date"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="NameInfoBaseType">
+        <xsd:complexContent>
+            <xsd:restriction base="tns:AbstractOptionalNameType">
+                <xsd:group ref="tns:NameGroup"/>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="BirthInfoBaseType">
+        <xsd:complexContent>
+            <xsd:restriction base="tns:AbstractOptionalBirthType">
+                <xsd:group ref="tns:BirthGroup"/>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="DeceaseInfoBaseType">
+        <xsd:complexContent>
+            <xsd:restriction base="tns:AbstractOptionalDeceaseType">
+                <xsd:group ref="tns:DeceaseGroup"/>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="GenderInfoBaseType">
+        <xsd:complexContent>
+            <xsd:restriction base="tns:AbstractOptionalGenderType">
+                <xsd:group ref="tns:GenderGroup"/>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="CivilStatesBaseType">
+        <xsd:sequence>
+            <xsd:element name="CivilState" type="tns:CivilStateInfoBaseType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CivilStateInfoBaseType">
+        <xsd:sequence>
+            <xsd:element name="CivilStateCode" type="tns:CivilstateCodeType" minOccurs="0"/>
+            <xsd:element name="CivilStateDescription" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Partner" type="tns:PartnerType" minOccurs="0"/>
+            <xsd:element name="Location" type="tns:LocationType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Place where civil state was registered.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Judgment" type="tns:JudgmentType" minOccurs="0"/>
+            <xsd:element name="Transcription" type="tns:TranscriptionType" minOccurs="0"/>
+            <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="NationalitiesBaseType">
+        <xsd:sequence>
+            <xsd:element name="Nationality" type="tns:NationalityInfoBaseType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="NationalityInfoBaseType">
+        <xsd:sequence>
+            <xsd:element name="NationalityCode" minOccurs="0" type="tns:NationalityCodeType"/>
+            <xsd:element name="NationalityDescription" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="InceptionDate" minOccurs="0" type="xsd:date"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="AddressBaseType">
+        <xsd:complexContent>
+            <xsd:restriction base="tns:AbstractOptionalAddressType">
+                <xsd:group ref="tns:AddressGroup"/>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="AddressCbssBaseType">
+        <xsd:complexContent>
+            <xsd:restriction base="tns:AbstractOptionalAddressCbssType">
+                <xsd:sequence>
+                    <xsd:element name="ResidentialAddress" type="tns:ResidentialAddressType" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="AdministratorBaseType">
+        <xsd:complexContent>
+            <xsd:restriction base="tns:AbstractOptionalAdministratorType">
+                <xsd:group ref="tns:AdministratorGroup"/>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="SubregisterBaseType">
+        <xsd:complexContent>
+            <xsd:restriction base="tns:AbstractOptionalSubregisterType">
+                <xsd:group ref="tns:SubregisterGroup"/>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="LegalCohabitationBaseType">
+        <xsd:complexContent>
+            <xsd:restriction base="tns:AbstractOptionalLegalCohabitationType">
+                <xsd:group ref="tns:LegalCohabitationGroup"/>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="ContactAddressBaseType">
+        <xsd:complexContent>
+            <xsd:restriction base="tns:AbstractOptionalContactAddressType">
+                <xsd:group ref="tns:ContactAddressGroup"/>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <!--Base with update status and optional group for CbssPersonService.update-->
+    <xsd:complexType name="NameInfoWithUpdateStatusType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalNameType">
+                <xsd:attribute name="Status" type="tns:UpdateDatagroupStatusType" use="optional" />
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="BirthInfoWithUpdateStatusType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalBirthType">
+                <xsd:attribute name="Status" type="tns:UpdateDatagroupStatusType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="DeceaseInfoWithUpdateStatusType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalDeceaseType">
+                <xsd:attribute name="Status" type="tns:UpdateDatagroupStatusType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="GenderInfoWithUpdateStatusType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalGenderType">
+                <xsd:attribute name="Status" type="tns:UpdateDatagroupStatusType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="CivilStatesWithUpdateStatusType">
+        <xsd:sequence minOccurs="0">
+            <xsd:element name="CivilState" type="tns:CivilStateInfoBaseType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="Status" type="tns:UpdateDatagroupStatusType" use="optional"/>
+    </xsd:complexType>
+    <xsd:complexType name="NationalitiesWithUpdateStatusType">
+        <xsd:sequence minOccurs="0">
+            <xsd:element name="Nationality" type="tns:NationalityInfoBaseType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="Status" type="tns:UpdateDatagroupStatusType" use="optional"/>
+    </xsd:complexType>
+    <xsd:complexType name="AddressCbssWithUpdateStatusType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalAddressCbssType">
+                <xsd:attribute name="Status" type="tns:UpdateDatagroupStatusType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="ContactAddressWithUpdateStatusType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalContactAddressType">
+                <xsd:attribute name="Status" type="tns:UpdateDatagroupStatusType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <!--Base with status types and optional group for (Cbss)PersonInfoGroupService-->
+    <xsd:complexType name="NameInfoWithStatusAndSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalNameType">
+                <xsd:attribute name="Status" type="tns:DatagroupStatusType" use="optional"/>
+                <xsd:attribute name="Source" type="tns:SourceType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="BirthInfoWithStatusAndSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalBirthType">
+                <xsd:attribute name="Status" type="tns:DatagroupStatusType" use="optional"/>
+                <xsd:attribute name="Source" type="tns:SourceType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="DeceaseInfoWithStatusAndSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalDeceaseType">
+                <xsd:attribute name="Status" type="tns:DatagroupStatusType" use="optional"/>
+                <xsd:attribute name="Source" type="tns:SourceType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="GenderInfoWithStatusAndSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalGenderType">
+                <xsd:attribute name="Status" type="tns:DatagroupStatusType" use="optional"/>
+                <xsd:attribute name="Source" type="tns:SourceType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="CivilStatesWithStatusType">
+        <xsd:sequence minOccurs="0">
+            <xsd:element name="CivilState" type="tns:CivilStateInfoWithSourceType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="Status" type="tns:DatagroupStatusType" use="optional"/>
+    </xsd:complexType>
+    <xsd:complexType name="CivilStateInfoWithSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:CivilStateInfoBaseType">
+                <xsd:attribute name="Source" type="tns:SourceType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="NationalitiesWithStatusType">
+        <xsd:sequence minOccurs="0">
+            <xsd:element name="Nationality" type="tns:NationalityInfoWithSourceType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="Status" type="tns:DatagroupStatusType" use="optional"/>
+    </xsd:complexType>
+    <xsd:complexType name="NationalityInfoWithSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:NationalityInfoBaseType">
+                <xsd:attribute name="Source" type="tns:SourceType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="AddressWithStatusAndSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalAddressType">
+                <xsd:attribute name="Status" type="tns:DatagroupStatusType" use="optional"/>
+                <xsd:attribute name="Source" type="tns:SourceType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="AddressCbssWithStatusAndSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalAddressCbssType">
+                <xsd:attribute name="Status" type="tns:DatagroupStatusType" use="optional"/>
+                <xsd:attribute name="Source" type="tns:SourceType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="ContactAddressWithStatusAndSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalContactAddressType">
+                <xsd:attribute name="Status" type="tns:DatagroupStatusType" use="optional"/>
+                <xsd:attribute name="Source" type="tns:SourceType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="AdministratorWithStatusAndSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalAdministratorType">
+                <xsd:attribute name="Status" type="tns:DatagroupStatusType" use="optional"/>
+                <xsd:attribute name="Source" type="tns:SourceType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="SubregisterWithStatusAndSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalSubregisterType">
+                <xsd:attribute name="Status" type="tns:DatagroupStatusType" use="optional"/>
+                <xsd:attribute name="Source" type="tns:SourceType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="LegalCohabitationWithStatusAndSourceType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:AbstractOptionalLegalCohabitationType">
+                <xsd:attribute name="Status" type="tns:DatagroupStatusType" use="optional"/>
+                <xsd:attribute name="Source" type="tns:SourceType" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <!--Create/update declaration types-->
+    <xsd:complexType name="NameInfoDeclarationType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:NameInfoBaseType"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="BirthInfoDeclarationType">
+        <xsd:sequence>
+            <xsd:element name="BirthDate" type="common:IncompleteDateType"/>
+            <xsd:element name="BirthPlace" type="tns:LocationDeclarationType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="DeceaseInfoDeclarationType">
+        <xsd:sequence>
+            <xsd:element name="DeceaseDate" type="common:IncompleteDateType"/>
+            <xsd:element name="DeceasePlace" type="tns:LocationDeclarationType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="GenderInfoDeclarationType">
+        <xsd:annotation>
+            <xsd:documentation>Type describing the GenderInfo part of the person information to be provided by the customer</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="GenderCode" type="tns:GenderCodeType"/>
+            <xsd:element name="InceptionDate" type="xsd:date"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="NationalitiesDeclarationType">
+        <xsd:sequence>
+            <xsd:element name="Nationality" type="tns:NationalityInfoDeclarationType" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>Element containing all information comprised in the nationality datagroup of the found person</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="NationalityInfoDeclarationType">
+        <xsd:annotation>
+            <xsd:documentation>Type describing the NationalityInfo part of the person information to be provided by the customer</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="NationalityCode" type="tns:NationalityCodeType"/>
+            <xsd:element name="InceptionDate" type="xsd:date"/>
+            <xsd:element name="ExpiryDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CivilStatesDeclarationType">
+        <xsd:sequence>
+            <xsd:element name="CivilState" type="tns:CivilStateInfoDeclarationType" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>Element containing all information comprised in the nationality datagroup of the found person</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CivilStateInfoDeclarationType">
+        <xsd:annotation>
+            <xsd:documentation>Type describing the CivilStateInfo part of the person information to be provided by the customer</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="CivilStateCode" type="tns:CivilstateCodeType"/>
+            <xsd:element name="PartnerSsin" type="common:SsinType" minOccurs="0"/>
+            <xsd:element name="Location" type="tns:LocationDeclarationType" minOccurs="0"/>
+            <xsd:element name="InceptionDate" type="xsd:date"/>
+            <xsd:element name="ExpiryDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="AddressDeclarationType">
+        <xsd:sequence>
+            <xsd:element name="ResidentialAddress" type="tns:ForeignAddressDeclarationType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ContactAddressDeclarationType">
+        <xsd:sequence>
+            <xsd:choice>
+                <xsd:element name="CountryCode" type="tns:CountryCodeType"/>
+                <xsd:element name="CountryIsoCode" type="tns:CountryCodeISO3166Type"/>
+            </xsd:choice>
+            <xsd:element name="CountryName" type="common:LocalizedDescriptionType" minOccurs="0"/>
+            <xsd:element name="CityCode" type="tns:CityCodeType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Only for Belgian addresses</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CityName" type="common:LocalizedDescriptionType" minOccurs="0"/>
+            <xsd:element name="PostalCode" type="tns:PostalCodeType" minOccurs="0"/>
+            <xsd:element name="StreetCode" type="tns:StreetCodeType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Only for Belgian addresses</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="StreetName" type="common:LocalizedDescriptionType" minOccurs="0"/>
+            <xsd:element name="HouseNumber" type="tns:HouseNumberType" minOccurs="0"/>
+            <xsd:element name="BoxNumber" type="tns:BoxNumberType" minOccurs="0"/>
+            <xsd:element name="TypeCode" type="tns:ContactAddressTypeType"/>
+            <xsd:element name="InceptionDate" type="xsd:date"/>
+            <xsd:element name="ExpiryDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!--Address subtypes-->
+    <xsd:complexType name="ResidentialAddressType">
+        <xsd:complexContent>
+            <xsd:restriction base="tns:ResidentialAddressOptionalInceptionDateType">
+                <xsd:sequence>
+                    <xsd:group ref="tns:MinimalResidentialAddressFragment"/>
+                    <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:group name="MinimalResidentialAddressFragment">
+        <xsd:sequence>
+            <xsd:element name="CountryCode" type="tns:CountryCodeType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Country NIS-code</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CountryIsoCode" type="tns:CountryCodeISO3166Type" minOccurs="0"/>
+            <xsd:element name="CountryName" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="RegionCode" type="tns:BelgianRegionCodeType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Only for Belgian addresses</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="RegionName" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="CityCode" type="tns:CityCodeType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Municipality NIS-code. Only for Belgian addresses</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CityRegionalCode" type="tns:BestIdentifierType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>BeST municipality ID. Only for Belgian addresses</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CityName" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="PostalCode" type="tns:PostalCodeType" minOccurs="0"/>
+            <xsd:element name="StreetCode" type="tns:StreetCodeType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>National Register street code. Only for Belgian addresses</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="StreetRegionalCode" type="tns:BestIdentifierType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>BeST regional street ID. Only for Belgian addresses</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="StreetName" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="HouseNumber" type="tns:HouseNumberType" minOccurs="0"/>
+            <xsd:element name="BoxNumber" type="tns:BoxNumberType" minOccurs="0"/>
+            <xsd:element name="AddressRegionalCode" type="tns:BestIdentifierType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>BeSt object ID. Only for Belgian addresses</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:group>
+    <xsd:complexType name="PlainAddressType">
+        <xsd:complexContent>
+            <xsd:restriction base="tns:PlainAddressOptionalInceptionDateType">
+                <xsd:sequence>
+                    <xsd:element name="CountryCode" type="tns:CountryCodeType" minOccurs="0"/>
+                    <xsd:element name="CountryIsoCode" type="tns:CountryCodeISO3166Type" minOccurs="0"/>
+                    <xsd:element name="CountryName" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element name="Address" type="tns:PlainAddressString" minOccurs="0"/>
+                    <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="DiplomaticPostType">
+        <xsd:sequence>
+            <xsd:element name="CountryCode" type="tns:CountryCodeType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Country code of the diplomatic post.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CountryIsoCode" type="tns:CountryCodeISO3166Type" minOccurs="0"/>
+            <xsd:element name="CountryName" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="DiplomaticPostCode" type="tns:DiplomaticPostCodeType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>The official code of the diplomatic post.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DiplomaticPostName" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ForeignAddressDeclarationType">
+        <xsd:sequence>
+            <xsd:choice>
+                <xsd:element name="CountryCode" type="tns:CountryCodeType"/>
+                <xsd:element name="CountryIsoCode" type="tns:CountryCodeISO3166Type"/>
+            </xsd:choice>
+            <xsd:element name="CountryName" type="common:LocalizedDescriptionType" minOccurs="0"/>
+            <xsd:element name="CityName" type="common:LocalizedDescriptionType" minOccurs="0"/>
+            <xsd:element name="PostalCode" type="tns:PostalCodeType" minOccurs="0"/>
+            <xsd:element name="StreetName" type="common:LocalizedDescriptionType" minOccurs="0"/>
+            <xsd:element name="HouseNumber" type="tns:HouseNumberType" minOccurs="0"/>
+            <xsd:element name="BoxNumber" type="tns:BoxNumberType" minOccurs="0"/>
+            <xsd:element name="InceptionDate" type="xsd:date"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ResidentialAddressOptionalInceptionDateType">
+        <xsd:sequence>
+            <xsd:group ref="tns:MinimalResidentialAddressFragment"/>
+            <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="PlainAddressOptionalInceptionDateType">
+        <xsd:sequence>
+            <xsd:element name="CountryCode" type="tns:CountryCodeType" minOccurs="0"/>
+            <xsd:element name="CountryIsoCode" type="tns:CountryCodeISO3166Type" minOccurs="0"/>
+            <xsd:element name="CountryName" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Address" type="tns:PlainAddressString" minOccurs="0"/>
+            <xsd:element name="InceptionDate" type="xsd:date" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!--Basic building blocks-->
+    <xsd:simpleType name="GenderCodeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="M"/>
+            <xsd:enumeration value="F"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="CivilstateCodeType">
+        <xsd:restriction base="xsd:unsignedShort">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="99"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="NrSubregisterCodeType">
+        <xsd:annotation>
+            <xsd:documentation>Code specifying the subregister of the National Registry in which the person can be found</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:unsignedShort">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="99"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="SourceType">
+        <xsd:annotation>
+            <xsd:documentation>Type specifying the register which is the authentic source of an occurrence of legal data of a person.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="NR"/>
+            <xsd:enumeration value="CBSS"/>
+            <xsd:enumeration value="BOTH"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="ActCodeType">
+        <xsd:restriction base="xsd:unsignedShort">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="99"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="LastNameType">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="128"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="GivenNameValueType">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="48"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="GivenNameType">
+        <xsd:simpleContent>
+            <xsd:extension base="tns:GivenNameValueType">
+                <xsd:attribute name="Sequence">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:unsignedShort">
+                            <xsd:maxInclusive value="3"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="PartnerType">
+        <xsd:sequence>
+            <xsd:choice>
+                <xsd:element name="PartnerSsin" type="common:SsinType" minOccurs="0"/>
+                <xsd:element name="PartnerFictionalIdentificationNumber" minOccurs="0">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:maxLength value="11"/>
+                            <xsd:minLength value="1"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:choice>
+            <xsd:element name="PartnerName" type="tns:MinimalNameInfoType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="LocationType">
+        <xsd:annotation>
+            <xsd:documentation>Type describing a Belgian location (BelgianMunicipality). Can be used as a birthplace or decease place.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="CountryCode" type="tns:CountryCodeType" minOccurs="0"/>
+            <xsd:element name="CountryIsoCode" type="tns:CountryCodeISO3166Type" minOccurs="0"/>
+            <xsd:element name="CountryName" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="CityCode" type="tns:CityCodeType" minOccurs="0"/>
+            <xsd:element name="CityName" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="LocationDeclarationType">
+        <xsd:annotation>
+            <xsd:documentation>Type describing a Belgian location (BelgianMunicipality). Can be used as a birthplace or decease place.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:choice>
+                <xsd:element name="CountryCode" type="tns:CountryCodeType"/>
+                <xsd:element name="CountryIsoCode" type="tns:CountryCodeISO3166Type"/>
+            </xsd:choice>
+            <xsd:element name="CountryName" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="CityCode" type="tns:CityCodeType" minOccurs="0"/>
+            <xsd:element name="CityName" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ActType">
+        <xsd:sequence>
+            <xsd:element name="ActTypeCode" type="tns:ActCodeType" minOccurs="0"/>
+            <xsd:element name="ActTypeDescription" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="TranscriptionType">
+        <xsd:sequence>
+            <xsd:element name="TranscriptionDate" type="common:IncompleteDateType" minOccurs="0"/>
+            <xsd:element name="TranscriptionLocation" type="tns:LocationType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="JudgmentType">
+        <xsd:sequence>
+            <xsd:element name="JudgmentDate" type="common:IncompleteDateType" minOccurs="0"/>
+            <xsd:element name="JudgmentLocation" type="tns:LocationType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="SpecialNotionType">
+        <xsd:annotation>
+            <xsd:documentation>Container for special NIS codes occurring in the information type 001</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="SpecialNotionCode" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1"/>
+                        <xsd:maxLength value="5"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="SpecialNotionDescription" type="common:LocalizedDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="BestIdentifierType">
+        <xsd:annotation>
+            <xsd:documentation>Unique identificator of a BeSt object.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Namespace" type="tns:BestIdentifierComponentType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Identification of the object source.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ObjectIdentifier" type="tns:BestIdentifierComponentType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Local identificator, assigned by the authentic source</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="VersionIdentifier" type="tns:BestIdentifierComponentType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Object version identication</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="BestIdentifierComponentType">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="128"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="PostalCodeType">
+        <xsd:annotation>
+            <xsd:documentation>Used in consult/create/update</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="15"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="BelgianPostalCodeType">
+        <xsd:annotation>
+            <xsd:documentation>Used in searchOnAddress request</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[1-9][0-9]{3}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="StreetCodeType">
+        <xsd:annotation>
+            <xsd:documentation>Used in consult/create/update and in searchOnAddress</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="4"/>
+            <xsd:pattern value="\s*[0-9]+\s*"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="BelgianRegionCodeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="HouseNumberType">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="12"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="BoxNumberType">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="ContactAddressTypeType">
+        <xsd:restriction base="xsd:unsignedShort">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="99"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="CountryCodeType">
+        <xsd:restriction base="xsd:unsignedShort">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="999"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="CountryCodeISO3166Type">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[A-Z]{2}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="CityCodeType">
+        <xsd:annotation>
+            <xsd:documentation>"NIS code" of a Belgian municipality</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[0-9]{5}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="DiplomaticPostCodeType">
+        <xsd:restriction base="xsd:unsignedShort">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="9999"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="NobilityTitleCodeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="DatagroupStatusType">
+        <xsd:annotation>
+            <xsd:documentation>Type defining possible statuses of a datagroup occurrence</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="DATA_FOUND"/>
+            <xsd:enumeration value="NO_DATA_FOUND"/>
+            <xsd:enumeration value="NOT_SUPPORTED"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="UpdateDatagroupStatusType">
+        <xsd:annotation>
+            <xsd:documentation>Type defining possible statuses of a datagroup occurrence</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="OK"/>
+            <xsd:enumeration value="NOK"/>
+            <xsd:enumeration value="NO_UPDATE"/>
+            <xsd:enumeration value="DEFERRED"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="LegalCohabitationRegistrationType">
+        <xsd:sequence>
+            <xsd:element name="RegistrationDate" type="xsd:date" minOccurs="0"/>
+            <xsd:element name="Location" type="tns:LocationType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Place where civil state was registered.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="RegistrationBailiff" type="tns:RegistrationBailiffType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="RegistrationBailiffType">
+        <xsd:sequence>
+            <xsd:element name="BailiffName" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1"/>
+                        <xsd:maxLength value="128"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="Location" type="tns:LocationType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Place where civil state was registered.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="NationalityCodeType">
+        <xsd:restriction base="xsd:unsignedShort">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="999"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="PlainAddressString">
+        <xsd:annotation>
+            <xsd:documentation>The actual address, in unformatted form</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="300"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>
