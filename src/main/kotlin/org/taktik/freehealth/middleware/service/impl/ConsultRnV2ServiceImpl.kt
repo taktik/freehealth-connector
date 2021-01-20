@@ -15,6 +15,7 @@ import be.fgov.ehealth.rn.personservice.core.v1.SearchPersonBySsinCriteriaType
 import be.fgov.ehealth.rn.personservice.core.v1.SearchPersonPhoneticallyCriteriaType
 import be.fgov.ehealth.rn.personservice.protocol.v1.SearchPersonBySsinRequest
 import be.fgov.ehealth.rn.personservice.protocol.v1.SearchPersonPhoneticallyRequest
+import be.fgov.ehealth.rn.registries.commons.v1.GivenNameMatchingType
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
@@ -120,7 +121,8 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 ?: throw MissingTokenException("Cannot obtain token for Rn consult operations")
 
         return try{
-            val givenName = mutableListOf<String?>()
+            val givenName = mutableListOf<String?>(firstName)
+
             val searchPersonPhoneticallyResponse = backingPersonService.searchPersonPhonetically(samlToken, SearchPersonPhoneticallyRequest().apply {
                 applicationId = "0"
                 issueInstant = DateTime.now()
@@ -128,9 +130,16 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 criteria = SearchPersonPhoneticallyCriteriaType().apply {
                     this.name = PhoneticName().apply {
                         this.lastName = lastName
-                        GivenNameType().apply {
+                        givenNames.addAll(listOf(
+                            firstName
+                        ))
+                        /*mutableListOf<GivenNameType?>(GivenNameType().apply {
+                            value = firstName
+                            sequence = 1
+                        })
 
-                        }
+                         */
+                        this.givenNameMatching = GivenNameMatchingType.ALL_GIVENNAME.value()
                     }
 
                     this.birth = PhoneticBirth().apply {
