@@ -28,4 +28,11 @@ class RnConsultV2ControllerTest: EhealthTest() {
         val personBySsin = this.restTemplate.exchange("http://localhost:$port/consultrnv2/bySsin/${"92092412781"}",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
+
+    @Test
+    fun searchPersonPhonetically(){
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val personPhonetically = this.restTemplate.exchange("http://localhost:$port/consultrnv2/phonetically/${"19920924"}/${"mennechet"}?firstName=${"max"}&middleName=${""}",
+            HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
+    }
 }
