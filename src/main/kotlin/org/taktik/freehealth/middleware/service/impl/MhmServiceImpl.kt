@@ -241,6 +241,16 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     extractError(unencryptedRequest, ec, e.url)
                 } ?: setOf()
             }
+
+            if (errors != null && errors.isNotEmpty()) {
+                val author = sendTransactionResponse?.response?.author
+                val faultSource = author?.hcparties?.first()?.ids?.first()?.value
+
+                if (faultSource != null) {
+                    errors.filter { it.faultSource == null }.forEach { it.faultSource = faultSource }
+                }
+            }
+
             val commonOutput = sendSubscriptionResponse.`return`.commonOutput
 
             sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
@@ -426,6 +436,16 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 extractError(unencryptedRequest, ec, e.url)
             } ?: setOf()
         }
+
+        if (errors != null && errors.isNotEmpty()) {
+            val author = sendTransactionResponse?.response?.author
+            val faultSource = author?.hcparties?.first()?.ids?.first()?.value
+
+            if (faultSource != null) {
+                errors.filter { it.faultSource == null }.forEach { it.faultSource = faultSource }
+            }
+        }
+
         val commonOutput = sendCancelSubscriptionResponse.`return`.commonOutput
 
         return sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
@@ -609,6 +629,16 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                     extractError(unencryptedRequest, ec, e.url)
                 } ?: setOf()
             }
+
+            if (errors != null && errors.isNotEmpty()) {
+                val author = sendTransactionResponse?.response?.author
+                val faultSource = author?.hcparties?.first()?.ids?.first()?.value
+
+                if (faultSource != null) {
+                    errors.filter { it.faultSource == null }.forEach { it.faultSource = faultSource }
+                }
+            }
+
             val commonOutput = sendNotifySubscriptionClosureResponse.`return`.commonOutput
 
             return sendTransactionResponse?.kmehrmessage?.folders?.firstOrNull()?.let { folder ->
