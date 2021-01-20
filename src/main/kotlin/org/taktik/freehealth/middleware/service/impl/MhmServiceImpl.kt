@@ -1317,7 +1317,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                             }
                             elements =
                                 mhmSubscriptionErrors.values.filter {
-                                    it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+                                    it.path.equals(base, true) && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
                                 }
                             if (skipped>1) { break }
                             skip++
