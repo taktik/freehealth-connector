@@ -53,6 +53,7 @@ import org.taktik.freehealth.middleware.mapper.toDocumentMessage
 import org.taktik.freehealth.middleware.mapper.toMessageDto
 import org.taktik.freehealth.middleware.service.EhboxService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.utils.FuzzyValues
 import org.w3c.dom.Element
 import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
@@ -234,11 +235,14 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         passPhrase: String,
         boxId: String,
         limit: Int?,
+        startDate: Long?,
         alternateKeystores: List<AltKeystore>?
                              ): MessagesResponse {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val messagesListRequest = GetMessagesListRequest()
+        val hasStartDate = startDate != null
+        val startDateAsLocalDate = if (hasStartDate) FuzzyValues.getLocalDateTime(startDate!!)?.toLocalDate() else null
 
         messagesListRequest.source = boxId
         messagesListRequest.startIndex = 1
@@ -279,8 +283,22 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                 if (response.messages.size < 100 || (limit != null && result.size >= limit)) {
                     break
                 }
+                // Stop retrieving if the publication date is before start date
+                if (hasStartDate && result.last().publicationDateTime != null && FuzzyValues.getLocalDateTime(result.last().publicationDateTime!!)!!.toLocalDate().isBefore(startDateAsLocalDate)) {
+                    break
+                }
                 messagesListRequest.startIndex = messagesListRequest.startIndex + 100
                 messagesListRequest.endIndex = messagesListRequest.endIndex + 100
+            }
+
+            // Filter results in excluding messages which have a publication date before start date
+            if (hasStartDate) {
+                result.removeIf { it.publicationDateTime != null && FuzzyValues.getLocalDateTime(it.publicationDateTime)!!.toLocalDate().isBefore(startDateAsLocalDate) }
+            }
+
+            // Filter results in excluding the messages exceeding the limit
+            if (limit != null) {
+                return MessagesResponse(result.take(limit), null)
             }
 
             MessagesResponse(result, if (status?.code != "100") Error(status?.code, status?.messages?.joinToString(",")) else null)
