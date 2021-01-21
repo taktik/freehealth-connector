@@ -2,6 +2,7 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinRequest
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinResponse
+import be.fgov.ehealth.rn.baselegaldata.v1.GenderInfoBaseType
 import be.fgov.ehealth.rn.baselegaldata.v1.GivenNameType
 import be.fgov.ehealth.rn.cbsspersonlegaldata.v1.CbssPersonRequestType
 import be.fgov.ehealth.rn.cbsspersonservice.core.v1.RegisterPersonDeclarationType
@@ -18,6 +19,7 @@ import be.fgov.ehealth.rn.personservice.protocol.v1.SearchPersonPhoneticallyRequ
 import be.fgov.ehealth.rn.registries.commons.v1.GivenNameMatchingType
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
+import org.opensaml.saml2.metadata.GivenName
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.consultrnv2.exception.inscriptionservice.CbssPersonServiceException
 import org.taktik.connector.business.consultrnv2.exception.personservice.SearchPersonBySsinException
@@ -26,6 +28,7 @@ import org.taktik.connector.business.consultrnv2.exception.ssinInformationservic
 import org.taktik.connector.business.consultrnv2.service.impl.ConsultrnCBSSPersonServiceImpl
 import org.taktik.connector.business.consultrnv2.service.impl.ConsultrnPersonServiceImpl
 import org.taktik.connector.business.ssinhistory.service.impl.SsinHistoryTokenServiceImpl
+import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
@@ -39,6 +42,7 @@ import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.ConsultRnV2Service
 import org.taktik.freehealth.middleware.service.STSService
 import java.util.*
+import javax.xml.ws.soap.SOAPFaultException
 import kotlin.collections.ArrayList
 
 @Service
@@ -53,18 +57,18 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Rn consult operations")
 
-        return try {
-           val searchPersonBySsinResponse = backingPersonService.searchPersonBySsin(samlToken, SearchPersonBySsinRequest().apply {
-                applicationId = "0"
-                issueInstant = DateTime.now()
-                id = "ID${System.currentTimeMillis()}"
-                criteria = SearchPersonBySsinCriteriaType().apply {
-                    this.ssin = ssin
-                }
-            })
+        val searchPersonBySsinRequest = SearchPersonBySsinRequest().apply {
+            applicationId = "0"
+            issueInstant = DateTime.now()
+            id = "ID${System.currentTimeMillis()}"
+            criteria = SearchPersonBySsinCriteriaType().apply {
+                this.ssin = ssin
+            }
+        }
 
-            log.info("SearchPersonBySsin response: "+ ConnectorXmlUtils.toString(searchPersonBySsinResponse))
-            
+        return try {
+           val searchPersonBySsinResponse = backingPersonService.searchPersonBySsin(samlToken, searchPersonBySsinRequest)
+
             ConsultRnSearchPersonBySsinResponseDto(
                 ssin = searchPersonBySsinResponse?.ssin,
                 result = ConsultRnSearchByNissResultDto(
@@ -92,12 +96,12 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 inResponseTo = searchPersonBySsinResponse?.inResponseTo,
                 issueInstant = searchPersonBySsinResponse?.issueInstant,
                 xmlConversations = ConsultRnConversationDto(
-                    request = null,
+                    request = ConnectorXmlUtils.toString(searchPersonBySsinRequest),
                     response = ConnectorXmlUtils.toString(searchPersonBySsinResponse)
                 )
             )
 
-        }catch (ex : SearchPersonBySsinException){
+        } catch (ex : SearchPersonBySsinException){
             log.info("SearchPersonBySsin error response: "+ ConnectorXmlUtils.toString(ex))
             ConsultRnSearchPersonBySsinResponseDto(
                 ssin = null,
@@ -107,8 +111,22 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 inResponseTo = ex?.searchPersonBySsinResponse?.inResponseTo,
                 issueInstant = ex?.searchPersonBySsinResponse?.issueInstant,
                 xmlConversations = ConsultRnConversationDto(
-                    request = null,
+                    request = ConnectorXmlUtils.toString(searchPersonBySsinRequest),
                     response = ConnectorXmlUtils.toString(ex.searchPersonBySsinResponse)
+                )
+            )
+        }catch (ex: TechnicalConnectorException){
+            log.info("SearchPersonBySsin error response: "+ ConnectorXmlUtils.toString(ex))
+            ConsultRnSearchPersonBySsinResponseDto(
+                ssin = null,
+                result = null,
+                status = null,
+                id = null,
+                inResponseTo = null,
+                issueInstant = null,
+                xmlConversations = ConsultRnConversationDto(
+                    request = ConnectorXmlUtils.toString(searchPersonBySsinRequest),
+                    response = ConnectorXmlUtils.toString(ex)
                 )
             )
         }
@@ -120,54 +138,58 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Rn consult operations")
 
-        return try{
-            val givenName = mutableListOf<String?>(firstName)
+        val givenNames = mutableListOf<GivenNameType>()
+        givenNames.add(GivenNameType().apply {
+            value = firstName
+            sequence = 1
+        })
 
-            val searchPersonPhoneticallyResponse = backingPersonService.searchPersonPhonetically(samlToken, SearchPersonPhoneticallyRequest().apply {
-                applicationId = "0"
-                issueInstant = DateTime.now()
-                id = "ID${System.currentTimeMillis()}"
-                criteria = SearchPersonPhoneticallyCriteriaType().apply {
-                    this.name = PhoneticName().apply {
-                        this.lastName = lastName
-                        givenNames.addAll(listOf(
-                            firstName
-                        ))
-                        /*mutableListOf<GivenNameType?>(GivenNameType().apply {
-                            value = firstName
-                            sequence = 1
-                        })
-
-                         */
-                        this.givenNameMatching = GivenNameMatchingType.ALL_GIVENNAME.value()
-                    }
-
-                    this.birth = PhoneticBirth().apply {
-                       this.birthDate = dateOfBirth.toString().replace(Regex("(....)(..)(..)"), "$1-$2-$3")
-                    }
-
-                    if(gender !== null && gender !== "UNKNOWN"){
-                        this.gender = PhoneticGender().apply {
-                            this.genderCode
-                        }
-                    }
-
-                    if(countryCode !== null){
-                        this.address = PhoneticAddress().apply {
-                            if(cityCode !== null){
-                                this.cityCode = cityCode
-                            }
-                            if (countryCode != null) {
-                                this.countryCode = countryCode
-                            }
-                        }
-                    }
-                    this.maximumResultCount = limit
-
-                }
+        if(middleName !== null){
+            givenNames.add(GivenNameType().apply {
+                value = middleName
+                sequence = 2
             })
+        }
 
-            log.info("SearchPersonBySsin response: "+ ConnectorXmlUtils.toString(searchPersonPhoneticallyResponse))
+        val searchPersonPhoneticallyRequest = SearchPersonPhoneticallyRequest().apply {
+            applicationId = "0"
+            issueInstant = DateTime.now()
+            id = "ID${System.currentTimeMillis()}"
+            criteria = SearchPersonPhoneticallyCriteriaType().apply {
+                this.name = PhoneticName().apply {
+                    this.lastName = lastName
+                    this.givenNames.addAll(givenNames)
+                    this.givenNameMatching = GivenNameMatchingType.ALL_GIVENNAME.value()
+                }
+
+                this.birth = PhoneticBirth().apply {
+                    this.birthDate = dateOfBirth.toString().replace(Regex("(....)(..)(..)"), "$1-$2-$3")
+                    this.variation = tolerance
+                }
+
+                if(gender !== null && gender !== "UNKNOWN"){
+                    this.gender = PhoneticGender().apply {
+                        if (gender === "MALE"){
+                            this.genderCode = "M"
+                        }else{
+                            this.genderCode = "F"
+                        }
+                    }
+                }
+
+                if(countryCode !== null){
+                    this.address = PhoneticAddress().apply {
+                        this.countryCode = countryCode
+                        if(this.cityCode !== null){this.cityCode = cityCode}
+                    }
+                }
+                this.maximumResultCount = limit
+            }
+        }
+
+        return try{
+            val searchPersonPhoneticallyResponse = backingPersonService.searchPersonPhonetically(samlToken, searchPersonPhoneticallyRequest)
+            log.info("SearchPersonPhonetically response: "+ ConnectorXmlUtils.toString(searchPersonPhoneticallyResponse))
 
             ConsultRnSearchPersonPhoneticallyResponseDto(
                 id = searchPersonPhoneticallyResponse?.id,
@@ -176,13 +198,13 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 status = searchPersonPhoneticallyResponse?.status,
                 result = searchPersonPhoneticallyResponse?.result,
                 xmlConversations = ConsultRnConversationDto(
-                    request = null,
+                    request = ConnectorXmlUtils.toString(searchPersonPhoneticallyRequest),
                     response = ConnectorXmlUtils.toString(searchPersonPhoneticallyResponse)
                 )
             )
 
         }catch (ex: SearchPersonPhoneticallyException){
-            log.info("SearchPersonBySsin error response: "+ ConnectorXmlUtils.toString(ex))
+            log.info("SearchPersonPhonetically error response: "+ ConnectorXmlUtils.toString(ex))
             ConsultRnSearchPersonPhoneticallyResponseDto(
                 id = ex.searchPersonPhoneticallyResponse?.id,
                 inResponseTo = ex.searchPersonPhoneticallyResponse?.inResponseTo,
@@ -190,8 +212,21 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 status = ex.searchPersonPhoneticallyResponse?.status,
                 result = null,
                 xmlConversations = ConsultRnConversationDto(
-                    request = null,
+                    request = ConnectorXmlUtils.toString(searchPersonPhoneticallyRequest),
                     response = ConnectorXmlUtils.toString(ex.searchPersonPhoneticallyResponse)
+                )
+            )
+        }catch (ex: TechnicalConnectorException){
+            log.info("SearchPersonBySsin error response: "+ ConnectorXmlUtils.toString(ex))
+            ConsultRnSearchPersonPhoneticallyResponseDto(
+                result = null,
+                status = null,
+                id = null,
+                inResponseTo = null,
+                issueInstant = null,
+                xmlConversations = ConsultRnConversationDto(
+                    request = ConnectorXmlUtils.toString(searchPersonPhoneticallyRequest),
+                    response = ConnectorXmlUtils.toString(ex)
                 )
             )
         }

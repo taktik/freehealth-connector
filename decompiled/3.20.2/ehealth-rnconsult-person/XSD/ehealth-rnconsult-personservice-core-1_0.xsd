@@ -2,7 +2,7 @@
 <!-- Copyright (c) eHealth -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:rn:personservice:core:v1" 
            targetNamespace="urn:be:fgov:ehealth:rn:personservice:core:v1" 
-           xmlns:base="urn:be:fgov:ehealth:rn:baselegaldata:v1" 
+           xmlns:other="urn:be:fgov:ehealth:rn:baselegaldata:v1"
            xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2"
 		   xmlns:coc="urn:be:fgov:ehealth:rn:commons:business:v1" 
            xmlns:person="urn:be:fgov:ehealth:rn:personlegaldata:v1" elementFormDefault="qualified" 
@@ -62,7 +62,7 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="GivenName" type="base:GivenNameType" minOccurs="1" maxOccurs="3"/>
+			<xs:element name="GivenName" type="other:GivenNameType" minOccurs="1" maxOccurs="3"/>
 			<xs:element name="GivenNameMatching" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>Element specifying the behavior of the searchPersonPhonetically capability.</xs:documentation>
@@ -83,18 +83,18 @@
 	</xs:complexType>
 	<xs:complexType name="PhoneticGender">
 		<xs:sequence>
-			<xs:element name="GenderCode" type="base:GenderCodeType"/>
+			<xs:element name="GenderCode" type="other:GenderCodeType"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="PhoneticAddress">
 		<xs:sequence>
-			<xs:element name="CountryCode" type="base:CountryCodeType"/>
-			<xs:element name="CityCode" type="base:CityCodeType" minOccurs="0"/>
+			<xs:element name="CountryCode" type="other:CountryCodeType"/>
+			<xs:element name="CityCode" type="other:CityCodeType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="PersonResponseResultsType">
 		<xs:sequence>
-			<xs:element name="PersonIdentifications" type="base:PersonIdentificationsResponseType"/>
+			<xs:element name="PersonIdentifications" type="other:PersonIdentificationsResponseType"/>
 		</xs:sequence>
 	</xs:complexType>
 </xs:schema>
