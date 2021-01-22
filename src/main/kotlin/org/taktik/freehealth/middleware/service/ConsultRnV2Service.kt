@@ -2,11 +2,9 @@ package org.taktik.freehealth.middleware.service
 
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinResponse
 import be.fgov.ehealth.rn.cbsspersonservice.protocol.v1.RegisterPersonResponse
-import be.fgov.ehealth.rn.personservice.protocol.v1.SearchPersonBySsinResponse
-import be.fgov.ehealth.rn.personservice.protocol.v1.SearchPersonPhoneticallyResponse
-import org.taktik.freehealth.middleware.dto.consultrn.PersonMid
 import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnSearchPersonBySsinResponseDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnSearchPersonPhoneticallyResponseDto
+import org.taktik.freehealth.middleware.dto.consultrnv2.PersonMid
 import java.util.*
 
 interface ConsultRnV2Service {
@@ -26,7 +24,7 @@ interface ConsultRnV2Service {
         firstName: String? = null,
         middleName: String? = null,
         gender: String? = "UNKNOWN",
-        countryCode: Int? = 0,
+        countryCode: Int = 0,
         cityCode: String ? = null,
         tolerance: Int? = 0,
         limit: Int? = 20

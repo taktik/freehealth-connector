@@ -1,13 +1,28 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import be.fgov.ehealth.consultrn.commons.core.v3.BirthRequestType
+import be.fgov.ehealth.consultrn.commons.core.v3.NameType
+import be.fgov.ehealth.consultrn.commons.core.v3.WhereRequestType
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinRequest
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinResponse
+import be.fgov.ehealth.rn.baselegaldata.v1.AddressDeclarationType
+import be.fgov.ehealth.rn.baselegaldata.v1.BirthInfoDeclarationType
+import be.fgov.ehealth.rn.baselegaldata.v1.ContactAddressDeclarationType
+import be.fgov.ehealth.rn.baselegaldata.v1.ForeignAddressDeclarationType
 import be.fgov.ehealth.rn.baselegaldata.v1.GenderInfoBaseType
+import be.fgov.ehealth.rn.baselegaldata.v1.GenderInfoDeclarationType
 import be.fgov.ehealth.rn.baselegaldata.v1.GivenNameType
+import be.fgov.ehealth.rn.baselegaldata.v1.LocationDeclarationType
+import be.fgov.ehealth.rn.baselegaldata.v1.NameInfoBaseType
+import be.fgov.ehealth.rn.baselegaldata.v1.NameInfoDeclarationType
+import be.fgov.ehealth.rn.baselegaldata.v1.NationalitiesDeclarationType
+import be.fgov.ehealth.rn.baselegaldata.v1.NationalityInfoBaseType
+import be.fgov.ehealth.rn.baselegaldata.v1.ResidentialAddressType
 import be.fgov.ehealth.rn.cbsspersonlegaldata.v1.CbssPersonRequestType
 import be.fgov.ehealth.rn.cbsspersonservice.core.v1.RegisterPersonDeclarationType
 import be.fgov.ehealth.rn.cbsspersonservice.protocol.v1.RegisterPersonRequest
 import be.fgov.ehealth.rn.cbsspersonservice.protocol.v1.RegisterPersonResponse
+import be.fgov.ehealth.rn.commons.business.v1.LocalizedDescriptionType
 import be.fgov.ehealth.rn.personservice.core.v1.PhoneticAddress
 import be.fgov.ehealth.rn.personservice.core.v1.PhoneticBirth
 import be.fgov.ehealth.rn.personservice.core.v1.PhoneticGender
@@ -19,31 +34,25 @@ import be.fgov.ehealth.rn.personservice.protocol.v1.SearchPersonPhoneticallyRequ
 import be.fgov.ehealth.rn.registries.commons.v1.GivenNameMatchingType
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
-import org.opensaml.saml2.metadata.GivenName
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.consultrnv2.exception.inscriptionservice.CbssPersonServiceException
-import org.taktik.connector.business.consultrnv2.exception.personservice.SearchPersonBySsinException
-import org.taktik.connector.business.consultrnv2.exception.personservice.SearchPersonPhoneticallyException
 import org.taktik.connector.business.consultrnv2.exception.ssinInformationservice.ConsultCurrentSsinException
 import org.taktik.connector.business.consultrnv2.service.impl.ConsultrnCBSSPersonServiceImpl
 import org.taktik.connector.business.consultrnv2.service.impl.ConsultrnPersonServiceImpl
 import org.taktik.connector.business.ssinhistory.service.impl.SsinHistoryTokenServiceImpl
-import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
-import org.taktik.freehealth.middleware.dto.consultrn.PersonMid
 import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnConversationDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnPersonDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnSearchByNissResultDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnSearchPersonBySsinResponseDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnSearchPersonPhoneticallyResponseDto
+import org.taktik.freehealth.middleware.dto.consultrnv2.PersonMid
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.ConsultRnV2Service
 import org.taktik.freehealth.middleware.service.STSService
 import java.util.*
-import javax.xml.ws.soap.SOAPFaultException
-import kotlin.collections.ArrayList
 
 @Service
 class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Service {
@@ -101,22 +110,6 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 ),
                 exception = null
             )
-
-        } catch (ex : SearchPersonBySsinException){
-            log.info("SearchPersonBySsin error response: "+ ConnectorXmlUtils.toString(ex))
-            ConsultRnSearchPersonBySsinResponseDto(
-                ssin = null,
-                result = null,
-                status = ex?.searchPersonBySsinResponse?.status,
-                id = ex?.searchPersonBySsinResponse?.id,
-                inResponseTo = ex?.searchPersonBySsinResponse?.inResponseTo,
-                issueInstant = ex?.searchPersonBySsinResponse?.issueInstant,
-                xmlConversations = ConsultRnConversationDto(
-                    request = ConnectorXmlUtils.toString(searchPersonBySsinRequest),
-                    response = ConnectorXmlUtils.toString(ex.searchPersonBySsinResponse)
-                ),
-                exception = null
-            )
         }catch (ex: Exception){
             ConsultRnSearchPersonBySsinResponseDto(
                 result = null,
@@ -134,7 +127,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
 
     }
 
-    override fun searchPersonPhonetically(keystoreId: UUID, tokenId: UUID, passPhrase: String, dateOfBirth: Int, lastName: String, firstName: String?, middleName: String?, gender: String?, countryCode: Int?, cityCode: String?, tolerance: Int?, limit: Int?): ConsultRnSearchPersonPhoneticallyResponseDto {
+    override fun searchPersonPhonetically(keystoreId: UUID, tokenId: UUID, passPhrase: String, dateOfBirth: Int, lastName: String, firstName: String?, middleName: String?, gender: String?, countryCode: Int, cityCode: String?, tolerance: Int?, limit: Int?): ConsultRnSearchPersonPhoneticallyResponseDto {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Rn consult operations")
@@ -168,7 +161,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                     this.variation = tolerance
                 }
 
-                if(!gender.isNullOrEmpty() && gender !== "UNKNOWN"){
+                gender.let {
                     this.gender = PhoneticGender().apply {
                         if (gender === "MALE"){
                             this.genderCode = "M"
@@ -178,12 +171,13 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                     }
                 }
 
-                if(countryCode !== null){
+                countryCode.let {
                     this.address = PhoneticAddress().apply {
                         this.countryCode = countryCode
                         if(!cityCode.isNullOrEmpty()){this.cityCode = cityCode}
                     }
                 }
+
                 this.maximumResultCount = limit
             }
         }
@@ -202,21 +196,6 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                     request = ConnectorXmlUtils.toString(searchPersonPhoneticallyRequest),
                     response = ConnectorXmlUtils.toString(searchPersonPhoneticallyResponse)
                 )
-            )
-
-        }catch (ex: SearchPersonPhoneticallyException){
-            log.info("SearchPersonPhonetically error response: "+ ConnectorXmlUtils.toString(ex))
-            ConsultRnSearchPersonPhoneticallyResponseDto(
-                id = ex.searchPersonPhoneticallyResponse?.id,
-                inResponseTo = ex.searchPersonPhoneticallyResponse?.inResponseTo,
-                issueInstant = ex.searchPersonPhoneticallyResponse?.issueInstant,
-                status = ex.searchPersonPhoneticallyResponse?.status,
-                result = null,
-                xmlConversations = ConsultRnConversationDto(
-                    request = ConnectorXmlUtils.toString(searchPersonPhoneticallyRequest),
-                    response = ConnectorXmlUtils.toString(ex.searchPersonPhoneticallyResponse)
-                ),
-                exception = null
             )
         }catch (ex: Exception){
             ConsultRnSearchPersonPhoneticallyResponseDto(
@@ -239,19 +218,149 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Rn consult operations")
 
-        return try{
-            backingCbssPersonService.registerPerson(samlToken, RegisterPersonRequest().apply {
-                id = IdGeneratorFactory.getIdGenerator("uuid").generateId()
-                applicationId = "0"
-                issueInstant = DateTime.now()
-                declaration = RegisterPersonDeclarationType().apply {
-                    person = CbssPersonRequestType().apply {
-                        name //todo
-                        birth //todo
-                        gender //todo
+        val givenNames = mutableListOf<GivenNameType>()
+
+        givenNames.add(GivenNameType().apply {
+            value = mid?.firstName?.capitalize()
+            sequence = 1
+        })
+
+        if(!mid.middleName.isNullOrEmpty()){
+            givenNames.add(GivenNameType().apply {
+                value = mid?.middleName?.capitalize()
+                sequence = 2
+            })
+        }
+
+        val registerPErsonRequest = RegisterPersonRequest().apply {
+            id = IdGeneratorFactory.getIdGenerator("uuid").generateId()
+            applicationId = "0"
+            issueInstant = DateTime.now()
+            declaration = RegisterPersonDeclarationType().apply {
+                person = CbssPersonRequestType().apply {
+                    name = NameInfoDeclarationType().apply {
+                        this.lastName = mid?.lastName?.capitalize()
+                        this.givenNames.addAll(givenNames)
+                    }
+                    mid?.nationalityCode.let {
+                        nationalities = NationalitiesDeclarationType().apply {
+                            nationalities.add(NationalityInfoBaseType().apply {
+                                nationalityCode = it
+                            })
+                        }
+                    }
+                    birth = BirthInfoDeclarationType().apply {
+                        birthDate = mid?.dateOfBirth.toString().replace(Regex("(....)(..)(..)"), "$1-$2-$3")
+                        birthPlace = mid?.birthPlace?.let {
+                            LocationDeclarationType().apply {
+                                countryCode = it.countryCode
+                                cityCode = it.cityCode
+                                it.cityName?.let {
+                                    cityNames.add(LocalizedDescriptionType().apply {
+                                        value = it
+                                    })
+                                }
+                            }
+                        }
+                    }
+                    this.gender = mid.gender?.let {
+                        GenderInfoDeclarationType().apply {
+                           if(it === "MALE"){
+                               this.genderCode = "M"
+                           }else{
+                               this.genderCode = "M"
+                           }
+                        }
+                    }
+                    this.address = mid?.residentialAddress?.let {
+                        AddressDeclarationType().apply {
+                            ForeignAddressDeclarationType().apply {
+                                it.countryCode?.let {
+                                    if(it != 0){
+                                        this.countryCode = it
+                                    }
+                                }
+                                it.countryIsoCode.let {
+                                    countryIsoCode = it
+                                }
+                                it.countryName.let {
+                                    LocalizedDescriptionType().apply {
+                                        value = it
+                                    }
+                                }
+                                it.cityName?.let {
+                                    this.cityName = LocalizedDescriptionType().apply {
+                                        value = it
+                                    }
+                                }
+                                it.postalCode.let {
+                                    postalCode = it
+                                }
+                                it.streetName?.let {
+                                    this.streetName = LocalizedDescriptionType().apply {
+                                        value = it
+                                    }
+                                }
+                                it.houseNumber?.let {
+                                    this.houseNumber = it
+                                }
+                                it.boxNumber?.let {
+                                    this.boxNumber = it
+                                }
+                            }
+                        }
+                    }
+
+                    this.contactAddress = mid?.contactAddress?.let {
+                        ContactAddressDeclarationType().apply {
+                            it.countryCode?.let {
+                                if(it != 0){
+                                    this.countryCode = it
+                                }
+                            }
+                            it.countryIsoCode?.let {
+                                this.countryIsoCode = it
+                            }
+                            it.countryName.let {
+                                LocalizedDescriptionType().apply {
+                                    value = it
+                                }
+                            }
+                            it.cityName?.let {
+                                this.cityName = LocalizedDescriptionType().apply {
+                                    value = it
+                                }
+                            }
+                            it.postalCode.let {
+                                this.postalCode = it
+                            }
+                            it.streetCode.let {
+                                this.streetCode = it
+                            }
+                            it.streetName?.let {
+                                this.streetName = LocalizedDescriptionType().apply {
+                                    value = it
+                                }
+                            }
+                            it.houseNumber?.let {
+                                this.houseNumber = it
+                            }
+                            it.boxNumber?.let {
+                                this.boxNumber = it
+                            }
+                            it.typeCode?.let {
+                                if(it != 0){
+                                    this.typeCode = it
+                                }
+                            }
+                        }
                     }
                 }
-            })
+            }
+        }
+
+        return try{
+            backingCbssPersonService.registerPerson(samlToken, registerPErsonRequest)
         }catch (ex: CbssPersonServiceException){
             ex.registerPersonResponse
         }
