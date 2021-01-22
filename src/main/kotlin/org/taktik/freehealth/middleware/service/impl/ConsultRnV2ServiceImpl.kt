@@ -98,7 +98,8 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 xmlConversations = ConsultRnConversationDto(
                     request = ConnectorXmlUtils.toString(searchPersonBySsinRequest),
                     response = ConnectorXmlUtils.toString(searchPersonBySsinResponse)
-                )
+                ),
+                exception = null
             )
 
         } catch (ex : SearchPersonBySsinException){
@@ -113,12 +114,11 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 xmlConversations = ConsultRnConversationDto(
                     request = ConnectorXmlUtils.toString(searchPersonBySsinRequest),
                     response = ConnectorXmlUtils.toString(ex.searchPersonBySsinResponse)
-                )
+                ),
+                exception = null
             )
-        }catch (ex: TechnicalConnectorException){
-            log.info("SearchPersonBySsin error response: "+ ConnectorXmlUtils.toString(ex))
+        }catch (ex: Exception){
             ConsultRnSearchPersonBySsinResponseDto(
-                ssin = null,
                 result = null,
                 status = null,
                 id = null,
@@ -127,7 +127,8 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 xmlConversations = ConsultRnConversationDto(
                     request = ConnectorXmlUtils.toString(searchPersonBySsinRequest),
                     response = ConnectorXmlUtils.toString(ex)
-                )
+                ),
+                exception = ex
             )
         }
 
@@ -144,7 +145,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
             sequence = 1
         })
 
-        if(middleName !== null){
+       if(!middleName.isNullOrEmpty()){
             givenNames.add(GivenNameType().apply {
                 value = middleName
                 sequence = 2
@@ -167,7 +168,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                     this.variation = tolerance
                 }
 
-                if(gender !== null && gender !== "UNKNOWN"){
+                if(!gender.isNullOrEmpty() && gender !== "UNKNOWN"){
                     this.gender = PhoneticGender().apply {
                         if (gender === "MALE"){
                             this.genderCode = "M"
@@ -180,7 +181,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 if(countryCode !== null){
                     this.address = PhoneticAddress().apply {
                         this.countryCode = countryCode
-                        if(this.cityCode !== null){this.cityCode = cityCode}
+                        if(!cityCode.isNullOrEmpty()){this.cityCode = cityCode}
                     }
                 }
                 this.maximumResultCount = limit
@@ -214,10 +215,10 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 xmlConversations = ConsultRnConversationDto(
                     request = ConnectorXmlUtils.toString(searchPersonPhoneticallyRequest),
                     response = ConnectorXmlUtils.toString(ex.searchPersonPhoneticallyResponse)
-                )
+                ),
+                exception = null
             )
-        }catch (ex: TechnicalConnectorException){
-            log.info("SearchPersonBySsin error response: "+ ConnectorXmlUtils.toString(ex))
+        }catch (ex: Exception){
             ConsultRnSearchPersonPhoneticallyResponseDto(
                 result = null,
                 status = null,
@@ -227,7 +228,8 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 xmlConversations = ConsultRnConversationDto(
                     request = ConnectorXmlUtils.toString(searchPersonPhoneticallyRequest),
                     response = ConnectorXmlUtils.toString(ex)
-                )
+                ),
+                exception = ex
             )
         }
     }
@@ -246,7 +248,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                     person = CbssPersonRequestType().apply {
                         name //todo
                         birth //todo
-                        this.gender //todo
+                        gender //todo
                     }
                 }
             })

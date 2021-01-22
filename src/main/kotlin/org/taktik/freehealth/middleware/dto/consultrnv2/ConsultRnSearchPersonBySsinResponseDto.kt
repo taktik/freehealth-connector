@@ -4,6 +4,7 @@ import be.fgov.ehealth.commons.core.v2.Status
 import be.fgov.ehealth.rn.commons.business.v1.SsinWithCanceledAndReplacesStatusType
 import org.joda.time.DateTime
 import java.io.Serializable
+import java.lang.Exception
 
 class ConsultRnSearchPersonBySsinResponseDto(
     var ssin: SsinWithCanceledAndReplacesStatusType? = null,
@@ -12,5 +13,6 @@ class ConsultRnSearchPersonBySsinResponseDto(
     var id: String? = null,
     var inResponseTo: String? = null,
     var issueInstant: DateTime? = null,
-    var xmlConversations: ConsultRnConversationDto? = null
+    var xmlConversations: ConsultRnConversationDto? = null,
+    var exception: Exception? = null
 ): Serializable

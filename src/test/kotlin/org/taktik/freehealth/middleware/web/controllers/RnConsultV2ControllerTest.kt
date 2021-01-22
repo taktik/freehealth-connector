@@ -32,14 +32,14 @@ class RnConsultV2ControllerTest: EhealthTest() {
     @Test
     fun searchPersonPhonetically(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val personPhonetically = this.restTemplate.exchange("http://localhost:$port/consultrnv2/phonetically/${"19920924"}/${"mennechet"}?firstName=${"max"}&middleName=${""}",
+        val personPhonetically = this.restTemplate.exchange("http://localhost:$port/consultrnv2/phonetically/${"19920924"}/${"mennechet"}?firstName=${"maxime"}&middleName=${""}",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 
     @Test
     fun searchPersonPhoneticallyWithGender(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val personPhonetically = this.restTemplate.exchange("http://localhost:$port/consultrnv2/phonetically/${"19960000"}/${"wathelet"}?firstName=${"julien"}&middleName=${""}&gender=${"MALE"}",
+        val personPhonetically = this.restTemplate.exchange("http://localhost:$port/consultrnv2/phonetically/${"19960000"}/${"wathelet"}?firstName=${"julien"}&middleName=${""}&gender=${"MALE"}&tolerance=2",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 
@@ -142,6 +142,14 @@ class RnConsultV2ControllerTest: EhealthTest() {
     fun searchPersonPhoneticallySc4(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val personPhonetically = this.restTemplate.exchange("http://localhost:$port/consultrnv2/phonetically/${"19700816"}/${"pluton"}?firstName=${"rita"}",
+            HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
+    }
+
+    @Test
+    //
+    fun consultCurrentSsin(){
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val personPhonetically = this.restTemplate.exchange("http://localhost:$port/consultrnv2/history/${"92092412781"}",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 
