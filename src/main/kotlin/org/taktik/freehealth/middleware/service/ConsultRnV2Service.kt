@@ -2,6 +2,7 @@ package org.taktik.freehealth.middleware.service
 
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinResponse
 import be.fgov.ehealth.rn.cbsspersonservice.protocol.v1.RegisterPersonResponse
+import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnRegisterPersonResponseDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnSearchPersonBySsinResponseDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnSearchPersonPhoneticallyResponseDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.PersonMid
@@ -23,6 +24,7 @@ interface ConsultRnV2Service {
         lastName: String,
         firstName: String? = null,
         middleName: String? = null,
+        matchingType: String? = "ALL_GIVENNAME",
         gender: String? = "UNKNOWN",
         countryCode: Int = 0,
         cityCode: String ? = null,
@@ -35,7 +37,7 @@ interface ConsultRnV2Service {
         tokenId: UUID,
         passPhrase: String,
         mid: PersonMid
-    ) : RegisterPersonResponse
+    ) : ConsultRnRegisterPersonResponseDto
 
     fun consultCurrentSsin(
         keystoreId: UUID,
