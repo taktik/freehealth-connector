@@ -18,7 +18,8 @@ class PersonMid(
     var birthPlace: BirthPlace? = null,
     var gender: String? = null,
     var residentialAddress: ResidentialAddress? = null,
-    var contactAddress: ContactAddress? = null
+    var contactAddress: ContactAddress? = null,
+    var language: String
 
 ){
     class BirthPlace(

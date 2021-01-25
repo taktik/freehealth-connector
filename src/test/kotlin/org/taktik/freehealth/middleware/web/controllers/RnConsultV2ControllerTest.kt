@@ -185,7 +185,7 @@ class RnConsultV2ControllerTest: EhealthTest() {
                     streetName = "atchoumboboum",
                     typeCode = 0
                 ),
-                dateOfBirth = null,
+                dateOfBirth = 20000101,
                 gender = null,
                 middleName = null,
                 nationalityCode = 150,

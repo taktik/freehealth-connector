@@ -61,6 +61,7 @@ import org.taktik.freehealth.middleware.service.ConsultRnV2Service
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Element
 import java.util.*
+import javax.xml.ws.soap.SOAPFaultException
 
 @Service
 class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Service {
@@ -262,37 +263,39 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                             })
                         }
                     }
-                    birth = BirthInfoDeclarationType().apply {
-                        mid?.dateOfBirth.let {
+
+                    mid?.dateOfBirth.let {
+                        birth = BirthInfoDeclarationType().apply {
                             birthDate = it.toString().replace(Regex("(....)(..)(..)"), "$1-$2-$3")
-                        }
-                        birthPlace = mid?.birthPlace?.let {
-                            LocationDeclarationType().apply {
-                                countryCode = it.countryCode
-                                it.countryName.let {
-                                    if(!it.isNullOrEmpty()){
-                                        countryNames.add(LocalizedDescriptionType().apply {
+                            birthPlace = mid?.birthPlace?.let {
+                                LocationDeclarationType().apply {
+                                    countryCode = it.countryCode
+                                    it.countryName.let {
+                                        if(!it.isNullOrEmpty()){
+                                            countryNames.add(LocalizedDescriptionType().apply {
+                                                value = it
+                                                lang = mid?.language?.toUpperCase()
+                                            })
+                                        }
+                                    }
+                                    it.cityCode.let {
+                                        cityCode = it
+                                    }
+
+                                    it.cityName?.let {
+                                        cityNames.add(LocalizedDescriptionType().apply {
                                             value = it
-                                            lang = "FR"
+                                            lang = mid?.language?.toUpperCase()
                                         })
                                     }
-                                }
-                                it.cityCode.let {
-                                    cityCode = it
-                                }
-
-                                it.cityName?.let {
-                                    cityNames.add(LocalizedDescriptionType().apply {
-                                        value = it
-                                        lang = "FR"
-                                    })
-                                }
-                                it.countryIsoCode.let {
-                                    countryIsoCode = it
+                                    it.countryIsoCode.let {
+                                        countryIsoCode = it
+                                    }
                                 }
                             }
                         }
                     }
+
                     mid.gender?.let {
                         gender = GenderInfoDeclarationType().apply {
                            if(it?.toUpperCase() === "MALE"){
@@ -305,17 +308,17 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                     }
                     mid?.residentialAddress?.let {
                         address = AddressDeclarationType().apply {
-                            ForeignAddressDeclarationType().apply {
+                            residentialAddress = ForeignAddressDeclarationType().apply {
                                 it.countryCode?.let {
                                     if(it != 0){
                                         this.countryCode = it
                                     }
                                 }
                                 it.countryIsoCode.let {
-                                    countryIsoCode = it
+                                    this.countryIsoCode = it
                                 }
                                 it.countryName.let {
-                                    LocalizedDescriptionType().apply {
+                                    this.countryName = LocalizedDescriptionType().apply {
                                         value = it
                                     }
                                 }
@@ -325,12 +328,12 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                                     }
                                 }
                                 it.postalCode.let {
-                                    postalCode = it
+                                    this.postalCode = it
                                 }
                                 it.streetName?.let {
                                     this.streetName = LocalizedDescriptionType().apply {
                                         value = it
-                                        lang = "FR"
+                                        lang = mid?.language?.toUpperCase()
                                     }
                                 }
                                 it.houseNumber?.let {
@@ -357,13 +360,13 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                             it.countryName.let {
                                 LocalizedDescriptionType().apply {
                                     value = it
-                                    lang = "FR"
+                                    lang = mid?.language?.toUpperCase()
                                 }
                             }
                             it.cityName?.let {
                                 this.cityName = LocalizedDescriptionType().apply {
                                     value = it
-                                    lang = "FR"
+                                    lang = mid?.language?.toUpperCase()
                                 }
                             }
                             it.postalCode.let {
@@ -373,7 +376,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                             it.streetName?.let {
                                 this.streetName = LocalizedDescriptionType().apply {
                                     value = it
-                                    lang = "FR"
+                                    lang = mid?.language?.toUpperCase()
                                 }
                             }
                             it.typeCode?.let {
@@ -402,7 +405,6 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                     response = ConnectorXmlUtils.toString(registerPersonResponse)
                 ),
                 error = null
-
             )
         }catch (ex: SoaErrorException){
             log.info("Error: "+ConnectorXmlUtils.toString(ex))
@@ -418,6 +420,21 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                     response = ConnectorXmlUtils.toString(ex)
                 ),
                 error = ex
+            )
+        }catch (ex: SOAPFaultException){
+            log.info("Error: "+ConnectorXmlUtils.toString(ex))
+            ConsultRnRegisterPersonResponseDto(
+                id = null,
+                issueInstant = null,
+                inResponseTo = null,
+                status = null,
+                declaration = null,
+                result = null,
+                xmlConversation = ConsultRnConversationDto(
+                    request = ConnectorXmlUtils.toString(registerPersonRequest),
+                    response = ConnectorXmlUtils.toString(ex)
+                ),
+                error = null
             )
         }
 
