@@ -1,7 +1,9 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import ma.glasnost.orika.MapperFacade
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -9,14 +11,32 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.consultrnv2.PersonMid
-import org.taktik.freehealth.middleware.service.ConsultRnV2Service
+import org.taktik.freehealth.middleware.exception.MissingTokenException
+import org.taktik.freehealth.middleware.service.RnConsultService
 import java.util.*
+import javax.servlet.http.HttpServletRequest
 
 @RestController
-@RequestMapping("/consultrnv2")
-class ConsultrnV2Controller(val consultRnV2Service: ConsultRnV2Service, val mapper: MapperFacade){
+@RequestMapping("/rnconsult")
+class RnConsultController(val rnConsultService: RnConsultService, val mapper: MapperFacade){
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingTokenException::class)
+    @ResponseBody
+    fun handleUnauthorizedRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException::class)
+    @ResponseBody
+    fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
+
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
+    @ResponseBody
+    fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
 
     @GetMapping("/bySsin/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun searchPersonBySsin(
@@ -24,7 +44,7 @@ class ConsultrnV2Controller(val consultRnV2Service: ConsultRnV2Service, val mapp
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable(value = "ssin") ssin: String
-    ) = consultRnV2Service.searchPersonBySsin(
+    ) = rnConsultService.searchPersonBySsin(
         keystoreId,
         tokenId,
         passPhrase,
@@ -46,7 +66,7 @@ class ConsultrnV2Controller(val consultRnV2Service: ConsultRnV2Service, val mapp
         @RequestParam(required = false) cityCode: String?,
         @RequestParam(required = false) tolerance: Int?,
         @RequestParam(required = false) limit: Int?
-    ) = consultRnV2Service.searchPersonPhonetically(
+    ) = rnConsultService.searchPersonPhonetically(
         keystoreId,
         tokenId,
         passPhrase,
@@ -68,7 +88,7 @@ class ConsultrnV2Controller(val consultRnV2Service: ConsultRnV2Service, val mapp
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestBody mid: PersonMid
-    ) = consultRnV2Service.registerPerson(
+    ) = rnConsultService.registerPerson(
         keystoreId,
         tokenId,
         passPhrase,
@@ -81,7 +101,7 @@ class ConsultrnV2Controller(val consultRnV2Service: ConsultRnV2Service, val mapp
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable(value = "ssin") ssin: String
-    ) = consultRnV2Service.consultCurrentSsin(
+    ) = rnConsultService.consultCurrentSsin(
         keystoreId,
         tokenId,
         passPhrase,
