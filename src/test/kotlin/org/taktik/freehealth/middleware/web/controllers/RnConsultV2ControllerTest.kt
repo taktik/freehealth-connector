@@ -5,12 +5,14 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
+import org.taktik.freehealth.middleware.dto.consultrnv2.PersonMid
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
@@ -146,7 +148,80 @@ class RnConsultV2ControllerTest: EhealthTest() {
     }
 
     @Test
-    //
+    // Base on mid birth
+    fun registerPersonBasedOnBirth(){
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val registerPerson = this.restTemplate.exchange("http://localhost:$port/consultrnv2", HttpMethod.POST, HttpEntity(
+            PersonMid(
+                lastName = "jenesaispascomment",
+                firstName = "julienne",
+                birthPlace = PersonMid.BirthPlace(
+                    countryCode = 111,
+                    cityName = "ans"
+                ),
+                contactAddress = null,
+                dateOfBirth = 20000101,
+                gender = "female",
+                middleName = null,
+                nationalityCode = 150,
+                residentialAddress = null
+            ),
+            createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
+
+    }
+
+    @Test
+    // Base on contact address in belgium
+    fun registerPersonBasedOnAddressInBelgium(){
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val registerPerson = this.restTemplate.exchange("http://localhost:$port/consultrnv2", HttpMethod.POST, HttpEntity(
+            PersonMid(
+                lastName = "atchoum",
+                firstName = "baboum",
+                birthPlace = null,
+                contactAddress = PersonMid.ContactAddress(
+                    countryCode = 150,
+                    cityCode = "102",
+                    streetName = "atchoumboboum",
+                    typeCode = 0
+                ),
+                dateOfBirth = null,
+                gender = null,
+                middleName = null,
+                nationalityCode = 150,
+                residentialAddress = null
+            ),
+            createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
+
+    }
+
+    @Test
+    // Base on residential address
+    fun registerPersonBasedOnResidentialAddress(){
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val registerPerson = this.restTemplate.exchange("http://localhost:$port/consultrnv2", HttpMethod.POST, HttpEntity(
+            PersonMid(
+                lastName = "dalas",
+                firstName = "corben",
+                birthPlace = null,
+                contactAddress = null,
+                dateOfBirth = 20000804,
+                gender = null,
+                middleName = null,
+                nationalityCode = null,
+                residentialAddress = PersonMid.ResidentialAddress(
+                    countryCode = 159,
+                    cityName = "New-York",
+                    streetName = "badaboum"
+                )
+            ),
+            createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
+
+    }
+
+
+    @Test
+    //Verify history of niss
     fun consultCurrentSsin(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val personPhonetically = this.restTemplate.exchange("http://localhost:$port/consultrnv2/history/${"92092412781"}",

@@ -19,9 +19,9 @@ public class LocalizedDescriptionsType implements Serializable {
       name = "Description",
       required = true
    )
-   protected List descriptions;
+   protected List<LocalizedDescriptionType> descriptions;
 
-   public List getDescriptions() {
+   public List<LocalizedDescriptionType> getDescriptions() {
       if (this.descriptions == null) {
          this.descriptions = new ArrayList();
       }

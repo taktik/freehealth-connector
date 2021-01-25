@@ -1,5 +1,11 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import be.cin.types.v1.DetailType
+import be.cin.types.v1.DetailsType
+import be.cin.types.v1.FaultType
+import be.cin.types.v1.StringLangType
+import be.fgov.ehealth.commons.core.v1.CountryType
+import be.fgov.ehealth.commons.core.v1.LangageType
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinRequest
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinResponse
 import be.fgov.ehealth.rn.baselegaldata.v1.AddressDeclarationType
@@ -15,6 +21,7 @@ import be.fgov.ehealth.rn.baselegaldata.v1.NationalityInfoBaseType
 import be.fgov.ehealth.rn.cbsspersonlegaldata.v1.CbssPersonRequestType
 import be.fgov.ehealth.rn.cbsspersonservice.core.v1.RegisterPersonDeclarationType
 import be.fgov.ehealth.rn.cbsspersonservice.protocol.v1.RegisterPersonRequest
+import be.fgov.ehealth.rn.cbsspersonservice.protocol.v1.RegisterPersonResponse
 import be.fgov.ehealth.rn.commons.business.v1.LocalizedDescriptionType
 import be.fgov.ehealth.rn.personservice.core.v1.PhoneticAddress
 import be.fgov.ehealth.rn.personservice.core.v1.PhoneticBirth
@@ -25,14 +32,21 @@ import be.fgov.ehealth.rn.personservice.core.v1.SearchPersonPhoneticallyCriteria
 import be.fgov.ehealth.rn.personservice.protocol.v1.SearchPersonBySsinRequest
 import be.fgov.ehealth.rn.personservice.protocol.v1.SearchPersonPhoneticallyRequest
 import be.fgov.ehealth.rn.registries.commons.v1.GivenNameMatchingType
+import be.recipe.services.core.ResponseType
+import com.sun.org.apache.xerces.internal.dom.ElementNSImpl
+import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
+import org.taktik.connector.business.common.exception.EhealthServiceV2Exception
+import org.taktik.connector.business.consultrnv2.exception.inscriptionservice.CbssPersonServiceException
 import org.taktik.connector.business.consultrnv2.exception.ssinInformationservice.ConsultCurrentSsinException
 import org.taktik.connector.business.consultrnv2.service.impl.ConsultrnCBSSPersonServiceImpl
 import org.taktik.connector.business.consultrnv2.service.impl.ConsultrnPersonServiceImpl
 import org.taktik.connector.business.ssinhistory.service.impl.SsinHistoryTokenServiceImpl
+import org.taktik.connector.technical.exception.SoaErrorException
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
+import org.taktik.connector.technical.utils.ConnectorExceptionUtils
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnConversationDto
@@ -45,6 +59,7 @@ import org.taktik.freehealth.middleware.dto.consultrnv2.PersonMid
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.ConsultRnV2Service
 import org.taktik.freehealth.middleware.service.STSService
+import org.w3c.dom.Element
 import java.util.*
 
 @Service
@@ -104,6 +119,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 exception = null
             )
         }catch (ex: Exception){
+            log.info("Error: "+ex)
             ConsultRnSearchPersonBySsinResponseDto(
                 result = null,
                 status = null,
@@ -156,7 +172,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
 
                 gender.let {
                     this.gender = PhoneticGender().apply {
-                        if (gender === "MALE"){
+                        if (gender?.toUpperCase() === "MALE"){
                             this.genderCode = "M"
                         }else{
                             this.genderCode = "F"
@@ -191,6 +207,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                 )
             )
         }catch (ex: Exception){
+            log.info("Error: "+ex)
             ConsultRnSearchPersonPhoneticallyResponseDto(
                 result = null,
                 status = null,
@@ -226,7 +243,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
         }
 
         val registerPersonRequest = RegisterPersonRequest().apply {
-            id = IdGeneratorFactory.getIdGenerator("uuid").generateId()
+            id = "ID${System.currentTimeMillis()}"
             applicationId = "0"
             issueInstant = DateTime.now()
             declaration = RegisterPersonDeclarationType().apply {
@@ -234,39 +251,60 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                     name = NameInfoDeclarationType().apply {
                         this.lastName = mid?.lastName?.capitalize()
                         this.givenNames.addAll(givenNames)
+                        inceptionDate = DateTime.now()
                     }
+
                     mid?.nationalityCode.let {
                         nationalities = NationalitiesDeclarationType().apply {
                             nationalities.add(NationalityInfoBaseType().apply {
                                 nationalityCode = it
+                                inceptionDate = DateTime.now()
                             })
                         }
                     }
                     birth = BirthInfoDeclarationType().apply {
-                        birthDate = mid?.dateOfBirth.toString().replace(Regex("(....)(..)(..)"), "$1-$2-$3")
+                        mid?.dateOfBirth.let {
+                            birthDate = it.toString().replace(Regex("(....)(..)(..)"), "$1-$2-$3")
+                        }
                         birthPlace = mid?.birthPlace?.let {
                             LocationDeclarationType().apply {
                                 countryCode = it.countryCode
-                                cityCode = it.cityCode
+                                it.countryName.let {
+                                    if(!it.isNullOrEmpty()){
+                                        countryNames.add(LocalizedDescriptionType().apply {
+                                            value = it
+                                            lang = "FR"
+                                        })
+                                    }
+                                }
+                                it.cityCode.let {
+                                    cityCode = it
+                                }
+
                                 it.cityName?.let {
                                     cityNames.add(LocalizedDescriptionType().apply {
                                         value = it
+                                        lang = "FR"
                                     })
+                                }
+                                it.countryIsoCode.let {
+                                    countryIsoCode = it
                                 }
                             }
                         }
                     }
-                    this.gender = mid.gender?.let {
-                        GenderInfoDeclarationType().apply {
-                           if(it === "MALE"){
+                    mid.gender?.let {
+                        gender = GenderInfoDeclarationType().apply {
+                           if(it?.toUpperCase() === "MALE"){
                                this.genderCode = "M"
                            }else{
-                               this.genderCode = "M"
+                               this.genderCode = "F"
                            }
+                            inceptionDate = DateTime.now()
                         }
                     }
-                    this.address = mid?.residentialAddress?.let {
-                        AddressDeclarationType().apply {
+                    mid?.residentialAddress?.let {
+                        address = AddressDeclarationType().apply {
                             ForeignAddressDeclarationType().apply {
                                 it.countryCode?.let {
                                     if(it != 0){
@@ -292,6 +330,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                                 it.streetName?.let {
                                     this.streetName = LocalizedDescriptionType().apply {
                                         value = it
+                                        lang = "FR"
                                     }
                                 }
                                 it.houseNumber?.let {
@@ -300,12 +339,13 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                                 it.boxNumber?.let {
                                     this.boxNumber = it
                                 }
+                                inceptionDate = DateTime.now()
                             }
                         }
                     }
 
-                    this.contactAddress = mid?.contactAddress?.let {
-                        ContactAddressDeclarationType().apply {
+                    mid?.contactAddress?.let {
+                        contactAddress = ContactAddressDeclarationType().apply {
                             it.countryCode?.let {
                                 if(it != 0){
                                     this.countryCode = it
@@ -317,35 +357,31 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                             it.countryName.let {
                                 LocalizedDescriptionType().apply {
                                     value = it
+                                    lang = "FR"
                                 }
                             }
                             it.cityName?.let {
                                 this.cityName = LocalizedDescriptionType().apply {
                                     value = it
+                                    lang = "FR"
                                 }
                             }
                             it.postalCode.let {
                                 this.postalCode = it
                             }
-                            it.streetCode.let {
-                                this.streetCode = it
-                            }
+
                             it.streetName?.let {
                                 this.streetName = LocalizedDescriptionType().apply {
                                     value = it
+                                    lang = "FR"
                                 }
-                            }
-                            it.houseNumber?.let {
-                                this.houseNumber = it
-                            }
-                            it.boxNumber?.let {
-                                this.boxNumber = it
                             }
                             it.typeCode?.let {
                                 if(it != 0){
                                     this.typeCode = it
                                 }
                             }
+                            inceptionDate = DateTime.now()
                         }
                     }
                 }
@@ -365,14 +401,15 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                     request = ConnectorXmlUtils.toString(registerPersonRequest),
                     response = ConnectorXmlUtils.toString(registerPersonResponse)
                 ),
-                exception = null
+                error = null
 
             )
-        }catch (ex: Exception){
+        }catch (ex: SoaErrorException){
+            log.info("Error: "+ConnectorXmlUtils.toString(ex))
             ConsultRnRegisterPersonResponseDto(
-                id = null,
-                issueInstant = null,
-                inResponseTo = null,
+                id = ex.responseTypeV2.id,
+                issueInstant = ex.responseTypeV2.issueInstant,
+                inResponseTo = ex.responseTypeV2.inResponseTo,
                 status = null,
                 declaration = null,
                 result = null,
@@ -380,7 +417,7 @@ class ConsultRnV2ServiceImpl(private val stsService: STSService) : ConsultRnV2Se
                     request = ConnectorXmlUtils.toString(registerPersonRequest),
                     response = ConnectorXmlUtils.toString(ex)
                 ),
-                exception = ex
+                error = ex
             )
         }
 

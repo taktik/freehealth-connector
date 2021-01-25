@@ -23,8 +23,10 @@ class PersonMid(
 ){
     class BirthPlace(
         var countryCode: Int? = 0,
+        var countryIsoCode: String? = null,
         var cityCode: String? = null,
-        var cityName: String? = null
+        var cityName: String? = null,
+        var countryName: String? = null
     )
 
     class ResidentialAddress(
@@ -41,13 +43,11 @@ class PersonMid(
     class ContactAddress(
         var countryCode: Int? = 0,
         var countryIsoCode: String? = null,
+        var cityCode: String? = null,
         var countryName: String? = null,
         var cityName: String? = null,
         var postalCode: String? = null,
-        var streetCode: String? = null,
         var streetName: String? = null,
-        var houseNumber: String? = null,
-        var boxNumber: String? = null,
         var typeCode: Int? = 0
     )
 }
