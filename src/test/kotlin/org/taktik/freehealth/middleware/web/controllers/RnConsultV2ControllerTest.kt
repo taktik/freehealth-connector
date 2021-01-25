@@ -164,10 +164,10 @@ class RnConsultV2ControllerTest: EhealthTest() {
                 gender = "female",
                 middleName = null,
                 nationalityCode = 150,
-                residentialAddress = null
+                residentialAddress = null,
+                language = "fr"
             ),
             createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
-
     }
 
     @Test
@@ -189,10 +189,10 @@ class RnConsultV2ControllerTest: EhealthTest() {
                 gender = null,
                 middleName = null,
                 nationalityCode = 150,
-                residentialAddress = null
+                residentialAddress = null,
+                language = "fr"
             ),
             createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
-
     }
 
     @Test
@@ -213,10 +213,10 @@ class RnConsultV2ControllerTest: EhealthTest() {
                     countryCode = 159,
                     cityName = "New-York",
                     streetName = "badaboum"
-                )
+                ),
+                language = "fr"
             ),
             createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
-
     }
 
 
