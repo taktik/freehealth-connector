@@ -197,7 +197,6 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) endDate: Long?,
-        @RequestParam(required = false) hospitalized: Boolean?,
         @RequestParam(required = false) requestType: String?,
         @RequestBody mdaRequest: MemberDataBatchRequestDto
                              ): GenAsyncResponse {
@@ -205,13 +204,11 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         return memberDataService.sendMemberDataRequest(
             keystoreId = keystoreId,
             tokenId = tokenId,
-            hcpQuality = hcpQuality ?: "medicalhouse",
             hcpNihii = hcpNihii,
             hcpName = hcpName,
             startDate = startDate,
             endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
             passPhrase = passPhrase,
-            hospitalized = hospitalized,
             requestType = requestType ?: "information",
             mdaRequest = mapper.map(mdaRequest, MemberDataBatchRequest::class.java)
                                                       )
@@ -224,15 +221,19 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
-        @RequestParam messageNames: List<String>?) : MemberDataList? {
-            return memberDataService.getMemberDataMessages(
-                keystoreId = keystoreId,
-                tokenId = tokenId,
-                passPhrase = passPhrase,
-                hcpNihii = hcpNihii,
-                hcpName = hcpName,
-                messageNames = messageNames)
-        }
+        @RequestParam messageNames: List<String>?,
+        @RequestParam(required = false) reference: String?
+    ) : MemberDataList? {
+        return memberDataService.getMemberDataMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
+            hcpName = hcpName,
+            messageNames = messageNames,
+            reference = reference
+        )
+    }
 
     @PostMapping("/async/confirm/messages", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmMemberDataMessagesAsync(

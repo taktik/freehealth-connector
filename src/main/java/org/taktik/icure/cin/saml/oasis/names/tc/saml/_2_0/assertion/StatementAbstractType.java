@@ -8,6 +8,9 @@
 
 package org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,6 +34,16 @@ import javax.xml.bind.annotation.XmlType;
  *
  *
  */
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type"
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = AttributeStatement.class, name = "AttributeStatement"),
+    @JsonSubTypes.Type(value = AuthzDecisionStatement.class, name = "AuthzDecisionStatement"),
+    @JsonSubTypes.Type(value = AuthnStatement.class, name = "AuthnStatement")
+})
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StatementAbstractType")
 @XmlSeeAlso({

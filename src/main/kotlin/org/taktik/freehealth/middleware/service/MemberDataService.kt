@@ -48,14 +48,12 @@ interface MemberDataService {
     fun sendMemberDataRequest(
         keystoreId: UUID,
         tokenId: UUID,
-        hcpQuality: String,
         hcpNihii: String,
         hcpName: String,
         requestType: String = "information",
         startDate: Instant,
         endDate: Instant,
         passPhrase: String,
-        hospitalized: Boolean? = false,
         mdaRequest: MemberDataBatchRequest
                              ): GenAsyncResponse
 
@@ -65,7 +63,8 @@ interface MemberDataService {
         passPhrase: String,
         hcpNihii: String,
         hcpName: String,
-        messageNames: List<String>?
+        messageNames: List<String>?,
+        reference: String?
     ): MemberDataList?
 
     fun confirmMemberDataMessages(
