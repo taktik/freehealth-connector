@@ -19,9 +19,9 @@ public class PersonIdentificationsResponseType implements Serializable {
       name = "PersonIdentification",
       required = true
    )
-   protected List personIdentifications;
+   protected List<PersonIdentificationType> personIdentifications;
 
-   public List getPersonIdentifications() {
+   public List<PersonIdentificationType> getPersonIdentifications() {
       if (this.personIdentifications == null) {
          this.personIdentifications = new ArrayList();
       }

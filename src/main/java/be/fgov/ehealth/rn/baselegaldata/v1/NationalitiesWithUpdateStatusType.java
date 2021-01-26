@@ -19,13 +19,13 @@ public class NationalitiesWithUpdateStatusType implements Serializable {
    @XmlElement(
       name = "Nationality"
    )
-   protected List nationalities;
+   protected List<NationalityInfoBaseType> nationalities;
    @XmlAttribute(
       name = "Status"
    )
    protected String status;
 
-   public List getNationalities() {
+   public List<NationalityInfoBaseType> getNationalities() {
       if (this.nationalities == null) {
          this.nationalities = new ArrayList();
       }

@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import be.fgov.ehealth.rn.commons.business.v1.LocalizedDescriptionType;
 import org.joda.time.DateTime;
 import org.taktik.connector.technical.adapter.XmlDateAdapter;
 
@@ -31,7 +33,7 @@ public class CivilStateInfoBaseType implements Serializable {
    @XmlElement(
       name = "CivilStateDescription"
    )
-   protected List civilStateDescriptions;
+   protected List<LocalizedDescriptionType> civilStateDescriptions;
    @XmlElement(
       name = "Partner"
    )
@@ -66,7 +68,7 @@ public class CivilStateInfoBaseType implements Serializable {
       this.civilStateCode = value;
    }
 
-   public List getCivilStateDescriptions() {
+   public List<LocalizedDescriptionType>  getCivilStateDescriptions() {
       if (this.civilStateDescriptions == null) {
          this.civilStateDescriptions = new ArrayList();
       }

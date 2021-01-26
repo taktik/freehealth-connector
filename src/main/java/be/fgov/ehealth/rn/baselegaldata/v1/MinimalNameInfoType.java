@@ -26,7 +26,7 @@ public class MinimalNameInfoType implements Serializable {
    @XmlElement(
       name = "GivenName"
    )
-   protected List givenNames;
+   protected List<GivenNameType> givenNames;
    @XmlElement(
       name = "InceptionDate",
       type = String.class
@@ -45,7 +45,7 @@ public class MinimalNameInfoType implements Serializable {
       this.lastName = value;
    }
 
-   public List getGivenNames() {
+   public List<GivenNameType> getGivenNames() {
       if (this.givenNames == null) {
          this.givenNames = new ArrayList();
       }

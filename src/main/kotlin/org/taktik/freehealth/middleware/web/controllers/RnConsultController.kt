@@ -86,7 +86,7 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
         @RequestParam(required = false) middleName: String?,
         @RequestParam(required = false) matchingType: String?,
         @RequestParam(required = false) gender: String?,
-        @RequestParam(required = false) countryCode: Int,
+        @RequestParam(required = false) countryCode: Int?,
         @RequestParam(required = false) cityCode: String?,
         @RequestParam(required = false) tolerance: Int?,
         @RequestParam(required = false) limit: Int?
@@ -101,7 +101,7 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
             middleName = middleName,
             matchingType = matchingType,
             gender = gender,
-            countryCode = countryCode,
+            countryCode = countryCode?:0,
             cityCode = cityCode,
             tolerance = tolerance,
             limit = limit

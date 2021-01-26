@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import be.fgov.ehealth.rn.commons.business.v1.LocalizedDescriptionType;
 import org.joda.time.DateTime;
 import org.taktik.connector.technical.adapter.XmlDateAdapter;
 
@@ -35,7 +37,7 @@ public abstract class AbstractOptionalContactAddressType implements Serializable
    @XmlElement(
       name = "CountryName"
    )
-   protected List countryNames;
+   protected List<LocalizedDescriptionType>  countryNames;
    @XmlElement(
       name = "RegionCode"
    )
@@ -43,7 +45,7 @@ public abstract class AbstractOptionalContactAddressType implements Serializable
    @XmlElement(
       name = "RegionName"
    )
-   protected List regionNames;
+   protected List<LocalizedDescriptionType>  regionNames;
    @XmlElement(
       name = "CityCode"
    )
@@ -55,7 +57,7 @@ public abstract class AbstractOptionalContactAddressType implements Serializable
    @XmlElement(
       name = "CityName"
    )
-   protected List cityNames;
+   protected List<LocalizedDescriptionType>  cityNames;
    @XmlElement(
       name = "PostalCode"
    )
@@ -71,7 +73,7 @@ public abstract class AbstractOptionalContactAddressType implements Serializable
    @XmlElement(
       name = "StreetName"
    )
-   protected List streetNames;
+   protected List<LocalizedDescriptionType>  streetNames;
    @XmlElement(
       name = "HouseNumber"
    )
@@ -94,7 +96,7 @@ public abstract class AbstractOptionalContactAddressType implements Serializable
    @XmlElement(
       name = "TypeDescription"
    )
-   protected List typeDescriptions;
+   protected List<LocalizedDescriptionType>  typeDescriptions;
    @XmlElement(
       name = "InceptionDate",
       type = String.class
@@ -121,7 +123,7 @@ public abstract class AbstractOptionalContactAddressType implements Serializable
       this.countryIsoCode = value;
    }
 
-   public List getCountryNames() {
+   public List<LocalizedDescriptionType>  getCountryNames() {
       if (this.countryNames == null) {
          this.countryNames = new ArrayList();
       }
@@ -137,7 +139,7 @@ public abstract class AbstractOptionalContactAddressType implements Serializable
       this.regionCode = value;
    }
 
-   public List getRegionNames() {
+   public List<LocalizedDescriptionType>  getRegionNames() {
       if (this.regionNames == null) {
          this.regionNames = new ArrayList();
       }
@@ -161,7 +163,7 @@ public abstract class AbstractOptionalContactAddressType implements Serializable
       this.cityRegionalCode = value;
    }
 
-   public List getCityNames() {
+   public List<LocalizedDescriptionType>  getCityNames() {
       if (this.cityNames == null) {
          this.cityNames = new ArrayList();
       }
@@ -193,7 +195,7 @@ public abstract class AbstractOptionalContactAddressType implements Serializable
       this.streetRegionalCode = value;
    }
 
-   public List getStreetNames() {
+   public List<LocalizedDescriptionType>  getStreetNames() {
       if (this.streetNames == null) {
          this.streetNames = new ArrayList();
       }
@@ -233,7 +235,7 @@ public abstract class AbstractOptionalContactAddressType implements Serializable
       this.typeCode = value;
    }
 
-   public List getTypeDescriptions() {
+   public List<LocalizedDescriptionType>  getTypeDescriptions() {
       if (this.typeDescriptions == null) {
          this.typeDescriptions = new ArrayList();
       }

@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import be.fgov.ehealth.rn.commons.business.v1.LocalizedDescriptionType;
 import org.joda.time.DateTime;
 import org.taktik.connector.technical.adapter.XmlDateAdapter;
 
@@ -31,7 +33,7 @@ public abstract class AbstractOptionalSubregisterType implements Serializable {
    @XmlElement(
       name = "SubregisterDescription"
    )
-   protected List subregisterDescriptions;
+   protected List<LocalizedDescriptionType>  subregisterDescriptions;
    @XmlElement(
       name = "InceptionDate",
       type = String.class
@@ -50,7 +52,7 @@ public abstract class AbstractOptionalSubregisterType implements Serializable {
       this.subregisterCode = value;
    }
 
-   public List getSubregisterDescriptions() {
+   public List<LocalizedDescriptionType> getSubregisterDescriptions() {
       if (this.subregisterDescriptions == null) {
          this.subregisterDescriptions = new ArrayList();
       }

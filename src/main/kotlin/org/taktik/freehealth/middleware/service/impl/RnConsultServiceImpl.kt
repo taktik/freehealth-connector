@@ -129,13 +129,13 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
 
         val givenNames = mutableListOf<GivenNameType>()
         givenNames.add(GivenNameType().apply {
-            value = firstName
+            value = firstName?.capitalize()
             sequence = 1
         })
 
        if(!middleName.isNullOrEmpty()){
             givenNames.add(GivenNameType().apply {
-                value = middleName
+                value = middleName?.capitalize()
                 sequence = 2
             })
         }
@@ -146,7 +146,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
             id = "ID${System.currentTimeMillis()}"
             criteria = SearchPersonPhoneticallyCriteriaType().apply {
                 this.name = PhoneticName().apply {
-                    this.lastName = lastName
+                    this.lastName = lastName.capitalize()
                     this.givenNames.addAll(givenNames)
                     this.givenNameMatching = GivenNameMatchingType.fromValue(matchingType).value()
                 }
@@ -158,7 +158,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
 
                 gender.let {
                     this.gender = PhoneticGender().apply {
-                        if (gender?.toUpperCase() === "MALE"){
+                        if (gender?.toUpperCase() == "MALE"){
                             this.genderCode = "M"
                         }else{
                             this.genderCode = "F"
@@ -166,13 +166,14 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
                     }
                 }
 
-                countryCode.let {
-                    this.address = PhoneticAddress().apply {
-                        this.countryCode = countryCode
-                        if(!cityCode.isNullOrEmpty()){this.cityCode = cityCode}
+                if(countryCode != 0){
+                    countryCode.let {
+                        this.address = PhoneticAddress().apply {
+                            this.countryCode = countryCode
+                            if(!cityCode.isNullOrEmpty()){this.cityCode = cityCode}
+                        }
                     }
                 }
-
                 this.maximumResultCount = limit
             }
         }
@@ -283,7 +284,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
 
                     mid.gender?.let {
                         gender = GenderInfoDeclarationType().apply {
-                           if(it?.toUpperCase() === "MALE"){
+                           if(it?.toUpperCase() == "MALE"){
                                this.genderCode = "M"
                            }else{
                                this.genderCode = "F"
