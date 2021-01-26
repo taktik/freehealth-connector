@@ -6,13 +6,13 @@ import org.joda.time.DateTime
 import java.io.Serializable
 import java.lang.Exception
 
-class ConsultRnSearchPersonBySsinResponseDto(
+class RnConsultSearchPersonBySsinResponseDto(
     var ssin: SsinWithCanceledAndReplacesStatusType? = null,
-    var result: ConsultRnSearchByNissResultDto? = null,
+    var result: RnConsultSearchByNissResultDto? = null,
     var status: Status? = null,
     var id: String? = null,
     var inResponseTo: String? = null,
     var issueInstant: DateTime? = null,
-    var xmlConversations: ConsultRnConversationDto? = null,
+    var xmlConversations: RnConsultConversationDto? = null,
     var exception: Exception? = null
 ): Serializable

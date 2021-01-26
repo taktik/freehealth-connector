@@ -16,7 +16,7 @@ import be.fgov.ehealth.rn.registries.commons.v1.AnomaliesType
 import org.joda.time.DateTime
 import java.io.Serializable
 
-class ConsultRnPersonDto(
+class RnConsultPersonDto(
     var ssin: String? = null,
     var nobilityTitle: NobilityTitleBaseType? = null,
     var name: NameInfoBaseType? = null,

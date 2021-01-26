@@ -5,14 +5,13 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
-import org.taktik.freehealth.middleware.dto.consultrnv2.PersonMid
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultPersonMid
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
@@ -152,10 +151,10 @@ class RnConsultControllerTest: EhealthTest() {
     fun registerPersonBasedOnBirth(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val registerPerson = this.restTemplate.exchange("http://localhost:$port/rnconsult", HttpMethod.POST, HttpEntity(
-            PersonMid(
+            RnConsultPersonMid(
                 lastName = "jenesaispascomment",
                 firstName = "julienne",
-                birthPlace = PersonMid.BirthPlace(
+                birthPlace = RnConsultPersonMid.BirthPlace(
                     countryCode = 111,
                     cityName = "ans"
                 ),
@@ -175,11 +174,11 @@ class RnConsultControllerTest: EhealthTest() {
     fun registerPersonBasedOnAddressInBelgium(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val registerPerson = this.restTemplate.exchange("http://localhost:$port/rnconsult", HttpMethod.POST, HttpEntity(
-            PersonMid(
+            RnConsultPersonMid(
                 lastName = "atchoum",
                 firstName = "baboum",
                 birthPlace = null,
-                contactAddress = PersonMid.ContactAddress(
+                contactAddress = RnConsultPersonMid.ContactAddress(
                     countryCode = 150,
                     cityCode = "102",
                     streetName = "atchoumboboum",
@@ -200,7 +199,7 @@ class RnConsultControllerTest: EhealthTest() {
     fun registerPersonBasedOnResidentialAddress(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val registerPerson = this.restTemplate.exchange("http://localhost:$port/rnconsult", HttpMethod.POST, HttpEntity(
-            PersonMid(
+            RnConsultPersonMid(
                 lastName = "dalas",
                 firstName = "corben",
                 birthPlace = null,
@@ -209,7 +208,7 @@ class RnConsultControllerTest: EhealthTest() {
                 gender = null,
                 middleName = null,
                 nationalityCode = null,
-                residentialAddress = PersonMid.ResidentialAddress(
+                residentialAddress = RnConsultPersonMid.ResidentialAddress(
                     countryCode = 159,
                     cityName = "New-York",
                     streetName = "badaboum"

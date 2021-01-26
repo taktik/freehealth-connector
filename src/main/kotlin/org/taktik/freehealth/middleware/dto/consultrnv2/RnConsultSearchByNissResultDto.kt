@@ -2,6 +2,6 @@ package org.taktik.freehealth.middleware.dto.consultrnv2
 
 import java.io.Serializable
 
-class ConsultRnSearchByNissResultDto(
-    var person: ConsultRnPersonDto? = null
+class RnConsultSearchByNissResultDto(
+    var person: RnConsultPersonDto? = null
 ): Serializable

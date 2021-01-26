@@ -1,15 +1,6 @@
 package org.taktik.freehealth.middleware.dto.consultrnv2
 
-import be.fgov.ehealth.rn.baselegaldata.v1.AddressDeclarationType
-import be.fgov.ehealth.rn.baselegaldata.v1.BirthInfoDeclarationType
-import be.fgov.ehealth.rn.baselegaldata.v1.CivilStatesDeclarationType
-import be.fgov.ehealth.rn.baselegaldata.v1.ContactAddressDeclarationType
-import be.fgov.ehealth.rn.baselegaldata.v1.DeceaseInfoDeclarationType
-import be.fgov.ehealth.rn.baselegaldata.v1.GenderInfoDeclarationType
-import be.fgov.ehealth.rn.baselegaldata.v1.NameInfoDeclarationType
-import be.fgov.ehealth.rn.baselegaldata.v1.NationalitiesDeclarationType
-
-class PersonMid(
+class RnConsultPersonMid(
     var firstName: String? = null,
     var lastName: String? = null,
     var middleName: String? = null,

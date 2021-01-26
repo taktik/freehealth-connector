@@ -35,13 +35,13 @@ import org.taktik.connector.business.ssinhistory.service.impl.SsinHistoryTokenSe
 import org.taktik.connector.technical.exception.SoaErrorException
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
-import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnConversationDto
-import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnPersonDto
-import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnRegisterPersonResponseDto
-import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnSearchByNissResultDto
-import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnSearchPersonBySsinResponseDto
-import org.taktik.freehealth.middleware.dto.consultrnv2.ConsultRnSearchPersonPhoneticallyResponseDto
-import org.taktik.freehealth.middleware.dto.consultrnv2.PersonMid
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultConversationDto
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultPersonDto
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultRegisterPersonResponseDto
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultSearchByNissResultDto
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultSearchPersonBySsinResponseDto
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultSearchPersonPhoneticallyResponseDto
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultPersonMid
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.RnConsultService
 import org.taktik.freehealth.middleware.service.STSService
@@ -55,7 +55,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
     val backingCbssPersonService = ConsultrnCBSSPersonServiceImpl(EhealthReplyValidatorImpl());
     val historyService = SsinHistoryTokenServiceImpl(EhealthReplyValidatorImpl())
 
-    override fun searchPersonBySsin(keystoreId: UUID, tokenId: UUID, passPhrase: String, ssin: String): ConsultRnSearchPersonBySsinResponseDto {
+    override fun searchPersonBySsin(keystoreId: UUID, tokenId: UUID, passPhrase: String, ssin: String): RnConsultSearchPersonBySsinResponseDto {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Rn consult operations")
@@ -72,10 +72,10 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
         return try {
            val searchPersonBySsinResponse = backingPersonService.searchPersonBySsin(samlToken, searchPersonBySsinRequest)
 
-            ConsultRnSearchPersonBySsinResponseDto(
+            RnConsultSearchPersonBySsinResponseDto(
                 ssin = searchPersonBySsinResponse?.ssin,
-                result = ConsultRnSearchByNissResultDto(
-                    person = ConsultRnPersonDto(
+                result = RnConsultSearchByNissResultDto(
+                    person = RnConsultPersonDto(
                         ssin = searchPersonBySsinResponse?.result?.person?.ssin,
                         nobilityTitle = searchPersonBySsinResponse?.result?.person?.nobilityTitle,
                         name = searchPersonBySsinResponse?.result?.person?.name,
@@ -98,7 +98,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
                 id = searchPersonBySsinResponse?.id,
                 inResponseTo = searchPersonBySsinResponse?.inResponseTo,
                 issueInstant = searchPersonBySsinResponse?.issueInstant,
-                xmlConversations = ConsultRnConversationDto(
+                xmlConversations = RnConsultConversationDto(
                     request = ConnectorXmlUtils.toString(searchPersonBySsinRequest),
                     response = ConnectorXmlUtils.toString(searchPersonBySsinResponse)
                 ),
@@ -106,13 +106,13 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
             )
         }catch (ex: Exception){
             log.info("Error: "+ex)
-            ConsultRnSearchPersonBySsinResponseDto(
+            RnConsultSearchPersonBySsinResponseDto(
                 result = null,
                 status = null,
                 id = null,
                 inResponseTo = null,
                 issueInstant = null,
-                xmlConversations = ConsultRnConversationDto(
+                xmlConversations = RnConsultConversationDto(
                     request = ConnectorXmlUtils.toString(searchPersonBySsinRequest),
                     response = ConnectorXmlUtils.toString(ex)
                 ),
@@ -122,7 +122,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
 
     }
 
-    override fun searchPersonPhonetically(keystoreId: UUID, tokenId: UUID, passPhrase: String, dateOfBirth: Int, lastName: String, firstName: String?, middleName: String?, matchingType: String?, gender: String?, countryCode: Int, cityCode: String?, tolerance: Int?, limit: Int?): ConsultRnSearchPersonPhoneticallyResponseDto {
+    override fun searchPersonPhonetically(keystoreId: UUID, tokenId: UUID, passPhrase: String, dateOfBirth: Int, lastName: String, firstName: String?, middleName: String?, matchingType: String?, gender: String?, countryCode: Int, cityCode: String?, tolerance: Int?, limit: Int?): RnConsultSearchPersonPhoneticallyResponseDto {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Rn consult operations")
@@ -181,26 +181,26 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
             val searchPersonPhoneticallyResponse = backingPersonService.searchPersonPhonetically(samlToken, searchPersonPhoneticallyRequest)
             log.info("SearchPersonPhonetically response: "+ ConnectorXmlUtils.toString(searchPersonPhoneticallyResponse))
 
-            ConsultRnSearchPersonPhoneticallyResponseDto(
+            RnConsultSearchPersonPhoneticallyResponseDto(
                 id = searchPersonPhoneticallyResponse?.id,
                 inResponseTo = searchPersonPhoneticallyResponse?.inResponseTo,
                 issueInstant = searchPersonPhoneticallyResponse?.issueInstant,
                 status = searchPersonPhoneticallyResponse?.status,
                 result = searchPersonPhoneticallyResponse?.result,
-                xmlConversations = ConsultRnConversationDto(
+                xmlConversations = RnConsultConversationDto(
                     request = ConnectorXmlUtils.toString(searchPersonPhoneticallyRequest),
                     response = ConnectorXmlUtils.toString(searchPersonPhoneticallyResponse)
                 )
             )
         }catch (ex: Exception){
             log.info("Error: "+ex)
-            ConsultRnSearchPersonPhoneticallyResponseDto(
+            RnConsultSearchPersonPhoneticallyResponseDto(
                 result = null,
                 status = null,
                 id = null,
                 inResponseTo = null,
                 issueInstant = null,
-                xmlConversations = ConsultRnConversationDto(
+                xmlConversations = RnConsultConversationDto(
                     request = ConnectorXmlUtils.toString(searchPersonPhoneticallyRequest),
                     response = ConnectorXmlUtils.toString(ex)
                 ),
@@ -209,7 +209,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
         }
     }
 
-    override fun registerPerson(keystoreId: UUID, tokenId: UUID, passPhrase: String, mid: PersonMid): ConsultRnRegisterPersonResponseDto {
+    override fun registerPerson(keystoreId: UUID, tokenId: UUID, passPhrase: String, mid: RnConsultPersonMid): RnConsultRegisterPersonResponseDto {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Rn consult operations")
@@ -378,14 +378,14 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
 
         return try{
             val registerPersonResponse = backingCbssPersonService.registerPerson(samlToken, registerPersonRequest)
-            ConsultRnRegisterPersonResponseDto(
+            RnConsultRegisterPersonResponseDto(
                 id = registerPersonResponse.id,
                 issueInstant = registerPersonResponse.issueInstant,
                 inResponseTo = registerPersonResponse.inResponseTo,
                 status = registerPersonResponse.status,
                 declaration = registerPersonResponse.declaration,
                 result = registerPersonResponse.result,
-                xmlConversation = ConsultRnConversationDto(
+                xmlConversation = RnConsultConversationDto(
                     request = ConnectorXmlUtils.toString(registerPersonRequest),
                     response = ConnectorXmlUtils.toString(registerPersonResponse)
                 ),
@@ -393,14 +393,14 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
             )
         }catch (ex: SoaErrorException){
             log.info("Error: "+ConnectorXmlUtils.toString(ex))
-            ConsultRnRegisterPersonResponseDto(
+            RnConsultRegisterPersonResponseDto(
                 id = ex.responseTypeV2.id,
                 issueInstant = ex.responseTypeV2.issueInstant,
                 inResponseTo = ex.responseTypeV2.inResponseTo,
                 status = null,
                 declaration = null,
                 result = null,
-                xmlConversation = ConsultRnConversationDto(
+                xmlConversation = RnConsultConversationDto(
                     request = ConnectorXmlUtils.toString(registerPersonRequest),
                     response = ConnectorXmlUtils.toString(ex)
                 ),
@@ -408,14 +408,14 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
             )
         }catch (ex: SOAPFaultException){
             log.info("Error: "+ConnectorXmlUtils.toString(ex))
-            ConsultRnRegisterPersonResponseDto(
+            RnConsultRegisterPersonResponseDto(
                 id = null,
                 issueInstant = null,
                 inResponseTo = null,
                 status = null,
                 declaration = null,
                 result = null,
-                xmlConversation = ConsultRnConversationDto(
+                xmlConversation = RnConsultConversationDto(
                     request = ConnectorXmlUtils.toString(registerPersonRequest),
                     response = ConnectorXmlUtils.toString(ex)
                 ),

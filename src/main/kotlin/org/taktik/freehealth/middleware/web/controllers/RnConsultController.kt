@@ -1,3 +1,23 @@
+/*
+ *
+ * Copyright (C) 2018 Taktik SA
+ *
+ * This file is part of FreeHealthConnector.
+ *
+ * FreeHealthConnector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation.
+ *
+ * FreeHealthConnector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with FreeHealthConnector.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.taktik.freehealth.middleware.web.controllers
 
 import ma.glasnost.orika.MapperFacade
@@ -14,7 +34,9 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import org.taktik.freehealth.middleware.dto.consultrnv2.PersonMid
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultSearchPersonBySsinResponseDto
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultSearchPersonPhoneticallyResponseDto
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultPersonMid
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.RnConsultService
 import java.util.*
@@ -44,12 +66,14 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable(value = "ssin") ssin: String
-    ) = rnConsultService.searchPersonBySsin(
-        keystoreId,
-        tokenId,
-        passPhrase,
-        ssin
-    )
+    ): RnConsultSearchPersonBySsinResponseDto?{
+        return rnConsultService.searchPersonBySsin(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            ssin = ssin
+        )
+     }
 
     @GetMapping("/phonetically/{dateOfBirth}/{lastName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun searchPersonPhonetically(
@@ -66,28 +90,30 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
         @RequestParam(required = false) cityCode: String?,
         @RequestParam(required = false) tolerance: Int?,
         @RequestParam(required = false) limit: Int?
-    ) = rnConsultService.searchPersonPhonetically(
-        keystoreId,
-        tokenId,
-        passPhrase,
-        dateOfBirth,
-        lastName,
-        firstName,
-        middleName,
-        matchingType,
-        gender,
-        countryCode,
-        cityCode,
-        tolerance,
-        limit
-    )
+    ): RnConsultSearchPersonPhoneticallyResponseDto?{
+        return rnConsultService.searchPersonPhonetically(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            dateOfBirth = dateOfBirth,
+            lastName = lastName,
+            firstName = firstName,
+            middleName = middleName,
+            matchingType = matchingType,
+            gender = gender,
+            countryCode = countryCode,
+            cityCode = cityCode,
+            tolerance = tolerance,
+            limit = limit
+        )
+    }
 
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerPerson(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
-        @RequestBody mid: PersonMid
+        @RequestBody mid: RnConsultPersonMid
     ) = rnConsultService.registerPerson(
         keystoreId,
         tokenId,
@@ -107,5 +133,4 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
         passPhrase,
         ssin
     )
-
 }
