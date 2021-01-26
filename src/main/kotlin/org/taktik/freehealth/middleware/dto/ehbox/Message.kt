@@ -20,9 +20,21 @@
 
 package org.taktik.freehealth.middleware.dto.ehbox
 
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import org.taktik.freehealth.middleware.dto.common.Addressee
 import java.io.Serializable
 
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type"
+)
+@JsonSubTypes(
+    JsonSubTypes.Type(value = DocumentMessage::class, name = "DocumentMessage"),
+    JsonSubTypes.Type(value = AcknowledgeMessage::class, name = "AcknowledgeMessage"),
+    JsonSubTypes.Type(value = ErrorMessage::class, name = "ErrorMessage")
+)
 abstract class Message(
     val id: String? = null,
     val publicationId: String? = null,
