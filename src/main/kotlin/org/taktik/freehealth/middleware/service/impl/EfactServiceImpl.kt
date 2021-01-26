@@ -135,7 +135,14 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             when {
                 i1.creditNote && !i2.creditNote -> -1
                 i2.creditNote && !i1.creditNote -> 1
-                else -> iv.getDestCode(i1.ioCode!!, batch.sender!!).compareTo(iv.getDestCode(i2.ioCode!!, batch.sender!!), true)
+                else -> {
+                    compareValuesBy(
+                        i1,
+                        i2,
+                        { iv.getDestCode(it.ioCode!!, batch.sender!!) },
+                        { it.invoiceNumber }
+                    )
+                }
             }
         })) {
             if (invoice.items.isNotEmpty()) {
@@ -152,7 +159,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedBatchYearMonth, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber, batch.magneticInvoice, invoice.startOfCoveragePeriod)
                 recordsCountPerOA[0]++
                 metadata.recordsCount++
-                for (it in invoice.items) {
+                for (it in invoice.items.sortedWith(compareBy({ it.dateCode }, { it.codeNomenclature }))) {
                     it.gnotionNihii = it.gnotionNihii ?: invoice.gnotionNihii
                     it.internshipNihii = it.internshipNihii ?: invoice.internshipNihii
                     rn = iv.writeRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, invoice.ioCode!!, it)
