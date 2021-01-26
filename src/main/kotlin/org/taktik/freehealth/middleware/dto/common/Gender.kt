@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.dto.common
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import org.taktik.freehealth.utils.FailSafeEnumDeserializer
 import java.io.Serializable
@@ -39,4 +41,8 @@ enum class Gender constructor(val code: String) : Serializable {
     }
 }
 
-class GenderDeserializer: FailSafeEnumDeserializer<Gender>(Gender::class.java, Gender.unknown)
+class GenderDeserializer: FailSafeEnumDeserializer<Gender>(Gender::class.java, Gender.unknown) {
+    override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Gender? {
+        return Gender.fromCode(jp.text) ?: super.deserialize(jp, ctxt)
+    }
+}
