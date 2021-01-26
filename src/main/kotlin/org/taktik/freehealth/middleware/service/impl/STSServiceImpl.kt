@@ -39,6 +39,7 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.service.sts.utils.SAMLHelper
 import org.taktik.connector.technical.utils.CertificateParser
+import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import org.taktik.freehealth.middleware.dto.CertificateInfo
 import org.taktik.freehealth.middleware.exception.MissingKeystoreException
@@ -342,7 +343,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             samlTokenResult
         } catch (e: TechnicalConnectorException) {
             log.info("STS token request failure: ${e.errorCode} : ${e.message} : ${e.stackTrace}")
-            currentToken // FIXME: should throw if no currentToken
+            currentToken ?: throw e
         }
     }
 
@@ -368,6 +369,14 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             val identifierType = parser.identifier
             val identifierValue = parser.id
             val application = parser.application
+
+            if (identifierType == IdentifierType.UNKNOWN) {
+                throw TechnicalConnectorException(ERROR_ETK_NOTFOUND, "identifierType", identifierType)
+            }
+
+            if (identifierValue.isBlank()) {
+                throw TechnicalConnectorException(ERROR_ETK_NOTFOUND, "identifierValue", identifierValue)
+            }
 
             this.keyDepotService.getETKSet(
                 identifierType,
