@@ -55,6 +55,6 @@ class SwaggerConfiguration(val typeResolver: TypeResolver) {
             .securitySchemes(listOf(BasicAuth("basicAuth")))
             .select()
             .apis(RequestHandlerSelectors.any())
-            .paths(PathSelectors.regex("^/(ab|admin|chap4|consent|consultrn|crypto|gmd|eatt.+|efact|ehb.+|genins|hub|mda|mhm|recip.+|sts|tarif|therlink)(/.*)?"))
+            .paths(PathSelectors.regex("^/(ab|admin|chap4|consent|consultrn|crypto|gmd|eatt.+|efact|ehb.+|genins|hub|mda|mhm|mycarenet|recip.+|sts|tarif|therlink)(/.*)?"))
             .build()
 }
