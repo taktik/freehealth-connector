@@ -19,10 +19,10 @@ import java.io.Serializable
 class RnConsultPersonDto(
     var ssin: String? = null,
     var nobilityTitle: NobilityTitleBaseType? = null,
-    var name: NameInfoBaseType? = null,
+    var name: RnConsultNameType? = null,
     var nationalities: NationalitiesBaseType? = null,
     var birth: BirthInfoBaseType? = null,
-    var decease: DeceaseInfoBaseType? = null,
+    var decease: RnConsultDeceaseType? = null,
     var gender: GenderInfoBaseType? = null,
     var civilStates: CivilStatesBaseType? = null,
     var address: AddressBaseType? = null,

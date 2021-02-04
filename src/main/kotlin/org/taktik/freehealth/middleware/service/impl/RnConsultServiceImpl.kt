@@ -1,17 +1,26 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import be.fgov.ehealth.commons.core.v2.Id
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinRequest
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinResponse
+import be.fgov.ehealth.idsupport.core.v2.IdentificationData
+import be.fgov.ehealth.idsupport.protocol.v2.VerifyIdRequest
+import be.fgov.ehealth.idsupport.protocol.v2.VerifyIdResponse
+import be.fgov.ehealth.rn.baselegaldata.v1.AddressBaseType
 import be.fgov.ehealth.rn.baselegaldata.v1.AddressDeclarationType
+import be.fgov.ehealth.rn.baselegaldata.v1.AdministratorBaseType
+import be.fgov.ehealth.rn.baselegaldata.v1.BirthInfoBaseType
 import be.fgov.ehealth.rn.baselegaldata.v1.BirthInfoDeclarationType
 import be.fgov.ehealth.rn.baselegaldata.v1.ContactAddressDeclarationType
 import be.fgov.ehealth.rn.baselegaldata.v1.ForeignAddressDeclarationType
+import be.fgov.ehealth.rn.baselegaldata.v1.GenderInfoBaseType
 import be.fgov.ehealth.rn.baselegaldata.v1.GenderInfoDeclarationType
 import be.fgov.ehealth.rn.baselegaldata.v1.GivenNameType
 import be.fgov.ehealth.rn.baselegaldata.v1.LocationDeclarationType
 import be.fgov.ehealth.rn.baselegaldata.v1.NameInfoDeclarationType
 import be.fgov.ehealth.rn.baselegaldata.v1.NationalitiesDeclarationType
 import be.fgov.ehealth.rn.baselegaldata.v1.NationalityInfoBaseType
+import be.fgov.ehealth.rn.baselegaldata.v1.PlainAddressType
 import be.fgov.ehealth.rn.cbsspersonlegaldata.v1.CbssPersonRequestType
 import be.fgov.ehealth.rn.cbsspersonservice.core.v1.RegisterPersonDeclarationType
 import be.fgov.ehealth.rn.cbsspersonservice.protocol.v1.RegisterPersonRequest
@@ -33,9 +42,12 @@ import org.taktik.connector.business.consultrnv2.service.impl.ConsultrnCBSSPerso
 import org.taktik.connector.business.consultrnv2.service.impl.ConsultrnPersonServiceImpl
 import org.taktik.connector.business.ssinhistory.service.impl.SsinHistoryTokenServiceImpl
 import org.taktik.connector.technical.exception.SoaErrorException
+import org.taktik.connector.technical.service.idsupport.impl.IdSupportServiceImpl
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultConversationDto
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultDeceaseType
+import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultNameType
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultPersonDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultRegisterPersonResponseDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultSearchByNissResultDto
@@ -54,6 +66,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
     val backingPersonService = ConsultrnPersonServiceImpl(EhealthReplyValidatorImpl());
     val backingCbssPersonService = ConsultrnCBSSPersonServiceImpl(EhealthReplyValidatorImpl());
     val historyService = SsinHistoryTokenServiceImpl(EhealthReplyValidatorImpl())
+    val verifyIdService = IdSupportServiceImpl(EhealthReplyValidatorImpl())
 
     override fun searchPersonBySsin(keystoreId: UUID, tokenId: UUID, passPhrase: String, ssin: String): RnConsultSearchPersonBySsinResponseDto {
         val samlToken =
@@ -78,10 +91,24 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
                     person = RnConsultPersonDto(
                         ssin = searchPersonBySsinResponse?.result?.person?.ssin,
                         nobilityTitle = searchPersonBySsinResponse?.result?.person?.nobilityTitle,
-                        name = searchPersonBySsinResponse?.result?.person?.name,
+                        name = RnConsultNameType(
+                            lastName = searchPersonBySsinResponse?.result?.person?.name?.lastName,
+                            firstName = searchPersonBySsinResponse?.result?.person?.name?.givenNames?.joinToString { it.value },
+                            inceptionDate = searchPersonBySsinResponse?.result?.person?.name?.inceptionDate.toString()
+                        ),
                         nationalities = searchPersonBySsinResponse?.result?.person?.nationalities,
                         birth = searchPersonBySsinResponse?.result?.person?.birth,
-                        decease = searchPersonBySsinResponse?.result?.person?.decease,
+                        decease = RnConsultDeceaseType().apply {
+                            deceaseDate = searchPersonBySsinResponse?.result?.person?.decease?.deceaseDate
+                            deceasePlace = searchPersonBySsinResponse?.result?.person?.decease?.deceasePlace
+                            searchPersonBySsinResponse?.result?.person?.decease?.deceaseDate.let {
+                                if (it != null){
+                                    isDecease = true
+                                }else{
+                                    isDecease = false
+                                }
+                            }
+                        },
                         gender = searchPersonBySsinResponse?.result?.person?.gender,
                         civilStates = searchPersonBySsinResponse?.result?.person?.civilStates,
                         address = searchPersonBySsinResponse?.result?.person?.address,
@@ -232,7 +259,6 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
         val registerPersonRequest = RegisterPersonRequest().apply {
             id = "ID${System.currentTimeMillis()}"
             applicationId = "0"
-            issueInstant = DateTime.now()
             declaration = RegisterPersonDeclarationType().apply {
                 person = CbssPersonRequestType().apply {
                     name = NameInfoDeclarationType().apply {
@@ -438,5 +464,48 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
         })}catch (ex: ConsultCurrentSsinException){
             ex.consultCurrentSsinResponse
         }
+    }
+
+    override fun verifyId(keystoreId: UUID, tokenId: UUID, passPhrase: String, ssin: String?, cardNumber: String?, barCoded: String?): VerifyIdResponse {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for Rn consult operations")
+
+        val ssinType = "urn:be:fgov:person:ssin"
+        val cardNumberType = "urn:be:fgov:person:cardsupport:cardnumber"
+        val barCodedType = "urn:be:fgov:person:cardsupport:barcoded"
+
+        val verifyIdRequest = VerifyIdRequest().apply {
+            issueInstant = DateTime.now()
+            legalContext = "patient insurance validation"
+            identificationData = IdentificationData().apply {
+                this.ids.addAll(listOf(
+                    ssin.let {
+                        Id().apply {
+                            type = ssinType
+                            value = ssin
+                        }
+                    },
+                    cardNumber.let {
+                        Id().apply {
+                            type = cardNumberType
+                            value = cardNumber
+                        }
+                    },
+                    barCoded.let {
+                        if(!barCoded.isNullOrEmpty()){
+                            Id().apply {
+                                type = barCodedType
+                                value = barCoded
+                            }
+                        }else{
+                            null
+                        }
+                    })
+                )
+            }
+        }
+
+        return verifyIdService.verifyId(verifyIdRequest, samlToken)
     }
 }

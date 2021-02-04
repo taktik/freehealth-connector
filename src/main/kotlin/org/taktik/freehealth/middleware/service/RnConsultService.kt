@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.service
 
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinResponse
+import be.fgov.ehealth.idsupport.protocol.v2.VerifyIdResponse
 import org.taktik.connector.business.consultrnv2.exception.inscriptionservice.CbssPersonServiceException
 import org.taktik.connector.business.consultrnv2.exception.personservice.SearchPersonBySsinException
 import org.taktik.connector.business.consultrnv2.exception.personservice.SearchPersonPhoneticallyException
@@ -54,4 +55,14 @@ interface RnConsultService {
         passPhrase: String,
         ssin: String
     ) : ConsultCurrentSsinResponse
+
+    @Throws(TechnicalConnectorException::class, SOAPFaultException::class, SoaErrorException::class)
+    fun verifyId(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        ssin: String?,
+        cardNumber: String?,
+        barCoded: String?
+    ) : VerifyIdResponse
 }

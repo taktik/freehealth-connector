@@ -227,4 +227,12 @@ class RnConsultControllerTest: EhealthTest() {
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 
+    @Test
+    //VerifyId
+    fun verifyId(){
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val veridyId = this.restTemplate.exchange("http://localhost:$port/rnconsult/verifyId?ssin=${"84091304237"}&cardNumber=${"591112548495"}&barCoded=${""}",
+            HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
+    }
+
 }

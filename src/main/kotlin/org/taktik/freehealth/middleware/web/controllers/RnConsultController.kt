@@ -133,4 +133,22 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
         passPhrase,
         ssin
     )
+
+    @GetMapping("/verifyId", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun verifyId(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam(required = false) ssin: String?,
+        @RequestParam(required = false) cardNumber: String?,
+        @RequestParam(required = false) barCoded: String?
+    ) = rnConsultService.verifyId(
+        keystoreId,
+        tokenId,
+        passPhrase,
+        ssin,
+        cardNumber,
+        barCoded
+    )
+
 }
