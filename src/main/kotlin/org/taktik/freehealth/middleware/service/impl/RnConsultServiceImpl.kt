@@ -259,6 +259,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
         val registerPersonRequest = RegisterPersonRequest().apply {
             id = "ID${System.currentTimeMillis()}"
             applicationId = "0"
+            issueInstant = DateTime.now()
             declaration = RegisterPersonDeclarationType().apply {
                 person = CbssPersonRequestType().apply {
                     name = NameInfoDeclarationType().apply {
