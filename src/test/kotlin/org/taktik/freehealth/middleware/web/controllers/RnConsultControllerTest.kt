@@ -26,14 +26,14 @@ class RnConsultControllerTest: EhealthTest() {
     @Test
     fun searchPersonBySsin(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val personBySsin = this.restTemplate.exchange("http://localhost:$port/rnconsult/bySsin/${"92092412781"}",
+        val personBySsin = this.restTemplate.exchange("http://localhost:$port/rnconsult/bySsin/${"56000308828"}",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 
     @Test
     fun searchPersonPhonetically(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val personPhonetically = this.restTemplate.exchange("http://localhost:$port/rnconsult/phonetically/${"19920924"}/${"mennechet"}?firstName=${"maxime"}&middleName=${""}",
+        val personPhonetically = this.restTemplate.exchange("http://localhost:$port/rnconsult/phonetically/${"19960000"}/${"wathelet"}?firstName=${"julien"}&middleName=${""}",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 
@@ -47,14 +47,14 @@ class RnConsultControllerTest: EhealthTest() {
     @Test
     fun searchPersonPhoneticallyWithCountryCode(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val personPhonetically = this.restTemplate.exchange("http://localhost:$port/rnconsult/phonetically/${"1977"}/${"mennechet"}?firstName=${"max"}&middleName=${""}&countryCode=${111}",
+        val personPhonetically = this.restTemplate.exchange("http://localhost:$port/rnconsult/phonetically/${"19770000"}/${"mennechet"}?firstName=${"max"}&middleName=${""}&countryCode=${111}",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 
     @Test
     fun searchPersonPhoneticallyWithCountryCodeAndCityCode(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val personPhonetically = this.restTemplate.exchange("http://localhost:$port/rnconsult/phonetically/${"19920924"}/${"mennechet"}?firstName=${"max"}&middleName=${""}&countryCode=${111}&cityCode=${"20"}",
+        val personPhonetically = this.restTemplate.exchange("http://localhost:$port/rnconsult/phonetically/${"19960000"}/${"mennechet"}?firstName=${"max"}&middleName=${""}&countryCode=${111}&cityCode=${"20"}",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
     }
 
