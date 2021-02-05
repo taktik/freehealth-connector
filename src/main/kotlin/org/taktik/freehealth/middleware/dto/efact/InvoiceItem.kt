@@ -50,6 +50,7 @@ class InvoiceItem {
     var derogationMaxNumber: InvoicingDerogationMaxNumberCode? = null
     var prescriberNorm: InvoicingPrescriberCode? = null
     var prescriberNihii: String? = null
+    var prescriptionDate: Long? = null
 
     var personalInterventionCoveredByThirdPartyCode: Int? = null
 
