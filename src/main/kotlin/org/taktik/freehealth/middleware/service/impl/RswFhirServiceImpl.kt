@@ -93,7 +93,7 @@ class RswFhirServiceImpl(val stsService: STSService) : RswFhirService {
             val recInfo = parser.recipientInfos.recipients.firstOrNull()
             val recipient = JceKeyTransEnvelopedRecipient(privateKey!!)
 
-            val content = recInfo?.getContentStream(recipient)?.contentStream?.readBytes() //<-- Error here: bad padding: data hash wrong
+            val content = recInfo?.getContentStream(recipient)?.contentStream?.readBytes()
             (MimeMessage(session, ByteArrayInputStream(content)).content as? Multipart)?.let { objectMapper.readValue(it.getBodyPart(0).inputStream.readBytes(), Bundle::class.java) }
         } ?: throw IllegalStateException("Cannot decode data")
     }
