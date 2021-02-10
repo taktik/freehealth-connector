@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema elementFormDefault="qualified" targetNamespace="urn:be:cin:nip:async:generic"
+	xmlns:types="urn:be:cin:types:v1"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:common="urn:be:cin:mycarenet:esb:common:v2">
+
+
+	<xsd:import schemaLocation="commonTypes-v1.4.xsd" namespace="urn:be:cin:types:v1" />
+	<xsd:import schemaLocation="commonInfo-v2.4.xsd" namespace="urn:be:cin:mycarenet:esb:common:v2" />
+
+	<xsd:element name="RejectInb">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="CommonInput" type="common:CommonInputType"/>
+				<xsd:element name="Fault" type="types:FaultType" />
+			</xsd:sequence>
+			<xsd:attribute name="msgName" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+
+	<xsd:element name="RejectOutb">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="CommonOutput" type="common:CommonOutputType" />
+				<xsd:element name="Origin" type="common:OrigineType" />
+				<xsd:element name="Fault" type="types:FaultType" />
+			</xsd:sequence>
+			<xsd:attribute name="msgName" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

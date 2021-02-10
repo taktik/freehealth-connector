@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="urn:be:fgov:ehealth:consultrn:protocol:v2"
+  xmlns="urn:be:fgov:ehealth:consultrn:protocol:v2"
+  xmlns:core="urn:be:fgov:ehealth:consultrn:core:v2"
+  xmlns:commons_prot="urn:be:fgov:ehealth:consultrn:commons:protocol:v3"
+  xmlns:commons_core="urn:be:fgov:ehealth:consultrn:commons:core:v3"
+  xmlns:ehealth_core="urn:be:fgov:ehealth:commons:protocol:v2"
+  elementFormDefault="qualified" attributeFormDefault="unqualified"
+  version="2.0">
+  <xs:annotation>
+    <xs:appinfo> </xs:appinfo>
+  </xs:annotation>
+  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd"/>
+  <xs:import namespace="urn:be:fgov:ehealth:consultrn:commons:protocol:v3" schemaLocation="../../ehealth-consultrn-commons/XSD/ehealth-consultrn-commons-protocol-3_1.xsd"/>
+  <xs:import namespace="urn:be:fgov:ehealth:consultrn:commons:core:v3" schemaLocation="../../ehealth-consultrn-commons/XSD/ehealth-consultrn-commons-core-3_1.xsd"/> 
+  <xs:import namespace="urn:be:fgov:ehealth:consultrn:core:v2" schemaLocation="ehealth-consultrn-manageperson-core-2_0.xsd" />
+  <!--RegisterPerson (BISPersonService CBSS) -->
+  <xs:element name="RegisterPersonRequest" type="RegisterPersonRequestType">
+    <xs:annotation>
+      <xs:documentation>Request to register a person</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="RegisterPersonResponse" type="RegisterPersonResponseType">
+    <xs:annotation>
+      <xs:documentation>Response to the person registration</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <!-- RegisterPerson types  -->
+  <xs:complexType name="RegisterPersonRequestType">
+    <xs:annotation>
+      <xs:documentation>Type defining the structure of the request to register a person</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="commons_prot:ConsultRnRequestType">
+        <xs:sequence>
+          <xs:element name="Person" type="commons_core:PersonRequestType">
+            <xs:annotation>
+              <xs:documentation>Element containing the person information to be used to register a person</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="RegisterPersonResponseType">
+    <xs:annotation>
+      <xs:documentation>Type defining the structure of the response being send to the consumer after the person registration</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="ehealth_core:StatusResponseType">
+        <xs:sequence>
+          <xs:element name="Result" type="core:ResultType" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Element containing the person information to be used to register a person</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+    
+  <!-- ReplacePerson types  -->
+</xs:schema>

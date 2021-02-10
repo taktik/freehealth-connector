@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================================================================================
+	* Owner					: Crossroad Bank for Social Security (CBSS)
+	* Description				: This XML schema document contains a set of Common XML type definitions specific for the registries domain. 
+	* Revision History		: 08/10/2018 4.0 Add standardized SSIN block
+	*								  08/10/2018 4.0 Change information in StatusType from tns:InformationType to common:InformationType
+	*								  08/10/2018 4.0 Add ValidationErrorsType and AnomaliesType
+	*								  08/10/2018 4.0 Remove RegisterIntegrationType
+	*								  19/10/2018 4.0 Remove StatusType
+	*								  19/10/2018 4.0 Move PersonRegisterType to RegistriesCommon + change 'RR' (historical anomaly) to 'NR'
+	*								  15/01/2019 4.0 Removed SsinWithCanceledAndReplacesStatusType and SsinWithCanceledAndReplacedByStatusType (in CommonV3 now)
+	* ====================================================================================================================================
+-->
+<!-- Copyright (c) eHealth -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:be:fgov:ehealth:rn:registries:commons:v1" 
+			xmlns:common="urn:be:fgov:ehealth:rn:commons:business:v1" targetNamespace="urn:be:fgov:ehealth:rn:registries:commons:v1" 
+			elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-rnregistries-common
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.0
+ Build-Time: 20200302-1704 
+ </xs:appinfo>
+ </xs:annotation>
+	<xsd:import namespace="urn:be:fgov:ehealth:rn:commons:business:v1" schemaLocation="../../ehealth-rn-common/XSD/ehealth-rn-commons-business-1_0.xsd"/>
+	
+	<xsd:element name="ValidationErrors" type="tns:ValidationErrorsType" />
+	
+	<xsd:simpleType name="GivenNameMatchingType">
+		<xsd:annotation>
+			<xsd:documentation>Type defining the possible ways to interpret the given firstnames during the phonetic search.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="FIRST_LETTER_FIRST_GIVENNAME"/>
+			<xsd:enumeration value="COMPLETE_FIRST_GIVENNAME"/>
+			<xsd:enumeration value="ALL_GIVENNAME"/>
+			<xsd:enumeration value="IGNORE_GIVENNAME"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PersonRegisterType">
+		<xsd:annotation>
+			<xsd:documentation>Type specifying the register which is the authentic source of the legal data of a person.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="NR"/>
+			<xsd:enumeration value="BIS"/>
+			<xsd:enumeration value="RAD"/>
+			<xsd:enumeration value="RAN"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="DetailedStatusType">
+		<xsd:annotation>
+			<xsd:documentation>Type defining the structure of one business Faults</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Code">
+				<xsd:annotation>
+					<xsd:documentation>Unique code referring to a description of this Fault </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="6"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="Description">
+				<xsd:annotation>
+					<xsd:documentation>Some description of this Fault</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="256"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ValidationErrorsType">
+		<xsd:annotation>
+			<xsd:documentation>Type defining the structure of the part of the response containing errors in the validation of the input</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ValidationError" type="tns:DetailedStatusType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AnomaliesType">
+		<xsd:annotation>
+			<xsd:documentation>Type defining the structure of the part of the response containing warnings about the returned data</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Anomaly" type="tns:DetailedStatusType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

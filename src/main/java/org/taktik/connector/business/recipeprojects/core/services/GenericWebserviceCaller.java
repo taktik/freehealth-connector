@@ -17,19 +17,16 @@ import org.taktik.connector.technical.exception.ConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
-import org.taktik.connector.technical.ws.GenericWsSender;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import org.taktik.connector.technical.ws.domain.GenericResponse;
 import org.taktik.connector.technical.ws.domain.HandlerChain;
 import org.taktik.connector.technical.ws.domain.HandlerPosition;
-import org.taktik.connector.technical.ws.impl.GenericWsSenderImpl;
 
 import javax.xml.soap.SOAPException;
 
 public abstract class GenericWebserviceCaller {
 
     private final static Logger LOG = LogManager.getLogger(GenericWebserviceCaller.class);
-    private static GenericWsSender sender = new GenericWsSenderImpl();
 
     public static <T extends Object> T callGenericWebservice(SAMLToken samlToken, Credential credential, Object request, Class<T> responseType, String endpointName, String serviceName, boolean addLoggingHandler, boolean addSoapFaultHandler, boolean addMustUnderstandHandler, boolean addInsurabilityHandler) throws IntegrationModuleException, TechnicalConnectorException {
         return callGenericWebservice(samlToken, credential, request, request.getClass(), responseType, endpointName, serviceName, addLoggingHandler, addSoapFaultHandler, addMustUnderstandHandler, addInsurabilityHandler);
@@ -111,7 +108,7 @@ public abstract class GenericWebserviceCaller {
             final GenericResponse resp;
 
             genericRequest.setSamlSecured(samlToken.getAssertion(), credential);
-            resp = sender.send(genericRequest);
+            resp = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(genericRequest);
             LOG.info(serviceName + "GenericWebservice received a response from service with endpoint:" + genericWebserviceRequest.getEndpoint());
 
             T response = JaxContextCentralizer.getInstance().toObject(responseType, resp.asString());

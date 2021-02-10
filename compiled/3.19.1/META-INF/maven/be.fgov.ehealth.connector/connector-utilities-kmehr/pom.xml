@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>be.fgov.ehealth.connector</groupId>
+        <artifactId>connector-utilities-master</artifactId>
+        <version>3.19.1</version>
+    </parent>
+
+    <artifactId>connector-utilities-kmehr</artifactId>
+    <name>${project.artifactId}</name>
+    <description>Connector utilities kmehr</description>
+
+    <packaging>jar</packaging>
+
+    <properties>
+        <version.kmehr.major>1</version.kmehr.major>
+        <version.kmehr.minor>29</version.kmehr.minor>
+        <version.kmehr.bugfix>0</version.kmehr.bugfix>
+
+        <Enable.Versioning/>
+        <version.rename.major>${version.kmehr.major}</version.rename.major>
+        <version.rename.minor>${version.kmehr.minor}</version.rename.minor>
+        <XSD.versioning.includes>**/ehealth-kmehr/**/*.xsd</XSD.versioning.includes>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack xsds from xsd-connector</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>be.fgov.ehealth.xsd</groupId>
+                                    <artifactId>xsd-kmehr</artifactId>
+                                    <version>${version.kmehr.major}.${version.kmehr.minor}.${version.kmehr.bugfix}
+                                    </version>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>**/*.xsd</includes>
+                            <outputDirectory>target/generated-resources</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>Generate JAva Xml Bindings</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <schemaIncludes>
+                        <include>**/*ext*.xsd</include>
+                    </schemaIncludes>
+                    <bindingIncludes>
+                        <include>kmerh-global-bindings.xjb</include>
+                        <include>kmehr-bindings.xjb</include>
+                    </bindingIncludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-utilities-core</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-utilities-external</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
+
+
+</project>

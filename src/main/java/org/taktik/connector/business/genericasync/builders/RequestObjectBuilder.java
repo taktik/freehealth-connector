@@ -30,7 +30,7 @@ public interface RequestObjectBuilder extends ConfigurableImplementation {
 
    Post buildPostRequest(CommonInput commonInput, Blob blob, byte[] xades);
 
-   Post buildPostRequest(String projectName, PostContent postContent, String licenseUsername, String licensePassword) throws TechnicalConnectorException;
+   Post buildPostRequest(String projectName, PostContent postContent, String licenseUsername, String licensePassword, String packageName) throws TechnicalConnectorException;
 
    Get buildGetRequest(OrigineType origin, MsgQuery msgQuery, Query tackQuery);
 
@@ -46,9 +46,9 @@ public interface RequestObjectBuilder extends ConfigurableImplementation {
 
    Confirm buildConfirmWithReferences(OrigineType origin, GetResponse getResponse);
 
-   Post buildPostRequest(String messageName, String projectName, String platformName, Object object, String schemaLocation, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword) throws TechnicalConnectorException, InstantiationException, GenAsyncBusinessConnectorException;
+   Post buildPostRequest(String messageName, String projectName, String platformName, Object object, String schemaLocation, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword, String packageName) throws TechnicalConnectorException, InstantiationException, GenAsyncBusinessConnectorException;
 
-   Post buildPostRequest(String messageName, String projectName, String platformName, ConfigName configName, byte[] xmlByteArray, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword) throws TechnicalConnectorException, InstantiationException, GenAsyncBusinessConnectorException;
+   Post buildPostRequest(String messageName, String projectName, String platformName, ConfigName configName, byte[] xmlByteArray, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword, String packageName) throws TechnicalConnectorException, InstantiationException, GenAsyncBusinessConnectorException;
 
-   Post buildPostRequest(String messageName, String projectName, String platformName, byte[] xmlByteArray, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword) throws TechnicalConnectorException, GenAsyncBusinessConnectorException, InstantiationException;
+   Post buildPostRequest(String messageName, String projectName, String platformName, byte[] xmlByteArray, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword, String packageName) throws TechnicalConnectorException, GenAsyncBusinessConnectorException, InstantiationException;
 }

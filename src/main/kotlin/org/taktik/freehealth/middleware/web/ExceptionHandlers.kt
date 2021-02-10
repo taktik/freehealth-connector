@@ -7,6 +7,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.freehealth.middleware.dto.ExceptionDto
 import org.taktik.freehealth.middleware.exception.MissingKeystoreException
 import org.taktik.freehealth.middleware.exception.MissingTokenException
+import java.io.EOFException
 import javax.servlet.http.HttpServletRequest
 import javax.xml.ws.soap.SOAPFaultException
 
@@ -30,6 +31,9 @@ class ExceptionHandlers {
     @ExceptionHandler(SOAPFaultException::class)
     fun handleSoapFaultException(request: HttpServletRequest, exception: SOAPFaultException) =
             ExceptionDto(HttpStatus.BAD_GATEWAY, exception, request.servletPath).toResponseEntity()
+
+    @ExceptionHandler(EOFException::class)
+    fun handleEOFException(request: HttpServletRequest, exception: EOFException) = null //Nothing more to do... Connection closed
 
     @ExceptionHandler(Exception::class)
     fun handleException(request: HttpServletRequest, exception: Exception) =

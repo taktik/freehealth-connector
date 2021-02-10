@@ -239,7 +239,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                 blob.messageName = "E-ATTEST-CANCEL"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword)
+                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
                 this.commonInput = CommonInputType().apply {
                     request =
@@ -440,7 +440,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                 blob.messageName = "E-ATTEST-V2"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword)
+                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
                 this.commonInput = CommonInputType().apply {
                     request =

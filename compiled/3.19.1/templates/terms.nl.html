@@ -1,0 +1,48 @@
+<h2 style="background-color: #C0C0C0">
+       eHealth-platform Certificaten Gebruikersvoorwaarden
+    </h2>
+    <br>
+
+    #if($name.naturalPerson)
+    Dit is een overeenkomst tussen eHealth-platform en <b>$!identity.firstName $!identity.middleName $identity.name (NISS=$identity.nationalNumber)</b> verder de GEBRUIKER genoemd.<br>
+    #else
+    Dit is een overeenkomst tussen eHealth-platform en <b>$!identity.firstName $!identity.middleName $identity.name (NISS=$identity.nationalNumber)</b>, die de organisatie wettelijk vertegenwoordigt <b>$name.name (${oids.get("CN").replace("\","").split(",")[0]})</b/>, verder de GEBRUIKER genoemd.<br>
+    #end
+
+<p><b>Algemene voorwaarden met betrekking tot het eHealth-certificaat</b></p>
+<p>Het eHealth-certificaat moet gezien worden als een digitaal paspoort voor een natuurlijke persoon, rechtspersoon of feitelijke vereniging. Het eHealth-certificaat dient dan ook te worden behandeld met de nodige voorzorgen om misbruik van die identiteit te voorkomen.</p>
+<p>Iedereen die een eHealth-certificaat aanvraagt of gebruikt (hierna &laquo;certificaathouder&raquo; genoemd), zowel op persoonlijke titel als in naam en voor rekening van een rechtspersoon of een feitelijke vereniging, is onderworpen aan volgende voorwaarden: </p>
+<ul>
+<li>De aanvrager van een eHealth-certificaat dient kennis te hebben van het gebruik van digitale certificaten en Public Key Infrastructure (PKI). Indien nodig dient de aanvrager zich hieromtrent te laten onderwijzen of te laten bijstaan door deskundigen.</li>
+<li>De aanvrager van een eHealth-certificaat moet de handleiding &laquo; Procedure voor de aanvraag van het eHealth-certificaat &raquo;, consulteren, lezen, begrijpen en aanvaarden. <br />
+(eHealth portaal > Support > Basisdiensten > Toegangsbeheer > eHealth-certificaten > downloadsectie) <br />
+<a href="https://www.ehealth.fgov.be/nl/support/basisdiensten/ehealth-certificaten">https://www.ehealth.fgov.be/nl/support/basisdiensten/ehealth-certificaten</a></li>
+<li>De aanvrager staat in voor de verstrekte informatie (gegevens en sleutels die hij ter certificatie indient) en garandeert dat deze volledig en correct is.</li>
+<li>Het is verboden het certificaat op enigerlei wijze te manipuleren.</li>
+<li>De certificaathouder mag de eHealth-certificaten uitsluitend gebruiken voor wettelijke en toegelaten doeleinden in overeenstemming met het Gebruikersreglement van het eHealth-platform.(<a href="https://www.ehealth.fgov.be/nl/gebruikersreglement">https://www.ehealth.fgov.be/nl/gebruikersreglement</a>)</li>
+<li>Elk gebruik van een eHealth-certificaat is in voorkomend geval beperkt tot het toepassingsgebied van de bestaande juridische machtigingen. Ingeval van uitbreiding, aanpassing of evolutie van het doel of de draagwijdte van dit gebruik, moet contact worden opgenomen met het eHealth-platform.</li>
+<li>De certificaathouder moet het eHealth-platform onmiddellijk informeren over iedere wijziging in de informatie die eerder werd doorgestuurd aan het eHealth-platform. De certificaathouder dient hiervoor contact op te nemen met het Contactcenter van het eHealth-platform (02 788 51 55 of per e-mail naar <a href="mailto:support@ehealth.fgov.be">support@ehealth.fgov.be</a> ).</li>
+<li>De certificaathouder moet het gebruik van het eHealth-certificaat onmiddellijk be&euml;indigen indien enige informatie in het eHealth-certificaat niet meer valide is.</li>
+<li>De certificaathouder moet onmiddellijk ophouden een eHealth-certificaat te gebruiken wanneer het eHealth-certificaat om welke reden dan ook ongeldig is geworden.</li>
+<li>Wanneer het eHealth-certificaat niet langer geldig is, dient certificaathouder het eHealth-certificaat uit de verschillende toepassingen en / of apparaten waar het werd ge&iuml;nstalleerd, te verwijderen. In dit geval is de certificaathouder verplicht onmiddellijk het eHealth-certificaat te herroepen volgens de geldende procedure.</li>
+<li>De certificaathouder dient tijdig voor het verlopen van het certificaat een nieuw exemplaar volgens de geldende procedure aan te vragen. De geldigheidsduur van eHealth-certificaten kan niet &ldquo;verlengd&rdquo; worden.</li>
+<li>De certificaathouder moet voorkomen dat de private sleutel behorende bij het eHealth-certificaat of het eHealth-certificaat zelf, wordt gecompromitteerd, verloren, bekend gemaakt, gewijzigd of op enig andere manier op een niet gemachtigde wijze wordt gebruikt.</li>
+
+<li>Bij het gebruik van het certificaat en het beheer van de private sleutel is de certificaathouder gehouden de veiligheidsvoorschriften zoals vastgesteld door de veiligheidsdienst van het eHealth-platform na te leven. Deze veiligheidsvoorschriften kunnen worden geraadpleegd op het portaal van het eHealth-platform. <br />
+(eHealth portaal > Support > Basisdiensten > Toegangsbeheer > eHealth-certificaten > downloadsectie) <br />
+<a href="https://www.ehealth.fgov.be/nl/support/basisdiensten/ehealth-certificaten">https://www.ehealth.fgov.be/nl/support/basisdiensten/ehealth-certificaten</a></li>
+<li>De certificaathouder is gehouden het eHealth-certificaat te laten herroepen wanneer er zich een voorval heeft voorgedaan, of het vermoeden bestaat dat er zich een voorval heeft voorgedaan waarbij op enige wijze de integriteit van het eHealth-certificaat of de bijbehorende private sleutel is aangetast. Meer bepaald verlies, diefstal, wijziging, ongeautoriseerde openbaring of enig andere compromittering van het eHealth-certificaat of de bijbehorende private sleutel. Dit is mogelijk via de keuze �Herroeping� in het  hoofdmenu van de eHealth Certificate Manager. Wanneer deze herroepingsfunctie in de eHealth Certificate Manager niet beschikbaar zou zijn kan de certificaathouder een ingevuld aanvraagformulier tot herroeping (revocatieaanvraag) per email te versturen aan <a href="mailto:support@ehealth.fgov.be">support@ehealth.fgov.be</a>. Deze aanvraag tot herroeping dient te worden opgesteld en verstuurd overeenkomstig de instructies vermeld in de revocatieprocedure die te vinden is op de technische bibliotheek van het eHealth portaal.<br />
+(eHealth portaal > Support > Basisdiensten > Toegangsbeheer > eHealth-certificaten > downloadsectie) <br />
+<a href="https://www.ehealth.fgov.be/nl/support/basisdiensten/ehealth-certificaten">https://www.ehealth.fgov.be/nl/support/basisdiensten/ehealth-certificaten</a></li>
+<li>Indien het eHealth-certificaat of de bijbehorende private sleutel gecompromitteerd is, dient de certificaathouder ogenblikkelijk en definitief het gebruik van het eHealth-certificaat en de bijbehorende private sleutel te be&euml;indigen.</li>
+<li>Enkel het volledig wissen van een verlopen of een gecompromitteerd eHealth-certificaat en installeren van een nieuw eHealth-certificaat, uitgegeven door of namens het eHealth-platform, is toegestaan. De certificaathouder dient zich te onthouden van elke poging om deze richtlijn te omzeilen.</li>
+</ul>
+<p>De certificaathouder is aansprakelijk voor elk al dan niet geoorloofd gebruik ervan, met inbegrip van elk gebruik door derden.</p>
+<p>De certificaathouder blijft aansprakelijk voor alle (rechtstreekse of onrechtstreekse) schade ontstaan door het (al dan niet geoorloofde) gebruik van zijn certificaat dat heeft plaatsgevonden v&oacute;&oacute;r het tijdstip waarop het certificaat ge&iuml;nactiveerd werd.</p>
+<p>Bronverwijzingen:</p>
+<ul>
+<li><a href="http://repository.eid.belgium.be/index.php?lang=nl">http://repository.eid.belgium.be/index.php?lang=nl</a></li>
+<li><a href="http://nl.wikipedia.org/wiki/Digitaal_certificaat">http://nl.wikipedia.org/wiki/Digitaal_certificaat</a></li>
+<li><a href="http://nl.wikipedia.org/wiki/Public_Key_Infrastructure">http://nl.wikipedia.org/wiki/Public_Key_Infrastructure</a></li>
+<li><a href="https://www.ehealth.fgov.be/nl/support/basisdiensten/ehealth-certificaten">https://www.ehealth.fgov.be/nl/support/basisdiensten/ehealth-certificaten</a></li>
+</ul>

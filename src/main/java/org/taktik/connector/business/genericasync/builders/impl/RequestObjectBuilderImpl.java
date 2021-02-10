@@ -60,7 +60,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder {
    }
 
    @Override
-   public final Post buildPostRequest(String projectName, PostContent postContent, String licenseUsername, String licensePassword) throws TechnicalConnectorException {
+   public final Post buildPostRequest(String projectName, PostContent postContent, String licenseUsername, String licensePassword, String packageName) throws TechnicalConnectorException {
       Blob detail = DomainBlobMapper.mapBlobToCinBlob(postContent.getBlob());
       if (LOG.isDebugEnabled()) {
          ConnectorXmlUtils.dump(detail);
@@ -68,7 +68,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder {
 
       Post post = new Post();
       post.setDetail(detail);
-      post.setCommonInput(CommonInputMapper.mapCommonInputType(RequestBuilderFactory.getCommonBuilder(projectName).createCommonInput(McnConfigUtil.retrievePackageInfo("genericasync." + projectName, licenseUsername, licensePassword), postContent.isTest(), postContent.getCommonInputReference())));
+      post.setCommonInput(CommonInputMapper.mapCommonInputType(RequestBuilderFactory.getCommonBuilder(projectName).createCommonInput(McnConfigUtil.retrievePackageInfo("genericasync." + projectName, licenseUsername, licensePassword, packageName), postContent.isTest(), postContent.getCommonInputReference())));
       if (postContent.getXades() != null) {
          post.setXadesT(DomainBlobMapper.mapB64fromByte(postContent.getXades()));
       }
@@ -189,21 +189,21 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder {
    }
 
    @Override
-   public Post buildPostRequest(String messageName, String projectName, String platformName, Object object, String schemaLocation, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword) throws TechnicalConnectorException, InstantiationException, GenAsyncBusinessConnectorException {
+   public Post buildPostRequest(String messageName, String projectName, String platformName, Object object, String schemaLocation, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword, String packageName) throws TechnicalConnectorException, InstantiationException, GenAsyncBusinessConnectorException {
       if (config.getBooleanProperty("genericasync." + projectName + "." + messageName + ".validation.outgoing", true)) {
          ValidatorHelper.Companion.validate(object, schemaLocation);
       }
 
-      return this.buildPostRequest(messageName, projectName, platformName, ConnectorXmlUtils.toByteArray(object), credential, keyDepotManager, inputReference, licenseUsername, licensePassword);
+      return this.buildPostRequest(messageName, projectName, platformName, ConnectorXmlUtils.toByteArray(object), credential, keyDepotManager, inputReference, licenseUsername, licensePassword, packageName);
    }
 
    @Override
-   public Post buildPostRequest(String messageName, String projectName, String platformName, byte[] xmlByteArray, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword) throws TechnicalConnectorException, GenAsyncBusinessConnectorException, InstantiationException {
-      return this.buildPostRequest(messageName, projectName, platformName, null, xmlByteArray, credential, keyDepotManager, inputReference, licenseUsername, licensePassword);
+   public Post buildPostRequest(String messageName, String projectName, String platformName, byte[] xmlByteArray, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword, String packageName) throws TechnicalConnectorException, GenAsyncBusinessConnectorException, InstantiationException {
+      return this.buildPostRequest(messageName, projectName, platformName, null, xmlByteArray, credential, keyDepotManager, inputReference, licenseUsername, licensePassword, packageName);
    }
 
    @Override
-   public Post buildPostRequest(String messageName, String projectName, String platformName, ConfigName configName, byte[] xmlByteArray, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword) throws TechnicalConnectorException, InstantiationException, GenAsyncBusinessConnectorException {
+   public Post buildPostRequest(String messageName, String projectName, String platformName, ConfigName configName, byte[] xmlByteArray, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword, String packageName) throws TechnicalConnectorException, InstantiationException, GenAsyncBusinessConnectorException {
       String extraConfig = configName == null ? messageName : configName.name();
       Validate.notNull(inputReference, "You must define an InputReference");
       boolean encrypt = StringUtils.isNotBlank(config.getProperty(platformName + ".blobbuilder." + projectName + "." + extraConfig + ".contentencryption"));
@@ -218,6 +218,6 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder {
       org.taktik.connector.business.mycarenetdomaincommons.domain.Blob blob = blobBuilder.build(businessContent);
       blob.setMessageName(messageName);
       PostContent postContent = PostContent.Builder().blob(blob).commonInputReference(inputReference.getInputReference()).isTest(config.getBooleanProperty("genericasync." + projectName + ".istest", true)).messageName(messageName).xades(encrypt ? null : BlobUtil.generateXades(credential, blob, projectName, platformName)).build();
-      return BuilderFactory.getRequestObjectBuilder(projectName).buildPostRequest(projectName, postContent, licenseUsername, licensePassword);
+      return BuilderFactory.getRequestObjectBuilder(projectName).buildPostRequest(projectName, postContent, licenseUsername, licensePassword, packageName);
    }
 }

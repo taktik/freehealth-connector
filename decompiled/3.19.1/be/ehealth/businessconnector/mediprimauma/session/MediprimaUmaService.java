@@ -1,0 +1,20 @@
+package be.ehealth.businessconnector.mediprimauma.session;
+
+import be.ehealth.businessconnector.mediprimauma.exception.MediprimaUmaDeleteException;
+import be.ehealth.businessconnector.mediprimauma.exception.MediprimaUmaSearchException;
+import be.ehealth.businessconnector.mediprimauma.exception.MediprimaUmaSendException;
+import be.ehealth.technicalconnector.exception.TechnicalConnectorException;
+import be.fgov.ehealth.mediprima.uma.protocol.v1.DeleteUrgentMedicalAidAttestationRequest;
+import be.fgov.ehealth.mediprima.uma.protocol.v1.DeleteUrgentMedicalAidAttestationResponse;
+import be.fgov.ehealth.mediprima.uma.protocol.v1.SearchUrgentMedicalAidAttestationRequest;
+import be.fgov.ehealth.mediprima.uma.protocol.v1.SearchUrgentMedicalAidAttestationResponse;
+import be.fgov.ehealth.mediprima.uma.protocol.v1.SendUrgentMedicalAidAttestationRequest;
+import be.fgov.ehealth.mediprima.uma.protocol.v1.SendUrgentMedicalAidAttestationResponse;
+
+public interface MediprimaUmaService {
+   DeleteUrgentMedicalAidAttestationResponse deleteUrgentMedicalAidAttestation(DeleteUrgentMedicalAidAttestationRequest var1) throws TechnicalConnectorException, MediprimaUmaDeleteException;
+
+   SearchUrgentMedicalAidAttestationResponse searchUrgentMedicalAidAttestation(SearchUrgentMedicalAidAttestationRequest var1) throws TechnicalConnectorException, MediprimaUmaSearchException;
+
+   SendUrgentMedicalAidAttestationResponse sendUrgentMedicalAidAttestation(SendUrgentMedicalAidAttestationRequest var1) throws TechnicalConnectorException, MediprimaUmaSendException;
+}
