@@ -45,6 +45,7 @@ import org.taktik.connector.technical.exception.SoaErrorException
 import org.taktik.connector.technical.service.idsupport.impl.IdSupportServiceImpl
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
+import org.taktik.freehealth.middleware.dto.common.ErrorDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultConversationDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultDeceaseType
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultNameType
@@ -432,7 +433,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
                     request = ConnectorXmlUtils.toString(registerPersonRequest),
                     response = ConnectorXmlUtils.toString(ex)
                 ),
-                error = ex
+                error = ErrorDto(code = ex.errorCode, descr = ex.message)
             )
         }catch (ex: SOAPFaultException){
             log.info("Error: "+ConnectorXmlUtils.toString(ex))

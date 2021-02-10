@@ -5,6 +5,7 @@ import be.fgov.ehealth.rn.cbsspersonservice.core.v1.RegisterPersonDeclarationTyp
 import be.fgov.ehealth.rn.cbsspersonservice.core.v1.RegisterPersonResultType
 import org.joda.time.DateTime
 import org.taktik.connector.technical.exception.SoaErrorException
+import org.taktik.freehealth.middleware.dto.common.ErrorDto
 
 class RnConsultRegisterPersonResponseDto(
     var id: String? = null,
@@ -14,5 +15,5 @@ class RnConsultRegisterPersonResponseDto(
     var declaration: RegisterPersonDeclarationType? = null,
     var result: RegisterPersonResultType? = null,
     var xmlConversation: RnConsultConversationDto?= null,
-    var error: SoaErrorException? = null
+    var error: ErrorDto? = null
     )
