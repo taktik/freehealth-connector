@@ -19,13 +19,13 @@ public class CivilStatesWithStatusType implements Serializable {
    @XmlElement(
       name = "CivilState"
    )
-   protected List civilStates;
+   protected List<CivilStateInfoBaseType> civilStates;
    @XmlAttribute(
       name = "Status"
    )
    protected String status;
 
-   public List getCivilStates() {
+   public List<CivilStateInfoBaseType> getCivilStates() {
       if (this.civilStates == null) {
          this.civilStates = new ArrayList();
       }

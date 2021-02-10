@@ -1,5 +1,7 @@
 package be.fgov.ehealth.rn.personservice.core.v1;
 
+import be.fgov.ehealth.rn.baselegaldata.v1.GivenNameType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,7 @@ public class PhoneticName implements Serializable {
       name = "GivenName",
       required = true
    )
-   protected List givenNames;
+   protected List<GivenNameType> givenNames;
    @XmlElement(
       name = "GivenNameMatching",
       required = true
@@ -39,7 +41,7 @@ public class PhoneticName implements Serializable {
       this.lastName = value;
    }
 
-   public List getGivenNames() {
+   public List<GivenNameType> getGivenNames() {
       if (this.givenNames == null) {
          this.givenNames = new ArrayList();
       }

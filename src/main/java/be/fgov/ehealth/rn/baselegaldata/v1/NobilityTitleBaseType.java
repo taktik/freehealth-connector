@@ -26,7 +26,7 @@ public class NobilityTitleBaseType implements Serializable {
    @XmlElement(
       name = "NobilityTitleDescription"
    )
-   protected List nobilityTitleDescriptions;
+   protected List<NobilityTitleBaseType> nobilityTitleDescriptions;
    @XmlElement(
       name = "InceptionDate",
       type = String.class
@@ -45,7 +45,7 @@ public class NobilityTitleBaseType implements Serializable {
       this.nobilityTitleCode = value;
    }
 
-   public List getNobilityTitleDescriptions() {
+   public List<NobilityTitleBaseType> getNobilityTitleDescriptions() {
       if (this.nobilityTitleDescriptions == null) {
          this.nobilityTitleDescriptions = new ArrayList();
       }

@@ -18,9 +18,9 @@ public class CbssPersonIdentificationsResponseType implements Serializable {
    @XmlElement(
       name = "PersonIdentification"
    )
-   protected List personIdentifications;
+   protected List<PersonIdentificationType> personIdentifications;
 
-   public List getPersonIdentifications() {
+   public List<PersonIdentificationType> getPersonIdentifications() {
       if (this.personIdentifications == null) {
          this.personIdentifications = new ArrayList();
       }

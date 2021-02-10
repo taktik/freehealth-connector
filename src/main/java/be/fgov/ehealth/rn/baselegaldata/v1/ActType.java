@@ -26,7 +26,7 @@ public class ActType implements Serializable {
    @XmlElement(
       name = "ActTypeDescription"
    )
-   protected List actTypeDescriptions;
+   protected List<ActType> actTypeDescriptions;
 
    public Integer getActTypeCode() {
       return this.actTypeCode;
@@ -36,7 +36,7 @@ public class ActType implements Serializable {
       this.actTypeCode = value;
    }
 
-   public List getActTypeDescriptions() {
+   public List<ActType> getActTypeDescriptions() {
       if (this.actTypeDescriptions == null) {
          this.actTypeDescriptions = new ArrayList();
       }

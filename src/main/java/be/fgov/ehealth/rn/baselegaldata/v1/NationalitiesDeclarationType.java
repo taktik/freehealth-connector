@@ -18,9 +18,9 @@ public class NationalitiesDeclarationType implements Serializable {
    @XmlElement(
       name = "Nationality"
    )
-   protected List nationalities;
+   protected List<NationalityInfoBaseType> nationalities;
 
-   public List getNationalities() {
+   public List<NationalityInfoBaseType> getNationalities() {
       if (this.nationalities == null) {
          this.nationalities = new ArrayList();
       }
