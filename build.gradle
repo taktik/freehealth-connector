@@ -57,13 +57,13 @@ repositories {
 	mavenCentral()
 	jcenter()
 	maven {
-		url = "http://repo.ehealth.fgov.be/artifactory/maven2/"
-	}
-	maven {
 		url = "https://maven.taktik.be/content/groups/public"
 	}
 	flatDir {
 		dirs 'libs'
+	}
+	maven {
+		url = "https://repo.ehealth.fgov.be/artifactory/maven2/"
 	}
 }
 
