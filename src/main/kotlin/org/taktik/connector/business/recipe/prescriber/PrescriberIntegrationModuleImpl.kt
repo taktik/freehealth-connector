@@ -626,14 +626,14 @@ open class PrescriberIntegrationModuleImpl(val stsService: STSService, keyDepotS
         } else status.code
     }
 
-    private fun createIdentifierType(id: String, type: String): IdentifierType {
+    protected fun createIdentifierType(id: String, type: String): IdentifierType {
         val ident = IdentifierType()
         ident.id = id + ""
         ident.type = type
         return ident
     }
 
-    private fun getPatientId(rid: String): String {
+    protected fun getPatientId(rid: String): String {
         return prescriptionCache[rid] ?: "72081061175"
     }
 

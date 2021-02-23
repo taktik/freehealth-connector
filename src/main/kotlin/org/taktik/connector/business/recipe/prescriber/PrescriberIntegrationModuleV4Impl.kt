@@ -3,8 +3,10 @@ package org.taktik.connector.business.recipe.prescriber
 
 import be.fgov.ehealth.commons.core.v2.Status
 import be.fgov.ehealth.commons.protocol.v2.StatusResponseType
+import be.fgov.ehealth.recipe.core.v1.PrescriberServiceAdministrativeInformationType
 import be.fgov.ehealth.recipe.core.v4.CreatePrescriptionAdministrativeInformationType
 import be.fgov.ehealth.recipe.core.v4.SecuredContentType
+import be.fgov.ehealth.recipe.protocol.v1.RevokePrescriptionRequest
 import be.fgov.ehealth.recipe.protocol.v4.CreatePrescriptionRequest
 import be.fgov.ehealth.recipe.protocol.v4.CreatePrescriptionResponse
 import be.fgov.ehealth.recipe.protocol.v4.GetPrescriptionStatusRequest
@@ -28,6 +30,8 @@ import be.recipe.services.prescriber.ListRidsHistoryParam
 import be.recipe.services.prescriber.ListRidsHistoryResult
 import be.recipe.services.prescriber.PutVisionParam
 import be.recipe.services.prescriber.PutVisionResult
+import be.recipe.services.prescriber.RevokePrescriptionParam
+import be.recipe.services.prescriber.RevokePrescriptionResult
 import be.recipe.services.prescriber.ValidationPropertiesParam
 import be.recipe.services.prescriber.ValidationPropertiesResult
 import com.sun.xml.internal.ws.client.ClientTransportException
@@ -38,6 +42,7 @@ import org.slf4j.LoggerFactory
 import org.taktik.connector.business.recipe.prescriber.services.RecipePrescriberServiceV4Impl
 import org.taktik.connector.business.recipe.utils.RidValidator
 import org.taktik.connector.business.recipe.utils.ValidationUtils
+import org.taktik.connector.business.recipeprojects.core.domain.IdentifierTypes
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleValidationException
 import org.taktik.connector.business.recipeprojects.core.utils.Exceptionutils
@@ -562,6 +567,62 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
             Exceptionutils.errorHandler(var14)
             null
         }
+    }
+
+
+
+    /**
+     * Cancel prescription.
+     *
+     *
+     *
+     *
+     * @param samlToken
+     * @param credential
+     * @param nihii
+     * @param rid    the rid
+     * @param reason the reason
+     * @throws IntegrationModuleException the integration module exception
+     */
+
+    @Throws(IntegrationModuleException::class)
+    override fun revokePrescription(samlToken: SAMLToken, credential: KeyStoreCredential, nihii: String, rid: String, reason: String) {
+        validateRid(rid)
+
+        try {
+            // init helper
+            val helper = MarshallerHelper(Any::class.java, RevokePrescriptionParam::class.java)
+
+            // get Recipe ETK
+            val etkRecipes = etkHelper.recipe_ETK
+
+            // create params
+            val params = RevokePrescriptionParam()
+            params.rid = rid
+            params.reason = reason
+            params.prescriberId = nihii
+            params.symmKey = symmKey.encoded
+
+            // create request
+            val request = be.fgov.ehealth.recipe.protocol.v4.RevokePrescriptionRequest()
+            request.securedRevokePrescriptionRequest = createSecuredContentType(sealRequest(getCrypto(credential),etkRecipes[0], helper.toXMLByteArray(params)))
+            request.programId = PropertyHandler.getInstance().getProperty("programIdentification") ?: "freehealth-connector"
+            request.issueInstant = DateTime()
+            request.id = "id" + UUID.randomUUID().toString()
+
+            // call WS
+            try {
+                val response = recipePrescriberServiceV4.revokePrescription(samlToken, credential, request)
+                val marshaller = MarshallerHelper(RevokePrescriptionResult::class.java, Any::class.java)
+                checkStatus(marshaller.unsealWithSymmKey(response!!.securedRevokePrescriptionResponse.securedContent, symmKey))
+            } catch (cte: ClientTransportException) {
+                throw IntegrationModuleException(I18nHelper.getLabel("error.connection.prescriber"), cte)
+            }
+
+        } catch (t: Throwable) {
+            Exceptionutils.errorHandler(t)
+        }
+
     }
 
     @Throws(IntegrationModuleException::class)
