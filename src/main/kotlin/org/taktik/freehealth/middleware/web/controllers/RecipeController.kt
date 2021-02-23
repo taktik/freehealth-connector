@@ -102,14 +102,15 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
 
     @GetMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listOpenPrescriptions(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Prescription> =
-        recipeService.listOpenPrescriptions(
+        recipeV4Service.listOpenPrescriptions(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,
             hcpNihii = hcpNihii,
             hcpSsin = hcpSsin,
             hcpName = hcpName,
-            passPhrase = passPhrase
+            passPhrase = passPhrase,
+            patientId = null
         )
 
     @GetMapping("/patient", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -154,7 +155,7 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
 
     @DeleteMapping("/{rid}")
     fun revokePrescription(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @PathVariable rid: String, @RequestParam reason: String) =
-        recipeService.revokePrescription(
+        recipeV4Service.revokePrescription(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,
@@ -182,7 +183,7 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
 
     @GetMapping("/all/feedbacks", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listFeedbacks(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String): List<Feedback> =
-        recipeService.listFeedbacks(
+        recipeV4Service.listFeedbacks(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpQuality = hcpQuality,

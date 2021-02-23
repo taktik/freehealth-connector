@@ -76,7 +76,7 @@ interface RecipeV4Service {
         hcpSsin: String,
         hcpName: String,
         passPhrase: String,
-        patientId: String
+        patientId: String?
                              ): List<Prescription>
 
     @Throws(ConnectorException::class, DataFormatException::class, KeyStoreException::class, CertificateExpiredException::class)
