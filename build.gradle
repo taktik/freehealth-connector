@@ -62,9 +62,6 @@ repositories {
 	flatDir {
 		dirs 'libs'
 	}
-	maven {
-		url = "https://repo.ehealth.fgov.be/artifactory/maven2/"
-	}
 }
 
 // tag::wsdl[]
