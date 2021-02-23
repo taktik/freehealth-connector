@@ -79,7 +79,7 @@ public class SingleSignOnServiceImpl implements SingleSignOnService {
          LOG.debug("Launching browser with url [" + uri + "]");
          return new URI(uri).toASCIIString();
       } catch (URISyntaxException var6) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.CORE_TECHNICAL, var6, new Object[]{var6.getMessage()});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.CORE_TECHNICAL, var6, var6.getMessage());
       }
    }
 
@@ -143,7 +143,7 @@ public class SingleSignOnServiceImpl implements SingleSignOnService {
          tf.transform(new DOMSource(assertion), sr);
          return sr.getWriter().toString();
       } catch (TransformerException var4) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.CORE_TECHNICAL, var4, new Object[]{var4.getMessage()});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.CORE_TECHNICAL, var4, var4.getMessage());
       }
    }
 
@@ -156,7 +156,7 @@ public class SingleSignOnServiceImpl implements SingleSignOnService {
          request.setPayload(template);
          return (Element)ServiceFactory.getGenericWsSender().send(request).asNode();
       } catch (SOAPException var3) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var3, new Object[]{var3.getMessage()});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var3, var3.getMessage());
       }
    }
 }
