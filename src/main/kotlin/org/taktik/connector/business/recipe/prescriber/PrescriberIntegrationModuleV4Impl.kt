@@ -3,10 +3,8 @@ package org.taktik.connector.business.recipe.prescriber
 
 import be.fgov.ehealth.commons.core.v2.Status
 import be.fgov.ehealth.commons.protocol.v2.StatusResponseType
-import be.fgov.ehealth.recipe.core.v1.PrescriberServiceAdministrativeInformationType
 import be.fgov.ehealth.recipe.core.v4.CreatePrescriptionAdministrativeInformationType
 import be.fgov.ehealth.recipe.core.v4.SecuredContentType
-import be.fgov.ehealth.recipe.protocol.v1.RevokePrescriptionRequest
 import be.fgov.ehealth.recipe.protocol.v4.CreatePrescriptionRequest
 import be.fgov.ehealth.recipe.protocol.v4.CreatePrescriptionResponse
 import be.fgov.ehealth.recipe.protocol.v4.GetPrescriptionStatusRequest
@@ -42,7 +40,6 @@ import org.slf4j.LoggerFactory
 import org.taktik.connector.business.recipe.prescriber.services.RecipePrescriberServiceV4Impl
 import org.taktik.connector.business.recipe.utils.RidValidator
 import org.taktik.connector.business.recipe.utils.ValidationUtils
-import org.taktik.connector.business.recipeprojects.core.domain.IdentifierTypes
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleValidationException
 import org.taktik.connector.business.recipeprojects.core.utils.Exceptionutils
@@ -178,38 +175,41 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
     private fun generateRid(prescriptionType: String) =
         ("BE" + prescriptionType + "JNT" + RandomStringUtils.random(5, true, false).toUpperCase()).replace('I', 'J').replace('O', 'A').replace('U', 'V')
 
-    override fun getData(
-        keystore: KeyStore,
+    override fun getPrescriptionStatus(
         samlToken: SAMLToken,
-        passPhrase: String,
         credential: KeyStoreCredential,
-        param: GetPrescriptionStatusParam
-                        ): GetPrescriptionStatusResult? {
-        RidValidator.validateRid(param.rid)
+        nihii: String,
+        rid: String
+                             ): GetPrescriptionStatusResult? {
+        RidValidator.validateRid(rid)
+        val param = GetPrescriptionStatusParam()
+        param.rid = rid
+        param.prescriberId = nihii
+        param.symmKey = symmKey.encoded
+
         return try {
-            val getPrescriptionStatusRequest = getGetPrescriptionStatus(credential, param) ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON, "Unknown error in recipe")
+            val request = getGetPrescriptionStatus(credential, param) ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON, "Unknown error in recipe")
             try {
-                val response: GetPrescriptionStatusResponse? = recipePrescriberServiceV4.getPrescriptionStatus(samlToken, credential, getPrescriptionStatusRequest)
+                val response: GetPrescriptionStatusResponse? = recipePrescriberServiceV4.getPrescriptionStatus(samlToken, credential, request)
                 response?.let {
                     unsealGetPrescriptionStatusResponse(it).also {
                         checkStatus(it)
                     }
                 }
-            } catch (var8: ClientTransportException) {
-                throw IntegrationModuleException(I18nHelper.getLabel("error.connection.executor"), var8)
+            } catch (ex: ClientTransportException) {
+                throw IntegrationModuleException(I18nHelper.getLabel("error.connection.executor"), ex)
             }
-        } catch (var9: Throwable) {
-            Exceptionutils.errorHandler(var9)
+        } catch (err: Throwable) {
+            Exceptionutils.errorHandler(err)
             null
         }
     }
 
-    override fun getData(
-        keystore: KeyStore,
+    override fun listRidsHistory(
         samlToken: SAMLToken,
-        passPhrase: String,
         credential: KeyStoreCredential,
-        param: ListRidsHistoryParam): ListRidsHistoryResult? {
+        param: ListRidsHistoryParam
+                                ): ListRidsHistoryResult? {
         ValidationUtils.validatePatientId(param.patientId)
 
         return try {
@@ -624,6 +624,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         }
 
     }
+
 
     @Throws(IntegrationModuleException::class)
     protected fun checkStatus(response: StatusResponseType) {
