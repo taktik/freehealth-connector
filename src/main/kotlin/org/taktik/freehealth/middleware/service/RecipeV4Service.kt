@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.service
 
+import be.recipe.services.prescriber.GetPrescriptionStatusResult
 import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.domain.common.Patient
@@ -102,4 +103,6 @@ interface RecipeV4Service {
         rid: String,
         reason: String
                           )
+
+    fun getPrescriptionStatus(keystoreId: UUID, tokenId: UUID, hcpNihii: String, passPhrase: String, rid: String): GetPrescriptionStatusResult
 }

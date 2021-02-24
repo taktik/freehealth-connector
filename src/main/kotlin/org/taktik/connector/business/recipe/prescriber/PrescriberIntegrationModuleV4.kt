@@ -39,23 +39,23 @@ interface PrescriberIntegrationModuleV4 : PrescriberIntegrationModule {
                           ): String?
 
     @Throws(IntegrationModuleException::class)
-    fun getData(
-        keystore: KeyStore,
+    fun getPrescriptionStatus(
         samlToken: SAMLToken,
-        passPhrase: String,
         credential: KeyStoreCredential,
-        param: GetPrescriptionStatusParam): GetPrescriptionStatusResult?
+        nihii: String,
+        rid: String
+
+                             ): GetPrescriptionStatusResult?
 
     @Throws(IntegrationModuleException::class)
-    fun getData(
-        keystore: KeyStore,
+    fun listRidsHistory(
         samlToken: SAMLToken,
-        passPhrase: String,
         credential: KeyStoreCredential,
         param: ListRidsHistoryParam): ListRidsHistoryResult?
 
     @Throws(IntegrationModuleException::class)
-    fun putData(        keystore: KeyStore,
+    fun putData(
+        keystore: KeyStore,
         samlToken: SAMLToken,
         passPhrase: String,
         credential: KeyStoreCredential,

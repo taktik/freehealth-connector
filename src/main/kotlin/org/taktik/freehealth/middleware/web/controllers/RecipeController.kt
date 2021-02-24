@@ -167,6 +167,15 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
             reason = reason
         )
 
+    @GetMapping("/{rid}/status")
+    fun getPrescriptionStatus(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpNihii: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @PathVariable rid: String) =
+        recipeV4Service.getPrescriptionStatus(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            hcpNihii = hcpNihii,
+            passPhrase = passPhrase,
+            rid = rid)
+
     @PutMapping("/{rid}/feedback/{feedbackFlag}")
     fun updateFeedbackFlag(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpQuality: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpName: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @PathVariable rid: String, @PathVariable feedbackFlag: Boolean) =
         recipeService.updateFeedbackFlag(
