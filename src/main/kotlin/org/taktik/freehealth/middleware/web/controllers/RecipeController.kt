@@ -167,7 +167,7 @@ class RecipeController(val recipeService: RecipeService, val recipeV4Service: Re
             reason = reason
         )
 
-    @GetMapping("/{rid}/status")
+    @GetMapping("/{rid}/status", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPrescriptionStatus(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam hcpNihii: String, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @PathVariable rid: String) =
         recipeV4Service.getPrescriptionStatus(
             keystoreId = keystoreId,
