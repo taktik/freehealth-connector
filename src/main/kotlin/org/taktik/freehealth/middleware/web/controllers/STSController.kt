@@ -75,4 +75,23 @@ class STSController(private val stsService: STSService, private val ssoService: 
     @GetMapping("/token/bearer", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getBearerToken(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID) =
         ssoService.getBearerToken(tokenId, keystoreId, passPhrase)
+
+    @GetMapping("/token/oauth2/{cbe}/{kid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun getOauth2Token(
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @PathVariable(name = "cbe") cbe: String,
+        @PathVariable(name = "kid") kid: String,
+        @RequestParam(required = false) isAcceptance: Boolean?
+    ) =
+        ssoService.getOauth2Token(
+            tokenId,
+            keystoreId,
+            passPhrase,
+            cbe,
+            kid,
+            isAcceptance ?: false
+        )
+
 }
