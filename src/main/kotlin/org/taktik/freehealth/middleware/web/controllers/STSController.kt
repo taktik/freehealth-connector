@@ -82,16 +82,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @PathVariable(name = "cbe") cbe: String,
-        @PathVariable(name = "kid") kid: String,
-        @RequestParam(required = false) isAcceptance: Boolean?
-    ) =
-        ssoService.getOauth2Token(
-            tokenId,
-            keystoreId,
-            passPhrase,
-            cbe,
-            kid,
-            isAcceptance ?: false
-        )
+        @PathVariable(name = "kid") kid: String
+    ) = ssoService.getOauth2Token(tokenId, keystoreId, passPhrase, cbe, kid)
 
 }

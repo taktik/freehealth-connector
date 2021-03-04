@@ -118,7 +118,8 @@ dependencies {
 	compile("org.springframework.ws:spring-ws-core")
 	compile("org.springframework:spring-orm")
 
-	compile("org.springframework.security:spring-security-oauth2-client")
+	compile("com.nimbusds:nimbus-jose-jwt:9.7")
+	compile("com.nimbusds:oauth2-oidc-sdk:9.2.1")
 
 	compile('com.taktik.boot:spring-boot-starter-hazelcast:2.1-0-g4d5d84ad53') {
 		exclude module: "kotlin-runtime"

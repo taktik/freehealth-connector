@@ -6,12 +6,5 @@ import java.util.UUID
 
 interface SSOService {
     fun getBearerToken(tokenId: UUID, keystoreId: UUID, passPhrase: String, profile: String? = null): BearerToken?
-    fun getOauth2Token(
-        tokenId: UUID,
-        keystoreId: UUID,
-        passPhrase: String,
-        cbe: String,
-        kid: String,
-        isAcceptance: Boolean
-    ): TokenResponse?
+    fun getOauth2Token(tokenId: UUID, keystoreId: UUID, passPhrase: String, cbe: String, kid: String): TokenResponse
 }

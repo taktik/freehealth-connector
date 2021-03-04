@@ -27,8 +27,9 @@ import com.hazelcast.core.IMap
 import org.apache.commons.logging.LogFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import org.taktik.connector.technical.config.ConfigFactory
+import org.taktik.connector.technical.config.ConfigValidator
 import org.taktik.connector.technical.exception.TechnicalConnectorException
-import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues.ERROR_CONFIG
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
@@ -66,7 +67,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
 
     val freehealthStsService: org.taktik.connector.technical.service.sts.STSService =
         org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
-    val transformerFactory = TransformerFactory.newInstance()
+    val transformerFactory: TransformerFactory = TransformerFactory.newInstance()
+    val config: ConfigValidator = ConfigFactory.getConfigValidator()
+
+    override fun isAcceptance() = config.getProperty("endpoint.sts").contains("-acpt")
 
     override fun registerToken(tokenId: UUID, token: String, quality: String) {
         val factory = DocumentBuilderFactory.newInstance()
