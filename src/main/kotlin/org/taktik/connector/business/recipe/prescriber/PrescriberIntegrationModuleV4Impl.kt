@@ -1,27 +1,39 @@
 package org.taktik.connector.business.recipe.prescriber
 
 
+import be.fgov.ehealth.commons.core.v1.IdentifierType
+import be.fgov.ehealth.commons.core.v1.StatusType
 import be.fgov.ehealth.commons.core.v2.Status
+import be.fgov.ehealth.commons.protocol.v1.ResponseType
 import be.fgov.ehealth.commons.protocol.v2.StatusResponseType
+import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import be.fgov.ehealth.recipe.core.v4.CreatePrescriptionAdministrativeInformationType
 import be.fgov.ehealth.recipe.core.v4.SecuredContentType
+import be.fgov.ehealth.recipe.protocol.v1.AliveCheckRequest
+import be.fgov.ehealth.recipe.protocol.v1.AliveCheckResponse
 import be.fgov.ehealth.recipe.protocol.v4.CreatePrescriptionRequest
 import be.fgov.ehealth.recipe.protocol.v4.CreatePrescriptionResponse
 import be.fgov.ehealth.recipe.protocol.v4.GetPrescriptionStatusRequest
 import be.fgov.ehealth.recipe.protocol.v4.GetPrescriptionStatusResponse
 import be.fgov.ehealth.recipe.protocol.v4.GetValidationPropertiesRequest
 import be.fgov.ehealth.recipe.protocol.v4.GetValidationPropertiesResponse
+import be.fgov.ehealth.recipe.protocol.v4.ListFeedbacksRequest
+import be.fgov.ehealth.recipe.protocol.v4.ListFeedbacksResponse
 import be.fgov.ehealth.recipe.protocol.v4.ListOpenRidsRequest
 import be.fgov.ehealth.recipe.protocol.v4.ListOpenRidsResponse
 import be.fgov.ehealth.recipe.protocol.v4.ListRidsHistoryRequest
 import be.fgov.ehealth.recipe.protocol.v4.ListRidsHistoryResponse
 import be.fgov.ehealth.recipe.protocol.v4.PutVisionForPrescriberRequest
 import be.fgov.ehealth.recipe.protocol.v4.PutVisionForPrescriberResponse
+import be.fgov.ehealth.recipe.protocol.v4.SendNotificationRequest
 import be.recipe.services.prescriber.CreatePrescription
 import be.recipe.services.prescriber.CreatePrescriptionParam
 import be.recipe.services.prescriber.CreatePrescriptionResult
 import be.recipe.services.prescriber.GetPrescriptionStatusParam
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
+import be.recipe.services.prescriber.ListFeedbackItem
+import be.recipe.services.prescriber.ListFeedbacksParam
+import be.recipe.services.prescriber.ListFeedbacksResult
 import be.recipe.services.prescriber.ListOpenRidsParam
 import be.recipe.services.prescriber.ListOpenRidsResult
 import be.recipe.services.prescriber.ListRidsHistoryParam
@@ -30,6 +42,8 @@ import be.recipe.services.prescriber.PutVisionParam
 import be.recipe.services.prescriber.PutVisionResult
 import be.recipe.services.prescriber.RevokePrescriptionParam
 import be.recipe.services.prescriber.RevokePrescriptionResult
+import be.recipe.services.prescriber.SendNotificationParam
+import be.recipe.services.prescriber.SendNotificationResult
 import be.recipe.services.prescriber.ValidationPropertiesParam
 import be.recipe.services.prescriber.ValidationPropertiesResult
 import com.sun.xml.internal.ws.client.ClientTransportException
@@ -37,9 +51,13 @@ import org.apache.commons.lang.RandomStringUtils
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
+import org.taktik.connector.business.recipe.common.AbstractIntegrationModule
+import org.taktik.connector.business.recipe.prescriber.services.RecipePrescriberServiceImpl
 import org.taktik.connector.business.recipe.prescriber.services.RecipePrescriberServiceV4Impl
+import org.taktik.connector.business.recipe.utils.KmehrHelper
 import org.taktik.connector.business.recipe.utils.RidValidator
 import org.taktik.connector.business.recipe.utils.ValidationUtils
+import org.taktik.connector.business.recipeprojects.core.domain.KgssIdentifierType
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleValidationException
 import org.taktik.connector.business.recipeprojects.core.utils.Exceptionutils
@@ -49,6 +67,7 @@ import org.taktik.connector.business.recipeprojects.core.utils.PropertyHandler
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.service.etee.Crypto
+import org.taktik.connector.technical.service.etee.CryptoFactory
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.kgss.domain.KeyResult
@@ -66,8 +85,7 @@ import java.security.KeyStore
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
-import java.util.UUID
+import java.util.*
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
@@ -75,12 +93,45 @@ import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathExpressionException
 import javax.xml.xpath.XPathFactory
+import kotlin.collections.ArrayList
 
 
-class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService: KeyDepotService) : PrescriberIntegrationModuleImpl(stsService, keyDepotService), PrescriberIntegrationModuleV4 {
+class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotService: KeyDepotService) : AbstractIntegrationModule(keyDepotService), PrescriberIntegrationModuleV4 {
     private val log = LoggerFactory.getLogger(PrescriberIntegrationModuleV4Impl::class.java)
     private val recipePrescriberServiceV4 = RecipePrescriberServiceV4Impl()
     private val useNewCall = false
+    private val keyCache = HashMap<String, KeyResult>()
+    private val recipePrescriberService = RecipePrescriberServiceImpl()
+    private val kmehrHelper = KmehrHelper(Properties().apply { load(this::class.java.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
+
+    private fun getNewKey(credential: KeyStoreCredential,
+                            nihii: String,
+                            patientId: String,
+                            prescriptionType: String): KeyResult? {
+        var key: KeyResult? = null
+
+        val cacheId = "($patientId#$prescriptionType)"
+        if (keyCache.containsKey(cacheId)) {
+            key = keyCache[cacheId]
+            keyCache.remove(cacheId)
+        } else {
+            key = getNewKeyFromKgss(credential, prescriptionType, nihii, null, patientId, stsService.getHolderOfKeysEtk(credential, nihii)!!.encoded)
+        }
+        return key
+    }
+
+    @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
+    override fun ping(samlToken: SAMLToken, credential: KeyStoreCredential): AliveCheckResponse {
+        var response =  try {
+            recipePrescriberService.aliveCheck(samlToken, credential, AliveCheckRequest())
+        } catch (cte: ClientTransportException) {
+            throw IntegrationModuleException(I18nHelper.getLabel("error.connection.prescriber"), cte)
+        }
+        checkStatus(response)
+
+        return response
+    }
+
 
     override fun createPrescription(
         keystore: KeyStore,
@@ -163,7 +214,6 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
             response?.let { r ->
                 helper.unsealWithSymmKey(r.securedCreatePrescriptionResponse.securedContent, symmKey)?.also {
                     checkStatus(response)
-                    setPatientId(it.rid, patientId)
                 }
             }?.rid
         } catch (var29: Throwable) {
@@ -205,6 +255,46 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         }
     }
 
+    fun listFeedback(
+        samlToken: SAMLToken, credential: KeyStoreCredential,
+        readFlag: Boolean
+    ) : List<ListFeedbackItem>? {
+        return try {
+            val helper = MarshallerHelper(ListFeedbacksResult::class.java, ListFeedbacksParam::class.java)
+            val etkRecipes = etkHelper.recipe_ETK
+            val param = ListFeedbacksParam()
+            param.readFlag = readFlag
+            param.symmKey = this.symmKey.encoded
+            val request = ListFeedbacksRequest()
+            request.securedListFeedbacksRequest = this.createSecuredContentType(
+                this.sealRequest(getCrypto(credential), etkRecipes[0], helper.toXMLByteArray(param))
+            )
+            request.programId = PropertyHandler.getInstance().getProperty("programIdentification")
+            request.issueInstant = DateTime()
+            request.id =  "id" + UUID.randomUUID().toString()
+            var response: ListFeedbacksResponse? = null
+            response = try {
+                recipePrescriberServiceV4.listFeedbacks(samlToken, credential, request)
+            } catch (cte: ClientTransportException) {
+                throw IntegrationModuleException(I18nHelper.getLabel("error.connection.prescriber"), cte)
+            }
+            // unseal WS response
+
+            val feedbacks = helper.unsealWithSymmKey(response!!.securedListFeedbacksResponse.securedContent, symmKey).feedbacks
+
+            for (i in feedbacks.indices) {
+                val item = org.taktik.connector.business.recipe.prescriber.domain.ListFeedbackItem(feedbacks[i])
+                item.content = try { unsealFeedback(getCrypto(credential), item.content)?.let {IOUtils.decompress(it)} ?: item.content } catch (t: Throwable) {item.linkedException = t; item.content}
+
+                feedbacks[i] = item
+            }
+            feedbacks
+        } catch (t: Throwable) {
+            Exceptionutils.errorHandler(t)
+            null
+        }
+    }
+
     override fun listRidsHistory(
         samlToken: SAMLToken,
         credential: KeyStoreCredential,
@@ -221,16 +311,16 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
                         checkStatus(it)
                     }
                 }
-            } catch (var8: ClientTransportException) {
-                throw IntegrationModuleException(I18nHelper.getLabel("error.connection.executor"), var8)
+            } catch (cte: ClientTransportException) {
+                throw IntegrationModuleException(I18nHelper.getLabel("error.connection.executor"), cte)
             }
-        } catch (var9: Throwable) {
-            Exceptionutils.errorHandler(var9)
+        } catch (t: Throwable) {
+            Exceptionutils.errorHandler(t)
             null
         }
     }
 
-    override fun getData(
+    override fun listOpenRids(
         keystore: KeyStore,
         samlToken: SAMLToken,
         passPhrase: String,
@@ -257,14 +347,15 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         }
     }
 
-    override fun getData(
+    override fun getValidationProperties(
         keystore: KeyStore,
         samlToken: SAMLToken,
         passPhrase: String,
         credential: KeyStoreCredential,
         param: ValidationPropertiesParam): ValidationPropertiesResult? {
         return try {
-            val validationProperties: GetValidationPropertiesRequest = getValidationProperties(credential, param) ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON, "Unknown error in recipe")
+            val validationProperties: GetValidationPropertiesRequest = getValidationProperties(credential, param)
+                ?: throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON, "Unknown error in recipe")
             val response = recipePrescriberServiceV4.getValidationProperties(samlToken, credential, validationProperties)
 
             response?.let {
@@ -278,7 +369,7 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         }
     }
 
-    override fun putData(
+    override fun setVision(
         keystore: KeyStore,
         samlToken: SAMLToken,
         passPhrase: String,
@@ -530,28 +621,17 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
     @Throws(IntegrationModuleException::class)
     private fun extractReferenceSourceVersionFromKmehr(xmlDocument: ByteArray): String? {
         return try {
-            val factory: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
-            factory.isNamespaceAware = false
+            val factory: DocumentBuilderFactory = DocumentBuilderFactory.newInstance().apply { isNamespaceAware = false }
             val builder: DocumentBuilder = factory.newDocumentBuilder()
             val kmehrDocument: Document = builder.parse(ByteArrayInputStream(xmlDocument))
-            val propertyHandler =
-                PropertyHandler.getInstance()
+            val propertyHandler = PropertyHandler.getInstance()
             val xpath: XPath = XPathFactory.newInstance().newXPath()
             val xpathStr1 = propertyHandler.getProperty("referenceSourceVersion.xpath1")
-            val referenceSourceVersionNodeList1: NodeList =
-                xpath.evaluate(xpathStr1, kmehrDocument, XPathConstants.NODESET) as NodeList
-            var referenceSourceVersionPart1 = ""
-            if (referenceSourceVersionNodeList1.item(0) != null) {
-                referenceSourceVersionPart1 = referenceSourceVersionNodeList1.item(0).textContent
-            }
+            val referenceSourceVersionNodeList1: NodeList = xpath.evaluate(xpathStr1, kmehrDocument, XPathConstants.NODESET) as NodeList
+            val referenceSourceVersionPart1 = referenceSourceVersionNodeList1.item(0)?.let { it.textContent } ?: ""
             val xpathStr2 = propertyHandler.getProperty("referenceSourceVersion.xpath2")
-            val referenceSourceVersionNodeList2: NodeList =
-                xpath.evaluate(xpathStr2, kmehrDocument, XPathConstants.NODESET) as NodeList
-            var referenceSourceVersionPart2 = ""
-            if (referenceSourceVersionNodeList2.item(0) != null) {
-                referenceSourceVersionPart2 =
-                    referenceSourceVersionPart2 + referenceSourceVersionNodeList2.item(0).textContent
-            }
+            val referenceSourceVersionNodeList2: NodeList = xpath.evaluate(xpathStr2, kmehrDocument, XPathConstants.NODESET) as NodeList
+            val referenceSourceVersionPart2 = referenceSourceVersionNodeList2.item(0)?.let { it.textContent } ?: ""
             val referenceSourceVersion = "$referenceSourceVersionPart1:$referenceSourceVersionPart2"
             if (StringUtils.isNotBlank(referenceSourceVersion)) referenceSourceVersion else "Unknown"
         } catch (var14: ParserConfigurationException) {
@@ -569,6 +649,46 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         }
     }
 
+    fun sendNotification(
+        samlToken: SAMLToken, credential: KeyStoreCredential,
+        notificationText: ByteArray,
+        patientId: String,
+        executorId: String
+    ) {
+        try {
+            val helper = MarshallerHelper(Any::class.java, SendNotificationParam::class.java)
+            val etkRecipes = etkHelper.recipe_ETK
+            val etkRecipients = etkHelper.getEtks(KgssIdentifierType.NIHII_PHARMACY, executorId)
+            val notificationZip = IOUtils.compress(notificationText)
+            for (i in etkRecipients.indices) {
+                val etkRecipient = etkRecipients[0]
+                val notificationSealed = sealNotification(getCrypto(credential), etkRecipient, notificationZip)
+                val param = SendNotificationParam()
+                param.content = notificationSealed
+                param.executorId = executorId
+                param.patientId = patientId
+                param.symmKey = this.symmKey.encoded
+                val request = SendNotificationRequest()
+                request.securedSendNotificationRequest = this.createSecuredContentType(
+                    this.sealRequest(getCrypto(credential), etkRecipes[0], helper.toXMLByteArray(param))
+                )
+                request.programId = PropertyHandler.getInstance().getProperty("programIdentification")
+                request.issueInstant = DateTime()
+                request.id = "id" + UUID.randomUUID().toString()
+                try {
+                    val response = recipePrescriberServiceV4.sendNotification(samlToken, credential, request)
+                    val marshaller = MarshallerHelper(SendNotificationResult::class.java, SendNotificationResult::class.java)
+                    this.checkStatus(
+                        marshaller.unsealWithSymmKey(response!!.securedSendNotificationResponse.securedContent, this.symmKey)
+                    )
+                } catch (cte: ClientTransportException) {
+                    throw IntegrationModuleException(I18nHelper.getLabel("error.connection.prescriber"), cte)
+                }
+            }
+        } catch (t: Throwable) {
+            Exceptionutils.errorHandler(t)
+        }
+    }
 
 
     /**
@@ -625,8 +745,10 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
 
     }
 
+    private fun getLocalisedMsg(status: Status): String {
+        return if (status.statusMessage.isNotBlank()) status.statusMessage else status.statusCode.value
+    }
 
-    @Throws(IntegrationModuleException::class)
     protected fun checkStatus(response: StatusResponseType) {
         if (EHEALTH_SUCCESS_CODE_100 != response.status.statusCode.value && EHEALTH_SUCCESS_CODE_200 != response.status.statusCode.value && EHEALTH_SUCCESS_URN != response.status.statusCode.value) {
             log.error("Error Status received : " + response.status.statusCode.value)
@@ -634,8 +756,77 @@ class PrescriberIntegrationModuleV4Impl(stsService: STSService, keyDepotService:
         }
     }
 
-    private fun getLocalisedMsg(status: Status): String {
-        return if (status.statusMessage.isNotBlank()) status.statusMessage else status.statusCode.value
+    protected fun checkStatus(response: ResponseType) {
+        if (AbstractIntegrationModule.EHEALTH_SUCCESS_CODE_100 != response.status.code && AbstractIntegrationModule.EHEALTH_SUCCESS_CODE_200 != response.status.code) {
+            log.error("Error Status received : " + response.status.code)
+            throw IntegrationModuleException(getLocalisedMsg(response.status))
+        }
+    }
+    protected fun checkStatus(response: be.recipe.services.core.ResponseType) {
+        if (AbstractIntegrationModule.EHEALTH_SUCCESS_CODE_100 != response.status.code && AbstractIntegrationModule.EHEALTH_SUCCESS_CODE_200 != response.status.code) {
+            log.error("Error Status received : " + response.status.code)
+            throw IntegrationModuleException(getLocalisedMsg(response.status))
+        }
+    }
+    private fun getLocalisedMsg(status: StatusType): String {
+        val locale = IntegrationModuleException.getUserLocale()
+        for (msg in status.messages) {
+            if (msg.lang != null && locale.equals(msg.lang.value(), ignoreCase = true)) {
+                return msg.value
+            }
+        }
+        return if (status.messages.size > 0) {
+            status.messages[0].value
+        } else status.code
+    }
+    private fun getLocalisedMsg(status: be.recipe.services.core.StatusType): String {
+        val locale = IntegrationModuleException.getUserLocale()
+        for (msg in status.messages) {
+            if (msg.lang != null && locale.equals(msg.lang.value(), ignoreCase = true)) {
+                return msg.value
+            }
+        }
+        return if (status.messages.size > 0) {
+            status.messages[0].value
+        } else status.code
+    }
+
+    protected fun createIdentifierType(id: String, type: String): IdentifierType {
+        val ident = IdentifierType()
+        ident.id = id + ""
+        ident.type = type
+        return ident
+    }
+
+    @Throws(IntegrationModuleException::class)
+    protected fun unsealFeedback(crypto: Crypto, message: ByteArray?): ByteArray? {
+        return message?.let { unsealNotiffeed(crypto, it) }
+    }
+
+    @Throws(IntegrationModuleException::class)
+    protected fun getNewKeyFromKgss(credential: KeyStoreCredential, prescriptionType: String, prescriberId: String, executorId: String?, patientId: String, myEtk: ByteArray): KeyResult? {
+        val etkKgss = etkHelper.kgsS_ETK[0]
+        val credentialTypes = propertyHandler.getMatchingProperties("kgss.createPrescription.ACL.$prescriptionType")?.map { it.replace(Regex("\\{saml.quality}"), credential.quality) }
+
+        var keyResult: KeyResult? = null
+        try {
+            keyResult = kgssService.retrieveNewKey(credential, etkKgss.encoded, credentialTypes, prescriberId, executorId, patientId, myEtk);
+        } catch (t: Throwable) {
+            Exceptionutils.errorHandler(t)
+        }
+
+        return keyResult
+    }
+
+
+    @Throws(IntegrationModuleException::class)
+    protected fun sealNotification(crypto: Crypto, paramEncryptionToken: EncryptionToken, paramArrayOfByte: ByteArray): ByteArray {
+        return crypto.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, paramEncryptionToken, paramArrayOfByte)
+    }
+
+    protected fun getCrypto(credential: KeyStoreCredential) : Crypto {
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(credential.keyStore, credential.password)
+        return CryptoFactory.getCrypto(credential, hokPrivateKeys)
     }
 
 }

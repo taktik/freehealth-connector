@@ -21,17 +21,21 @@
 package org.taktik.freehealth.middleware.service
 
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.recipe.Feedback
 import org.taktik.freehealth.middleware.domain.recipe.Prescription
+import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
+import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
 import java.security.KeyStoreException
 import java.security.cert.CertificateExpiredException
 import java.time.LocalDateTime
 import java.util.UUID
 import java.util.zip.DataFormatException
+import javax.xml.bind.JAXBException
 
 /**
  * Created with IntelliJ IDEA.
@@ -41,7 +45,6 @@ import java.util.zip.DataFormatException
  * To change this template use File | Settings | File Templates.
  */
 interface RecipeV4Service {
-    @Throws(ConnectorException::class)
     fun createPrescription(
         keystoreId: UUID,
         tokenId: UUID,
@@ -68,7 +71,6 @@ interface RecipeV4Service {
         expirationDate: LocalDateTime?
                           ): Prescription
 
-    @Throws(ConnectorException::class)
     fun listOpenPrescriptions(
         keystoreId: UUID,
         tokenId: UUID,
@@ -80,7 +82,6 @@ interface RecipeV4Service {
         patientId: String?
                              ): List<Prescription>
 
-    @Throws(ConnectorException::class, DataFormatException::class, KeyStoreException::class, CertificateExpiredException::class)
     fun listFeedbacks(
         keystoreId: UUID,
         tokenId: UUID,
@@ -91,7 +92,6 @@ interface RecipeV4Service {
         passPhrase: String
                      ): List<Feedback>
 
-    @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
     fun revokePrescription(
         keystoreId: UUID,
         tokenId: UUID,
@@ -105,4 +105,33 @@ interface RecipeV4Service {
                           )
 
     fun getPrescriptionStatus(keystoreId: UUID, tokenId: UUID, hcpNihii: String, passPhrase: String, rid: String): GetPrescriptionStatusResult
+
+    fun getPrescriptionMessage(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String,
+        rid: String
+    ): Kmehrmessage?
+
+    fun sendNotification(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpQuality: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpName: String,
+        passPhrase: String,
+        patientId: String,
+        executorId: String,
+        rid: String,
+        text: String
+    )
+
+    fun getGalToAdministrationUnit(galId: String): Code?
+    @Throws(exceptionClasses = { JAXBException::class })
+    fun getPrescription(rid: String): PrescriptionFullWithFeedback?
 }

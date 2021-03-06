@@ -1,5 +1,6 @@
 package org.taktik.connector.business.recipe.prescriber
 
+import be.fgov.ehealth.recipe.protocol.v1.AliveCheckResponse
 import be.recipe.services.prescriber.GetPrescriptionStatusParam
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
 import be.recipe.services.prescriber.ListOpenRidsParam
@@ -19,7 +20,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-interface PrescriberIntegrationModuleV4 : PrescriberIntegrationModule {
+interface PrescriberIntegrationModuleV4 {
     @Throws(IntegrationModuleException::class)
     fun createPrescription(
         keystore: KeyStore,
@@ -54,7 +55,7 @@ interface PrescriberIntegrationModuleV4 : PrescriberIntegrationModule {
         param: ListRidsHistoryParam): ListRidsHistoryResult?
 
     @Throws(IntegrationModuleException::class)
-    fun putData(
+    fun setVision(
         keystore: KeyStore,
         samlToken: SAMLToken,
         passPhrase: String,
@@ -62,7 +63,7 @@ interface PrescriberIntegrationModuleV4 : PrescriberIntegrationModule {
         param: PutVisionParam): PutVisionResult?
 
     @Throws(IntegrationModuleException::class)
-    fun getData(
+    fun listOpenRids(
         keystore: KeyStore,
         samlToken: SAMLToken,
         passPhrase: String,
@@ -70,10 +71,21 @@ interface PrescriberIntegrationModuleV4 : PrescriberIntegrationModule {
         param: ListOpenRidsParam): ListOpenRidsResult?
 
     @Throws(IntegrationModuleException::class)
-    fun getData(
+    fun getValidationProperties(
         keystore: KeyStore,
         samlToken: SAMLToken,
         passPhrase: String,
         credential: KeyStoreCredential,
         param: ValidationPropertiesParam): ValidationPropertiesResult?
+
+    @Throws(exceptionClasses = { IntegrationModuleException::class, org.taktik.connector.technical.exception.TechnicalConnectorException::class })
+    fun ping(samlToken: SAMLToken, credential: KeyStoreCredential): AliveCheckResponse
+    @Throws(exceptionClasses = { IntegrationModuleException::class })
+    fun revokePrescription(
+        samlToken: SAMLToken,
+        credential: KeyStoreCredential,
+        nihii: String,
+        rid: String,
+        reason: String
+    )
 }

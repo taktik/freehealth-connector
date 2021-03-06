@@ -20,6 +20,7 @@
 
 package org.taktik.connector.business.recipe.prescriber
 
+import be.fgov.ehealth.recipe.protocol.v1.AliveCheckResponse
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
 import be.recipe.services.prescriber.ListFeedbackItem
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
@@ -92,6 +93,6 @@ interface PrescriberIntegrationModule {
                     ): List<ListFeedbackItem>
 
     @Throws(IntegrationModuleException::class, TechnicalConnectorException::class)
-    fun ping(samlToken: SAMLToken, credential: KeyStoreCredential)
+    fun ping(samlToken: SAMLToken, credential: KeyStoreCredential): AliveCheckResponse
 
 }

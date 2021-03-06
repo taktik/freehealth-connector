@@ -63,7 +63,7 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
     protected lateinit var symmKey: Key
         private set
 
-    private val kgssService = KgssServiceImpl()
+    protected val kgssService = KgssServiceImpl()
 
     protected val propertyHandler = PropertyHandler.getInstance()
     protected val encryptionUtils = EncryptionUtils.getInstance(propertyHandler)
