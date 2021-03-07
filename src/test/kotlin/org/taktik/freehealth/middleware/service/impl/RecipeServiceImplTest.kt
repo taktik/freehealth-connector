@@ -100,7 +100,7 @@ class RecipeServiceImplTest {
     @Autowired
     lateinit var stsService : STSServiceImpl
     @Autowired
-    lateinit var recipeService : RecipeServiceImpl
+    lateinit var recipeService : RecipeV4ServiceImpl
 
     @Value("\${org.taktik.icure.keystore1.ssin}") var ssin : String? = null
     @Value("\${org.taktik.icure.keystore1.nihii}") var nihii : String? = null
@@ -162,7 +162,7 @@ class RecipeServiceImplTest {
 		val quantities = kmehrPrescription.folder.transaction.heading.items.get(0).regimen.daynumbersAndQuantitiesAndDaytimes
 			.filter { it is RecipeadministrationquantityType }
 		assertTrue(quantities.isNotEmpty())
-		quantities.forEach { assertEquals(RecipeServiceImpl.defaultDosis, (it as RecipeadministrationquantityType).unit.cd.value) }
+		quantities.forEach { assertEquals(RecipeV4ServiceImpl.defaultDosis, (it as RecipeadministrationquantityType).unit.cd.value) }
 	}
 
 	@Test
@@ -197,14 +197,14 @@ class RecipeServiceImplTest {
 		assertEquals(XMLGregorianCalendarImpl.parse("22:00:00"), daytime.time)
 	}
 
-	@Test(expected = RecipeServiceImpl.UnsupportedCodeValueException::class)
+	@Test(expected = IllegalArgumentException::class)
 	fun toDaytime_periodAftermeal_unsupported() {
 		toDaytime(RegimenItem().apply {
 			dayPeriod = Code("CD-DAYPERIOD", "aftermeal")
 		})
 	}
 
-	@Test(expected = RecipeServiceImpl.UnsupportedCodeValueException::class)
+	@Test(expected = IllegalArgumentException::class)
 	fun toDaytime_periodBetweenmeals_unsupported() {
 		toDaytime(RegimenItem().apply {
 			dayPeriod = Code("CD-DAYPERIOD", "betweenmeals")
@@ -224,7 +224,7 @@ class RecipeServiceImplTest {
 			try {
 				time = toDaytime(RegimenItem().apply { dayPeriod = Code("CD-DAYPERIOD", it) }).time
 				assertThat(it, time, Matchers.notNullValue())
-			} catch (e: RecipeServiceImpl.UnsupportedCodeValueException) {
+			} catch (e: IllegalArgumentException) {
 				// ok
 			}
 		}

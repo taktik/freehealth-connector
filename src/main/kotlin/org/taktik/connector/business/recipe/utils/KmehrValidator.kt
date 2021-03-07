@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.taktik.connector.technical.validator.impl.handler.ErrorCollectorHandler
 import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.service.RecipeService
+import org.taktik.freehealth.middleware.service.RecipeV4Service
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.util.Properties
@@ -16,7 +17,7 @@ import javax.xml.validation.SchemaFactory
  * validate Kmehr messages
  */
 
-class KmehrValidator(val recipeService : RecipeService, val kmehrXsd: String = "ehealth-kmehr/XSD/recipe/recipe_PP_kmehr_elements-1_19.xsd") {
+class KmehrValidator(val recipeService : RecipeV4Service, val kmehrXsd: String = "ehealth-kmehr/XSD/recipe/recipe_PP_kmehr_elements-1_19.xsd") {
     val log = LoggerFactory.getLogger(KmehrValidator::class.java)
     val kmehrHelper = KmehrHelper(Properties().apply { load(javaClass.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
 
