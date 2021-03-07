@@ -396,7 +396,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         return getKmehrPrescription(patient, hcp, medications, deliveryDate, config, hcpQuality, expirationDate)
     }
 
-    fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String {
+    override fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String {
         if (prescriptionType != null) {
             return prescriptionType
         }
@@ -440,7 +440,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         return false
     }
 
-    fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig, hcpQuality: String,
+    override fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig, hcpQuality: String,
         expirationDate: LocalDateTime?): Kmehrmessage {
 
         val language = config.prescription.language

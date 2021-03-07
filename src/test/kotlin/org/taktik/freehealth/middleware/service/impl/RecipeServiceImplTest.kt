@@ -81,6 +81,7 @@ import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.recipe.RegimenItem
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
+import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Companion.taktik
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications.Companion.compoundPrescriptionP2
@@ -134,7 +135,7 @@ class RecipeServiceImplTest {
             Patient().apply { firstName = "Antoine"; lastName = "Duchateau"; dateOfBirth = 19740104; ssin = "74010414733" },
             HealthcareParty(firstName = "Antoine", lastName = "Baudoux", ssin = "79121430944", nihii = "11478761004", addresses = mutableSetOf(taktik())),
             listOf(medication),
-            LocalDateTime.now(), "doctor")
+            LocalDateTime.now(), KmehrPrescriptionConfig(), "doctor", LocalDateTime.now().plusDays(60))
 
 	    validator.validatePrescription(kmehrPrescription, listOf(medication))
     }
@@ -157,9 +158,9 @@ class RecipeServiceImplTest {
             Patient().apply { firstName = "Antoine"; lastName = "Duchateau"; dateOfBirth = 19740104; ssin = "74010414733" },
             HealthcareParty(firstName = "Antoine", lastName = "Baudoux", ssin = "79121430944", nihii = "11478761004", addresses = mutableSetOf(taktik()) ),
             medications,
-            LocalDateTime.now(), "doctor")
+            LocalDateTime.now(), KmehrPrescriptionConfig(), "doctor", LocalDateTime.now().plusDays(60))
 
-		val quantities = kmehrPrescription.folder.transaction.heading.items.get(0).regimen.daynumbersAndQuantitiesAndDaytimes
+		val quantities = (kmehrPrescription.folders.first().transactions.first().headingsAndItemsAndTexts.first() as org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.ItemType).regimen.daynumbersAndQuantitiesAndDates
 			.filter { it is RecipeadministrationquantityType }
 		assertTrue(quantities.isNotEmpty())
 		quantities.forEach { assertEquals(RecipeV4ServiceImpl.defaultDosis, (it as RecipeadministrationquantityType).unit.cd.value) }

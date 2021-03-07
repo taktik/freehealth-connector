@@ -32,6 +32,7 @@ import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
+import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -145,4 +146,14 @@ interface RecipeV4Service {
         rid: String
     ): Kmehrmessage?
 
+    fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String
+    fun getKmehrPrescription(
+        patient: Patient,
+        hcp: HealthcareParty,
+        medications: List<Medication>,
+        deliveryDate: LocalDateTime?,
+        config: KmehrPrescriptionConfig,
+        hcpQuality: String,
+        expirationDate: LocalDateTime?
+    ): org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 }

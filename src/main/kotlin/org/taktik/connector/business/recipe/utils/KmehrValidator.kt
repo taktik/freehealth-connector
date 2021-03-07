@@ -4,7 +4,6 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.slf4j.LoggerFactory
 import org.taktik.connector.technical.validator.impl.handler.ErrorCollectorHandler
 import org.taktik.freehealth.middleware.domain.recipe.Medication
-import org.taktik.freehealth.middleware.service.RecipeService
 import org.taktik.freehealth.middleware.service.RecipeV4Service
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -35,6 +34,14 @@ class KmehrValidator(val recipeService : RecipeV4Service, val kmehrXsd: String =
 
         validatePrescription(prescription, medications)
     }
+    fun validatePrescription(kmehrPrescription: org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage, medications: List<Medication>) {
+        val os = ByteArrayOutputStream()
+        JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createMarshaller().marshal(kmehrPrescription, os)
+        val prescription = os.toByteArray()
+
+        validatePrescription(prescription, medications)
+    }
+
 
     fun validatePrescription(prescription: ByteArray, medications: List<Medication>) {
         val prescriptionType = recipeService.inferPrescriptionType(medications, null)
