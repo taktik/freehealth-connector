@@ -8,7 +8,7 @@
 
 package be.vaccinnet.wupl.uplvaccinatiegegevens;
 
-import be.fgov.ehealth.standards.kmehr.schema.v1.KmehrmessageType;
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.KmehrmessageType;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

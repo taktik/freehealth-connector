@@ -1,50 +1,51 @@
 package be.vlaanderen.zg.vaccinnet.batchuploadtest.service
 
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.cd.v1.CDSEXvalues
-import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
-import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes
-import be.fgov.ehealth.standards.kmehr.schema.v1.DateType
-import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
-import be.fgov.ehealth.standards.kmehr.schema.v1.HeaderType
-import be.fgov.ehealth.standards.kmehr.schema.v1.ItemType
-import be.fgov.ehealth.standards.kmehr.schema.v1.KmehrmessageType
-import be.fgov.ehealth.standards.kmehr.schema.v1.PersonType
-import be.fgov.ehealth.standards.kmehr.schema.v1.TransactionType
+import be.vaccinnet.wupl.uplvaccinatiegegevens.ExtraInfo
+import be.vaccinnet.wupl.uplvaccinatiegegevens.GetAanleverenVaccinatieGegevensRequest
+import be.vlaanderen.zg.vaccinnet.batchuploadtest.model.Organisation
 import be.vlaanderen.zg.vaccinnet.batchuploadtest.model.Patient
 import be.vlaanderen.zg.vaccinnet.batchuploadtest.utils.DateUtils
+import be.vlaanderen.zg.vaccinnet.batchuploadtest.utils.KmehrUtils
 import be.vlaanderen.zg.vaccinnet.batchuploadtest.utils.SoapUtils
+import be.vlaanderen.zg.vaccinnet.batchuploadtest.utils.XmlDataUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDSEXvalues
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.DateType
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.KmehrmessageType
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.PersonType
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.TransactionType
+import org.springframework.ws.client.core.WebServiceTemplate
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHRschemes
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.HeaderType
+import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.xml.bind.JAXBException
+import javax.xml.datatype.DatatypeConfigurationException
+import javax.xml.datatype.XMLGregorianCalendar
 
 @Service
-@Slf4j
 class AanleverenVaccinatieGegevensService(
-    webServiceTemplate: WebServiceTemplate,
-    applicationArguments: ApplicationArguments,
-    @Value("\${vaccinnet.batchupload.vaccination_minus_days.aanleveren}") minusVaccinationDays: Int
+    private val webServiceTemplate: WebServiceTemplate,
+    @Value("\${vaccinnet.batchupload.vaccination_minus_days.aanleveren}") private val minusVaccinationDays: Int
 ) {
-    private val webServiceTemplate: WebServiceTemplate
-    private val applicationArguments: ApplicationArguments
-
-    @Value("\${vaccinnet.batchupload.vaccination_minus_days.aanleveren}")
-    private val minusVaccinationDays: Int
-    fun run() {
-        val requestPayload: GetAanleverenVaccinatieGegevensRequest = getAanleverenVaccinatieGegevensRequest
+    fun run(organisation: Organisation, patient: Patient) {
+        val requestPayload: GetAanleverenVaccinatieGegevensRequest = getAanleverenVaccinatieGegevensRequest()
         SoapUtils.validateMessage(requestPayload)
         webServiceTemplate.marshalSendAndReceive(requestPayload)
     }
 
-    private val getAanleverenVaccinatieGegevensRequest: GetAanleverenVaccinatieGegevensRequest
-        private get() {
+        private fun getAanleverenVaccinatieGegevensRequest(organisation: Organisation, patient: Patient): GetAanleverenVaccinatieGegevensRequest {
             val request = GetAanleverenVaccinatieGegevensRequest()
-            request.setExtraInfo(configureExtraInfo())
+            request.extraInfo = configureExtraInfo()
             try {
-                request.setKmehrmessage(configureKmehr())
+                request.kmehrmessage = configureKmehr(organisation, patient)
             } catch (e: IOException) {
                 e.printStackTrace()
             } catch (e: JAXBException) {
@@ -57,95 +58,78 @@ class AanleverenVaccinatieGegevensService(
 
     private fun configureExtraInfo(): ExtraInfo {
         val extraInfo = ExtraInfo()
-        extraInfo.setType("auth_eHealth_org")
-        extraInfo.setPakket("DXC_VACCINNET_TEST")
+        extraInfo.type = "auth_eHealth_org"
+        extraInfo.pakket = "DXC_VACCINNET_TEST"
         return extraInfo
     }
 
     @Throws(IOException::class, JAXBException::class, DatatypeConfigurationException::class)
-    private fun configureKmehr(): KmehrmessageType {
-        val kmehr: KmehrmessageType = XmlDataUtils.getTemplateKmehr()
-        configureKmehrHeader(kmehr)
-        configureKmehrFolder(kmehr)
+    private fun configureKmehr(organisation: Organisation, patient: Patient): KmehrmessageType {
+        val kmehr: KmehrmessageType = XmlDataUtils.templateKmehr
+        configureKmehrHeader(organisation, patient, kmehr)
+        configureKmehrFolder(organisation, patient, kmehr)
         return kmehr
     }
 
     @Throws(DatatypeConfigurationException::class)
-    private fun configureKmehrHeader(kmehr: KmehrmessageType) {
-        val organisation: Organisation = XmlDataUtils.getOrganisation(applicationArguments)
-        val header: HeaderType = kmehr.getHeader()
+    private fun configureKmehrHeader(organisation: Organisation, patient: Patient,kmehr: KmehrmessageType) {
+        val header: HeaderType = kmehr.header
         val now = LocalDateTime.now()
         val gregorianCalendar: XMLGregorianCalendar? = DateUtils.toXmlGregorianCalendar(now)
         header.date = gregorianCalendar
         header.time = gregorianCalendar
-        val idkmehr: IDKMEHR = header.getId().stream()
-            .filter({ id -> IDKMEHRschemes.ID_KMEHR == id.getS() })
-            .findFirst()
-            .orElseThrow()
+        val idkmehr: IDKMEHR = header.ids
+            .first { id -> IDKMEHRschemes.ID_KMEHR == id.s }
         idkmehr.value =
-            organisation.getRiziv().toString() + "." + now.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
-        val hcpartyType: HcpartyType = header.sender.getHcparty().get(0)
-        KmehrUtils.getIdHcParty(hcpartyType.getId(), IDHCPARTYschemes.LOCAL).setValue(organisation.getUserCode())
-        KmehrUtils.getIdHcParty(hcpartyType.getId(), IDHCPARTYschemes.ID_HCPARTY).setValue(organisation.getRiziv())
-        KmehrUtils.getCdHcParty(hcpartyType.getCd(), CDHCPARTYschemes.CD_HCPARTY)
-            .setValue(organisation.getOrganisationType().getCdHcParty().value())
-        hcpartyType.name = organisation.getName()
+            organisation.riziv.toString() + "." + now.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+        val hcpartyType: HcpartyType = header.sender.hcparties.first()
+        KmehrUtils.getIdHcParty(hcpartyType.ids, IDHCPARTYschemes.LOCAL).value = organisation.userCode
+        KmehrUtils.getIdHcParty(hcpartyType.ids, IDHCPARTYschemes.ID_HCPARTY).value = organisation.riziv
+        KmehrUtils.getCdHcParty(hcpartyType.cds, CDHCPARTYschemes.CD_HCPARTY).value = organisation.organisationType.cdHcParty.value()
+        hcpartyType.name = organisation.name
     }
 
     @Throws(DatatypeConfigurationException::class)
-    private fun configureKmehrFolder(kmehr: KmehrmessageType) {
-        configureKmehrPatient(kmehr)
-        configureTransaction(kmehr)
+    private fun configureKmehrFolder(organisation: Organisation, patient: Patient,kmehr: KmehrmessageType) {
+        configureKmehrPatient(organisation, patient, kmehr)
+        configureTransaction(organisation, patient, kmehr)
     }
 
-    private fun configureKmehrPatient(kmehr: KmehrmessageType) {
-        val patient: Patient = XmlDataUtils.getPatient(
-            applicationArguments
-        )
-        val personType: PersonType = kmehr.getFolder().get(0).getPatient()
-        personType.getId().get(0).setValue(patient.getNationalRegistryNumber())
-        personType.getFirstname().add(patient.getFirstName())
-        personType.familyname = patient.getLastName()
+    private fun configureKmehrPatient(organisation: Organisation, patient: Patient, kmehr: KmehrmessageType) {
+        val personType: PersonType = kmehr.folders.first().patient
+        personType.ids.first().value = patient.nationalRegistryNumber
+        personType.firstnames.add(patient.firstName)
+        personType.familyname = patient.lastName
         val dateType = DateType()
         try {
-            dateType.setDate(DateUtils.toXmlGregorianCalendar(patient.birthDate))
+            dateType.date = DateUtils.toXmlGregorianCalendar(patient.birthDate)
         } catch (e: DatatypeConfigurationException) {
             e.printStackTrace()
         }
         personType.birthdate = dateType
-        personType.sex.cd.value = CDSEXvalues.fromValue(patient.gender.getValue())
+        personType.sex.cd.value = CDSEXvalues.fromValue(patient.gender?.value)
     }
 
     @Throws(DatatypeConfigurationException::class)
-    private fun configureTransaction(kmehr: KmehrmessageType) {
-        val transactionTypes: List<TransactionType> = kmehr.getFolder().get(0).getTransaction()
+    private fun configureTransaction(organisation: Organisation, patient: Patient,kmehr: KmehrmessageType) {
+        val transactionTypes: List<TransactionType> = kmehr.folders.first().transactions
         val transactionType = transactionTypes[0]
-        val idkmehr: IDKMEHR = transactionType.getId().stream()
-            .filter({ id -> IDKMEHRschemes.LOCAL == id.getS() })
-            .findFirst()
-            .orElseThrow()
+        val idkmehr: IDKMEHR = transactionType.ids
+            .first { id -> IDKMEHRschemes.LOCAL == id.s }
         idkmehr.value = UUID.randomUUID().toString()
         val date: XMLGregorianCalendar? =
             DateUtils.toXmlGregorianCalendar(LocalDateTime.now().minusDays(minusVaccinationDays.toLong()))
         transactionType.date = date
         transactionType.time = date
-        val organisation: Organisation = XmlDataUtils.getOrganisation(applicationArguments)
-        val hcpartyType: HcpartyType = transactionType.author.getHcparty().get(0)
-        KmehrUtils.getIdHcParty(hcpartyType.getId(), IDHCPARTYschemes.LOCAL).setValue(organisation.getUserCode())
-        KmehrUtils.getIdHcParty(hcpartyType.getId(), IDHCPARTYschemes.ID_HCPARTY).setValue(organisation.getRiziv())
-        KmehrUtils.getCdHcParty(hcpartyType.getCd(), CDHCPARTYschemes.CD_HCPARTY)
-            .setValue(organisation.getOrganisationType().getCdHcParty().value())
-        hcpartyType.name = organisation.getName()
-        val itemType: ItemType = KmehrUtils.getItem(transactionType)
-        itemType.getContent().get(0).getMedicinalproduct().getIntendedcd().setValue("1734094")
-        itemType.getContent().get(0).getMedicinalproduct().setIntendedname("BOOSTRIX SER PREREMPL 1 X 0,5 ML")
+        val hcpartyType: HcpartyType = transactionType.author.hcparties.first()
+        KmehrUtils.getIdHcParty(hcpartyType.ids, IDHCPARTYschemes.LOCAL).value = organisation.userCode
+        KmehrUtils.getIdHcParty(hcpartyType.ids, IDHCPARTYschemes.ID_HCPARTY).value = organisation.riziv
+        KmehrUtils.getCdHcParty(hcpartyType.cds, CDHCPARTYschemes.CD_HCPARTY).value = organisation.organisationType.cdHcParty.value()
+        hcpartyType.name = organisation.name
+        val itemType = KmehrUtils.getItem(transactionType)
+        itemType.contents.first().medicinalproduct.intendedcds.first().value = "1734094"
+        itemType.contents.first().medicinalproduct.intendedname = "BOOSTRIX SER PREREMPL 1 X 0,5 ML"
         itemType.beginmoment.date = date
         itemType.batch = "Batch1"
-    }
-
-    init {
-        this.webServiceTemplate = webServiceTemplate
-        this.applicationArguments = applicationArguments
-        this.minusVaccinationDays = minusVaccinationDays
     }
 }
