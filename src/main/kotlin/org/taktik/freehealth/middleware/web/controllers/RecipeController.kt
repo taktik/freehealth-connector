@@ -121,9 +121,9 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
-        @RequestParam(required = false) hcpQuality: String?,
         @RequestParam hcpNihii: String,
         @RequestParam patientId: String,
+        @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?
     ): List<Prescription> =
@@ -203,8 +203,8 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable rid: String,
         @PathVariable feedbackFlag: Boolean,
-        @RequestParam(required = false) hcpQuality: String?,
         @RequestParam hcpNihii: String,
+        @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?
     ) =
@@ -241,8 +241,8 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable rid: String,
-        @RequestParam(required = false) hcpQuality: String?,
         @RequestParam hcpNihii: String,
+        @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?
     ): org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage? =
