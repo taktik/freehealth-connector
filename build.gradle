@@ -185,6 +185,12 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.RELEASE"
+	}
+}
+
 task ktlint(type: JavaExec, group: "verification") {
 	description = "Check Kotlin code style."
 	classpath = configurations.ktlint
