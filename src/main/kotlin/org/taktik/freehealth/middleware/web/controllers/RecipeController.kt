@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import be.recipe.services.prescriber.PutVisionResult
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -162,6 +163,19 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             rid = rid,
             feedbackAllowed = feedbackFlag
         )
+
+    @PutMapping("/{rid}/vision")
+    fun setVision(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @PathVariable rid: String, @RequestParam vision: String
+    ): PutVisionResult = recipeV4Service.setVision(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        rid = rid,
+        vision = vision
+    )
+
+
 
 
     @GetMapping("/prescription/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
