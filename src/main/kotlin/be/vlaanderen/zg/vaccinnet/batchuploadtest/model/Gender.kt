@@ -1,6 +1,6 @@
 package be.vlaanderen.zg.vaccinnet.batchuploadtest.model
 
-enum class Gender(val value: String? = null) {
+enum class Gender(val value: String) {
     MALE("male"), FEMALE("female");
 
     companion object {

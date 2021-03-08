@@ -36,7 +36,7 @@ class AanleverenVaccinatieGegevensService(
     @Value("\${vaccinnet.batchupload.vaccination_minus_days.aanleveren}") private val minusVaccinationDays: Int
 ) {
     fun run(organisation: Organisation, patient: Patient) {
-        val requestPayload: GetAanleverenVaccinatieGegevensRequest = getAanleverenVaccinatieGegevensRequest()
+        val requestPayload: GetAanleverenVaccinatieGegevensRequest = getAanleverenVaccinatieGegevensRequest(organisation, patient)
         SoapUtils.validateMessage(requestPayload)
         webServiceTemplate.marshalSendAndReceive(requestPayload)
     }

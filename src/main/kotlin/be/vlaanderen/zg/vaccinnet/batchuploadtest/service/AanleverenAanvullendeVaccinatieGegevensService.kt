@@ -34,13 +34,13 @@ class AanleverenAanvullendeVaccinatieGegevensService(
     private val webServiceTemplate: WebServiceTemplate,
     @Value("\${vaccinnet.batchupload.vaccination_minus_days.aanvullen}") private val minusVaccinationDays: Int
 ) {
-    fun run() {
-        val requestPayload = GetAanvullingVaccinatieGegevensRequest()
+    fun run(organisation: Organisation, patient: Patient) {
+        val requestPayload = getAanvullingVaccinatieGegevensRequest(organisation, patient)
         SoapUtils.validateMessage(requestPayload)
         webServiceTemplate.marshalSendAndReceive(requestPayload)
     }
 
-    private fun GetAanvullingVaccinatieGegevensRequest(organisation: Organisation, patient: Patient): GetAanvullingVaccinatieGegevensRequest {
+    private fun getAanvullingVaccinatieGegevensRequest(organisation: Organisation, patient: Patient): GetAanvullingVaccinatieGegevensRequest {
         val request = GetAanvullingVaccinatieGegevensRequest()
         request.extraInfo = configureExtraInfo()
         try {
