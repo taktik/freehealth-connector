@@ -116,6 +116,7 @@ dependencies {
 	}
 	compile('org.springframework.boot:spring-boot-starter-security')
 	compile("org.springframework.ws:spring-ws-core")
+	compile("org.springframework.ws:spring-ws-security")
 	compile("org.springframework:spring-orm")
 
 	compile("com.nimbusds:nimbus-jose-jwt:9.7")
