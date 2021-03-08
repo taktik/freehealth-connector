@@ -125,6 +125,8 @@ dependencies {
 		exclude module: "kotlin-runtime"
 	}
 
+	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
+
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
 	compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 	compile group: 'org.bouncycastle', name: 'bcmail-jdk15on', version: '1.54'
