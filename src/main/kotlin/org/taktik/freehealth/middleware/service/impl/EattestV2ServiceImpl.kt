@@ -932,7 +932,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                                 s = CDCONTENTschemes.LOCAL;
                                                 sv = "1.0";
                                                 sl = "NIHDI-TREATED-LIMB";
-                                                value = code.side.toString();
+                                                value = code.side!!.code.toString();
                                             })
                                         }
                                     },
