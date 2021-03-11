@@ -57,7 +57,7 @@ class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: C
         val passwordEncoder = BCryptPasswordEncoder(8)
 		auth!!.authenticationProvider(DaoAuthenticationProvider().apply {
             setPasswordEncoder(passwordEncoder)
-            setUserDetailsService(CouchdbUserDetailsService(httpClient, couchDbProperties, authenticationProperties, cacheManager, passwordEncoder))
+            setUserDetailsService(CouchdbUserDetailsService(httpClient, couchDbProperties, authenticationProperties, passwordEncoder))
         })
 	}
 
