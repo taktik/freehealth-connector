@@ -92,6 +92,7 @@ import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
+import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.CodeDao
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.recipe.Feedback
@@ -123,6 +124,7 @@ import java.util.concurrent.Executors
 import java.util.zip.DataFormatException
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
+import be.recipe.services.feedback.Feedback as FeedbackText
 
 @Service
 class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: STSService, private val drugsLogic: DrugsLogic, keyDepotService: KeyDepotService) : RecipeV4Service {
@@ -178,7 +180,8 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val feedbackItemList = service.listFeedback(samlToken, credential, false)
-        return feedbackItemList.map { Feedback(it.rid, it.sentBy.toLong(), it.sentDate?.time, it.content?.toString(Charset.forName("UTF-8"))) }
+        return feedbackItemList.map { Feedback(it.rid, it.sentBy?.toLong(), it.sentDate?.time, it.content?.toString(Charset.forName("UTF-8"))?.let { try {
+            MarshallerHelper<FeedbackText, FeedbackText>(FeedbackText::class.java, FeedbackText::class.java).toObject(it)?.text } catch(e:Exception) { null } ?: it }) }
     }
 
     @Throws(ConnectorException::class, DataFormatException::class)

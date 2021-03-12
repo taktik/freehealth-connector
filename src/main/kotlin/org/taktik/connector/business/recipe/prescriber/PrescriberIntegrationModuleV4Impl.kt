@@ -342,12 +342,12 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         } catch (cte: ClientTransportException) {
             throw IntegrationModuleException(I18nHelper.getLabel("error.connection.prescriber"), cte)
         }.feedbacks.map {
-            org.taktik.connector.business.recipe.prescriber.domain.ListFeedbackItem(it).apply {
-                this.content = try {
+            ListFeedbackItem(it).apply {
+                setContent(try {
                     unsealFeedback(getCrypto(credential), it.content)?.let { it -> IOUtils.decompress(it) } ?: it.content
                 } catch (t: Throwable) {
                     this.linkedException = t; it.content
-                }
+                })
             }
         }
     } catch (t: Throwable) {
