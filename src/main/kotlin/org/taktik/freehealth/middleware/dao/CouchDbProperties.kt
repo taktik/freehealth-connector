@@ -25,7 +25,8 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties("org.taktik.connector.couchdb")
 class CouchDbProperties {
-	var prefix = ""
+    var cachettl = "120000"
+    var prefix = ""
 	var url = "http://127.0.0.1:5984"
     var dbName = "fhc-users"
 	var username :String? = "icure"

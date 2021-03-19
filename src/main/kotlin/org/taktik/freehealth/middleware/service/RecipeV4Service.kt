@@ -21,17 +21,20 @@
 package org.taktik.freehealth.middleware.service
 
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
-import org.taktik.connector.technical.exception.ConnectorException
+import be.recipe.services.prescriber.ListRidsHistoryResult
+import be.recipe.services.prescriber.PutVisionResult
+import be.recipe.services.prescriber.UpdateFeedbackFlagResult
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.recipe.Feedback
 import org.taktik.freehealth.middleware.domain.recipe.Prescription
+import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
+import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
-import java.security.KeyStoreException
-import java.security.cert.CertificateExpiredException
+import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
 import java.time.LocalDateTime
 import java.util.UUID
-import java.util.zip.DataFormatException
 
 /**
  * Created with IntelliJ IDEA.
@@ -41,15 +44,12 @@ import java.util.zip.DataFormatException
  * To change this template use File | Settings | File Templates.
  */
 interface RecipeV4Service {
-    @Throws(ConnectorException::class)
     fun createPrescription(
         keystoreId: UUID,
         tokenId: UUID,
+        passPhrase: String,
         hcpQuality: String,
         hcpNihii: String,
-        hcpSsin: String,
-        hcpName: String,
-        passPhrase: String,
         patient: Patient,
         hcp: HealthcareParty,
         feedback: Boolean,
@@ -66,43 +66,94 @@ interface RecipeV4Service {
         vendorPhone: String?,
         vision: String?,
         expirationDate: LocalDateTime?
-                          ): Prescription
+    ): Prescription
 
-    @Throws(ConnectorException::class)
     fun listOpenPrescriptions(
         keystoreId: UUID,
         tokenId: UUID,
-        hcpQuality: String,
-        hcpNihii: String,
-        hcpSsin: String,
-        hcpName: String,
         passPhrase: String,
-        patientId: String?
-                             ): List<Prescription>
+        hcpNihii: String,
+        patientId: String
+    ): List<Prescription>
 
-    @Throws(ConnectorException::class, DataFormatException::class, KeyStoreException::class, CertificateExpiredException::class)
     fun listFeedbacks(
         keystoreId: UUID,
         tokenId: UUID,
-        hcpQuality: String,
-        hcpNihii: String,
-        hcpSsin: String,
-        hcpName: String,
         passPhrase: String
-                     ): List<Feedback>
+    ): List<Feedback>
 
-    @Throws(ConnectorException::class, KeyStoreException::class, CertificateExpiredException::class)
     fun revokePrescription(
         keystoreId: UUID,
         tokenId: UUID,
-        hcpQuality: String,
-        hcpNihii: String,
-        hcpSsin: String,
-        hcpName: String,
         passPhrase: String,
+        hcpNihii: String,
         rid: String,
         reason: String
-                          )
+    )
 
-    fun getPrescriptionStatus(keystoreId: UUID, tokenId: UUID, hcpNihii: String, passPhrase: String, rid: String): GetPrescriptionStatusResult
+    fun getPrescriptionStatus(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        rid: String
+    ): GetPrescriptionStatusResult
+
+    fun sendNotification(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        patientId: String,
+        executorId: String,
+        rid: String,
+        text: String
+    )
+
+    fun setVision(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        rid: String,
+        vision: String
+    ): PutVisionResult
+
+    fun listRidsHistory(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        patientSsin: String,
+        rid: String,
+        reason: String
+    ): ListRidsHistoryResult
+
+    fun updateFeedbackFlag(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpNihii: String,
+        passPhrase: String,
+        rid: String,
+        feedbackAllowed: Boolean
+    ): UpdateFeedbackFlagResult
+
+    fun getGalToAdministrationUnit(galId: String): Code?
+    fun getPrescription(rid: String): PrescriptionFullWithFeedback?
+    fun getPrescriptionMessage(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        rid: String
+    ): Kmehrmessage?
+
+    fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String
+    fun getKmehrPrescription(
+        patient: Patient,
+        hcp: HealthcareParty,
+        medications: List<Medication>,
+        deliveryDate: LocalDateTime?,
+        config: KmehrPrescriptionConfig,
+        hcpQuality: String,
+        expirationDate: LocalDateTime?
+    ): org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 }
