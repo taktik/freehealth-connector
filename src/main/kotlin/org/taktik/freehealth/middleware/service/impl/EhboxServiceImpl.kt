@@ -53,6 +53,7 @@ import org.taktik.freehealth.middleware.mapper.toDocumentMessage
 import org.taktik.freehealth.middleware.mapper.toMessageDto
 import org.taktik.freehealth.middleware.service.EhboxService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.utils.mapFirstNotNull
 import org.w3c.dom.Element
 import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
@@ -67,15 +68,6 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
     private val consultationMessageBuilder = ConsultationMessageBuilderImpl()
     private val sendMessageBuilder = SendMessageBuilderImpl(KeyDepotManagerImpl.getInstance(keyDepotService))
 
-
-    /**
-     * Returns a list containing the results of applying the given [transform] function
-     * to each element in the original collection.
-     */
-    private inline fun <T, R> Iterable<T>.mapFirstNotNull(transform: (T) -> R): R? {
-        for (item in this) transform(item)?.let { return it }
-        return null
-    }
 
     override fun getInfos(keystoreId: UUID, tokenId: UUID, passPhrase: String): BoxInfo {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
