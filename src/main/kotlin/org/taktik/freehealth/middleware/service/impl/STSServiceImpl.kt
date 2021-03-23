@@ -65,8 +65,7 @@ import javax.xml.transform.stream.StreamSource
 class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, SamlTokenResult>, val keyDepotService: KeyDepotService) : STSService {
     private val log = LogFactory.getLog(this.javaClass)
 
-    val freehealthStsService: org.taktik.connector.technical.service.sts.STSService =
-        org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
+    val freehealthStsService: org.taktik.connector.technical.service.sts.STSService = org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
     val transformerFactory: TransformerFactory = TransformerFactory.newInstance()
     val config: ConfigValidator = ConfigFactory.getConfigValidator()
 
@@ -78,8 +77,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val document = builder.parse(InputSource(StringReader(token)))
         val assertion = document.documentElement
 
-        tokensMap[tokenId] =
-            SamlTokenResult(tokenId, token, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
+        tokensMap[tokenId] = SamlTokenResult(tokenId, token, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
         log.info("tokensMap size: ${tokensMap.size}")
     }
 

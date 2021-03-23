@@ -73,17 +73,12 @@ class CouchdbUserDetailsService(val httpClient: HttpClient,
         return if (user._id == null) {
             null
         } else try {
-            val connection = URL(
-                couchDbProperties.url + "/" + couchDbProperties.dbName + "/" + user._id + "/" + key
-            ).openConnection()
+            val connection = URL(couchDbProperties.url + "/" + couchDbProperties.dbName + "/" + user._id + "/" + key).openConnection()
             (connection as? HttpURLConnection)?.apply {
                 requestMethod = "GET"
                 setRequestProperty(
                     "Authorization",
-                    "Basic ${
-                        Base64.getEncoder()
-                            .encodeToString("${couchDbProperties.username}:${couchDbProperties.password}".toByteArray())
-                    }"
+                    "Basic ${Base64.getEncoder().encodeToString("${couchDbProperties.username}:${couchDbProperties.password}".toByteArray())}"
                 )
             }?.inputStream?.readBytes() ?: throw IllegalStateException("Cannot load User from database")
         } catch (e: Exception) {

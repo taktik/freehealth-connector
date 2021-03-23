@@ -26,6 +26,7 @@ import org.taktik.freehealth.middleware.dao.CouchdbUserDetailsService
 import org.taktik.freehealth.middleware.dao.KeystoreProviderService
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.sts.BearerToken
+import org.taktik.freehealth.middleware.exception.MissingKeystoreException
 import org.taktik.freehealth.middleware.service.SSOService
 import org.taktik.freehealth.middleware.service.STSService
 import java.net.URI
@@ -76,7 +77,7 @@ class SSOServiceImpl(private val stsService: STSService, private val userDetails
 
         stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for SSO operations")
 
-        val orgKeystore = stsService.getKeyStore(orgKeystoreUuid, orgKeystorePassword) ?:
+        val orgKeystore = try { stsService.getKeyStore(orgKeystoreUuid, orgKeystorePassword) } catch (e: MissingKeystoreException) { null }?:
                             userDetailsService.getKeystore(principal, if (isAcceptance) "org-keystore-acc" else "org-keystore-prod")?.let { keyStore ->
                                 stsService.uploadKeystore(keyStore).let {
                                     if (it != orgKeystoreUuid) throw java.lang.IllegalStateException("Mismatch in keystore UUID")
