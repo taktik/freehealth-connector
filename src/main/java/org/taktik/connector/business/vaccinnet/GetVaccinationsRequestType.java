@@ -32,7 +32,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *
  *
  */
-@XmlRootElement
+@XmlRootElement(namespace = "http://www.vaccinnet.be/VaccinnetUPL/wupl/VaccinationService/V21", name = "GetVaccinationsRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetVaccinationsRequestType", propOrder = {
     "patientId",

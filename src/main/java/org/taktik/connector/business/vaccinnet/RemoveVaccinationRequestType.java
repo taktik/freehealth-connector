@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  *
  */
-@XmlRootElement
+@XmlRootElement(namespace = "http://www.vaccinnet.be/VaccinnetUPL/wupl/VaccinationService/V21", name = "RemoveVaccinationRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RemoveVaccinationRequestType", propOrder = {
     "patientId",

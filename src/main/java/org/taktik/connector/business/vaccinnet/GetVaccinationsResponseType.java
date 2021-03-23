@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlValue;
  *
  *
  */
-@XmlRootElement
+@XmlRootElement(namespace = "http://www.vaccinnet.be/VaccinnetUPL/wupl/VaccinationService/V21", name = "GetVaccinationsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetVaccinationsResponseType", propOrder = {
     "status",
