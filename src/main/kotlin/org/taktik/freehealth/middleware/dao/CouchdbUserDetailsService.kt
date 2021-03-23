@@ -9,6 +9,7 @@ import org.taktik.freehealth.middleware.AuthenticationProperties
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import java.security.KeyStore
 import java.util.Base64
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
@@ -18,7 +19,7 @@ class CouchdbUserDetailsService(val httpClient: HttpClient,
     val authenticationProperties: AuthenticationProperties,
     val passwordEncoder: PasswordEncoder,
     val gson: Gson = Gson()
-    ) : UserDetailsService {
+    ) : UserDetailsService, KeystoreProviderService {
     private val TTL = couchDbProperties.cachettl.toLong()
     private val hashedPassword = authenticationProperties.password?.let {passwordEncoder.encode(it)}
     private val cache = ConcurrentHashMap<String, Pair<Long,UserDetails>>()
@@ -67,4 +68,28 @@ class CouchdbUserDetailsService(val httpClient: HttpClient,
     } catch (e: Exception) {
         throw e
     })
+
+    override fun getKeystore(user: User, key: String): ByteArray? {
+        return if (user._id == null) {
+            null
+        } else try {
+            val connection = URL(
+                couchDbProperties.url + "/" + couchDbProperties.dbName + "/" + user._id + "/" + key
+            ).openConnection()
+            (connection as? HttpURLConnection)?.apply {
+                requestMethod = "GET"
+                setRequestProperty(
+                    "Authorization",
+                    "Basic ${
+                        Base64.getEncoder()
+                            .encodeToString("${couchDbProperties.username}:${couchDbProperties.password}".toByteArray())
+                    }"
+                )
+            }?.inputStream?.readBytes() ?: throw IllegalStateException("Cannot load User from database")
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+
 }
