@@ -49,7 +49,7 @@ class RecipeStories {
     @Autowired
     lateinit var stsService : STSServiceImpl
     @Autowired
-    lateinit var recipeService : RecipeServiceImpl
+    lateinit var recipeService : RecipeV4ServiceImpl
 
     @Value("\${org.taktik.icure.keystore1.ssin}") var ssin : String? = null
     @Value("\${org.taktik.icure.keystore1.nihii}") var nihii : String? = null
@@ -105,16 +105,6 @@ class RecipeStories {
     }
 
     @Test
-    fun prescription_listOpenCreate_ridNotInListBeforeCreate() {
-        prescriptions.forEach { prescription_listOpenCreate_ridNotInListBeforeCreate(it) }
-    }
-
-    @Test
-    fun prescription_createListOpen_ridInList() {
-        prescriptions.forEach { prescription_createListOpen_ridInList(it) }
-    }
-
-    @Test
     fun prescription_createListOpenByPatient_ridInList() {
         prescriptions.forEach { prescription_createListOpenByPatient_ridInList(it) }
     }
@@ -155,11 +145,6 @@ class RecipeStories {
     }
 
     @Test
-    fun prescription_createListRevokeList_revokedNotInOpenPrescriptions() {
-        prescriptions.forEach { prescription_createListRevokeList_revokedNotInOpenPrescriptions(it) }
-    }
-
-    @Test
     fun prescription_createListByPatientsRevokeListByPatients_revokedNotInOpenPrescriptions() {
         prescriptions.forEach { prescription_createListByPatientsRevokeListByPatients_revokedNotInOpenPrescriptions(it) }
     }
@@ -185,23 +170,6 @@ class RecipeStories {
         val createdPrescription1 = createPrescription(prescription)
         val createdPrescription2 = createPrescription(prescription)
         assertThat(createdPrescription1.rid, not(equalTo(createdPrescription2.rid)))
-    }
-
-    fun prescription_listOpenCreate_ridNotInListBeforeCreate(prescription: PrescriptionExample) {
-        val oldOpenPrescriptions = listOpenPrescriptions()
-        val createdPrescription = createPrescription(prescription)
-        val oldRids = oldOpenPrescriptions.map { it.rid }
-        assertThat(oldRids.toString(), oldRids, not(contains(createdPrescription.rid)))
-    }
-
-    fun prescription_createListOpen_ridInList(prescription: PrescriptionExample): Prescription {
-        val createdPrescription = createPrescription(prescription)
-        val openPrescriptions = listOpenPrescriptions()
-        assumeThat("cannot find back ${createdPrescription.rid} in open prescriptions: list is empty", openPrescriptions.size, greaterThan(0))
-        val rids = openPrescriptions.map { it.rid }
-        assumeThat(rids.toString(), rids, contains(createdPrescription.rid))
-        fail("test case currently not working. If you get to this line, it means Recip-E fixed it, so remove it and change the assumeThat() to assertThat()")
-        return createdPrescription
     }
 
     fun prescription_createListOpenByPatient_ridInList(prescription: PrescriptionExample): Prescription {
@@ -253,13 +221,6 @@ class RecipeStories {
         assertThrowsIntegrationModuleException({ getPrescription(createdPrescription.rid) }, "ERR100028")
     }
 
-    fun prescription_createListRevokeList_revokedNotInOpenPrescriptions(prescription: PrescriptionExample) {
-        val createdPrescription = prescription_createListOpen_ridInList(prescription)
-        revokePrescription(createdPrescription.rid)
-        val openPrescriptions = listOpenPrescriptions()
-        assertThat(openPrescriptions.map { it.rid }, not(contains(createdPrescription.rid)))
-    }
-
     fun prescription_createListByPatientsRevokeListByPatients_revokedNotInOpenPrescriptions(prescription: PrescriptionExample) {
         val createdPrescription = prescription_createListOpenByPatient_ridInList(prescription)
         revokePrescription(createdPrescription.rid)
@@ -284,37 +245,33 @@ class RecipeStories {
     // clean API functions
 
     private fun getPrescription(rid: String): Kmehrmessage? {
-        return recipeService.getPrescriptionMessage(keystoreId!!, tokenId!!, "persphysican", nihii!!, ssin!!, "Duchateau", passPhrase!!, rid)
+        return recipeService.getPrescriptionMessage(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, rid)
     }
 
     private fun createPrescription(prescription: PrescriptionExample, notification: String? = null, feedbackRequested: Boolean = false): Prescription {
         val executorId = null
-        val createdPrescription = recipeService.createPrescription(keystoreId!!, tokenId!!, "persphysican", nihii!!, ssin!!, "Duchateau", passPhrase!!, prescription.patient, prescription.hcp, feedbackRequested, prescription.medications, recipeService.inferPrescriptionType(prescription.medications, null), notification, executorId, prescription.deliveryDate)
+        val createdPrescription = recipeService.createPrescription(keystoreId!!, tokenId!!, passPhrase!!, "persphysican", nihii!!, prescription.patient, prescription.hcp, feedbackRequested, prescription.medications, recipeService.inferPrescriptionType(prescription.medications, null), notification, executorId, "1.0", prescription.deliveryDate)
         return createdPrescription
     }
 
-    private fun listOpenPrescriptions(): List<Prescription> {
-        return recipeService.listOpenPrescriptions(keystoreId!!, tokenId!!, "persphysican", nihii!!, ssin!!, "Duchateau", passPhrase!!)
-    }
-
     private fun listOpenPrescriptionsByPatient(patientSsin: String): List<Prescription> {
-        return recipeService.listOpenPrescriptions(keystoreId!!, tokenId!!, "persphysican", nihii!!, ssin!!, "Duchateau", passPhrase!!, patientSsin)
+        return recipeService.listOpenPrescriptions(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, patientSsin)
     }
 
     private fun sendNotification(patientSsin: String, prescriptionId: String, pharmacyId: String, notificationTest: String) {
-        recipeService.sendNotification(keystoreId!!, tokenId!!, "persphysican", nihii!!, ssin!!, "Duchateau", passPhrase!!, patientSsin, pharmacyId, prescriptionId, notificationTest)
+        recipeService.sendNotification(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, patientSsin, pharmacyId, prescriptionId, notificationTest)
     }
 
     fun listFeedbacks(): List<Feedback> {
-        return recipeService.listFeedbacks(keystoreId!!, tokenId!!, "persphysican", nihii!!, ssin!!, "Duchateau", passPhrase!!)
+        return recipeService.listFeedbacks(keystoreId!!, tokenId!!, passPhrase!!)
     }
 
     private fun updateFeedbackFlag(rid: String, feedbackFlag: Boolean) {
-        recipeService.updateFeedbackFlag(keystoreId!!, tokenId!!, "persphysican", nihii!!, ssin!!, "Duchateau", passPhrase!!, rid, feedbackFlag)
+        recipeService.updateFeedbackFlag(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, rid, feedbackFlag)
     }
 
     private fun revokePrescription(rid: String) {
-        recipeService.revokePrescription(keystoreId!!, tokenId!!, "persphysican", nihii!!, ssin!!, "Duchateau", passPhrase!!, rid, "I want to revoke this prescription")
+        recipeService.revokePrescription(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, rid, "I want to revoke this prescription")
     }
 
     // special assertion functions

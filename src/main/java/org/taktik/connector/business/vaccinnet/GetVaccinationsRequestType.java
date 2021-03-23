@@ -4,6 +4,7 @@ package org.taktik.connector.business.vaccinnet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -11,11 +12,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * Service needed to get the vaccination from vaccinnet.
- * 
+ *
  * <p>Java class for GetVaccinationsRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetVaccinationsRequestType">
  *   &lt;complexContent>
@@ -28,9 +29,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetVaccinationsRequestType", propOrder = {
     "patientId",
@@ -47,11 +49,11 @@ public class GetVaccinationsRequestType
 
     /**
      * Gets the value of the patientId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPatientId() {
         return patientId;
@@ -59,11 +61,11 @@ public class GetVaccinationsRequestType
 
     /**
      * Sets the value of the patientId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPatientId(String value) {
         this.patientId = value;
@@ -71,11 +73,11 @@ public class GetVaccinationsRequestType
 
     /**
      * Gets the value of the vaccinationDateSince property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getVaccinationDateSince() {
         return vaccinationDateSince;
@@ -83,11 +85,11 @@ public class GetVaccinationsRequestType
 
     /**
      * Sets the value of the vaccinationDateSince property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setVaccinationDateSince(XMLGregorianCalendar value) {
         this.vaccinationDateSince = value;

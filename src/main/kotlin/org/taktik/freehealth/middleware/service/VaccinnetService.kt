@@ -13,7 +13,7 @@ interface VaccinnetService {
         passPhrase: String,
         patientId: String,
         softwareId: String,
-        vaccinetId: String,
+        vaccinnetId: String,
         since: Long
     ): GetVaccinationsResponseType
 
@@ -23,7 +23,7 @@ interface VaccinnetService {
         passPhrase: String,
         patientId: String,
         softwareId: String,
-        vaccinetId: String,
+        vaccinnetId: String,
         vaccinationId: String
     ): RemoveVaccinationResponseType
 
@@ -33,7 +33,7 @@ interface VaccinnetService {
         passPhrase: String,
         patientId: String,
         softwareId: String,
-        vaccinetId: String,
+        vaccinnetId: String,
         kmehrmessage: Kmehrmessage
     ): AddVaccinationsResponseType
 }

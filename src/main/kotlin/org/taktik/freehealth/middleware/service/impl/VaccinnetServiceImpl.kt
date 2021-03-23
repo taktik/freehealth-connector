@@ -41,7 +41,7 @@ class VaccinnetServiceImpl(private val stsService: STSService) : VaccinnetServic
     private val freehealthVaccinnetService: org.taktik.connector.business.vaccinnet.service.VaccinnetService =
         org.taktik.connector.business.vaccinnet.service.impl.VaccinnetServiceImpl()
 
-    override fun addVaccinations(keystoreId: UUID, tokenId: UUID, passPhrase: String, patientId: String, softwareId: String, vaccinetId: String, kmehrmessage: Kmehrmessage): AddVaccinationsResponseType {
+    override fun addVaccinations(keystoreId: UUID, tokenId: UUID, passPhrase: String, patientId: String, softwareId: String, vaccinnetId: String, kmehrmessage: Kmehrmessage): AddVaccinationsResponseType {
         val marshallerHelper = MarshallerHelper<Kmehrmessage, Kmehrmessage>(Kmehrmessage::class.java, Kmehrmessage::class.java)
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
@@ -56,7 +56,7 @@ class VaccinnetServiceImpl(private val stsService: STSService) : VaccinnetServic
         return freehealthVaccinnetService.addVaccinations(samlToken, addVaccinationsRequest)
     }
 
-    override fun removeVaccination(keystoreId: UUID, tokenId: UUID, passPhrase: String, patientId: String, softwareId: String, vaccinetId: String, vaccinationId: String): RemoveVaccinationResponseType {
+    override fun removeVaccination(keystoreId: UUID, tokenId: UUID, passPhrase: String, patientId: String, softwareId: String, vaccinnetId: String, vaccinationId: String): RemoveVaccinationResponseType {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val removeVaccinationsRequest = RemoveVaccinationRequestType().apply {
@@ -68,7 +68,7 @@ class VaccinnetServiceImpl(private val stsService: STSService) : VaccinnetServic
         return freehealthVaccinnetService.removeVaccination(samlToken, removeVaccinationsRequest)
     }
 
-    override fun getVaccinations(keystoreId: UUID, tokenId: UUID, passPhrase: String, patientId: String, softwareId: String, vaccinetId: String, since: Long): GetVaccinationsResponseType {
+    override fun getVaccinations(keystoreId: UUID, tokenId: UUID, passPhrase: String, patientId: String, softwareId: String, vaccinnetId: String, since: Long): GetVaccinationsResponseType {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val getVaccinationsRequest = GetVaccinationsRequestType().apply {

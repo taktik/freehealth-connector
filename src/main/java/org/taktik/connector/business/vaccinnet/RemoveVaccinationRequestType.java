@@ -4,16 +4,17 @@ package org.taktik.connector.business.vaccinnet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
  * Service needed to remove a vaccination from vaccinnet.
- * 
+ *
  * <p>Java class for RemoveVaccinationRequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RemoveVaccinationRequestType">
  *   &lt;complexContent>
@@ -26,9 +27,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RemoveVaccinationRequestType", propOrder = {
     "patientId",
@@ -45,11 +47,11 @@ public class RemoveVaccinationRequestType
 
     /**
      * Gets the value of the patientId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPatientId() {
         return patientId;
@@ -57,11 +59,11 @@ public class RemoveVaccinationRequestType
 
     /**
      * Sets the value of the patientId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPatientId(String value) {
         this.patientId = value;
@@ -69,11 +71,11 @@ public class RemoveVaccinationRequestType
 
     /**
      * Gets the value of the vaccinationId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVaccinationId() {
         return vaccinationId;
@@ -81,11 +83,11 @@ public class RemoveVaccinationRequestType
 
     /**
      * Sets the value of the vaccinationId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVaccinationId(String value) {
         this.vaccinationId = value;

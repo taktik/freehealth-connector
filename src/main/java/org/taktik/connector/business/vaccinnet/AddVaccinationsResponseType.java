@@ -7,17 +7,18 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 
 /**
  * Service needed to add vaccinations to vaccinnet.
- * 
+ *
  * <p>Java class for AddVaccinationsResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AddVaccinationsResponseType">
  *   &lt;complexContent>
@@ -56,9 +57,10 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AddVaccinationsResponseType", propOrder = {
     "status",
@@ -76,11 +78,11 @@ public class AddVaccinationsResponseType {
 
     /**
      * Gets the value of the status property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StatusType }
-     *     
+     *
      */
     public StatusType getStatus() {
         return status;
@@ -88,11 +90,11 @@ public class AddVaccinationsResponseType {
 
     /**
      * Sets the value of the status property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StatusType }
-     *     
+     *
      */
     public void setStatus(StatusType value) {
         this.status = value;
@@ -100,11 +102,11 @@ public class AddVaccinationsResponseType {
 
     /**
      * Gets the value of the patientId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPatientId() {
         return patientId;
@@ -112,11 +114,11 @@ public class AddVaccinationsResponseType {
 
     /**
      * Sets the value of the patientId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPatientId(String value) {
         this.patientId = value;
@@ -124,25 +126,25 @@ public class AddVaccinationsResponseType {
 
     /**
      * Gets the value of the results property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the results property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResults().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AddVaccinationsResponseType.Results }
-     * 
-     * 
+     *
+     *
      */
     public List<AddVaccinationsResponseType.Results> getResults() {
         if (results == null) {
@@ -154,9 +156,9 @@ public class AddVaccinationsResponseType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -181,8 +183,8 @@ public class AddVaccinationsResponseType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -204,11 +206,11 @@ public class AddVaccinationsResponseType {
 
         /**
          * Gets the value of the kmehrId property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getKmehrId() {
             return kmehrId;
@@ -216,11 +218,11 @@ public class AddVaccinationsResponseType {
 
         /**
          * Sets the value of the kmehrId property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setKmehrId(String value) {
             this.kmehrId = value;
@@ -228,11 +230,11 @@ public class AddVaccinationsResponseType {
 
         /**
          * Gets the value of the status property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link StatusType }
-         *     
+         *
          */
         public StatusType getStatus() {
             return status;
@@ -240,11 +242,11 @@ public class AddVaccinationsResponseType {
 
         /**
          * Sets the value of the status property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link StatusType }
-         *     
+         *
          */
         public void setStatus(StatusType value) {
             this.status = value;
@@ -252,11 +254,11 @@ public class AddVaccinationsResponseType {
 
         /**
          * Gets the value of the vaccinationId property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link AddVaccinationsResponseType.Results.VaccinationId }
-         *     
+         *
          */
         public AddVaccinationsResponseType.Results.VaccinationId getVaccinationId() {
             return vaccinationId;
@@ -264,11 +266,11 @@ public class AddVaccinationsResponseType {
 
         /**
          * Sets the value of the vaccinationId property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link AddVaccinationsResponseType.Results.VaccinationId }
-         *     
+         *
          */
         public void setVaccinationId(AddVaccinationsResponseType.Results.VaccinationId value) {
             this.vaccinationId = value;
@@ -276,11 +278,11 @@ public class AddVaccinationsResponseType {
 
         /**
          * Gets the value of the stocked property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Integer }
-         *     
+         *
          */
         public Integer getStocked() {
             return stocked;
@@ -288,11 +290,11 @@ public class AddVaccinationsResponseType {
 
         /**
          * Sets the value of the stocked property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Integer }
-         *     
+         *
          */
         public void setStocked(Integer value) {
             this.stocked = value;
@@ -301,9 +303,9 @@ public class AddVaccinationsResponseType {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;simpleContent>
@@ -313,8 +315,8 @@ public class AddVaccinationsResponseType {
          *   &lt;/simpleContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -329,11 +331,11 @@ public class AddVaccinationsResponseType {
 
             /**
              * Gets the value of the value property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getValue() {
                 return value;
@@ -341,11 +343,11 @@ public class AddVaccinationsResponseType {
 
             /**
              * Sets the value of the value property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setValue(String value) {
                 this.value = value;
@@ -353,11 +355,11 @@ public class AddVaccinationsResponseType {
 
             /**
              * Gets the value of the source property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getSource() {
                 return source;
@@ -365,11 +367,11 @@ public class AddVaccinationsResponseType {
 
             /**
              * Sets the value of the source property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setSource(String value) {
                 this.source = value;

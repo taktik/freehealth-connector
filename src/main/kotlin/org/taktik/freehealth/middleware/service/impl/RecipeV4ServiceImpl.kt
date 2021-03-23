@@ -284,7 +284,14 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         return service.setVision(samlToken, credential, rid, vision)
     }
 
-    override fun updateFeedbackFlag(keystoreId: UUID, tokenId: UUID, hcpNihii: String, passPhrase: String, rid: String, feedbackAllowed: Boolean): UpdateFeedbackFlagResult {
+    override fun updateFeedbackFlag(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        rid: String,
+        feedbackAllowed: Boolean
+    ): UpdateFeedbackFlagResult {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 

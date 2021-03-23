@@ -4,16 +4,17 @@ package org.taktik.connector.business.vaccinnet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
  * Service needed to remove a vaccination from vaccinnet.
- * 
+ *
  * <p>Java class for RemoveVaccinationResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RemoveVaccinationResponseType">
  *   &lt;complexContent>
@@ -29,9 +30,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RemoveVaccinationResponseType", propOrder = {
     "status",
@@ -49,11 +51,11 @@ public class RemoveVaccinationResponseType {
 
     /**
      * Gets the value of the status property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StatusType }
-     *     
+     *
      */
     public StatusType getStatus() {
         return status;
@@ -61,11 +63,11 @@ public class RemoveVaccinationResponseType {
 
     /**
      * Sets the value of the status property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StatusType }
-     *     
+     *
      */
     public void setStatus(StatusType value) {
         this.status = value;
@@ -73,11 +75,11 @@ public class RemoveVaccinationResponseType {
 
     /**
      * Gets the value of the patientId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPatientId() {
         return patientId;
@@ -85,11 +87,11 @@ public class RemoveVaccinationResponseType {
 
     /**
      * Sets the value of the patientId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPatientId(String value) {
         this.patientId = value;
@@ -97,11 +99,11 @@ public class RemoveVaccinationResponseType {
 
     /**
      * Gets the value of the vaccinationId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVaccinationId() {
         return vaccinationId;
@@ -109,11 +111,11 @@ public class RemoveVaccinationResponseType {
 
     /**
      * Sets the value of the vaccinationId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVaccinationId(String value) {
         this.vaccinationId = value;

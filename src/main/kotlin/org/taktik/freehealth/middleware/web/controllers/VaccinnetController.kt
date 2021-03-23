@@ -42,7 +42,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/vaccinnet")
-class VaccinetController(val vaccinnetService: VaccinnetService) {
+class VaccinnetController(val vaccinnetService: VaccinnetService) {
     @GetMapping("/{patientId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getVaccinations(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -50,9 +50,9 @@ class VaccinetController(val vaccinnetService: VaccinnetService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable patientId: String,
         @RequestParam softwareId: String,
-        @RequestParam vaccinetId: String,
+        @RequestParam vaccinnetId: String,
         @RequestParam since: Long
-    ) = vaccinnetService.getVaccinations(keystoreId, tokenId, passPhrase, patientId, softwareId, vaccinetId, since)
+    ) = vaccinnetService.getVaccinations(keystoreId, tokenId, passPhrase, patientId, softwareId, vaccinnetId, since)
 
     @DeleteMapping("/{patientId}/{vaccinationId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun removeVaccination(
@@ -62,8 +62,8 @@ class VaccinetController(val vaccinnetService: VaccinnetService) {
         @PathVariable patientId: String,
         @PathVariable vaccinationId: String,
         @RequestParam softwareId: String,
-        @RequestParam vaccinetId: String
-    ) = vaccinnetService.removeVaccination(keystoreId, tokenId, passPhrase, patientId, softwareId, vaccinetId, vaccinationId)
+        @RequestParam vaccinnetId: String
+    ) = vaccinnetService.removeVaccination(keystoreId, tokenId, passPhrase, patientId, softwareId, vaccinnetId, vaccinationId)
 
     @PostMapping("/{patientId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getVaccinations(
@@ -72,7 +72,7 @@ class VaccinetController(val vaccinnetService: VaccinnetService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable patientId: String,
         @RequestParam softwareId: String,
-        @RequestParam vaccinetId: String,
+        @RequestParam vaccinnetId: String,
         @RequestBody kmehrmessage: Kmehrmessage
-    ) = vaccinnetService.addVaccinations(keystoreId, tokenId, passPhrase, patientId, softwareId, vaccinetId, kmehrmessage)
+    ) = vaccinnetService.addVaccinations(keystoreId, tokenId, passPhrase, patientId, softwareId, vaccinnetId, kmehrmessage)
 }

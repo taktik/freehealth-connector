@@ -35,7 +35,7 @@ object ServiceFactory {
         setEndpoint(
             config.getProperty(
                 "endpoint.vaccinnet.vaccination.v2",
-                "\$uddi{uddi:vaccinnet-vlanderen-be:business:vacination:v2}"
+                "https://tfe.kindengezin.be/VaccinnetUPL/wupl/VaccinationService-2_1"
             )
         )
         setCredential(token, TokenType.SAML)

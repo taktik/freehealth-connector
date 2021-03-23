@@ -4,17 +4,18 @@ package org.taktik.connector.business.vaccinnet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 
 /**
  * Service needed to get vaccinations from vaccinnet.
- * 
+ *
  * <p>Java class for GetVaccinationsResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetVaccinationsResponseType">
  *   &lt;complexContent>
@@ -37,9 +38,10 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetVaccinationsResponseType", propOrder = {
     "status",
@@ -57,11 +59,11 @@ public class GetVaccinationsResponseType {
 
     /**
      * Gets the value of the status property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StatusType }
-     *     
+     *
      */
     public StatusType getStatus() {
         return status;
@@ -69,11 +71,11 @@ public class GetVaccinationsResponseType {
 
     /**
      * Sets the value of the status property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StatusType }
-     *     
+     *
      */
     public void setStatus(StatusType value) {
         this.status = value;
@@ -81,11 +83,11 @@ public class GetVaccinationsResponseType {
 
     /**
      * Gets the value of the patientId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPatientId() {
         return patientId;
@@ -93,11 +95,11 @@ public class GetVaccinationsResponseType {
 
     /**
      * Sets the value of the patientId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPatientId(String value) {
         this.patientId = value;
@@ -105,11 +107,11 @@ public class GetVaccinationsResponseType {
 
     /**
      * Gets the value of the base64EncodedKmehr property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GetVaccinationsResponseType.Base64EncodedKmehr }
-     *     
+     *
      */
     public GetVaccinationsResponseType.Base64EncodedKmehr getBase64EncodedKmehr() {
         return base64EncodedKmehr;
@@ -117,11 +119,11 @@ public class GetVaccinationsResponseType {
 
     /**
      * Sets the value of the base64EncodedKmehr property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GetVaccinationsResponseType.Base64EncodedKmehr }
-     *     
+     *
      */
     public void setBase64EncodedKmehr(GetVaccinationsResponseType.Base64EncodedKmehr value) {
         this.base64EncodedKmehr = value;
@@ -130,9 +132,9 @@ public class GetVaccinationsResponseType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;simpleContent>
@@ -141,8 +143,8 @@ public class GetVaccinationsResponseType {
      *   &lt;/simpleContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -155,7 +157,7 @@ public class GetVaccinationsResponseType {
 
         /**
          * Gets the value of the value property.
-         * 
+         *
          * @return
          *     possible object is
          *     byte[]
@@ -166,7 +168,7 @@ public class GetVaccinationsResponseType {
 
         /**
          * Sets the value of the value property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     byte[]

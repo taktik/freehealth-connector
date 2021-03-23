@@ -30,7 +30,7 @@ class InferPrescTypeTest {
     @Autowired
     lateinit var stsService : STSServiceImpl
     @Autowired
-    lateinit var recipeService : RecipeServiceImpl
+    lateinit var recipeService : RecipeV4ServiceImpl
 
     @Value("\${org.taktik.icure.keystore1.ssin}") var ssin : String? = null
     @Value("\${org.taktik.icure.keystore1.nihii}") var nihii : String? = null
