@@ -211,8 +211,8 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         recipeV4Service.updateFeedbackFlag(
             keystoreId = keystoreId,
             tokenId = tokenId,
-            hcpNihii = hcpNihii,
             passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
             rid = rid,
             feedbackAllowed = feedbackFlag
         )

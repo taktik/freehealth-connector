@@ -31,7 +31,7 @@ public class NoRetryInvokeStrategy extends AbstractWsSender implements InvokeStr
    private boolean handleException(InvokeStrategyContext ctx, Exception e) {
       Throwable reason = ExceptionUtils.getRootCause(e);
       LOG.error("Cannot send SOAP message. Reason [" + reason + "]", e);
-      ctx.setException(new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ExceptionUtils.getRootCause(e), new Object[]{ExceptionUtils.getRootCauseMessage(e)}));
+      ctx.setException(new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ExceptionUtils.getRootCause(e), ExceptionUtils.getRootCauseMessage(e)));
       return false;
    }
 }

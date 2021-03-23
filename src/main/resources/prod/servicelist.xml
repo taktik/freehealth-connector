@@ -89,6 +89,9 @@
         <Endpoint Order="0" Status="ACTIVE">https://services.ehealth.fgov.be/Recip-e/v4/Prescriber</Endpoint>
         <Endpoint Order="1" Status="INACTIVE">https://services.ehealth2.be/Recip-e/v4/Prescriber</Endpoint>
     </Service>
+    <Service Id="uddi:vaccinnet-vlanderen-be:business:vacination:v2" Name="Vaccinnet v2">
+        <Endpoint Order="0" Status="ACTIVE">https://tfe.kindengezin.be/VaccinnetUPL/wupl/VaccinationService-2_1</Endpoint>
+    </Service>
     <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="xmldsig-e186df88-a5d9-4524-ae3e-d8dd33ecec6b">
         <ds:SignedInfo>
             <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>

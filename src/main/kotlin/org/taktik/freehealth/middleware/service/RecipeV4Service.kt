@@ -59,13 +59,13 @@ interface RecipeV4Service {
         executorId: String?,
         samVersion: String?,
         deliveryDate: LocalDateTime?,
-        vendorName: String?,
-        packageName: String?,
-        packageVersion: String?,
-        vendorEmail: String?,
-        vendorPhone: String?,
-        vision: String?,
-        expirationDate: LocalDateTime?
+        vendorName: String? = null,
+        packageName: String? = null,
+        packageVersion: String? = null,
+        vendorEmail: String? = null,
+        vendorPhone: String? = null,
+        vision: String? = null,
+        expirationDate: LocalDateTime? = null
     ): Prescription
 
     fun listOpenPrescriptions(
@@ -130,8 +130,8 @@ interface RecipeV4Service {
     fun updateFeedbackFlag(
         keystoreId: UUID,
         tokenId: UUID,
-        hcpNihii: String,
         passPhrase: String,
+        hcpNihii: String,
         rid: String,
         feedbackAllowed: Boolean
     ): UpdateFeedbackFlagResult
