@@ -79,7 +79,7 @@ class SSOServiceImpl(private val stsService: STSService, private val userDetails
         val orgKeystore = stsService.getKeyStore(orgKeystoreUuid, orgKeystorePassword) ?:
                             userDetailsService.getKeystore(principal, if (isAcceptance) "org-keystore-acc" else "org-keystore-prod")?.let { keyStore ->
                                 stsService.uploadKeystore(keyStore).let {
-                                    if (it != orgKeystoreUuid) throw java.lang.IllegalStateException("Mismetch in keystore UUID")
+                                    if (it != orgKeystoreUuid) throw java.lang.IllegalStateException("Mismatch in keystore UUID")
                                     stsService.getKeyStore(it, orgKeystorePassword)
                                 }
                             } ?: throw IllegalStateException("Missing org keystore")
