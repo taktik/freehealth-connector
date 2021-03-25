@@ -975,7 +975,10 @@ class EattestServiceImpl(private val stsService: STSService, private val keyDepo
             return "item[${xpath.evaluate("ns1:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
         }
         if (localName == "cd" && node is Element) {
-            return "cd[${node.getAttribute("S") ?: node.getAttribute("SL")}]"
+            if (node.getAttribute("SL").isNotEmpty()) {
+                return "cd[${node.getAttribute("SL")}]"
+            }
+            return "cd[${node.getAttribute("S")}]"
         }
         return localName
     }
