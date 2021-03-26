@@ -1,0 +1,69 @@
+<kmehrmessage>
+    <header>
+        <standard>
+            <cd S="CD-STANDARD" SV="1.0">20120701</cd>
+        </standard>
+        <id S="ID-KMEHR" SV="1.0">07142016083331.1</id>
+        <date>2021-03-25</date>
+        <time>16:33:31</time>
+        <sender>
+            <hcparty>
+                <id S="ID-HCPARTY" SV="1.0">14700250004</id>
+                <cd S="CD-HCPARTY" SV="1.0">persphysician</cd>
+                <name>Veerle Piessens</name>
+            </hcparty>
+        </sender>
+        <recipient>
+            <hcparty>
+                <cd S="CD-HCPARTY" SV="1.0">orgpublichealth</cd>
+                <name>VAZG</name>
+            </hcparty>
+        </recipient>
+    </header>
+    <folder>
+        <id S="ID-KMEHR" SV="1.0">1</id>
+        <patient>
+            <id S="ID-PATIENT" SV="1.0">72022102793</id>
+            <firstname>Sam</firstname>
+            <familyname>Jocqué</familyname>
+            <birthdate>
+                <date>1972-02-21</date>
+            </birthdate>
+            <sex>
+                <cd S="CD-SEX" SV="1.0">male</cd>
+            </sex>
+        </patient>
+        <transaction>
+            <id S="ID-KMEHR" SV="1.0">1</id>
+            <cd S="CD-TRANSACTION" SV="1.0"/>
+            <date>2021-03-25</date>
+            <time>16:33:31</time>
+            <author>
+                <hcparty>
+                    <id S="ID-HCPARTY" SV="1.0">14700250004</id>
+                    <cd S="CD-HCPARTY" SV="1.0">persphysician</cd>
+                    <name>Veerle Piessens</name>
+                </hcparty>
+            </author>
+            <iscomplete>true</iscomplete>
+            <isvalidated>true</isvalidated>
+            <item>
+                <id S="ID-KMEHR" SV="1.0">1</id>
+                <cd S="CD-ITEM" SV="1.0">vaccine</cd>
+                <content>
+                    <medicinalproduct>
+                        <intendedcd S="CD-DRUG-CNK" SV="1.0">1665363</intendedcd>
+                        <intendedname>INFANRIX HEXA DOS 1 SUSP INJ IM 0,5</intendedname>
+                    </medicinalproduct>
+                </content>
+                <beginmoment>
+                    <date>2021-03-25</date>
+                </beginmoment>
+                <quantity>
+                    <decimal>1</decimal>
+                </quantity>
+                <batch>LTNR123</batch>
+            </item>
+        </transaction>
+    </folder>
+</kmehrmessage>
