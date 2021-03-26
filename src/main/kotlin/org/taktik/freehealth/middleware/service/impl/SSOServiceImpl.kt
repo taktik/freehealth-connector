@@ -85,7 +85,7 @@ class SSOServiceImpl(private val stsService: STSService, private val userDetails
                                 }
                             } ?: throw IllegalStateException("Missing org keystore")
 
-        val key = orgKeystore.getKey("authentication", passPhrase.toCharArray())
+        val key = orgKeystore.getKey("authentication", orgKeystorePassword.toCharArray())
 
         val tokenRequest = TokenRequest(
             URI(if (isAcceptance) "https://api-acpt.ehealth.fgov.be/auth/realms/M2M/protocol/openid-connect/token" else "https://api.ehealth.fgov.be/auth/realms/M2M/protocol/openid-connect/token"),
