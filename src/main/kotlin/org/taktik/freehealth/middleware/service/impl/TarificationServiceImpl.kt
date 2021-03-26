@@ -377,7 +377,10 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             return "item[${xpath.evaluate("ns3:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
         }
         if (localName == "cd" && node is Element) {
-            return "cd[${node.getAttribute("S") ?: node.getAttribute("SL")}]"
+            if (node.getAttribute("SL")?.isNotEmpty() == true) {
+                return "cd[${node.getAttribute("SL")}]"
+            }
+            return "cd[${node.getAttribute("S")}]"
         }
         return localName
     }
