@@ -1402,19 +1402,14 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
             override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
                 if (namespaceURI == "http://www.ehealth.fgov.be/standards/kmehr/schema/v1") listOf("ns1").iterator() else listOf<String>().iterator()
         }
-        if (localName == "transaction") {
-            return "transaction[${xpath.evaluate("ns1:cd[@S=\"CD-TRANSACTION-MYCARENET\"]", node)}]"
-        }
-        if (localName == "item") {
-            return "item[${xpath.evaluate("ns1:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
-        }
-        if (localName == "cd" && node is Element) {
-            if (node.getAttribute("SL")?.isNotEmpty() == true) {
-                return "cd[${node.getAttribute("SL")}]"
+        return when {
+            localName == "transaction" -> "transaction[${xpath.evaluate("ns1:cd[@S=\"CD-TRANSACTION-MYCARENET\"]", node)}]"
+            localName == "item" -> "item[${xpath.evaluate("ns1:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
+            localName == "cd" && node is Element -> {
+                if (node.getAttribute("SL")?.isNotEmpty() == true) "cd[${node.getAttribute("SL")}]" else "cd[${node.getAttribute("S")}]"
             }
-            return "cd[${node.getAttribute("S")}]"
+            else -> localName
         }
-        return localName
     }
 
     private fun handleEncryption(

@@ -1368,16 +1368,12 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         /*if (localName == "transaction") {
             return "transaction[${xpath.evaluate("ns1:cd[@S=\"CD-TRANSACTION-MYCARENET\"]", node)}]"
         }*/
-        if (localName == "item") {
-            return "item[${xpath.evaluate("ns1:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
-        }
-
-        if (localName == "cd" && node is Element) {
-            if (node.getAttribute("SL")?.isNotEmpty() == true) {
-                return "cd[${node.getAttribute("SL")}]"
+        return when {
+            localName == "item" -> "item[${xpath.evaluate("ns1:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
+            localName == "cd" && node is Element -> {
+                if (node.getAttribute("SL")?.isNotEmpty() == true) "cd[${node.getAttribute("SL")}]" else "cd[${node.getAttribute("S")}]"
             }
-            return "cd[${node.getAttribute("S")}]"
+            else -> localName
         }
-        return localName
     }
 }
