@@ -20,7 +20,6 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -31,12 +30,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.taktik.freehealth.middleware.dto.ehbox.AltKeystoresList
-import org.taktik.freehealth.middleware.dto.ehbox.BoxInfo
-import org.taktik.freehealth.middleware.dto.ehbox.DocumentMessage
-import org.taktik.freehealth.middleware.dto.ehbox.ErrorMessage
-import org.taktik.freehealth.middleware.dto.ehbox.Message
-import org.taktik.freehealth.middleware.service.EhboxService
+import org.taktik.connector.business.domain.vaccinnet.VaccineInjection
 import org.taktik.freehealth.middleware.service.VaccinnetService
 import java.util.*
 
@@ -71,8 +65,14 @@ class VaccinnetController(val vaccinnetService: VaccinnetService) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable patientId: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpName: String,
+        @RequestParam hcpQuality: String,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientDateOfBirth: Long,
         @RequestParam softwareId: String,
         @RequestParam vaccinnetId: String,
-        @RequestBody kmehrmessage: Kmehrmessage
-    ) = vaccinnetService.addVaccinations(keystoreId, tokenId, passPhrase, patientId, softwareId, vaccinnetId, kmehrmessage)
+        @RequestBody injections: List<VaccineInjection>
+    ) = vaccinnetService.addVaccinations(keystoreId, tokenId, passPhrase, hcpNihii, hcpName, hcpQuality, patientId, patientFirstName, patientLastName, patientDateOfBirth, softwareId, vaccinnetId, injections)
 }

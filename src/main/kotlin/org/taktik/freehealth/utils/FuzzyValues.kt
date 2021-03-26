@@ -199,6 +199,27 @@ object FuzzyValues {
         }
     }
 
+    fun XMLGregorianCalendarImpl?.justDate() = this?.let { XMLGregorianCalendarImpl().apply {
+        this.year = it.year
+        this.month = it.month
+        this.day = it.day
+        this.timezone = DatatypeConstants.FIELD_UNDEFINED
+        this.hour = DatatypeConstants.FIELD_UNDEFINED
+        this.minute = DatatypeConstants.FIELD_UNDEFINED
+        this.second = DatatypeConstants.FIELD_UNDEFINED
+        this.millisecond = DatatypeConstants.FIELD_UNDEFINED
+    } }
+
+    fun XMLGregorianCalendarImpl?.justTime() = this?.let { XMLGregorianCalendarImpl().apply {
+        this.year = DatatypeConstants.FIELD_UNDEFINED
+        this.month = DatatypeConstants.FIELD_UNDEFINED
+        this.day = DatatypeConstants.FIELD_UNDEFINED
+        this.timezone = DatatypeConstants.FIELD_UNDEFINED
+        this.hour = it.hour
+        this.minute = it.minute
+        this.second = it.second
+        this.millisecond = DatatypeConstants.FIELD_UNDEFINED
+    } }
 
     fun getFuzzyDate(instant: Instant, zoneId: ZoneId = ZoneId.systemDefault(), precision: TemporalUnit = ChronoUnit.DAYS): Long {
         return getFuzzyDate(LocalDateTime.ofInstant(instant, zoneId), precision)

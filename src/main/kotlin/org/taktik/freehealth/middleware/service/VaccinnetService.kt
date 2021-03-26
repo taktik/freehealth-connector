@@ -1,6 +1,6 @@
 package org.taktik.freehealth.middleware.service
 
-import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+import org.taktik.connector.business.domain.vaccinnet.VaccineInjection
 import org.taktik.connector.business.vaccinnet.AddVaccinationsResponseType
 import org.taktik.connector.business.vaccinnet.GetVaccinationsResponseType
 import org.taktik.connector.business.vaccinnet.RemoveVaccinationResponseType
@@ -31,9 +31,15 @@ interface VaccinnetService {
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpNihii: String,
+        hcpName: String,
+        hcpQuality: String,
         patientId: String,
+        patientFirstName: String,
+        patientLastName: String,
+        patientDateOfBirth: Long,
         softwareId: String,
         vaccinnetId: String,
-        kmehrmessage: Kmehrmessage
+        injections: List<VaccineInjection>
     ): AddVaccinationsResponseType
 }
