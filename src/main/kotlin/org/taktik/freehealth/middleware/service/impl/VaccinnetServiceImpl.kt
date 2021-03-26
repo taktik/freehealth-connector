@@ -105,26 +105,26 @@ class VaccinnetServiceImpl(private val stsService: STSService) : VaccinnetServic
                         standard = StandardType().apply {
                             cd = CDSTANDARD().apply { value = "20120701" }
                         }
-                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1" ; value = "${hcpNihii}.${System.currentTimeMillis()}" })
+                        ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; value = "${hcpNihii}.${System.currentTimeMillis()}" })
                         date = now.justDate()
                         time = now.justTime()
                         sender = SenderType().apply {
                             hcparties.add(HcpartyType().apply {
-                                ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
-                                cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY;sv = "1.0"; value = hcpQuality })
+                                ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; value = hcpNihii })
+                                cds.add(CDHCPARTY().apply { s(CDHCPARTYschemes.CD_HCPARTY);  value = hcpQuality })
                                 name = hcpName
                             })
                         }
                         recipients.add(RecipientType().apply {
                             hcparties.add(HcpartyType().apply {
-                                cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.0"; value = "orgpublichealth" })
+                                cds.add(CDHCPARTY().apply { s(CDHCPARTYschemes.CD_HCPARTY);  value = "orgpublichealth" })
                                 name = "VAZG"
                             })
                         })
                     }
                     folders.add(
                         FolderType().apply {
-                            ids.add(IDKMEHR().apply { s= IDKMEHRschemes.ID_KMEHR; sv="1"; value="1" })
+                            ids.add(IDKMEHR().apply { s= IDKMEHRschemes.ID_KMEHR; value="1" })
                             patient = PersonType().apply{
                                 ids.add(IDPATIENT().apply{s= IDPATIENTschemes.ID_PATIENT; sv="1.0"; value=patientId})
                                 firstnames.add(patientFirstName)
@@ -134,7 +134,7 @@ class VaccinnetServiceImpl(private val stsService: STSService) : VaccinnetServic
                             }
                             transactions.add(
                                 TransactionType().apply {
-                                    ids.add(IDKMEHR().apply { s= IDKMEHRschemes.ID_KMEHR; sv="1"; value="1" })
+                                    ids.add(IDKMEHR().apply { s= IDKMEHRschemes.ID_KMEHR; value="1" })
                                     cds.add(CDTRANSACTION().apply { s(CDTRANSACTIONschemes.CD_TRANSACTION); value = "vaccination" /* TODO validate with our vaccinnet friend */ })
                                     date = now.justDate()
                                     time = now.justTime()
