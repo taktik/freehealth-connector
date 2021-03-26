@@ -274,12 +274,6 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                 }
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
                 this.issueInstant = DateTime()
-                this.routing = RoutingType().apply {
-                    careReceiver = CareReceiverIdType().apply {
-                        ssin = patientSsin
-                    }
-                    this.referenceDate = refDateTime
-                }
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
                 this.xades = BlobUtil.generateXades(credential, this.detail, "eattest")
             }
