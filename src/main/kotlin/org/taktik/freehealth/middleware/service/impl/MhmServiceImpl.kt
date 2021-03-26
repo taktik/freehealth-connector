@@ -1373,7 +1373,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         }
 
         if (localName == "cd" && node is Element) {
-            if (node.getAttribute("SL").isNotEmpty()) {
+            if (node.getAttribute("SL")?.isNotEmpty() == true) {
                 return "cd[${node.getAttribute("SL")}]"
             }
             return "cd[${node.getAttribute("S")}]"
