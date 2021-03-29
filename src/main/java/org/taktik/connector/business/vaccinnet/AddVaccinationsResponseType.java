@@ -70,7 +70,7 @@ import javax.xml.bind.annotation.XmlValue;
 public class AddVaccinationsResponseType {
 
     @XmlElement(name = "Status", required = true)
-    protected StatusType status;
+    protected VaccinationStatusType status;
     @XmlElement(name = "PatientId")
     protected String patientId;
     @XmlElement(name = "Results")
@@ -81,10 +81,10 @@ public class AddVaccinationsResponseType {
      *
      * @return
      *     possible object is
-     *     {@link StatusType }
+     *     {@link VaccinationStatusType }
      *
      */
-    public StatusType getStatus() {
+    public VaccinationStatusType getStatus() {
         return status;
     }
 
@@ -93,10 +93,10 @@ public class AddVaccinationsResponseType {
      *
      * @param value
      *     allowed object is
-     *     {@link StatusType }
+     *     {@link VaccinationStatusType }
      *
      */
-    public void setStatus(StatusType value) {
+    public void setStatus(VaccinationStatusType value) {
         this.status = value;
     }
 
@@ -198,7 +198,7 @@ public class AddVaccinationsResponseType {
         @XmlElement(name = "KmehrId", required = true)
         protected String kmehrId;
         @XmlElement(name = "Status")
-        protected StatusType status;
+        protected VaccinationStatusType status;
         @XmlElement(name = "VaccinationId")
         protected AddVaccinationsResponseType.Results.VaccinationId vaccinationId;
         @XmlElement(name = "Stocked")
@@ -233,10 +233,10 @@ public class AddVaccinationsResponseType {
          *
          * @return
          *     possible object is
-         *     {@link StatusType }
+         *     {@link VaccinationStatusType }
          *
          */
-        public StatusType getStatus() {
+        public VaccinationStatusType getStatus() {
             return status;
         }
 
@@ -245,10 +245,10 @@ public class AddVaccinationsResponseType {
          *
          * @param value
          *     allowed object is
-         *     {@link StatusType }
+         *     {@link VaccinationStatusType }
          *
          */
-        public void setStatus(StatusType value) {
+        public void setStatus(VaccinationStatusType value) {
             this.status = value;
         }
 

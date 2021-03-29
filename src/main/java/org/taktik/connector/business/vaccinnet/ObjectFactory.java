@@ -8,18 +8,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the org.taktik.connector.business.vaccinnet package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the org.taktik.connector.business.vaccinnet package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -33,14 +33,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.taktik.connector.business.vaccinnet
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link AddVaccinationsResponseType }
-     * 
+     *
      */
     public AddVaccinationsResponseType createAddVaccinationsResponseType() {
         return new AddVaccinationsResponseType();
@@ -48,7 +48,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AddVaccinationsResponseType.Results }
-     * 
+     *
      */
     public AddVaccinationsResponseType.Results createAddVaccinationsResponseTypeResults() {
         return new AddVaccinationsResponseType.Results();
@@ -56,7 +56,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AddVaccinationsRequestType }
-     * 
+     *
      */
     public AddVaccinationsRequestType createAddVaccinationsRequestType() {
         return new AddVaccinationsRequestType();
@@ -64,7 +64,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetVaccinationsResponseType }
-     * 
+     *
      */
     public GetVaccinationsResponseType createGetVaccinationsResponseType() {
         return new GetVaccinationsResponseType();
@@ -72,7 +72,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RemoveVaccinationResponseType }
-     * 
+     *
      */
     public RemoveVaccinationResponseType createRemoveVaccinationResponseType() {
         return new RemoveVaccinationResponseType();
@@ -80,7 +80,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetVaccinationsRequestType }
-     * 
+     *
      */
     public GetVaccinationsRequestType createGetVaccinationsRequestType() {
         return new GetVaccinationsRequestType();
@@ -88,23 +88,23 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RemoveVaccinationRequestType }
-     * 
+     *
      */
     public RemoveVaccinationRequestType createRemoveVaccinationRequestType() {
         return new RemoveVaccinationRequestType();
     }
 
     /**
-     * Create an instance of {@link StatusType }
-     * 
+     * Create an instance of {@link VaccinationStatusType }
+     *
      */
-    public StatusType createStatusType() {
-        return new StatusType();
+    public VaccinationStatusType createStatusType() {
+        return new VaccinationStatusType();
     }
 
     /**
      * Create an instance of {@link RequestType }
-     * 
+     *
      */
     public RequestType createRequestType() {
         return new RequestType();
@@ -112,7 +112,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AddVaccinationsResponseType.Results.VaccinationId }
-     * 
+     *
      */
     public AddVaccinationsResponseType.Results.VaccinationId createAddVaccinationsResponseTypeResultsVaccinationId() {
         return new AddVaccinationsResponseType.Results.VaccinationId();
@@ -120,7 +120,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AddVaccinationsRequestType.Base64EncodedKmehrmessage }
-     * 
+     *
      */
     public AddVaccinationsRequestType.Base64EncodedKmehrmessage createAddVaccinationsRequestTypeBase64EncodedKmehrmessage() {
         return new AddVaccinationsRequestType.Base64EncodedKmehrmessage();
@@ -128,7 +128,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetVaccinationsResponseType.Base64EncodedKmehr }
-     * 
+     *
      */
     public GetVaccinationsResponseType.Base64EncodedKmehr createGetVaccinationsResponseTypeBase64EncodedKmehr() {
         return new GetVaccinationsResponseType.Base64EncodedKmehr();
@@ -136,7 +136,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RemoveVaccinationRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.vaccinnet.be/VaccinnetUPL/wupl/VaccinationService/V21", name = "RemoveVaccinationRequest")
     public JAXBElement<RemoveVaccinationRequestType> createRemoveVaccinationRequest(RemoveVaccinationRequestType value) {
@@ -145,7 +145,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetVaccinationsResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.vaccinnet.be/VaccinnetUPL/wupl/VaccinationService/V21", name = "GetVaccinationsResponse")
     public JAXBElement<GetVaccinationsResponseType> createGetVaccinationsResponse(GetVaccinationsResponseType value) {
@@ -154,7 +154,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AddVaccinationsResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.vaccinnet.be/VaccinnetUPL/wupl/VaccinationService/V21", name = "AddVaccinationsResponse")
     public JAXBElement<AddVaccinationsResponseType> createAddVaccinationsResponse(AddVaccinationsResponseType value) {
@@ -163,7 +163,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AddVaccinationsRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.vaccinnet.be/VaccinnetUPL/wupl/VaccinationService/V21", name = "AddVaccinationsRequest")
     public JAXBElement<AddVaccinationsRequestType> createAddVaccinationsRequest(AddVaccinationsRequestType value) {
@@ -172,7 +172,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RemoveVaccinationResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.vaccinnet.be/VaccinnetUPL/wupl/VaccinationService/V21", name = "RemoveVaccinationResponse")
     public JAXBElement<RemoveVaccinationResponseType> createRemoveVaccinationResponse(RemoveVaccinationResponseType value) {
@@ -181,7 +181,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetVaccinationsRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.vaccinnet.be/VaccinnetUPL/wupl/VaccinationService/V21", name = "GetVaccinationsRequest")
     public JAXBElement<GetVaccinationsRequestType> createGetVaccinationsRequest(GetVaccinationsRequestType value) {

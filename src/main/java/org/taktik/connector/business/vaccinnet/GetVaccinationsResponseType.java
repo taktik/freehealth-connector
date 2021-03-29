@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlValue;
 public class GetVaccinationsResponseType {
 
     @XmlElement(name = "Status", required = true)
-    protected StatusType status;
+    protected VaccinationStatusType status;
     @XmlElement(name = "PatientId")
     protected String patientId;
     @XmlElement(name = "Base64EncodedKmehr")
@@ -62,10 +62,10 @@ public class GetVaccinationsResponseType {
      *
      * @return
      *     possible object is
-     *     {@link StatusType }
+     *     {@link VaccinationStatusType }
      *
      */
-    public StatusType getStatus() {
+    public VaccinationStatusType getStatus() {
         return status;
     }
 
@@ -74,10 +74,10 @@ public class GetVaccinationsResponseType {
      *
      * @param value
      *     allowed object is
-     *     {@link StatusType }
+     *     {@link VaccinationStatusType }
      *
      */
-    public void setStatus(StatusType value) {
+    public void setStatus(VaccinationStatusType value) {
         this.status = value;
     }
 
