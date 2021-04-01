@@ -54,7 +54,7 @@ public class CDHEADING
     @XmlAttribute(name = "S", required = true)
     protected CDHEADINGschemes s;
     @XmlAttribute(name = "SV", required = true)
-    protected String sv = "1.0";
+    protected String sv = "1.2";
     @XmlAttribute(name = "SL")
     protected String sl;
     @XmlAttribute(name = "DN")
