@@ -1,0 +1,5 @@
+be.ehealth.businessconnector.chapterIV.builders.impl.CommonBuilderImpl
+be.ehealth.businessconnector.chapterIV.builders.impl.ConsultationBuilderImpl
+be.ehealth.businessconnector.chapterIV.builders.impl.GenericKmehrBuilder
+be.ehealth.businessconnector.chapterIV.builders.impl.ResponseBuilderImpl
+be.ehealth.businessconnector.chapterIV.validators.impl.Chapter4XmlValidatorImpl

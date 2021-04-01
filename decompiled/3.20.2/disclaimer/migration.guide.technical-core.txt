@@ -1,0 +1,53 @@
+****************************************************
+* eHealth Technical Connector Core MIGRATION GUIDE *
+****************************************************
+3.4.0-beta-9 release
+    . properties started with timestamp.signature.cert.alias are deprecated and not longer used.
+    . the property environment should be added so the uddi props can correctly be resolved
+        -- BEGIN extract ---
+           environment=acc
+        -- END extract ---    
+    . Update the following properties if you want to use the UDDI feature
+        -- BEGIN extract ---
+           endpoint.etk=$uddi{uddi:ehealth-fgov-be:business:etkdepot:v1}
+           endpoint.kgss=$uddi{uddi:ehealth-fgov-be:business:kgss:v1}
+           endpoint.seals.v1=$uddi{uddi:ehealth-fgov-be:business:seals:v1}
+           endpoint.ts.consult=$uddi{uddi:ehealth-fgov-be:business:timestampconsult:v2}
+           endpoint.ts.authority=$uddi{uddi:ehealth-fgov-be:business:timestampauthority:v2}
+           endpoint.idsupport.v2=$uddi{uddi:ehealth-fgov-be:business:idsupport:v2}
+        -- END extract ---    
+        
+3.4.0-beta-8 release
+    . N/A
+
+3.4.0-beta-7 release
+    . N/A
+    
+3.4.0-beta-6 release
+    . N/A
+    
+3.4.0-beta-5 release
+    . N/A
+
+3.4.0-beta-4 release
+    . N/A
+
+3.4.0-beta-3 release
+    . update the following keystores in your project in
+                    config\P12\${env}\truststore.jks
+3.4.0-beta-2 release
+    . N/A
+
+3.4.0-beta-1 release
+    . N/A
+
+3.4.0-beta-0 release
+    . update the following keystores in your project in
+                    config\P12\${env}\caCertificateKeystore.jks
+                    config\P12\${env}\truststore.jks
+                    config\P12\${env}\tsacertificate.jks
+    . update the following properties in your configuration file
+        -- BEGIN extract ---
+            endpoint.sts=https://services-acpt.ehealth.fgov.be/IAM/Saml11TokenService/Legacy/v1
+            endpoint.etk=https://services-acpt.ehealth.fgov.be/EtkDepot/v1
+        -- END extract ---

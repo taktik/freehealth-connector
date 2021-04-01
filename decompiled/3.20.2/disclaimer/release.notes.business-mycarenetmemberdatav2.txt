@@ -1,0 +1,12 @@
+**********************************************************
+* eHealth Business Mycarenet Member Data RELEASE NOTES   *
+**********************************************************
+3.19.1 release (april 2020)
+  . improvement         added new target groups support (clinical psychologist + clinical orthopedagogist)
+
+3.19.0 release (april 2020)
+ . internal release
+
+3.18.0 release (october 2019)
+  . Initial release
+  

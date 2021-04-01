@@ -449,6 +449,7 @@ public final class ConnectorIOUtils {
             File tempFile = new File(tempDirectory, name);
             if (create) {
                try {
+                  tempFile.getParentFile().mkdirs();
                   if (tempFile.createNewFile()) {
                      return tempFile;
                   }

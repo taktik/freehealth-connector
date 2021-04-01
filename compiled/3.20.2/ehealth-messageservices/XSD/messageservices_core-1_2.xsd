@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:cd="http://www.ehealth.fgov.be/standards/kmehr/cd/v1"
+    xmlns:id="http://www.ehealth.fgov.be/standards/kmehr/id/v1"
+    xmlns:dt="http://www.ehealth.fgov.be/standards/kmehr/dt/v1"
+    xmlns:kmehr="http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
+    xmlns="http://www.ehealth.fgov.be/messageservices/core/v1"
+    targetNamespace="http://www.ehealth.fgov.be/messageservices/core/v1"
+    elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.2">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD 39. Message services
+ Specification-Version: 1.2
+ Implementation-Version: 1.2.0
+ Build-Time: 20170224-1146 
+ </xs:appinfo>
+ </xs:annotation>
+	<xsd:import namespace="http://www.ehealth.fgov.be/standards/kmehr/id/v1" schemaLocation="../../ehealth-kmehr/XSD/id-1_19.xsd"/>
+	<xsd:import namespace="http://www.ehealth.fgov.be/standards/kmehr/cd/v1" schemaLocation="../../ehealth-kmehr/XSD/cd-1_19.xsd"/>
+	<xsd:import namespace="http://www.ehealth.fgov.be/standards/kmehr/dt/v1" schemaLocation="../../ehealth-kmehr/XSD/dt-1_19.xsd"/>
+	<xsd:import namespace="http://www.ehealth.fgov.be/standards/kmehr/schema/v1" schemaLocation="../../ehealth-kmehr/XSD/kmehr-1_19.xsd"/>
+	<!-- Common Request Type and Element -->
+	<xsd:complexType name="RequestType">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-KMEHR"/>
+			<xsd:element name="author" type="kmehr:authorType"/>
+			<xsd:element name="date" type="xsd:date"/>
+			<xsd:element name="time" type="xsd:time"/>
+			<xsd:element name="maxrows" type="xsd:decimal" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Common Response Type and Element -->
+	<xsd:complexType name="AcknowledgeType">
+		<xsd:sequence>
+			<xsd:element name="iscomplete" type="xsd:boolean"/>
+			<xsd:element name="error" type="kmehr:errorMyCarenetType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ResponseType">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-KMEHR"/>
+			<xsd:element name="author" type="kmehr:authorType"/>
+			<xsd:element name="date" type="xsd:date"/>
+			<xsd:element name="time" type="xsd:time"/>
+			<xsd:element name="request" type="RequestType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Common Type -->
+	<xsd:complexType name="patientType">
+		<xsd:sequence>
+			<xsd:element name="id" type="id:ID-PATIENT" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="firstname" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="familyname" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="birthdate" type="kmehr:dateType" minOccurs="0"/>
+			<xsd:element name="birthlocation" type="kmehr:addressTypeBase" minOccurs="0"/>
+			<xsd:element name="deathdate" type="kmehr:dateType" minOccurs="0"/>
+			<xsd:element name="deathlocation" type="kmehr:addressTypeBase" minOccurs="0"/>
+			<xsd:element name="sex" type="kmehr:sexType" minOccurs="0"/>
+			<xsd:element name="nationality" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="cd" type="cd:CD-COUNTRY"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="address" type="kmehr:addressType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="telecom" type="kmehr:telecomType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="usuallanguage" type="xsd:language" minOccurs="0"/>
+			<xsd:element name="profession" type="kmehr:professionType" minOccurs="0"/>
+			<xsd:element name="insurancystatus" type="kmehr:insuranceType" minOccurs="0"/>
+			<xsd:element name="insurancymembership" type="kmehr:memberinsuranceType" minOccurs="0"/>
+			<xsd:element name="recorddatetime" type="xsd:dateTime" minOccurs="0"/>
+			<xsd:element name="text" type="dt:textType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="transactionType">
+		<xsd:sequence>
+			<xsd:element name="confidentiality" type="kmehr:confidentialityType" minOccurs="0"/>
+			<xsd:element name="id" type="id:ID-KMEHR" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="cd" type="cd:CD-TRANSACTION" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="date" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="time" type="xsd:time" minOccurs="0"/>
+			<xsd:element name="author" type="kmehr:authorType" minOccurs="0"/>
+			<xsd:element name="redactor" type="kmehr:authorType" minOccurs="0"/>
+			<xsd:element name="iscomplete" type="xsd:boolean" minOccurs="0"/>
+			<xsd:element name="isvalidated" type="xsd:boolean" minOccurs="0"/>
+			<xsd:element name="expirationdate" type="xsd:date" minOccurs="0"/>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="heading" type="kmehr:headingType"/>
+				<xsd:element name="item" type="kmehr:itemType"/>
+				<xsd:element name="text" type="dt:textType"/>
+				<xsd:element name="text-with-layout" type="kmehr:textWithLayoutType" nillable="true" maxOccurs="unbounded"/>
+				<xsd:element name="lnk" type="cd:lnkType"/>
+			</xsd:choice>
+			<xsd:element name="recorddatetime" type="xsd:dateTime" minOccurs="0"/>
+			<xsd:element name="begindate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="enddate" type="xsd:date" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Select Type -->
+	<xsd:complexType name="SelectRetrieveTransactionType">
+		<xsd:sequence>
+			<xsd:element name="patient" type="patientType" minOccurs="0"/>
+			<xsd:element name="transaction" type="transactionType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Specialized input/output Type -->
+	<xsd:complexType name="SendTransactionRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="kmehrmessage" type="kmehr:kmehrmessageType"/>
+		</xsd:sequence>
+        <xsd:attribute name="messageProtocoleSchemaVersion" type="xsd:decimal" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="SendTransactionResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="kmehrmessage" type="kmehr:kmehrmessageType" minOccurs="0"/>
+		</xsd:sequence>
+        <xsd:attribute name="messageProtocoleSchemaVersion" type="xsd:decimal" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="RetrieveTransactionRequestType">
+		<xsd:sequence>
+			<xsd:element name="request" type="RequestType"/>
+			<xsd:element name="select" type="SelectRetrieveTransactionType"/>
+		</xsd:sequence>
+        <xsd:attribute name="messageProtocoleSchemaVersion" type="xsd:decimal" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="RetrieveTransactionResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="ResponseType"/>
+			<xsd:element name="acknowledge" type="AcknowledgeType"/>
+			<xsd:element name="kmehrmessage" type="kmehr:kmehrmessageType" minOccurs="0"/>
+		</xsd:sequence>
+        <xsd:attribute name="messageProtocoleSchemaVersion" type="xsd:decimal" use="optional"/>
+	</xsd:complexType>
+</xsd:schema>

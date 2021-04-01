@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:dics:core:v3:compounding:common" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:dics:core:v3:core"  targetNamespace="urn:be:fgov:ehealth:dics:core:v3:compounding:common" elementFormDefault="qualified" attributeFormDefault="unqualified" version="3.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD DICS
+ Specification-Version: 3.0
+ Implementation-Version: 3.0.0
+ Build-Time: 20170222-1101 
+ </xs:appinfo>
+ </xs:annotation>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd" />
+	<xs:import namespace="urn:be:fgov:ehealth:dics:core:v3:core" schemaLocation="ehealth-dics-core-SamCommonItems-3_0.xsd"/> 
+	<!--Compounding Ingredients-->
+	<xs:complexType name="CompoundingIngredientKeyType">
+		<xs:attribute name="Code" type="core:DmppCodeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Ingredients are uniquely identified by a CNK code.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="CodeType" type="core:DmppCodeTypeType" default="CNK">
+			<xs:annotation>
+				<xs:documentation>Code Type for Compounding Ingredients is always CNK. Code Type is present in the KeyType for uniformity with other SAM components.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="CompoundingFormulaKeyType">
+		<xs:attribute name="Code" type="core:DmppCodeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Formulas are uniquely identified by a CNK code.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="CodeType" type="core:DmppCodeTypeType" default="CNK">
+			<xs:annotation>
+				<xs:documentation>Code Type for Compounding Formulas is always CNK. Code Type is present in the KeyType for uniformity with other SAM components.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<!--Common-->
+	<xs:complexType name="SynonymType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute ref="xml:lang"/>
+				<xs:attribute name="Rank" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Optional rank of the synonym. Synonyms may be ordered by importance or frequency of use.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

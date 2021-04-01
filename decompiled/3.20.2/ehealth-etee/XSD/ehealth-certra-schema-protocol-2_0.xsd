@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:certra:protocol:v2" xmlns:commonscore="urn:be:fgov:ehealth:commons:core:v2" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2" xmlns:etee="urn:be:fgov:ehealth:etee:commons:core:v2" xmlns:core="urn:be:fgov:ehealth:certra:core:v2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:be:fgov:ehealth:certra:protocol:v2" elementFormDefault="qualified">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD ETEE RA
+ Specification-Version: 2.0
+ Implementation-Version: 2.0.2
+ Build-Time: 20170713-1652 
+ </xs:appinfo>
+ </xs:annotation>
+
+  <xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../external/XSD/xmldsig-core-schema.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-core-2_0.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:etee:commons:core:v2" schemaLocation="ehealth-etee-schema-core-2_0.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:certra:core:v2" schemaLocation="ehealth-certra-schema-core-2_0.xsd" />
+
+  <xs:element name="GetActorQualitiesRequest" type="GetActorQualitiesRequestType" />
+  <xs:element name="GetActorQualitiesResponse" type="GetActorQualitiesResponseType" />
+  
+  <xs:element name="GenerateRevocationContractRequest" type="GenerateRevocationContractRequestType" />
+  <xs:element name="GenerateRevocationContractResponse" type="GenerateRevocationContractResponseType" />
+  
+  <xs:element name="RevokeRequest" type="RevokeRequestType" />
+  <xs:element name="RevokeResponse" type="RevokeResponseType" />
+  
+  <xs:element name="GenerateContractRequest" type="GenerateContractRequestType" />
+  <xs:element name="GenerateContractResponse" type="GenerateContractResponseType" />
+  
+  <xs:element name="GenerateCertificateRequest" type="GenerateCertificateRequestType" />
+  <xs:element name="GenerateCertificateResponse" type="GenerateCertificateResponseType" />
+  
+  <xs:element name="SubmitCSRForForeignerRequest" type="SubmitCSRForForeignerRequestType" />
+  <xs:element name="SubmitCSRForForeignerResponse" type="SubmitCSRForForeignerResponseType" />
+  
+  <xs:element name="GetCertificateRequest" type="GetCertificateRequestType" />
+  <xs:element name="GetCertificateResponse" type="GetCertificateResponseType" />
+  
+  <xs:element name="GetGenericOrganizationTypesRequest" type="GetGenericOrganizationTypesRequestType" />
+  <xs:element name="GetGenericOrganizationTypesResponse" type="GetGenericOrganizationTypesResponseType" />
+  
+  <xs:element name="GetExistingApplicationIdsRequest" type="GetExistingApplicationIdsRequestType" />
+  <xs:element name="GetExistingApplicationIdsResponse" type="GetExistingApplicationIdsResponseType" />
+  
+  <xs:element name="GetCertificateInfoForCitizenRequest" type="GetCertificateInfoForCitizenRequestType" />
+  <xs:element name="GetCertificateInfoForCitizenResponse" type="GetCertificateInfoForCitizenResponseType" />
+  
+  <xs:element name="GetCertificateInfoForAuthenticationCertificateRequest" type="GetCertificateInfoForAuthenticationCertificateRequestType" />
+  <xs:element name="GetCertificateInfoForAuthenticationCertificateResponse" type="GetCertificateInfoForAuthenticationCertificateResponseType" />
+  
+  <xs:complexType name="GetActorQualitiesRequestType">
+    <xs:annotation>
+      <xs:documentation>Request type that allows a user to get their health care qualities from the web service. This will check both the natural person qualities and the organizations for which they are authorized to manage the eHealth certificate.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="SSIN" type="commonscore:IdType">
+            <xs:annotation>
+              <xs:documentation>The SSIN of the person of which you want to get the list of actor qualities.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element ref="ds:Signature">
+            <xs:annotation>
+              <xs:documentation>An enveloped XML signature signing the entire request element. This signature must be created with the "Authentication" key of a valid Belgian eID card. The person signing the request MUST be the same as the one identified by the SSIN element.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="GetActorQualitiesResponseType">
+    <xs:annotation>
+      <xs:documentation>The response of the getActorQualities operation: It will contain whether or not they are authorized to request eHealth certificates for their own natural person or the organizations for which they can manage eHealth certificates.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="NaturalPersonAuthorization" type="xs:boolean">
+            <xs:annotation>
+              <xs:documentation>The authorization flag will be set to true when the natural person possesses at least one health care quality.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="OrganizationAuthorization" type="core:OrganizationType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>The organizations for which the user has the authorization to manage the eHealth certificates.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="GenerateRevocationContractRequestType">
+    <xs:annotation>
+      <xs:documentation>Request element with all the data required for generating a revocation contract in XML format.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="PublicKeyIdentifier" type="etee:PublicKeyIdentifier">
+            <xs:annotation>
+              <xs:documentation>The public key identifier of the authentication certificate for which you want to create the revocation contract.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Signer" type="commonscore:ActorType">
+            <xs:annotation>
+              <xs:documentation>The identifying information of the person that is going to digitally sign the revocation contract with his eID. The SignerPersons's name and SSIN must exactly match the ones of his eID for the contract to be valid.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="RevocationReason" type="core:RevocationReasonType">
+            <xs:annotation>
+              <xs:documentation>Reason chosen from the set of available reasons</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="GenerateRevocationContractResponseType">
+    <xs:annotation>
+      <xs:documentation>Response containing the revocation contract in XML format. The XML also contains a human-readable HTML contract in french and dutch that must be shown to the end user so that they know what they are signing. The contract contained in this response must be sent as-is in the RevokeRequest.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="Contract" type="core:RevocationContractType">
+            <xs:annotation>
+              <xs:documentation>This server generated contract must be used as part of the revocation request.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="RevokeRequestType">
+    <xs:annotation>
+      <xs:documentation>Request for revoking an eHealth authentication certificate and its associated Encryption Token. The request must contain a XML contract that was obtained from the generateRevocationContract operation.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="PublicKeyIdentifier" type="etee:PublicKeyIdentifier"/>
+          <xs:element name="Contract" type="core:RevocationContractType">
+            <xs:annotation>
+              <xs:documentation>The server generated revocation contract XML as it was returned by the GenerateRevocationContract operation.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element ref="ds:Signature">
+            <xs:annotation>
+              <xs:documentation>Enveloped XML signature that signs the entire request element. The signature must be created with the "Signature" key of a valid Belgian eID and the signer of this request must be a person that is allowed to revoke the certificate that is identified by the PublicKeyIdentifier element.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="RevokeResponseType">
+    <xs:annotation>
+      <xs:documentation>The certificate and Encryption token are successfully revoked if this response contains no error message in the status of the response.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="GenerateContractRequestType">
+    <xs:annotation>
+      <xs:documentation>Request for obtaining a customized eHealth contract for requesting an eHealth certificate and encryption token.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="ContactData" type="core:ContactDataType">
+            <xs:annotation>
+              <xs:documentation>The contact data of the person(s) that are responsible for this eHealth certificate and ETK.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Signer" type="commonscore:ActorType">
+            <xs:annotation>
+              <xs:documentation>The identifying information of the person that is going to digitally sign the CSR contract with his eID. The SignerPersons's name and SSIN must exactly match the ones of his eID for the contract to be valid.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="CertificateIdentifier" type="core:CertificateIdentifierType">
+            <xs:annotation>
+              <xs:documentation>The identifier of the certificate for which this contract is being generated. In case of a natural person the actor mentioned here must be the same as the actor in the Signer element.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="GenerateContractResponseType">
+    <xs:annotation>
+      <xs:documentation>Contains the personalized eHealth contract that can be used as input for the generateCertificate operation. Web service clients are required to show the HTML content of the contract to the end user before asking them to digitally sign the contents.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="Contract" type="core:ContractType">
+            <xs:annotation>
+              <xs:documentation>Server generated contract that must be used as part of the eHealth CSR request.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="GenerateCertificateRequestType">
+    <xs:annotation>
+      <xs:documentation>Request type used to start the generation of a new eHealth authentication certificate. It contains the eHealth "Certificate Signing Request" that should be signed by the Belgian eID card of the user requesting the certificate. A new certificate can only be generated when there is no other certificate for that same DN in an active state, or when the active certificate is close to its expiration date.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="EHealthCSR" type="core:EHealthCertificateSigningRequestType">
+          <xs:annotation>
+            <xs:documentation>This element contains a PKCS#11 Certificate Signing Request together with additional identification data required by eHealth.</xs:documentation>
+          </xs:annotation>
+          </xs:element>
+          <xs:element ref="ds:Signature">
+            <xs:annotation>
+              <xs:documentation>An enveloped XML signature that signs the entire request. It must be created with the "Signature" key of a valid Belgian eID. The person signing this request must correspond to the person identified in the EHealthCSR element (either as the natural person identified by the EHealthCSR or as a user that is authorized to manage certificates of the organization identified by the EHealthCSR).</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="GenerateCertificateResponseType">
+    <xs:annotation>
+      <xs:documentation>Result of the generateCertificate operation: the web service returns the identifier associated with your request so that you know how to identify your request in the future, together with an indication of the validation status.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="PublicKeyIdentifier" type="etee:PublicKeyIdentifier">
+            <xs:annotation>
+              <xs:documentation>The unique identifier of the public key that has been registered and that will appear in the "Subject Key Identifier" extension of the delivered certificate. This serves as a unique identifier of your certificate request.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="AutomaticallyValidated" type="xs:boolean">
+            <xs:annotation>
+              <xs:documentation>Indicates how the request was validated. If automatic then the CSR will immediately be forwarded to the CA, otherwise authorization will need to be manually checked by the support team (this will delay the certificate generation).</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ReplacesCertificate" type="etee:PublicKeyIdentifier" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Optional element that contains the identifier of the public key of the certificate that will be replaced by the new certificate that will be generated. This replacement only occurs when a certificate exists for the same DN is close to its expiration date.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="SubmitCSRForForeignerRequestType">
+    <xs:annotation>
+      <xs:documentation>Request containing the details of a Certificate Signing Request of a foreign person. This request should only be used by foreign persons that not resident in Belgium and thus do not have a SSIN number. This request will only "submit" the CSR, no certificate generation will take place until the foreigner has confirmed their identity using the eHealth IDP.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="ForeignPerson" type="commonscore:ActorType">
+            <xs:annotation>
+              <xs:documentation>The foreign person element must contain the first name and last name of the natural person that is requesting a certificate, together with an identifier of type "SSIN" and a value that is a valid SSIN BIS number. Only SSIN BIS numbers are accepted because only non-resident foreigners are able to perform this request.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ContactData" type="core:ContactDataType">
+            <xs:annotation>
+              <xs:documentation>Contact details of the foreign person.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="CSR" type="xs:base64Binary">
+            <xs:annotation>
+              <xs:documentation>A certificate signing request (CSR) in PKCS#10 format and transformed into base64 representation.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="SubmitCSRForForeignerResponseType">
+    <xs:annotation>
+      <xs:documentation>This response contains a validation URL that the foreigner user must visit in order to validate their request, this validation must take place before the expiration date mentioned in the response. The certificate generation will only continue if the user authenticates their identity in the web application and follows the steps explained on the web page.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="ValidationUrl" type="xs:anyURI">
+            <xs:annotation>
+              <xs:documentation>The URL where the foreign user can validate the CSR they just submitted. The web application will ask the user to login in order to authenticate their identity.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ExpirationDate" type="xs:dateTime">
+            <xs:annotation>
+              <xs:documentation>A CSR submitted by a foreign user must be validated within the expiration period, the value of this element contains the timestamp of the expiration date. After the expiration date the user can no langer validate their request and they will need to submit a new one.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="GetCertificateRequestType">
+    <xs:annotation>
+      <xs:documentation>Request type used to obtain the eHealth authentication certificate by its identifier. This operation will only return the certificate once it has been delivered by the Certificate Authority.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="PublicKeyIdentifier" type="etee:PublicKeyIdentifier">
+            <xs:annotation>
+              <xs:documentation>The public key identifier hash value that identifies the public key for which you want to retrieve the certificate. This value can be calculated based on the public key (see definition of the type on how to do this) or you can use the return value of the generateCertificate operation.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="GetCertificateResponseType">
+    <xs:annotation>
+      <xs:documentation>This response will contain the certificate signed by the Certificate Authority, together with the entire chain of intermediate Certificate Authorities up to (but excluding) the root CA itself. eHealth authentication certificates are generated asynchronously, if the certificate has not yet been signed then the certificate will be missing and the response will contain an error code instead. Users should either wait until they received a confirmation mail or periodically poll this operation until the certificate has been delivered.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="X509Certificate" type="xs:base64Binary" minOccurs="1" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>A list of certificates that represents the certificate chain of the requested authentication certificate. The first item in the list is the authentication certificate followed by the correctly ordered list of intermediate CA's that complete the chain excluding the root CA.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="GetGenericOrganizationTypesRequestType">
+    <xs:annotation>
+      <xs:documentation>Request type used to obtain details about all the types of organizations to which eHealth certificates and encryption tokens can be issued.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="GetGenericOrganizationTypesResponseType">
+    <xs:annotation>
+      <xs:documentation>The list of all organization types that are accepted by the web service. Only certificate requests for organizations that match one of the types in this list and passes the associated validation rules will be accepted.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="OrganizationType" type="core:OrganizationIdentifierType" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>Details about each type of organization accepted by the web service. It describes the organization type together with its validation rules, this can help web service clients with validating the input of the users.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="GetExistingApplicationIdsRequestType">
+    <xs:annotation>
+      <xs:documentation>Request for obtaining a list of all Application Id's that are currently being used by certificates issued to the organization identified in this request. This operation is left unprotected intentionally because clients that do not have any known eHealth qualities must also be able to use this operation.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="OrganizationIdentifier" type="commonscore:IdType">
+            <xs:annotation>
+              <xs:documentation>Identifier of an organization for which you want the list of application IDs that are being used by the eHealth certificates.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="GetExistingApplicationIdsResponseType">
+    <xs:annotation>
+      <xs:documentation>The list of Application Id's of all currently active certificates associated with the organization specified in the request. This response can be used by client applications to help the user in choosing a new unique Application Id for a certificate. The list may contain a "nill" element, this element represents a certificate without an application ID.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:ResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="ApplicationId" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="GetCertificateInfoForCitizenRequestType">
+    <xs:annotation>
+      <xs:documentation>Request for obtaining information about all the eHealth certificates and encryption tokens that can be managed by the natural person that signed the request with their Belgian eID.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element ref="ds:Signature">
+            <xs:annotation>
+              <xs:documentation>An enveloped XML signature that signs the entire request. It must be created by the "Authentication" key of a Belgian eID. The service will extract the details of the person from the associated certificate in order to determine which certificates this person can view and manage.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="GetCertificateInfoForCitizenResponseType">
+    <xs:annotation>
+      <xs:documentation>Contains information about all the eHealth certificates and encryption tokens that this person can view and manage. This includes all of their personal certificates associated with their SSIN, but also all certificates of organizations for which they possess a mandate according to the authentic eHealth sources.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="CertificateInfo" type="core:CertificateInfoType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>Details about all authentication certificates and optionally the associated encryption tokens that can be managed by the user.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="GetCertificateInfoForAuthenticationCertificateRequestType">
+    <xs:annotation>
+      <xs:documentation>Request for obtaining information about a single eHealth certificate and its associated encryption token. The certificate is identified by looking at the eHealth authentication certificate that was used for creating the XML signature on the request element. This operation allows anyone who controls the authentication certificate to always get the details about their certificate and ETK, even if their authorisation could not be automatically checked using the eHealth authentic sources.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element ref="ds:Signature">
+            <xs:annotation>
+              <xs:documentation>An enveloped XML signature that signs the entire request element. It must be created by an eHealth authentication certificate. The service will extract the identifier of the certificate used to create the signature and will use this to fetch the details about the certificate.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="GetCertificateInfoForAuthenticationCertificateResponseType">
+    <xs:annotation>
+      <xs:documentation>Contains information about the eHealth authentication certificate and encryption token that the user requested in their request.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:StatusResponseType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="CertificateInfo" type="core:CertificateInfoType">
+            <xs:annotation>
+              <xs:documentation>Details about the authentication certificate and its associated encryption token.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

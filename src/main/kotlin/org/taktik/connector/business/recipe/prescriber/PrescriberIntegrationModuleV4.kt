@@ -1,79 +1,102 @@
 package org.taktik.connector.business.recipe.prescriber
 
-import be.recipe.services.prescriber.GetPrescriptionStatusParam
+import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
 import be.recipe.services.prescriber.ListOpenRidsParam
 import be.recipe.services.prescriber.ListOpenRidsResult
-import be.recipe.services.prescriber.ListRidsHistoryParam
 import be.recipe.services.prescriber.ListRidsHistoryResult
-import be.recipe.services.prescriber.PutVisionParam
 import be.recipe.services.prescriber.PutVisionResult
+import be.recipe.services.prescriber.RevokePrescriptionResult
 import be.recipe.services.prescriber.ValidationPropertiesParam
 import be.recipe.services.prescriber.ValidationPropertiesResult
-import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
+import org.taktik.connector.business.recipe.prescriber.domain.ListFeedbackItem
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import java.security.KeyStore
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 
-interface PrescriberIntegrationModuleV4 : PrescriberIntegrationModule {
-    @Throws(IntegrationModuleException::class)
-    fun createPrescription(
-        keystore: KeyStore,
+interface PrescriberIntegrationModuleV4 {
+    fun getPrescription(
         samlToken: SAMLToken,
-        passPhrase: String,
         credential: KeyStoreCredential,
         nihii: String,
+        rid: String,
+        vendorName: String? = null,
+        packageVersion: String? = null
+    ): GetPrescriptionForPrescriberResult?
+
+    fun createPrescription(
+        samlToken: SAMLToken,
+        credential: KeyStoreCredential,
+        patientSsin: String,
+        nihii: String,
         feedbackRequested: Boolean,
-        patientId: String,
-        prescription: ByteArray,
         prescriptionType: String,
+        expirationDate: LocalDateTime = LocalDateTime.now().plusMonths(3),
+        prescription: ByteArray,
         visibility: String? = null,
-        vendorName: String?,
-        packageName: String?,
-        packageVersion: String?,
-        expirationDate: LocalDateTime = LocalDateTime.now().plusMonths(3)
-                          ): String?
+        vendorName: String? = null,
+        packageVersion: String? = null
+    ): String?
 
-    @Throws(IntegrationModuleException::class)
-    fun getData(
-        keystore: KeyStore,
+    fun getPrescriptionStatus(
         samlToken: SAMLToken,
-        passPhrase: String,
         credential: KeyStoreCredential,
-        param: GetPrescriptionStatusParam): GetPrescriptionStatusResult?
+        nihii: String,
+        rid: String,
+        vendorName: String? = null,
+        packageVersion: String? = null
+    ): GetPrescriptionStatusResult?
 
-    @Throws(IntegrationModuleException::class)
-    fun getData(
-        keystore: KeyStore,
+    fun listRidsHistory(
         samlToken: SAMLToken,
-        passPhrase: String,
         credential: KeyStoreCredential,
-        param: ListRidsHistoryParam): ListRidsHistoryResult?
+        patientSsin: String,
+        vendorName: String? = null,
+        packageVersion: String? = null
+    ): ListRidsHistoryResult?
 
-    @Throws(IntegrationModuleException::class)
-    fun putData(        keystore: KeyStore,
+    fun setVision(
         samlToken: SAMLToken,
-        passPhrase: String,
         credential: KeyStoreCredential,
-        param: PutVisionParam): PutVisionResult?
+        rid: String,
+        vision: String,
+        vendorName: String? = null,
+        packageVersion: String? = null
+    ): PutVisionResult?
 
-    @Throws(IntegrationModuleException::class)
-    fun getData(
-        keystore: KeyStore,
+    fun listOpenRids(
         samlToken: SAMLToken,
-        passPhrase: String,
         credential: KeyStoreCredential,
-        param: ListOpenRidsParam): ListOpenRidsResult?
+        patientSsin: String,
+        vendorName: String? = null,
+        packageVersion: String? = null
+    ): ListOpenRidsResult?
 
-    @Throws(IntegrationModuleException::class)
-    fun getData(
-        keystore: KeyStore,
+    fun revokePrescription(
         samlToken: SAMLToken,
-        passPhrase: String,
         credential: KeyStoreCredential,
-        param: ValidationPropertiesParam): ValidationPropertiesResult?
+        nihii: String,
+        rid: String,
+        reason: String,
+        vendorName: String? = null,
+        packageVersion: String? = null
+    ): RevokePrescriptionResult
+
+    fun listFeedback(
+        samlToken: SAMLToken,
+        credential: KeyStoreCredential,
+        readFlag: Boolean,
+        vendorName: String? = null,
+        packageVersion: String? = null
+    ): List<ListFeedbackItem>
+
+    fun getValidationProperties(
+        samlToken: SAMLToken,
+        credential: KeyStoreCredential,
+        param: ValidationPropertiesParam,
+        vendorName: String? = null,
+        packageVersion: String? = null
+    ): ValidationPropertiesResult?
 }
