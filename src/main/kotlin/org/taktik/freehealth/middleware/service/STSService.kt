@@ -48,4 +48,5 @@ interface STSService {
     fun getHolderOfKeysEtk(credential: KeyStoreCredential, nihiiOrSsin: String?): EncryptionToken?
     fun checkTokenValid(tokenId: UUID): Boolean
     fun getKeystoreInfo(keystoreId: UUID, passPhrase: String): CertificateInfo
+    fun isAcceptance(): Boolean
 }

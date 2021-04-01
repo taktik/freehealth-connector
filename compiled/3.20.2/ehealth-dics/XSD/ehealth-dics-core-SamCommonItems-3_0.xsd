@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:dics:core:v3:core" targetNamespace="urn:be:fgov:ehealth:dics:core:v3:core" elementFormDefault="qualified" attributeFormDefault="unqualified" version="3.1">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD DICS
+ Specification-Version: 3.0
+ Implementation-Version: 3.0.0
+ Build-Time: 20170222-1101 
+ </xs:appinfo>
+ </xs:annotation>
+	<xs:complexType name="VmpKeyType">
+		<xs:attribute name="Code" type="xs:positiveInteger" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="Text255Type">
+		<xs:sequence>
+			<xs:element name="Fr" type="xs:string"/>
+			<xs:element name="Nl" type="xs:string"/>
+			<xs:element name="De" type="xs:string" minOccurs="0"/>
+			<xs:element name="En" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RangeType">
+		<xs:sequence>
+			<xs:element name="Min" type="xs:decimal"/>
+			<xs:element name="Max" type="xs:decimal"/>
+		</xs:sequence>
+		<xs:attribute name="Unit" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="QuantityType">
+		<xs:simpleContent>
+			<xs:extension base="xs:decimal">
+				<xs:attribute name="Unit" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="VmpComponentKeyType">
+		<xs:attribute name="Code" type="xs:positiveInteger" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="StrengthRangeType">
+		<xs:sequence>
+			<xs:element name="NumeratorRange" type="core:RangeType"/>
+			<xs:element name="Denominator" type="core:QuantityType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StrengthType">
+		<xs:sequence>
+			<xs:element name="Numerator" type="core:QuantityType"/>
+			<xs:element name="Denominator" type="core:QuantityType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="SearchStringType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="DeliveryEnvironmentType">
+		<xs:annotation>
+			<xs:documentation>Type of environment in which a medicinal product is delivered. 
+Possible values :
+-	‘P’ for Public, 
+-	‘A’ for Ambulatory,
+-	‘H’ for Hospital, 
+-	‘R’ For Residential care</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="DmppCodeType">
+		<xs:annotation>
+			<xs:documentation>Code number used to uniquely identify a package or a group of packages being delivered in a given environment and reimbursed according to the same rules.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="DmppCodeTypeType">
+		<xs:annotation>
+			<xs:documentation>Type of the mentioned code, among the following:
+-	‘CNK’: Code National – Nationale Kode . This code is attributed by the APB  (“Association Pharmaceutique Belge”) to identify unequivocally one medicinal product package, or by the NIHDI for identifying tarification units, which meet to the same reimbursement criteria.
+-	‘PSEUDO’: Pseudo-code used for the flat-pricing of drugs in certain environments such as radiopharmaca in hospitals.
+-	‘PSEUDOCODE’: Code used for the flat-pricing of drugs in certain environments such as radiopharmaca in hospitals.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="CompanyActorNrType">
+		<xs:annotation>
+			<xs:documentation>A Company ActorNr is a number of exactly five digits with significant leading zeroes</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="LegalReferencePathType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="CtiExtendedType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="PositiveShortType">
+		<xs:restriction base="xs:short"/>
+	</xs:simpleType>
+	<xs:simpleType name="IngredientTypeType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+</xs:schema>

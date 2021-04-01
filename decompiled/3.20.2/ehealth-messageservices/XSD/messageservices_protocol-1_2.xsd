@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- CVS Version 1.13 -->
+<!-- Copyright (c) eHealth -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ehealth.fgov.be/messageservices/protocol/v1" xmlns:core="http://www.ehealth.fgov.be/messageservices/core/v1" targetNamespace="http://www.ehealth.fgov.be/messageservices/protocol/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.2">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD 39. Message services
+ Specification-Version: 1.2
+ Implementation-Version: 1.2.0
+ Build-Time: 20170224-1146 
+ </xs:appinfo>
+ </xs:annotation>
+	<xsd:import namespace="http://www.ehealth.fgov.be/messageservices/core/v1" schemaLocation="messageservices_core-1_2.xsd"/>
+	<!-- SendTransaction Service -->
+	<xsd:element name="SendTransactionRequest" type="core:SendTransactionRequestType"/>
+	<xsd:element name="SendTransactionResponse" type="core:SendTransactionResponseType"/>
+	<!-- RetrieveTransaction Service -->
+	<xsd:element name="RetrieveTransactionRequest" type="core:RetrieveTransactionRequestType"/>
+	<xsd:element name="RetrieveTransactionResponse" type="core:RetrieveTransactionResponseType"/>
+</xsd:schema>

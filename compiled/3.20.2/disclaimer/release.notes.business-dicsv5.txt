@@ -1,0 +1,6 @@
+**************************************************
+* eHealth Business Dics V5 RELEASE NOTES         *
+**************************************************
+
+3.19.0 release (april 2020)
+ . initial release

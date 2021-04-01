@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:mycarenet:tarification:protocol:v1" xmlns:protocol="urn:be:fgov:ehealth:mycarenet:commons:protocol:v2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" targetNamespace="urn:be:fgov:ehealth:mycarenet:tarification:protocol:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title:   XSD MyCarenet Tarification
+      Specification-Version:  1.0
+      Implementation-Version: 1.0.0
+      Build-Time:             20140805-0832 
+    </xs:appinfo>
+  </xs:annotation>
+	<!-- core elements and types -->
+	<xs:import namespace="urn:be:fgov:ehealth:mycarenet:commons:protocol:v2" schemaLocation="../../ehealth-mycarenetcommons/XSD/mycarenet-commons-protocol-2_0.xsd"/>
+	<!--eHealth commons protocol -->
+	<xs:element name="TarificationConsultationRequest" type="protocol:SendRequestType"/>
+	<xs:element name="TarificationConsultationResponse" type="protocol:SendResponseType"/>
+</xs:schema>

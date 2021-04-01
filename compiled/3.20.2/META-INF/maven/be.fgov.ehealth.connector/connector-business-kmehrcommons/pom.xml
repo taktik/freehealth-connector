@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <!-- Parent is the connector parent pom -->
+  <parent>
+    <groupId>be.fgov.ehealth.connector</groupId>
+    <artifactId>connector-business-master</artifactId>
+    <version>3.20.2</version>
+  </parent>
+
+  <!-- General attributes -->
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>connector-business-kmehrcommons</artifactId>
+  <name>Kmehr Commons (business)</name>
+  <description>Kmehr common for business connectors</description>
+
+  <!-- Packaging CAN NOT BE CHANGED -->
+  <packaging>jar</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>buildDll</id>
+            <phase>package</phase>
+            <configuration>
+              <target>
+                <property name="maven.target.dll.classpath" value="${target.dll.classpath}" />
+                <property name="maven.compileclasspath" refid="maven.compile.classpath" />
+                <property name="maven.runtimeclasspath" refid="maven.runtime.classpath" />
+                <property name="maven.pluginclasspath" refid="maven.plugin.classpath" />
+                <property name="maven.testclasspath" refid="maven.test.classpath" />
+                <property name="maven.projectbasedir" value="${project.build.directory}/../" />
+                <property name="maven.artifactId" value="${project.artifactId}" />
+                <property name="maven.version" value="${project.version}" />
+                <property name="maven.packaging" value="${project.packaging}" />
+                <property name="maven.skip.ikvm" value="${maven.test.skip}" />
+
+                <property name="maven.version.major" value="${parsedVersion.majorVersion}" />
+                <property name="maven.version.minor" value="${parsedVersion.minorVersion}" />
+                <property name="maven.version.patch" value="${parsedVersion.incrementalVersion}" />
+
+                <echoproperties />
+
+                <ant antfile="${basedir}/target/build/build-dll.xml">
+                  <target name="generateDLL-test" />
+                </ant>
+
+                <ant antfile="${basedir}/target/build/build-dll.xml">
+                  <target name="buildDLL" />
+                </ant>
+
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default testjar [.net]</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <finalName>${project.build.finalName}-net</finalName>
+              <includes>
+                <include>**/*.java</include>
+                <include>**/*.class</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- Configuration of dependencies -->
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-kmehr</artifactId>
+      <version>${version.utilities}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-kmehr-mycarenet</artifactId>
+      <version>${version.utilities}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-technical-core</artifactId>
+      <version>${version.technical}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-business-testcommons</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <!-- Configuration of profiles MUST BE CONFIGURED -->
+  <profiles>
+    <profile>
+      <id>no-dotnet</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unpack ikvm</id>
+                <phase>disabled</phase>
+              </execution>
+              <execution>
+                <id>unpack ddl</id>
+                <phase>disabled</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>buildDll</id>
+                <phase>disabled</phase>
+              </execution>
+              <execution>
+                <id>buildCSPROJ</id>
+                <phase>disabled</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>make-zip</id>
+                <phase>disabled</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

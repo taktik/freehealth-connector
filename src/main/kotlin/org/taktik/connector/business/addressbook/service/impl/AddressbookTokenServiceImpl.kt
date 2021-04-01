@@ -26,7 +26,6 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.validator.EhealthReplyValidator
-import org.taktik.connector.technical.validator.SessionValidator
 import org.taktik.connector.technical.ws.ServiceFactory
 import be.fgov.ehealth.addressbook.protocol.v1.GetOrganizationContactInfoRequest
 import be.fgov.ehealth.addressbook.protocol.v1.GetOrganizationContactInfoResponse
