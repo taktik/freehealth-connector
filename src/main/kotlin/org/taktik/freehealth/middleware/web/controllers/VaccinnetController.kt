@@ -68,11 +68,14 @@ class VaccinnetController(val vaccinnetService: VaccinnetService) {
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
         @RequestParam hcpQuality: String,
+        @RequestParam hcpSupervisorNihii: String?,
+        @RequestParam hcpSupervisorName: String?,
+        @RequestParam hcpSupervisorQuality: String?,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientDateOfBirth: Long,
         @RequestParam softwareId: String,
         @RequestParam vaccinnetId: String,
         @RequestBody injections: List<VaccineInjection>
-    ) = vaccinnetService.addVaccinations(keystoreId, tokenId, passPhrase, hcpNihii, hcpName, hcpQuality, patientId, patientFirstName, patientLastName, patientDateOfBirth, softwareId, vaccinnetId, injections)
+    ) = vaccinnetService.addVaccinations(keystoreId, tokenId, passPhrase, hcpNihii, hcpName, hcpQuality, hcpSupervisorNihii, hcpSupervisorName, hcpSupervisorQuality, patientId, patientFirstName, patientLastName, patientDateOfBirth, softwareId, vaccinnetId, injections)
 }
