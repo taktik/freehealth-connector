@@ -24,7 +24,7 @@ import be.recipe.services.prescriber.GetPrescriptionStatusResult
 import be.recipe.services.prescriber.ListRidsHistoryResult
 import be.recipe.services.prescriber.PutVisionResult
 import be.recipe.services.prescriber.UpdateFeedbackFlagResult
-import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeKmehrmessageType
 import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.recipe.Feedback
@@ -144,7 +144,7 @@ interface RecipeV4Service {
         passPhrase: String,
         hcpNihii: String,
         rid: String
-    ): Kmehrmessage?
+    ): RecipeKmehrmessageType?
 
     fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String
     fun getKmehrPrescription(

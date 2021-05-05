@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
@@ -18,11 +18,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * to transfer medical information about one or several patients (using one folder per patient).
- * 
+ *
  * <p>Classe Java pour recipekmehrmessageType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="recipekmehrmessageType">
  *   &lt;complexContent>
@@ -35,8 +35,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "recipekmehrmessageType", propOrder = {
@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
     "folder"
 })
 @XmlRootElement(name = "kmehrmessage")
-public class Kmehrmessage
+public class RecipeKmehrmessageType
     implements Serializable
 {
 
@@ -56,11 +56,11 @@ public class Kmehrmessage
 
     /**
      * Obtient la valeur de la propriété header.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipeheaderType }
-     *     
+     *
      */
     public RecipeheaderType getHeader() {
         return header;
@@ -68,11 +68,11 @@ public class Kmehrmessage
 
     /**
      * Définit la valeur de la propriété header.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipeheaderType }
-     *     
+     *
      */
     public void setHeader(RecipeheaderType value) {
         this.header = value;
@@ -80,11 +80,11 @@ public class Kmehrmessage
 
     /**
      * Obtient la valeur de la propriété folder.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipefolderType }
-     *     
+     *
      */
     public RecipefolderType getFolder() {
         return folder;
@@ -92,11 +92,11 @@ public class Kmehrmessage
 
     /**
      * Définit la valeur de la propriété folder.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipefolderType }
-     *     
+     *
      */
     public void setFolder(RecipefolderType value) {
         this.folder = value;
