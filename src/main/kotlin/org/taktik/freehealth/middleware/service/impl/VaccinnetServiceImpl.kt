@@ -83,6 +83,9 @@ class VaccinnetServiceImpl(private val stsService: STSService) : VaccinnetServic
         hcpNihii: String,
         hcpName: String,
         hcpQuality: String,
+        hcpSupervisorNihii: String?,
+        hcpSupervisorName: String?,
+        hcpSupervisorQuality: String?,
         patientId: String,
         patientFirstName: String,
         patientLastName: String,
@@ -140,9 +143,9 @@ class VaccinnetServiceImpl(private val stsService: STSService) : VaccinnetServic
                                     time = now.justTime()
                                     author = AuthorType().apply {
                                         hcparties.add(HcpartyType().apply {
-                                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; value = hcpNihii })
-                                            cds.add(CDHCPARTY().apply { s(CDHCPARTYschemes.CD_HCPARTY); value = hcpQuality })
-                                            name = hcpName
+                                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; value = if(!hcpSupervisorNihii.isNullOrBlank()) hcpSupervisorNihii else hcpNihii })
+                                            cds.add(CDHCPARTY().apply { s(CDHCPARTYschemes.CD_HCPARTY); value = if(!hcpSupervisorQuality.isNullOrBlank()) hcpSupervisorQuality else hcpQuality })
+                                            name = if(!hcpSupervisorName.isNullOrBlank()) hcpSupervisorName else hcpName
                                         })
                                     }
                                     isIscomplete = true
