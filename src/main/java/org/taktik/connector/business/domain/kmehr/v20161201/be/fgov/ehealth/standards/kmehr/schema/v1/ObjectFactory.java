@@ -80,11 +80,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RecipeitemType.Regimen }
+     * Create an instance of {@link RecipeitemType.RecipeRegimen }
      *
      */
-    public RecipeitemType.Regimen createRecipeitemTypeRegimen() {
-        return new RecipeitemType.Regimen();
+    public RecipeitemType.RecipeRegimen createRecipeitemTypeRegimen() {
+        return new RecipeitemType.RecipeRegimen();
     }
 
     /**
@@ -1320,27 +1320,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RecipeitemType.Posology }
+     * Create an instance of {@link RecipeitemType.RecipePosology }
      *
      */
-    public RecipeitemType.Posology createRecipeitemTypePosology() {
-        return new RecipeitemType.Posology();
+    public RecipeitemType.RecipePosology createRecipeitemTypePosology() {
+        return new RecipeitemType.RecipePosology();
     }
 
     /**
-     * Create an instance of {@link RecipeitemType.Regimen.Daytime }
+     * Create an instance of {@link RecipeitemType.RecipeRegimen.Daytime }
      *
      */
-    public RecipeitemType.Regimen.Daytime createRecipeitemTypeRegimenDaytime() {
-        return new RecipeitemType.Regimen.Daytime();
+    public RecipeitemType.RecipeRegimen.Daytime createRecipeitemTypeRegimenDaytime() {
+        return new RecipeitemType.RecipeRegimen.Daytime();
     }
 
     /**
-     * Create an instance of {@link RecipeitemType.Regimen.Weekday }
+     * Create an instance of {@link RecipeitemType.RecipeRegimen.Weekday }
      *
      */
-    public RecipeitemType.Regimen.Weekday createRecipeitemTypeRegimenWeekday() {
-        return new RecipeitemType.Regimen.Weekday();
+    public RecipeitemType.RecipeRegimen.Weekday createRecipeitemTypeRegimenWeekday() {
+        return new RecipeitemType.RecipeRegimen.Weekday();
     }
 
     /**

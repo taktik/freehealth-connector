@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
@@ -24,11 +24,11 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 
 /**
  * the item is used to describe atomic medical information.
- * 
+ *
  * <p>Classe Java pour recipeitemType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="recipeitemType">
  *   &lt;complexContent>
@@ -104,8 +104,8 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "recipeitemType", propOrder = {
@@ -149,8 +149,8 @@ public class RecipeitemType
     protected RecipefrequencyType frequency;
     protected RecipedurationType duration;
     @XmlElement(required = true)
-    protected RecipeitemType.Posology posology;
-    protected RecipeitemType.Regimen regimen;
+    protected RecipePosology posology;
+    protected RecipeRegimen regimen;
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar deliverydate;
     protected ReciperenewalType renewal;
@@ -162,11 +162,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété id.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipebasicIDKMEHR }
-     *     
+     *
      */
     public RecipebasicIDKMEHR getId() {
         return id;
@@ -174,11 +174,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété id.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipebasicIDKMEHR }
-     *     
+     *
      */
     public void setId(RecipebasicIDKMEHR value) {
         this.id = value;
@@ -186,11 +186,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété cd.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipeCDITEM }
-     *     
+     *
      */
     public RecipeCDITEM getCd() {
         return cd;
@@ -198,11 +198,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété cd.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipeCDITEM }
-     *     
+     *
      */
     public void setCd(RecipeCDITEM value) {
         this.cd = value;
@@ -210,11 +210,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété content.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipecontentType }
-     *     
+     *
      */
     public RecipecontentType getContent() {
         return content;
@@ -222,11 +222,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété content.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipecontentType }
-     *     
+     *
      */
     public void setContent(RecipecontentType value) {
         this.content = value;
@@ -234,11 +234,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété beginmoment.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipemomentType }
-     *     
+     *
      */
     public RecipemomentType getBeginmoment() {
         return beginmoment;
@@ -246,11 +246,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété beginmoment.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipemomentType }
-     *     
+     *
      */
     public void setBeginmoment(RecipemomentType value) {
         this.beginmoment = value;
@@ -258,11 +258,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété endmoment.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipemomentType }
-     *     
+     *
      */
     public RecipemomentType getEndmoment() {
         return endmoment;
@@ -270,11 +270,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété endmoment.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipemomentType }
-     *     
+     *
      */
     public void setEndmoment(RecipemomentType value) {
         this.endmoment = value;
@@ -282,11 +282,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété lifecycle.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipelifecycleType }
-     *     
+     *
      */
     public RecipelifecycleType getLifecycle() {
         return lifecycle;
@@ -294,11 +294,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété lifecycle.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipelifecycleType }
-     *     
+     *
      */
     public void setLifecycle(RecipelifecycleType value) {
         this.lifecycle = value;
@@ -306,11 +306,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété temporality.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipetemporalityType }
-     *     
+     *
      */
     public RecipetemporalityType getTemporality() {
         return temporality;
@@ -318,11 +318,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété temporality.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipetemporalityType }
-     *     
+     *
      */
     public void setTemporality(RecipetemporalityType value) {
         this.temporality = value;
@@ -330,11 +330,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété quantity.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipequantityType }
-     *     
+     *
      */
     public RecipequantityType getQuantity() {
         return quantity;
@@ -342,11 +342,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété quantity.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipequantityType }
-     *     
+     *
      */
     public void setQuantity(RecipequantityType value) {
         this.quantity = value;
@@ -354,11 +354,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété frequency.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipefrequencyType }
-     *     
+     *
      */
     public RecipefrequencyType getFrequency() {
         return frequency;
@@ -366,11 +366,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété frequency.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipefrequencyType }
-     *     
+     *
      */
     public void setFrequency(RecipefrequencyType value) {
         this.frequency = value;
@@ -378,11 +378,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété duration.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipedurationType }
-     *     
+     *
      */
     public RecipedurationType getDuration() {
         return duration;
@@ -390,11 +390,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété duration.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipedurationType }
-     *     
+     *
      */
     public void setDuration(RecipedurationType value) {
         this.duration = value;
@@ -402,59 +402,59 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété posology.
-     * 
+     *
      * @return
      *     possible object is
-     *     {@link RecipeitemType.Posology }
-     *     
+     *     {@link RecipePosology }
+     *
      */
-    public RecipeitemType.Posology getPosology() {
+    public RecipePosology getPosology() {
         return posology;
     }
 
     /**
      * Définit la valeur de la propriété posology.
-     * 
+     *
      * @param value
      *     allowed object is
-     *     {@link RecipeitemType.Posology }
-     *     
+     *     {@link RecipePosology }
+     *
      */
-    public void setPosology(RecipeitemType.Posology value) {
+    public void setPosology(RecipePosology value) {
         this.posology = value;
     }
 
     /**
      * Obtient la valeur de la propriété regimen.
-     * 
+     *
      * @return
      *     possible object is
-     *     {@link RecipeitemType.Regimen }
-     *     
+     *     {@link RecipeRegimen }
+     *
      */
-    public RecipeitemType.Regimen getRegimen() {
+    public RecipeRegimen getRegimen() {
         return regimen;
     }
 
     /**
      * Définit la valeur de la propriété regimen.
-     * 
+     *
      * @param value
      *     allowed object is
-     *     {@link RecipeitemType.Regimen }
-     *     
+     *     {@link RecipeRegimen }
+     *
      */
-    public void setRegimen(RecipeitemType.Regimen value) {
+    public void setRegimen(RecipeRegimen value) {
         this.regimen = value;
     }
 
     /**
      * Obtient la valeur de la propriété deliverydate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getDeliverydate() {
         return deliverydate;
@@ -462,11 +462,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété deliverydate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setDeliverydate(XMLGregorianCalendar value) {
         this.deliverydate = value;
@@ -474,11 +474,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété renewal.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReciperenewalType }
-     *     
+     *
      */
     public ReciperenewalType getRenewal() {
         return renewal;
@@ -486,11 +486,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété renewal.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReciperenewalType }
-     *     
+     *
      */
     public void setRenewal(ReciperenewalType value) {
         this.renewal = value;
@@ -498,11 +498,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété route.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReciperouteType }
-     *     
+     *
      */
     public ReciperouteType getRoute() {
         return route;
@@ -510,11 +510,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété route.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReciperouteType }
-     *     
+     *
      */
     public void setRoute(ReciperouteType value) {
         this.route = value;
@@ -522,11 +522,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété instructionforpatient.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getInstructionforpatient() {
         return instructionforpatient;
@@ -534,11 +534,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété instructionforpatient.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setInstructionforpatient(TextType value) {
         this.instructionforpatient = value;
@@ -546,11 +546,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété instructionforreimbursement.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getInstructionforreimbursement() {
         return instructionforreimbursement;
@@ -558,11 +558,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété instructionforreimbursement.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setInstructionforreimbursement(TextType value) {
         this.instructionforreimbursement = value;
@@ -570,11 +570,11 @@ public class RecipeitemType
 
     /**
      * Obtient la valeur de la propriété issubstitutionallowed.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIssubstitutionallowed() {
         return issubstitutionallowed;
@@ -582,11 +582,11 @@ public class RecipeitemType
 
     /**
      * Définit la valeur de la propriété issubstitutionallowed.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIssubstitutionallowed(Boolean value) {
         this.issubstitutionallowed = value;
@@ -595,9 +595,9 @@ public class RecipeitemType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -609,14 +609,14 @@ public class RecipeitemType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
         "text"
     })
-    public static class Posology
+    public static class RecipePosology
         implements Serializable
     {
 
@@ -625,11 +625,11 @@ public class RecipeitemType
 
         /**
          * Obtient la valeur de la propriété text.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TextType }
-         *     
+         *
          */
         public TextType getText() {
             return text;
@@ -637,11 +637,11 @@ public class RecipeitemType
 
         /**
          * Définit la valeur de la propriété text.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TextType }
-         *     
+         *
          */
         public void setText(TextType value) {
             this.text = value;
@@ -652,9 +652,9 @@ public class RecipeitemType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -693,14 +693,14 @@ public class RecipeitemType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
         "daynumbersAndQuantitiesAndDaytimes"
     })
-    public static class Regimen
+    public static class RecipeRegimen
         implements Serializable
     {
 
@@ -708,37 +708,37 @@ public class RecipeitemType
         @XmlElements({
             @XmlElement(name = "daynumber", required = true, type = BigInteger.class),
             @XmlElement(name = "quantity", required = true, type = RecipeadministrationquantityType.class),
-            @XmlElement(name = "daytime", required = true, type = RecipeitemType.Regimen.Daytime.class),
+            @XmlElement(name = "daytime", required = true, type = RecipeRegimen.Daytime.class),
             @XmlElement(name = "date", required = true, type = XMLGregorianCalendar.class),
-            @XmlElement(name = "weekday", required = true, type = RecipeitemType.Regimen.Weekday.class)
+            @XmlElement(name = "weekday", required = true, type = RecipeRegimen.Weekday.class)
         })
         protected List<Object> daynumbersAndQuantitiesAndDaytimes;
 
         /**
          * Gets the value of the daynumbersAndQuantitiesAndDaytimes property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the daynumbersAndQuantitiesAndDaytimes property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getDaynumbersAndQuantitiesAndDaytimes().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link BigInteger }
          * {@link RecipeadministrationquantityType }
-         * {@link RecipeitemType.Regimen.Daytime }
+         * {@link RecipeRegimen.Daytime }
          * {@link XMLGregorianCalendar }
-         * {@link RecipeitemType.Regimen.Weekday }
-         * 
-         * 
+         * {@link RecipeRegimen.Weekday }
+         *
+         *
          */
         public List<Object> getDaynumbersAndQuantitiesAndDaytimes() {
             if (daynumbersAndQuantitiesAndDaytimes == null) {
@@ -750,9 +750,9 @@ public class RecipeitemType
 
         /**
          * <p>Classe Java pour anonymous complex type.
-         * 
+         *
          * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -765,8 +765,8 @@ public class RecipeitemType
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -783,11 +783,11 @@ public class RecipeitemType
 
             /**
              * Obtient la valeur de la propriété dayperiod.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link RecipedayperiodType }
-             *     
+             *
              */
             public RecipedayperiodType getDayperiod() {
                 return dayperiod;
@@ -795,11 +795,11 @@ public class RecipeitemType
 
             /**
              * Définit la valeur de la propriété dayperiod.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link RecipedayperiodType }
-             *     
+             *
              */
             public void setDayperiod(RecipedayperiodType value) {
                 this.dayperiod = value;
@@ -807,11 +807,11 @@ public class RecipeitemType
 
             /**
              * Obtient la valeur de la propriété time.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link XMLGregorianCalendar }
-             *     
+             *
              */
             public XMLGregorianCalendar getTime() {
                 return time;
@@ -819,11 +819,11 @@ public class RecipeitemType
 
             /**
              * Définit la valeur de la propriété time.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link XMLGregorianCalendar }
-             *     
+             *
              */
             public void setTime(XMLGregorianCalendar value) {
                 this.time = value;
@@ -834,9 +834,9 @@ public class RecipeitemType
 
         /**
          * <p>Classe Java pour anonymous complex type.
-         * 
+         *
          * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -848,8 +848,8 @@ public class RecipeitemType
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -866,11 +866,11 @@ public class RecipeitemType
 
             /**
              * Obtient la valeur de la propriété weeknumber.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link BigInteger }
-             *     
+             *
              */
             public BigInteger getWeeknumber() {
                 return weeknumber;
@@ -878,11 +878,11 @@ public class RecipeitemType
 
             /**
              * Définit la valeur de la propriété weeknumber.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link BigInteger }
-             *     
+             *
              */
             public void setWeeknumber(BigInteger value) {
                 this.weeknumber = value;

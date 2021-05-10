@@ -199,8 +199,8 @@ object KmehrPrescriptionHelper {
         }
     }
 
-    fun toDaytime(intake: RegimenItem): RecipeitemType.Regimen.Daytime {
-        return RecipeitemType.Regimen.Daytime().apply {
+    fun toDaytime(intake: RegimenItem): RecipeitemType.RecipeRegimen.Daytime {
+        return RecipeitemType.RecipeRegimen.Daytime().apply {
             if (intake.timeOfDay != null) {
                 time = Utils.makeXMLGregorianCalendarFromHHMMSSLong(intake.timeOfDay!!)
             } else {

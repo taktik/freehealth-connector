@@ -462,7 +462,8 @@ class RecipeServiceImplTest {
                                             decimal = BigDecimal.ONE
                                             unit = UnitType().apply { cd = CDUNIT().apply { s = CDUNITschemes.CD_UNIT; sv = "1.0"; value = "pkg" } }
                                         }
-                                        posology = RecipeitemType.Posology().apply { text = TextType().apply { l = "FR"; value = "2017-03-29" } }
+                                        posology = RecipeitemType.RecipePosology()
+                                            .apply { text = TextType().apply { l = "FR"; value = "2017-03-29" } }
                                         deliverydate = DatatypeFactory.newInstance().newXMLGregorianCalendar("2017-03-29")
                                     })
                                 }
