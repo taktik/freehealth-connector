@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.dt.v1.TextType
-import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeKmehrmessageType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipecompoundType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeformularyreferenceType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipegalenicformType
@@ -244,7 +244,7 @@ class RecipeStories {
 
     // clean API functions
 
-    private fun getPrescription(rid: String): Kmehrmessage? {
+    private fun getPrescription(rid: String): RecipeKmehrmessageType? {
         return recipeService.getPrescriptionMessage(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, rid)
     }
 
@@ -276,7 +276,7 @@ class RecipeStories {
 
     // special assertion functions
 
-    private fun assertEqualPrescriptions(prescription: PrescriptionExample, retrievedPrescription: Kmehrmessage) {
+    private fun assertEqualPrescriptions(prescription: PrescriptionExample, retrievedPrescription: RecipeKmehrmessageType) {
         val folder = retrievedPrescription.folder
         assertThat(folder.patient.ids[0].value, equalTo(prescription.patient.ssin))
         val transaction = folder.transaction

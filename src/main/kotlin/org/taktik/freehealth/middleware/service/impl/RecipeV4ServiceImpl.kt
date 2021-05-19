@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.kmehr.v20161201.be.ehealth.logic.recipe.xsd.v20160906.RecipeNotification
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeKmehrmessageType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeitemType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESSschemes
@@ -191,16 +192,16 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         passPhrase: String,
         hcpNihii: String,
         rid: String
-    ): org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage? {
+    ): RecipeKmehrmessageType? {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val p = service.getPrescription(samlToken, credential, hcpNihii, rid)
 
-        return p.prescription?.let { JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java).createUnmarshaller().unmarshal(
+        return p.prescription?.let { JAXBContext.newInstance(RecipeKmehrmessageType::class.java).createUnmarshaller().unmarshal(
             ByteArrayInputStream(it) as InputStream
-        ) as org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+        ) as RecipeKmehrmessageType
         }
     }
 
@@ -846,9 +847,9 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
             PrescriptionFullWithFeedback(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId)
         fd?.let { result.feedbacks = ArrayList(fd) }
 
-        val jaxbContext = JAXBContext.newInstance(org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage::class.java)
+        val jaxbContext = JAXBContext.newInstance(RecipeKmehrmessageType::class.java)
         val jaxbUnmarshaller = jaxbContext.createUnmarshaller()
-        val pm = jaxbUnmarshaller.unmarshal(ByteArrayInputStream(r.prescription)) as org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+        val pm = jaxbUnmarshaller.unmarshal(ByteArrayInputStream(r.prescription)) as RecipeKmehrmessageType
 
         pm.folder?.transaction?.let { t ->
             t.heading?.let { hs ->

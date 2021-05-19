@@ -1,6 +1,6 @@
 package org.taktik.connector.business.domain.kmehr.v20161201.be.ehealth.logic.recipe.xsd.v20160906;
 
-import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage;
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeKmehrmessageType;
 
 import javax.xml.bind.annotation.*;
 
@@ -11,7 +11,7 @@ public class RecipeNotification {
     @XmlSchemaType(name = "text")
     String text;
     @XmlSchemaType(name = "kmehrmessage")
-    Kmehrmessage kmehrmessage;
+    RecipeKmehrmessageType kmehrmessage;
 
     public String getText() {
         return text;
@@ -21,11 +21,11 @@ public class RecipeNotification {
         this.text = text;
     }
 
-    public Kmehrmessage getKmehrmessage() {
+    public RecipeKmehrmessageType getKmehrmessage() {
         return kmehrmessage;
     }
 
-    public void setKmehrmessage(Kmehrmessage kmehrmessage) {
+    public void setKmehrmessage(RecipeKmehrmessageType kmehrmessage) {
         this.kmehrmessage = kmehrmessage;
     }
 }

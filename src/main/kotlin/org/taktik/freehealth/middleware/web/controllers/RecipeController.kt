@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeKmehrmessageType
 import org.taktik.freehealth.middleware.domain.recipe.Feedback
 import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
@@ -245,7 +246,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?
-    ): org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage? =
+    ): RecipeKmehrmessageType? =
         recipeV4Service.getPrescriptionMessage(
             keystoreId = keystoreId,
             tokenId = tokenId,

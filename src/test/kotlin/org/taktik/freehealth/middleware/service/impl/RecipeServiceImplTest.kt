@@ -50,6 +50,7 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDHEADING
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDITEM
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDTRANSACTION
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeKmehrmessageType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeadministrationquantityType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeauthorType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipebasicIDKMEHR
@@ -367,7 +368,8 @@ class RecipeServiceImplTest {
     fun validateNotification() {
         val notification = RecipeNotification().apply {
             text = "This is a notification"
-            kmehrmessage = org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage().apply {
+            kmehrmessage = RecipeKmehrmessageType()
+                .apply {
                 header = RecipeheaderType().apply {
                     standard = StandardType().apply {
                         cd = CDSTANDARD().apply { s  = "CD-STANDARD"; sv = "1.19"; value = "20161201" }
@@ -460,7 +462,8 @@ class RecipeServiceImplTest {
                                             decimal = BigDecimal.ONE
                                             unit = UnitType().apply { cd = CDUNIT().apply { s = CDUNITschemes.CD_UNIT; sv = "1.0"; value = "pkg" } }
                                         }
-                                        posology = RecipeitemType.Posology().apply { text = TextType().apply { l = "FR"; value = "2017-03-29" } }
+                                        posology = RecipeitemType.RecipePosology()
+                                            .apply { text = TextType().apply { l = "FR"; value = "2017-03-29" } }
                                         deliverydate = DatatypeFactory.newInstance().newXMLGregorianCalendar("2017-03-29")
                                     })
                                 }
