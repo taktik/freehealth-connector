@@ -176,6 +176,8 @@ dependencies {
 	//Compat
 	compile('org.slf4j:log4j-over-slf4j:1.7.25')
 	compile('org.jdom:jdom-legacy:1.1.3')
+	compile('com.taktik.boot:spring-boot-starter-gke-logging:2.1.174-0f038f8004')
+
 	//jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
 	//compile(files(genJaxb.classesDir).builtBy(genJaxb))
 	//compile 'org.mapstruct:mapstruct-jdk8:1.2.0.Final'

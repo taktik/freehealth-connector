@@ -233,9 +233,6 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         vision = vision
     )
 
-
-
-
     @GetMapping("/prescription/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPrescriptionMessage(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
