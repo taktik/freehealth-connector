@@ -4,7 +4,6 @@
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
-			<charset>${CONSOLE_LOG_CHARSET}</charset>
 		</encoder>
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
 			<level>ERROR</level>
