@@ -96,7 +96,7 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
     fun keystoresMap(hazelcastInstance: HazelcastInstance): IMap<UUID, ByteArray> {
         val map = hazelcastInstance.getMap<UUID, ByteArray>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KEYSTORES").apply {
             this.addEntryListener(EntryEvictedListener<UUID, SamlTokenResult> {
-                log.warn("Keystore ${it.key} evicted")
+                log.info("Keystore ${it.key} evicted")
             }, false)
         }
         return map
@@ -106,7 +106,7 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
     fun tokensMap(hazelcastInstance: HazelcastInstance): IMap<UUID, SamlTokenResult> {
         return hazelcastInstance.getMap<UUID, SamlTokenResult>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.TOKENS").apply {
             this.addEntryListener(EntryEvictedListener<UUID, SamlTokenResult> {
-                log.warn("Token ${it.key} evicted")
+                log.info("Token ${it.key} evicted")
             }, false)
         }
     }
@@ -115,7 +115,7 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
     fun etksMap(hazelcastInstance: HazelcastInstance): IMap<Triple<IdentifierType, String, String>, Set<EncryptionToken>> {
         return hazelcastInstance.getMap<Triple<IdentifierType, String, String>, Set<EncryptionToken>>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK").apply {
             this.addEntryListener(EntryEvictedListener<Triple<IdentifierType, String, String>, Set<EncryptionToken>> {
-                log.warn("ETK ${it.key} evicted")
+                log.info("ETK ${it.key} evicted")
             }, false)
         }
     }
@@ -124,7 +124,7 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
     fun longLivedEtksMap(hazelcastInstance: HazelcastInstance): IMap<org.apache.commons.lang3.tuple.Pair<UUID, Triple<IdentifierType, String, String>>, Set<EncryptionToken>> {
         return hazelcastInstance.getMap<org.apache.commons.lang3.tuple.Pair<UUID, Triple<IdentifierType, String, String>>, Set<EncryptionToken>>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.LONGLIVEDETK").apply {
             this.addEntryListener(EntryEvictedListener<org.apache.commons.lang3.tuple.Pair<UUID, Triple<IdentifierType, String, String>>, Set<EncryptionToken>> {
-                log.warn("ETK ${it.key} evicted")
+                log.info("ETK ${it.key} evicted")
             }, false)
         }
     }
@@ -133,7 +133,7 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
     fun kgssMap(hazelcastInstance: HazelcastInstance): IMap<UUID, SerializableKeyResult> {
         return hazelcastInstance.getMap<UUID, SerializableKeyResult>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KGSS").apply {
             this.addEntryListener(EntryEvictedListener<UUID, SerializableKeyResult> {
-                log.warn("KGSS ${it.key} evicted")
+                log.info("KGSS ${it.key} evicted")
             }, false)
         }
     }

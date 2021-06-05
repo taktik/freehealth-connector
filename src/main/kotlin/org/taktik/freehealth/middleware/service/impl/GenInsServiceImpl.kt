@@ -126,7 +126,7 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
         val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
-        log.info("getGeneralInsurability called with principal "+(principal?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
+        log.debug("getGeneralInsurability called with principal "+(principal?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
 
         val request = GetInsurabilityAsXmlOrFlatRequestType().apply {
             recordCommonInput =

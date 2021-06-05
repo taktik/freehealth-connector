@@ -47,7 +47,7 @@ public final class BuilderUtils {
 
    public static byte[] decompressBlob(byte[] decompressedBlob, String contentEncoding) {
       if ("none".equals(contentEncoding)) {
-         logger.warn("decompressBlob called with on blob with contentEncoding " + contentEncoding + " : decompress will be skipped!");
+         logger.info("decompressBlob called with on blob with contentEncoding " + contentEncoding + " : decompress will be skipped!");
       } else {
          try {
             decompressedBlob = ConnectorIOUtils.decompress(decompressedBlob);

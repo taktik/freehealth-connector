@@ -140,7 +140,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-        log.info("sendSubscription called with principal "+(principal?._id?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
+        log.debug("sendSubscription called with principal "+(principal?._id?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
 
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val inputReference = InputReference().inputReference
