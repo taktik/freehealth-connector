@@ -19,7 +19,7 @@
 	<logger name="org.taktik.connector.technical.service.etee.impl.CryptoImpl" level="ERROR" />
 
 	<logger name="org.taktik.freehealth.middleware.service.impl" level="INFO" />
-
+	<logger name="org.taktik.freehealth.middleware.HazelcastConfiguration" level="WARN" />
 	<logger name="org.taktik.connector.business.hubv3.service" level="DEBUG" />
 
 	<logger name="org.springframework.web.client" level="DEBUG" />
