@@ -16,8 +16,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class MemberDataServiceImpl : MemberDataService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
+    private val log = LoggerFactory.getLogger(this.javaClass)
     @Throws(TechnicalConnectorException::class)
     override fun consultMemberData(token: SAMLToken, request: MemberDataConsultationRequest): MemberDataConsultationResponse {
+
         try {
             val service = ServiceFactory.getMemberDataSyncPort(token)
             service.setPayload(request)
@@ -33,6 +35,10 @@ class MemberDataServiceImpl : MemberDataService, ConfigurationModuleBootstrap.Mo
             return memberDataConsultationResponse
         } catch (ex: SOAPException) {
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
+        }
+        catch(ex: Exception){
+            log.error(ex.message)
+            throw ex;
         }
     }
 
