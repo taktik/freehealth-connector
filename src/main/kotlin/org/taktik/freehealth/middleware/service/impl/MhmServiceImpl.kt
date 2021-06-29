@@ -247,7 +247,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 val faultSource = author?.hcparties?.first()?.ids?.first()?.value
 
                 if (faultSource != null) {
-                    errors.filter { it.faultSource == null }.forEach { it.faultSource = faultSource }
+                    errors.forEach { it.faultSource = faultSource }
                 }
             }
 
@@ -442,7 +442,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
             val faultSource = author?.hcparties?.first()?.ids?.first()?.value
 
             if (faultSource != null) {
-                errors.filter { it.faultSource == null }.forEach { it.faultSource = faultSource }
+                errors.forEach { it.faultSource = faultSource }
             }
         }
 
@@ -635,7 +635,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 val faultSource = author?.hcparties?.first()?.ids?.first()?.value
 
                 if (faultSource != null) {
-                    errors.filter { it.faultSource == null }.forEach { it.faultSource = faultSource }
+                    errors.forEach { it.faultSource = faultSource }
                 }
             }
 
@@ -1360,7 +1360,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                                 }
                         }
                         elements.forEach { it.value = textContent }
-                        result.addAll(elements)
+                        result.addAll(elements.map { it.clone() })
                     } else {
                         result.add(
                             MycarenetError(
