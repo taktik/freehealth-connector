@@ -246,9 +246,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 val author = sendTransactionResponse?.response?.author
                 val faultSource = author?.hcparties?.first()?.ids?.first()?.value
 
-                if (faultSource != null) {
-                    errors.filter { it.faultSource == null }.forEach { it.faultSource = faultSource }
-                }
+                errors.forEach { it.faultSource = faultSource }
             }
 
             val commonOutput = sendSubscriptionResponse.`return`.commonOutput
@@ -441,9 +439,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
             val author = sendTransactionResponse?.response?.author
             val faultSource = author?.hcparties?.first()?.ids?.first()?.value
 
-            if (faultSource != null) {
-                errors.filter { it.faultSource == null }.forEach { it.faultSource = faultSource }
-            }
+            errors.forEach { it.faultSource = faultSource }
         }
 
         val commonOutput = sendCancelSubscriptionResponse.`return`.commonOutput
@@ -634,9 +630,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 val author = sendTransactionResponse?.response?.author
                 val faultSource = author?.hcparties?.first()?.ids?.first()?.value
 
-                if (faultSource != null) {
-                    errors.filter { it.faultSource == null }.forEach { it.faultSource = faultSource }
-                }
+                errors.forEach { it.faultSource = faultSource }
             }
 
             val commonOutput = sendNotifySubscriptionClosureResponse.`return`.commonOutput
