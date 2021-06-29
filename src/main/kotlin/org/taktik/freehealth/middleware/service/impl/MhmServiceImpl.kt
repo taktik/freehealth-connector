@@ -246,7 +246,9 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 val author = sendTransactionResponse?.response?.author
                 val faultSource = author?.hcparties?.first()?.ids?.first()?.value
 
-                errors.forEach { it.faultSource = faultSource }
+                if (faultSource != null) {
+                    errors.forEach { it.faultSource = faultSource }
+                }
             }
 
             val commonOutput = sendSubscriptionResponse.`return`.commonOutput
@@ -439,7 +441,9 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
             val author = sendTransactionResponse?.response?.author
             val faultSource = author?.hcparties?.first()?.ids?.first()?.value
 
-            errors.forEach { it.faultSource = faultSource }
+            if (faultSource != null) {
+                errors.forEach { it.faultSource = faultSource }
+            }
         }
 
         val commonOutput = sendCancelSubscriptionResponse.`return`.commonOutput
@@ -630,7 +634,9 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                 val author = sendTransactionResponse?.response?.author
                 val faultSource = author?.hcparties?.first()?.ids?.first()?.value
 
-                errors.forEach { it.faultSource = faultSource }
+                if (faultSource != null) {
+                    errors.forEach { it.faultSource = faultSource }
+                }
             }
 
             val commonOutput = sendNotifySubscriptionClosureResponse.`return`.commonOutput
@@ -1354,7 +1360,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
                                 }
                         }
                         elements.forEach { it.value = textContent }
-                        result.addAll(elements)
+                        result.addAll(elements.map { it.clone() })
                     } else {
                         result.add(
                             MycarenetError(

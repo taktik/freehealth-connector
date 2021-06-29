@@ -36,4 +36,28 @@ class MycarenetError(
     var detailCode: String? = null,
     var detailSource: String? = null,
     var value: String? = null
-)
+) {
+    fun clone(): MycarenetError {
+        val error = MycarenetError()
+
+        error.uid = uid
+        error.path = path
+        error.regex = regex
+        error.locFr = locFr
+        error.locNl = locNl
+        error.msgFr = msgFr
+        error.msgNl = msgNl
+        error.msgEn = msgEn
+        error.code = code
+        error.subCode = subCode
+        error.faultCode = faultCode
+        error.faultSource = faultSource
+        error.detailCode = detailCode
+        error.detailSource = detailSource
+        error.value = value
+
+        return error
+    }
+}
+
+
