@@ -377,6 +377,9 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
                                     lang = mid?.language?.toUpperCase()
                                 }
                             }
+                            it.cityCode.let{
+                                this.cityCode = it
+                            }
                             it.cityName?.let {
                                 this.cityName = LocalizedDescriptionType().apply {
                                     value = it
