@@ -12,11 +12,14 @@ import org.taktik.connector.technical.ws.impl.strategy.InvokeStrategy;
 import org.taktik.connector.technical.ws.impl.strategy.InvokeStrategyContext;
 import org.taktik.connector.technical.ws.impl.strategy.InvokeStrategyFactory;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointDistributor;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -75,11 +78,18 @@ public abstract class AbstractWsSender {
          request.put("javax.xml.ws.handler.message.outbound", true);
          executeHandlers(chain, request);
          conn = scf.createConnection();
-         SOAPMessageContext reply = createSOAPMessageCtx(conn.call(request.getMessage(), generateEndpoint(request)));
+         SOAPMessage message = request.getMessage();
+         ByteArrayOutputStream bos = new ByteArrayOutputStream();
+         message.writeTo(bos);
+         String requestAsString = new String(bos.toByteArray(), Charset.forName("UTF-8"));
+         SOAPMessageContext reply = createSOAPMessageCtx(conn.call(message, generateEndpoint(request)));
          reply.putAll(genericRequest.getRequestMap());
          reply.put("javax.xml.ws.handler.message.outbound", false);
          ArrayUtils.reverse(chain);
          executeHandlers(chain, reply);
+         SOAPMessage messageR = reply.getMessage();
+         messageR.writeTo(bos);
+         String replyAsString = new String(bos.toByteArray(), Charset.forName("UTF-8"));
          genericResponse = new GenericResponse(reply.getMessage(), request.getMessage());
       } catch (Exception var10) {
          throw translate(var10);

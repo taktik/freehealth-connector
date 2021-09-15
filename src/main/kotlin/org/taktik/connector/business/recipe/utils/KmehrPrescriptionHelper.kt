@@ -63,7 +63,6 @@ import org.taktik.freehealth.middleware.domain.recipe.GalenicForm
 import org.taktik.freehealth.middleware.domain.recipe.KmehrQuantity
 import org.taktik.freehealth.middleware.domain.recipe.RegimenItem
 import org.taktik.freehealth.middleware.dto.Code
-import org.taktik.freehealth.middleware.service.impl.RecipeServiceImpl
 import org.taktik.freehealth.utils.FuzzyValues
 import java.io.Serializable
 import java.math.BigDecimal
@@ -200,8 +199,8 @@ object KmehrPrescriptionHelper {
         }
     }
 
-    fun toDaytime(intake: RegimenItem): RecipeitemType.Regimen.Daytime {
-        return RecipeitemType.Regimen.Daytime().apply {
+    fun toDaytime(intake: RegimenItem): RecipeitemType.RecipeRegimen.Daytime {
+        return RecipeitemType.RecipeRegimen.Daytime().apply {
             if (intake.timeOfDay != null) {
                 time = Utils.makeXMLGregorianCalendarFromHHMMSSLong(intake.timeOfDay!!)
             } else {
@@ -210,7 +209,7 @@ object KmehrPrescriptionHelper {
                     CDDAYPERIODvalues.AFTERNOON.value() -> time = XMLGregorianCalendarImpl.parse("16:00:00")
                     CDDAYPERIODvalues.EVENING.value() -> time = XMLGregorianCalendarImpl.parse("19:00:00")
                     CDDAYPERIODvalues.NIGHT.value() -> time = XMLGregorianCalendarImpl.parse("22:00:00")
-                    CDDAYPERIODvalues.AFTERMEAL.value(), CDDAYPERIODvalues.BETWEENMEALS.value() -> throw RecipeServiceImpl.UnsupportedCodeValueException("$timeOfDay not supported: corresponds to multiple possible moments in a day")
+                    CDDAYPERIODvalues.AFTERMEAL.value(), CDDAYPERIODvalues.BETWEENMEALS.value() -> throw IllegalArgumentException("$timeOfDay not supported: corresponds to multiple possible moments in a day")
                     else -> dayperiod = RecipedayperiodType().apply {
                         cd = CDDAYPERIOD().apply { s = "CD-DAYPERIOD"; sv = versions["CD-DAYPERIOD"]; value = CDDAYPERIODvalues.fromValue(timeOfDay) }
                     }

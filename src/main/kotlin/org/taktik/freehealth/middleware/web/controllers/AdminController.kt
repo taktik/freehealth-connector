@@ -82,14 +82,20 @@ class AdminController(val addressbookService: AddressbookService) {
     fun setLogLevel(logLevel: String, packageName: String): String {
         val retVal: String
         val loggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
-        if (logLevel.equals("DEBUG", ignoreCase = true)) {
+        if (logLevel.equals("TRACE", ignoreCase = true)) {
+            loggerContext.getLogger(packageName).level = Level.TRACE
+            retVal = "ok"
+        } else if (logLevel.equals("DEBUG", ignoreCase = true)) {
             loggerContext.getLogger(packageName).level = Level.DEBUG
             retVal = "ok"
         } else if (logLevel.equals("INFO", ignoreCase = true)) {
             loggerContext.getLogger(packageName).level = Level.INFO
             retVal = "ok"
-        } else if (logLevel.equals("TRACE", ignoreCase = true)) {
-            loggerContext.getLogger(packageName).level = Level.TRACE
+        } else if (logLevel.equals("WARN", ignoreCase = true)) {
+            loggerContext.getLogger(packageName).level = Level.WARN
+            retVal = "ok"
+        } else if (logLevel.equals("ERROR", ignoreCase = true)) {
+            loggerContext.getLogger(packageName).level = Level.ERROR
             retVal = "ok"
         } else {
             log.error("Not a known loglevel: $logLevel")

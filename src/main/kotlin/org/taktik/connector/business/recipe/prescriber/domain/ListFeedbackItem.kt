@@ -52,7 +52,7 @@ class ListFeedbackItem(val root: be.recipe.services.prescriber.ListFeedbackItem)
     /* (non-Javadoc)
 	 * @see be.recipe.services.prescriber.ListFeedbackItem#getContent()
 	 */
-    override fun getContent(): ByteArray {
+    override fun getContent(): ByteArray? {
         if (linkedException != null) {
             throw RuntimeException(linkedException)
         }
@@ -62,21 +62,21 @@ class ListFeedbackItem(val root: be.recipe.services.prescriber.ListFeedbackItem)
     /* (non-Javadoc)
 	 * @see be.recipe.services.prescriber.ListFeedbackItem#getRid()
 	 */
-    override fun getRid(): String {
+    override fun getRid(): String? {
         return root.rid
     }
 
     /* (non-Javadoc)
 	 * @see be.recipe.services.prescriber.ListFeedbackItem#getSentBy()
 	 */
-    override fun getSentBy(): String {
+    override fun getSentBy(): String? {
         return root.sentBy
     }
 
     /* (non-Javadoc)
 	 * @see be.recipe.services.prescriber.ListFeedbackItem#getSentDate()
 	 */
-    override fun getSentDate(): Calendar {
+    override fun getSentDate(): Calendar? {
         return root.sentDate
     }
 

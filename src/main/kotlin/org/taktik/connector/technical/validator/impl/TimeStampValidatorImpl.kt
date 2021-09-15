@@ -76,6 +76,7 @@ class TimeStampValidatorImpl : TimeStampValidator, ConfigurableImplementation {
         }
 
         if (!signatureValid) {
+            LOG.warn("timestampToken is valid", lastException)
             throw InvalidTimeStampException("timestamp is not valid ", lastException)
         } else {
             LOG.debug("timestampToken is valid")

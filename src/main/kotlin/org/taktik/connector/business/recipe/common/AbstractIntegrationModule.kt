@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.connector.business.recipeprojects.core.utils.ETKHelper
 import org.taktik.connector.business.recipeprojects.core.utils.EncryptionUtils
-import org.taktik.connector.business.recipeprojects.core.utils.Exceptionutils
+import org.taktik.connector.business.recipe.utils.Exceptionutils
 import org.taktik.connector.business.recipeprojects.core.utils.I18nHelper
 import org.taktik.connector.business.recipeprojects.core.utils.IOUtils
 import org.taktik.connector.business.recipeprojects.core.utils.MessageDumper
@@ -60,10 +60,10 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
 
     protected lateinit var etkHelper: ETKHelper
         private set
-    protected lateinit var symmKey: Key
+    protected lateinit var recipeSymmKey: Key
         private set
 
-    private val kgssService = KgssServiceImpl()
+    protected val kgssService = KgssServiceImpl()
 
     protected val propertyHandler = PropertyHandler.getInstance()
     protected val encryptionUtils = EncryptionUtils.getInstance(propertyHandler)
@@ -86,7 +86,7 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
 
             try {
                 log.info("Init recipe encryption - create symmKey")
-                symmKey = encryptionUtils.generateSecretKey()
+                recipeSymmKey = encryptionUtils.generateSecretKey()
                 log.info("Init recipe encryption - init etkHelper")
                 etkHelper = ETKHelper(keyDepotService)
             } catch (t: Throwable) {
@@ -97,10 +97,6 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
             log.error("Exception in init abstractIntegrationModule: ", t)
             Exceptionutils.errorHandler(t)
         }
-    }
-
-    private fun initCaching() {
-
     }
 
     @Synchronized

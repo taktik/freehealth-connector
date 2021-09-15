@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.connector.business.recipe.utils.KmehrValidator
-import org.taktik.freehealth.middleware.service.RecipeService
+import org.taktik.freehealth.middleware.service.RecipeV4Service
 import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
 import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample1
 import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample10
@@ -42,7 +42,7 @@ import javax.xml.datatype.DatatypeFactory
  */
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class RecipeExamplesTest(val recipeService: RecipeService) {
+class RecipeExamplesTest(val recipeService: RecipeV4Service) {
     // build even later than spring injection
     private val validator by lazy { KmehrValidator(recipeService) }
 
@@ -272,7 +272,7 @@ class RecipeExamplesTest(val recipeService: RecipeService) {
 
     fun toXmlPrescription(prescriptionExample: PrescriptionExample, config: KmehrPrescriptionConfig = createBaseConfig(prescriptionExample.hcp.nihii!!), skipPrescriptionTypeCheck: Boolean = false): String {
         val os = ByteArrayOutputStream()
-		val kmehrPrescription = recipeService.getKmehrPrescription(prescriptionExample.patient, prescriptionExample.hcp, prescriptionExample.medications, prescriptionExample.deliveryDate, config, "doctor")
+		val kmehrPrescription = recipeService.getKmehrPrescription(prescriptionExample.patient, prescriptionExample.hcp, prescriptionExample.medications, prescriptionExample.deliveryDate, config, "doctor", null)
 		JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(kmehrPrescription, os)
         val prescription = os.toByteArray()
 		if (!skipPrescriptionTypeCheck) {

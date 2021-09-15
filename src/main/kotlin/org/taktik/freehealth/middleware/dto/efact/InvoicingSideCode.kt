@@ -40,7 +40,6 @@ enum class InvoicingSideCode private constructor(val code: Int) {
                 }
             }
             return null
-
         }
     }
 }

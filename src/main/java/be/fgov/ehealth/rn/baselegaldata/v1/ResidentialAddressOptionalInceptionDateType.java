@@ -1,5 +1,6 @@
 package be.fgov.ehealth.rn.baselegaldata.v1;
 
+import be.fgov.ehealth.rn.commons.business.v1.LocalizedDescriptionType;
 import org.taktik.connector.technical.adapter.XmlDateAdapter;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class ResidentialAddressOptionalInceptionDateType implements Serializable
    @XmlElement(
       name = "CountryName"
    )
-   protected List countryNames;
+   protected List<LocalizedDescriptionType> countryNames;
    @XmlElement(
       name = "RegionCode"
    )
@@ -43,7 +44,7 @@ public class ResidentialAddressOptionalInceptionDateType implements Serializable
    @XmlElement(
       name = "RegionName"
    )
-   protected List regionNames;
+   protected List<LocalizedDescriptionType> regionNames;
    @XmlElement(
       name = "CityCode"
    )
@@ -55,7 +56,7 @@ public class ResidentialAddressOptionalInceptionDateType implements Serializable
    @XmlElement(
       name = "CityName"
    )
-   protected List cityNames;
+   protected List<LocalizedDescriptionType> cityNames;
    @XmlElement(
       name = "PostalCode"
    )
@@ -71,7 +72,7 @@ public class ResidentialAddressOptionalInceptionDateType implements Serializable
    @XmlElement(
       name = "StreetName"
    )
-   protected List streetNames;
+   protected List<LocalizedDescriptionType> streetNames;
    @XmlElement(
       name = "HouseNumber"
    )
@@ -110,7 +111,7 @@ public class ResidentialAddressOptionalInceptionDateType implements Serializable
       this.countryIsoCode = value;
    }
 
-   public List getCountryNames() {
+   public List<LocalizedDescriptionType> getCountryNames() {
       if (this.countryNames == null) {
          this.countryNames = new ArrayList();
       }
@@ -126,7 +127,7 @@ public class ResidentialAddressOptionalInceptionDateType implements Serializable
       this.regionCode = value;
    }
 
-   public List getRegionNames() {
+   public List<LocalizedDescriptionType> getRegionNames() {
       if (this.regionNames == null) {
          this.regionNames = new ArrayList();
       }
@@ -150,7 +151,7 @@ public class ResidentialAddressOptionalInceptionDateType implements Serializable
       this.cityRegionalCode = value;
    }
 
-   public List getCityNames() {
+   public List<LocalizedDescriptionType> getCityNames() {
       if (this.cityNames == null) {
          this.cityNames = new ArrayList();
       }
@@ -182,7 +183,7 @@ public class ResidentialAddressOptionalInceptionDateType implements Serializable
       this.streetRegionalCode = value;
    }
 
-   public List getStreetNames() {
+   public List<LocalizedDescriptionType> getStreetNames() {
       if (this.streetNames == null) {
          this.streetNames = new ArrayList();
       }

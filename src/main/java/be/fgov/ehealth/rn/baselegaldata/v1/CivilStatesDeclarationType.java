@@ -18,9 +18,9 @@ public class CivilStatesDeclarationType implements Serializable {
    @XmlElement(
       name = "CivilState"
    )
-   protected List civilStates;
+   protected List<CivilStateInfoDeclarationType> civilStates;
 
-   public List getCivilStates() {
+   public List<CivilStateInfoDeclarationType> getCivilStates() {
       if (this.civilStates == null) {
          this.civilStates = new ArrayList();
       }

@@ -36,7 +36,7 @@ class CreatePrescriptionTest {
     @Autowired
     lateinit var stsService : STSServiceImpl
     @Autowired
-    lateinit var recipeService : RecipeServiceImpl
+    lateinit var recipeService : RecipeV4ServiceImpl
 
     @Value("\${org.taktik.icure.keystore1.ssin}") var ssin : String? = null
     @Value("\${org.taktik.icure.keystore1.nihii}") var nihii : String? = null
@@ -96,7 +96,7 @@ class CreatePrescriptionTest {
         //InsurabilityInfo infos = generalInsurabilityLogic.getGeneralInsurabity(niss, null, null, "T@kt1k1Cur3", "/Users/aduchate/ehealth/keystore", "SSIN=79121430944 20121128-151901.acc-p12");
 
         val type = recipeService.inferPrescriptionType(medications, null)
-        val infos = recipeService.createPrescription(keystoreId!!, tokenId!!, "persphysician", hcp.nihii!!, hcp.ssin!!, hcp.lastName!!, passPhrase!!, patient, hcp, true, medications, type, null, null, LocalDateTime.now())
+        val infos = recipeService.createPrescription(keystoreId!!, tokenId!!, passPhrase!!, "persphysician", hcp.nihii!!, patient, hcp, true, medications, type, null, null, "1.0", LocalDateTime.now())
         return infos
     }
 

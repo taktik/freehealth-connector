@@ -391,6 +391,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                  })
         ws.write("17", icd.relatedCode)
         ws.write("19",(if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
+        if(icd.prescriberNorm?.code != 0 && icd.prescriberNorm?.code !=3 && icd.prescriberNorm?.code !=4) ws.write("20", icd.prescriptionDate)// todo enlever le code 4 quand on fera infi cfr bible factu pg 473
         ws.write("22",(if (icd.units >= 0) "+" else "-") + nf4.format(Math.abs(icd.units)))
         ws.write("23", (icd.derogationMaxNumber ?: InvoicingDerogationMaxNumberCode.Other).code)
         ws.write("24", icd.prescriberNihii)

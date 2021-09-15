@@ -22,7 +22,7 @@ public class SpecialNotionType implements Serializable {
    @XmlElement(
       name = "SpecialNotionDescription"
    )
-   protected List specialNotionDescriptions;
+   protected List<SpecialNotionType> specialNotionDescriptions;
 
    public String getSpecialNotionCode() {
       return this.specialNotionCode;
@@ -32,7 +32,7 @@ public class SpecialNotionType implements Serializable {
       this.specialNotionCode = value;
    }
 
-   public List getSpecialNotionDescriptions() {
+   public List<SpecialNotionType> getSpecialNotionDescriptions() {
       if (this.specialNotionDescriptions == null) {
          this.specialNotionDescriptions = new ArrayList();
       }

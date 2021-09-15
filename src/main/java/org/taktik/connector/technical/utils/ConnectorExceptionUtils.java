@@ -36,7 +36,7 @@ public final class ConnectorExceptionUtils {
             errors.remove(error);
          }
       } else {
-         LOG.warn("Empty error list to ignore. Ignoring all errors.");
+         LOG.debug("Empty error list to ignore. Ignoring all errors.");
          errors.clear();
       }
 

@@ -1,11 +1,18 @@
 package org.taktik.freehealth.middleware.service.impl
 
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
+import be.recipe.services.prescriber.GetPrescriptionStatusResult
+import be.recipe.services.prescriber.ListRidsHistoryResult
+import be.recipe.services.prescriber.PutVisionResult
+import be.recipe.services.prescriber.UpdateFeedbackFlagResult
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.taktik.connector.business.domain.kmehr.v20161201.be.ehealth.logic.recipe.xsd.v20160906.RecipeNotification
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeKmehrmessageType
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeitemType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESSschemes
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDADMINISTRATIONUNIT
@@ -53,44 +60,22 @@ import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.CountryType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.FolderType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
-import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
-import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.RecipientType
-import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.SenderType
-import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.SexType
-import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.StandardType
-import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.TelecomType
-import org.taktik.connector.business.recipe.prescriber.PrescriberIntegrationModuleV4Impl
-import org.taktik.connector.business.recipe.utils.KmehrHelper
-import org.taktik.connector.technical.service.keydepot.KeyDepotService
-import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
-import org.taktik.freehealth.middleware.domain.common.Patient
-import org.taktik.freehealth.middleware.domain.recipe.Medication
-import org.taktik.freehealth.middleware.domain.recipe.Prescription
-import org.taktik.freehealth.middleware.dto.Code
-import org.taktik.freehealth.middleware.dto.HealthcareParty
-import org.taktik.freehealth.middleware.service.RecipeService
-import org.taktik.freehealth.middleware.service.RecipeV4Service
-import org.taktik.freehealth.middleware.service.STSService
-import org.taktik.freehealth.utils.FuzzyValues
-import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
-import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelper
-import java.io.ByteArrayOutputStream
-import java.math.BigDecimal
-import java.math.BigInteger
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
-import javax.xml.bind.JAXBContext
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.HeaderType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.HeadingType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.ItemType
+import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.LifecycleType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.MedicinalProductType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.MomentType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.PersonType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.QuantityType
+import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.RecipientType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.RenewalType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.RouteType
+import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.SenderType
+import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.SexType
+import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.StandardType
+import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.TelecomType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.TemporalityType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.TransactionType
 import org.taktik.connector.business.domain.kmehr.v20190301.makeDateTypeFromFuzzyLong
@@ -98,50 +83,80 @@ import org.taktik.connector.business.domain.kmehr.v20190301.makeXGC
 import org.taktik.connector.business.domain.kmehr.v20190301.makeXMLGregorianCalendarFromFuzzyLong
 import org.taktik.connector.business.domain.kmehr.v20190301.makeXmlGregorianCalendar
 import org.taktik.connector.business.domain.kmehr.v20190301.s
+import org.taktik.connector.business.recipe.prescriber.PrescriberIntegrationModuleV4Impl
+import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelper
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.mapPeriodToFrequency
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDaytime
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDurationType
+import org.taktik.connector.technical.exception.ConnectorException
+import org.taktik.connector.technical.service.keydepot.KeyDepotService
+import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
+import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.CodeDao
+import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.recipe.Feedback
+import org.taktik.freehealth.middleware.domain.recipe.Medication
+import org.taktik.freehealth.middleware.domain.recipe.Prescription
+import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
 import org.taktik.freehealth.middleware.drugs.dto.MppId
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
 import org.taktik.freehealth.middleware.dto.Address
-import java.lang.Long
+import org.taktik.freehealth.middleware.dto.Code
+import org.taktik.freehealth.middleware.dto.HealthcareParty
+import org.taktik.freehealth.middleware.service.RecipeV4Service
+import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.utils.FuzzyValues
+import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.math.BigDecimal
+import java.math.BigInteger
 import java.nio.charset.Charset
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
+import java.util.zip.DataFormatException
+import javax.xml.bind.JAXBContext
+import javax.xml.bind.JAXBException
+import be.recipe.services.feedback.Feedback as FeedbackText
 
 @Service
-class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: STSService, private val drugsLogic: DrugsLogic, private val recipeService: RecipeService, private val keyDepotService: KeyDepotService) : RecipeV4Service {
+class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: STSService, private val drugsLogic: DrugsLogic, keyDepotService: KeyDepotService) : RecipeV4Service {
     val log = LoggerFactory.getLogger(this.javaClass)!!
-    private val kmehrHelper = KmehrHelper(Properties().apply { load(RecipeServiceImpl::class.java.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
 
     private val ridCache = CacheBuilder.newBuilder().build<String, GetPrescriptionForPrescriberResult>()
-    private val feedbacksCache : Cache<String, SortedSet<Feedback>>
-    private val icureName = "freehealth-connector"
-    private val icureVersion = "1.0.0"
+    private val feedbacksCache : Cache<String, SortedSet<Feedback>> = CacheBuilder.newBuilder().build<String, SortedSet<Feedback>>()
+    private val service = PrescriberIntegrationModuleV4Impl(stsService, keyDepotService)
 
-    init {
-        feedbacksCache = CacheBuilder.newBuilder().build<String, SortedSet<Feedback>>()
-    }
-
-    override fun listOpenPrescriptions(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, patientId: String): List<Prescription> {
+    override fun listOpenPrescriptions(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        patientId: String
+    ): List<Prescription> {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
 
-        val service = PrescriberIntegrationModuleV4Impl(stsService, keyDepotService)
-        val ridList = service.listOpenPrescription(samlToken, credential, hcpNihii, patientId)
+        val ridList = service.listOpenRids(samlToken, credential, patientId)
 
         val es = Executors.newFixedThreadPool(5)
         try {
-            val getFeedback = es.submit<List<Feedback>> { listFeedbacks(keystoreId, tokenId, hcpQuality, hcpNihii, hcpSsin, hcpName, passPhrase) }
-            val futures = es.invokeAll<GetPrescriptionForPrescriberResult>(ridList.map { rid -> Callable<GetPrescriptionForPrescriberResult> { ridCache[rid, { service!!.getPrescription(samlToken, credential, keystore, passPhrase, hcpNihii, rid) }] } })
+            val getFeedback = es.submit<List<Feedback>> { listFeedbacks(
+                keystoreId,
+                tokenId,
+                passPhrase
+            ) }
+            val futures = es.invokeAll<GetPrescriptionForPrescriberResult>(ridList.prescriptions.map { rid -> Callable<GetPrescriptionForPrescriberResult> { ridCache[rid, { service.getPrescription(samlToken, credential, hcpNihii, rid) }] } })
             val result = futures.map { f -> f.get() }.map { r -> Prescription(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId) }
 
             try {
@@ -157,38 +172,140 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         } catch (e: InterruptedException) {
             log.error("Unexpected error", e)
         }
-
         return emptyList()
-
     }
 
-    override fun listFeedbacks(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String): List<Feedback> {
-        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
-        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-
-        val service = PrescriberIntegrationModuleV4Impl(stsService, keyDepotService)
-
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
-        val feedbackItemList = service!!.listFeedback(samlToken, credential, hcpNihii, true)
-        return feedbackItemList.map { Feedback(it.rid, Long.parseLong(it.sentBy), it.sentDate?.time, it.content?.toString(Charset.forName("UTF-8"))) }
-    }
-
-    override fun revokePrescription(keystoreId: UUID, tokenId: UUID, hcpQuality: String, hcpNihii: String, hcpSsin: String, hcpName: String, passPhrase: String, rid: String, reason: String) {
+    override fun listFeedbacks(keystoreId: UUID, tokenId: UUID, passPhrase: String): List<Feedback> {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
-        val service = PrescriberIntegrationModuleV4Impl(stsService, keyDepotService)
+        val feedbackItemList = service.listFeedback(samlToken, credential, false)
+        return feedbackItemList.map { Feedback(it.rid, it.sentBy?.toLong(), it.sentDate?.time, it.content?.toString(Charset.forName("UTF-8"))?.let { try {
+            MarshallerHelper<FeedbackText, FeedbackText>(FeedbackText::class.java, FeedbackText::class.java).toObject(it)?.text } catch(e:Exception) { null } ?: it }) }
+    }
+
+    @Throws(ConnectorException::class, DataFormatException::class)
+    override fun getPrescriptionMessage(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        rid: String
+    ): RecipeKmehrmessageType? {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val p = service.getPrescription(samlToken, credential, hcpNihii, rid)
+
+        return p.prescription?.let { JAXBContext.newInstance(RecipeKmehrmessageType::class.java).createUnmarshaller().unmarshal(
+            ByteArrayInputStream(it) as InputStream
+        ) as RecipeKmehrmessageType
+        }
+    }
+
+    override fun sendNotification(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        patientId: String,
+        executorId: String,
+        rid: String,
+        text: String
+    ) {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val os = ByteArrayOutputStream()
+        JAXBContext.newInstance(RecipeNotification::class.java).createMarshaller().marshal(RecipeNotification().apply { this.text = text; kmehrmessage = getPrescriptionMessage(
+            keystoreId,
+            tokenId,
+            passPhrase,
+            hcpNihii,
+            rid
+        ) }, os)
+        val bytes = os.toByteArray()
+
+        service.sendNotification(samlToken, credential, bytes, patientId, executorId)
+    }
+
+    override fun revokePrescription(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        rid: String,
+        reason: String
+    ) {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         service.revokePrescription(samlToken, credential, hcpNihii, rid, reason)
     }
 
-    override fun createPrescription(keystoreId: UUID,
+    override fun getPrescriptionStatus(
+        keystoreId: UUID,
         tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        rid: String
+    ): GetPrescriptionStatusResult {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+       return service.getPrescriptionStatus(samlToken, credential, hcpNihii, rid) ?: throw IllegalStateException("Unknown error")
+    }
+
+    override fun listRidsHistory(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        patientSsin: String,
+        rid: String,
+        reason: String
+    ): ListRidsHistoryResult {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        return service.listRidsHistory(samlToken, credential, patientSsin, rid, reason)
+    }
+
+
+    override fun setVision(keystoreId: UUID, tokenId: UUID, passPhrase: String, rid: String, vision: String): PutVisionResult {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        return service.setVision(samlToken, credential, rid, vision)
+    }
+
+    override fun updateFeedbackFlag(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        rid: String,
+        feedbackAllowed: Boolean
+    ): UpdateFeedbackFlagResult {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        return service.updateFeedbackFlag(samlToken, credential, hcpNihii, rid, feedbackAllowed)
+    }
+
+    override fun createPrescription(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
         hcpQuality: String,
         hcpNihii: String,
-        hcpSsin: String,
-        hcpName: String,
-        passPhrase: String,
         patient: Patient,
         hcp: HealthcareParty,
         feedback: Boolean,
@@ -204,7 +321,8 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         vendorEmail: String?,
         vendorPhone: String?,
         vision: String?,
-        expirationDate: LocalDateTime?): Prescription {
+        expirationDate: LocalDateTime?
+    ): Prescription {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
@@ -217,7 +335,6 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(m, os)
         val prescription = os.toByteArray()
 
-        val service = PrescriberIntegrationModuleV4Impl(stsService, keyDepotService)
         try {
             //kmehrHelper.assertValidKmehrPrescription(ByteArrayInputStream(prescription), selectedType)
             log.debug("prescription $selectedType XML:\n${String(prescription)}")
@@ -229,9 +346,21 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         val unconstrainedDate = expirationDate ?: deliveryDate?.plusMonths(3)?.minusDays(1) ?: LocalDateTime.now().plusMonths(3).minusDays(1)
         val limitDate =  LocalDateTime.now().plusYears(1).minusDays(1)
 
-        val prescriptionId = service.createPrescription(keystore, samlToken, passPhrase, credential, hcpNihii, feedback, patient.ssin!!, prescription, selectedType, vision, vendorName ?: "phyMedispringTopaz", packageName, packageVersion ?: "1.0-freehealth-connector", if (unconstrainedDate.isAfter(limitDate)) limitDate else unconstrainedDate)
+        val prescriptionId = service.createPrescription(
+            samlToken,
+            credential,
+            patient.ssin!!,
+            hcpNihii,
+            feedback,
+            selectedType,
+            if (unconstrainedDate.isAfter(limitDate)) limitDate else unconstrainedDate,
+            prescription,
+            vision,
+            vendorName ?: "phyMedispringTopaz",
+            packageVersion ?: "1.0-freehealth-connector"
+        )
 
-        val result = Prescription(Date(), "", prescriptionId!!, false, null, false, ConnectorXmlUtils.toString(m))
+        val result = Prescription(Date(), "", prescriptionId, false, null, false, ConnectorXmlUtils.toString(m))
 
         return result
     }
@@ -278,7 +407,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         return getKmehrPrescription(patient, hcp, medications, deliveryDate, config, hcpQuality, expirationDate)
     }
 
-    fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String {
+    override fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String {
         if (prescriptionType != null) {
             return prescriptionType
         }
@@ -322,7 +451,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         return false
     }
 
-    fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig, hcpQuality: String,
+    override fun getKmehrPrescription(patient: Patient, hcp: HealthcareParty, medications: List<Medication>, deliveryDate: LocalDateTime?, config: KmehrPrescriptionConfig, hcpQuality: String,
         expirationDate: LocalDateTime?): Kmehrmessage {
 
         val language = config.prescription.language
@@ -565,9 +694,9 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                                                     drugQuantity.administrationUnit?.let { drugUnit ->
                                                         unit = AdministrationunitType().apply {
                                                             cd = CDADMINISTRATIONUNIT().apply {
-                                                                value = codeDao.ensureValid(drugUnit, ofType = "CD-ADMINISTRATIONUNIT", orDefault = Code("CD-ADMINISTRATIONUNIT", RecipeServiceImpl.defaultDosis))?.code
+                                                                value = codeDao.ensureValid(drugUnit, ofType = "CD-ADMINISTRATIONUNIT", orDefault = Code("CD-ADMINISTRATIONUNIT", defaultDosis))?.code
                                                                 if (value != drugUnit.code) {
-                                                                    log.warn("illegal CD-ADMINISTRATIONUNIT ${drugUnit.code} changed to ${RecipeServiceImpl.defaultDosis}")
+                                                                    log.warn("illegal CD-ADMINISTRATIONUNIT ${drugUnit.code} changed to ${defaultDosis}")
                                                                 }
                                                             }
                                                         }
@@ -602,6 +731,161 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
 
     private fun getPreferredAddress(hcp: HealthcareParty): Address {
         return hcp.addresses.find { it.addressType == org.taktik.freehealth.middleware.dto.AddressType.work || it.addressType == org.taktik.freehealth.middleware.dto.AddressType.clinic } ?: hcp.addresses.iterator().next() ?: throw IllegalArgumentException("${hcp.lastName} (${hcp.nihii}) has no address")
+    }
+
+    override fun getGalToAdministrationUnit(galId: String): Code? {
+        return getAdministrationCode(when (galId) {
+            "00001" -> "00005" // compr
+            "00003" -> "00005"
+            "00004" -> "00005"
+            "00005" -> "00005"
+            "00006" -> "00005"
+            "00007" -> "00026" // suppo
+            "00010" -> "00005" // compr
+            "00011" -> "00008" // flac
+            "00012" -> "00002" // amp
+            "00013" -> "00008" // flac
+            "00015" -> defaultDosis
+            "00017" -> "00004" // caps
+            "00019" -> "00007" // drips
+            "00020" -> "00005" // compr
+            "00023" -> "00005"
+            "00026" -> "00002" // amp
+            "00029" -> "00022" // pen
+            "00030" -> "00008" // flac
+            "00032" -> "00005" // compr
+            "00033" -> defaultDosis
+            "00035" -> "00008" // flac
+            "00036" -> defaultDosis
+            "00037" -> "00005" // compr
+            "00040" -> defaultDosis
+            "00046" -> "00004" // caps
+            "00047" -> "00008" // flac
+            "00048" -> "00003" // cream -> applic
+            "00049" -> defaultDosis
+            "00053" -> "00005" // compr
+            "00058" -> "00028" // meche
+            "00059" -> "00002" // amp
+            "00062" -> defaultDosis
+            "00063" -> "00007" // drips
+            "00065" -> "00002" // amp
+            "00066" -> defaultDosis
+            "00067" -> defaultDosis
+            "00068" -> "00008" // flac
+            "00070" -> "00029" // sac
+            "00071" -> "00008" // flac
+            "00073" -> "00001" // caps
+            "00074" -> "00007" // drips
+            "00075" -> "00008" // flac
+            "00076" -> "00002" // amp
+            "00077" -> "00008" // flac
+            "00080" -> "00030" // zakjes
+            "00081" -> "00002" // amp
+            "00084" -> "00005" // compr
+            "00088" -> "00002" // amp
+            "00091" -> "00008" // flac
+            "00092" -> "00008"
+            "00093" -> "00005" // compr
+            "00094" -> "00005"
+            "00099" -> defaultDosis
+            "00102" -> "00005" // compr
+            "00104" -> "00003" // pommade -> applic
+            "00112" -> defaultDosis
+            "00113" -> "00002" // amp
+            "00118" -> "00011" // inhal
+            "00136" -> defaultDosis
+            "00139" -> defaultDosis
+            "00140" -> defaultDosis
+            "00148" -> "00004" // caps
+            "00152" -> "00005" // compr
+            "00153" -> "00004" // caps
+            "00155" -> "00008" // flac
+            "00156" -> defaultDosis
+            "00157" -> "00005" // compr
+            "00161" -> defaultDosis
+            "00167" -> "00005" // compr
+            "00174" -> "00002" // amp
+            "00175" -> "00005" // compr
+            "00177" -> defaultDosis
+            "00178" -> "00008" // flac
+            "00180" -> "00022" // stylo
+            "00181" -> "00007" // drips
+            "00184" -> defaultDosis
+            "00191" -> "00008" // flac
+            "00198" -> defaultDosis
+            "00199" -> "00005" // compr
+            "00204" -> "00008" // flac
+            "00213" -> defaultDosis
+            "00218" -> "00008" // flac
+            "00221" -> "00030" // zakjes
+            "00226" -> "00008" // flac
+            "00229" -> defaultDosis
+            "00242" -> "00002" // amp
+            "00243" -> "00008" // flac
+            "00246" -> "00005" // compr
+            "00256" -> "00005"
+            "00269" -> "00005"
+            "00270" -> "00008" // flac
+            "00308" -> "00005"
+            "00322" -> "00007" // drips
+            "00383" -> "00008" // flac
+            "00420" -> defaultDosis
+            "00422" -> "00011" // inhal
+            "00440" -> "00007" // drips
+            "00447" -> "00004" // caps
+            "00508" -> defaultDosis
+            "00537" -> "00030"
+            else -> defaultDosis
+        })
+    }
+
+    @Throws(JAXBException::class)
+    override fun getPrescription(rid: String): PrescriptionFullWithFeedback? {
+        val r = ridCache.getIfPresent(rid) ?: return null
+        val fd = feedbacksCache.getIfPresent(rid)
+        val result =
+            PrescriptionFullWithFeedback(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId)
+        fd?.let { result.feedbacks = ArrayList(fd) }
+
+        val jaxbContext = JAXBContext.newInstance(RecipeKmehrmessageType::class.java)
+        val jaxbUnmarshaller = jaxbContext.createUnmarshaller()
+        val pm = jaxbUnmarshaller.unmarshal(ByteArrayInputStream(r.prescription)) as RecipeKmehrmessageType
+
+        pm.folder?.transaction?.let { t ->
+            t.heading?.let { hs ->
+                t.author?.hcparties?.firstOrNull()?.let { hcp ->
+                    result.nihii = hcp.ids?.find { it.s == org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes.ID_HCPARTY }?.value
+                    result.fullAuthorName = hcp.name ?: ((hcp.firstname?.plus(" ") ?: "") + (hcp.familyname ?: ""))
+                }
+                hs.items.forEach { item ->
+                    when (item) {
+                        is RecipeitemType -> {
+                            item.deliverydate?.toGregorianCalendar()?.time?.let { dd -> result.deliverableFrom = if (result.deliverableFrom?.after(dd) ?: false) result.deliverableFrom else dd }
+                            item.content.let { c ->
+                                (
+                                    c.medicinalproduct?.intendedname ?:
+                                    c.substanceproduct?.intendedname ?:
+                                    c?.compoundprescription?.content?.find { it is org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.dt.v1.TextType }.let { (it as org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.dt.v1.TextType).value }
+                                    ).let {
+                                        result.medicines.add(it + (item.posology?.let {
+                                            "\nS/ " + it.text
+                                        } ?: ""))
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    private fun getAdministrationCode(code: String): Code? {
+        return codeDao.findCode("CD-ADMINISTRATIONUNIT", code, "1")
+    }
+
+    companion object {
+        const val defaultDosis = "00006"
     }
 
 }

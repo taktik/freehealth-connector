@@ -119,12 +119,10 @@ public class CryptoImpl extends AbstractEndToEndCrypto {
 	}
 
 	private static UnsealedData processUnsealResult(CryptoResult<be.fgov.ehealth.etee.crypto.decrypt.UnsealedData> result) throws TechnicalConnectorException {
-      UnsealedData unsealedData = null;
       if (result.hasErrors()) {
-         LOG.error("Unsealed message is invalid.");
          throw new UnsealConnectorException(UnsealConnectorExceptionValues.ERROR_CRYPTO, result, "Data can't be unsealed.");
       } else if (ignoreWarnings(result)) {
-         return map((be.fgov.ehealth.etee.crypto.decrypt.UnsealedData)result.getData());
+         return map(result.getData());
       } else {
          throw new UnsealConnectorException(UnsealConnectorExceptionValues.ERROR_CRYPTO, result, "Data can't be unsealed.");
       }

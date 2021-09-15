@@ -140,7 +140,7 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-        log.info("sendSubscription called with principal "+(principal?._id?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
+        log.debug("sendSubscription called with principal "+(principal?._id?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
 
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val inputReference = InputReference().inputReference
@@ -1398,12 +1398,12 @@ class MhmServiceImpl(private val stsService: STSService) : MhmService {
         /*if (localName == "transaction") {
             return "transaction[${xpath.evaluate("ns1:cd[@S=\"CD-TRANSACTION-MYCARENET\"]", node)}]"
         }*/
-        if (localName == "item") {
-            return "item[${xpath.evaluate("ns1:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
+        return when {
+            localName == "item" -> "item[${xpath.evaluate("ns1:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
+            localName == "cd" && node is Element -> {
+                if (node.getAttribute("SL")?.isNotEmpty() == true) "cd[${node.getAttribute("SL")}]" else "cd[${node.getAttribute("S")}]"
+            }
+            else -> localName
         }
-        if (localName == "cd" && node is Element) {
-            return "cd[${node.getAttribute("S") ?: node.getAttribute("SL")}]"
-        }
-        return localName
     }
 }

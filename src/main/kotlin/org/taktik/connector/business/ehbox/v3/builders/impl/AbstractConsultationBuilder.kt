@@ -149,7 +149,7 @@ abstract class AbstractConsultationBuilder<T>() {
                     try {
                         byteVal = ConnectorExceptionUtils.processUnsealConnectorException(unsealConnectorException)
                     } catch (connectorException: UnsealConnectorException) {
-                        LOG.error("unrecoverable unsealException occurred while decrypting ehbox content ," +
+                        LOG.debug("unrecoverable unsealException occurred while decrypting ehbox content ," +
                                       " returning null as message , error : ${connectorException.message}")
                         throw EhboxCryptoException(connectorException, null)
                     }

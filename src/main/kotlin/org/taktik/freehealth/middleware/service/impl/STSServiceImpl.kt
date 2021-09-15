@@ -27,8 +27,9 @@ import com.hazelcast.core.IMap
 import org.apache.commons.logging.LogFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import org.taktik.connector.technical.config.ConfigFactory
+import org.taktik.connector.technical.config.ConfigValidator
 import org.taktik.connector.technical.exception.TechnicalConnectorException
-import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues.ERROR_CONFIG
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
@@ -65,9 +66,11 @@ import javax.xml.transform.stream.StreamSource
 class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, SamlTokenResult>, val keyDepotService: KeyDepotService) : STSService {
     private val log = LogFactory.getLog(this.javaClass)
 
-    val freehealthStsService: org.taktik.connector.technical.service.sts.STSService =
-        org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
-    val transformerFactory = TransformerFactory.newInstance()
+    val freehealthStsService: org.taktik.connector.technical.service.sts.STSService = org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
+    val transformerFactory: TransformerFactory = TransformerFactory.newInstance()
+    val config: ConfigValidator = ConfigFactory.getConfigValidator()
+
+    override fun isAcceptance() = config.getProperty("endpoint.sts").contains("-acpt")
 
     override fun registerToken(tokenId: UUID, token: String, quality: String) {
         val factory = DocumentBuilderFactory.newInstance()
@@ -75,8 +78,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val document = builder.parse(InputSource(StringReader(token)))
         val assertion = document.documentElement
 
-        tokensMap[tokenId] =
-            SamlTokenResult(tokenId, token, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
+        tokensMap[tokenId] = SamlTokenResult(tokenId, token, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
         log.info("tokensMap size: ${tokensMap.size}")
     }
 
@@ -143,6 +145,14 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number:recognisedmedicalhouse:nihii11",
                     "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number:recognisedmedicalhouse:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
             "guardpost" -> listOf(
@@ -164,6 +174,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 ),
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:guardpost:nihii-number:recognisedguardpost:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
@@ -187,6 +201,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:sortingcenter:nihii-number:recognisedsortingcenter:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
             "officedoctors" -> listOf(
@@ -208,6 +226,28 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 ),
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:officedoctors:nihii-number:recognisedofficedoctors:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
+            )
+            "groupofnurses" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:groupofnurses:nihii-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:groupofnurses:nihii-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:groupofnurses:nihii-number",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:groupofnurses:nihii-number:recognisedgroupofnurses:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:groupofnurses:nihii-number:recognisedgroupofnurses:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
@@ -254,6 +294,91 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 ),
                 SAMLAttributeDesignator(
                     "urn:be:fgov:person:ssin:ehealth:1.0:fpsph:doctor:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
+            )
+            "nurse" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:nurse:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:nurse:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:nihii:nurse:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:givenname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:surname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:fpsph:nurse:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
+            )
+            "physiotherapist" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:professional:physiotherapist:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:nihii:physiotherapist:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:givenname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:surname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:fpsph:physiotherapist:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
+            )
+            "midwife" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:professional:midwife:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:nihii:midwife:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:givenname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:surname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:fpsph:midwife:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
@@ -305,6 +430,18 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 ),
                 SAMLAttribute(
                     "urn:be:fgov:ehealth:1.0:certificateholder:officedoctors:nihii-number",
+                    "urn:be:fgov:identification-namespace",
+                    nihiiOrSsin
+                )
+            )
+            "groupofnurses" -> listOf(
+                SAMLAttribute(
+                    "urn:be:fgov:ehealth:1.0:groupofnurses:nihii-number",
+                    "urn:be:fgov:identification-namespace",
+                    nihiiOrSsin
+                ),
+                SAMLAttribute(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:groupofnurses:nihii-number",
                     "urn:be:fgov:identification-namespace",
                     nihiiOrSsin
                 )

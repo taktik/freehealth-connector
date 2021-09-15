@@ -274,12 +274,6 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                 }
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
                 this.issueInstant = DateTime()
-                this.routing = RoutingType().apply {
-                    careReceiver = CareReceiverIdType().apply {
-                        ssin = patientSsin
-                    }
-                    this.referenceDate = refDateTime
-                }
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
                 this.xades = BlobUtil.generateXades(credential, this.detail, "eattest")
             }
@@ -914,7 +908,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                         cds.add(CDCONTENT().apply {
                                             s =
                                                 CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                            "NIHDI-CLAIM-NORM"; value = code.requestorNorm.toString()
+                                            "NIHDI-CLAIM-NORM"; value = code.norm.toString()
                                         })
                                     },
                                     code.relativeService?.let {
@@ -932,7 +926,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                                 s = CDCONTENTschemes.LOCAL;
                                                 sv = "1.0";
                                                 sl = "NIHDI-TREATED-LIMB";
-                                                value = code.side.toString();
+                                                value = code.side!!.code.toString();
                                             })
                                         }
                                     },
@@ -1402,16 +1396,14 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
             override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
                 if (namespaceURI == "http://www.ehealth.fgov.be/standards/kmehr/schema/v1") listOf("ns1").iterator() else listOf<String>().iterator()
         }
-        if (localName == "transaction") {
-            return "transaction[${xpath.evaluate("ns1:cd[@S=\"CD-TRANSACTION-MYCARENET\"]", node)}]"
+        return when {
+            localName == "transaction" -> "transaction[${xpath.evaluate("ns1:cd[@S=\"CD-TRANSACTION-MYCARENET\"]", node)}]"
+            localName == "item" -> "item[${xpath.evaluate("ns1:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
+            localName == "cd" && node is Element -> {
+                if (node.getAttribute("SL")?.isNotEmpty() == true) "cd[${node.getAttribute("SL")}]" else "cd[${node.getAttribute("S")}]"
+            }
+            else -> localName
         }
-        if (localName == "item") {
-            return "item[${xpath.evaluate("ns1:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
-        }
-        if (localName == "cd" && node is Element) {
-            return "cd[${node.getAttribute("S") ?: node.getAttribute("SL")}]"
-        }
-        return localName
     }
 
     private fun handleEncryption(

@@ -26,7 +26,7 @@ import java.io.Serializable
 
 @JsonDeserialize(using = AddressTypeDeserializer::class)
 enum class AddressType : Serializable {
-    home, work, vacation, hospital, clinic, hq, other
+    home, work, vacation, hospital, clinic, hq, other, diplomatic, reference, postal, temporary
 }
 
 class AddressTypeDeserializer:FailSafeEnumDeserializer<AddressType>(AddressType::class.java)

@@ -29,7 +29,9 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.DefaultSecurityFilterChain
 import org.springframework.security.web.FilterChainProxy
 import org.springframework.security.web.access.ExceptionTranslationFilter
@@ -43,11 +45,13 @@ import org.taktik.freehealth.middleware.web.LoginUrlAuthenticationEntryPoint
 
 @Configuration
 class SecurityConfig {
-	@Bean fun securityConfigAdapter(httpClient: HttpClient, couchDbProperties: CouchDbProperties, authenticationProperties: AuthenticationProperties, cacheManager: CacheManager) = SecurityConfigAdapter(httpClient, couchDbProperties, authenticationProperties, cacheManager)
+	@Bean fun securityConfigAdapter(httpClient: HttpClient, couchDbProperties: CouchDbProperties, authenticationProperties: AuthenticationProperties, cacheManager: CacheManager, userDetailsService: UserDetailsService) = SecurityConfigAdapter(httpClient, couchDbProperties, authenticationProperties, cacheManager, userDetailsService)
     @Bean fun httpClient() = HttpClient().apply { start() }
+    @Bean fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder(8)
+    @Bean fun userDetailsService(passwordEncoder: PasswordEncoder, httpClient: HttpClient, couchDbProperties: CouchDbProperties, authenticationProperties: AuthenticationProperties): CouchdbUserDetailsService = CouchdbUserDetailsService(httpClient, couchDbProperties, authenticationProperties, passwordEncoder)
 }
 
-class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: CouchDbProperties, val authenticationProperties: AuthenticationProperties, val cacheManager: CacheManager) : WebSecurityConfigurerAdapter(false) {
+class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: CouchDbProperties, val authenticationProperties: AuthenticationProperties, val cacheManager: CacheManager, private val userDetailsService: UserDetailsService) : WebSecurityConfigurerAdapter(false) {
     @Bean
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
@@ -57,7 +61,7 @@ class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: C
         val passwordEncoder = BCryptPasswordEncoder(8)
 		auth!!.authenticationProvider(DaoAuthenticationProvider().apply {
             setPasswordEncoder(passwordEncoder)
-            setUserDetailsService(CouchdbUserDetailsService(httpClient, couchDbProperties, authenticationProperties, cacheManager, passwordEncoder))
+            setUserDetailsService(userDetailsService)
         })
 	}
 

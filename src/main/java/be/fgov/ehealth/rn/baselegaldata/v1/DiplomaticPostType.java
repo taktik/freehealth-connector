@@ -1,5 +1,7 @@
 package be.fgov.ehealth.rn.baselegaldata.v1;
 
+import be.fgov.ehealth.rn.commons.business.v1.LocalizedDescriptionType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,7 @@ public class DiplomaticPostType implements Serializable {
    @XmlElement(
       name = "CountryName"
    )
-   protected List countryNames;
+   protected List<LocalizedDescriptionType> countryNames;
    @XmlElement(
       name = "DiplomaticPostCode"
    )
@@ -41,7 +43,7 @@ public class DiplomaticPostType implements Serializable {
    @XmlElement(
       name = "DiplomaticPostName"
    )
-   protected List diplomaticPostNames;
+   protected List<LocalizedDescriptionType> diplomaticPostNames;
 
    public Integer getCountryCode() {
       return this.countryCode;
@@ -59,7 +61,7 @@ public class DiplomaticPostType implements Serializable {
       this.countryIsoCode = value;
    }
 
-   public List getCountryNames() {
+   public List<LocalizedDescriptionType> getCountryNames() {
       if (this.countryNames == null) {
          this.countryNames = new ArrayList();
       }
@@ -75,7 +77,7 @@ public class DiplomaticPostType implements Serializable {
       this.diplomaticPostCode = value;
    }
 
-   public List getDiplomaticPostNames() {
+   public List<LocalizedDescriptionType> getDiplomaticPostNames() {
       if (this.diplomaticPostNames == null) {
          this.diplomaticPostNames = new ArrayList();
       }

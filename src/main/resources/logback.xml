@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
-	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+	</appender>
 
 	<logger name="be.fgov.ehealth.etee.crypto" level="WARN" />
 	<logger name="be.fgov.ehealth.etee.crypto.decrypt" level="ERROR" />
@@ -11,6 +19,12 @@
 	<logger name="org.taktik.connector.technical.service.etee.impl.CryptoImpl" level="ERROR" />
 
 	<logger name="org.taktik.freehealth.middleware.service.impl" level="INFO" />
-
+	<logger name="org.taktik.freehealth.middleware.HazelcastConfiguration" level="WARN" />
 	<logger name="org.taktik.connector.business.hubv3.service" level="DEBUG" />
+
+	<logger name="org.springframework.web.client" level="DEBUG" />
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
+	</root>
 </configuration>

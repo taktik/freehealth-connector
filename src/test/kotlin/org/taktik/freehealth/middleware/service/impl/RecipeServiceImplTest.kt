@@ -50,6 +50,7 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDHEADING
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDITEM
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeCDTRANSACTION
+import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeKmehrmessageType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeadministrationquantityType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeauthorType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipebasicIDKMEHR
@@ -81,6 +82,7 @@ import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.recipe.RegimenItem
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
+import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Companion.taktik
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications.Companion.compoundPrescriptionP2
@@ -100,7 +102,7 @@ class RecipeServiceImplTest {
     @Autowired
     lateinit var stsService : STSServiceImpl
     @Autowired
-    lateinit var recipeService : RecipeServiceImpl
+    lateinit var recipeService : RecipeV4ServiceImpl
 
     @Value("\${org.taktik.icure.keystore1.ssin}") var ssin : String? = null
     @Value("\${org.taktik.icure.keystore1.nihii}") var nihii : String? = null
@@ -134,7 +136,7 @@ class RecipeServiceImplTest {
             Patient().apply { firstName = "Antoine"; lastName = "Duchateau"; dateOfBirth = 19740104; ssin = "74010414733" },
             HealthcareParty(firstName = "Antoine", lastName = "Baudoux", ssin = "79121430944", nihii = "11478761004", addresses = mutableSetOf(taktik())),
             listOf(medication),
-            LocalDateTime.now(), "doctor")
+            LocalDateTime.now(), KmehrPrescriptionConfig(), "doctor", LocalDateTime.now().plusDays(60))
 
 	    validator.validatePrescription(kmehrPrescription, listOf(medication))
     }
@@ -157,12 +159,12 @@ class RecipeServiceImplTest {
             Patient().apply { firstName = "Antoine"; lastName = "Duchateau"; dateOfBirth = 19740104; ssin = "74010414733" },
             HealthcareParty(firstName = "Antoine", lastName = "Baudoux", ssin = "79121430944", nihii = "11478761004", addresses = mutableSetOf(taktik()) ),
             medications,
-            LocalDateTime.now(), "doctor")
+            LocalDateTime.now(), KmehrPrescriptionConfig(), "doctor", LocalDateTime.now().plusDays(60))
 
-		val quantities = kmehrPrescription.folder.transaction.heading.items.get(0).regimen.daynumbersAndQuantitiesAndDaytimes
+		val quantities = (kmehrPrescription.folders.first().transactions.first().headingsAndItemsAndTexts.first() as org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.ItemType).regimen.daynumbersAndQuantitiesAndDates
 			.filter { it is RecipeadministrationquantityType }
 		assertTrue(quantities.isNotEmpty())
-		quantities.forEach { assertEquals(RecipeServiceImpl.defaultDosis, (it as RecipeadministrationquantityType).unit.cd.value) }
+		quantities.forEach { assertEquals(RecipeV4ServiceImpl.defaultDosis, (it as RecipeadministrationquantityType).unit.cd.value) }
 	}
 
 	@Test
@@ -197,14 +199,14 @@ class RecipeServiceImplTest {
 		assertEquals(XMLGregorianCalendarImpl.parse("22:00:00"), daytime.time)
 	}
 
-	@Test(expected = RecipeServiceImpl.UnsupportedCodeValueException::class)
+	@Test(expected = IllegalArgumentException::class)
 	fun toDaytime_periodAftermeal_unsupported() {
 		toDaytime(RegimenItem().apply {
 			dayPeriod = Code("CD-DAYPERIOD", "aftermeal")
 		})
 	}
 
-	@Test(expected = RecipeServiceImpl.UnsupportedCodeValueException::class)
+	@Test(expected = IllegalArgumentException::class)
 	fun toDaytime_periodBetweenmeals_unsupported() {
 		toDaytime(RegimenItem().apply {
 			dayPeriod = Code("CD-DAYPERIOD", "betweenmeals")
@@ -224,7 +226,7 @@ class RecipeServiceImplTest {
 			try {
 				time = toDaytime(RegimenItem().apply { dayPeriod = Code("CD-DAYPERIOD", it) }).time
 				assertThat(it, time, Matchers.notNullValue())
-			} catch (e: RecipeServiceImpl.UnsupportedCodeValueException) {
+			} catch (e: IllegalArgumentException) {
 				// ok
 			}
 		}
@@ -366,7 +368,8 @@ class RecipeServiceImplTest {
     fun validateNotification() {
         val notification = RecipeNotification().apply {
             text = "This is a notification"
-            kmehrmessage = org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage().apply {
+            kmehrmessage = RecipeKmehrmessageType()
+                .apply {
                 header = RecipeheaderType().apply {
                     standard = StandardType().apply {
                         cd = CDSTANDARD().apply { s  = "CD-STANDARD"; sv = "1.19"; value = "20161201" }
@@ -459,7 +462,8 @@ class RecipeServiceImplTest {
                                             decimal = BigDecimal.ONE
                                             unit = UnitType().apply { cd = CDUNIT().apply { s = CDUNITschemes.CD_UNIT; sv = "1.0"; value = "pkg" } }
                                         }
-                                        posology = RecipeitemType.Posology().apply { text = TextType().apply { l = "FR"; value = "2017-03-29" } }
+                                        posology = RecipeitemType.RecipePosology()
+                                            .apply { text = TextType().apply { l = "FR"; value = "2017-03-29" } }
                                         deliverydate = DatatypeFactory.newInstance().newXMLGregorianCalendar("2017-03-29")
                                     })
                                 }
