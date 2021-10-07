@@ -144,6 +144,14 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number:recognisedmedicalhouse:nihii11",
                     "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number:recognisedmedicalhouse:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
             "guardpost" -> listOf(
@@ -166,6 +174,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:guardpost:nihii-number:recognisedguardpost:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
             "sortingcenter" -> listOf(
@@ -187,6 +199,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 ),
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:sortingcenter:nihii-number:recognisedsortingcenter:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
