@@ -137,20 +137,11 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     "urn:be:fgov:identification-namespace"
                 ),
                 SAMLAttributeDesignator(
-                    "urn:be:fgov:ehealth:1.0:certificateholder:medicalhouse:nihii-number",
-                    "urn:be:fgov:certified-namespace:ehealth"
-                )
-                ,
-                SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number:recognisedmedicalhouse:nihii11",
                     "urn:be:fgov:certified-namespace:ehealth"
                 ),
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number:recognisedmedicalhouse:boolean",
-                    "urn:be:fgov:certified-namespace:ehealth"
-                ),
-                SAMLAttributeDesignator(
-                    "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
