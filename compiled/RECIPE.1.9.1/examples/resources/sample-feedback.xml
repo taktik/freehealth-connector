@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:feedback xmlns:p="http://services.recipe.be" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://services.recipe.be feedback.xsd">
+	<text>this is a feedback</text>
+</p:feedback>

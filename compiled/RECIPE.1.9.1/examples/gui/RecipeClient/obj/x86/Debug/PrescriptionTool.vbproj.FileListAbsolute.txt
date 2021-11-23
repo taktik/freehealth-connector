@@ -1,0 +1,557 @@
+C:\Recipe\Workspaces\Trunk\trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+C:\Recipe\Workspaces\Trunk\trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+C:\Recipe\Workspaces\Trunk\trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+C:\Recipe\Workspaces\Trunk\trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.Cache
+C:\Recipe\Workspaces\Trunk\trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+C:\Recipe\SDK checkout\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+C:\Recipe\SDK checkout\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+C:\Recipe\SDK checkout\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+C:\Recipe\SDK checkout\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+C:\Recipe\SDK checkout\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojResolveAssemblyReference.cache
+C:\Recipe\SDK checkout\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+C:\Recipe\SDK checkout\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+C:\Recipe\SDK checkout\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+C:\Recipe\SDK checkout\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.Cache
+C:\Recipe\SDK checkout\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+C:\Recipe\SDK checkout\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+C:\Recipe\SDK checkout\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+C:\recipe\workspaces\trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+C:\recipe\workspaces\trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+C:\recipe\workspaces\trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+C:\recipe\workspaces\trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+H:\hc\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+H:\hc\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+H:\hc\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+H:\hc\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+H:\hc\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojResolveAssemblyReference.cache
+H:\hc\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+H:\hc\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+H:\hc\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+H:\hc\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.Cache
+H:\hc\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+H:\hc\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+H:\hc\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+H:\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+H:\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+H:\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+H:\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+H:\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+H:\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+H:\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+H:\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojResolveAssemblyReference.cache
+H:\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+H:\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+H:\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+H:\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.Cache
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-apb-gfddpp-services-smc.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.AWT.WinForms.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Beans.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Charsets.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Corba.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Core.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Jdbc.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Management.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Media.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Misc.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Naming.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Remoting.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Security.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.SwingAWT.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Text.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Util.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.API.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Bind.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Crypto.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Parse.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Transform.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.WebServices.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.JNI.dll
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.Cache
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+F:\workspace\rbc_trunk\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojResolveAssemblyReference.cache
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-apb-gfddpp-services-smc.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-common.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-core.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-projects-core.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-recipe.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-technical-core.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-technical-smartcardio.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-codage.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-common.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-core.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-etee.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-external.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-kmehr.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-timestamping.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.AWT.WinForms.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Beans.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Charsets.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Corba.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Core.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Jdbc.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Management.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Media.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Misc.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Naming.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Remoting.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Security.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.SwingAWT.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Text.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Util.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.API.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Bind.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Crypto.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Parse.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Transform.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.WebServices.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.JNI.dll
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojResolveAssemblyReference.cache
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.Cache
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+F:\workspace\rbc_trunk_\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-apb-gfddpp-services-smc.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-common.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-core.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-projects-core.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-recipe.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-sessionutils.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-technical-core.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-technical-smartcardio.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-codage.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-common.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-core.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-etee.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-external.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-kmehr.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-timestamping.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.AWT.WinForms.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Beans.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Charsets.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Corba.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Core.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Jdbc.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Management.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Media.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Misc.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Naming.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Remoting.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Security.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.SwingAWT.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Text.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Util.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.API.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Bind.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Crypto.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Parse.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Transform.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.WebServices.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.JNI.dll
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojResolveAssemblyReference.cache
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.Cache
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+C:\git\recipe-business-connector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-apb-gfddpp-services-smc.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-common.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-core.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-projects-core.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-recipe.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-sessionutils.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-technical-core.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-technical-smartcardio.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-codage.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-common.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-core.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-etee.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-external.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-kmehr.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-timestamping.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.AWT.WinForms.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Beans.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Charsets.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Corba.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Core.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Jdbc.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Management.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Media.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Misc.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Naming.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Remoting.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Security.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.SwingAWT.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Text.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Util.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.API.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Bind.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Crypto.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Parse.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Transform.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.WebServices.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.JNI.dll
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojResolveAssemblyReference.cache
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.Cache
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+C:\Workspace\BusinessConnector\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\be-apb-gfddpp-services-smc.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\be-business-connector-common.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\be-business-connector-core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\be-business-connector-projects-core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\be-business-connector-recipe.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\be-business-connector-sessionutils.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\connector-technical-core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\connector-technical-smartcardio.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\connector-utilities-codage.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\connector-utilities-common.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\connector-utilities-core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\connector-utilities-etee.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\connector-utilities-external.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\connector-utilities-kmehr.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\connector-utilities-timestamping.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.AWT.WinForms.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Beans.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Charsets.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Corba.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Jdbc.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Management.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Media.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Misc.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Naming.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Remoting.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Security.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.SwingAWT.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Text.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Util.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.API.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Bind.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Crypto.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Parse.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Transform.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.WebServices.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.JNI.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojAssemblyReference.cache
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.cache
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.CoreCompileInputs.cache
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.CopyComplete
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190604-140900\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\be-apb-gfddpp-services-smc.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\be-business-connector-common.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\be-business-connector-core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\be-business-connector-projects-core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\be-business-connector-recipe.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\be-business-connector-sessionutils.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\connector-technical-core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\connector-technical-smartcardio.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\connector-utilities-codage.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\connector-utilities-common.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\connector-utilities-core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\connector-utilities-etee.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\connector-utilities-external.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\connector-utilities-kmehr.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\connector-utilities-timestamping.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.AWT.WinForms.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Beans.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Charsets.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Corba.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Jdbc.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Management.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Media.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Misc.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Naming.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Remoting.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Security.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.SwingAWT.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Text.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Util.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.API.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Bind.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Crypto.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Parse.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Transform.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.WebServices.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.JNI.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojAssemblyReference.cache
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.cache
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.CoreCompileInputs.cache
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.CopyComplete
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber-sdk-1.8.0-20190605-085334\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-apb-gfddpp-services-smc.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-common.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-projects-core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-recipe.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-sessionutils.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-technical-core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-technical-smartcardio.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-codage.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-common.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-etee.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-external.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-kmehr.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-timestamping.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.AWT.WinForms.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Beans.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Charsets.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Corba.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Core.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Jdbc.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Management.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Media.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Misc.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Naming.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Remoting.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Security.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.SwingAWT.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Text.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Util.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.API.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Bind.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Crypto.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Parse.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Transform.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.WebServices.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.JNI.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-idsupport.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-bcp.dll
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojAssemblyReference.cache
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.cache
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.CoreCompileInputs.cache
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.CopyComplete
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+C:\projects\development\recipe-business-connector_1.8.0\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-common.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-core.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-projects-core.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-recipe.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-sessionutils.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-technical-core.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-technical-smartcardio.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-codage.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-common.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-core.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-etee.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-external.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-kmehr.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-timestamping.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.AWT.WinForms.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Beans.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Charsets.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Corba.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Core.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Jdbc.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Management.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Media.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Misc.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Naming.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Remoting.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Security.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.SwingAWT.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Text.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Util.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.API.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Bind.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Crypto.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Parse.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Transform.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.WebServices.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.JNI.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-apb-gfddpp-services-smc.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-idsupport.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-bcp.dll
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.cache
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.CoreCompileInputs.cache
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.CopyComplete
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.ResultPopup.resources
+C:\projects\development\recipe-business-connector_1.8.0_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojAssemblyReference.cache
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-apb-gfddpp-services-smc.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-common.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-core.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-projects-core.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-recipe.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\be-business-connector-sessionutils.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-technical-core.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-bcp.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-common.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-core.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-etee.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-external.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-idsupport.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\connector-utilities-timestamping.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.AWT.WinForms.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Beans.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Charsets.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Corba.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Core.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Jdbc.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Management.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Media.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Misc.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Naming.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Remoting.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Security.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.SwingAWT.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Text.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Util.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.API.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Bind.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Crypto.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Parse.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Transform.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.WebServices.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.JNI.dll
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.ResultPopup.resources
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.cache
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.CoreCompileInputs.cache
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.CopyComplete
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
+C:\projects\development\recipe-business-connector_1.8.7_release\dist\prescriber\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojAssemblyReference.cache
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe.config
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.exe
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.pdb
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\RecipePrescriptionTool.xml
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\be-apb-gfddpp-services-smc.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\be-business-connector-common.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\be-business-connector-core.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\be-business-connector-projects-core.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\be-business-connector-recipe.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\be-business-connector-sessionutils.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\connector-technical-core.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\connector-utilities-bcp.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\connector-utilities-common.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\connector-utilities-core.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\connector-utilities-etee.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\connector-utilities-external.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\connector-utilities-idsupport.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\connector-utilities-timestamping.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.AWT.WinForms.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Beans.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Charsets.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Corba.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Core.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Jdbc.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Management.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Media.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Misc.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Naming.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Remoting.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Security.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.SwingAWT.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Text.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.Util.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.API.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Bind.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Crypto.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Parse.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.Transform.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.WebServices.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\bin\Debug\IKVM.Runtime.JNI.dll
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbprojAssemblyReference.cache
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.ResultPopup.resources
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PasswordPrompt.resources
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.PrescriptionTool.resources
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.Resources.resources
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.GenerateResource.cache
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.CoreCompileInputs.cache
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\obj\x86\Debug\PrescriptionTool.vbproj.CopyComplete
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.exe
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.xml
+C:\Users\bruno.casneuf\Recip-e\Recip-e - Documenten\General\Softwarehouses\Package Homepage_voor SWHouses\SDK\prescriber-sdk-1.9.1\examples\gui\RecipeClient\obj\x86\Debug\RecipePrescriptionTool.pdb
