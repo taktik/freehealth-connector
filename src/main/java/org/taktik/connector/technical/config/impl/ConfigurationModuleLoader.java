@@ -33,7 +33,6 @@ final class ConfigurationModuleLoader {
       filter(modulesToLoad);
       List<ConfigurationModule> modules = new ArrayList();
       modules.add(new ConfigurationModuleClassloader());
-      modules.add(new ConfigurationModuleLogging());
       modules.add(new ConfigurationModuleVersion());
       modules.add(new ConfigurationModuleProperties());
       modules.addAll(modulesToLoad);
@@ -54,7 +53,7 @@ final class ConfigurationModuleLoader {
    }
 
    static void filter(List<ConfigurationModule> modulesToLoad) {
-      CollectionUtils.filter(modulesToLoad, new ConfigurationModuleLoader.ConfigurationModulePredicate(ConfigurationModuleClassloader.class, ConfigurationModuleLogging.class, ConfigurationModuleVersion.class, ConfigurationModuleProperties.class, ConfigurationModuleSecurityProvider.class, ConfigurationModuleTrustStore.class));
+      CollectionUtils.filter(modulesToLoad, new ConfigurationModuleLoader.ConfigurationModulePredicate(ConfigurationModuleClassloader.class, ConfigurationModuleVersion.class, ConfigurationModuleProperties.class, ConfigurationModuleSecurityProvider.class, ConfigurationModuleTrustStore.class));
    }
 
    static void unload() {
