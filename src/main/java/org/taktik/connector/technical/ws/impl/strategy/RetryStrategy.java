@@ -21,7 +21,7 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
       GenericRequest genericRequest = invokeStrategyContext.getRequest();
       RetryStrategy.RetryContext ctx = new RetryStrategy.RetryContext(this.getCurrentEndpoint(genericRequest));
       int alternatives = distributor.getAmountOfAlternatives(ctx.endpoint);
-      boolean alternateHasBeenQueried = false;
+
       for(int i = 0; i < alternatives; ++i) {
          String activeEndpoint = distributor.getActiveEndpoint(ctx.endpoint);
          if (!ctx.invokedEndpoints.contains(activeEndpoint)) {
@@ -30,11 +30,9 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
 
             try {
                invokeStrategyContext.setResponse(super.call(genericRequest));
-               if (alternateHasBeenQueried) { this.activatePolling(ctx); }
                return false;
             } catch (RetryNextEndpointException var8) {
                this.retryNext(ctx, activeEndpoint, var8);
-               alternateHasBeenQueried = true;
             } catch (TechnicalConnectorException var9) {
                invokeStrategyContext.setException(var9);
                return true;
@@ -50,11 +48,6 @@ public class RetryStrategy extends AbstractWsSender implements InvokeStrategy {
          invokeStrategyContext.setException(new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ExceptionUtils.getRootCause(ctx.lastException), ExceptionUtils.getRootCauseMessage(ctx.lastException)));
          return true;
       }
-   }
-
-   private void activatePolling(RetryStrategy.RetryContext ctx) {
-      LOG.debug("Activating status page polling!");
-      distributor.updatePollingBehaviour();
    }
 
    private void retryNext(RetryStrategy.RetryContext ctx, String activeEndpoint, RetryNextEndpointException e) {

@@ -22,9 +22,11 @@ package org.taktik.freehealth.middleware
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.scheduling.annotation.EnableScheduling
 import java.io.File
 
 @SpringBootApplication
+@EnableScheduling
 class MiddlewareApplication
 
 fun main(args: Array<String>) {
