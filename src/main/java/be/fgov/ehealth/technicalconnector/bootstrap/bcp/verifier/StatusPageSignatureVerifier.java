@@ -23,7 +23,7 @@ public final class StatusPageSignatureVerifier {
          Map<String, Object> options = new HashMap();
          SignatureVerificationResult signatureResult = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES).verify(xml.getBytes(), options);
          if (!signatureResult.isValid()) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_SIGNATURE_VALIDATION, new Object[]{ArrayUtils.toString(signatureResult.getErrors().toArray())});
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_SIGNATURE_VALIDATION, ArrayUtils.toString(signatureResult.getErrors().toArray()));
          } else {
             return true;
          }
