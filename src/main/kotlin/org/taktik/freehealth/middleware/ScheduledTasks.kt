@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class ScheduledTasks {
     @Scheduled(fixedDelay = 60000)
-    fun scheduleFixedDelayTask() {
+    fun scheduleBcpPolling() {
         if (EndpointDistributor.getInstance().isBCPMode) {
             EndpointUpdater.forceUpdate()
         }
