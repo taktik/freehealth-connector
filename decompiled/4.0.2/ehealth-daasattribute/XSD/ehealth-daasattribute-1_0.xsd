@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:daas:complextype:v1" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="urn:be:fgov:ehealth:daas:complextype:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-daas-attributes
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.2
+ Build-Time: 20170331-0921 
+ </xs:appinfo>
+ </xs:annotation>
+	<xs:annotation>
+		<xs:appinfo>
+
+ </xs:appinfo>
+	</xs:annotation>
+	<!-- external XSD -->
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd"/>
+	<!-- elements -->
+	<xs:element name="Name" type="NameType"/>
+	<xs:element name="Actor" type="ActorType"/>
+	<xs:complexType name="ActorType">
+		<xs:annotation>
+			<xs:documentation>Identifier, name and occupation period of an actor (organization, INSS,...)</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Id" type="TypeCodeType" minOccurs="1" maxOccurs="unbounded"/>
+			<xs:choice minOccurs="0">
+				<xs:sequence>
+					<xs:element name="FirstName" minOccurs="0"/>
+					<xs:element name="MiddleName" minOccurs="0"/>
+					<xs:element name="LastName"/>
+				</xs:sequence>
+				<xs:sequence>
+					<xs:element name="Name" type="NameType" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:choice>
+			<xs:element name="Period" type="PeriodType" minOccurs="0"/>
+			<xs:element name="Actor" type="ActorType" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="Type" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>e.g. employer,...</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="NameType">
+		<xs:annotation>
+			<xs:documentation>Localized name.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="BaseNameType"/>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="PeriodType">
+		<xs:annotation>
+			<xs:documentation>Period in time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:date"/>
+			<xs:element name="EndDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BaseNameType">
+		<xs:annotation>
+			<xs:documentation>Localized string.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute ref="xml:lang"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="TypeCodeType">
+		<xs:annotation>
+			<xs:documentation>Type code for code element such as QualityTypeCode, OrganizationTypeCode.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="Type" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>
