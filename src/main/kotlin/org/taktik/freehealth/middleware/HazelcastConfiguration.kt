@@ -26,6 +26,9 @@ import com.hazelcast.config.MapConfig
 import com.hazelcast.config.MaxSizeConfig
 import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.core.IMap
+import com.hazelcast.core.ISet
+import com.hazelcast.core.ItemEvent
+import com.hazelcast.core.ItemListener
 import com.hazelcast.map.listener.EntryEvictedListener
 import org.apache.commons.lang3.tuple.Pair
 import org.apache.commons.lang3.tuple.Triple
@@ -107,6 +110,16 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
         return hazelcastInstance.getMap<UUID, SamlTokenResult>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.TOKENS").apply {
             this.addEntryListener(EntryEvictedListener<UUID, SamlTokenResult> {
                 log.info("Token ${it.key} evicted")
+            }, false)
+        }
+    }
+
+    @Bean
+    fun keystoreConnections(hazelcastInstance: HazelcastInstance): ISet<UUID> {
+        return hazelcastInstance.getSet<UUID>("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.KEYSTORECONNECTIONS").apply {
+            this.addItemListener(object : ItemListener<UUID> {
+                override fun itemAdded(item: ItemEvent<UUID>) {}
+                override fun itemRemoved(item: ItemEvent<UUID>) { log.info("Connection ${item} evicted") }
             }, false)
         }
     }
