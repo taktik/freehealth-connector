@@ -78,6 +78,7 @@ class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: C
 				.antMatchers("/api/**").permitAll() //.hasRole("USER")
 
 				.antMatchers("/").permitAll()
+                .antMatchers("/ws/**").permitAll() //.hasRole("USER")
 				.antMatchers("/**").permitAll() //.hasRole("USER")
 	}
 }
