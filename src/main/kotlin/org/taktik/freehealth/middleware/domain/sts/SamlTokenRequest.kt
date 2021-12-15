@@ -23,12 +23,12 @@ package org.taktik.freehealth.middleware.domain.sts
 import java.io.Serializable
 import java.util.*
 
-data class SamlTokenResult(
+data class SamlTokenRequest(
     val sessionId: UUID? = null,
-    var tokenId: UUID? = null,
-    var keystoreId: UUID? = null,
-    var token: String? = null,
-    var timestamp: Long? = null,
-    var validity: Long? = null,
-    var quality: String? = null
+    val tokenId: UUID? = null,
+    val keystoreId: UUID, //nihii for medical house and niss for doctor
+    val nihiiOrSsin: String,
+    val passPhrase: String,
+    val quality: String,
+    val extraDesignators: List<Pair<String, String>> = emptyList()
 ) : Serializable

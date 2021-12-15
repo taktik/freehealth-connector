@@ -414,7 +414,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
         val isTest = config.getProperty("endpoint.ch4.admission.v1").contains("-acpt")
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for Chapte IV operations")
+                ?: throw MissingTokenException("Cannot obtain token for Chapter IV operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)

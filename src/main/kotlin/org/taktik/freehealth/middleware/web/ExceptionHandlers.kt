@@ -8,6 +8,7 @@ import org.taktik.freehealth.middleware.dto.ExceptionDto
 import org.taktik.freehealth.middleware.exception.MissingKeystoreException
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import java.io.EOFException
+import java.util.concurrent.TimeoutException
 import javax.servlet.http.HttpServletRequest
 import javax.xml.ws.soap.SOAPFaultException
 
@@ -16,6 +17,10 @@ import javax.xml.ws.soap.SOAPFaultException
  */
 @ControllerAdvice
 class ExceptionHandlers {
+    @ExceptionHandler(TimeoutException::class)
+    fun handleTimeoutException(request: HttpServletRequest, exception: TimeoutException) =
+        ExceptionDto(HttpStatus.REQUEST_TIMEOUT, exception, request.servletPath).toResponseEntity()
+
     @ExceptionHandler(TechnicalConnectorException::class)
     fun handleTechnicalConnectorException(request: HttpServletRequest, exception: TechnicalConnectorException) =
             ExceptionDto(exception.category.httpStatus, exception, request.servletPath).toResponseEntity()

@@ -10,4 +10,5 @@ interface RemoteKeystoreService {
     fun registerConnection(uuid: UUID)
     fun hasConnection(uuid: UUID): Boolean
     fun publishResponse(uuid: UUID, response: String)
+    fun hasLocalConnection(uuid: UUID): Boolean
 }

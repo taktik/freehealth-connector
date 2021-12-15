@@ -30,23 +30,15 @@ import java.security.KeyStore
 import java.util.UUID
 
 interface STSService {
-    fun uploadKeystore(data: ByteArray): UUID
-    fun uploadKeystore(file: MultipartFile): UUID
     fun requestToken(
         keystoreId: UUID,
         nihiiOrSsin: String,
         passPhrase: String,
         quality: String = "doctor",
         tokenId: UUID? = null,
-        extraDesignators: List<Pair<String, String>> = listOf()
-    ): SamlTokenResult?
+        extraDesignators: List<Pair<String, String>> = listOf(),
+        keyStore: KeyStore? = null
+    ): SamlTokenResult
 
-    fun registerToken(tokenId: UUID, token: String, quality: String = "doctor")
-    fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken?
-    fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore?
-    fun checkIfKeystoreExist(keystoreId: UUID): Boolean
     fun getHolderOfKeysEtk(credential: KeyStoreCredential, nihiiOrSsin: String?): EncryptionToken?
-    fun checkTokenValid(tokenId: UUID): Boolean
-    fun getKeystoreInfo(keystoreId: UUID, passPhrase: String): CertificateInfo
-    fun isAcceptance(): Boolean
 }
