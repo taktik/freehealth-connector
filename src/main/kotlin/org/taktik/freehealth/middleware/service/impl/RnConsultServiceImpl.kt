@@ -156,10 +156,20 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
                 ?: throw MissingTokenException("Cannot obtain token for Rn consult operations")
 
         val givenNames = mutableListOf<GivenNameType>()
-        givenNames.add(GivenNameType().apply {
-            value = firstName?.capitalize()
-            sequence = 1
-        })
+        if(!firstName.isNullOrBlank()){
+            givenNames.add(GivenNameType().apply {
+                value = firstName?.capitalize()
+                sequence = 1
+            })
+        }else{
+            //Add empty value if we don't have firstname with IGNORE_GIVENNAME matching type because in the xsd givenName node is mandatory
+            if(matchingType.equals("IGNORE_GIVENNAME")){
+                givenNames.add(GivenNameType().apply {
+                    value = " "
+                    sequence = 1
+                })
+            }
+        }
 
        if(!middleName.isNullOrEmpty()){
             givenNames.add(GivenNameType().apply {
@@ -377,6 +387,9 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
                                     lang = mid?.language?.toUpperCase()
                                 }
                             }
+                            it.cityCode.let{
+                                this.cityCode = it
+                            }
                             it.cityName?.let {
                                 this.cityName = LocalizedDescriptionType().apply {
                                     value = it
@@ -478,6 +491,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
         val barCodedType = "urn:be:fgov:person:cardsupport:barcoded"
 
         val verifyIdRequest = VerifyIdRequest().apply {
+            id = "ID${System.currentTimeMillis()}"
             issueInstant = DateTime.now()
             legalContext = "patient insurance validation"
             identificationData = IdentificationData().apply {
