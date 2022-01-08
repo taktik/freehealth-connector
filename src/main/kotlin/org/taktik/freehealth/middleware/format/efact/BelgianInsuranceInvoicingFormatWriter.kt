@@ -54,7 +54,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         patient.insurabilities
         if (patient.insurabilities.isNotEmpty()) {
             val parameters = patient.insurabilities[0].parameters
-            return parameters[parameter]
+            return parameters[parameter.name]
         }
         return null
     }
