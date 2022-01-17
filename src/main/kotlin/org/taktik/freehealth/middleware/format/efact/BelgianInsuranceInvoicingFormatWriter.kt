@@ -73,7 +73,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
             }
         } else {
             if (affCode.startsWith("3")) {
-                if (Arrays.asList("305", "315", "317", "319", "323", "325").contains(firstCode)){
+                if (Arrays.asList("304", "305", "309", "311", "315", "317", "319", "322", "323", "325").contains(firstCode)){
                     "300"
                 }else{
                     firstCode
