@@ -41,9 +41,65 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable lastName: String,
         @RequestParam(required = false) firstName: String?,
-        @RequestParam(required = false) type: String?
+        @RequestParam(required = false) type: String?,
+        @RequestParam(required = false) limit: Int?
     ): List<HealthcareParty> = addressbookService.searchHcp(
-        keystoreId, tokenId, passPhrase, lastName, firstName, type ?: "PHYSICIAN"
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        queryLastName = lastName,
+        queryFirstName = firstName,
+        type = type ?: "PHYSICIAN",
+        limit = limit ?: 100
+    )
+
+    @GetMapping("/search/hcp/email/{emailAddress}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun searchHcpByEmailAddress(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @PathVariable emailAddress: String,
+        @RequestParam(required = false) limit: Int?
+    ): List<HealthcareParty> = addressbookService.searchHcp(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        queryEmailAddress = emailAddress,
+        limit = limit ?: 20
+    )
+
+    @GetMapping("/search/hcp/zipcode/{zipCode}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun searchHcpByZipCode(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @PathVariable zipCode: String,
+        @RequestParam(required = false) type: String?,
+        @RequestParam(required = false) limit: Int?
+    ): List<HealthcareParty> = addressbookService.searchHcp(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        queryZipCode = zipCode,
+        type = type ?: "PHYSICIAN",
+        limit = limit ?: 100
+    )
+
+    @GetMapping("/search/hcp/city/{city}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun searchHcpByCity(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @PathVariable city: String,
+        @RequestParam(required = false) type: String?,
+        @RequestParam(required = false) limit: Int?
+    ): List<HealthcareParty> = addressbookService.searchHcp(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        queryCity = city,
+        type = type ?: "PHYSICIAN",
+        limit = limit ?: 100
     )
 
     @GetMapping("/search/org/{name}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])

@@ -24,5 +24,6 @@ import org.taktik.freehealth.middleware.domain.common.Error
 
 class MessageOperationResponse(
     val success: Boolean,
+    val messageId: String? = null,
     val error: Error? = null
                               )

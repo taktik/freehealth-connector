@@ -53,6 +53,7 @@ import org.taktik.freehealth.middleware.mapper.toDocumentMessage
 import org.taktik.freehealth.middleware.mapper.toMessageDto
 import org.taktik.freehealth.middleware.service.EhboxService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.utils.FuzzyValues
 import org.taktik.freehealth.utils.mapFirstNotNull
 import org.w3c.dom.Element
 import org.w3c.dom.NamedNodeMap
@@ -158,16 +159,23 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                     readReceipt
                 }
             }
-        request.publicationId = UUID.randomUUID().toString().substring(0, 12)
+
+        if (request.publicationId == null) {
+            request.publicationId = UUID.randomUUID().toString().substring(0, 12)
+        }
+
         return try {
             freehealthEhboxService.sendMessage(samlToken, request).let { sendMessageResponse ->
-                if (sendMessageResponse.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
+                if (sendMessageResponse.status?.code == "100")
+                    MessageOperationResponse(true, sendMessageResponse.id)
+                else
+                    MessageOperationResponse(false, null, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
             }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
-                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value ?: it.message))
-            } ?: MessageOperationResponse(false, Error("999", e.message))
+                MessageOperationResponse(false, null, Error(be?.code, be?.messages?.firstOrNull()?.value ?: it.message))
+            } ?: MessageOperationResponse(false, null, Error("999", e.message))
         }
     }
 
@@ -200,13 +208,16 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         request.publicationId = UUID.randomUUID().toString().substring(0, 12)
         return try {
             freehealthEhboxService.sendMessage2Ebox(samlToken, request).let { sendMessageResponse ->
-                if (sendMessageResponse.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
+                if (sendMessageResponse.status?.code == "100")
+                    MessageOperationResponse(true, sendMessageResponse.id)
+                else
+                    MessageOperationResponse(false, null, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
             }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
-                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
-            } ?: MessageOperationResponse(false, Error("999", e.message))
+                MessageOperationResponse(false, null, Error(be?.code, be?.messages?.firstOrNull()?.value))
+            } ?: MessageOperationResponse(false, null, Error("999", e.message))
         }
     }
 
@@ -216,11 +227,14 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         passPhrase: String,
         boxId: String,
         limit: Int?,
+        startDate: Long?,
         alternateKeystores: List<AltKeystore>?
                              ): MessagesResponse {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val messagesListRequest = GetMessagesListRequest()
+        val hasStartDate = startDate != null
+        val startDateAsLocalDate = if (hasStartDate) FuzzyValues.getLocalDateTime(startDate!!)?.toLocalDate() else null
 
         messagesListRequest.source = boxId
         messagesListRequest.startIndex = 1
@@ -261,8 +275,22 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                 if (response.messages.size < 100 || (limit != null && result.size >= limit)) {
                     break
                 }
+                // Stop retrieving if the publication date is before start date
+                if (hasStartDate && result.last().publicationDateTime != null && FuzzyValues.getLocalDateTime(result.last().publicationDateTime!!)!!.toLocalDate().isBefore(startDateAsLocalDate)) {
+                    break
+                }
                 messagesListRequest.startIndex = messagesListRequest.startIndex + 100
                 messagesListRequest.endIndex = messagesListRequest.endIndex + 100
+            }
+
+            // Filter results in excluding messages which have a publication date before start date
+            if (hasStartDate) {
+                result.removeIf { it.publicationDateTime != null && FuzzyValues.getLocalDateTime(it.publicationDateTime)!!.toLocalDate().isBefore(startDateAsLocalDate) }
+            }
+
+            // Filter results in excluding the messages exceeding the limit
+            if (limit != null) {
+                return MessagesResponse(result.take(limit), null)
             }
 
             MessagesResponse(result, if (status?.code != "100") Error(status?.code, status?.messages?.joinToString(",")) else null)
@@ -292,13 +320,16 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         return try {
             freehealthEhboxService.moveMessage(samlToken, mmr)
                 .let { moveMessageResult ->
-                    if (moveMessageResult.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(moveMessageResult.status?.code, moveMessageResult.status?.messages?.joinToString(",")))
+                    if (moveMessageResult.status?.code == "100")
+                        MessageOperationResponse(true, moveMessageResult.id)
+                    else
+                        MessageOperationResponse(false, null, Error(moveMessageResult.status?.code, moveMessageResult.status?.messages?.joinToString(",")))
                 }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
-                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
-            } ?: MessageOperationResponse(false, Error("999", e.message))
+                MessageOperationResponse(false, null, Error(be?.code, be?.messages?.firstOrNull()?.value))
+            } ?: MessageOperationResponse(false, null, Error("999", e.message))
         }
     }
 
@@ -316,13 +347,16 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         mmr.messageIds.addAll(messageIds)
         return try {
             freehealthEhboxService.deleteMessage(samlToken, mmr).let { deleteMessageResult ->
-                if (deleteMessageResult.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(deleteMessageResult.status?.code, deleteMessageResult.status?.messages?.joinToString(",")))
+                if (deleteMessageResult.status?.code == "100")
+                    MessageOperationResponse(true, deleteMessageResult.id)
+                else
+                    MessageOperationResponse(false, null, Error(deleteMessageResult.status?.code, deleteMessageResult.status?.messages?.joinToString(",")))
             }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
-                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
-            } ?: MessageOperationResponse(false, Error("999", e.message))
+                MessageOperationResponse(false, null, Error(be?.code, be?.messages?.firstOrNull()?.value))
+            } ?: MessageOperationResponse(false, null, Error("999", e.message))
         }
     }
 

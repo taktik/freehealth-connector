@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
     "encryptedData",
     "encryptedKeies"
 })
-public class EncryptedElementType implements Serializable
+public class EncryptedElementType implements Serializable, AttributeOrEncryptedAttribute
 {
 
     private final static long serialVersionUID = 2L;

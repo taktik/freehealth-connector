@@ -52,7 +52,7 @@ import javax.xml.namespace.QName;
     "attributeValues"
 })
 @XmlRootElement(name = "Attribute")
-public class Attribute implements Serializable
+public class Attribute implements Serializable, AttributeOrEncryptedAttribute
 {
 
     private final static long serialVersionUID = 2L;

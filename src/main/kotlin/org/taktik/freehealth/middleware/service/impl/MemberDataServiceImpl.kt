@@ -26,10 +26,9 @@ import be.cin.mycarenet.esb.common.v2.CommonInput
 import be.cin.mycarenet.esb.common.v2.OrigineType
 import be.cin.nip.async.generic.Confirm
 import be.cin.nip.async.generic.Get
-import be.cin.nip.async.generic.MsgQuery
 import be.cin.nip.async.generic.Post
 import be.cin.nip.async.generic.PostResponse
-import be.cin.nip.async.generic.Query
+import be.cin.nip.async.generic.QueryParameters
 import be.cin.types.v1.DetailType
 import be.cin.types.v1.DetailsType
 import be.cin.types.v1.FaultType
@@ -159,32 +158,28 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
     override fun sendMemberDataRequest(
         keystoreId: UUID,
         tokenId: UUID,
-        hcpQuality: String,
         hcpNihii: String,
         hcpName: String,
         requestType: String,
         startDate: Instant,
         endDate: Instant,
         passPhrase: String,
-        hospitalized: Boolean?,
         mdaRequest: MemberDataBatchRequest
     ): GenAsyncResponse {
         val encryptRequest = false
-        validateQuality(hcpQuality)
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for MDA operations")
 
-        val istest = config.getProperty("endpoint.dmg.notification.v1").contains("-acpt")
+        validateQuality(samlToken.quality)
+
+        val istest = config.getProperty("endpoint.genericasync.mda.v1").contains("pilot.")
         val author = makeAuthor(hcpNihii, hcpName)
         val inputReference = IdGeneratorFactory.getIdGenerator().generateId()//.let { if (istest) "T" + it.substring(1) else it }
-        val now = DateTime().withMillisOfSecond(0)
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
-        val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
         val postHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:post:msg")).apply {
             faultTo = "http://www.w3.org/2005/08/addressing/anonymous"
@@ -242,32 +237,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val ci = CommonInput().apply {
             request = be.cin.mycarenet.esb.common.v2.RequestType().apply {
-                isIsTest = istest!!
+                isIsTest = istest
             }
-            origin = OrigineType().apply {
-                `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
-                    license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
-                        username = packageInfo.userName
-                        password = packageInfo.password
-                    }
-                    name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = packageInfo.packageName }
-                }
-                careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
-                    nihii =
-                        be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                            quality = hcpQuality; value =
-                            be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
-                        }
-
-                    organization = be.cin.mycarenet.esb.common.v2.IdType().apply {
-                        nihii =
-                            be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                                quality = hcpQuality; value =
-                                be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
-                            }
-                    }
-                }
-            }
+            origin = buildOriginType(samlToken.quality, hcpNihii, hcpName)
 
             this.inputReference = inputReference
         }
@@ -291,7 +263,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         }
     }
 
-    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, messageNames: List<String>?): MemberDataList? {
+    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, messageNames: List<String>?, reference: String?): MemberDataList? {
 
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for MDA operations")
@@ -301,21 +273,18 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
         val getHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
+            faultTo = "http://www.w3.org/2005/08/addressing/anonymous"
+            replyTo = "http://www.w3.org/2005/08/addressing/anonymous"
             messageID = URI(IdGeneratorFactory.getIdGenerator("uuid").generateId())
         }
 
-        val get = Get().apply {
-            msgQuery = MsgQuery().apply {
-                isInclude = true
-                max = 100
-                messageNames?.let { this.messageNames.addAll(it) }
-            }
-            tAckQuery = Query().apply {
-                isInclude = true
-                max = 100
-            }
-            origin = buildOriginType(hcpNihii, hcpName)
-        }
+        val requestObjectBuilder = BuilderFactory.getRequestObjectBuilder("mda")
+
+        val msgQuery = requestObjectBuilder.createMsgQuery(100, true, *messageNames?.toTypedArray() ?: arrayOf("MDA"))
+        val query = requestObjectBuilder.createQuery(100, true)
+        val queryParameters = if (reference != null) QueryParameters().apply { this.reference = reference } else null
+        val originType = buildOriginType(samlToken.quality, hcpNihii, hcpName)
+        val get = requestObjectBuilder.buildGetRequest(originType, msgQuery, query, queryParameters);
 
         val response = genAsyncService.getRequest(samlToken, get, getHeader)
 
@@ -352,9 +321,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                         io = null,
                         memberDataResponse = responseList.responses.map {
                             MemberDataBatchResponse(
-                                assertions = it.anies.map{
+                                assertions = it.anies?.map {
                                     MarshallerHelper(Assertion::class.java, Assertion::class.java).toObject(it)
-                                },
+                                } ?: emptyList(),
                                 status = MdaStatus(
                                     it.status.statusCode?.value,
                                     it.status.statusCode?.statusCode?.value
@@ -395,7 +364,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                                 inResponseTo = it.inResponseTo,
                                 issuer = it.issuer.value,
                                 responseId = it.id
-                            )
+                            ).apply {
+                                this.myCarenetErrors += extractErrors(status, this.errors)
+                            }
                         },
                         valueHash = it.detail?.hashValue?.let { b64.encodeToString(it)}
                     )
@@ -413,7 +384,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
                     this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
                     response?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                    response?.soapRequest?.writeTo(this.soapRequestOutputStream())
                     this.decryptedResponseContent = listOfMdaDecryptedResponseContent
                 },
                 date = null,
@@ -425,7 +396,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     this.transactionRequest = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.Get::class.java, be.cin.nip.async.generic.Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
                     this.transactionResponse = org.taktik.connector.technical.utils.MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(kotlin.text.Charsets.UTF_8)
                     response?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                    response?.soapRequest?.writeTo(this.soapRequestOutputStream())
                     this.decryptedResponseContent = listOfMdaDecryptedResponseContent
                 },
                 acks = null,
@@ -452,7 +423,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
 
         val confirm = Confirm()
-        confirm.origin = buildOriginType(hcpNihii, hcpName)
+        confirm.origin = buildOriginType(samlToken.quality, hcpNihii, hcpName)
         confirm.msgRefValues.addAll(mdaMessagesReference)
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
@@ -471,7 +442,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
         val confirm =
             BuilderFactory.getRequestObjectBuilder("mda")
-                .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpName),
+                .buildConfirmRequestWithHashes(buildOriginType(samlToken.quality, hcpNihii, hcpName),
                     listOf(),
                     mdaAcksHashes.map { valueHash -> Base64.getDecoder().decode(valueHash) })
 
@@ -480,24 +451,52 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         return true
     }
 
+    private fun buildOriginType(hcpQuality: String, hcpNihii: String, hcpName: String): OrigineType {
+        val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+        val packageInfo = McnConfigUtil.retrievePackageInfo("genericasync.mda", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
-    private fun buildOriginType(hcpNihii: String, hcpName: String): OrigineType =
-        OrigineType().apply {
+        return OrigineType().apply {
             `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
-                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.dmg.package.name") }
+                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.mda.package.name") }
                 license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
-                    username = config.getProperty("mycarenet.license.username")
-                    password = config.getProperty("mycarenet.license.password")
+                    username = packageInfo.userName
+                    password = packageInfo.password
                 }
+                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = packageInfo.packageName }
             }
             careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
-                this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                    quality = "medicalhouse"
-                    value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
+                if (hcpQuality == "guardpost" || hcpQuality == "medicalhouse") {
+                    nihii =
+                        be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                            quality = hcpQuality
+                            value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                        }
+                    organization = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                        name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpName }
+                        nihii =
+                            be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                                quality = hcpQuality
+                                value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                            }
+                    }
+                } else {
+                    nihii =
+                        be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                            quality = hcpQuality
+                            value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
+                        }
+                    physicalPerson = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                        name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpName }
+                        nihii =
+                            be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                                quality = hcpQuality
+                                value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
+                            }
+                    }
                 }
             }
         }
-
+    }
 
     override fun getMemberData(
         keystoreId: UUID,
@@ -521,7 +520,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for Genins operations")
+                ?: throw MissingTokenException("Cannot obtain token for MDA operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
@@ -531,7 +530,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         assert(patientSsin != null || io != null && ioMembership != null)
 
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+        val packageInfo = McnConfigUtil.retrievePackageInfo("memberdata", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
         log.debug("getMemberData called with principal " + (principal?._id
             ?: "<ANONYMOUS>") + " and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
@@ -552,7 +551,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val request = MemberDataConsultationRequest().apply {
             commonInput = CommonInputType().apply {
                 request =
-                    RequestType().apply { isIsTest = true /*config.getProperty("endpoint.genins")?.contains("-acpt") ?: false*/ }
+                    RequestType().apply { isIsTest = config.getProperty("endpoint.memberdata").contains("-acpt") }
                 inputReference = inputRef
                 origin = OriginType().apply {
                     `package` = PackageType().apply {
@@ -649,6 +648,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             MemberDataResponse(
                 it.assertions,
                 MdaStatus(code1, code2),
+                issuer = it.response.issuer,
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse =
                         MarshallerHelper(Response::class.java, Response::class.java).toXMLByteArray(it.response)
@@ -656,7 +656,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                     this.transactionRequest = (unencryptedXmlRequest ?: xmlRequest).toString(Charsets.UTF_8)
 
                     consultMemberData.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    soapRequest = MarshallerHelper(MemberDataConsultationRequest::class.java, MemberDataConsultationRequest::class.java).toXMLByteArray(request).toString(Charsets.UTF_8)
+                    consultMemberData.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
                 errors = it.response.status?.statusDetail?.anies?.map {
                     FaultType().apply {
@@ -857,6 +857,35 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             }
             result
         } ?: setOf()
+    }
+
+    private fun extractErrors(status: MdaStatus?, faultTypes: List<FaultType>?): List<MycarenetError>  {
+        val mycarenetErrors = mutableListOf<MycarenetError>()
+
+        faultTypes?.forEach { faultType ->
+            faultType.details.details.forEach { detail ->
+                var errors = MemberDataErrors.values.filter {
+                    it.code == status?.code1
+                        && (status?.code2 == null || it.subCode == status.code2)
+                        && it.faultCode == faultType.faultCode
+                        && it.detailCode == detail.detailCode
+                }
+
+                if (errors.isNotEmpty()) {
+                    mycarenetErrors.addAll(errors)
+                } else {
+                    mycarenetErrors.add(MycarenetError(
+                        code = status?.code1,
+                        subCode = status?.code2,
+                        path = detail.location,
+                        msgFr = "Erreur générique, xpath invalide",
+                        msgNl = "Onbekend foutmelding, xpath ongeldig"
+                    ))
+                }
+            }
+        }
+
+        return mycarenetErrors
     }
 
     private fun extractError(e: javax.xml.ws.soap.SOAPFaultException): Set<MycarenetError> {

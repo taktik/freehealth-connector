@@ -90,7 +90,7 @@ public abstract class AbstractWsSender {
          SOAPMessage messageR = reply.getMessage();
          messageR.writeTo(bos);
          String replyAsString = new String(bos.toByteArray(), Charset.forName("UTF-8"));
-         genericResponse = new GenericResponse(reply.getMessage());
+         genericResponse = new GenericResponse(reply.getMessage(), request.getMessage());
       } catch (Exception var10) {
          throw translate(var10);
       } finally {

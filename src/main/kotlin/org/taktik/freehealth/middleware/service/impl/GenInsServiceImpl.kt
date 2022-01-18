@@ -152,8 +152,8 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                         }
                     }
                     careProvider = CareProviderType().apply {
-                        if(hcpQuality == "guardpost") {
-                            // nihii11 is required with guardpost
+                        if(hcpQuality == "guardpost" || hcpQuality == "medicalhouse") {
+                            // nihii11 is required with guardpost and medicalhouse
                             nihii =
                                 NihiiType().apply {
                                     quality = hcpQuality; value =

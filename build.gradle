@@ -25,7 +25,7 @@ buildscript {
 		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
 		classpath('com.taktik.gradle:gradle-plugin-docker-java:1.2.0')
-		classpath('com.taktik.gradle:gradle-plugin-git-version:2.0.0')
+		classpath('com.taktik.gradle:gradle-plugin-git-version:1.0.12')
 		classpath('com.github.ben-manes:gradle-versions-plugin:0.17.0') // version 0.18.0 is incompatible with Spring Boot (see https://github.com/spring-gradle-plugins/spring-build-conventions/issues/44)
 	}
 }
@@ -126,6 +126,9 @@ dependencies {
 	compile('com.taktik.boot:spring-boot-starter-hazelcast:2.1-0-g4d5d84ad53') {
 		exclude module: "kotlin-runtime"
 	}
+
+	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
+
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
 	compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 	compile group: 'org.bouncycastle', name: 'bcmail-jdk15on', version: '1.54'
@@ -152,7 +155,7 @@ dependencies {
 	compile('com.google.code.gson:gson:2.7')
 	compile('net.sf.dozer:dozer:5.5.1') //WTF... This must go away
 	compile group: 'ma.glasnost.orika', name: 'orika-core', version: '1.4.6'
-	compile('io.springfox:springfox-swagger2:2.6.1')
+	compile('io.springfox:springfox-swagger2:2.9.2')
 	//Saxon
 	compile group: 'net.sf.saxon', name: 'Saxon-HE', version: '9.9.1-5'
 	compile group: 'org.bitbucket.b_c', name: 'jose4j', version: '0.7.2'
@@ -184,6 +187,12 @@ dependencies {
 	//kapt 'org.mapstruct:mapstruct-processor:1.2.0.Final'
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.RELEASE"
+	}
 }
 
 task ktlint(type: JavaExec, group: "verification") {

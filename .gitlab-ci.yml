@@ -1,0 +1,54 @@
+image: docker:20
+
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+
+services:
+  - docker:20-dind
+
+stages:
+  - build
+  - package
+
+build:
+  stage: build
+  image: adoptopenjdk/openjdk8:alpine
+  when: manual
+  variables:
+    GRADLE_OPTS: "-Dgradle.user.home=${CI_PROJECT_DIR}/.gradle"
+  cache:
+    key: _build
+    paths:
+      - .gradle/
+  script:
+    - ./gradlew build --exclude-task test
+  artifacts:
+    paths:
+      - build/libs/*.jar
+      - Dockerfile
+    expire_in: 1 week
+
+package:
+  stage: package
+  only:
+    - beoogo
+  when: manual
+  variables:
+    GIT_STRATEGY: none
+    DOCKER_IMAGE: "${CI_REGISTRY_IMAGE}/build/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}"
+    DOCKER_IMAGE_LATEST: "${CI_REGISTRY_IMAGE}/build/${CI_COMMIT_REF_SLUG}:latest"
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  after_script:
+    - docker logout ${CI_REGISTRY}
+  script:
+    - docker build -t ${DOCKER_IMAGE} --label "namespace=${CI_PROJECT_NAMESPACE}" --label "project=${CI_PROJECT_NAME} (#${CI_PROJECT_ID})" --label "branch=${CI_COMMIT_REF_NAME}" --label "commit=${CI_COMMIT_SHA}" --label "pipeline=#${CI_PIPELINE_IID} (#${CI_PIPELINE_ID})" --label "job=#${CI_JOB_ID}" --label "runner=${CI_RUNNER_DESCRIPTION} (#${CI_RUNNER_ID})" .
+    - docker image tag ${DOCKER_IMAGE} ${DOCKER_IMAGE_LATEST}
+    - docker push ${DOCKER_IMAGE}
+    - docker push ${DOCKER_IMAGE_LATEST}
+    - docker image rm ${DOCKER_IMAGE_LATEST}
+    - docker image rm ${DOCKER_IMAGE}
+  dependencies:
+    - build

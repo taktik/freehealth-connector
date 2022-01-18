@@ -28,9 +28,13 @@ interface AddressbookService {
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
-        queryLastName: String,
-        queryFirstName: String?,
-        type: String = "PHYSICIAN"
+        queryLastName: String? = null,
+        queryFirstName: String? = null,
+        queryEmailAddress: String? = null,
+        queryZipCode: String? = null,
+        queryCity: String? = null,
+        type: String = "PHYSICIAN",
+        limit: Int = 100
     ): List<HealthcareParty>
 
     fun searchOrg(

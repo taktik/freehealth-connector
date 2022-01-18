@@ -41,6 +41,31 @@ class AddressbookControllerTest : EhealthTest() {
     }
 
     @Test
+    fun searchHcpByEmail() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val searchHcp = this.restTemplate.exchange("http://localhost:$port/ab/search/hcp/email/test@ehealth.fgov.be", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
+        Assertions.assertThat(searchHcp != null && searchHcp.length>2 && searchHcp.startsWith("["))
+    }
+
+    @Test
+    fun searchHcpByZipCode() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val searchHcp = this.restTemplate.exchange("http://localhost:$port/ab/search/hcp/zipcode/1000", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
+        Assertions.assertThat(searchHcp != null && searchHcp.length>2 && searchHcp.startsWith("["))
+        val hcps: List<HealthcareParty> = gson.fromJson(searchHcp, object : TypeToken<ArrayList<HealthcareParty>>() {}.getType())
+        Assertions.assertThat(20).isLessThan(hcps.size)
+    }
+
+    @Test
+    fun searchHcpByCity() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val searchHcp = this.restTemplate.exchange("http://localhost:$port/ab/search/hcp/city/Bruxelles", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
+        Assertions.assertThat(searchHcp != null && searchHcp.length>2 && searchHcp.startsWith("["))
+        val hcps: List<HealthcareParty> = gson.fromJson(searchHcp, object : TypeToken<ArrayList<HealthcareParty>>() {}.getType())
+        Assertions.assertThat(20).isLessThan(hcps.size)
+    }
+
+    @Test
     fun searchOrg() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val searchOrg = this.restTemplate.exchange("http://localhost:$port/ab/search/org/*clinique*", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
