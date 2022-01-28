@@ -292,8 +292,8 @@ abstract class EfactAbstractTest : EhealthTest() {
                 insurabilities = it.insurabilities.map {
                     Insurability().apply {
                         insuranceCode = it.mutuality
-                        it.ct1?.let { parameters[InsuranceParameter.tc1] = it }
-                        it.ct2?.let { parameters[InsuranceParameter.tc2] = it }
+                        it.ct1?.let { parameters[InsuranceParameter.tc1.name] = it }
+                        it.ct2?.let { parameters[InsuranceParameter.tc2.name] = it }
                     }
                 }
             }
@@ -323,8 +323,8 @@ abstract class EfactAbstractTest : EhealthTest() {
                         Assertions.assertThat(it.mutuality).isNotNull()
 
                         insuranceCode = it.mutuality
-                        it.ct1?.let { parameters[InsuranceParameter.tc1] = it }
-                        it.ct2?.let { parameters[InsuranceParameter.tc2] = it }
+                        it.ct1?.let { parameters[InsuranceParameter.tc1.name] = it }
+                        it.ct2?.let { parameters[InsuranceParameter.tc2.name] = it }
                     }
                 }
             }

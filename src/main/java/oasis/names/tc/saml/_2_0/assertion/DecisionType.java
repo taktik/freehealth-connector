@@ -1,42 +1,54 @@
+
 package oasis.names.tc.saml._2_0.assertion;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(
-   name = "DecisionType"
-)
+
+/**
+ * <p>Java class for DecisionType.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * <pre>
+ * &lt;simpleType name="DecisionType">
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *     &lt;enumeration value="Permit"/>
+ *     &lt;enumeration value="Deny"/>
+ *     &lt;enumeration value="Indeterminate"/>
+ *   &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
+ * 
+ */
+@XmlType(name = "DecisionType")
 @XmlEnum
 public enum DecisionType {
-   @XmlEnumValue("Permit")
-   PERMIT("Permit"),
-   @XmlEnumValue("Deny")
-   DENY("Deny"),
-   @XmlEnumValue("Indeterminate")
-   INDETERMINATE("Indeterminate");
 
-   private final String value;
+    @XmlEnumValue("Permit")
+    PERMIT("Permit"),
+    @XmlEnumValue("Deny")
+    DENY("Deny"),
+    @XmlEnumValue("Indeterminate")
+    INDETERMINATE("Indeterminate");
+    private final String value;
 
-   private DecisionType(String v) {
-      this.value = v;
-   }
+    DecisionType(String v) {
+        value = v;
+    }
 
-   public String value() {
-      return this.value;
-   }
+    public String value() {
+        return value;
+    }
 
-   public static DecisionType fromValue(String v) {
-      DecisionType[] arr$ = values();
-      int len$ = arr$.length;
+    public static DecisionType fromValue(String v) {
+        for (DecisionType c: DecisionType.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         DecisionType c = arr$[i$];
-         if (c.value.equals(v)) {
-            return c;
-         }
-      }
-
-      throw new IllegalArgumentException(v);
-   }
 }

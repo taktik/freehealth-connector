@@ -73,7 +73,7 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
             evictionPolicy = EvictionPolicy.LRU
         })
         addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.ETK").apply {
-            timeToLiveSeconds = 24*3600
+            timeToLiveSeconds = 8*3600
             asyncBackupCount = 1
             isReadBackupData = true
             maxSizeConfig = MaxSizeConfig(128, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE)

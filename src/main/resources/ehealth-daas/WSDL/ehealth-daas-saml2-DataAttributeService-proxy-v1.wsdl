@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:be:fgov:ehealth:daas:saml:protocol:v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:be:fgov:ehealth:daas:saml:protocol:v1">
+  
+  <documentation>Version v1</documentation>
+  
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="urn:oasis:names:tc:SAML:2.0:protocol" schemaLocation="../../external/XSD/saml-schema-protocol-2.0.xsd"/>
+    </xsd:schema>
+  </types>
+  
+  <message name="AttributeQueryMessage">
+    <part element="samlp:AttributeQuery" name="body"/>
+  </message>
+  <message name="ResponseMessage">
+    <part element="samlp:Response" name="body"/>
+  </message>
+  
+  <portType name="DataAttributeServicePortType">
+    <operation name="AttributeQuery">
+      <input message="tns:AttributeQueryMessage"/>
+      <output message="tns:ResponseMessage"/>
+    </operation>
+  </portType>
+  
+  <binding name="DataAttributeServiceSoapBinding" type="tns:DataAttributeServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="AttributeQuery">
+      <soap:operation soapAction="urn:be:fgov:ehealth:daas:saml:protocol:v1:AttributeQuery"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  
+  <service name="DataAttributeService">
+    <port binding="tns:DataAttributeServiceSoapBinding" name="DataAttributeServicePort">
+      <soap:address location="https://services.ehealth.fgov.be/DAtaAttributeService/v1"/>
+    </port>
+  </service>
+  
+</definitions>
