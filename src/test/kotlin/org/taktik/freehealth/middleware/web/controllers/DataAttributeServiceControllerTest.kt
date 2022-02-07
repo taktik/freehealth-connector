@@ -46,7 +46,7 @@ class DataAttributeServiceControllerTest : EhealthTest() {
         val total: String = "true"
 
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val daas = this.restTemplate.exchange("http://localhost:$port/daas/din/${nihii1}/${niss}?dateOfBirth=${birthday}}&from=${from}&to=${to}&cause=${cause}&prolongation=${prolongation}&total=${total}",
+        val daas = this.restTemplate.exchange("http://localhost:$port/daas/din/${nihii1}/${niss}?dateOfBirth=${birthday}&from=${from}&to=${to}&cause=${cause}&prolongation=${prolongation}&total=${total}",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
 
         assertErrors("BasicDAASTest", "", daas.toString())
@@ -63,7 +63,7 @@ class DataAttributeServiceControllerTest : EhealthTest() {
         val total: String = "true"
 
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val daas = this.restTemplate.exchange("http://localhost:$port/daas/din/${nihii1}/${niss}?dateOfBirth=${birthday}}&from=${from}&to=${to}&cause=${cause}&prolongation=${prolongation}&total=${total}",
+        val daas = this.restTemplate.exchange("http://localhost:$port/daas/din/${nihii1}/${niss}?dateOfBirth=${birthday}&from=${from}&to=${to}&cause=${cause}&prolongation=${prolongation}&total=${total}",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
 
         assertErrors("Scenario1", "", daas.toString())
@@ -80,7 +80,7 @@ class DataAttributeServiceControllerTest : EhealthTest() {
         val total: String = "true"
 
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val daas = this.restTemplate.exchange("http://localhost:$port/daas/din/${nihii1}/${niss}?dateOfBirth=${birthday}}&from=${from}&to=${to}&cause=${cause}&prolongation=${prolongation}&total=${total}",
+        val daas = this.restTemplate.exchange("http://localhost:$port/daas/din/${nihii1}/${niss}?dateOfBirth=${birthday}&from=${from}&to=${to}&cause=${cause}&prolongation=${prolongation}&total=${total}",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
 
         assertErrors("Scenario2", "", daas.toString())
