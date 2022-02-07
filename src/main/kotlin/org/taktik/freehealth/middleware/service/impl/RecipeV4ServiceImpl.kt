@@ -715,7 +715,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                                 med.intakeRoute?.code?.let { c ->
                                     route = RouteType().apply { cd = CDDRUGROUTE().apply { value = c } }
                                 }
-                                deliverydate = deliveryDate?.let { makeXMLGregorianCalendarFromFuzzyLong(FuzzyValues.getFuzzyDate(it, ChronoUnit.DAYS)) }
+                                // Deleted by recip-e deliverydate = deliveryDate?.let { makeXMLGregorianCalendarFromFuzzyLong(FuzzyValues.getFuzzyDate(it, ChronoUnit.DAYS)) }
                                 instructionforpatient = KmehrPrescriptionHelperV4.toTextType(language, med.recipeInstructionForPatient)
                                 med.instructionsForReimbursement?.translations?.get(language)?.let {
                                     instructionforreimbursement = KmehrPrescriptionHelperV4.toTextType(language, it)
