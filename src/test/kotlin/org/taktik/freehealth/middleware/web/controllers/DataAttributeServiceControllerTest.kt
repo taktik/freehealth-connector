@@ -53,7 +53,8 @@ class DataAttributeServiceControllerTest : EhealthTest() {
 
     }
 
-    fun Scenario1(){
+    @Test
+    fun Scenario1Test(){
         val niss: String = "56441941910"
         val birthday: String = "19560419"
         val from: String = "20220207"
@@ -70,7 +71,8 @@ class DataAttributeServiceControllerTest : EhealthTest() {
 
     }
 
-    fun Scenario2(){
+    @Test
+    fun Scenario2Test(){
         val niss: String = "97432402244"
         val birthday: String = "19970324"
         val from: String = "20220207"
