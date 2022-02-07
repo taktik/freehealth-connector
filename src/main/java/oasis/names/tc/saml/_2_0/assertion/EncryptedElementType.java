@@ -7,15 +7,15 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.w3._2001._04.xmlenc_.EncryptedDataType;
-import org.w3._2001._04.xmlenc_.EncryptedKeyType;
+import org.w3._2001._04.xmlenc.EncryptedData;
+import org.w3._2001._04.xmlenc.EncryptedKey;
 
 
 /**
  * <p>Java class for EncryptedElementType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EncryptedElementType">
  *   &lt;complexContent>
@@ -28,8 +28,8 @@ import org.w3._2001._04.xmlenc_.EncryptedKeyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EncryptedElementType", propOrder = {
@@ -39,59 +39,59 @@ import org.w3._2001._04.xmlenc_.EncryptedKeyType;
 public class EncryptedElementType {
 
     @XmlElement(name = "EncryptedData", namespace = "http://www.w3.org/2001/04/xmlenc#", required = true)
-    protected EncryptedDataType encryptedData;
+    protected EncryptedData encryptedData;
     @XmlElement(name = "EncryptedKey", namespace = "http://www.w3.org/2001/04/xmlenc#")
-    protected List<EncryptedKeyType> encryptedKey;
+    protected List<EncryptedKey> encryptedKey;
 
     /**
      * Gets the value of the encryptedData property.
-     * 
+     *
      * @return
      *     possible object is
-     *     {@link EncryptedDataType }
-     *     
+     *     {@link EncryptedData }
+     *
      */
-    public EncryptedDataType getEncryptedData() {
+    public EncryptedData getEncryptedData() {
         return encryptedData;
     }
 
     /**
      * Sets the value of the encryptedData property.
-     * 
+     *
      * @param value
      *     allowed object is
-     *     {@link EncryptedDataType }
-     *     
+     *     {@link EncryptedData }
+     *
      */
-    public void setEncryptedData(EncryptedDataType value) {
+    public void setEncryptedData(EncryptedData value) {
         this.encryptedData = value;
     }
 
     /**
      * Gets the value of the encryptedKey property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the encryptedKey property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEncryptedKey().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link EncryptedKeyType }
-     * 
-     * 
+     * {@link EncryptedKey }
+     *
+     *
      */
-    public List<EncryptedKeyType> getEncryptedKey() {
+    public List<EncryptedKey> getEncryptedKey() {
         if (encryptedKey == null) {
-            encryptedKey = new ArrayList<EncryptedKeyType>();
+            encryptedKey = new ArrayList<EncryptedKey>();
         }
         return this.encryptedKey;
     }

@@ -13,14 +13,14 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 import oasis.names.tc.saml._2_0.assertion.NameIDType;
-import org.w3._2000._09.xmldsig_.SignatureType;
+import org.w3._2000._09.xmldsig.Signature;
 
 
 /**
  * <p>Java class for RequestAbstractType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestAbstractType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import org.w3._2000._09.xmldsig_.SignatureType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestAbstractType", propOrder = {
@@ -49,12 +49,12 @@ import org.w3._2000._09.xmldsig_.SignatureType;
     "extensions"
 })
 @XmlSeeAlso({
-    ManageNameIDRequestType.class,
-    AssertionIDRequestType.class,
-    ArtifactResolveType.class,
-    LogoutRequestType.class,
-    NameIDMappingRequestType.class,
-    AuthnRequestType.class,
+    ManageNameIDRequest.class,
+    AssertionIDRequest.class,
+    ArtifactResolve.class,
+    LogoutRequest.class,
+    NameIDMappingRequest.class,
+    AuthnRequest.class,
     SubjectQueryAbstractType.class
 })
 public abstract class RequestAbstractType {
@@ -62,7 +62,7 @@ public abstract class RequestAbstractType {
     @XmlElement(name = "Issuer", namespace = "urn:oasis:names:tc:SAML:2.0:assertion")
     protected NameIDType issuer;
     @XmlElement(name = "Signature", namespace = "http://www.w3.org/2000/09/xmldsig#")
-    protected SignatureType signature;
+    protected Signature signature;
     @XmlElement(name = "Extensions")
     protected ExtensionsType extensions;
     @XmlAttribute(name = "ID", required = true)
@@ -84,11 +84,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Gets the value of the issuer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NameIDType }
-     *     
+     *
      */
     public NameIDType getIssuer() {
         return issuer;
@@ -96,11 +96,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Sets the value of the issuer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NameIDType }
-     *     
+     *
      */
     public void setIssuer(NameIDType value) {
         this.issuer = value;
@@ -108,35 +108,35 @@ public abstract class RequestAbstractType {
 
     /**
      * Gets the value of the signature property.
-     * 
+     *
      * @return
      *     possible object is
-     *     {@link SignatureType }
-     *     
+     *     {@link Signature }
+     *
      */
-    public SignatureType getSignature() {
+    public Signature getSignature() {
         return signature;
     }
 
     /**
      * Sets the value of the signature property.
-     * 
+     *
      * @param value
      *     allowed object is
-     *     {@link SignatureType }
-     *     
+     *     {@link Signature }
+     *
      */
-    public void setSignature(SignatureType value) {
+    public void setSignature(Signature value) {
         this.signature = value;
     }
 
     /**
      * Gets the value of the extensions property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExtensionsType }
-     *     
+     *
      */
     public ExtensionsType getExtensions() {
         return extensions;
@@ -144,11 +144,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Sets the value of the extensions property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExtensionsType }
-     *     
+     *
      */
     public void setExtensions(ExtensionsType value) {
         this.extensions = value;
@@ -156,11 +156,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getID() {
         return id;
@@ -168,11 +168,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setID(String value) {
         this.id = value;
@@ -180,11 +180,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -192,11 +192,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;
@@ -204,11 +204,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Gets the value of the issueInstant property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getIssueInstant() {
         return issueInstant;
@@ -216,11 +216,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Sets the value of the issueInstant property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setIssueInstant(XMLGregorianCalendar value) {
         this.issueInstant = value;
@@ -228,11 +228,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Gets the value of the destination property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDestination() {
         return destination;
@@ -240,11 +240,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Sets the value of the destination property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDestination(String value) {
         this.destination = value;
@@ -252,11 +252,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Gets the value of the consent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getConsent() {
         return consent;
@@ -264,11 +264,11 @@ public abstract class RequestAbstractType {
 
     /**
      * Sets the value of the consent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setConsent(String value) {
         this.consent = value;

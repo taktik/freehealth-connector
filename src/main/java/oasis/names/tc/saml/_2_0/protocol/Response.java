@@ -18,7 +18,8 @@ import oasis.names.tc.saml._2_0.assertion.EncryptedElementType;
    propOrder = {"assertionsAndEncryptedAssertions"}
 )
 @XmlRootElement(
-   name = "Response"
+        namespace = "urn:oasis:names:tc:SAML:2.0:protocol",
+        name = "Response"
 )
 public class Response extends StatusResponseType implements Serializable {
    private static final long serialVersionUID = 1L;
