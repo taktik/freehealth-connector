@@ -1,6 +1,6 @@
-
 package oasis.names.tc.saml._2_0.assertion;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -8,162 +8,72 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
-
-/**
- * <p>Java class for NameIDType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="NameIDType">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
- *       &lt;attGroup ref="{urn:oasis:names:tc:SAML:2.0:assertion}IDNameQualifiers"/>
- *       &lt;attribute name="Format" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
- *       &lt;attribute name="SPProvidedID" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "NameIDType", propOrder = {
-    "value"
-})
-public class NameIDType {
+@XmlType(
+   name = "NameIDType",
+   propOrder = {"value"}
+)
+public class NameIDType implements Serializable {
+   private static final long serialVersionUID = 1L;
+   @XmlValue
+   protected String value;
+   @XmlAttribute(
+      name = "Format"
+   )
+   @XmlSchemaType(
+      name = "anyURI"
+   )
+   protected String format;
+   @XmlAttribute(
+      name = "SPProvidedID"
+   )
+   protected String spProvidedID;
+   @XmlAttribute(
+      name = "NameQualifier"
+   )
+   protected String nameQualifier;
+   @XmlAttribute(
+      name = "SPNameQualifier"
+   )
+   protected String spNameQualifier;
 
-    @XmlValue
-    protected String value;
-    @XmlAttribute(name = "Format")
-    @XmlSchemaType(name = "anyURI")
-    protected String format;
-    @XmlAttribute(name = "SPProvidedID")
-    protected String spProvidedID;
-    @XmlAttribute(name = "NameQualifier")
-    protected String nameQualifier;
-    @XmlAttribute(name = "SPNameQualifier")
-    protected String spNameQualifier;
+   public String getValue() {
+      return this.value;
+   }
 
-    /**
-     * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getValue() {
-        return value;
-    }
+   public void setValue(String value) {
+      this.value = value;
+   }
 
-    /**
-     * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
+   public String getFormat() {
+      return this.format;
+   }
 
-    /**
-     * Gets the value of the format property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getFormat() {
-        return format;
-    }
+   public void setFormat(String value) {
+      this.format = value;
+   }
 
-    /**
-     * Sets the value of the format property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setFormat(String value) {
-        this.format = value;
-    }
+   public String getSPProvidedID() {
+      return this.spProvidedID;
+   }
 
-    /**
-     * Gets the value of the spProvidedID property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSPProvidedID() {
-        return spProvidedID;
-    }
+   public void setSPProvidedID(String value) {
+      this.spProvidedID = value;
+   }
 
-    /**
-     * Sets the value of the spProvidedID property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSPProvidedID(String value) {
-        this.spProvidedID = value;
-    }
+   public String getNameQualifier() {
+      return this.nameQualifier;
+   }
 
-    /**
-     * Gets the value of the nameQualifier property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getNameQualifier() {
-        return nameQualifier;
-    }
+   public void setNameQualifier(String value) {
+      this.nameQualifier = value;
+   }
 
-    /**
-     * Sets the value of the nameQualifier property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setNameQualifier(String value) {
-        this.nameQualifier = value;
-    }
+   public String getSPNameQualifier() {
+      return this.spNameQualifier;
+   }
 
-    /**
-     * Gets the value of the spNameQualifier property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSPNameQualifier() {
-        return spNameQualifier;
-    }
-
-    /**
-     * Sets the value of the spNameQualifier property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSPNameQualifier(String value) {
-        this.spNameQualifier = value;
-    }
-
+   public void setSPNameQualifier(String value) {
+      this.spNameQualifier = value;
+   }
 }

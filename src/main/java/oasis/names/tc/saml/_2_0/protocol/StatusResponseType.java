@@ -1,6 +1,7 @@
-
 package oasis.names.tc.saml._2_0.protocol;
 
+import org.taktik.connector.technical.adapter.XmlDateTimeAdapter;
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -11,320 +12,161 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.datatype.XMLGregorianCalendar;
 import oasis.names.tc.saml._2_0.assertion.NameIDType;
+import org.joda.time.DateTime;
 import org.w3._2000._09.xmldsig.Signature;
 
-
-/**
- * <p>Java class for StatusResponseType complex type.
- *
- * <p>The following schema fragment specifies the expected content contained within this class.
- *
- * <pre>
- * &lt;complexType name="StatusResponseType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{urn:oasis:names:tc:SAML:2.0:assertion}Issuer" minOccurs="0"/>
- *         &lt;element ref="{http://www.w3.org/2000/09/xmldsig#}Signature" minOccurs="0"/>
- *         &lt;element ref="{urn:oasis:names:tc:SAML:2.0:protocol}Extensions" minOccurs="0"/>
- *         &lt;element ref="{urn:oasis:names:tc:SAML:2.0:protocol}Status"/>
- *       &lt;/sequence>
- *       &lt;attribute name="ID" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *       &lt;attribute name="InResponseTo" type="{http://www.w3.org/2001/XMLSchema}NCName" />
- *       &lt;attribute name="Version" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="IssueInstant" use="required" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
- *       &lt;attribute name="Destination" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
- *       &lt;attribute name="Consent" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- *
- *
- */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "StatusResponseType", propOrder = {
-    "issuer",
-    "signature",
-    "extensions",
-    "status"
-})
-@XmlSeeAlso({
-    Response.class,
-    ArtifactResponse.class,
-    NameIDMappingResponse.class
-})
-public class StatusResponseType {
+@XmlType(
+   name = "StatusResponseType",
+   propOrder = {"issuer", "signature", "extensions", "status"}
+)
+@XmlSeeAlso({NameIDMappingResponse.class, ArtifactResponse.class, Response.class})
+public class StatusResponseType implements Serializable {
+   private static final long serialVersionUID = 1L;
+   @XmlElement(
+      name = "Issuer",
+      namespace = "urn:oasis:names:tc:SAML:2.0:assertion"
+   )
+   protected NameIDType issuer;
+   @XmlElement(
+      name = "Signature",
+      namespace = "http://www.w3.org/2000/09/xmldsig#"
+   )
+   protected Signature signature;
+   @XmlElement(
+      name = "Extensions"
+   )
+   protected ExtensionsType extensions;
+   @XmlElement(
+      name = "Status",
+      required = true
+   )
+   protected Status status;
+   @XmlAttribute(
+      name = "ID",
+      required = true
+   )
+   @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+   @XmlID
+   @XmlSchemaType(
+      name = "ID"
+   )
+   protected String id;
+   @XmlAttribute(
+      name = "InResponseTo"
+   )
+   @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+   @XmlSchemaType(
+      name = "NCName"
+   )
+   protected String inResponseTo;
+   @XmlAttribute(
+      name = "Version",
+      required = true
+   )
+   protected String version;
+   @XmlAttribute(
+      name = "IssueInstant",
+      required = true
+   )
+   @XmlJavaTypeAdapter(XmlDateTimeAdapter.class)
+   @XmlSchemaType(
+      name = "dateTime"
+   )
+   protected DateTime issueInstant;
+   @XmlAttribute(
+      name = "Destination"
+   )
+   @XmlSchemaType(
+      name = "anyURI"
+   )
+   protected String destination;
+   @XmlAttribute(
+      name = "Consent"
+   )
+   @XmlSchemaType(
+      name = "anyURI"
+   )
+   protected String consent;
 
-    @XmlElement(name = "Issuer", namespace = "urn:oasis:names:tc:SAML:2.0:assertion")
-    protected NameIDType issuer;
-    @XmlElement(name = "Signature", namespace = "http://www.w3.org/2000/09/xmldsig#")
-    protected Signature signature;
-    @XmlElement(name = "Extensions")
-    protected ExtensionsType extensions;
-    @XmlElement(name = "Status", required = true)
-    protected Status status;
-    @XmlAttribute(name = "ID", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    @XmlSchemaType(name = "ID")
-    protected String id;
-    @XmlAttribute(name = "InResponseTo")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String inResponseTo;
-    @XmlAttribute(name = "Version", required = true)
-    protected String version;
-    @XmlAttribute(name = "IssueInstant", required = true)
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar issueInstant;
-    @XmlAttribute(name = "Destination")
-    @XmlSchemaType(name = "anyURI")
-    protected String destination;
-    @XmlAttribute(name = "Consent")
-    @XmlSchemaType(name = "anyURI")
-    protected String consent;
+   public NameIDType getIssuer() {
+      return this.issuer;
+   }
 
-    /**
-     * Gets the value of the issuer property.
-     *
-     * @return
-     *     possible object is
-     *     {@link NameIDType }
-     *
-     */
-    public NameIDType getIssuer() {
-        return issuer;
-    }
+   public void setIssuer(NameIDType value) {
+      this.issuer = value;
+   }
 
-    /**
-     * Sets the value of the issuer property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link NameIDType }
-     *
-     */
-    public void setIssuer(NameIDType value) {
-        this.issuer = value;
-    }
+   public Signature getSignature() {
+      return this.signature;
+   }
 
-    /**
-     * Gets the value of the signature property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Signature }
-     *
-     */
-    public Signature getSignature() {
-        return signature;
-    }
+   public void setSignature(Signature value) {
+      this.signature = value;
+   }
 
-    /**
-     * Sets the value of the signature property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Signature }
-     *
-     */
-    public void setSignature(Signature value) {
-        this.signature = value;
-    }
+   public ExtensionsType getExtensions() {
+      return this.extensions;
+   }
 
-    /**
-     * Gets the value of the extensions property.
-     *
-     * @return
-     *     possible object is
-     *     {@link ExtensionsType }
-     *
-     */
-    public ExtensionsType getExtensions() {
-        return extensions;
-    }
+   public void setExtensions(ExtensionsType value) {
+      this.extensions = value;
+   }
 
-    /**
-     * Sets the value of the extensions property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link ExtensionsType }
-     *
-     */
-    public void setExtensions(ExtensionsType value) {
-        this.extensions = value;
-    }
+   public Status getStatus() {
+      return this.status;
+   }
 
-    /**
-     * Gets the value of the status property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Status }
-     *
-     */
-    public Status getStatus() {
-        return status;
-    }
+   public void setStatus(Status value) {
+      this.status = value;
+   }
 
-    /**
-     * Sets the value of the status property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Status }
-     *
-     */
-    public void setStatus(Status value) {
-        this.status = value;
-    }
+   public String getID() {
+      return this.id;
+   }
 
-    /**
-     * Gets the value of the id property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getID() {
-        return id;
-    }
+   public void setID(String value) {
+      this.id = value;
+   }
 
-    /**
-     * Sets the value of the id property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setID(String value) {
-        this.id = value;
-    }
+   public String getInResponseTo() {
+      return this.inResponseTo;
+   }
 
-    /**
-     * Gets the value of the inResponseTo property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getInResponseTo() {
-        return inResponseTo;
-    }
+   public void setInResponseTo(String value) {
+      this.inResponseTo = value;
+   }
 
-    /**
-     * Sets the value of the inResponseTo property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setInResponseTo(String value) {
-        this.inResponseTo = value;
-    }
+   public String getVersion() {
+      return this.version;
+   }
 
-    /**
-     * Gets the value of the version property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getVersion() {
-        return version;
-    }
+   public void setVersion(String value) {
+      this.version = value;
+   }
 
-    /**
-     * Sets the value of the version property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setVersion(String value) {
-        this.version = value;
-    }
+   public DateTime getIssueInstant() {
+      return this.issueInstant;
+   }
 
-    /**
-     * Gets the value of the issueInstant property.
-     *
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *
-     */
-    public XMLGregorianCalendar getIssueInstant() {
-        return issueInstant;
-    }
+   public void setIssueInstant(DateTime value) {
+      this.issueInstant = value;
+   }
 
-    /**
-     * Sets the value of the issueInstant property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *
-     */
-    public void setIssueInstant(XMLGregorianCalendar value) {
-        this.issueInstant = value;
-    }
+   public String getDestination() {
+      return this.destination;
+   }
 
-    /**
-     * Gets the value of the destination property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getDestination() {
-        return destination;
-    }
+   public void setDestination(String value) {
+      this.destination = value;
+   }
 
-    /**
-     * Sets the value of the destination property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setDestination(String value) {
-        this.destination = value;
-    }
+   public String getConsent() {
+      return this.consent;
+   }
 
-    /**
-     * Gets the value of the consent property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getConsent() {
-        return consent;
-    }
-
-    /**
-     * Sets the value of the consent property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setConsent(String value) {
-        this.consent = value;
-    }
-
+   public void setConsent(String value) {
+      this.consent = value;
+   }
 }

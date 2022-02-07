@@ -1,36 +1,16 @@
-
 package oasis.names.tc.saml._2_0.assertion;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
-
-/**
- * <p>Java class for StatementAbstractType complex type.
- *
- * <p>The following schema fragment specifies the expected content contained within this class.
- *
- * <pre>
- * &lt;complexType name="StatementAbstractType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- *
- *
- */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "StatementAbstractType")
-@XmlSeeAlso({
-    AuthzDecisionStatement.class,
-    AttributeStatement.class,
-    AuthnStatement.class
-})
-public abstract class StatementAbstractType {
-
-
+@XmlType(
+   name = "StatementAbstractType"
+)
+@XmlSeeAlso({AttributeStatement.class, AuthzDecisionStatement.class, AuthnStatement.class})
+public abstract class StatementAbstractType implements Serializable {
+   private static final long serialVersionUID = 1L;
 }
