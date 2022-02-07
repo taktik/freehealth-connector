@@ -9,6 +9,7 @@ import oasis.names.tc.saml._2_0.assertion.SubjectConfirmation
 import oasis.names.tc.saml._2_0.assertion.SubjectConfirmationDataType
 import oasis.names.tc.saml._2_0.protocol.AttributeQuery
 import oasis.names.tc.saml._2_0.protocol.Response
+import org.joda.time.DateTime
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.daas.impl.AttributeServiceImpl
 import org.taktik.connector.technical.exception.TechnicalConnectorException
@@ -46,7 +47,7 @@ class DataAttributeServiceImpl(private val stsService: STSService) : DataAttribu
                 this.version = "2.0"
                 this.consent = "urn:oasis:names:tc:SAML:2.0:consent:current-implicit"
                 this.id = "DAAS_${UUID.randomUUID()}"
-                this.issueInstant = XMLGregorianCalendarImpl(GregorianCalendar())
+                this.issueInstant = DateTime.now()
                 this.issuer = NameIDType().apply {
                     format = "urn:oasis:names:tc:SAML:2.0:nameid-format:entity"
                     value = "urn:be:fgov:person:ssin:ehealth:1.0:doctor:nihii11:$nihii"
