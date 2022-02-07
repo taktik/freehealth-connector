@@ -38,7 +38,7 @@ class DataAttributeServiceControllerTest : EhealthTest() {
     @Test
     fun BasicDAASTest(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val daas = this.restTemplate.exchange("http://localhost:$port/daas/din/${nihii1}/${"72022102793"}?dateOfBirth=19720221&from=20220201&to=20220221&cause=ziek&prolongation=false&total=false",
+        val daas = this.restTemplate.exchange("http://localhost:$port/daas/din/${nihii1}/${"72022102793"}?dateOfBirth=19720221&from=20220201&to=20220221&cause=workaccident&prolongation=false&total=true",
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
 
         assertErrors("BasicDAASTest", "", daas.toString())
