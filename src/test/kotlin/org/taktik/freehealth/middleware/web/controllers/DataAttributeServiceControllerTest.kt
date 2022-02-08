@@ -16,6 +16,7 @@ import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.dto.daas.DaasResponse
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import java.io.File
+import java.time.LocalDateTime
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
@@ -40,8 +41,10 @@ class DataAttributeServiceControllerTest : EhealthTest() {
     fun BasicDAASTest(){
         val niss: String = "56441941910"
         val birthday: String = "19560419"
-        val from: String = "20220208"
-        val to: String = "20220309"
+        val nowDate = LocalDateTime.now()
+        val thenDate = nowDate.plusDays(1)
+        val from: String = (nowDate.year * 10000 + nowDate.monthValue * 100 + nowDate.dayOfMonth).toString()
+        val to: String = (thenDate.year * 10000 + thenDate.monthValue * 100 + thenDate.dayOfMonth).toString()
         val cause: String = "illness"
         val prolongation: String = "false"
         val total: String = "true"
@@ -59,8 +62,10 @@ class DataAttributeServiceControllerTest : EhealthTest() {
     fun Scenario1Test(){
         val niss: String = "56441941910"
         val birthday: String = "19560419"
-        val from: String = "20220208" //Today
-        val to: String = "20220209" //Today + 1
+        val nowDate = LocalDateTime.now()
+        val thenDate = nowDate.plusDays(1)
+        val from: String = (nowDate.year * 10000 + nowDate.monthValue * 100 + nowDate.dayOfMonth).toString()
+        val to: String = (thenDate.year * 10000 + thenDate.monthValue * 100 + thenDate.dayOfMonth).toString()
         val cause: String = "illness"
         val prolongation: String = "false"
         val total: String = "true"
@@ -77,8 +82,10 @@ class DataAttributeServiceControllerTest : EhealthTest() {
     fun Scenario2Test(){
         val niss: String = "97432402244"
         val birthday: String = "19970324"
-        val from: String = "20220208" //Today
-        val to: String = "20220302"   //Today + 22
+        val nowDate = LocalDateTime.now()
+        val thenDate = nowDate.plusDays(22)
+        val from: String = (nowDate.year * 10000 + nowDate.monthValue * 100 + nowDate.dayOfMonth).toString()
+        val to: String = (thenDate.year * 10000 + thenDate.monthValue * 100 + thenDate.dayOfMonth).toString()
         val cause: String = "workaccident"
         val prolongation: String = "false"
         val total: String = "true"
@@ -95,8 +102,10 @@ class DataAttributeServiceControllerTest : EhealthTest() {
     fun Scenario3Test(){
         val niss: String = "75411615563"
         val birthday: String = "19750116"
-        val from: String = "20220208" //Today
-        val to: String = "20220301"   //Today + 21
+        val nowDate = LocalDateTime.now()
+        val thenDate = nowDate.plusDays(21)
+        val from: String = (nowDate.year * 10000 + nowDate.monthValue * 100 + nowDate.dayOfMonth).toString()
+        val to: String = (thenDate.year * 10000 + thenDate.monthValue * 100 + thenDate.dayOfMonth).toString()
         val cause: String = "illness"
         val prolongation: String = "true"
         val total: String = "true"
@@ -113,8 +122,10 @@ class DataAttributeServiceControllerTest : EhealthTest() {
     fun Scenario4Test(){
         val niss: String = "92410907531"
         val birthday: String = "19920109"
-        val from: String = "20220208" //Today
-        val to: String = "20220301"   //Today + 6
+        val nowDate = LocalDateTime.now()
+        val thenDate = nowDate.plusDays(6)
+        val from: String = (nowDate.year * 10000 + nowDate.monthValue * 100 + nowDate.dayOfMonth).toString()
+        val to: String = (thenDate.year * 10000 + thenDate.monthValue * 100 + thenDate.dayOfMonth).toString()
         val cause: String = "workaccident"
         val prolongation: String = "false"
         val total: String = "true"
@@ -131,8 +142,10 @@ class DataAttributeServiceControllerTest : EhealthTest() {
     fun Scenario5Test(){
         val niss: String = "91412708740"
         val birthday: String = "19910127"
-        val from: String = "20220208" //Today
-        val to: String = "20220310"   //Today + 30
+        val nowDate = LocalDateTime.now()
+        val thenDate = nowDate.plusDays(30)
+        val from: String = (nowDate.year * 10000 + nowDate.monthValue * 100 + nowDate.dayOfMonth).toString()
+        val to: String = (thenDate.year * 10000 + thenDate.monthValue * 100 + thenDate.dayOfMonth).toString()
         val cause: String = "illness" //pregnancy
         val prolongation: String = "false"
         val total: String = "true"
