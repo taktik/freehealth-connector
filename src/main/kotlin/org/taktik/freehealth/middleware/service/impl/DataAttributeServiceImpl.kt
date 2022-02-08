@@ -85,7 +85,11 @@ class DataAttributeServiceImpl(private val stsService: STSService) : DataAttribu
                 .firstOrNull()?.let { attribute ->
                     fun collectSiblings(acc: Collection<Node>, node: Node): Collection<Node> = (acc + node).let { nodes -> node.nextSibling?.let { collectSiblings(nodes, it)} ?: nodes }
                     val data = collectSiblings(listOf(), (attribute.attributeValues.first() as ElementNSImpl).firstChild.firstChild)
-                    val destinations = data.firstOrNull { it.localName == "Destinations" }?.let { collectSiblings(listOf(), it.firstChild) }?.mapNotNull { it.firstChild?.let { collectSiblings(listOf(), it) }?.map { it.nodeName to it.textContent} } ?: listOf()
+                    val destinations = data.firstOrNull { it.localName == "Destinations" }?.let { collectSiblings(listOf(), it.firstChild) }?.map { dest ->
+                        (dest.firstChild?.let { collectSiblings(listOf(), it) }?.map {
+                            (it.attributes.getNamedItem("lang")?.textContent?.let { lng -> "${it.nodeName}:$lng" } ?: it.nodeName) to it.textContent
+                        } ?: listOf()) + listOfNotNull(dest.attributes.getNamedItem("Channel")?.textContent?.let { "Channel" to it }, dest.attributes.getNamedItem("Dataset")?.textContent?.let { "Dataset" to it})
+                    } ?: listOf()
                     val context = data.firstOrNull { it.localName == "Context" }?.let { collectSiblings(listOf(), it.firstChild) }?.mapNotNull { it.attributes.getNamedItem("Name")?.textContent?.let {key -> key to it.firstChild?.textContent } } ?: listOf()
                     return DaasResponse(destinations.map { it.toMap() }, context.toMap())
                 }
