@@ -1,7 +1,10 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import com.sun.org.apache.xerces.internal.dom.ElementNSImpl
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
+import oasis.names.tc.saml._2_0.assertion.Assertion
 import oasis.names.tc.saml._2_0.assertion.Attribute
+import oasis.names.tc.saml._2_0.assertion.AttributeStatement
 import oasis.names.tc.saml._2_0.assertion.NameIDType
 import oasis.names.tc.saml._2_0.assertion.ObjectFactory
 import oasis.names.tc.saml._2_0.assertion.Subject
@@ -13,10 +16,12 @@ import org.joda.time.DateTime
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.daas.impl.AttributeServiceImpl
 import org.taktik.connector.technical.exception.TechnicalConnectorException
+import org.taktik.freehealth.middleware.dto.daas.DaasResponse
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.DataAttributeService
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.utils.FuzzyValues
+import org.w3c.dom.Node
 import java.text.DecimalFormat
 import java.util.*
 
@@ -35,7 +40,7 @@ class DataAttributeServiceImpl(private val stsService: STSService) : DataAttribu
         to: Long,
         total: Boolean,
         prolongation: Boolean
-    ) : Response {
+    ) : DaasResponse? {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
 
@@ -71,7 +76,19 @@ class DataAttributeServiceImpl(private val stsService: STSService) : DataAttribu
                 this.attributes.add(Attribute().apply { name = "urn:be:fgov:person:ssin:incapacity:totalincapacity"; nameFormat = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"; attributeValues.add(total.toString()) })
                 this.attributes.add(Attribute().apply { name = "urn:be:fgov:person:ssin:incapacity:cause"; nameFormat = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"; attributeValues.add(cause) })
             })
-            response
+            val attributes = response.assertionsAndEncryptedAssertions
+                .flatMap { (it as? Assertion)?.statementsAndAuthnStatementsAndAuthzDecisionStatements ?: listOf() }
+                .flatMap { (it as? AttributeStatement)?.attributesAndEncryptedAttributes ?: listOf() }
+                .mapNotNull { (it as? Attribute) }
+                .filter { it.name == "urn:be:fgov:person:ssin:multemediatt:routing" }
+            attributes
+                .firstOrNull()?.let { attribute ->
+                    fun collectSiblings(acc: Collection<Node>, node: Node): Collection<Node> = (acc + node).let { nodes -> node.nextSibling?.let { collectSiblings(nodes, it)} ?: nodes }
+                    val data = collectSiblings(listOf(), (attribute.attributeValues.first() as ElementNSImpl).firstChild.firstChild)
+                    val destinations = data.firstOrNull { it.localName == "Destinations" }?.let { collectSiblings(listOf(), it.firstChild) }?.mapNotNull { it.firstChild?.let { collectSiblings(listOf(), it) }?.map { it.nodeName to it.textContent} } ?: listOf()
+                    val context = data.firstOrNull { it.localName == "Context" }?.let { collectSiblings(listOf(), it.firstChild) }?.mapNotNull { it.attributes.getNamedItem("Name")?.textContent?.let {key -> key to it.firstChild?.textContent } } ?: listOf()
+                    return DaasResponse(destinations.map { it.toMap() }, context.toMap())
+                }
         } catch (e: TechnicalConnectorException) {
             throw IllegalArgumentException(e)
         }
