@@ -89,6 +89,7 @@ import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.mapPeriodToFrequency
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDaytime
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDurationType
+import org.taktik.connector.business.recipe.utils.KmehrValidator
 import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
@@ -134,6 +135,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
     private val ridCache = CacheBuilder.newBuilder().build<String, GetPrescriptionForPrescriberResult>()
     private val feedbacksCache : Cache<String, SortedSet<Feedback>> = CacheBuilder.newBuilder().build<String, SortedSet<Feedback>>()
     private val service = PrescriberIntegrationModuleV4Impl(stsService, keyDepotService)
+    private val validator = KmehrValidator();
 
     override fun listOpenPrescriptions(
         keystoreId: UUID,
@@ -336,11 +338,10 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         val prescription = os.toByteArray()
 
         try {
-            //kmehrHelper.assertValidKmehrPrescription(ByteArrayInputStream(prescription), selectedType)
+            validator.validatePrescription(prescription, selectedType)
             log.debug("prescription $selectedType XML:\n${String(prescription)}")
         } catch (e: Exception) {
-            log.error("Invalid $selectedType prescription XML:\n${String(prescription)}")
-            throw e
+            throw IllegalArgumentException("Invalid $selectedType prescription XML:\n${String(prescription)}", e);
         }
 
         val unconstrainedDate = expirationDate ?: deliveryDate?.plusMonths(3)?.minusDays(1) ?: LocalDateTime.now().plusMonths(3).minusDays(1)
