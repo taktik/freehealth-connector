@@ -341,7 +341,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
             validator.validatePrescription(prescription, selectedType)
             log.debug("prescription $selectedType XML:\n${String(prescription)}")
         } catch (e: Exception) {
-            log.error("prescription $selectedType XML:\n${String(prescription) does not validate}", e);
+            log.error("prescription $selectedType XML:\n${String(prescription)} does not validate", e);
             //throw IllegalArgumentException("Invalid $selectedType prescription XML:\n${String(prescription)}", e);
         }
 
