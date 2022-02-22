@@ -1,7 +1,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import org.springframework.messaging.handler.annotation.MessageMapping
-import org.springframework.messaging.simp.annotation.SendToUser
 import org.springframework.stereotype.Controller
 import org.taktik.freehealth.middleware.domain.sts.StompMessage
 import org.taktik.freehealth.middleware.service.RemoteKeystoreService

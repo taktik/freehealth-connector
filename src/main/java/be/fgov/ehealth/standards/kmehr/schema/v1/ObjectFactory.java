@@ -340,8 +340,8 @@ public class ObjectFactory {
       return new Posology();
    }
 
-   public Regimen createRegimen() {
-      return new Regimen();
+   public KmehrRegimen createRegimen() {
+      return new KmehrRegimen();
    }
 
    public Feedback createFeedback() {
@@ -396,47 +396,47 @@ public class ObjectFactory {
    @XmlElementDecl(
       namespace = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1",
       name = "daynumber",
-      scope = Regimen.class
+      scope = KmehrRegimen.class
    )
    public JAXBElement<BigInteger> createRegimenDaynumber(BigInteger value) {
-      return new JAXBElement(_RegimenDaynumber_QNAME, BigInteger.class, Regimen.class, value);
+      return new JAXBElement(_RegimenDaynumber_QNAME, BigInteger.class, KmehrRegimen.class, value);
    }
 
    @XmlElementDecl(
       namespace = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1",
       name = "quantity",
-      scope = Regimen.class
+      scope = KmehrRegimen.class
    )
    public JAXBElement<AdministrationquantityType> createRegimenQuantity(AdministrationquantityType value) {
-      return new JAXBElement(_RegimenQuantity_QNAME, AdministrationquantityType.class, Regimen.class, value);
+      return new JAXBElement(_RegimenQuantity_QNAME, AdministrationquantityType.class, KmehrRegimen.class, value);
    }
 
    @XmlElementDecl(
       namespace = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1",
       name = "date",
-      scope = Regimen.class
+      scope = KmehrRegimen.class
    )
    @XmlJavaTypeAdapter(XmlDateNoTzAdapter.class)
    public JAXBElement<DateTime> createRegimenDate(DateTime value) {
-      return new JAXBElement(_RegimenDate_QNAME, DateTime.class, Regimen.class, value);
+      return new JAXBElement(_RegimenDate_QNAME, DateTime.class, KmehrRegimen.class, value);
    }
 
    @XmlElementDecl(
       namespace = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1",
       name = "weekday",
-      scope = Regimen.class
+      scope = KmehrRegimen.class
    )
    public JAXBElement<Weekday> createRegimenWeekday(Weekday value) {
-      return new JAXBElement(_RegimenWeekday_QNAME, Weekday.class, Regimen.class, value);
+      return new JAXBElement(_RegimenWeekday_QNAME, Weekday.class, KmehrRegimen.class, value);
    }
 
    @XmlElementDecl(
       namespace = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1",
       name = "daytime",
-      scope = Regimen.class
+      scope = KmehrRegimen.class
    )
    public JAXBElement<Daytime> createRegimenDaytime(Daytime value) {
-      return new JAXBElement(_RegimenDaytime_QNAME, Daytime.class, Regimen.class, value);
+      return new JAXBElement(_RegimenDaytime_QNAME, Daytime.class, KmehrRegimen.class, value);
    }
 
    @XmlElementDecl(

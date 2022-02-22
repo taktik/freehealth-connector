@@ -62,6 +62,7 @@ class RelayCardConnection(val uuid: UUID, private val  hazelcastInstance: Hazelc
 class StompCardConnection(val uuid: UUID, val messenger: RemoteKeystoreServiceImpl.Messenger, private val  hazelcastInstance: HazelcastInstance) : CardConnection {
     private val queue = LinkedBlockingQueue<ByteArray>()
     private val markerByteArray = ByteArray(1) { 0 }
+    private var hazelcastRegistrationId: String? = null
 
     fun init() {
         hazelcastInstance.getTopic<CardConnectionRelay>("/cc/relay/request/${uuid}").addMessageListener {
@@ -69,7 +70,7 @@ class StompCardConnection(val uuid: UUID, val messenger: RemoteKeystoreServiceIm
                 "sign" -> hazelcastInstance.getTopic<ByteArray>("/cc/relay/response/${uuid}").publish(try { sendSign(it.messageObject.data, it.messageObject.digestType) } catch (e: TimeoutException) { markerByteArray })
                 "readFile" -> hazelcastInstance.getTopic<ByteArray>("/cc/relay/response/${uuid}").publish(try { readFile(it.messageObject.data) } catch (e: TimeoutException) { markerByteArray })
             }
-        }
+        }.let { hazelcastRegistrationId = it }
     }
 
     fun destroy() {
@@ -79,7 +80,7 @@ class StompCardConnection(val uuid: UUID, val messenger: RemoteKeystoreServiceIm
     fun pushResponse(byteArray: ByteArray) = queue.put(byteArray)
 
     override fun disconnect() {
-        TODO("Not yet implemented")
+        hazelcastRegistrationId.let { if (hazelcastInstance.getTopic<CardConnectionRelay>("/cc/relay/request/${uuid}").removeMessageListener(it)) { hazelcastRegistrationId = null } }
     }
 
     override fun sign(

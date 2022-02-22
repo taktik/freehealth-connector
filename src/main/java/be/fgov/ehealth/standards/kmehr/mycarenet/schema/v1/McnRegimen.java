@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlType;
    name = "",
    propOrder = {"daynumbersAndQuantitiesAndDates"}
 )
-public class Regimen implements Serializable {
+public class McnRegimen implements Serializable {
    private static final long serialVersionUID = 1L;
    @XmlElementRefs({@XmlElementRef(
    name = "date",
