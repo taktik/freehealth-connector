@@ -72,5 +72,5 @@
   {"uid":"71","path":null,"code":"SOA-03005","locFr":"Message","locNl":"Bericht","msgFr":"Message non conforme (vs référence WSDL), Contactez le helpdesk","msgNl":"Bericht is niet conform (tov WSDL referentie), Contacteer de helpdesk"},
   {"uid":"72","path":null,"code":"SOA-03006","locFr":"Message","locNl":"Bericht","msgFr":"Message non conforme (vs référence XSD), Contactez le helpdesk","msgNl":"Bericht is niet conform (tov XSD referentie), Contacteer de helpdesk"},
   {"uid":"73","path":null,"code":"SOA-03007","locFr":"Message","locNl":"Bericht","msgFr":"Echec de la validation du contenu du message:formaat de la donnée et cohérence des données entre elles, Contactez le helpdesk","msgNl":"Validatie van de inhoud van het bericht mislukt (tov XSD): formaat van het gegeven en coherentie met andere gegevens, Contacteer de helpdesk"},
-  {"uid":"74","path":null,"code":"INVALID_LICENSE","locFr":"License","locNl":"Licentie","msgFr":"Licence/mot de passe fourni incorrect","msgNl":""}
+  {"uid":"74","path":null,"code":"INVALID_LICENSE","locFr":"License","locNl":"Licentie","msgFr":"Licence/mot de passe fourni incorrect","msgNl":"Foutieve licentie/wachtwoord"}
 ]
