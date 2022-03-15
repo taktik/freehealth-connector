@@ -90,7 +90,9 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
     private val log = LoggerFactory.getLogger(PrescriberIntegrationModuleV4Impl::class.java)
     private val recipePrescriberServiceV4 = RecipePrescriberServiceV4Impl()
     private val keyCache = HashMap<String, KeyResult>()
-    private val kmehrHelper = KmehrHelper(Properties().apply { load(javaClass.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
+    private val kmehrHelper = KmehrHelper(Properties().apply {
+        load(PrescriberIntegrationModuleV4Impl::class.java.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties"))
+    })
 
     private fun getNewKey(
         credential: KeyStoreCredential,
