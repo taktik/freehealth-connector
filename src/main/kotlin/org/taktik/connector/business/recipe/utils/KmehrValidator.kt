@@ -19,7 +19,9 @@ import javax.xml.validation.SchemaFactory
 
 class KmehrValidator(val kmehrXsd: String = "ehealth-kmehr/XSD/recipe/recipe_PP_kmehr_elements-1_19.xsd") {
     val log = LoggerFactory.getLogger(KmehrValidator::class.java)
-    val kmehrHelper = KmehrHelper(Properties().apply { load(javaClass.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
+    val kmehrHelper = KmehrHelper(Properties().apply {
+        load(KmehrValidator::class.java.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties"))
+    })
 
     fun validatePrescription(prescription: ByteArray, prescriptionType: String) {
         log.warn("Validating: "+prescription.toString(Charsets.UTF_8))
