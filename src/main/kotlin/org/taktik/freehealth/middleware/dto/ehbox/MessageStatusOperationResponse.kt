@@ -20,9 +20,18 @@
 
 package org.taktik.freehealth.middleware.dto.ehbox
 
+import be.fgov.ehealth.ehbox.core.v3.EhboxIdentifierType
 import org.taktik.freehealth.middleware.domain.common.Error
 
-open class MessageOperationResponse(
-    val success: Boolean,
-    val error: Error? = null
-                              )
+class MessageStatusOperationResponse(
+    success: Boolean,
+    error: Error? = null,
+val acks: List<Acknowledgement> = emptyList()
+                              ) : MessageOperationResponse(success, error)
+
+class Acknowledgement(
+    val recipient: EhboxIdentifierType,
+    val published: Long?,
+    val received: Long?,
+    val read: Long?
+)
