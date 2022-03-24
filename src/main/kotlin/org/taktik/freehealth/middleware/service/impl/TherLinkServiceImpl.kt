@@ -87,8 +87,13 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         type: String?,
         sign: Boolean?
                                        ): TherapeuticLinkMessage? {
+
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for Therlink operations")
+
         val linkBuilder = TherapeuticLink.Builder()
-            .withHcParty(makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName))
+            .withHcParty(makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, hcpTypeFromSamlToken(samlToken)))
             .withPatient(makePatient(patientSsin, eidCardNumber, isiCardNumber, patientFirstName, patientLastName))
             .withStartDateTime(startDate?.let { DateTime(it) })
             .withEndDateTime(endDate?.let { DateTime(it) })
@@ -205,10 +210,10 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                     setPayload(requestObjectMapper.mapHasTherapeuticLinkRequest(HasTherapeuticLinkRequest(
                         DateTime(),
                         hcpNihii,
-                        makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
+                        makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, hcpTypeFromSamlToken(samlToken)),
                         makeTherapeuticLink(
                             therLinkType ?: "gpconsultation",
-                            makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
+                            makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, hcpTypeFromSamlToken(samlToken)),
                             makePatient(patientSsin, eidCardNumber, isiCardNumber, patientFirstName, patientLastName),
                             startDate?.let { DateTime(it) }, //Maybe not supported
                             endDate?.let { DateTime(it) }, //Maybe not supported
@@ -274,7 +279,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         val therLink =
             makeTherapeuticLink(
                 therLinkType ?: "gpconsultation",
-                makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
+                makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, hcpTypeFromSamlToken(samlToken)),
                 makePatient(patientSsin, eidCardNumber, isiCardNumber, patientFirstName, patientLastName),
                 start?.let { DateTime(it) },
                 end?.let { DateTime(it) },
@@ -300,7 +305,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                             PutTherapeuticLinkRequest(
                                 DateTime(),
                                 hcpNihii,
-                                makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
+                                makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, hcpTypeFromSamlToken(samlToken)),
                                 therLink,
                                 makeProof(sign ?: false, therLink.patient, therLink.hcParty, proofType)
                                                      )
@@ -349,13 +354,17 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         sign: Boolean?,
         proofType: ProofTypeValues?
                            ): TherapeuticLinkMessage? {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for Therlink operations")
+
         return doesLinkExist(
             keystoreId,
             tokenId,
             passPhrase,
             makeTherapeuticLink(
                 therLinkType ?: "gpconsultation",
-                makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
+                makeHcParty(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, hcpTypeFromSamlToken(samlToken)),
                 makePatient(
                     patientSsin,
                     eidCardNumber,
@@ -394,7 +403,8 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                     getNihii(hcParty),
                     getSsin(hcParty),
                     hcParty.firstName,
-                    hcParty.familyName
+                    hcParty.familyName,
+                    hcpTypeFromSamlToken(samlToken)
                           ),
                 makeTherapeuticLink(
                     therLink.type!!,
@@ -500,15 +510,15 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         }
     }
 
-    private fun makeAuthor(nihii: String?, inss: String?, firstname: String?, lastname: String?): Author {
+    private fun makeAuthor(nihii: String?, inss: String?, firstname: String?, lastname: String?, type: String? = "persphysician"): Author {
         val author = Author()
-        author.hcParties.add(makeHcParty(nihii, inss, firstname, lastname))
+        author.hcParties.add(makeHcParty(nihii, inss, firstname, lastname, type))
 
         return author
     }
 
-    private fun makeHcParty(nihii: String?, inss: String?, firstname: String?, lastname: String?) =
-        HcParty.Builder().withNihii(nihii).withInss(inss).withType("persphysician").withFirstName(firstname).withFamilyName(
+    private fun makeHcParty(nihii: String?, inss: String?, firstname: String?, lastname: String?, type: String? = "persphysician") =
+        HcParty.Builder().withNihii(nihii).withInss(inss).withType(type).withFirstName(firstname).withFamilyName(
             lastname
                                                                                                                            ).build()
 
@@ -524,4 +534,15 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                 "/ehealth-hubservices/XSD/hubservices_protocol-2_2.xsd"
                                                     )
                                                                                                                                     )
+
+    /**
+     * Map HealthcareParty type from the SAMLToken quality
+     */
+    fun hcpTypeFromSamlToken(samlToken: SAMLToken) : String? {
+        if(samlToken.quality == "nurse")
+            return "persnurse";
+        if(samlToken.quality == "doctor")
+            return "persphysician";
+        return null;
+    }
 }
