@@ -61,6 +61,7 @@ import be.fgov.ehealth.hubservices.core.v2.HasTherapeuticLinkResponse
 import org.taktik.connector.business.therlink.domain.HasTherapeuticLinkMessage
 import org.taktik.connector.business.therlink.domain.requests.HasTherapeuticLinkRequest
 import org.taktik.connector.business.therlink.exception.TherLinkBusinessConnectorException
+import org.taktik.freehealth.utils.hcpTypeFromSamlToken
 import javax.xml.soap.SOAPException
 
 
@@ -535,14 +536,4 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                                                     )
                                                                                                                                     )
 
-    /**
-     * Map HealthcareParty type from the SAMLToken quality
-     */
-    fun hcpTypeFromSamlToken(samlToken: SAMLToken) : String? {
-        if(samlToken.quality == "nurse")
-            return "persnurse";
-        if(samlToken.quality == "doctor")
-            return "persphysician";
-        return null;
-    }
 }
