@@ -165,7 +165,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         request.publicationId = UUID.randomUUID().toString().substring(0, 12)
         return try {
             freehealthEhboxService.sendMessage(samlToken, request).let { sendMessageResponse ->
-                if (sendMessageResponse.status?.code == "100") MessageOperationResponse(success= true, messageId = sendMessageResponse.sentPublicationId) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
+                if (sendMessageResponse.status?.code == "100") MessageOperationResponse(success= true, messageId = sendMessageResponse.id) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
             }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
