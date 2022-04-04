@@ -322,7 +322,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         return try {
             freehealthEhboxService.getMessageAcknowledgmentsStatusResponse(samlToken, asr)
                 .let { statusMessageResult ->
-                    if (statusMessageResult.status?.code == "100") MessageStatusOperationResponse(true, acks = statusMessageResult.acknowledgmentsStatus.rows.map { Acknowledgement(it.recipient, it.published.millis, it.received.millis, it.read.millis) }) else MessageStatusOperationResponse(false, Error(statusMessageResult.status?.code, statusMessageResult.status?.messages?.joinToString(",")))
+                    if (statusMessageResult.status?.code == "100") MessageStatusOperationResponse(true, acks = statusMessageResult.acknowledgmentsStatus.rows.map { Acknowledgement(it.recipient, it.published?.millis, it.received?.millis, it.read?.millis) }) else MessageStatusOperationResponse(false, Error(statusMessageResult.status?.code, statusMessageResult.status?.messages?.joinToString(",")))
                 }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
