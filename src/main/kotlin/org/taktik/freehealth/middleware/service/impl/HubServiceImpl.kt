@@ -64,6 +64,7 @@ import be.fgov.ehealth.hubservices.core.v3.GetPatientAuditTrailRequest
 import be.fgov.ehealth.standards.kmehr.cd.v1.*
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.sts.security.SAMLToken
+import org.taktik.freehealth.utils.hcpTypeFromSamlToken
 import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
@@ -1253,19 +1254,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                     }
                 }
             }
-
         )
-    }
-
-    /**
-     * Map HealthcareParty type from the SAMLToken quality
-     */
-    fun hcpTypeFromSamlToken(samlToken: SAMLToken) : String? {
-        if(samlToken.quality == "nurse")
-            return "persnurse";
-        if(samlToken.quality == "doctor")
-            return "persphysician";
-        return null;
     }
 
 }
