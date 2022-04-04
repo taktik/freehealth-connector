@@ -73,7 +73,7 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
             this.add(CDConsentBuilderUtil.createCDConsent("1.0", CDCONSENTvalues.RETROSPECTIVE))
         }
 
-        val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+        val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, hcpTypeFromSamlToken(samlToken))
         val consentType =
             RequestObjectBuilderFactory.consentBuilder.createNewConsent(
                 makePatient(
@@ -129,7 +129,7 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
             this.add(CDConsentBuilderUtil.createCDConsent("1.0", CDCONSENTvalues.RETROSPECTIVE))
         }
 
-        val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+        val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, hcpTypeFromSamlToken(samlToken))
         val consentType =
             RequestObjectBuilderFactory.consentBuilder.createSelectGetPatientConsent(
                 makePatient(
@@ -179,7 +179,7 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Consent operations")
 
-        val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+        val author = makeAuthor(hcpNihii, hcpSsin, hcpFirstName, hcpLastName, hcpTypeFromSamlToken(samlToken))
 
         existingConsent.patient.ids.removeIf { id -> IDPATIENTschemes.EID_CARDNO == id.s }
         existingConsent.patient.ids.removeIf { id -> IDPATIENTschemes.ISI_CARDNO == id.s }
@@ -240,11 +240,12 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
         nihii: String?,
         inss: String?,
         firstname: String?,
-        lastname: String?
+        lastname: String?,
+        type: String? = "persphysician"
     ): AuthorWithPatientAndPersonType = AuthorWithPatientAndPersonType().apply {
         hcparties.add(
             HcPartyBuilder().idHcPartyId(nihii, "1.0").inssId(inss, "1.0").cdHcPartyCd(
-                "persphysician",
+                type,
                 "1.0"
             ).firstname(firstname).lastname(lastname).build()
         )
@@ -262,5 +263,16 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
             )
         )
         addDefaulHandlerChain()
+    }
+
+    /**
+     * Map HealthcareParty type from the SAMLToken quality
+     */
+    fun hcpTypeFromSamlToken(samlToken: SAMLToken) : String? {
+        if(samlToken.quality == "nurse")
+            return "persnurse";
+        if(samlToken.quality == "doctor")
+            return "persphysician";
+        return null;
     }
 }
