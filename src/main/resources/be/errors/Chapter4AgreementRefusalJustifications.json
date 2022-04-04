@@ -1,11 +1,11 @@
 [
-	{"uid":"1","path":null,"code":"200","locFr":"","locNl":"","msgFr":"Patient décédé avant  la date de début de période demandée","msgNl":""},
-	{"uid":"2","path":null,"code":"401","locFr":"","locNl":"","msgFr":"Il existe déjà un accord dont la date de fin est plus grande que la date de début demandée. (Dans ce cas, il est conseillé de refaire une consultation d’accord afin d’obtenir les détails de l’accord existant).","msgNl":""},
-	{"uid":"3","path":null,"code":"404","locFr":"","locNl":"","msgFr":"Demande non gérable par le médecin-conseil","msgNl":""},
-	{"uid":"4","path":null,"code":"406","locFr":"","locNl":"","msgFr":"Refus médical","msgNl":""},
-	{"uid":"5","path":null,"code":"409","locFr":"","locNl":"","msgFr":"Refus suite à la présence d’une autre demande en cours de traitement pour le même paragraphe.","msgNl":""},
-	{"uid":"6","path":null,"code":"413","locFr":"","locNl":"","msgFr":"Il ne s’agit pas d’une nouvelle demande. Veuillez réintroduire une prolongation.","msgNl":""},
-	{"uid":"7","path":null,"code":"415","locFr":"","locNl":"","msgFr":"Il ne s’agit pas d’une prolongation. Veuillez réintroduire une nouvelle demande.","msgNl":""},
-	{"uid":"8","path":null,"code":"416","locFr":"","locNl":"","msgFr":"Prestataire non habilité pour ce type de demande durant la période concernée","msgNl":""},
-	{"uid":"9","path":null,"code":"502","locFr":"","locNl":"","msgFr":"Nombre / Durée maximum d’accord déjà atteint. ","msgNl":""}
+	{"uid":"1","path":null,"code":"200","locFr":"","locNl":"","msgFr":"Patient décédé avant  la date de début de période demandée","msgNl":"Patiënt is overleden voor de startdatum van de gevraagde periode"},
+	{"uid":"2","path":null,"code":"401","locFr":"","locNl":"","msgFr":"Il existe déjà un accord dont la date de fin est plus grande que la date de début demandée. (Dans ce cas, il est conseillé de refaire une consultation d’accord afin d’obtenir les détails de l’accord existant).","msgNl":"Er bestaat al een overeenkomst waarvan de einddatum groter is dan de gevraagde startdatum. (In dit geval is het raadzaam om een overeenkomst opvraging opnieuw te doen om de details van de bestaande overeenkomst te verkrijgen)."},
+	{"uid":"3","path":null,"code":"404","locFr":"","locNl":"","msgFr":"Demande non gérable par le médecin-conseil","msgNl":"Verzoek niet beheersbaar door de medisch adviseur"},
+	{"uid":"4","path":null,"code":"406","locFr":"","locNl":"","msgFr":"Refus médical","msgNl":"medische weigering"},
+	{"uid":"5","path":null,"code":"409","locFr":"","locNl":"","msgFr":"Refus suite à la présence d’une autre demande en cours de traitement pour le même paragraphe.","msgNl":"Weigering naar aanleiding van de aanwezigheid van een ander verzoek dat voor dezelfde paragraaf in behandeling is."},
+	{"uid":"6","path":null,"code":"413","locFr":"","locNl":"","msgFr":"Il ne s’agit pas d’une nouvelle demande. Veuillez réintroduire une prolongation.","msgNl":"Dit is geen nieuw verzoek. Voer opnieuw een verlenging in."},
+	{"uid":"7","path":null,"code":"415","locFr":"","locNl":"","msgFr":"Il ne s’agit pas d’une prolongation. Veuillez réintroduire une nouvelle demande.","msgNl":"Dit is geen verlenging. Dien een nieuwe aanvraag in."},
+	{"uid":"8","path":null,"code":"416","locFr":"","locNl":"","msgFr":"Prestataire non habilité pour ce type de demande durant la période concernée","msgNl":"Zorgverstrekker niet geautoriseerd voor dit type verzoek gedurende de betreffende periode"},
+	{"uid":"9","path":null,"code":"502","locFr":"","locNl":"","msgFr":"Nombre / Durée maximum d’accord déjà atteint. ","msgNl":"Aantal / Maximale duur van reeds bereikte overeenkomst."}
 ]
