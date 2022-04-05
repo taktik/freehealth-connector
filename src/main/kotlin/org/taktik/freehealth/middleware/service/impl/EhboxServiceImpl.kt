@@ -165,7 +165,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         request.publicationId = UUID.randomUUID().toString().substring(0, 12)
         return try {
             freehealthEhboxService.sendMessage(samlToken, request).let { sendMessageResponse ->
-                if (sendMessageResponse.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
+                if (sendMessageResponse.status?.code == "100") MessageOperationResponse(success= true, messageId = sendMessageResponse.id) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
             }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
@@ -311,7 +311,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         tokenId: UUID,
         passPhrase: String,
         messageId: String
-    ): MessageOperationResponse {
+    ): MessageStatusOperationResponse {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val asr = GetMessageAcknowledgmentsStatusRequest().apply {
@@ -322,13 +322,13 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         return try {
             freehealthEhboxService.getMessageAcknowledgmentsStatusResponse(samlToken, asr)
                 .let { statusMessageResult ->
-                    if (statusMessageResult.status?.code == "100") MessageStatusOperationResponse(true, acks = statusMessageResult.acknowledgmentsStatus.rows.map { Acknowledgement(it.recipient, it.published.millis, it.received.millis, it.read.millis) }) else MessageOperationResponse(false, Error(statusMessageResult.status?.code, statusMessageResult.status?.messages?.joinToString(",")))
+                    if (statusMessageResult.status?.code == "100") MessageStatusOperationResponse(true, acks = statusMessageResult.acknowledgmentsStatus.rows.map { Acknowledgement(it.recipient, it.published?.millis, it.received?.millis, it.read?.millis) }) else MessageStatusOperationResponse(false, Error(statusMessageResult.status?.code, statusMessageResult.status?.messages?.joinToString(",")))
                 }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
-                MessageOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
-            } ?: MessageOperationResponse(false, Error("999", e.message))
+                MessageStatusOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
+            } ?: MessageStatusOperationResponse(false, Error("999", e.message))
         }
     }
 
