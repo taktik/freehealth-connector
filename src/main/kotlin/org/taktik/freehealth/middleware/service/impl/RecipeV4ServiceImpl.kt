@@ -332,7 +332,6 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         val selectedType: String = inferPrescriptionType(medications, prescriptionType)
 
         val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName ?: "phyMedispringTopaz", packageName, packageVersion ?: "1.0-freehealth-connector", vendorEmail, vendorPhone, expirationDate)
-
         val os = ByteArrayOutputStream()
         JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(m, os)
         val prescription = os.toByteArray()
@@ -603,7 +602,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                                                 intendedcd = CDINNCLUSTER().apply {
                                                     s(scheme)
                                                     sv = config.prescription.substanceDb
-                                                    value = c.code
+                                                    value = c.code?.padStart(7, '0')
                                                 }
                                                 intendedname = med.substanceProduct?.intendedname
                                             }
