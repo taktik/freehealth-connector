@@ -17,7 +17,7 @@ import javax.xml.validation.SchemaFactory
  * validate Kmehr messages
  */
 
-class KmehrValidator(val kmehrXsd: String = "ehealth-kmehr/XSD/recipe/recipe_PP_kmehr_elements-1_28.xsd") {
+class KmehrValidator(val kmehrXsd: String = "ehealth-kmehr/XSD/recipe/xsd-kmehr-1.28.0/ehealth-kmehr/XSD/kmehr_elements-1_28.xsd") {
     val log = LoggerFactory.getLogger(KmehrValidator::class.java)
     val kmehrHelper = KmehrHelper(Properties().apply {
         load(KmehrValidator::class.java.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties"))
