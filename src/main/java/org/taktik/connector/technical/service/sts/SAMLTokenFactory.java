@@ -1,5 +1,6 @@
 package org.taktik.connector.technical.service.sts;
 
+import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.service.sts.security.impl.SAMLHolderOfKeyToken;
@@ -20,7 +21,7 @@ public final class SAMLTokenFactory {
       return SAMLTokenFactory.SAMLTokenFactorySingleton.INSTANCE.getSAMLTokenFactory();
    }
 
-   public SAMLToken createSamlToken(Element assertion, Credential credential) {
+   public SAMLToken createSamlToken(Element assertion, Credential credential) throws TechnicalConnectorException {
       NodeList authenticationStatements = assertion.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "AuthenticationStatement");
 
       for(int i = 0; i < authenticationStatements.getLength(); ++i) {

@@ -1,0 +1,50 @@
+Signature-Version: 1.0
+SHA-256-Digest-Manifest-Main-Attributes: pNg6rEAPRx0C+QYG7gJXafTv3cuBE
+ 2jUNii9sbK4sQ8=
+SHA-256-Digest-Manifest: tSRy63U+EmeNKGdvr2Ht9Nc9xEzJi3KTkSt/F1pjNcI=
+Created-By: 1.8.0_281 (Oracle Corporation)
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-utilities-daa
+ s/pom.properties
+SHA-256-Digest: Jy4kTUV4Npl2dOSoT3OlpVOY+UTKU0HIeJiu9QlriyY=
+
+Name: bindings/jaxb/bindingsupport-basic.xjb
+SHA-256-Digest: X2LiG5pKhehfI7u0qvNK/CaeBbxEySsjz3B+WCL4QlU=
+
+Name: properties-from-pom.properties
+SHA-256-Digest: 37tUmXyu4BZswz74zDrmjwtO4v0LXyqH0gjZRegWJOQ=
+
+Name: be/fgov/ehealth/daas/complextype/v1/Actor.class
+SHA-256-Digest: zz2Wuf0IMMZybNi/uNcj1cFq1XST+XhF59LkrcI4bnQ=
+
+Name: ehealth-daasattribute/XSD/ehealth-daasattribute-1_0.xsd
+SHA-256-Digest: HEYLEe+TsvPk93ys7Bg84JrTvkntJ+MLEflP5OOawmk=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-utilities-daa
+ s/pom.xml
+SHA-256-Digest: FfEG7zUhfm0aBRVzra9plm2pAxxBNCZY5JGkKMCi/CI=
+
+Name: be/fgov/ehealth/daas/complextype/v1/TypeCodeType.class
+SHA-256-Digest: 3Euqmo2IljFLZM0q9I8vfsXH4iWRnESdu6R3vlNjlE4=
+
+Name: be/fgov/ehealth/daas/complextype/v1/Name.class
+SHA-256-Digest: Zsc/O5En8ZqfYElcboE2QLPSNYbm9egJxQ7AWTi7KYg=
+
+Name: external/XSD/xml.xsd
+SHA-256-Digest: oDBwn9LwgvRu8DDlMlgQoJyoSDjez3MmK8yOxfyoIog=
+
+Name: be/fgov/ehealth/daas/complextype/v1/package-info.class
+SHA-256-Digest: 5gpbXfdvtR1igMX21qM8ce1m9H8536CFULpfsqP9D28=
+
+Name: META-INF/sun-jaxb.episode
+SHA-256-Digest: bL80UunOeCPzjzuoUUf3MNgOocVHw74yuFOfOZtcVmI=
+
+Name: be/fgov/ehealth/daas/complextype/v1/PeriodType.class
+SHA-256-Digest: Pq5H+1qQaETZWQJKDHi2hNH6ZNI5oVvNFZVJwutn2IA=
+
+Name: be/fgov/ehealth/daas/complextype/v1/BaseNameType.class
+SHA-256-Digest: HeJqB86WBRkgMtClLq885m70zZvRz7UMjJTtVc0UOsg=
+
+Name: be/fgov/ehealth/daas/complextype/v1/ObjectFactory.class
+SHA-256-Digest: Tx3ZmgDhg9RBTsIues6GYCSQnVqObXsbf11dwJg22Hw=
+

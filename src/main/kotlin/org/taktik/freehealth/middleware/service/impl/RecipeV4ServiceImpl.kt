@@ -89,6 +89,7 @@ import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.mapPeriodToFrequency
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDaytime
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDurationType
+import org.taktik.connector.business.recipe.utils.KmehrValidator
 import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
@@ -134,6 +135,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
     private val ridCache = CacheBuilder.newBuilder().build<String, GetPrescriptionForPrescriberResult>()
     private val feedbacksCache : Cache<String, SortedSet<Feedback>> = CacheBuilder.newBuilder().build<String, SortedSet<Feedback>>()
     private val service = PrescriberIntegrationModuleV4Impl(stsService, keyDepotService)
+    private val validator = KmehrValidator();
 
     override fun listOpenPrescriptions(
         keystoreId: UUID,
@@ -330,17 +332,16 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         val selectedType: String = inferPrescriptionType(medications, prescriptionType)
 
         val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName ?: "phyMedispringTopaz", packageName, packageVersion ?: "1.0-freehealth-connector", vendorEmail, vendorPhone, expirationDate)
-
         val os = ByteArrayOutputStream()
         JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(m, os)
         val prescription = os.toByteArray()
 
         try {
-            //kmehrHelper.assertValidKmehrPrescription(ByteArrayInputStream(prescription), selectedType)
+            validator.validatePrescription(prescription, selectedType)
             log.debug("prescription $selectedType XML:\n${String(prescription)}")
         } catch (e: Exception) {
-            log.error("Invalid $selectedType prescription XML:\n${String(prescription)}")
-            throw e
+            log.error("prescription $selectedType XML:\n${String(prescription)} does not validate", e);
+            //throw IllegalArgumentException("Invalid $selectedType prescription XML:\n${String(prescription)}", e);
         }
 
         val unconstrainedDate = expirationDate ?: deliveryDate?.plusMonths(3)?.minusDays(1) ?: LocalDateTime.now().plusMonths(3).minusDays(1)
@@ -601,7 +602,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                                                 intendedcd = CDINNCLUSTER().apply {
                                                     s(scheme)
                                                     sv = config.prescription.substanceDb
-                                                    value = c.code
+                                                    value = c.code?.padStart(7, '0')
                                                 }
                                                 intendedname = med.substanceProduct?.intendedname
                                             }
@@ -715,7 +716,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                                 med.intakeRoute?.code?.let { c ->
                                     route = RouteType().apply { cd = CDDRUGROUTE().apply { value = c } }
                                 }
-                                deliverydate = deliveryDate?.let { makeXMLGregorianCalendarFromFuzzyLong(FuzzyValues.getFuzzyDate(it, ChronoUnit.DAYS)) }
+                                // Deleted by recip-e deliverydate = deliveryDate?.let { makeXMLGregorianCalendarFromFuzzyLong(FuzzyValues.getFuzzyDate(it, ChronoUnit.DAYS)) }
                                 instructionforpatient = KmehrPrescriptionHelperV4.toTextType(language, med.recipeInstructionForPatient)
                                 med.instructionsForReimbursement?.translations?.get(language)?.let {
                                     instructionforreimbursement = KmehrPrescriptionHelperV4.toTextType(language, it)

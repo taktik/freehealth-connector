@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema xmlns:core="http:/services.recipe.be/core"
+	xmlns:tns="http:/services.recipe.be/core" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1" version="1.0"
+	targetNamespace="http:/services.recipe.be/core">
+
+	<xs:complexType name="ResponseType">
+		<xs:sequence>
+			<xs:element name="status" type="tns:StatusType" />
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="StatusType">
+		<xs:sequence>
+			<xs:element name="code" type="xs:string" minOccurs="1"/><!-- 100 or 300 -->
+			<xs:element name="messageCode" type="xs:string" minOccurs="0"/> <!-- the technical code of the error message e.g. error.validation.x.y.z -->
+			<xs:element name="messages" type="tns:LocalisedString" minOccurs="0" maxOccurs="unbounded" /> <!-- localised message of the technical code in different languages-->
+			<xs:element name="statusUpdater" type="xs:string" minOccurs="0"/> <!-- the statusUpdater in case the RID is archived or revoked -->
+			<xs:element name="prescriptionStatus" type="xs:string" minOccurs="0"/> <!-- the current PrescriptionStatus -->
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="LocalisedString">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="lang" type="tns:LangageType" use="optional" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:simpleType name="LangageType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FR" />
+			<xs:enumeration value="NL" />
+			<xs:enumeration value="EN" />
+			<xs:enumeration value="DE" />
+			<xs:enumeration value="NA" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="Page">
+		<xs:sequence>
+			<xs:element name="month">
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:minInclusive value="1" />
+						<xs:maxInclusive value="12" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="year">
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:minInclusive value="2000" />
+						<xs:maxInclusive value="2100" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="pageNumber">
+				<xs:simpleType>
+					<xs:restriction base="xs:integer"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="context">
+				<xs:simpleType>
+					<xs:restriction base="xs:base64Binary"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="recipeExceptionDetails">
+		<xs:sequence>
+			<xs:element name="code" type="xs:string" minOccurs="0" />
+			<xs:element name="errorMap">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="key" minOccurs="0" type="xs:string" />
+									<xs:element name="value" minOccurs="0" type="tns:recipeError" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="recipeError">
+		<xs:sequence>
+			<xs:element name="message" type="xs:string" minOccurs="0" />
+			<xs:element name="resolution" type="xs:string" minOccurs="0" />
+			<xs:element name="severity" type="xs:string" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="partyIdentification">
+		<xs:sequence>
+			<xs:element name="prescriberId" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="executorId" type="xs:string" minOccurs="0" />
+			<xs:element name="patientId" type="xs:string" minOccurs="0" />
+			<xs:element name="type" type="xs:string" minOccurs="0" />
+			<xs:element name="quality" type="xs:string" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="prescriptionStatus">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NotDelivered">
+				<xs:annotation>
+					<xs:appinfo>
+						<jaxb:typesafeEnumMember name="NotDelivered" />
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="InProcess">
+				<xs:annotation>
+					<xs:appinfo>
+						<jaxb:typesafeEnumMember name="InProcess" />
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Delivered">
+				<xs:annotation>
+					<xs:appinfo>
+						<jaxb:typesafeEnumMember name="Delivered" />
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Revoked">
+				<xs:annotation>
+					<xs:appinfo>
+						<jaxb:typesafeEnumMember name="Revoked" />
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Expired">
+				<xs:annotation>
+					<xs:appinfo>
+						<jaxb:typesafeEnumMember name="Expired" />
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Archived">
+				<xs:annotation>
+					<xs:appinfo>
+						<jaxb:typesafeEnumMember name="Archived" />
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="contactPreference">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NO_PREFERENCE">
+				<xs:annotation>
+					<xs:appinfo>
+						<jaxb:typesafeEnumMember name="NO_PREFERENCE" />
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EMAIL_ADDRESS">
+				<xs:annotation>
+					<xs:appinfo>
+						<jaxb:typesafeEnumMember name="EMAIL_ADDRESS" />
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TELEPHONE_NUMBER">
+				<xs:annotation>
+					<xs:appinfo>
+						<jaxb:typesafeEnumMember name="TELEPHONE_NUMBER" />
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

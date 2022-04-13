@@ -20,12 +20,7 @@
 
 package org.taktik.freehealth.middleware.service
 
-import org.taktik.freehealth.middleware.dto.ehbox.AltKeystore
-import org.taktik.freehealth.middleware.dto.ehbox.BoxInfo
-import org.taktik.freehealth.middleware.dto.ehbox.DocumentMessage
-import org.taktik.freehealth.middleware.dto.ehbox.MessageResponse
-import org.taktik.freehealth.middleware.dto.ehbox.MessagesResponse
-import org.taktik.freehealth.middleware.dto.ehbox.MessageOperationResponse
+import org.taktik.freehealth.middleware.dto.ehbox.*
 import java.util.*
 
 interface EhboxService {
@@ -74,4 +69,10 @@ interface EhboxService {
     ): MessageOperationResponse
 
     fun sendMessage2Ebox(keystoreId: UUID, tokenId: UUID, passPhrase: String, message: DocumentMessage, publicationReceipt: Boolean, receptionReceipt: Boolean, readReceipt: Boolean): MessageOperationResponse
+    fun getMessageAckStatus(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        messageId: String
+    ): MessageStatusOperationResponse
 }

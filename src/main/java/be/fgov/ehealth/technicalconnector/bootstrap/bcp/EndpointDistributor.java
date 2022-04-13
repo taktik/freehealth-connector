@@ -62,20 +62,6 @@ public final class EndpointDistributor {
       return (CacheInformation)this.service2CacheInformation.get(this.url2Service.get(currentEndpoint));
    }
 
-   public void updatePollingBehaviour() {
-      if ((this.isBCPMode() || this.service2AllEndpoints.size() == 0) && config.getBooleanProperty(PROP_POLLING_ACTIVATED, Boolean.TRUE)) {
-         if (this.timer == null) {
-            this.timer = new Timer(true);
-            this.timer.schedule(new EndpointDistributor.StatusPollingTimerTask(), new Date(), TimeUnit.MILLISECONDS.convert(config.getLongProperty(PROP_POLLING_INTERVAL, 1L), TimeUnit.MINUTES));
-         }
-      } else {
-         if (this.timer != null) {
-            this.timer.cancel();
-            this.timer = null;
-         }
-      }
-   }
-
    public boolean mustPoll() {
       return this.timer != null;
    }
@@ -127,8 +113,6 @@ public final class EndpointDistributor {
       this.service2CacheInformation = info.getService2CacheInformation();
 
       log.warn("Finished setting new endpoints");
-
-      updatePollingBehaviour();
    }
 
    protected void reset() {
@@ -154,18 +138,6 @@ public final class EndpointDistributor {
       } catch (Exception ex) {
          log.error("Unable to update endpoints", ex);
          return false;
-      }
-   }
-
-   private static class StatusPollingTimerTask extends TimerTask {
-      private static final Log log = LogFactory.getLog(StatusPollingTimerTask.class);
-
-      private StatusPollingTimerTask() {
-      }
-
-      public void run() {
-         log.warn("Update endpoints through Timer");
-         EndpointDistributor.update();
       }
    }
 

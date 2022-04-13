@@ -22,9 +22,11 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.commons.core.v1.StatusType
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetBoxInfoRequest
+import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetMessageAcknowledgmentsStatusRequest
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetMessagesListRequest
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.MessageRequestType
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.MoveMessageRequest
+import be.fgov.ehealth.ehbox.core.v3.BoxIdType
 import be.fgov.ehealth.errors.core.v1.LocalisedStringType
 import be.fgov.ehealth.errors.soa.v1.BusinessError
 import be.fgov.ehealth.errors.soa.v1.EnvironmentType
@@ -40,6 +42,7 @@ import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.freehealth.middleware.domain.common.Error
 import org.taktik.freehealth.middleware.dto.common.ErrorDto
+import org.taktik.freehealth.middleware.dto.ehbox.Acknowledgement
 import org.taktik.freehealth.middleware.dto.ehbox.AltKeystore
 import org.taktik.freehealth.middleware.dto.ehbox.BoxInfo
 import org.taktik.freehealth.middleware.dto.ehbox.DocumentMessage
@@ -47,6 +50,7 @@ import org.taktik.freehealth.middleware.dto.ehbox.ErrorMessage
 import org.taktik.freehealth.middleware.dto.ehbox.Message
 import org.taktik.freehealth.middleware.dto.ehbox.MessageOperationResponse
 import org.taktik.freehealth.middleware.dto.ehbox.MessageResponse
+import org.taktik.freehealth.middleware.dto.ehbox.MessageStatusOperationResponse
 import org.taktik.freehealth.middleware.dto.ehbox.MessagesResponse
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.mapper.toDocumentMessage
@@ -161,7 +165,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         request.publicationId = UUID.randomUUID().toString().substring(0, 12)
         return try {
             freehealthEhboxService.sendMessage(samlToken, request).let { sendMessageResponse ->
-                if (sendMessageResponse.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
+                if (sendMessageResponse.status?.code == "100") MessageOperationResponse(success= true, messageId = sendMessageResponse.id) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
             }
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
@@ -301,6 +305,33 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
             } ?: MessageOperationResponse(false, Error("999", e.message))
         }
     }
+
+    override fun getMessageAckStatus(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        messageId: String
+    ): MessageStatusOperationResponse {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+            ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
+        val asr = GetMessageAcknowledgmentsStatusRequest().apply {
+            this.messageId = messageId
+            this.startIndex = 1
+            this.endIndex = 100
+        }
+        return try {
+            freehealthEhboxService.getMessageAcknowledgmentsStatusResponse(samlToken, asr)
+                .let { statusMessageResult ->
+                    if (statusMessageResult.status?.code == "100") MessageStatusOperationResponse(true, acks = statusMessageResult.acknowledgmentsStatus.rows.map { Acknowledgement(it.recipient, it.published?.millis, it.received?.millis, it.read?.millis) }) else MessageStatusOperationResponse(false, Error(statusMessageResult.status?.code, statusMessageResult.status?.messages?.joinToString(",")))
+                }
+        } catch (e: TechnicalConnectorException) {
+            (e.cause as? SOAPFaultException)?.let {
+                val be = parseFault(it.fault)?.details?.details?.firstOrNull()
+                MessageStatusOperationResponse(false, Error(be?.code, be?.messages?.firstOrNull()?.value))
+            } ?: MessageStatusOperationResponse(false, Error("999", e.message))
+        }
+    }
+
 
     override fun deleteMessages(
         keystoreId: UUID,

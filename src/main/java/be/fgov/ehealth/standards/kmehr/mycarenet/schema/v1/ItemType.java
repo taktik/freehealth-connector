@@ -68,7 +68,7 @@ public class ItemType implements Serializable {
    protected List<DayperiodType> dayperiods;
    protected DurationType duration;
    protected Posology posology;
-   protected Regimen regimen;
+   protected McnRegimen regimen;
    @XmlElement(
       type = String.class
    )
@@ -294,11 +294,11 @@ public class ItemType implements Serializable {
       this.posology = value;
    }
 
-   public Regimen getRegimen() {
+   public McnRegimen getRegimen() {
       return this.regimen;
    }
 
-   public void setRegimen(Regimen value) {
+   public void setRegimen(McnRegimen value) {
       this.regimen = value;
    }
 

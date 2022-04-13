@@ -188,7 +188,7 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
             ?: org.names.joinToString { it.value },
                                nihii = if (org.id.authenticSource == "NIHII") org.id.value else null,
                                cbe = if (org.id.authenticSource == "CBE") org.id.value else null,
-                               ehp = if (org.id.authenticSource == "EHP") org.id.value else null,
+                               ehp = if (org.id.authenticSource == "EHP" || org.id.authenticSource == "EHP_TEST") org.id.value else null,
                                type = org.organizationTypeCodes?.find { it.type == "code" }?.value,
                                ehealthBoxes = org.eHealthBoxes
         ).apply {

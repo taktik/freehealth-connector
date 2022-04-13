@@ -24,6 +24,7 @@ import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.hazelcast.core.IMap
+import com.hazelcast.core.ISet
 import org.apache.commons.logging.LogFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -43,6 +44,8 @@ import org.taktik.connector.technical.utils.CertificateParser
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import org.taktik.freehealth.middleware.dto.CertificateInfo
 import org.taktik.freehealth.middleware.exception.MissingKeystoreException
+import org.taktik.freehealth.middleware.pkcs11.remote.RemoteKeystore
+import org.taktik.freehealth.middleware.service.RemoteKeystoreService
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
@@ -62,12 +65,22 @@ import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 
 @Service
-class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, SamlTokenResult>, val keyDepotService: KeyDepotService) : STSService {
+class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, SamlTokenResult>, val keyDepotService: KeyDepotService, val remoteKeystoreService: RemoteKeystoreService) : STSService {
     private val log = LogFactory.getLog(this.javaClass)
 
     val freehealthStsService: org.taktik.connector.technical.service.sts.STSService = org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
     val transformerFactory: TransformerFactory = TransformerFactory.newInstance()
     val config: ConfigValidator = ConfigFactory.getConfigValidator()
+
+
+    val keystoreCache = CacheBuilder.newBuilder().maximumSize(2000).expireAfterAccess(1, TimeUnit.HOURS).build(object : CacheLoader<Pair<UUID, String>, KeyStore>() {
+        override fun load(key: Pair<UUID, String>): KeyStore {
+            val keyStoreData =
+                keystoresMap[key.first]
+                    ?: throw(MissingKeystoreException("Missing Keystore, please upload a keystore and use the returned keystoreId"))
+            return KeyManager.getKeyStore(keyStoreData.inputStream(), "PKCS12", key.second.toCharArray())
+        }
+    })
 
     override fun isAcceptance() = config.getProperty("endpoint.sts").contains("-acpt")
 
@@ -122,7 +135,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val etk = getHolderOfKeysEtk(credential, nihiiOrSsin)
-        if (!hokPrivateKeys.containsKey(etk?.certificate?.serialNumber?.toString(10))) {
+        if (hokPrivateKeys.isNotEmpty() && !hokPrivateKeys.containsKey(etk?.certificate?.serialNumber?.toString(10))) {
             throw java.lang.IllegalArgumentException("The certificate from the ETK don't match with the one in the encryption keystore")
         }
 
@@ -137,12 +150,15 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     "urn:be:fgov:identification-namespace"
                 ),
                 SAMLAttributeDesignator(
-                    "urn:be:fgov:ehealth:1.0:certificateholder:medicalhouse:nihii-number",
-                    "urn:be:fgov:certified-namespace:ehealth"
-                )
-                ,
-                SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number:recognisedmedicalhouse:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number:recognisedmedicalhouse:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
@@ -156,15 +172,15 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     "urn:be:fgov:identification-namespace"
                 ),
                 SAMLAttributeDesignator(
-                    "urn:be:fgov:ehealth:1.0:certificateholder:guardpost:nihii-number",
-                    "urn:be:fgov:certified-namespace:ehealth"
-                ),
-                SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:guardpost:nihii-number:recognisedguardpost:nihii11",
                     "urn:be:fgov:certified-namespace:ehealth"
                 ),
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:guardpost:nihii-number:recognisedguardpost:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
@@ -187,6 +203,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 ),
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:sortingcenter:nihii-number:recognisedsortingcenter:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
@@ -523,17 +543,14 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         return keystoreId
     }
 
-    val keystoreCache = CacheBuilder.newBuilder().maximumSize(2000).expireAfterAccess(1, TimeUnit.HOURS).build(object : CacheLoader<Pair<UUID, String>, KeyStore>() {
-        override fun load(key: Pair<UUID, String>): KeyStore {
-            val keyStoreData =
-                keystoresMap[key.first]
-                    ?: throw(MissingKeystoreException("Missing Keystore, please upload a keystore and use the returned keystoreId"))
-            return KeyManager.getKeyStore(keyStoreData.inputStream(), "PKCS12", key.second.toCharArray())
-        }
-    })
-
     override fun getKeyStore(keystoreId: UUID, passPhrase: String): KeyStore? {
-        return try { keystoreCache.get(Pair(keystoreId, passPhrase)) } catch(ex:ExecutionException) {
+        return try {
+            if (remoteKeystoreService.hasConnection(keystoreId)) RemoteKeystore(keystoreId, remoteKeystoreService).apply { load(object:KeyStore.LoadStoreParameter {
+                override fun getProtectionParameter(): KeyStore.ProtectionParameter? {
+                    return null
+                }
+            } ) } else keystoreCache.get(Pair(keystoreId, passPhrase))
+        } catch(ex:ExecutionException) {
             (ex.cause as? IOException)?.let { throw IllegalArgumentException(it.message ?: "Decryption exception") } ?: throw (ex.cause ?: ex)
         }
     }

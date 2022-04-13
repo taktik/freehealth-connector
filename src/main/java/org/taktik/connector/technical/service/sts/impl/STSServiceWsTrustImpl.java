@@ -48,9 +48,9 @@ public class STSServiceWsTrustImpl extends AbstractSTSService implements STSServ
 
          return this.processRequest(headerCredentials, bodyCredentials, issuePayload);
       } catch (SOAPException var12) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var12, new Object[]{var12.getMessage()});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var12, var12.getMessage());
       } catch (DOMException var13) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var13, new Object[]{var13.getMessage()});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var13, var13.getMessage());
       }
    }
 
@@ -100,7 +100,7 @@ public class STSServiceWsTrustImpl extends AbstractSTSService implements STSServ
          x509Cert.setTextContent(new String(Base64.encode(bodyCredentials.getCertificate().getEncoded())));
          return issuePayload;
       } catch (CertificateEncodingException var13) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var13, new Object[]{var13.getMessage()});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var13, var13.getMessage());
       }
    }
 
@@ -158,7 +158,7 @@ public class STSServiceWsTrustImpl extends AbstractSTSService implements STSServ
          embedded.appendChild(samlTokenNode);
          return this.processRequest(headerCredentials, bodyCredentials, renewPayload);
       } catch (SOAPException var9) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var9, new Object[]{var9.getMessage()});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var9, var9.getMessage());
       }
    }
 
@@ -186,7 +186,7 @@ public class STSServiceWsTrustImpl extends AbstractSTSService implements STSServ
       if (nodeRequestedSecurityToken != null && nodeRequestedSecurityToken.getLength() >= 1) {
          return ConnectorXmlUtils.getFirstChildElement(nodeRequestedSecurityToken.item(0));
       } else {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{"Unable to obtain token: reason unkown."});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, "Unable to obtain token: reason unkown.");
       }
    }
 }

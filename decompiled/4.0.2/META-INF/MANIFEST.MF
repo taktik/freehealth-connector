@@ -1,0 +1,57 @@
+Manifest-Version: 1.0
+Implementation-Title: connector-utilities-daas
+Maven-Artifact-Id: connector-utilities-daas
+Implementation-Version: 4.0.2
+Archiver-Version: Plexus Archiver
+Built-By: smals-jdss
+Build-Time: 2021-10-05T05:51:08Z
+CMDB-Catalog-Part: 
+Created-By: Apache Maven 3.2.5
+Build-Jdk: 1.8.0_101
+Specification-Version: 1.0.0
+Maven-Group-Id: be.fgov.ehealth.connector
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-utilities-daa
+ s/pom.properties
+SHA-256-Digest: /47HkfrqA2qpa1V9BSpvYhdqhz9IwNr2Vnp2IHqFv1M=
+
+Name: bindings/jaxb/bindingsupport-basic.xjb
+SHA-256-Digest: RpB+F91T4kSCiNUi3NbuudhfjXUoCMhH5tg9catDdbg=
+
+Name: properties-from-pom.properties
+SHA-256-Digest: f5BXE2GA285Igj5tfq9HIzKfwsi0CMXtwjnYnBgUphc=
+
+Name: be/fgov/ehealth/daas/complextype/v1/Actor.class
+SHA-256-Digest: ngMkKAHvMo60APaW3UdkNDdXru+xijcYjl/pJhkTlu0=
+
+Name: ehealth-daasattribute/XSD/ehealth-daasattribute-1_0.xsd
+SHA-256-Digest: Y9X9LVcfpQ77Ma3CBbfQWOlBmg+77U9uPhzV1pjLXtk=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-utilities-daa
+ s/pom.xml
+SHA-256-Digest: fVcGfkZZbgjU9RkcbMc64RV6kW6rS+JEu2V+G2tJcJU=
+
+Name: be/fgov/ehealth/daas/complextype/v1/TypeCodeType.class
+SHA-256-Digest: /XsaYoFguUIntQvwsQP52YbyqH/IXCgzXaUEzgWgNeY=
+
+Name: be/fgov/ehealth/daas/complextype/v1/Name.class
+SHA-256-Digest: xLEQaxclRZ+7UO9Dj7HioV4SJbkExmfrPzV2PzN8Src=
+
+Name: external/XSD/xml.xsd
+SHA-256-Digest: YWowd99c/JVKx0p1q+lpe5Xu96hdvgk2fZlaSD6EDrU=
+
+Name: be/fgov/ehealth/daas/complextype/v1/package-info.class
+SHA-256-Digest: WecHfHZDzRrXyo7dUG2520I3aTrDYZF86TfYUjuS5xk=
+
+Name: META-INF/sun-jaxb.episode
+SHA-256-Digest: Kmam8omA8IBRPSlYZXBVfDrC8pE8qtoLtUn4wf1f0NM=
+
+Name: be/fgov/ehealth/daas/complextype/v1/PeriodType.class
+SHA-256-Digest: wGyuu9ZzYEReFbj79xEgF9rcIVa38q969Dtcnopw2fg=
+
+Name: be/fgov/ehealth/daas/complextype/v1/BaseNameType.class
+SHA-256-Digest: SkxgHLTGbaqcG9WTIoGj6XYMT3nGKeag1fSsy5SE+p0=
+
+Name: be/fgov/ehealth/daas/complextype/v1/ObjectFactory.class
+SHA-256-Digest: bYGpBW5rUjDQ4cQxMCUFAsbvwS0mcYnLRIDbUhTBHBk=
+

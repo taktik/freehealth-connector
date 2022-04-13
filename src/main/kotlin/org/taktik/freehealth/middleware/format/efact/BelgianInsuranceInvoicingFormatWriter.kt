@@ -54,7 +54,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         patient.insurabilities
         if (patient.insurabilities.isNotEmpty()) {
             val parameters = patient.insurabilities[0].parameters
-            return parameters[parameter]
+            return parameters[parameter.name]
         }
         return null
     }
@@ -73,10 +73,11 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
             }
         } else {
             if (affCode.startsWith("3")) {
-                if (Arrays.asList("305", "315", "317", "319", "323", "325").contains(firstCode))
-                    if (invoiceSender.isSpecialist) "317"
-                    else "319"
-                else firstCode
+                if (Arrays.asList("304", "305", "309", "311", "315", "317", "319", "322", "323", "325").contains(firstCode)){
+                    "300"
+                }else{
+                    firstCode
+                }
             } else
                 if (affCode.startsWith("4")) "400"
                 else firstCode

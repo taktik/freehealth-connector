@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2009 (http://www.altova.com) by SMALS-MVM ASBL/VZW (SMALS-MVM ASBL/VZW) --><xs:schema targetNamespace="urn:be:fgov:ehealth:insurability:protocol:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xmlns="urn:be:fgov:ehealth:insurability:protocol:v1" xmlns:ic="urn:be:fgov:ehealth:insurability:core:v1" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<!-- core elements and types -->
+	<xs:import namespace="urn:be:fgov:ehealth:insurability:core:v1" schemaLocation="insurabilityservices_core-1_0.xsd"/>
+	<!--eHealth protocol element-->
+	<xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v1" schemaLocation="ehealth-commons-schema-protocol-1_4.xsd"/>
+	<!-- protocol elements -->
+	<!-- AliveCheck service -->
+	<!-- AliveCheck -->
+	<xs:element name="AliveCheckRequest" type="AliveCheckRequestType"/>
+	<xs:element name="AliveCheckResponse" type="AliveCheckResponseType"/>
+	<!-- Consultation service -->
+	<!-- GetInsurabilityForPharmacist -->
+	<xs:element name="GetInsurabilityForPharmacistRequest" type="GetInsurabilityForPharmacistRequestType"/>
+	<xs:element name="GetInsurabilityForPharmacistResponse" type="GetInsurabilityForPharmacistResponseType"/>
+	<!-- protocol types -->
+	<!-- AliveCheck service -->
+	<!-- AliveCheck -->
+	<xs:complexType name="AliveCheckRequestType">
+		<xs:complexContent>
+			<xs:extension base="protocol:RequestType">
+				<xs:sequence>
+					<xs:element name="CommonInput" type="ic:CommonInputType"/>
+					<xs:element name="RecordCommonInput" type="ic:RecordCommonInputType"/>
+					<xs:element name="Value" type="xs:anyType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AliveCheckResponseType">
+		<xs:complexContent>
+			<xs:extension base="protocol:ResponseType">
+				<xs:sequence minOccurs="0">
+					<xs:element name="CommonOutput" type="ic:CommonOutputType"/>
+					<xs:element name="RecordCommonOutput" type="ic:RecordCommonOutputType"/>
+					<xs:element name="Value" type="xs:anyType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- Consultation service -->
+	<!-- GetInsurabilityForPharmacist -->
+	<xs:complexType name="GetInsurabilityForPharmacistRequestType">
+		<xs:complexContent>
+			<xs:extension base="protocol:RequestType">
+				<xs:sequence>
+					<xs:element name="CommonInput" type="ic:CommonInputType"/>
+					<xs:element name="RecordCommonInput" type="ic:RecordCommonInputType"/>
+					<xs:element name="InsurabilityRequest" type="ic:InsurabilityForPharmacistRequestType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GetInsurabilityForPharmacistResponseType">
+		<xs:complexContent>
+			<xs:extension base="protocol:ResponseType">
+				<xs:sequence minOccurs="0">
+					<xs:element name="CommonOutput" type="ic:CommonOutputType"/>
+					<xs:element name="RecordCommonOutput" type="ic:RecordCommonOutputType"/>
+					<xs:element name="ReturnInfo" type="ic:ReturnInfoType"/>
+					<xs:element name="InsurabilityResponse" type="ic:InsurabilityForPharmacistResponseType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

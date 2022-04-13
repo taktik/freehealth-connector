@@ -47,10 +47,12 @@ import org.taktik.connector.business.recipe.common.AbstractIntegrationModule
 import org.taktik.connector.business.recipe.prescriber.domain.ListFeedbackItem
 import org.taktik.connector.business.recipe.prescriber.services.RecipePrescriberServiceV4Impl
 import org.taktik.connector.business.recipe.utils.Exceptionutils
+import org.taktik.connector.business.recipe.utils.KmehrHelper
 import org.taktik.connector.business.recipe.utils.RidValidator
 import org.taktik.connector.business.recipe.utils.ValidationUtils
 import org.taktik.connector.business.recipeprojects.core.domain.KgssIdentifierType
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
+import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleValidationException
 import org.taktik.connector.business.recipeprojects.core.utils.I18nHelper
 import org.taktik.connector.business.recipeprojects.core.utils.IOUtils
 import org.taktik.connector.business.recipeprojects.core.utils.PropertyHandler
@@ -88,6 +90,9 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
     private val log = LoggerFactory.getLogger(PrescriberIntegrationModuleV4Impl::class.java)
     private val recipePrescriberServiceV4 = RecipePrescriberServiceV4Impl()
     private val keyCache = HashMap<String, KeyResult>()
+    private val kmehrHelper = KmehrHelper(Properties().apply {
+        load(PrescriberIntegrationModuleV4Impl::class.java.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties"))
+    })
 
     private fun getNewKey(
         credential: KeyStoreCredential,
@@ -208,7 +213,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
 
         val expDateAsString = expirationDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         ValidationUtils.validateExpirationDate(expDateAsString)
-        //performValidation(prescription, prescriptionType, expDateAsString)
+        performValidation(prescription, prescriptionType, expDateAsString)
         val helper = MarshallerHelper(CreatePrescriptionResult::class.java, CreatePrescriptionParam::class.java)
         val key: KeyResult =
             getNewKey(credential, nihii, patientSsin, prescriptionType) ?: throw TechnicalConnectorException(
@@ -262,6 +267,73 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         }.rid
     } catch (t: Throwable) {
         Exceptionutils.errorHandler(t)
+    }
+
+    /**
+     * Validate expiration date from kmehr.
+     *
+     * @param xmlDocument
+     * the xml document
+     * @param errors
+     * the errors
+     * @param expirationDateFromRequest
+     * the expiration date from request @ the integration module exception
+     */
+    private fun validateExpirationDateFromKmehr(
+        xmlDocument: ByteArray,
+        errors: MutableList<String>,
+        expirationDateFromRequest: String
+    ) {
+        try {
+            val factory = DocumentBuilderFactory.newInstance()
+            factory.isNamespaceAware = false
+            val builder = factory.newDocumentBuilder()
+            val kmehrDocument = builder.parse(ByteArrayInputStream(xmlDocument))
+            val propertyHandler = PropertyHandler.getInstance()
+            val xpath = XPathFactory.newInstance().newXPath()
+            val xpathStr = propertyHandler.getProperty("expirationdate.xpath")
+            val expirationDateNodeList = xpath.evaluate(xpathStr, kmehrDocument, XPathConstants.NODESET) as NodeList
+            if (expirationDateNodeList.item(0) != null) {
+                val expirationDateFromKmehr = expirationDateNodeList.item(0).textContent
+                if (expirationDateFromKmehr?.contentEquals(expirationDateFromRequest) == false) {
+                    errors.add(
+                        I18nHelper.getLabel(
+                            "error.validation.expirationdate.different.message",
+                            arrayOf<Any>(expirationDateFromRequest, expirationDateFromKmehr)
+                        )
+                    )
+                }
+            } else {
+                errors.add(I18nHelper.getLabel("error.validation.expirationdate.kmehr"))
+            }
+        } catch (e: XPathExpressionException) {
+            Exceptionutils.errorHandler(e)
+        } catch (e: ParserConfigurationException) {
+            Exceptionutils.errorHandler(e)
+        } catch (e: SAXException) {
+            Exceptionutils.errorHandler(e)
+        } catch (e: IOException) {
+            Exceptionutils.errorHandler(e)
+        }
+    }
+
+    @Throws(IntegrationModuleException::class)
+    private fun performValidation(prescription: ByteArray,
+                                  prescriptionType: String,
+                                  expirationDateFromRequest: String) {
+        val errors = ArrayList<String>()
+        try {
+            kmehrHelper.assertValidKmehrPrescription(prescription, prescriptionType)
+        } catch (var7: IntegrationModuleValidationException) {
+            errors.addAll(var7.validationErrors)
+        }
+        validateExpirationDateFromKmehr(prescription, errors, expirationDateFromRequest)
+        if (errors.isNotEmpty()) {
+            log.info("******************************************************")
+            errors.forEach { log.info("Errors found in the kmehr:$it") }
+            log.info("******************************************************")
+            throw IntegrationModuleValidationException(I18nHelper.getLabel("error.xml.invalid"), errors)
+        }
     }
 
     override fun getPrescriptionStatus(

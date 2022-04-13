@@ -22,7 +22,8 @@ package org.taktik.freehealth.middleware.dto.ehbox
 
 import org.taktik.freehealth.middleware.domain.common.Error
 
-class MessageOperationResponse(
+open class MessageOperationResponse(
     val success: Boolean,
-    val error: Error? = null
+    val error: Error? = null,
+    val messageId: String? = null
                               )

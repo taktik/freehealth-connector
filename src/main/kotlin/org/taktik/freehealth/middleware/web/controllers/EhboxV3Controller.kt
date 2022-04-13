@@ -80,6 +80,14 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         readReceipt ?: false
                                                           )
 
+    @GetMapping("/{messageId}/status/acks", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun getMessageAckStatus(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @PathVariable messageId: String
+        )  = ehboxService.getMessageAckStatus(keystoreId, tokenId, passPhrase, messageId)
+
     @PostMapping("/2ebox", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendMessage2Ebox(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

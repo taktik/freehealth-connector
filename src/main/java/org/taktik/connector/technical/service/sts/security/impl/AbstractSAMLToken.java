@@ -3,6 +3,7 @@ package org.taktik.connector.technical.service.sts.security.impl;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.service.sts.security.Credential;
+import org.taktik.connector.technical.service.sts.security.ExtendedCredential;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.service.sts.utils.SAMLHelper;
 import java.security.KeyStore;
@@ -21,11 +22,13 @@ public abstract class AbstractSAMLToken extends AbstractExtendedCredential imple
    private final Credential credential;
    private final Element assertion;
 
-   public AbstractSAMLToken(Element assertion, Credential credential) {
+   public AbstractSAMLToken(Element assertion, Credential credential) throws TechnicalConnectorException {
+      super(credential instanceof ExtendedCredential ? ((ExtendedCredential) credential).getQuality() : "doctor");
       Validate.notNull(assertion);
       Validate.notNull(credential);
       this.assertion = assertion;
       this.credential = credential;
+
    }
 
    public String getIssuer() throws TechnicalConnectorException {
