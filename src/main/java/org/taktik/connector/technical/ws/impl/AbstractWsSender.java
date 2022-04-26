@@ -84,7 +84,7 @@ public abstract class AbstractWsSender {
          reply.put("javax.xml.ws.handler.message.outbound", false);
          ArrayUtils.reverse(chain);
          executeHandlers(chain, reply);
-         genericResponse = new GenericResponse(reply.getMessage());
+         genericResponse = new GenericResponse(reply.getMessage(), request.getMessage());
       } catch (Exception ex) {
          throw translate(ex);
       } finally {

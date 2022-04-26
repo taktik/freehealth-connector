@@ -18,6 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import com.google.gson.JsonArray;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
+import com.google.gson.JsonObject;
 
 public class GenericResponse {
    private static final Logger LOG = LoggerFactory.getLogger(GenericResponse.class);
@@ -61,7 +65,23 @@ public class GenericResponse {
          throw new IllegalArgumentException("Class [" + clazz + "] is not annotated with @XMLRootElement");
       } else {
          this.getSOAPException();
+         MimeHeaders headers = message.getMimeHeaders();
+         JsonArray response = new JsonArray();
+         if (headers != null) {
+            Iterator headersIterator = headers.getAllHeaders();
+
+            while(headersIterator.hasNext()) {
+               MimeHeader mimheader = (MimeHeader)headersIterator.next();
+               JsonObject header = new JsonObject();
+               header.addProperty("name", mimheader.getName());
+               header.addProperty("value", mimheader.getValue());
+               response.add(header);
+            }
+         }
+
+
          MarshallerHelper<T, T> helper = new MarshallerHelper(clazz, clazz);
+
          helper.clearAttachmentPartMap();
          Iterator attachmentPartIterator = this.message.getAttachments();
 
@@ -117,6 +137,20 @@ public class GenericResponse {
    public void getSOAPException() throws SOAPException {
       if (this.message != null && this.message.getSOAPBody() != null) {
          SOAPFault fault = this.message.getSOAPBody().getFault();
+         MimeHeaders headers = this.message.getMimeHeaders();
+         JsonArray response = new JsonArray();
+         if (headers != null) {
+            Iterator headersIterator = headers.getAllHeaders();
+
+            while(headersIterator.hasNext()) {
+               MimeHeader mimheader = (MimeHeader)headersIterator.next();
+               JsonObject header = new JsonObject();
+               header.addProperty("name", mimheader.getName());
+               header.addProperty("value", mimheader.getValue());
+               response.add(header);
+            }
+         }
+
          if (fault != null) {
             try {
                if (LOG.isErrorEnabled()) {
