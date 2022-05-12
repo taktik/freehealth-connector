@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:rn:cbsspersonservice:core:v1" 
+           targetNamespace="urn:be:fgov:ehealth:rn:cbsspersonservice:core:v1" 
+           xmlns:base="urn:be:fgov:ehealth:rn:baselegaldata:v1" 
+		   xmlns:cbssperson="urn:be:fgov:ehealth:rn:cbsspersonlegaldata:v1" 
+		   elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-rnconsult-cbssperson
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.3
+ Build-Time: 20200728-1034 
+ </xs:appinfo>
+ </xs:annotation>
+	<xs:import namespace="urn:be:fgov:ehealth:rn:baselegaldata:v1" schemaLocation="../../ehealth-rn-baselegaldata/XSD/ehealth-rn-baselegaldata-1_0.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:rn:commons:v1" schemaLocation="../../ehealth-rn-common/XSD/ehealth-rn-commons-1_0.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:rn:commons:business:v1" schemaLocation="../../ehealth-rn-common/XSD/ehealth-rn-commons-business-1_0.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:rn:cbsspersonlegaldata:v1" schemaLocation="../../ehealth-rn-cbsspersonlegaldata/XSD/ehealth-rn-cbsspersonlegaldata-1_0.xsd"/>
+
+	<xs:complexType name="RegisterPersonDeclarationType">
+		<xs:annotation>
+			<xs:documentation>Type definiting the business information of the register person capability</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Person" type="cbssperson:CbssPersonRequestType">
+				<xs:annotation>
+					<xs:documentation>Element containing the person information to be used to register a person</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RegisterPersonResultType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="NewlyRegisteredPerson" type="cbssperson:CbssPersonResponseType">
+					<xs:annotation>
+						<xs:documentation>The data of the BIS person being registered. Create successful.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ExistingPersons" type="ExistingPersons">
+					<xs:annotation>
+						<xs:documentation>List of persons that match the criteria used in the create. Create unsuccessful.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ExistingPersons">
+		<xs:sequence>
+			<xs:element name="ExistingPerson" type="base:PersonIdentificationType" maxOccurs="50"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

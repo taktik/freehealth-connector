@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mon="urn:be:fgov:ehealth:monitoring:core:v2" targetNamespace="urn:be:fgov:ehealth:monitoring:core:v2" elementFormDefault="unqualified"
+  attributeFormDefault="unqualified" version="2.0">
+  <xs:complexType name="MonitoringResponseType">
+    <xs:annotation>
+      <xs:documentation>Container type for monitoring results in xml format.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Monitoring" type="mon:MonitoringType" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="MonitoringType">
+    <xs:annotation>
+      <xs:documentation>Standard structure for monitoring results.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Schema" type="mon:SchemaType" />
+      <xs:element name="Results" type="mon:ResultsType" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SchemaType">
+    <xs:annotation>
+      <xs:documentation>Contains version of MonitoringXML type definitions as defined by Smals Supervision.</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Value" type="xs:string" fixed="1.2" />
+  </xs:complexType>
+
+  <xs:complexType name="ResultsType">
+    <xs:annotation>
+      <xs:documentation>Contains results of monitoring on a service.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Details" type="mon:DetailsType" />
+      <xs:element name="ErrorDetail" type="xs:string" minOccurs="0" />
+      <xs:element name="ErrorStack" type="xs:string" minOccurs="0" />
+      <xs:element name="SubResults" type="mon:SubResultsType" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="Extension" type="mon:ExtensionType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SubResultsType">
+    <xs:annotation>
+      <xs:documentation>Contains subresults of monitoring on a service.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="SubDetails" type="mon:DetailsType" />
+      <xs:element name="SubErrorDetail" type="xs:string" minOccurs="0" />
+      <xs:element name="SubErrorStack" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DetailsType" mixed="true">
+    <xs:annotation>
+      <xs:documentation>Detailed information on a monitoring result.</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Host" type="xs:string" use="required" />
+    <xs:attribute name="Service" type="xs:string" use="required" />
+    <xs:attribute name="Environment" type="mon:EnvironmentType" use="required" />
+    <xs:attribute name="Date" type="xs:string" use="required" />
+    <xs:attribute name="Time" type="xs:string" use="required" />
+    <xs:attribute name="Epochtime" type="xs:string" use="required" />
+    <xs:attribute name="Status" type="mon:StatusType" use="required" />
+    <xs:attribute name="StatusMessage" type="xs:string" use="required" />
+    <xs:attribute name="PerfData" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="ExtensionType">
+    <xs:annotation>
+      <xs:documentation>Extended information on a monitoring result.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Element" type="mon:ElementType" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="EnvironmentType">
+    <xs:annotation>
+      <xs:documentation>Environment in which monitoring is executed.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="ACC" />
+      <xs:enumeration value="PROD" />
+      <xs:enumeration value="LOCAL" />
+      <xs:enumeration value="DEV" />
+      <xs:enumeration value="TEST" />
+      <xs:enumeration value="SIM" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="StatusType">
+    <xs:annotation>
+      <xs:documentation>Status of monitoring result.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="0" />
+      <xs:enumeration value="1" />
+      <xs:enumeration value="2" />
+      <xs:enumeration value="3" />
+      <xs:enumeration value="4" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="ElementType" mixed="true">
+    <xs:annotation>
+      <xs:documentation>Extension element.</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="eName" type="xs:string" use="required" />
+    <xs:attribute name="eDescription" type="xs:string" use="required" />
+    <xs:attribute name="eType" type="mon:TypeOfElementType" use="required" />
+    <xs:attribute name="eFormat" type="xs:string" />
+    <xs:attribute name="eValue" type="xs:string" use="required" />
+    <xs:attribute name="ePerfData" type="xs:string" />
+  </xs:complexType>
+
+  <xs:simpleType name="TypeOfElementType">
+    <xs:annotation>
+      <xs:documentation>Type of extension element.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="ARRAY" />
+      <xs:enumeration value="INTEGER" />
+      <xs:enumeration value="HASH" />
+      <xs:enumeration value="BLOB" />
+      <xs:enumeration value="FLOAT" />
+      <xs:enumeration value="XML" />
+      <xs:enumeration value="STRING" />
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

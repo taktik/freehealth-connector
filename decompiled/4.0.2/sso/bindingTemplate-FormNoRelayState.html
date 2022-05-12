@@ -1,0 +1,466 @@
+<html xmlns="http://www.w3.org/1999/xhtml" class="login-pf">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=9">
+		<meta name="robots" content="noindex, nofollow">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<title>eHealth I.AM SSO</title>
+
+		<style>
+				html {
+					box-sizing: border-box;
+					font-family: sans-serif;
+					font-size: 10px;
+					-webkit-tap-highlight-color: transparent;
+					height: 100%;
+					background-repeat: no-repeat;
+					background-image: url(https://www.ehealth.fgov.be/idp/images/ehealth-brand_gray.png);
+					background-size: 128px;
+					background-position: 97% 97%;
+					background-color: rgba(48, 45, 44, 0.9);
+					background-attachment: fixed;
+				}
+
+				head {
+					font-family: sans-serif;
+					font-size: 10px;
+					-webkit-tap-highlight-color: transparent;
+					box-sizing: border-box;
+				}
+
+				body {
+					-webkit-tap-highlight-color: transparent;
+					box-sizing: border-box;
+					margin: 0;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					color: #363636;
+					height: 100%;
+					background: none;
+					background-size: auto;
+				}
+
+				div.login-pf-page {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					color: #363636;
+					box-sizing: border-box;
+				}
+
+				div#kc-header {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					box-sizing: border-box;
+					text-align: center;
+					margin-bottom: 40px;
+					color: #ededed;
+					overflow: visible;
+					white-space: nowrap;
+				}
+
+				div#kc-header-wrapper {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					text-align: center;
+					color: #ededed;
+					box-sizing: border-box;
+					font-size: 29px;
+					text-transform: uppercase;
+					letter-spacing: 3px;
+					line-height: 1.2em;
+					padding: 62px 10px 20px;
+					white-space: normal;
+				}
+
+				img.realm-logo {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					text-align: center;
+					color: #ededed;
+					font-size: 29px;
+					text-transform: uppercase;
+					letter-spacing: 3px;
+					line-height: 1.2em;
+					white-space: normal;
+					box-sizing: border-box;
+					border: 0;
+					height: 64px;
+					vertical-align: middle;
+				}
+
+				div#loader {
+					margin-top: 50px;
+					text-align: center;
+				}
+
+				div.card-pf.login-pf-accounts {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					color: #363636;
+					box-sizing: border-box;
+					background: #fff;
+					margin: 0 auto;
+					max-width: 500px;
+					border-top: 0;
+					box-shadow: 0 0 0;
+					margin-bottom: 0;
+					padding: 20px 40px 30px 40px;
+				}
+
+				header {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					color: #363636;
+					box-sizing: border-box;
+					display: flex;
+					flex-direction: column;
+					margin-bottom: 30px;
+					flex-basis: 100%;
+				}
+
+				h1#kc-page-title {
+					-webkit-tap-highlight-color: transparent;
+					box-sizing: border-box;
+					margin: .67em 0;
+					font-family: inherit;
+					line-height: 1.1;
+					color: inherit;
+					margin-top: 20px;
+					margin-bottom: 10px;
+					font-weight: 300;
+					text-align: center;
+					font-size: 24px;
+				}
+
+				h2#kc-page-subtitle {
+					-webkit-tap-highlight-color: transparent;
+					box-sizing: border-box;
+					margin: .67em 0;
+					font-family: inherit;
+					line-height: 1.1;
+					color: inherit;
+					margin-top: 5px;
+					margin-bottom: 5px;
+					font-weight: 300;
+					text-align: center;
+					font-size: 16px;
+				}
+
+				div#kc-content {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					color: #363636;
+					box-sizing: border-box;
+					width: 100%;
+				}
+
+				div#kc-content-wrapper {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					color: #363636;
+					box-sizing: border-box;
+				}
+
+				div#kc-form {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					color: #363636;
+					box-sizing: border-box;
+					margin-left: 0;
+					margin-right: 0;
+				}
+
+				div#kc-form-wrapper {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					color: #363636;
+					box-sizing: border-box;
+					min-height: 1px;
+					padding: 0;
+				}
+
+				p.notification-label {
+					-webkit-tap-highlight-color: transparent;
+					--blue: #007bff;
+					--indigo: #6610f2;
+					--purple: #6f42c1;
+					--pink: #e83e8c;
+					--red: #dc3545;
+					--orange: #fd7e14;
+					--yellow: #ffc107;
+					--green: #28a745;
+					--teal: #20c997;
+					--cyan: #17a2b8;
+					--white: #fff;
+					--gray: #6c757d;
+					--gray-dark: #343a40;
+					--primary: #007bff;
+					--secondary: #6c757d;
+					--success: #28a745;
+					--info: #17a2b8;
+					--warning: #ffc107;
+					--danger: #dc3545;
+					--light: #f8f9fa;
+					--dark: #343a40;
+					--breakpoint-xs: 0;
+					--breakpoint-sm: 576px;
+					--breakpoint-md: 768px;
+					--breakpoint-lg: 992px;
+					--breakpoint-xl: 1200px;
+					--font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+					--font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+					font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+					font-size: 1rem;
+					font-weight: 400;
+					line-height: 1.5;
+					text-align: left;
+					box-sizing: border-box;
+					position: relative;
+					padding: .75rem 1.25rem;
+					margin-bottom: 1rem;
+					border: 1px solid transparent;
+					border-radius: .25rem;
+					color: #155724;
+					background-color: #d4edda;
+					border-color: #c3e6cb;
+					margin-top: 1rem;
+				}
+
+				p.warning-label {
+					-webkit-tap-highlight-color: transparent;
+					--blue: #007bff;
+					--indigo: #6610f2;
+					--purple: #6f42c1;
+					--pink: #e83e8c;
+					--red: #dc3545;
+					--orange: #fd7e14;
+					--yellow: #ffc107;
+					--green: #28a745;
+					--teal: #20c997;
+					--cyan: #17a2b8;
+					--white: #fff;
+					--gray: #6c757d;
+					--gray-dark: #343a40;
+					--primary: #007bff;
+					--secondary: #6c757d;
+					--success: #28a745;
+					--info: #17a2b8;
+					--warning: #ffc107;
+					--danger: #dc3545;
+					--light: #f8f9fa;
+					--dark: #343a40;
+					--breakpoint-xs: 0;
+					--breakpoint-sm: 576px;
+					--breakpoint-md: 768px;
+					--breakpoint-lg: 992px;
+					--breakpoint-xl: 1200px;
+					--font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+					--font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+					font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+					font-size: 1rem;
+					font-weight: 400;
+					line-height: 1.5;
+					text-align: left;
+					box-sizing: border-box;
+					position: relative;
+					padding: .75rem 1.25rem;
+					margin-bottom: 1rem;
+					border: 1px solid transparent;
+					border-radius: .25rem;
+					color: #856404;
+					background-color: #fff3cd;
+					border-color: #ffeeba;
+					margin-top: 1rem;
+				}
+
+				div#kc-form-login {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					color: #363636;
+					box-sizing: border-box;
+				}
+
+				div.form-group {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					color: #363636;
+					box-sizing: border-box;
+					margin-bottom: 15px;
+				}
+
+				label.control-label {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					color: #363636;
+					box-sizing: border-box;
+					display: inline-block;
+					max-width: 100%;
+					margin-bottom: 5px;
+					font-weight: 600;
+				}
+
+				input.form-control {
+					-webkit-tap-highlight-color: transparent;
+					box-sizing: border-box;
+					font: inherit;
+					margin: 0;
+					font-family: inherit;
+					display: block;
+					width: 100%;
+					padding: 2px 6px;
+					font-size: 12px;
+					line-height: 1.66666667;
+					border: 1px solid #bbb;
+					border-radius: 1px;
+					box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+					transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+					height: 36px;
+				}
+
+				div#kc-form-buttons {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					font-size: 12px;
+					line-height: 1.66666667;
+					color: #363636;
+					box-sizing: border-box;
+					margin-bottom: 15px;
+					margin-top: 40px;
+				}
+
+				input.btn.btn-success.btn-block.btn-lg {
+					-webkit-tap-highlight-color: transparent;
+					box-sizing: border-box;
+					font: inherit;
+					margin: 0;
+					font-family: inherit;
+					margin-bottom: 0;
+					font-weight: 600;
+					text-align: center;
+					vertical-align: middle;
+					touch-action: manipulation;
+					background-image: none;
+					border: 1px solid transparent;
+					white-space: nowrap;
+					user-select: none;
+					padding: 6px 10px;
+					font-size: 14px;
+					line-height: 1.3333333;
+					border-radius: 1px;
+					display: block;
+					box-shadow: 0 2px 3px rgba(3,3,3,.1);
+					color: #FFFFFF;
+					background-color: #7AB800;
+					border-color: #7AB800;
+					-webkit-appearance: button;
+					cursor: pointer;
+					width: 100%;
+				}
+
+				div#kc-info {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					line-height: 1.66666667;
+					box-sizing: border-box;
+					margin: 40px 0 0;
+					text-align: center;
+					font-size: 15px;
+					color: #72767b;
+					flex-basis: 100%;
+					padding-bottom: 200px;
+					margin-bottom: -200px;
+				}
+
+				div#kc-info-wrapper {
+					-webkit-tap-highlight-color: transparent;
+					font-family: "Open Sans",Helvetica,Arial,sans-serif;
+					line-height: 1.66666667;
+					text-align: center;
+					color: #72767b;
+					box-sizing: border-box;
+					font-size: 13px;
+				}
+			</style>
+	</head>
+
+	<body>
+		<div class="login-pf-page">
+			<div id="kc-header" class="login-pf-page-header">
+				<div id="kc-header-wrapper" class="">
+					<img class="realm-logo" src="https://www.ehealth.fgov.be/idp/images/realm_healthcare_logo.png">
+				</div>
+			</div>
+			<div class="card-pf login-pf-accounts">
+				<header class="login-pf-header">
+					<h1 id="kc-page-title">eHealth I.AM SSO</h1>
+					<h2 id="kc-page-subtitle">Redirecting...</h2>
+				</header>
+				<div id="kc-content">
+					<div id="kc-content-wrapper">
+						<div id="kc-form" class="row">
+							<div id="kc-form-wrapper" class="col-xs-12 col-sm-6 login-pf-social-section">
+								<p class="notification-label">One moment please... We are setting up Single Sign On with the eHealth I.AM Authentication Service.</p>
+
+								<script>
+											document.write("<p>You are automatically being redirected to the authentication service. ");
+											document.write("If the browser appears to be hung up after 15-20 seconds, try reloading ");
+											document.write("the page before contacting the technical support staff in charge of the ");
+											document.write("authentication service you are trying to access.</p>");
+											document.write("<div id='loader'><img src='https://www.ehealth.fgov.be/idp/images/ajax-loader-back.gif' alt='loading...' /></div>");
+										</script>
+
+								<noscript>
+									<p class="warning-label">
+										<strong>Warning:</strong> Your browser is blocking a script. Please, press the <strong>continue</strong> button once to proceed.
+									</p>
+								</noscript>
+
+								<form id="kc-form-login" method="POST" action="${endpoint.idp.saml2.post}">
+		<!--							<input name="RelayState" value="${relayState}" type="hidden" />-->
+									<input name="SAMLResponse" value="${SAMLResponse}" type="hidden" />
+									<noscript>
+										<div id="kc-form-buttons" class="form-group">
+											<input tabindex="4" class="btn btn-success btn-block btn-lg" name="login" id="kc-login" type="submit" value="Continue">
+										</div>
+									</noscript>
+								</form>
+							</div>
+						</div>
+
+						<div id="kc-info" class="login-pf-signup">
+							<div id="kc-info-wrapper" class=""></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			document.getElementById('kc-form-login').submit();
+		</script>
+	</body>
+</html>

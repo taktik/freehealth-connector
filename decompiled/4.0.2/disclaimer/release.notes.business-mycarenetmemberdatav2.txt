@@ -1,0 +1,20 @@
+**********************************************************
+* eHealth Business Mycarenet Member Data RELEASE NOTES   *
+**********************************************************
+4.0.2 release (october 2021)                    
+ . change           Minor refactorings. Source diff:
+                          M	mycarenetmemberdatav2/src/main/java/be/ehealth/businessconnector/mycarenet/memberdatav2/builders/impl/ResponseObjectBuilderImpl.java
+
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+
+3.19.1 release (april 2020)
+  . improvement         added new target groups support (clinical psychologist + clinical orthopedagogist)
+
+3.19.0 release (april 2020)
+ . internal release
+
+3.18.0 release (october 2019)
+  . Initial release
+  

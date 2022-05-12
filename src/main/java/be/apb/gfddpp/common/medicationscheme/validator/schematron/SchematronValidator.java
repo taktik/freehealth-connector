@@ -44,7 +44,7 @@ public class SchematronValidator {
          LOG.debug(String.format("Template for schematron file [%s] created and cached", schematronLocation));
       }
 
-      Templates template = (Templates)cachedTemplates.get(schematronLocation);
+      Templates template = cachedTemplates.get(schematronLocation);
       return new SchematronValidator(template);
    }
 

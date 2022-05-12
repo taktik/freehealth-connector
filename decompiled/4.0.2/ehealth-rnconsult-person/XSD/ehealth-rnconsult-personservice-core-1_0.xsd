@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:rn:personservice:core:v1" 
+           targetNamespace="urn:be:fgov:ehealth:rn:personservice:core:v1" 
+           xmlns:base="urn:be:fgov:ehealth:rn:baselegaldata:v1" 
+           xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2"
+		   xmlns:coc="urn:be:fgov:ehealth:rn:commons:business:v1" 
+           xmlns:person="urn:be:fgov:ehealth:rn:personlegaldata:v1" elementFormDefault="qualified" 
+           attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-rnconsult-person
+ Specification-Version: 1.0
+ Implementation-Version: 1.0.9
+ Build-Time: 20201222-1022 
+ </xs:appinfo>
+ </xs:annotation>
+	<xs:import namespace="urn:be:fgov:ehealth:rn:baselegaldata:v1" schemaLocation="../../ehealth-rn-baselegaldata/XSD/ehealth-rn-baselegaldata-1_0.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:rn:commons:business:v1" schemaLocation="../../ehealth-rn-common/XSD/ehealth-rn-commons-business-1_0.xsd"/>
+	<xs:import namespace="urn:be:fgov:ehealth:rn:personlegaldata:v1" schemaLocation="../../ehealth-rn-personlegaldata/XSD/ehealth-rn-personlegaldata-1_0.xsd"/>
+	<xs:complexType name="SearchPersonBySsinCriteriaType">
+		<xs:sequence>
+			<xs:element name="Ssin" type="coc:SsinType">
+				<xs:annotation>
+					<xs:documentation>The NR / BIS / RAD / RAN number used to fetch person information</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="SearchPersonPhoneticallyCriteriaType">
+		<xs:annotation>
+			<xs:documentation>Type defining the structure of the criteria for the request</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="PhoneticName"/>
+			<xs:element name="Birth" type="PhoneticBirth"/>
+			<xs:element name="Gender" type="PhoneticGender" minOccurs="0"/>
+			<xs:element name="Address" type="PhoneticAddress" minOccurs="0"/>
+			<xs:element name="maximumResultCount" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedShort">
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonResponseResultType">
+		<xs:sequence>
+			<xs:element name="Person" type="person:PersonResponseType">
+				<xs:annotation>
+					<xs:documentation>The person found based on the given NR / BIS / RAD / RAN number</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PhoneticName">
+		<xs:sequence>
+			<xs:element name="LastName">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GivenName" type="base:GivenNameType" minOccurs="0" maxOccurs="3"/>
+			<xs:element name="GivenNameMatching" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Element specifying the behavior of the searchPersonPhonetically capability.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PhoneticBirth">
+		<xs:sequence>
+			<xs:element name="BirthDate" type="coc:IncompleteDateType"/>
+			<xs:element name="Variation" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedShort">
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PhoneticGender">
+		<xs:sequence>
+			<xs:element name="GenderCode" type="base:GenderCodeType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PhoneticAddress">
+		<xs:sequence>
+			<xs:element name="CountryCode" type="base:CountryCodeType"/>
+			<xs:element name="CityCode" type="base:CityCodeType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonResponseResultsType">
+		<xs:sequence>
+			<xs:element name="PersonIdentifications" type="base:PersonIdentificationsResponseType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>be.fgov.ehealth.connector</groupId>
+    <artifactId>connector-utilities-master</artifactId>
+    <version>4.0.2</version>
+  </parent>
+
+  <artifactId>connector-utilities-ehboxv3</artifactId>
+  <name>${project.artifactId}</name>
+  <description>Connector utilities ehboxv3</description>
+
+  <packaging>jar</packaging>
+
+  <properties>
+    <binding-directory>default-binding</binding-directory>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack XSD from XSD Repository</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>be.fgov.ehealth.xsd</groupId>
+                  <artifactId>xsd-ehbox</artifactId>
+                  <version>3.0.7</version>
+                </artifactItem>
+              </artifactItems>
+              <excludes>META-INF/**,**/ehealth-errors*service*.xsd</excludes>
+              <includes>**/*.xsd</includes>
+              <outputDirectory>target/generated-resources/</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-core</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-common</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+  
+
+</project>

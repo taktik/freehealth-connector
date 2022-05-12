@@ -1,0 +1,91 @@
+**********************************************************
+* eHealth Business wsconsent  RELEASE NOTES              *
+**********************************************************
+4.0.2 release (october 2021)                    
+ . change           Minor refactorings. Source diff:
+                          M	wsconsent/src/main/java/be/ehealth/businessconnector/wsconsent/builders/impl/AuthorBuilderImpl.java
+                          M	wsconsent/src/main/java/be/ehealth/businessconnector/wsconsent/builders/impl/PatientInfoBuilderImpl.java
+                          M	wsconsent/src/main/java/be/ehealth/businessconnector/wsconsent/service/impl/WsConsentServiceImpl.java
+
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+3.19.1 release (april 2020)
+  . improvement            added new method getPatientConsentStatus
+
+3.19.0 release (april 2020)
+ . internal release
+
+3.13.1 release (july 2017)
+
+3.13.0 release (july 2017)
+
+3.12.1 release (june 2017)
+  . improvement            refactored WsConsentServiceImpl replaced deprecated method
+  . improvement            now using HandlerChainUtil.buildChainWithValidator in ServiceFactory
+  . improvement            Default values added for the endpoint and the input validation
+
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+  . update           updated xsd version used
+
+3.11.0 internal release (october 2016)
+  . change                  code recompiled and rewritten to use new therlink jaxb objects ( migration to new xsd version 2.2.2 of hubservices xsd)
+  . update                  using technical connector 3.11.0
+
+3.10.4 release (september 2016)
+  . using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  . internal release
+  
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+  .   change                  added bootstrapping
+  .   change                  some minor checkstyle fixes
+
+  3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)  
+3.4.0-beta-9 release
+  .   change                  new kmehr version 1.14
+  .   using latest version of technical connector 3.4.0-beta-9 
+  .   improvement             b.e.b.wsconsent.builders.AuthorBuilder            added method readFromEidCard
+
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+  
+3.4.0-beta-7 release
+  . using latest version of technical connector 3.4.0-beta-7
+	
+3.4.0 beta-6 release
+  . using latest version of technical connector 3.4.0-beta-6
+  
+3.4.0-beta-5 release
+ .    change                    refactored ImplementationClassFactory : crypto parameters are not provided anymore
+ .    bugfix                    fixed soapActions : now using wsconsent soapActions instead of therlink soapActions
+ 
+3.4.0-beta-4 release
+ .    improvement                the therlink.maxrows property has become optional ( property is also optional in xsd )  
+ .    change                    now uses default kmehr author , configured with kmehr.default.* properties ( no software component anymore )
+ .    change                    delegating builder can now also be configured seperately for wsconsent ( with properties kmehr.wsconsent.* ) 
+ .  change                 updated service to use new code to configure HandlerChain
+ 
+3.4.0 beta release
+ .  change                    Using DelegatingHcPartyInfoBuilder as default implementation for HcPartyInfoBuilder class
+ .  change                    using HcPartyUtils to create kmehrId 
+ .    change                     now uses version 2.1 of hubservices xsd
+ .    improvement                added firstname and familyname to author
+ .    bugfix                    now using correct method to calculate kmehr suffix ( no impact on behaviour , just naming )
+
+3.3.0 beta release
+ .  improvement                now also supports pharmacists
+ .    improvement                logging standardized on sl4j 
+  .    improvement/change        now uses standard configuration for kmehrbuilder , see javadoc HcPartyUtil for config parameters
+ 

@@ -1,0 +1,44 @@
+**************************************************
+* eHealth Business ADDRESSBOOK RELEASE NOTES     *
+**************************************************
+4.0.2 release (october 2021)
+ . change           Minor refactorings. Source diff:
+                            M	addressbook/src/main/java/be/ehealth/businessconnector/addressbook/service/TokenServiceFactory.java
+
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+3.13.1 release (july 2017)
+
+3.13.0 internal release (july 2017)
+
+
+3.12.1 release (june 2017)
+  . improvement             now using HandlerChainUtil.buildChainWithValidator in ServiceFactory
+  . improvement             Default values added for the endpoint and the input validation
+
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . update                  using technical connector 3.11.0
+
+3.10.4 release (september 2016)
+  . using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  . internal release
+
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+  .   improvement             initial version of addressbook connector 
+
+3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)

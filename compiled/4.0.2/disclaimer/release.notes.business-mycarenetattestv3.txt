@@ -1,0 +1,11 @@
+**********************************************************
+* eHealth Business Mycarenet eAttest V3 RELEASE NOTES    *
+**********************************************************
+
+4.0.2 release (october 2021)
+  . Initial release
+    See examples in examples\be\ehealth\businessconnector\test\mycarenet\attestv3\session
+  
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+

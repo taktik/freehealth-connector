@@ -1,0 +1,83 @@
+package be.fgov.ehealth.technicalconnector.signature.impl.xades;
+
+import be.ehealth.technicalconnector.exception.TechnicalConnectorException;
+import be.ehealth.technicalconnector.idgenerator.IdGeneratorFactory;
+import be.ehealth.technicalconnector.service.sts.security.Credential;
+import be.fgov.ehealth.technicalconnector.signature.impl.SignatureUtils;
+import be.fgov.ehealth.technicalconnector.signature.impl.xades.domain.QualifyingPropertiesBuilder;
+import be.fgov.ehealth.technicalconnector.signature.impl.xades.domain.UnsignedPropertiesBuilder;
+import be.fgov.ehealth.technicalconnector.signature.resolvers.DocumentResolver;
+import java.util.Map;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.xml.security.exceptions.XMLSecurityException;
+import org.apache.xml.security.signature.ObjectContainer;
+import org.apache.xml.security.signature.XMLSignature;
+import org.apache.xml.security.transforms.Transforms;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+public class XadesHandler {
+   private final Map<String, Object> options;
+   private XMLSignature sig;
+   private Credential signatureCredential;
+   private XadesSpecification[] specs;
+   private Element xadesQualProperties;
+
+   public XadesHandler(XMLSignature sig, Credential signatureCredential, Map<String, Object> options, XadesSpecification... specs) throws TechnicalConnectorException {
+      this.sig = sig;
+      this.signatureCredential = signatureCredential;
+      this.options = options;
+      this.specs = specs;
+   }
+
+   public void before() throws TechnicalConnectorException, XMLSecurityException {
+      if (!ArrayUtils.isEmpty(this.specs)) {
+         ObjectContainer container = new ObjectContainer(this.sig.getDocument());
+         this.sig.appendObject(container);
+         QualifyingPropertiesBuilder qualProperties = new QualifyingPropertiesBuilder();
+         String xadesSignedId = IdGeneratorFactory.getIdGenerator("uuid").generateId();
+         XadesSpecification[] var4 = this.specs;
+         int var5 = var4.length;
+
+         for(int var6 = 0; var6 < var5; ++var6) {
+            XadesSpecification spec = var4[var6];
+            spec.addOptionalBeforeSignatureParts(qualProperties.getSignedProps(), this.sig, this.signatureCredential, xadesSignedId, this.options);
+         }
+
+         Document xadesQualPropertiesDocument = qualProperties.buildBeforeSigningAsDocument();
+         this.xadesQualProperties = (Element)this.sig.getDocument().importNode(xadesQualPropertiesDocument.getDocumentElement(), true);
+         container.appendChild(this.xadesQualProperties);
+         this.sig.addResourceResolver(new DocumentResolver(xadesQualPropertiesDocument));
+         Transforms xadesTransform = new Transforms(this.sig.getDocument());
+         xadesTransform.addTransform("http://www.w3.org/2001/10/xml-exc-c14n#");
+         this.sig.addDocument(ref(qualProperties.getSignedProps().getId()), xadesTransform, (String)SignatureUtils.getOption("digestURI", this.options, "http://www.w3.org/2001/04/xmlenc#sha256"), (String)null, "http://uri.etsi.org/01903#SignedProperties");
+      }
+   }
+
+   public void after() throws TechnicalConnectorException {
+      if (!ArrayUtils.isEmpty(this.specs)) {
+         this.xadesQualProperties.setAttribute("Target", ref(this.sig.getId()));
+         String xadesUnsignedId = IdGeneratorFactory.getIdGenerator("uuid").generateId();
+         UnsignedPropertiesBuilder unsignedProperties = new UnsignedPropertiesBuilder();
+         unsignedProperties.setId(xadesUnsignedId);
+         XadesSpecification[] var3 = this.specs;
+         int var4 = var3.length;
+
+         for(int var5 = 0; var5 < var4; ++var5) {
+            XadesSpecification spec = var3[var5];
+            spec.addOptionalAfterSignatureParts(unsignedProperties, this.sig, xadesUnsignedId, this.options);
+         }
+
+         Document xadesUnsignedPropertiesDoc = unsignedProperties.buildAsDocument();
+         if (xadesUnsignedPropertiesDoc != null) {
+            Element xadesUnsignedProperties = (Element)this.sig.getDocument().importNode(unsignedProperties.buildAsDocument().getDocumentElement(), true);
+            this.xadesQualProperties.appendChild(xadesUnsignedProperties);
+         }
+
+      }
+   }
+
+   private static String ref(String id) {
+      return "#" + id;
+   }
+}

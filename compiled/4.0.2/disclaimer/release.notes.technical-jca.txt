@@ -1,0 +1,127 @@
+**************************************************
+* eHealth Technical Connector JCA  RELEASE NOTES *
+**************************************************
+
+4.0.2 release (october 2021)
+   . /!\ Deprecated method/classes of version 3 are removed
+   .     Migration of commons-lang to commons-lang3
+   . improvement b.f.e.t.distributedkeys.*                                  Refactoring to support Elliptic curve based certifacates
+
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+3.21.2 release (may 2021)
+   . N/A
+
+3.21.1 release (may 2021)
+   . internal release
+
+3.21.0 release (may 2021)
+   . internal release
+
+3.20.2 release (october 2020)
+ . N/A
+
+3.20.1 release (september 2020)
+   . internal release
+   
+3.20.0 release (september 2020)
+   . internal release
+   
+3.19.1 release (mars 2020)
+   . improvement b.e.t.distributedkeys.jca.DistributedKeyProvider   Using slf4j as logger
+
+3.19.0 release (mars 2020)
+   . internal release
+
+3.18.0 release (september 2019)
+ . N/A
+
+ Note: Some minor refactoring (clean code, avoiding string concat)
+
+3.17.1 (april 2019)
+ . N/A
+
+3.17.0 (april 2019)
+ . internal release
+
+3.16.0 release (oktober 2018)
+  . N/A
+
+3.16.0-beta-3 (june 2018)
+  . N/A
+
+3.16.0-beta-2 (june 2018)
+ . internal release
+
+3.16.0-beta-1 (june 2018)
+ . internal release
+
+3.15.1 release (april 2018)
+  . N/A
+
+3.15.0 release (april 2018)
+ . internal release
+ 
+3.14.2 release (february 2017)
+  . N/A
+  
+3.14.2-beta-1 release (november 2017)
+  . N/A
+
+3.14.2-beta-0 internal release (november 2017)
+
+3.13.1 release (july 2017)
+  . N/A
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . N/A
+
+3.12.0 internal release (mai 2017)
+  . N/A
+
+3.11.1 release (october 2016)
+  . N/A
+
+3.11.0 internal release (october 2016)
+  . N/A
+
+3.10.4 release (september 2016)
+  . N/A
+
+3.10.3 release
+  . internal release
+
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release (july 2016)
+  . N/A
+
+3.10.0 release (june 2016)
+  . improvement                                                                     uniformisation of all connector versions
+
+3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+3.4.0-beta-10 release
+  . N/A
+
+3.4.0-beta-9 release
+  . improvement b.f.e.t.distributedkeys.DistributedKeyStoreRegistry               Adding flushCache method to clean the cached keystores
+  . bug-fix     b.f.e.t.distributedkeys.jca.DistributedKeyStore                   Cache is linked to the KeyStore and not longer to all the keystores
+  . improvement b.e.t.beid.BeIDInfo                                               Prevent resource leaking (closing beidcard after mapping objects)
+
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+3.4.0-beta-7 release
+  . N/A
+
+3.4.0-beta-6 release
+  . internal ehealth release (not published or distributed)
+
+3.4.0-beta-5 release
+  . initial version
