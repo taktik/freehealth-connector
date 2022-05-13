@@ -81,6 +81,7 @@ class DataAttributeServiceImpl(private val stsService: STSService) : DataAttribu
                 .flatMap { (it as? AttributeStatement)?.attributesAndEncryptedAttributes ?: listOf() }
                 .mapNotNull { (it as? Attribute) }
                 .filter { it.name == "urn:be:fgov:person:ssin:multemediatt:routing" }
+            val status = response.status.statusMessage
             attributes
                 .firstOrNull()?.let { attribute ->
                     fun collectSiblings(acc: Collection<Node>, node: Node): Collection<Node> = (acc + node).let { nodes -> node.nextSibling?.let { collectSiblings(nodes, it)} ?: nodes }
@@ -94,8 +95,9 @@ class DataAttributeServiceImpl(private val stsService: STSService) : DataAttribu
                         )
                     } ?: listOf()
                     val context = data.firstOrNull { it.localName == "Context" }?.let { collectSiblings(listOf(), it.firstChild) }?.mapNotNull { it.attributes.getNamedItem("Name")?.textContent?.let {key -> key to it.firstChild?.textContent } } ?: listOf()
-                    return DaasResponse(destinations.map { it.toMap() }, context.toMap())
+                    return DaasResponse(destinations.map { it.toMap() }, context.toMap(), status)
                 }
+            return DaasResponse(null, null, status);
         } catch (e: TechnicalConnectorException) {
             throw IllegalArgumentException(e)
         }

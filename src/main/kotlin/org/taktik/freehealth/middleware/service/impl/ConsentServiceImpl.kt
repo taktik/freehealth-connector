@@ -46,6 +46,7 @@ import org.taktik.connector.technical.ws.domain.TokenType
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.ConsentService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.utils.hcpTypeFromSamlToken
 import java.util.*
 
 @Service
@@ -263,16 +264,5 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
             )
         )
         addDefaulHandlerChain()
-    }
-
-    /**
-     * Map HealthcareParty type from the SAMLToken quality
-     */
-    fun hcpTypeFromSamlToken(samlToken: SAMLToken) : String? {
-        if(samlToken.quality == "nurse")
-            return "persnurse";
-        if(samlToken.quality == "doctor")
-            return "persphysician";
-        return null;
     }
 }
