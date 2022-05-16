@@ -36,7 +36,7 @@ import java.util.*
 @RequestMapping("/schematron")
 class SchematronController(val schematronService: SchematronService) {
     @PostMapping("/validate/{schema}", consumes = [MediaType.APPLICATION_XML_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getDinRoutingInfo(
+    fun validateUsingShematron(
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @PathVariable schema: String,
         @RequestBody(required = true) body: ByteArray
