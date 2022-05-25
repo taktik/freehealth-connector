@@ -59,9 +59,9 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         return null
     }
 
-    private fun getInsurabilityAffiliationNumber(patient:Patient): String?{
+    private fun getInsurabilityIdentificationNumber(patient:Patient): String?{
         if(patient.insurabilities.isNotEmpty()){
-            return patient.insurabilities[0].titularyId
+            return patient.insurabilities[0].identificationNumber
         }
         return null
     }
@@ -293,13 +293,13 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         assert(formattedCreationDate.length == 8)
 
-        var affiliationNumber: String? = getInsurabilityAffiliationNumber(patient);
+        var identificationNumber: String? = getInsurabilityIdentificationNumber(patient);
 
         val tc1String = getInsurabilityParameters(patient, InsuranceParameter.tc1)
         val ct1 = if (tc1String != null && tc1String != "") Integer.valueOf(tc1String) else 0
         val tc2String = getInsurabilityParameters(patient, InsuranceParameter.tc2)
         val ct2 = if (tc2String != null && tc2String != "") Integer.valueOf(tc2String) else 0
-        var noSIS: String? = if (!patient.ssin.isNullOrBlank()) patient.ssin!!.replace("[^0-9]".toRegex(), "") else if (patient.ssin.isNullOrBlank() && !affiliationNumber.isNullOrBlank()) affiliationNumber else ""
+        var noSIS: String? = if (!patient.ssin.isNullOrBlank()) patient.ssin!!.replace("[^0-9]".toRegex(), "") else if (patient.ssin.isNullOrBlank() && !identificationNumber.isNullOrBlank()) identificationNumber else ""
 
 
         ws.write("2", recordNumber)
@@ -528,8 +528,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         val formattedCreationDate = creationDate.format(dtf)
         assert(formattedCreationDate.length == 8)
 
-        var affiliationNumber: String? = getInsurabilityAffiliationNumber(patient);
-        var noSIS: String? = if (!patient.ssin.isNullOrBlank()) patient.ssin!!.replace("[^0-9]".toRegex(), "") else if (patient.ssin.isNullOrBlank() && !affiliationNumber.isNullOrBlank()) affiliationNumber else ""
+        var identificationNumber: String? = getInsurabilityIdentificationNumber(patient);
+        var noSIS: String? = if (!patient.ssin.isNullOrBlank()) patient.ssin!!.replace("[^0-9]".toRegex(), "") else if (patient.ssin.isNullOrBlank() && !identificationNumber.isNullOrBlank()) identificationNumber else ""
         val nf11 = DecimalFormat("00000000000")
         val nf9 = DecimalFormat("000000000")
 
