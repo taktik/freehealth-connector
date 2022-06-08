@@ -59,6 +59,13 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         return null
     }
 
+    private fun getInsurabilityIdentificationNumber(patient:Patient): String?{
+        if(patient.insurabilities.isNotEmpty()){
+            return patient.insurabilities[0].identificationNumber
+        }
+        return null
+    }
+
     fun getDestCode(affCode: String, invoiceSender: InvoiceSender, returnAffCodeIfMH: Boolean = false): String {
         val firstCode = affCode.substring(0, 3).replace("[^0-9]".toRegex(), "")
 
@@ -286,12 +293,13 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         assert(formattedCreationDate.length == 8)
 
+        var identificationNumber: String? = getInsurabilityIdentificationNumber(patient);
+
         val tc1String = getInsurabilityParameters(patient, InsuranceParameter.tc1)
         val ct1 = if (tc1String != null && tc1String != "") Integer.valueOf(tc1String) else 0
         val tc2String = getInsurabilityParameters(patient, InsuranceParameter.tc2)
         val ct2 = if (tc2String != null && tc2String != "") Integer.valueOf(tc2String) else 0
-        var noSIS: String? = if (patient.ssin != null) patient.ssin else ""
-        noSIS = noSIS!!.replace("[^0-9]".toRegex(), "")
+        var noSIS: String? = if (!patient.ssin.isNullOrBlank()) patient.ssin!!.replace("[^0-9]".toRegex(), "") else if (patient.ssin.isNullOrBlank() && !identificationNumber.isNullOrBlank()) identificationNumber else ""
 
 
         ws.write("2", recordNumber)
@@ -321,7 +329,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("27", ct1 * 1000 + ct2)
         ws.write("29", relatedInvoiceNumber)
         ws.write("28", invoiceRef)
-        ws.write("32", 1)
+        ws.write("32", (if (!patient.ssin!!.isNullOrBlank()) 1 else 0) )
         ws.write("34", relatedBatchSendNumber)
         ws.write("37", relatedDestCode)
         ws.write("41", relatedBatchYearMonth)
@@ -520,9 +528,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         val formattedCreationDate = creationDate.format(dtf)
         assert(formattedCreationDate.length == 8)
 
-        var noSIS: String? = if (patient.ssin != null) patient.ssin else ""
-        noSIS = noSIS!!.replace("[^0-9]".toRegex(), "")
-
+        var identificationNumber: String? = getInsurabilityIdentificationNumber(patient);
+        var noSIS: String? = if (!patient.ssin.isNullOrBlank()) patient.ssin!!.replace("[^0-9]".toRegex(), "") else if (patient.ssin.isNullOrBlank() && !identificationNumber.isNullOrBlank()) identificationNumber else ""
         val nf11 = DecimalFormat("00000000000")
         val nf9 = DecimalFormat("000000000")
 
@@ -552,7 +559,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("27", (if (fee >= 0) "+" else "-") + nf9.format(Math.abs(fee)))
         ws.write("28", invoiceRef)
         ws.write("30", (if (sup >= 0) "+" else "-") + nf9.format(Math.abs(sup)))
-        ws.write("32", 1)
+        ws.write("32", (if (!patient.ssin!!.isNullOrBlank()) 1 else 0) )
         ws.write("38", "+00000000000")
 
         var cs = BigInteger.ZERO
