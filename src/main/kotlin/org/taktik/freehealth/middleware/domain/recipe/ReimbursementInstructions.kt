@@ -33,5 +33,6 @@ enum class ReimbursementInstructions(val translations: Map<String, String>) {
     ),
     DIABETES_TREATMENT(mapOf("fr" to "Trajet de soins diabète", "nl" to "Zorgtraject diabetes")),
     DIABETES_CONVENTION(mapOf("fr" to "Convention diabète", "nl" to "Diabetesconventie")),
-    NOT_REIMBURSABLE(mapOf("fr" to "Non remboursable", "nl" to "Niet-vergoedbaar"))
+    NOT_REIMBURSABLE(mapOf("fr" to "Non remboursable", "nl" to "Niet-vergoedbaar")),
+    EXPLAIN_MEDICATION(mapOf("fr" to "BUM (bon usage du médicament)", "nl" to "GGG (goed gebruik geneesmiddelen)"))
 }
