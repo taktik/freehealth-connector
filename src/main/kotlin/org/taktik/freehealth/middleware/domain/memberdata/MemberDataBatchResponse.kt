@@ -5,6 +5,7 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.CommonOutputType
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
+import javax.xml.datatype.XMLGregorianCalendar
 
 class MemberDataBatchResponse (
     var assertions: List<Assertion> = ArrayList(),
@@ -12,6 +13,7 @@ class MemberDataBatchResponse (
     var errors: List<FaultType>? = null,
     var myCarenetErrors: List<MycarenetError> = ArrayList(),
     var issuer: String? = null,
+    var issueInstant: XMLGregorianCalendar? = null,
     var inResponseTo: String? = null,
     var responseId: String? = null
 )

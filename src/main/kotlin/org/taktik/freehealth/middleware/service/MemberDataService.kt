@@ -51,6 +51,7 @@ interface MemberDataService {
         hcpQuality: String,
         hcpNihii: String,
         hcpName: String,
+        hcpSsin: String?,
         requestType: String = "information",
         startDate: Instant,
         endDate: Instant,
@@ -63,8 +64,10 @@ interface MemberDataService {
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpQuality: String?,
         hcpNihii: String,
         hcpName: String,
+        hcpSsin: String?,
         messageNames: List<String>?
     ): MemberDataList?
 
@@ -72,8 +75,10 @@ interface MemberDataService {
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpQuality: String?,
         hcpNihii: String,
         hcpName: String,
+        hcpSsin: String?,
         mdaMessagesReference: List<String>
     ): Boolean
 
@@ -81,8 +86,10 @@ interface MemberDataService {
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpQuality: String?,
         hcpNihii: String,
         hcpName: String,
+        hcpSsin: String?,
         mdaAcksHashes: List<String>
     ): Boolean
 }
