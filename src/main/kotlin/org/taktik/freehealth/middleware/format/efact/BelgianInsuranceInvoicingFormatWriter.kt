@@ -283,7 +283,10 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                           relatedInvoiceIoCode: String?,
                           relatedInvoiceNumber: Long?,
                           magneticInvoice: Boolean? = false,
-                          startOfCoveragePeriod: Long?
+                          startOfCoveragePeriod: Long?,
+                          admissionDate: Long?,
+                          locationNihii: String?,
+                          locationService: Int?
         ): Int {
 
         val ws = WriterSession(writer, Record20Description)
@@ -308,6 +311,13 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         if (affCode.startsWith("2") || affCode.startsWith("5")) {
             affCode = "000"
+        }
+
+        //Patient is hospitalized
+        if(!locationNihii.isNullOrBlank()){
+            ws.write("5", admissionDate)
+            ws.write("13", locationService)
+            ws.write("15", locationNihii)
         }
 
         ws.write("7", affCode)
