@@ -162,6 +162,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         hcpQuality: String,
         hcpNihii: String,
         hcpName: String,
+        hcpSsin: String?,
         requestType: String,
         startDate: Instant,
         endDate: Instant,
@@ -255,15 +256,28 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
                     nihii =
                         be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                            quality = hcpQuality; value =
-                            be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                            quality = hcpQuality;
+                            value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
                         }
+
+                    physicalPerson = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                        nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                            quality = hcpQuality;
+                            value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                        }
+
+                        hcpSsin?.let {
+                            ssin = be.cin.mycarenet.esb.common.v2.ValueRefString().apply {
+                                value = hcpSsin;
+                            }
+                        }
+                    }
 
                     organization = be.cin.mycarenet.esb.common.v2.IdType().apply {
                         nihii =
                             be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                                quality = hcpQuality; value =
-                                be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                                quality = hcpQuality;
+                                value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
                             }
                     }
                 }
@@ -291,7 +305,16 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         }
     }
 
-    override fun getMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, messageNames: List<String>?): MemberDataList? {
+    override fun getMemberDataMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpQuality: String?,
+        hcpNihii: String,
+        hcpName: String,
+        hcpSsin: String?,
+        messageNames: List<String>?
+    ): MemberDataList? {
 
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for MDA operations")
@@ -314,7 +337,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 isInclude = true
                 max = 100
             }
-            origin = buildOriginType(hcpNihii, hcpName)
+            origin = buildOriginType(hcpNihii, hcpName, hcpQuality, hcpSsin)
         }
 
         val response = genAsyncService.getRequest(samlToken, get, getHeader)
@@ -392,10 +415,18 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                                         }
                                     }
                                 },
+                                issueInstant = it.issueInstant,
                                 inResponseTo = it.inResponseTo,
                                 issuer = it.issuer.value,
                                 responseId = it.id
                             )
+                                .apply {
+                                this.errors?.forEach {
+                                    it.details?.details?.forEach { d ->
+                                        this.myCarenetErrors += extractError(this.status?.code1, this.status?.code2, d.location, d.detailCode).toList()
+                                    }
+                                }
+                            }
                         },
                         valueHash = it.detail?.hashValue?.let { b64.encodeToString(it)}
                     )
@@ -440,7 +471,15 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
     }
 
-    override fun confirmMemberDataMessages(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, mdaMessagesReference: List<String>): Boolean {
+    override fun confirmMemberDataMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpQuality: String?,
+        hcpNihii: String,
+        hcpName: String,
+        hcpSsin: String?,
+        mdaMessagesReference: List<String>): Boolean {
         if (mdaMessagesReference.isEmpty()) {
             return true
         }
@@ -452,7 +491,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
 
         val confirm = Confirm()
-        confirm.origin = buildOriginType(hcpNihii, hcpName)
+        confirm.origin = buildOriginType(hcpNihii, hcpName, hcpQuality, hcpSsin)
         confirm.msgRefValues.addAll(mdaMessagesReference)
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
@@ -460,7 +499,16 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         return true
     }
 
-    override fun confirmMemberDataAcks(keystoreId: UUID, tokenId: UUID, passPhrase: String, hcpNihii: String, hcpName: String, mdaAcksHashes: List<String>): Boolean {
+    override fun confirmMemberDataAcks(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpQuality: String?,
+        hcpNihii: String,
+        hcpName: String,
+        hcpSsin: String?,
+        mdaAcksHashes: List<String>
+    ): Boolean {
         if (mdaAcksHashes.isEmpty()) {
             return true
         }
@@ -471,7 +519,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
         val confirm =
             BuilderFactory.getRequestObjectBuilder("mda")
-                .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpName),
+                .buildConfirmRequestWithHashes(buildOriginType(hcpNihii, hcpName, hcpQuality, hcpSsin),
                     listOf(),
                     mdaAcksHashes.map { valueHash -> Base64.getDecoder().decode(valueHash) })
 
@@ -481,7 +529,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
     }
 
 
-    private fun buildOriginType(hcpNihii: String, hcpName: String): OrigineType =
+    private fun buildOriginType(hcpNihii: String, hcpName: String, hcpQuality: String?, hcpSsin: String?): OrigineType =
         OrigineType().apply {
             `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
                 name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.dmg.package.name") }
@@ -492,9 +540,24 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             }
             careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
                 this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                    quality = "medicalhouse"
+                    quality = hcpQuality?: "medicalhouse"
                     value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
                 }
+
+                physicalPerson = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                    nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                        quality = hcpQuality;
+                        value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                    }
+
+                    hcpSsin?.let {
+                        ssin = be.cin.mycarenet.esb.common.v2.ValueRefString().apply {
+                            value = hcpSsin;
+                        }
+                    }
+                }
+
+
             }
         }
 
@@ -857,6 +920,17 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             }
             result
         } ?: setOf()
+    }
+
+    private fun extractError(code1: String?, code2: String?, errorUrl: String?, detailCode: String?): Set<MycarenetError> {
+        val result = mutableSetOf<MycarenetError>()
+        var url = errorUrl?.replace("(\\*|:)".toRegex(), "")
+        if(url?.startsWith("/") == false)
+            url = "/$url"
+
+        result.addAll(MemberDataErrors.values.filter {it.path == url &&  it.code == code1 && it.subCode == code2 && it.detailCode == detailCode })
+
+        return result
     }
 
     private fun extractError(e: javax.xml.ws.soap.SOAPFaultException): Set<MycarenetError> {

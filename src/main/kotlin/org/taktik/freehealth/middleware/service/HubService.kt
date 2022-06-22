@@ -161,7 +161,8 @@ interface HubService {
         to: Long?,
         authorNihii: String?,
         authorSsin: String?,
-        isGlobal: Boolean
+        isGlobal: Boolean,
+        transactionTypes: List<String>?
     ): List<TransactionSummaryDto>
 
     fun putTransaction(

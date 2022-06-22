@@ -63,7 +63,6 @@ import org.taktik.freehealth.middleware.service.STSService
 import be.fgov.ehealth.hubservices.core.v3.GetPatientAuditTrailRequest
 import be.fgov.ehealth.standards.kmehr.cd.v1.*
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
-import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.freehealth.utils.hcpTypeFromSamlToken
 import java.time.Instant
 import java.time.LocalDateTime
@@ -772,7 +771,8 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         to: Long?,
         authorNihii: String?,
         authorSsin: String?,
-        isGlobal: Boolean
+        isGlobal: Boolean,
+        transactionTypes: List<String>?
     ): List<TransactionSummaryDto> {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -812,6 +812,15 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                                 s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = authorNihii
                                             }
                                         })
+                                    })
+                                }
+                            }
+                            if(transactionTypes?.isNotEmpty() == true)
+                            {
+                                for(transactionType in transactionTypes)
+                                {
+                                    cds.add(CDTRANSACTION().apply {
+                                        s=CDTRANSACTIONschemes.CD_TRANSACTION; sv = "1.1"; value = transactionType
                                     })
                                 }
                             }
