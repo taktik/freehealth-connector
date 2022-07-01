@@ -323,7 +323,8 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         vendorEmail: String?,
         vendorPhone: String?,
         vision: String?,
-        expirationDate: LocalDateTime?
+        expirationDate: LocalDateTime?,
+        lang: String?
     ): Prescription {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
@@ -331,7 +332,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val selectedType: String = inferPrescriptionType(medications, prescriptionType)
 
-        val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName ?: "phyMedispringTopaz", packageName, packageVersion ?: "1.0-freehealth-connector", vendorEmail, vendorPhone, expirationDate)
+        val m = getKmehrPrescription(patient, hcp, medications, samVersion, deliveryDate, hcpQuality, vendorName ?: "phyMedispringTopaz", packageName, packageVersion ?: "1.0-freehealth-connector", vendorEmail, vendorPhone, expirationDate, lang)
         val os = ByteArrayOutputStream()
         JAXBContext.newInstance(Kmehrmessage::class.java).createMarshaller().marshal(m, os)
         val prescription = os.toByteArray()
@@ -378,12 +379,17 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         packageVersion: String?,
         vendorEmail: String?,
         vendorPhone: String?,
-        expirationDate: LocalDateTime?
+        expirationDate: LocalDateTime?,
+        lang: String?
                             ): Kmehrmessage {
         val config = KmehrPrescriptionConfig().apply {
             prescription.apply {
                 inami = hcp.nihii!!.replace("[^0-9]".toRegex(), "")
-                language = "fr"
+                var tempLang = lang
+                if (lang.isNullOrBlank()) {
+                    tempLang = "fr"
+                }
+                language = tempLang
                 substanceDb = "LOCALDB"
             }
             header.apply {
