@@ -28,15 +28,14 @@ public final class McnConfigUtil {
    }
 
    public static McnPackageInfo retrievePackageInfo(String componentName, String packageName, String hcpQuality) {
-      String userNameKey = "mycarenet.licence." + hcpQuality + ".username";
-      String passwordKey = "mycarenet.licence." + hcpQuality + ".password";
+      String userNameKey = "mycarenet.license." + hcpQuality + ".username";
+      String passwordKey = "mycarenet.license." + hcpQuality + ".password";
 
       LOG.info("retrievePackageInfo retrieving info using keys: " + userNameKey + " " + passwordKey);
 
       String userName = hcpQuality != null ? configValidator.getProperty(userNameKey) : null;
       String password = hcpQuality != null ? configValidator.getProperty(passwordKey) : null;
-      String name = packageName != null ? packageName : configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_NAME, "${package.name}");
 
-      return new McnPackageInfo(userName.trim(), password.trim(), name);
+      return new McnPackageInfo(userName.trim(), password.trim(), "rosa");
    }
 }

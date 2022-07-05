@@ -6,6 +6,7 @@ import org.taktik.connector.technical.exception.RetryNextEndpointException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
+import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import org.taktik.connector.technical.ws.domain.GenericResponse;
 import org.taktik.connector.technical.ws.impl.strategy.InvokeStrategy;
@@ -78,8 +79,21 @@ public abstract class AbstractWsSender {
          request.put("javax.xml.ws.handler.message.outbound", true);
          executeHandlers(chain, request);
          conn = scf.createConnection();
-         SOAPMessage message = request.getMessage();
-         SOAPMessageContext reply = createSOAPMessageCtx(conn.call(message, generateEndpoint(request)));
+         SOAPMessage messageRequest = request.getMessage();
+         URL url = generateEndpoint(request);
+         boolean isEAttest = url.toString().equals("https://services-acpt.ehealth.fgov.be/MyCareNet/eAttest/v2");
+         if(isEAttest) {
+            log.info("#####################################################################################");
+            log.info("ENDPOINT: " + url);
+            log.info("REQUEST: " + ConnectorXmlUtils.toString(messageRequest.getSOAPPart()));
+         }
+
+         SOAPMessage messageResponse = conn.call(messageRequest, url );
+         if(isEAttest) {
+            log.info("RESPONSE: " + ConnectorXmlUtils.toString(messageResponse.getSOAPPart()));
+            log.info("------------------------------------------------------------------------------------");
+         }
+         SOAPMessageContext reply = createSOAPMessageCtx(messageResponse);
          reply.putAll(genericRequest.getRequestMap());
          reply.put("javax.xml.ws.handler.message.outbound", false);
          ArrayUtils.reverse(chain);
