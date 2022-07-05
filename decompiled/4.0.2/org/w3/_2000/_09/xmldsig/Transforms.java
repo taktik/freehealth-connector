@@ -1,0 +1,38 @@
+package org.w3._2000._09.xmldsig;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(
+   name = "TransformsType",
+   propOrder = {"transforms"}
+)
+@XmlRootElement(
+   name = "Transforms"
+)
+public class Transforms implements Serializable {
+   private static final long serialVersionUID = 1L;
+   @XmlElement(
+      name = "Transform",
+      required = true
+   )
+   protected List<Transform> transforms;
+
+   public Transforms() {
+   }
+
+   public List<Transform> getTransforms() {
+      if (this.transforms == null) {
+         this.transforms = new ArrayList();
+      }
+
+      return this.transforms;
+   }
+}

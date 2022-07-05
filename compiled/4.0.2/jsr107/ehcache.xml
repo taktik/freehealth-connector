@@ -1,0 +1,24 @@
+<config
+        xmlns='http://www.ehcache.org/v3'
+        xmlns:jsr107="http://www.ehcache.org/v3/jsr107">
+
+    <service>
+        <jsr107:defaults  default-template="default" enable-management="false" enable-statistics="true"/>
+    </service>
+
+    <persistence directory="${user.home}/cache-data-2"/>
+
+    <cache-template name="default">
+        <key-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.String</key-type>
+        <value-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.String</value-type>
+
+        <resources>
+            <heap>2000</heap>
+            <offheap unit="MB">1</offheap>
+            <disk unit="MB" persistent="true">100</disk>
+        </resources>
+
+    </cache-template>
+
+
+</config>

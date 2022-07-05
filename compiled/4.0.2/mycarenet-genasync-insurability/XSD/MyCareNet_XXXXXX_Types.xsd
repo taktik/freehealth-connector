@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified" targetNamespace="urn:be:cin:mycarenet:1.0:carenet:types"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:cin:mycarenet:1.0:carenet:types"
+	xmlns:map="urn:cin:mycarenet:mappings"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace">
+	
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd"/>
+		
+	<xsd:attributeGroup name="MessageHeader">
+		<xsd:attribute name="MessageName" type="MessageNameType" use="required">
+			<xsd:annotation>
+				<xsd:documentation> The message name. For Insurability, the possible values are
+					801000, 801000ERR, 801001 and 801900. This is zone 201 in the flat file version.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="Version" type="MessageVersionType" use="required">
+			<xsd:annotation>
+				<xsd:documentation> The version number of the message. It defines the format of the
+					child elements and should be 2 digits long. First version = 01 It is required.
+					This is zone 201 in the flat file version. </xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="Duplicate" type="xsd:boolean" use="required">
+			<xsd:annotation>
+				<xsd:documentation> A Boolean that indicates if the message is a duplicate. It is
+					required. This is a part of zone 202 in the flat file version.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="TestFlag" type="xsd:boolean" use="required">
+			<xsd:annotation>
+				<xsd:documentation> A Boolean that indicates if the message is a test message. It is
+					required. This is a part of zone 202 in the flat file version.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="SenderReference" type="MessageReferenceType" use="required">
+			<xsd:annotation>
+				<xsd:documentation> Contains the message reference of the sender. It is a numeric
+					code of up to 14 characters. It is required. This is zone 204 in the flat file
+					version. </xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="ReceiverReference" type="MessageReferenceType" use="optional">
+			<xsd:annotation>
+				<xsd:documentation> Should not be provided, only for return messages. This is zone
+					205 in the flat file version. </xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="Synchronous" type="xsd:boolean" use="required">
+			<xsd:annotation>
+				<xsd:documentation> Determines if the message is received in Synchronous or
+					Asynchronous flow. </xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:attributeGroup>
+
+    <xsd:simpleType name="MessageNameType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="M801000"/>
+			<xsd:enumeration value="M801000ERR"/>
+			<xsd:enumeration value="M801001"/>
+			<xsd:enumeration value="M801900"/>
+			<xsd:enumeration value="M410000"/>
+			<xsd:enumeration value="M410001"/>
+			<xsd:enumeration value="M410000ERR"/>
+			<xsd:enumeration value="M410900"/>
+			<xsd:enumeration value="M410908"/>
+			<xsd:enumeration value="M410999"/>
+			<xsd:enumeration value="M420000"/>
+			<xsd:enumeration value="M420001"/>
+			<xsd:enumeration value="M420000ERR"/>
+			<xsd:enumeration value="M420900"/>
+			<xsd:enumeration value="M420999"/>
+			<xsd:enumeration value="M430000"/>
+			<xsd:enumeration value="M430001"/>
+			<xsd:enumeration value="M430000ERR"/>
+			<xsd:enumeration value="M891000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+
+	<xsd:simpleType name="InssType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{11}"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="MutualityType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[1-69][0-9]{2}"></xsd:pattern>
+			<xsd:length value="3"></xsd:length>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="RegNrWithMutType">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="13"></xsd:maxLength>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="InsuranceOrgType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="100"></xsd:enumeration>
+			<xsd:enumeration value="200"></xsd:enumeration>
+			<xsd:enumeration value="300"></xsd:enumeration>
+			<xsd:enumeration value="400"></xsd:enumeration>
+			<xsd:enumeration value="500"></xsd:enumeration>
+			<xsd:enumeration value="600"></xsd:enumeration>
+			<xsd:enumeration value="900"></xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="InsuranceOrgInOneCharType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="1"></xsd:enumeration>
+			<xsd:enumeration value="2"></xsd:enumeration>
+			<xsd:enumeration value="3"></xsd:enumeration>
+			<xsd:enumeration value="4"></xsd:enumeration>
+			<xsd:enumeration value="5"></xsd:enumeration>
+			<xsd:enumeration value="6"></xsd:enumeration>
+			<xsd:enumeration value="9"></xsd:enumeration>
+		</xsd:restriction>
+
+	</xsd:simpleType>
+
+	<xsd:simpleType name="NihiiType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{12}"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="AdministeredProductType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9A-ZÖËÜ '\.*+%,-/:;=?()\]\[&lt;&gt;]*"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="FillerType">
+		<xsd:restriction base="AdministeredProductType">
+            <xsd:maxLength value="150"/>
+        </xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="NumericalType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]*"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>	
+    <xsd:simpleType name="NumericalType_2">
+		<xsd:annotation>
+			<xsd:documentation>
+			   NumericalType Limited to a length of 2
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{1,2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+		
+	<xsd:simpleType name="AlphanumericalType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9A-ZÖËÜ '\.*+,-/:;=?()\]\[&lt;&gt;]*"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="AlphanumericalHeaderType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9A-Z .-:]*"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="String_150">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="150"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="String_50">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="String_25">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="25"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	
+	<xsd:simpleType name="MessageVersionType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{2}"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="MessageReferenceType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{1,14}"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="CTType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{3}"></xsd:pattern>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="SexType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="male"/>
+			<xsd:enumeration value="female"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:complexType name="CareReceiverIdType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" maxOccurs="1" name="Inss" type="InssType">
+				<xsd:annotation>
+					<xsd:documentation> The INSS number of the care receiver, optional when
+						RegNrWithMut and Mutuality are provided. This is zone 300 in the flat file
+						version. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element minOccurs="0" maxOccurs="1" name="RegNrWithMut" type="RegNrWithMutType">
+				<xsd:annotation>
+					<xsd:documentation> The registration number of the care receiver with the
+						insurance organisation. Optional if the INSS is provided. This is zone 302
+						in the flat file version. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element minOccurs="0" maxOccurs="1" name="Mutuality" type="MutualityType">
+				<xsd:annotation>
+					<xsd:documentation> The insurance organisation code (single character). Optional
+						if the INSS is provided. This is zone 301 in the flat file version.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+      <xsd:complexType name="CareReceiverStrictIdType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" maxOccurs="1" name="Inss" type="InssType">
+				<xsd:annotation>
+          <xsd:appinfo>
+            <map:mappings>
+              <map:field msgList="410000 410900 4209xx 420000">300</map:field>
+            </map:mappings> 
+          </xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element minOccurs="0" maxOccurs="1" name="RegNrWithMut" type="RegNrWithMutType">
+				<xsd:annotation>
+          <xsd:appinfo>
+            <map:mappings>
+              <map:field msgList="410000 410900 4209xx 420000">302</map:field>
+            </map:mappings>
+          </xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element minOccurs="1" maxOccurs="1" name="Mutuality" type="MutualityType">
+				<xsd:annotation>
+          <xsd:appinfo>
+            <map:mappings>
+              <map:field msgList="410000 410900 4209xx 420000">301</map:field>
+            </map:mappings>
+          </xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ExtCareReceiverStrictIdType">
+		<xsd:annotation>
+			<xsd:documentation>
+			     Extension of the CareReceiverType used to identified the Care Receiver in the 4XXXXX messages
+            	</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="CareReceiverStrictIdType">
+				<xsd:sequence>
+          <xsd:element name="Sex" type="SexType">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <map:mappings>
+                  <map:field msgList="410000 410900 4209xx 420000">303</map:field>
+                </map:mappings>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+		
+	<xsd:complexType name="CareReceiverDetailType">
+		<xsd:sequence>
+			<xsd:element name="Inss" type="InssType" maxOccurs="1" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> Optional element that contains the INSS of a care receiver.
+						Only omitted in rare cases (like newborns or foreingers).
+					</xsd:documentation>
+            <xsd:appinfo>
+              <map:mappings>
+                <map:field msgList="410908">300</map:field>
+              </map:mappings>
+            </xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="FirstName" type="xsd:string" maxOccurs="1" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> The first name of the care receiver if available.
+					</xsd:documentation>
+            <xsd:appinfo>
+              <map:mappings>
+                <map:field msgList="410900 410999">333</map:field>
+                <map:field msgList="410908">304</map:field>
+                <map:field msgList="4209xx">313</map:field>
+              </map:mappings>
+            </xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="LastName" type="xsd:string"  maxOccurs="1" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> The last name of the care receiver </xsd:documentation>
+            <xsd:appinfo>
+              <map:mappings>
+                <map:field msgList="410900 410999">332</map:field>
+                <map:field msgList="410908">303</map:field>
+                <map:field msgList="4209xx">312</map:field>
+              </map:mappings>
+            </xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Birthday"  type="xsd:date" maxOccurs="1" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> The date that the care receiver is born. Only optional in
+						rare cases (e.g. new born, foreigners, ...). </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Deceased"   type="xsd:date" maxOccurs="1" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> The day the care receiver is deceased. Only provided if when
+						the care receiver is deceased an the decease date is in the requested
+						period. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Sex" type="SexType" maxOccurs="1" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> The sex of the care receiver. </xsd:documentation>
+            <xsd:appinfo>
+              <map:mappings>
+                <map:field msgList="410908">305</map:field>
+              </map:mappings>
+            </xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ExtCareReceiverDetailType">
+		<xsd:annotation>
+			<xsd:documentation>
+			     Extension of the CareReceiverDetailType used to details the Care Receiver in the 4XXXXX messages
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="CareReceiverDetailType">
+				<xsd:sequence>
+          <xsd:element name="RegNrWithMut" type="RegNrWithMutType" minOccurs="0">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <map:mappings>
+                  <map:field msgList="410908">302</map:field>
+                </map:mappings>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="Mutuality" type="MutualityType" minOccurs="0">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <map:mappings>
+                  <map:field msgList="410908">301</map:field>
+                </map:mappings>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="PeriodType">
+		<xsd:sequence>
+			<xsd:element name="PeriodStart" type="xsd:date" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> The start date of the period This is zone 304 in the flat
+						file version. </xsd:documentation>
+              <xsd:appinfo>
+              <map:mappings>
+                <map:field msgList="4109xx">336</map:field>
+              </map:mappings>
+            </xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PeriodEnd" type="xsd:date" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> The end date of the period. This is zone 305 in the flat
+						file version. </xsd:documentation>
+              <xsd:appinfo>
+              <map:mappings>
+                <map:field msgList="4109xx">337</map:field>
+              </map:mappings>
+            </xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PeriodLengthType">
+		<xsd:sequence>
+			<xsd:element  name="PeriodStart" type="xsd:date" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>
+                        The start date of the period                        
+          </xsd:documentation>
+          <xsd:appinfo>
+            <map:mappings>
+              <map:field msgList="410000 410900">310</map:field>
+              <map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCareUpdateDetail/newValue">313</map:field>
+              <map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCarePreviousDetail">310</map:field>
+            </map:mappings>
+          </xsd:appinfo>
+        </xsd:annotation>
+			</xsd:element>
+			<xsd:choice minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>
+				       For this type, the end date or the length of the period is expected
+				       The length could be expressed by a number of week or month.
+				       In the message 410918, for the current data, no end is expected.
+                    </xsd:documentation>
+				</xsd:annotation>
+				<xsd:element  name="PeriodEnd" type="xsd:date">
+					<xsd:annotation>
+						<xsd:documentation>
+                        The end date of the period.
+            </xsd:documentation>
+            <xsd:appinfo>
+              <map:mappings>
+                <map:field msgList="410000 410900">311</map:field>
+                <map:field msgList="410908" location="SingleNurseContractualCareUpdate/NurseContractualCareUpdateDetail/newValue">315</map:field>
+              </map:mappings>
+            </xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="PeriodLength">
+          <xsd:annotation>
+            <xsd:appinfo>
+              <map:mappings>
+                <map:field msgList="410000 410900">312</map:field>
+              </map:mappings>
+            </xsd:appinfo>
+          </xsd:annotation>
+					<xsd:complexType>
+						<xsd:simpleContent>
+							<xsd:extension base="NumericalType_2">
+                <xsd:attribute name="type" type="PeriodLengthTypeType" use="required">
+                  <xsd:annotation>
+                    <xsd:appinfo>
+                      <map:mappings>
+                        <map:field msgList="410000 410900">313</map:field>
+                      </map:mappings>
+                    </xsd:appinfo>
+                  </xsd:annotation>
+                </xsd:attribute>
+							</xsd:extension>
+						</xsd:simpleContent>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="PeriodLengthTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="weeks"/>
+			<xsd:enumeration value="months"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NbrOfDayInAWeek">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[1-7]{1}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PostalCodeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{4}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:complexType name="MessageFaultType">
+		<xsd:sequence>
+			<xsd:element  name="FaultCode" type="FaultCodeType"/>
+			<xsd:element name="FaultSource" type="xsd:string"/>
+			<xsd:element name="MultiIO" type="MultiIOType" minOccurs="0">
+		<xsd:annotation>
+			<xsd:documentation> Contains 2 or 3 IO's that where returned by the membership filter.
+				If only 2 IO's are returned, an additional 0 is added. fi. if 2 and 6 are returned,
+				the value should be 260 This is zone 308 in the flat file version.
+			</xsd:documentation>
+		</xsd:annotation>			
+			</xsd:element>
+			<xsd:element name="Message" type="MessageType"/>
+			<xsd:element name="Details" type="DetailsType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="FaultCodeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="INPUT_ERROR"/>
+			<xsd:enumeration value="NO_IO_ERROR"/>
+			<xsd:enumeration value="MULTIIO_ERROR"/>			
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="MessageType">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute ref="xml:lang"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="DetailsType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" maxOccurs="unbounded" name="Detail"  type="DetailType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="DetailType">
+		<xsd:sequence>
+			<xsd:element name="DetailCode" type="xsd:string"/>
+			<xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Message" type="MessageType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="MultiIOType">
+		<xsd:sequence>
+			<xsd:element name="IO" type="InsuranceOrgInOneCharType" minOccurs="2" maxOccurs="3"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="NbrOfDayInAWeekAllowZeroAllowEmpty">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="|[0-7]{1}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="NbrOfDayInAWeekAllowZero">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-7]{1}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+</xsd:schema>

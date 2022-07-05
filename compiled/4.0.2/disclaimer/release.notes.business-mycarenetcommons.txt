@@ -1,0 +1,193 @@
+**********************************************************
+* eHealth Business kmehr commons  RELEASE NOTES          *
+**********************************************************
+4.0.2 release (october 2021)                    
+ . change           Minor refactorings. Source diff:
+                           D	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/impl/GPCommonBuilderImpl.java
+                           D	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/impl/IndependantProfessionalCommonBuilderImpl.java
+                           M	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/util/BlobUtil.java
+                           M	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/util/RequestBuilderUtil.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/EncryptedRequestHolder.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/SignedEncryptedResponseHolder.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/SignedResponseHolder.java
+                           D	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/mapper/v3/CommonInputMapper.java
+                           D	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/mapper/v3/RoutingMapper.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/security/EncryptionHelper.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/security/SignHelper.java
+                           R	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/mapper/v3/BlobMapper.java	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/v3/mapper/BlobMapper.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/v3/mapper/CommonInputMapper.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/v3/mapper/RoutingMapper.java
+                           R	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/mapper/v3/SendRequestMapper.java	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/v3/mapper/SendRequestMapper.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/v4/builders/EncryptedRequestObjectBuilder.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/v4/builders/RequestObjectBuilder.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/v4/builders/RequestObjectBuilderHelper.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/v4/builders/ResponseObjectBuilderHelper.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/v4/mapper/BlobMapper.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/v4/mapper/CommonInputMapper.java
+                           A	mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/v4/mapper/RoutingMapper.java
+                           D	mycarenetcommons/src/main/resources/dozer/commoninput.xml
+                           D	mycarenetcommons/src/main/resources/dozer/routing.xml
+  
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+                         
+3.17.1 release (april 2019)
+. improvement         Make Mycarenet etk key identifier configurable.
+                        - Modified classes:
+                                    mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/util/RequestBuilderUtil
+. improvement         Map contentEncryption.
+                        - Modified classes:
+                                    mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/mapper/v3/BlobMapper                                    
+
+3.17.0 internal release (april 2019)
+                                    
+3.16.0 release (september 2017)
+ . bugfix              Remove mandatory checks on fields InputReference, NIPReference, OutputReference of mycarenet CommonOutput. These fields
+                       are optional in a mycarenet response.
+                        - Modified classes:
+                                    be/ehealth/business/mycarenetcommons/validator/CommonOutputValidator
+                                    be/ehealth/business/mycarenetcommons/validator/CommonOutputValidatorTest
+
+
+3.14.0 release (octobre 2017)
+ . improvement             be/ehealth/business/mycarenetcommons/builders/util/BlobUtil        added method generateXades(Blob blob, String projectName)
+ 
+3.14.0-beta-0 release (september 2017)
+ . improvement             be/ehealth/business/mycarenetcommons/builders/util/BlobUtil.java   remove default hardcoded timestamp endpoint
+ 
+3.13.1 release (july 2017)
+  . change            moved classes not coupled to the connector-utilities-mycarenetcommons artifact to the
+                      connector-business-mycarenetdomaincommons artifact.
+                      Were modified as a result:
+                           mycarenetcommons/doc/disclaimer/migration.guide.business-mycarenetcommons.txt
+                           mycarenetcommons/doc/disclaimer/release.notes.business-mycarenetcommons.txt
+                           mycarenetcommons/pom.xml
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/ResponseBuilder.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/impl/IndependantProfessionalCommonBuilderImpl.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/impl/ResponseBuilderImpl.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/util/BlobUtil.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/util/RequestBuilderUtil.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/mapper/SendRequestMapper.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/validator/CommonOutputValidator.java
+                           mycarenetcommons/src/test/java/be/ehealth/business/mycarenetcommons/builders/impl/ResponseBuilderIntegrationTest.java
+                           mycarenetcommons/src/test/java/be/ehealth/business/mycarenetcommons/mappers/SendRequestMapperTest.java
+                           mycarenetcommons/src/test/java/be/ehealth/business/mycarenetcommons/validator/CommonOutputValidatorTest.java
+                      Were moved :
+                           mycarenetcommons/src/test/java/be/ehealth/business/mycarenetcommons/builders/impl/BlobUtilIntegrationTest.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/BlobBuilder.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/BlobBuilderFactory.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/CommonBuilder.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/RequestBuilderFactory.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/impl/AbstractCommonBuilderImpl.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/impl/BlobBuilderImpl.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/impl/BuilderUtils.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/impl/GenericCommonBuilderImpl.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/util/CareProviderBuilder.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/util/GeneralCommonInputBuilder.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/builders/util/GeneralRoutingBuilder.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/Blob.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/CareProvider.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/CareReceiverId.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/CommonInput.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/Identification.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/McnPackageInfo.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/Nihii.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/Origin.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/Party.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/Period.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/Routing.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/domain/package.html
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/exception/ConnectorValidationException.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/exception/InvalidBlobContentConnectorException.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/exception/InvalidBlobContentConnectorExceptionValues.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/exception/ValidationError.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/util/McnConfigUtil.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/util/WsAddressingUtil.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/validator/AbstractMyCarenetValidator.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/validator/CommonInputValidator.java
+                           mycarenetcommons/src/main/java/be/ehealth/business/mycarenetcommons/validator/RoutingValidator.java
+                           mycarenetcommons/src/test/java/be/ehealth/business/mycarenetcommons/builders/impl/AbstractCommonBuilderImplTest.java
+                           mycarenetcommons/src/test/java/be/ehealth/business/mycarenetcommons/builders/impl/BlobBuilderTest.java
+                           mycarenetcommons/src/test/java/be/ehealth/business/mycarenetcommons/builders/impl/CommonBuilderTest.java
+                           mycarenetcommons/src/test/java/be/ehealth/business/mycarenetcommons/builders/impl/CreateSenderTest.java
+                           mycarenetcommons/src/test/java/be/ehealth/business/mycarenetcommons/builders/impl/GenericCommonBuilderImplTest.java
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . improvement            moved PackageInfo class to this module, and updated code to use this new class and corresponding utility classes.
+  . improvement            removed unused imports , and and the get methods for byte arrays in Blob class now return a clone of the byte array.
+  . improvement            the decompressedBlob value of InvalidBlobConnectorException is now cloned before storage.            
+  . improvement            McnConfigUtil class is now final         
+  . deprecation            Methods using PackageInfo becomes deprecated
+  . improvement            Method using PackageInfo are replaced by method using McnPackageInfo
+  . improvement            Default value added for the property "needXades" and for "useDefaultProperties"
+
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . update                  using technical connector 3.11.0
+
+3.10.4 release (september 2016)
+  . using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  . internal release
+  
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+  .   change                    b.e.b.BuilderUtils decompressBlob now is a null operation if the contentEncoding == 'none'
+  .   change                  added bootstrapping
+  .   change                  some minor checkstyle fixes
+ 
+
+  3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)  
+3.4.0-beta-9 release
+  .   using latest version of technical connector 3.4.0-beta-9 
+
+3.4.0-beta-5 release
+  . change                    deprecated ResponseBuilder.validateXades(SendResponseType, Blob), use ResponseBuilder.validateXades(SendResponseType) now.
+  . change                    ResponseBuilder.validateXades(SendResponseType) now needs config property mycarenet.{projectName}.response.neededxadeslevel=none/xades/xadest ( default = xades)
+  . change                    deprecated ResponseBuilderFactory.getResponseBuilder() , use ResponseBuilderFactory.getResponseBuilder(projectName) instead
+  . change                    now using Xades or Xades-t depending on configuration when generating xades signature ( default : xadest )
+  . change                    added CommonOutputValidator
+  . change                    the BlobBuilder should now be created with the BlobBuilderFactory
+  . change                    made ResponseBuilderImpl class final
+  . change                    ResponseBuilderImpl removed unused import
+  . change                    replaced "".equals(content) with ArrayUtils.isEmpty(content) in BuilderUtils
+  . change                    Some static string is now defined in a local variable (Avoid duplicate literals).
+  . change                    Unnecessary Local Before Return dropped
+  . change                    modifier not usefull dropped
+  
+  
+3.4.0-beta-4 release
+  .    change                    removed siteId from commonInput->Origin not needed for user of connector
+  . change                    ResponseBuilder must now be created with ResponseBuilderFactory
+  . change                    BlobUtil generateXades is now configurable in property file, xades generation is now also configurable
+  .    change                    Blob class now makes a defensive copy of the input bytearray parameter
+  . change                    the SendRequestMapper utility methods are now static methods
+
+
+3.4.0 beta release
+  .    change                    default builders now use generic builders , configured in property file 
+  . change                    BlobBuilder interface expanded, a new method allows to set the message name (Blob build(byte[] input, String encodingType, String id, String contentType, String messageName))
+  . change                    added more documentation
+  .    change                    added BlobUtil, which allows to create Xades for blob
+    
+  
+3.3.0 beta release
+
+3.3.1 beta release 
+ .    change                    extracted commons package from this project into seperate project
+ .    change                    BlobBuilder : id is no longer a required field
+ .    change                    when choosing deflate as encoding another deflate protocol is choosen, see technical connector ( no impact on current business projects )

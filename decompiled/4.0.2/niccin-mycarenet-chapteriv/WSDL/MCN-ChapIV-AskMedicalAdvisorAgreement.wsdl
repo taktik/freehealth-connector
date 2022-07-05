@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions
+    name="AskChap4MedicalAdvisorAgreement"
+    targetNamespace="urn:be:cin:mycarenet:esb:medicalAdvisorAgreement:chap4:ask"
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+    xmlns:types="urn:be:cin:types:v1"
+    xmlns:tns="urn:be:cin:mycarenet:esb:medicalAdvisorAgreement:chap4:ask"
+    xmlns:sc="http://schemas.sun.com/2006/03/wss/server"
+    xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:v1="urn:be:cin:mycarenet:esb:medicalAdvisorAgreement:chap4:ask:v1"
+    xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:types>
+        <xsd:schema>
+            <xsd:import
+                schemaLocation="../XSD/MCN-ChapIV-AskMedicalAdvisorAgreement-v1.xsd"
+                namespace="urn:be:cin:mycarenet:esb:medicalAdvisorAgreement:chap4:ask:v1" />
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="AskChap4MedicalAdvisorAgreementRequest">
+        <wsdl:part
+            name="Parameters"
+            element="v1:AskChap4MedicalAdvisorAgreementRequest" />
+    </wsdl:message>
+    <wsdl:message name="AskChap4MedicalAdvisorAgreementResponse">
+        <wsdl:part
+            name="Parameters"
+            element="v1:AskChap4MedicalAdvisorAgreementResponse" />
+    </wsdl:message>
+    <wsdl:portType name="AskChap4MedicalAdvisorAgreementPortType">
+        <wsdl:operation name="askChap4MedicalAdvisorAgreement">
+            <wsdl:input message="tns:AskChap4MedicalAdvisorAgreementRequest" />
+            <wsdl:output message="tns:AskChap4MedicalAdvisorAgreementResponse" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding
+        name="AskChap4MedicalAdvisorAgreementPortBinding"
+        type="tns:AskChap4MedicalAdvisorAgreementPortType">
+        <wsp:PolicyReference URI="#BasicSecurityPolicy" />
+        <soap11:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="askChap4MedicalAdvisorAgreement">
+            <soap11:operation soapAction="urn:be:cin:mycarenet:esb:medicalAdvisorAgreement:chap4:ask:v1" />
+            <wsdl:input>
+                <soap11:body use="literal" />
+                <wsp:PolicyReference URI="#InputSecurityPolicy" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap11:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="AskChap4MedicalAdvisorAgreementService">
+        <wsdl:port
+            name="AskChap4MedicalAdvisorAgreementPort"
+            binding="tns:AskChap4MedicalAdvisorAgreementPortBinding">
+            <soap11:address location="http://change_me" />
+        </wsdl:port>
+    </wsdl:service>
+
+    <wsp:Policy wsu:Id="BasicSecurityPolicy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:TransportBinding>
+                    <wsp:Policy>
+                        <sp:TransportToken>
+                            <wsp:Policy>
+                                <sp:HttpsToken RequireClientCertificate="false" />
+                            </wsp:Policy>
+                        </sp:TransportToken>
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <sp:Basic128 />
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Lax />
+                            </wsp:Policy>
+                        </sp:Layout>
+                        <sp:IncludeTimestamp />
+                    </wsp:Policy>
+                </sp:TransportBinding>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="InputSecurityPolicy">
+        <sp:EndorsingSupportingTokens>
+            <wsp:Policy>
+                <sp:X509Token
+                    sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                    <wsp:Policy>
+                        <sp:WssX509V3Token10 />
+                    </wsp:Policy>
+                </sp:X509Token>
+            </wsp:Policy>
+        </sp:EndorsingSupportingTokens>
+        <sp:SupportingTokens>
+            <wsp:Policy>
+                <sp:SamlToken
+                    sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                    <wsp:Policy>
+                        <sp:WssSamlV11Token10 />
+                    </wsp:Policy>
+                </sp:SamlToken>
+            </wsp:Policy>
+        </sp:SupportingTokens>
+    </wsp:Policy>
+
+</wsdl:definitions>

@@ -1,0 +1,96 @@
+**********************************************************
+* eHealth Business genins                  RELEASE NOTES *
+**********************************************************
+4.0.2 release (october 2021)                    
+ . change           Minor refactorings. Source diff:
+                            M	genins/src/main/java/be/ehealth/businessconnector/genins/builders/impl/RequestObjectBuilderImpl.java
+                            M	genins/src/main/java/be/ehealth/businessconnector/genins/mapper/CommonInputMapper.java
+                            M	genins/src/main/java/be/ehealth/businessconnector/genins/service/ServiceFactory.java
+                            D	genins/src/main/resources/dozer/genins-commoninput.xml
+
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+
+3.13.1 release (july 2017)
+  . improvement               moved some dependencies from mycarenetcommons to mycarenetdomaincommons
+                              Were modified as a result:
+                              genins/src/main/java/be/ehealth/businessconnector/genins/builders/impl/RequestObjectBuilderImpl.java
+                              genins/src/main/java/be/ehealth/businessconnector/genins/domain/RequestParameters.java
+                              genins/src/main/java/be/ehealth/businessconnector/genins/mapper/CommonInputMapper.java
+                              genins/src/main/resources/dozer/genins-commoninput.xml
+                              genins/src/test/java/be/ehealth/businessconnector/genins/builders/CommonBuilderFactoryTest.java
+                              genins/src/test/java/be/ehealth/businessconnector/genins/domain/RequestParametersTest.java
+                              genins/src/test/java/be/ehealth/businessconnector/genins/mapper/CommonInputMapperTest.java
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . improvement               using new McnPackageInfo class and corresponding utility methods
+  . improvement               now using HandlerChainUtil.buildChainWithValidator in ServiceFactory
+  . improvement               Default values added for the endpoint and the input validation
+
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . update                  using technical connector 3.11.0
+
+3.10.4 release (september 2016)
+  . using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  . internal release
+  
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+  .   change                  added bootstrapping
+  .   change                  some minor checkstyle fixes
+
+
+  3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)  
+3.4.0-beta-10 release
+  .   improvement       b.e.b.genins.service.ServiceFactory       private constructor now throws UnsupportedOperationException when called
+  .   improvement       b.e.b.genins.service.ServiceFactory       now using method chain.registerHandler instead of chain.register to add handler to webservice
+  .   improvement       b.e.b.genins.domain.RequestParameters     made methods nullpointer safe.
+
+3.4.0-beta-9 release
+  .   using latest version of technical connector 3.4.0-beta-9 
+
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+  
+3.4.0-beta-7 release
+  . using latest version of technical connector 3.4.0-beta-7
+	
+3.4.0 beta-6 release
+  . using latest version of technical connector 3.4.0-beta-6
+  
+3.4.0 beta 5 release
+ .     change                   updated ImplementationFactory , no interface impacts
+ .     change                   now using factory to create GenericWsSender instead of constructor
+ .     change                   the GenInsBusinessConnectorException now always takes the causing exception as input to preserve stacktrace
+ .     change                   the original exceptions are now always added to thrown exceptions
+ .     change                   Some static string is now defined in a local variable (Avoid duplicate literals).
+ .     improvement              replaced new GenericWsSenderImpl() with factory method in service
+  
+3.4.0-beta-4 release
+
+
+3.3.0 beta release
+ .    improvement                        logging standardized on sl4j
+ .    improvement/change                now uses standard configuration for mycarenet CommonInput see javadoc be.ehealth.business.mycarenetcommons.builders.CommonBuilder for config parameters
+ . change                            genins.user.username => genins.package.licence.username
+                                    genins.user.password => genins.package.licence.password
+ . change                            location of xsd file changed to ehealth-mycarenet-genins/XSD/ehealth-genins-protocol-1_1.xsd
+ . change                           updated service to use new code to configure HandlerChain
+ 
+ 

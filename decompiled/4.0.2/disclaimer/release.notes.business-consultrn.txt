@@ -1,0 +1,31 @@
+**********************************************************
+* eHealth Business consultrn v2            RELEASE NOTES *
+**********************************************************
+4.0.2 release (october 2021)
+ . bugfix
+        - ConsultRN v2 phonetic search: update xsd model to make possible a phonetic search without given names.
+          See examples in examples\be\ehealth\businessconnector\test\consultrn\consultrnv2\session\ConsultrnSessionPersonServiceIntegrationTest
+  
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+        
+3.21.0 release (may 2021)
+ . improvement          - adding javadoc explaining how to manage a SoaErrorException
+                        
+3.20.2 release (october 2020)
+ . improvement          - Person Service: update to xsd version 1.0.5
+                        - CBSS Person Service: update to xsd version 1.0.3
+
+3.20.1 release (september 2020)
+   . internal release
+   
+3.20.0 release (september 2020)
+   . internal release
+   
+3.19.1 release (april 2020)
+ . improvement          - added Person Service
+                        - added CBSS Person Service
+
+3.19.0 release (april 2020)
+ . internal release

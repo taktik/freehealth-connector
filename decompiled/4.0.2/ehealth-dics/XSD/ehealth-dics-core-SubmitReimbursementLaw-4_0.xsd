@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:dics:core:v4:reimbursementlaw:submit" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:dics:core:v4:core" targetNamespace="urn:be:fgov:ehealth:dics:core:v4:reimbursementlaw:submit" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.9">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD DICS
+ Specification-Version: 4.0
+ Implementation-Version: 4.0.2
+ Build-Time: 20171128-1027 
+ </xs:appinfo>
+ </xs:annotation>
+	<xs:import namespace="urn:be:fgov:ehealth:dics:core:v4:core" schemaLocation="ehealth-dics-core-SamCommonItems-4_0.xsd"/>
+	<xs:complexType name="LegalBasisKeyType">
+		<xs:attribute name="Key" type="ReimbursementLawKeyType" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="FormalInterpretationKeyType">
+		<xs:attribute name="Key" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Unique identifier set by NIHDI. This key designates a possible interpretation of a legal reference.
+
+The structure of this identifier has to be defined by NIHDI. It could be a string such as for example: ‘FI00000001’, ‘FI00014372’.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="LegalReferenceKeyType">
+		<xs:attribute name="Key" type="ReimbursementLawKeyType" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="ReimbursementConditionKeyType">
+		<xs:attribute name="LegalTextRelativePath" type="LegalTextPathType" use="required">
+			<xs:annotation>
+				<xs:documentation>Path to the legal text concerning this reimbursement condition, evaluated from the legal reference node for this condition. Path elements are separated by a '-'. For example, 'ALINEA1-POINT1'. </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Key" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="ReimbursementTermKeyType">
+		<xs:attribute name="SequenceNr" type="core:PositiveShortType" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="ParameterValueType">
+		<xs:choice>
+			<xs:element name="Quantity" type="core:QuantityType"/>
+			<xs:element name="QuantityRange" type="core:RangeType"/>
+			<xs:element name="Strength" type="core:StrengthType"/>
+			<xs:element name="StrengthRange" type="core:StrengthRangeType"/>
+			<xs:element name="Code" type="xs:string"/>
+			<xs:element name="Boolean" type="xs:boolean"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="LegalTextKeyType">
+		<xs:attribute name="Key" type="ReimbursementLawKeyType" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="AttachmentKeyType">
+		<xs:attribute name="SequenceNr" type="core:PositiveShortType" use="required"/>
+	</xs:complexType>
+	<xs:simpleType name="ReimbursementLawKeyType">
+		<xs:annotation>
+			<xs:documentation>A string of 1 to 15 characters long without dashes (dashes are used as path separator)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="LegalBasisTypeType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="LegalReferenceTypeType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="LegalTextPathType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="LegalTextTypeType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+</xs:schema>

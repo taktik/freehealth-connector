@@ -1,0 +1,67 @@
+**************************************************
+* eHealth Business commons RELEASE NOTES         *
+**************************************************
+4.0.2 release (october 2021)
+ . change           Minor refactorings. Source diff:
+                            A	common/src/main/java/be/ehealth/business/common/util/BeIDInfoUtil.java
+                            A	common/src/main/java/be/ehealth/business/common/util/PomPropertiesUtil.java
+                
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+           
+3.13.1 release (july 2017)
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . improvement               using new McnPackageInfo class and corresponding utility methods
+  . improvement               now using HandlerChainUtil.buildChainWithValidator in ServiceFactory
+  . improvement               BusinessConfigUtil class is now final
+
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  . update                  using technical connector 3.11.0
+
+3.10.4 release (september 2016)
+  . using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  . internal release
+  
+3.10.2 release (july 2016)
+  . N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+  .   change                  some minor checkstyle fixes
+
+  3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)  
+  3.4.0-beta-9 release
+  .   using latest version of technical connector 3.4.0-beta-9 
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+  
+3.4.0-beta-7 release
+  . using latest version of technical connector 3.4.0-beta-7
+	
+3.4.0 beta-6 release
+  . using latest version of technical connector 3.4.0-beta-6
+  
+3.4.0-beta-5 release
+ .    change                    using EqualsBuilder to create equals method in Patient object
+ 
+3.4.0-beta-3 release
+ .    change                    added sis and isi card number properties to Patient object.
+ .    change                    added builder to Patient object
+
+3.3.2 beta release
+ .    change                    extracted commons package into seperate project
+ 

@@ -1,0 +1,14 @@
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+               xmlns:simplify="http://jaxb2-commons.dev.java.net/basic/simplify"
+               xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+               xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  jaxb:extensionBindingPrefixes="xjc simplify" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.1">
+
+
+  <jaxb:bindings schemaLocation="../../svrl.xsd">
+    <jaxb:bindings node="//xs:element[@name='schematron-output']/xs:complexType/xs:sequence/xs:sequence">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+  </jaxb:bindings>
+
+</jaxb:bindings>

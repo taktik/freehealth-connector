@@ -1,0 +1,3 @@
+be.ehealth.businessconnector.mycarenet.attestv3.service.impl.AttestServiceImpl
+be.ehealth.business.mycarenetcommons.v4.builders.ResponseObjectBuilderImpl
+be.ehealth.businessconnector.mycarenet.attestv3.builders.impl.RequestObjectBuilderImpl

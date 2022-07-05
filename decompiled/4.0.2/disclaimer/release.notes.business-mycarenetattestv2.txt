@@ -1,0 +1,80 @@
+**********************************************************
+* eHealth Business Mycarenet eAttest V2 RELEASE NOTES       *
+**********************************************************
+4.0.2 release (october 2021)                    
+ . change           Minor refactorings. Source diff:
+                           M	mycarenetattestv2/src/main/java/be/ehealth/businessconnector/mycarenet/attestv2/builders/impl/RequestObjectBuilderImpl.java
+                           M	mycarenetattestv2/src/main/java/be/ehealth/businessconnector/mycarenet/attestv2/builders/impl/ResponseObjectBuilderImpl.java
+                           M	mycarenetattestv2/src/main/java/be/ehealth/businessconnector/mycarenet/attestv2/helper/RequestObjectBuilderHelper.java
+    
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+                       
+3.18.0 release (october 2019)
+ . bugfix         The signature verifier now validates the signature of the response blob as a Xades-T with manifest referencing the 
+                  request blob. In version 3.17.1 the validation was limited to the Xades-BES specification.
+                  In order to validate the manifest against the request the ResponseObjectBuilder interface has been altered in order
+                  to pass it the necessary request data for both the encrypted and not encrypted cases.
+                  
+ . bugfix         In class be.ehealth.businessconnector.mycarenet.attestv2.domain.SignedBuilderResponse the method getSignedData()
+                  now returns the byte array representation of the signed blob (this is the same value returned by 
+                  the method CancelAttestationResponse.getReturn().getDetail().getValue()). In version 3.17.1 getSignedData()
+                  was returning the byte array passed to the signature verifier (the MyCarenet response + the signature).
+                  
+ . bugfix         As requested by the CIN the the xml type xs:time is now marshalled by the eAttest V2 business connector
+                  with the format hh:mm:ss. 
+                  In order to apply only this format to eAttest V2 the business request and response Java types 
+                  have been moved to MyCarenet-specific packages: 
+                      - be.fgov.ehealth.standards.kmehr.schema.v1 => be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1
+                      - be.fgov.ehealth.standards.kmehr.cd.v1 => be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1
+                      - be.fgov.ehealth.standards.kmehr.id.v1 => be.fgov.ehealth.standards.kmehr.mycarenet.id.v1
+                      - be.fgov.ehealth.standards.kmehr.dt.v1 => be.fgov.ehealth.standards.kmehr.mycarenet.dt.v1
+                      - be.fgov.ehealth.messageservices.core.v1 => be.fgov.ehealth.messageservices.mycarenet.core.v1
+                  /!\ As a result the following interfaces have been altered with the new package namespaces:
+                      - RequestObjectBuilder
+                      - ResponseObjectBuilder
+
+                   
+                   - Modified sources:
+                            be/ehealth/businessconnector/mycarenet/attestv2/builders/RequestObjectBuilder.java
+                            be/ehealth/businessconnector/mycarenet/attestv2/builders/impl/RequestObjectBuilderImpl.java
+                            be/ehealth/businessconnector/mycarenet/attestv2/domain/CancelAttestBuilderRequest.java
+                            be/ehealth/businessconnector/mycarenet/attestv2/domain/SendAttestBuilderRequest.java
+                            be/ehealth/businessconnector/mycarenet/attestv2/domain/SignedBuilderResponse.java
+                            be/ehealth/businessconnector/mycarenet/attestv2/domain/SignedEncryptedBuilderResponse.java
+                            be/ehealth/businessconnector/mycarenet/attestv2/helper/RequestObjectBuilderHelper.java
+                            be/ehealth/businessconnector/mycarenet/attestv2/helper/AttestIntegrationTestHelper.java
+                            be/ehealth/businessconnector/mycarenet/attestv2/session/SendAttestDentistIntegrationTest.java
+                            be/ehealth/businessconnector/mycarenet/attestv2/session/SendAttestPhysicianIntegrationTest.java
+                            be/ehealth/businessconnector/attestv2/helper/AttestIntegrationTestHelper.cs
+                            be/ehealth/businessconnector/attestv2/session/CancelAttestDentistIntegrationTest.cs
+                            be/ehealth/businessconnector/attestv2/session/CancelAttestPhysicianIntegrationTest.cs
+                            be/ehealth/businessconnector/attestv2/session/SendAttestDentistIntegrationTest.cs
+                            be/ehealth/businessconnector/attestv2/session/SendAttestPhysicianIntegrationTest.cs                                     
+ 
+ . bugfix         The project identifier has been renamed from attest to attestv2. This make it possible to define a specific 
+                  kmehr configuration for eAttest V1 vs eAttest V2.
+                  Note that the supplied connector configuration file should have the following properties:
+                  
+                  # eAttest V2 configuration of kmehr builder
+                  kmehr.attestv2.usedefaultproperties=false
+                  kmehr.attestv2.hcpartylist=identifier
+                  kmehr.attestv2.identifier.id.inss.value=${careprovider.inss}
+                  kmehr.attestv2.identifier.id.inss.sv=1.0
+                  kmehr.attestv2.identifier.id.idhcparty.value=${careprovider.nihii}
+                  kmehr.attestv2.identifier.id.idhcparty.sv=1.0
+                  kmehr.attestv2.identifier.cd.cdhcparty.value=${main.kmehr.quality}
+                  kmehr.attestv2.identifier.cd.cdhcparty.sv=1.14
+                  kmehr.attestv2.identifier.firstname=${careprovider.firstname}
+                  kmehr.attestv2.identifier.lastname=${careprovider.lastname}
+                  
+                  - Modified sources:
+                          be/ehealth/businessconnector/mycarenet/attestv2/helper/AttestConstants
+                                    
+
+3.17.1 release (april 2019)
+  . Initial release
+  
+3.17.0 internal release (april 2019)
+  

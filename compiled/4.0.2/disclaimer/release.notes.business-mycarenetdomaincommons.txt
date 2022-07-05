@@ -1,0 +1,34 @@
+**********************************************************
+* eHealth Business Mycarenet Commons RELEASE NOTES       *
+**********************************************************
+4.0.2 release (october 2021)                    
+ . change           Minor refactorings. Source diff:
+                          A	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/builders/BlobAttributeValues.java
+                          M	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/builders/BlobBuilder.java
+                          M	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/builders/CommonBuilder.java
+                          M	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/builders/impl/AbstractCommonBuilderImpl.java
+                          M	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/builders/impl/BlobBuilderImpl.java
+                          M	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/builders/impl/GenericCommonBuilderImpl.java
+                          M	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/builders/util/GeneralCommonInputBuilder.java
+                          A	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/domain/Actor.java
+                          A	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/domain/Attribute.java
+                          M	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/domain/Blob.java
+                          M	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/domain/CommonInput.java
+                          A	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/domain/Identifier.java
+                          M	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/domain/Origin.java
+                          A	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/domain/Reference.java
+                          M	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/domain/Routing.java
+                          A	mycarenetdomaincommons/src/main/java/be/ehealth/business/mycarenetdomaincommons/domain/Subject.java   
+
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+
+3.14.0 release (octobre 2017)
+ . bug-fix             be/ehealth/business/mycarenetdomaincommons/util/DomainBlobUtil       was faulty, use be/ehealth/business/mycarenetcommons/builders/util/BlobUtil instead
+ . improvement         be/ehealth/business/mycarenetdomaincommons/domain/async/PostContent  added convenience domain object to hold genericasync post data
+
+3.13.1 release (july 2017)
+  . Initial release (see also migration.guide.business-mycarenetcommons.txt)
+  
+3.13.0 internal release (july 2017) 

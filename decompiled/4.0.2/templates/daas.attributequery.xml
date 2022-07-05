@@ -1,0 +1,20 @@
+<samlp:AttributeQuery ID="${attributeQueryId}"
+                      Version="1.0"
+                      IssueInstant="${issueInstant}"
+                      Consent="urn:oasis:names:tc:SAML:2.0:consent:current-implicit"
+                      xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
+    <saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">${issuer}</saml:Issuer>
+    <saml:Subject>
+        <saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient">${transientNameId}</saml:NameID>
+        <saml:SubjectConfirmation Method="samlp:oasis:names:tc:SAML:2.0:cm:sender-vouches">
+            <saml:SubjectConfirmationData NotBefore="${notBefore}" NotOnOrAfter="${notOnOrAfter}" />
+        </saml:SubjectConfirmation>
+    </saml:Subject>
+    #foreach ($mapEntry in $attrMap.entrySet())
+    <saml:Attribute Name="$mapEntry.key" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        #foreach ($value in $mapEntry.value)
+            <saml:AttributeValue>$value</saml:AttributeValue>
+        #end
+    </saml:Attribute>
+    #end
+</samlp:AttributeQuery>

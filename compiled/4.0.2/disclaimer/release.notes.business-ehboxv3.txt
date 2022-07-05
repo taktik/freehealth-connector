@@ -1,0 +1,96 @@
+*****************************************************
+* eHealth Business ehbox V3 RELEASE NOTES           *
+*****************************************************
+4.0.2 release (october 2021)
+ . change           Minor refactorings. Source diff:
+                            M	ehboxv3/src/main/java/be/ehealth/businessconnector/ehbox/v3/builders/impl/AbstractConsultationBuilder.java
+                            M	ehboxv3/src/main/java/be/ehealth/businessconnector/ehbox/v3/builders/impl/ConsultationMessageBuilderImpl.java
+                            M	ehboxv3/src/main/java/be/ehealth/businessconnector/ehbox/v3/builders/impl/SendMessageBuilderImpl.java
+                            M	ehboxv3/src/main/java/be/ehealth/businessconnector/ehbox/v3/service/ServiceFactory.java
+                            
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+
+3.15.1 release (april 2018)
+ . new                  Added eh2ebox service
+ . improvement          In case of OoOPublicationException, give access to the whole recipient info (including timeframe for out-of-offices) by exposing the SendMessageResponse
+
+3.15.0 release (april 2018)
+ . internal release
+  
+3.13.1 release (july 2017)
+
+3.13.0 internal release (july 2017)
+
+3.12.1 release (june 2017)
+  . improvement               EhboxCryptoException can now also contain original exception.            
+  . improvement               now using HandlerChainUtil.buildChainWithValidator in ServiceFactory
+  . improvement               Default values added for the endpoint and the input validation
+  . improvement               Default value of property "ehbox.application.name" set to the value of the property "package.name"
+
+3.12.0 internal release (mai 2017)
+
+3.11.1 release (october 2016)
+
+3.11.0 internal release (october 2016)
+  .   update                  using technical connector 3.11.0
+
+3.10.4 release (september 2016)
+  .   using latest version of technical connector 3.10.4
+  
+3.10.3 release 
+  .   internal release
+  
+3.10.2 release (july 2016)
+  .   N/A
+
+3.10.1 release 
+  . internal release
+
+3.10.0 release (june 2016)
+  .   improvement             uniformisation of all connector versions
+  .   change                  added bootstrapping
+  .   change                  some minor checkstyle fixes
+  .   Improvement             b.e.b.ehbox.v3.builders.impl.SendMessageBuilderImpl     fixed error in check if freetext is empty, previously only null check, now also check if length != 0
+  .   Improvement             b.e.b.ehbox.v3.builders.BuilderFactory                  fixed initialisation of BuilderFactory
+
+  3.4.11 release (may 2016)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)  
+3.4.0-beta-9 release
+  .   using latest version of technical connector 3.4.0-beta-9 
+  .   Improvement             b.e.b.ehbox.api.domain.Addressee                          added check on required fields in constructor, now throws IllegalArgumentExeption early in the process instead of Nullpointer later
+  .   improvement             b.e.b.ehbox.v3.builders.impl.AbstractConsultationBuilder  now throws EhboxCryptoException with null value as message , when decryption was impossible , previously threw UnsealConnectorException 
+
+3.4.0-beta-8 release
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+  
+3.4.0-beta-7 release
+  . using latest version of technical connector 3.4.0-beta-7
+	
+3.4.0 beta-6 release
+  . using latest version of technical connector 3.4.0-beta-6
+  
+3.4.0 beta 5 release
+ .     change                   Crypto properties are now retrieved from session when needed. methods with crypto as parameter are deprecated
+  .    change                   ExceptionContainer : instance variables now have private modifier
+  .    change                   changed (internal) usage of some deprecated methods to new methods ( no behaviour impact)
+  .    improvement              replaced new GenericWsSenderImpl() with factory method in service
+  .    improvement              updated some methods comments
+  .    change                   now correctly throws OoOPublicationException
+  .    improvement              removed unused Logger from BuilderFactory
+  .    change                   AbstractConsultationBuilder: remove dumping message to decrypt/encrypt
+  .    improvement              the automatic base64 decoding of content that resembles base64 is now configurable with property ehboxv3.try.to.base64decode.content, default value = old behaviour : true
+ 
+3.4.0-beta-4 release
+
+3.4.0 beta release
+ .    change                    refactored calling of KeyDepotManager
+ .    change                    now throws EhboxCryptoException when a revoked or expired certificate was used to encrypt message, the message is property of the exception and can be retrieved
+ .    change                    added check to see if returned list of etks for a known addressee is not empty 
+    
+
+3.3.0 beta release
+ .    improvement               logging standardized on sl4j
+ .    change                    session.ServiceFactory can now throw ConnectorException
+ .    change                    replaced request in backend with genericRequest and generic Factory

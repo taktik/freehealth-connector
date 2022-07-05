@@ -1,0 +1,17 @@
+**********************************************************
+* eHealth Business intrahub commons  RELEASE NOTES       *
+**********************************************************
+4.0.2 release (october 2021)                    
+ . change           Minor refactorings. Source diff:
+                           M	intrahubcommons/src/main/java/be/ehealth/business/intrahubcommons/security/FolderEncryptor.java
+                           A	intrahubcommons/src/main/java/be/ehealth/business/intrahubcommons/security/RequestContextHandler.java
+   
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+                        
+3.14.1 release (octobre 2017)
+ . improvement        be.ehealth.business.intrahubcommons.security.FolderDecryptor      Fix potential encoding issue when decrypting reponse (was relying on system encoding being UTF-8 compatible)
+
+3.14.0-beta-0 release (september 2017)
+  . initial release

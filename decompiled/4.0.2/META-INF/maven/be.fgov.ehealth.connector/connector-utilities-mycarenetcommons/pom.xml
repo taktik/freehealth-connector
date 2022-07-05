@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>be.fgov.ehealth.connector</groupId>
+    <artifactId>connector-utilities-master</artifactId>
+    <version>4.0.2</version>
+  </parent>
+
+  <artifactId>connector-utilities-mycarenetcommons</artifactId>
+  <name>${project.artifactId}</name>
+  <description>mycarenetcommons v2 GenSync xml model for eHealth services</description>
+
+  <packaging>jar</packaging>
+
+  <properties>
+    <binding-directory>default-binding</binding-directory>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack xsds from xsd-connector</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>be.fgov.ehealth.xsd</groupId>
+                  <artifactId>xsd-commons-mycarenet</artifactId>
+                  <version>2.1.1</version>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>target/generated-resources</outputDirectory>
+              <includes>**/*.xsd</includes>
+              <!-- Exclude everything from MyCareNet model. Keep only eHealth V2 model for MyCareNet GenSync -->
+              <excludes>**/mycarenet-gen*,**/commonInfo*,**/commonTypes*</excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Generate JAva Xml Bindings</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <bindingIncludes>
+            <include>mycarenet-bindings.xjb</include>
+          </bindingIncludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-core</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-external</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>connector-utilities-common</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+</project>

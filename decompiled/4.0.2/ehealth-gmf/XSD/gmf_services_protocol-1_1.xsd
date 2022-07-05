@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:globalmedicalfile:protocol:v1" xmlns:gc="urn:be:fgov:ehealth:globalmedicalfile:core:v1" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xmime="http://www.w3.org/2005/05/xmlmime" targetNamespace="urn:be:fgov:ehealth:globalmedicalfile:protocol:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD 21. Global Medical File
+ Specification-Version: 1.1
+ Implementation-Version: 1.1.0
+ Build-Time: 20150928-1547 
+ </xs:appinfo>
+ </xs:annotation>
+  <!-- core elements and types -->
+	<xs:import namespace="urn:be:fgov:ehealth:globalmedicalfile:core:v1" schemaLocation="gmf_services_core-1_1.xsd"/>
+  <!--eHealth commons protocol -->
+	<xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v1" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-1_7.xsd"/>
+  <!-- external -->
+	<xs:import namespace="http://www.w3.org/2005/05/xmlmime" schemaLocation="../../external/XSD/xmlmime.xsd"/>
+  <!-- globalmedicalfile service -->
+  <!-- protocol elements -->
+  <!-- Consult -->
+  <xs:element name="ConsultGlobalMedicalFileRequest" type="SendRequestType" />
+  <xs:element name="ConsultGlobalMedicalFileResponse" type="SendResponseType" />
+  <!-- Notify -->
+  <xs:element name="NotifyGlobalMedicalFileRequest" type="SendRequestType" />
+  <xs:element name="NotifyGlobalMedicalFileResponse" type="SendResponseType" />
+  <!-- protocol types -->
+  <xs:complexType name="SendRequestType">
+		<xs:annotation>
+			<xs:documentation>Generic synchronised request type. </xs:documentation>
+		</xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:RequestType">
+        <xs:sequence>
+          <xs:element name="CommonInput" type="gc:CommonInputType" />
+          <xs:element name="Routing" type="gc:RoutingType" minOccurs="0" />
+          <xs:element name="Detail" type="gc:BlobType">
+            <xs:annotation>
+              <xs:documentation>ContentType: text/xml. ContentEncoding: none. MessageName: GMD-Notify-CR, GMD-Consult-CR (Async: GMD-Consult-HCP-REQ/RSP, GMD-Closure-RSP, GMD-Extension-RSP)</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="XadesT" type="xmime:base64Binary" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>The signature in xades-t form, base64 encoded to preserve the internal signature.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="SendResponseType">
+		<xs:annotation>
+			<xs:documentation>Generic synchronised response type. A SendResponseType contains a single Return element.</xs:documentation>
+		</xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="protocol:ResponseType">
+        <xs:sequence>
+          <xs:element name="Return" type="ResponseReturnType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ResponseReturnType">
+		<xs:annotation>
+			<xs:documentation> Describes the business output of NIP-PIN services.</xs:documentation>
+		</xs:annotation>
+    <xs:sequence>
+      <xs:element name="CommonOutput" type="gc:CommonOutputType" />
+      <xs:element name="Detail" type="gc:BlobType" />
+      <xs:element name="XadesT" type="xmime:base64Binary" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The signature in xades-t form, base64 encoded to preserve the internal signature. Optional when the input was emtpy.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,520 @@
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2" xmlns="urn:be:fgov:ehealth:mediprima:core:v2" xmlns:core="urn:be:fgov:ehealth:commons:core:v2"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="urn:be:fgov:ehealth:mediprima:core:v2" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: xsd-mediprima-consultation
+ Specification-Version: 2.0
+ Implementation-Version: 2.0.1
+ Build-Time: 20190514-1534 
+ </xs:appinfo>
+ </xs:annotation>
+  <!--eHealth core element -->
+  <xs:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-core-2_0.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd" />
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd" />
+  <!-- MediPrima services types -->
+  <xs:element name="CbssStatus" type="CbssStatusType" />
+  <xs:element name="MedicalCardRegistryStatus" type="MedicalCardRegistryStatusType" />
+  <!-- Reference types -->
+  <xs:complexType name="SupplementTypeListType">
+    <xs:sequence>
+      <xs:element name="SupplementType" type="xs:string" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AllowedSupplementsType">
+    <xs:annotation>
+      <xs:documentation>Description of the supplements paid by the OCMW / CPAS (can be filled only for hospitalization medical cover and ambulatory hospitalization medical cover) : maximum amount allowed, supplement types list.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="AmountMaxAllowed" type="xs:int" minOccurs="0">
+      <xs:annotation>
+          <xs:documentation>Maximum amount supported by the OCMW / CPAS for the supplements</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SupplementTypeList" type="SupplementTypeListType" minOccurs="0">
+      <xs:annotation>
+          <xs:documentation>Supplement types supported by the OCMW / CPAS for the supplements</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="BeneficiaryType">
+    <xs:sequence>
+      <xs:element name="Ssin" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>SSIN of the beneficiary</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LastName" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Last Name of the beneficiary</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FirstName" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>First Name of the beneficiary</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Gender" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Gender of the beneficiary. Possible values : M (male) or F (female)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="BirthDate" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Birth date of the beneficiary</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DeathDate" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Death date of the beneficiary</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="BySsinType">
+    <xs:sequence>
+      <xs:element name="Ssin" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>SSIN of the beneficiary</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice>
+        <xs:element name="Period" type="PeriodType">
+          <xs:annotation>
+            <xs:documentation>Period used to retrieve the medical cards that were valid on that period</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ReferenceDate" type="xs:date">
+          <xs:annotation>
+            <xs:documentation>Date used to retrieve the medical card that were valid on this date</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CbssStatusType">
+    <xs:sequence>
+      <xs:element name="Value" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>CBSS status of the result</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Code" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The code of the CBSS status</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The description of the CBSS status</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Information" type="InformationType" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CompanyListType">
+    <xs:sequence>
+      <xs:element name="CbeNumber" type="xs:string" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ConsultCarmedDataType">
+    <xs:sequence>
+        <xs:element name="BySsin" type="BySsinType">
+          <xs:annotation>
+            <xs:documentation>Criteria using a SSIN to search medical cards</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ConsultCarmedInterventionResultType">
+    <xs:sequence>
+      <xs:element name="CarmedIdentifier" type="CarmedIdentifierType">
+        <xs:annotation>
+          <xs:documentation>Identification of the medical card</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CarmedContent" type="CarmedContentCareType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Content of the medical card</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AgreementNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Agreement number assigned by MediPrima to the healthcare provider for a valid consultation of electronic decision support.
+It expresses the guarantee of being reimbursed on medical costs. 
+This information must be copied in the invoice sent to the HZIV/CAAMI.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="UrgentMedicalAidAttestationNumber" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Urgent medical aid attestation number (defined by MediPrima Urgent Medical Aid Attestation service)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="DoctorType">
+    <xs:complexContent>
+      <xs:extension base="MedicalCoverCommonInformationType">
+        <xs:sequence>
+          <!-- <xs:element name="MaxPrestation" type="xs:string" minOccurs="0"/> -->
+          <xs:element name="HealthCareProviderList" type="NihiiNumberListType" minOccurs="0">
+          <xs:annotation>
+              <xs:documentation>List of doctors authorized by OCMW / CPAS</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="CarmedAttributedListType">
+    <xs:sequence>
+      <xs:element name="Carmed" type="ConsultCarmedInterventionResultType" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CarmedContentCareType">
+    <xs:sequence>
+      <xs:element name="MedicalCover" type="MedicalCoverType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Medical covers of the medical Card</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="RefundPodmiSppis" type="RefundPodmiSppisType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Code that identifies the refund part of the POD MI / SPP IS </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CarmedIdentifierType">
+    <xs:sequence>
+      <xs:element name="CarmedNumber" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Unique number of the medical card </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="VersionNumber" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>The version number of the medical card</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Beneficiary" type="BeneficiaryType">
+        <xs:annotation>
+          <xs:documentation>Information on the beneficiary of the medical Card</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ValidityPeriod" type="PeriodType">
+        <xs:annotation>
+          <xs:documentation>Validity Period of the medical Card</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Pswc" type="OcmwCpasType">
+        <xs:annotation>
+          <xs:documentation>OCMW / CPAS</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="HospitalizationType">
+    <xs:complexContent>
+      <xs:extension base="MedicalCoverCommonInformationType">
+        <xs:sequence>
+          <xs:element name="HospitalList" type="NihiiNumberListType" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>List of hospitals authorized by OCMW / CPAS</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="InformationType">
+    <xs:sequence>
+      <xs:element name="FieldName" type="xs:string" />
+      <xs:element name="FieldValue" minOccurs="0" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MedicalCardRegistryMessageType">
+    <xs:sequence>
+      <xs:element name="ReasonCode" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The code of the MedicalCardRegistry status</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Source" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Source name of the message (always ECARMED)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Communication" minOccurs="2" maxOccurs="unbounded" type="NameType">
+        <xs:annotation>
+          <xs:documentation>The description of the MedicalCardRegistry status</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="Severity" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>Severity of the message : ERROR of WARNING</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="MedicalCardRegistryStatusType">
+    <xs:sequence>
+      <xs:element name="MedicalCardRegistryMessage" type="MedicalCardRegistryMessageType" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MedicalCoverCommonInformationType">
+    <xs:sequence>
+      <xs:annotation>
+        <xs:documentation>Common information of the medical cover.</xs:documentation>
+      </xs:annotation>
+      <xs:element name="ValidityPeriod" type="PeriodType">
+        <xs:annotation>
+          <xs:documentation>Validity Period of the medical cover.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PswcSupport" type="PswcSupportType" minOccurs="0"/>
+      <xs:element name="AmountPatientPartMax" type="xs:int" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Maximum amount supported by the OCMW / CPAS for patient personal fees ("ticket modérateur" / "Remgeld") (amount per month per type of invoice for the hospital, ...).  Only used when PatientPart (in element PswcSupport) is partial.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AllowedSupplements" type="AllowedSupplementsType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Description of the supplements supported by the OCMW / CPAS for the supplement. Only used when Supplement (in element PswcSupport) is partial.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MedicalCoverType">
+    <xs:annotation>
+      <xs:documentation>Representation of all the covers of a medical card.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Doctor" type="DoctorType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Doctor medical cover type.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Hospitalization" type="HospitalizationType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Hospitalization medical cover type.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AmbulatoryHospitalization" type="HospitalizationType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Ambulatory hospitalization medical cover type.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MedicalTransportation" type="MedicalTransportationType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Medical transportation medical cover type.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Miscellaneous" type="MiscellaneousType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Miscellaneous medical cover type.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Paramedic" type="ParamedicType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Paramedic medical cover type.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PharmaceuticalDrug" type="PharmaceuticalDrugType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Pharmaceutical drug medical cover type.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Prosthesis" type="ProsthesisType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Prosthesis medical cover type.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MedicalTransportationType">
+    <xs:complexContent>
+      <xs:extension base="MedicalCoverCommonInformationType">
+        <xs:sequence>
+          <xs:element name="CompanyList" type="CompanyListType" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="MiscellaneousType">
+    <xs:complexContent>
+      <xs:extension base="MedicalCoverCommonInformationType"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="NameType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute ref="xml:lang" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="NihiiNumberListType">
+    <xs:sequence>
+      <xs:element name="NihiiNumber" type="xs:string" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="OcmwCpasType">
+    <xs:sequence>
+      <xs:element name="CbeNumber" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>CBE number of the OCMW / CPAS</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MunicipalityIns" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>INS number of the municipality of the OCMW / CPAS
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Name" type="NameType" minOccurs="2" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Name of the OCMW / CPAS</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ParamedicType">
+    <xs:complexContent>
+      <xs:extension base="MedicalCoverCommonInformationType">
+        <xs:sequence>
+          <xs:element name="ProviderList" minOccurs="0">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="NihiiNumberListType" />
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="PeriodType">
+    <xs:sequence>
+      <xs:element name="StartDate" type="xs:date" />
+      <xs:element name="EndDate" type="xs:date" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PharmaceuticalDrugType">
+    <xs:complexContent>
+      <xs:extension base="MedicalCoverCommonInformationType">
+        <xs:sequence>
+          <xs:element name="PharmacyList" type="NihiiNumberListType" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ProsthesisType">
+    <xs:complexContent>
+      <xs:extension base="MedicalCoverCommonInformationType">
+        <xs:sequence>
+          <xs:element name="CompanyList" type="CompanyListType" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="PswcSupportType">
+    <xs:annotation>
+      <xs:documentation>Support of a CPAS / OCMW</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ZivAmiPart" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>ZIV/AMI part (part normally supported by ZIV/AMI) covered by the OCMW / CPAS. The values can be "NOTHING", "FULL" or "PARTIAL".</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PatientPart" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Patient part (part normally supported by the patient : remgeld / ticket modérateur) covered by the OCMW / CPAS. The values can be "NOTHING", "FULL" or "PARTIAL".</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Supplement" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Supplements supported by the OCMW / CPAS. The OCMW / CPAS indicates if it agrees to cover the supplements. The values can be "NOTHING", "FULL" or "PARTIAL".</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Convention" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>If there is a convention between the OCWM / CPAS and the healthcare provider, use this convention to fix the agreement</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Prescription" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The OCMW / CPAS agrees to pay the care only when there is a prescription.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="RefundPodmiSppisType">
+    <xs:annotation>
+      <xs:documentation>Refund Code defined by the POD MI / SPP IS</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="RefundCode" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>he RefundCode is the code that expresses the percentage of reimbursement of medical fees by the POD MI / SPP IS.
+The possible values are 0.00 / 0.50 / 1.00 corresponding to 0% support, 50% support and 100% support.
+RefundCodes value is between 0 and 9999.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AffiliedMutualityInd" type="xs:boolean">
+      <xs:annotation>
+          <xs:documentation>For information, this indicator (boolean : Y/N) indicates the existence of a mutuality at the moment of the card creation.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="BeneficiaryStatus" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Status of a beneficiary : L (legal) or I (illegal)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Justification" type="NameType" minOccurs="2" maxOccurs="unbounded" />
+      <xs:element name="PodmiSppisPart" type="PodmiSppisPartType" />
+      <xs:element name="MedicalUrgencyInd" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>This flag indicates whether the healthcare provider must provide an DMH / AMU (Dringend Medische Hulp / Aide Médicale Urgente) attest.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PodmiSppisPartType">
+    <xs:sequence>
+      <xs:element name="HospitalizationPart" type="ZivAmiPatientPartType">
+      <xs:annotation>
+          <xs:documentation>This element contains the percentage supported by POD MI / SPP IS when hospitalization (see also what is available in hospitalization cover).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AmbulatoryCarePart" type="ZivAmiPatientPartType">
+      <xs:annotation>
+          <xs:documentation>This element contains the percentage supported by POD MI / SPP IS when ambulatory care - in hospital (see also what is available in ambulatory hospitalization cover).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OtherPart" type="ZivAmiPatientPartType">
+      <xs:annotation>
+          <xs:documentation>This element contains the percentage supported by POD MI - SPP IS when cares ouside hospital (see also what is available in doctor, paramedic, medical transportation, miscellaneous, prosthesis, pharmaceutical drugs covers).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ZivAmiPatientPartType">
+    <xs:sequence>
+      <xs:element name="ZivAmiPart" type="xs:decimal">
+      <xs:annotation>
+          <xs:documentation>This element contains the percentage supported by POD MI / SPP IS for the ZIV/AMI part. The possibles values are 100.0 (full support for AMI/ZIV part), 50.0 of 0.0 (no support).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PatientPart" type="xs:decimal">
+      <xs:annotation>
+          <xs:documentation>This element contains the percentage supported by POD MI / SPP IS for the patient part. The possibles values are 100.0 (full support for the patient part), 50.0 of 0.0 (no support).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+     </xs:sequence>
+  </xs:complexType>
+</xs:schema>

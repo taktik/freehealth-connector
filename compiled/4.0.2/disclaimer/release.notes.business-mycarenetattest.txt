@@ -1,0 +1,45 @@
+**********************************************************
+* eHealth Business Mycarenet eAttest RELEASE NOTES       *
+**********************************************************
+4.0.2 release (october 2021)                    
+ . change           Minor refactorings. Source diff:
+                           M	mycarenetattest/src/main/java/be/ehealth/businessconnector/mycarenet/attest/builders/impl/RequestObjectBuilderImpl.java
+    
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+                       
+3.17.1 release (april 2019)
+ . improvement         Make Mycarenet etk key identifier configurable.
+                        - Modified classes:
+                                    mycarenetattest/src/main/java/be/ehealth/businessconnector/mycarenet/attest/security/BusinessContentEncryptor
+
+3.17.0 internal release (april 2019)
+                                    
+3.15.1 release (april 2018)
+ . improvement               Add signature data in response:
+                                - be.ehealth.businessconnector.mycarenet.attest.domain.AttestBuilderResponse                Add signature data
+                                - be.ehealth.businessconnector.mycarenet.attest.builders.impl.ResponseObjectBuilderImpl     Build signature data
+                                - be.ehealth.businessconnector.attest.session.AttestIntegrationTest                         Adapt Java tests
+                                - be.ehealth.businessconnector.attest.session.AttestIntegrationTest.cs                      Adapt .Net tests
+
+3.15.0 release (april 2018)
+ . internal release
+ 
+3.14.1 release (octobre 2017)
+ . improvement        RequestObjectBuilder now returns both the SendAttestationRequest (as before)
+                      and the SendTransactionRequest before encryption. They are wrapped in a AttestBuilderRequest.
+ . improvement        messageProtocoleSchemaVersion of SendTransactionRequest is now set by default to 1.18 through 
+                      the new configuration property: mycarenet.attest.message.protocole.schema.version
+ . improvement        Removed unused sendRequest argument from method AttestBuilderResponse.handleSendResponseType                    
+
+3.14.0 release (september 2017)
+. improvement               Correct typos in be.ehealth.businessconnector.attest.template.properties
+
+3.14.0-beta-0 release (september 2017)
+. improvement               Correct namespace in AttestIntegrationTest.cs
+
+3.13.1 release (july 2017)
+  . Initial release
+  
+3.13.0 internal release (july 2017)

@@ -1,0 +1,8 @@
+**********************************************************
+* eHealth Business MediPrima v2 RELEASE NOTES            *
+**********************************************************
+
+3.18.0 release (october 2019)
+ . initial release
+ .  /!\ For the orgpharmacy target group the following additional saml attribute designator is required for Mediprima Consultation V2 (see configuration file):
+             urn:be:fgov:certified-namespace:ehealth,urn:be:fgov:ehealth:1.0:pharmacy:nihii-number:recognisedpharmacy:nihii11

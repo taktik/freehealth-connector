@@ -1,0 +1,13 @@
+****************************************************************
+* eHealth Business Mycarenet Member Data Commons RELEASE NOTES *
+****************************************************************
+4.0.2 release (october 2021)                    
+ . change           Minor refactorings. Source diff:
+                          M	mycarenetmemberdatacommon/src/main/java/be/ehealth/businessconnector/mycarenet/memberdatacommons/builders/impl/EncryptedRequestObjectBuilderImpl.java
+                          M	mycarenetmemberdatacommon/src/main/java/be/ehealth/businessconnector/mycarenet/memberdatacommons/builders/impl/NotEncryptedRequestObjectBuilderImpl.java
+
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+
+  

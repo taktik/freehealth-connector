@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>be.fgov.ehealth.connector</groupId>
+        <artifactId>connector-technical-master</artifactId>
+        <version>4.0.2</version>
+    </parent>
+
+    <artifactId>connector-technical-core</artifactId>
+    <name>${project.artifactId}</name>
+    <description>Connector Technical Core-Jar (${project.artifactId})</description>
+
+    <packaging>jar</packaging>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack technical core 'resources'</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>connector-helpers-testresources</artifactId>
+                                    <version>${version.helpers}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <excludes>**/META-INF/**,**/*.etk</excludes>
+                            <outputDirectory>target/generated-test-resources</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>buildDll</id>
+                        <phase>prepare-package</phase>
+                    </execution>
+                    <execution>
+                        <id>mergeDLL</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <property name="maven.target.dll.classpath" value="${target.dll.classpath}"/>
+                                <property name="maven.compileclasspath" refid="maven.compile.classpath"/>
+                                <property name="maven.runtimeclasspath" refid="maven.runtime.classpath"/>
+                                <property name="maven.pluginclasspath" refid="maven.plugin.classpath"/>
+                                <property name="maven.testclasspath" refid="maven.test.classpath"/>
+                                <property name="maven.projectbasedir" value="${basedir}"/>
+                                <property name="maven.artifactId" value="${project.artifactId}"/>
+                                <property name="maven.version" value="${project.version}"/>
+                                <property name="maven.packaging" value="${project.packaging}"/>
+                                <property name="maven.skip.ikvm" value="${maven.skip.ikvm}"/>
+
+                                <property name="maven.version.major" value="${parsedVersion.majorVersion}"/>
+                                <property name="maven.version.minor" value="${parsedVersion.minorVersion}"/>
+                                <property name="maven.version.patch" value="${parsedVersion.incrementalVersion}"/>
+
+                                <ant antfile="${basedir}/target/build/build-mergedll.xml">
+                                    <target name="mergeDLL"/>
+                                </ant>
+
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>buildCSPROJ</id>
+                        <phase>disable</phase>
+                    </execution>
+
+
+                    <execution>
+                        <id>unpack PKCS11</id>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <unzip src="target/ikvm/nunit/Pkcs11.zip" dest="target/generated-net-sources" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/dllclasspath</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>lib-dll</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>deleting unwanted dll episode files</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>${project.build.directory}/dllclasspath</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                    <includes>
+                                        <include>connector-technical*</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>connector-technical-smartcard*</exclude>
+                                    </excludes>
+                                </fileset>
+                            </filesets>
+                            <verbose>true</verbose>
+                        </configuration>
+                    </execution>
+                </executions>
+
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-technical-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-technical-jca</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-technical-signature</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-technical-bootstrap</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-technical-ra</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>connector-technical-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>no-dotnet</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>buildDll</id>
+                                <phase>disabled</phase>
+                            </execution>
+                            <execution>
+                                <id>buildCSPROJ</id>
+                                <phase>disabled</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>make-zip</id>
+                                <phase>disabled</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
