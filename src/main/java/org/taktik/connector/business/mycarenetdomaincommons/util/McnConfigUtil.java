@@ -36,6 +36,9 @@ public final class McnConfigUtil {
       String userName = hcpQuality != null ? configValidator.getProperty(userNameKey) : null;
       String password = hcpQuality != null ? configValidator.getProperty(passwordKey) : null;
 
+      LOG.info("retrievePackageInfo retrieving info using keys: " + userName + " " + password);
+
+
       return new McnPackageInfo(userName.trim(), password.trim(), "rosa");
    }
 }
