@@ -385,11 +385,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         val config = KmehrPrescriptionConfig().apply {
             prescription.apply {
                 inami = hcp.nihii!!.replace("[^0-9]".toRegex(), "")
-                var tempLang = lang
-                if (lang.isNullOrBlank()) {
-                    tempLang = "fr"
-                }
-                language = tempLang
+                language = lang.takeIf { it!!.isNotBlank() } ?: "fr"
                 substanceDb = "LOCALDB"
             }
             header.apply {
