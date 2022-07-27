@@ -412,6 +412,33 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
+            "dietician" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:professional:dietician:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:nihii:dietician:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:givenname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:surname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:fpsph:dietician:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
+            )
             else -> throw IllegalArgumentException("unsupported quality")
         } + extraDesignators.map { SAMLAttributeDesignator(it.second, it.first) }
 
