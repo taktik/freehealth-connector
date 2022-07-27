@@ -78,7 +78,8 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             vendorEmail = prescription.vendorEmail,
             vendorPhone = prescription.vendorPhone,
             vision = prescription.vision,
-            expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)}
+            expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)},
+            lang = prescription.lang
         )
 
     @Suppress("DuplicatedCode")
@@ -114,7 +115,8 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             vendorEmail = prescription.vendorEmail,
             vendorPhone = prescription.vendorPhone,
             vision = prescription.vision,
-            expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)}
+            expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)},
+            lang = prescription.lang
         )
 
     @GetMapping("/patient", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
