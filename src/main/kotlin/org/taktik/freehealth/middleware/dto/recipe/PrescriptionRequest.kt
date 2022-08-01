@@ -41,5 +41,6 @@ class PrescriptionRequest(
     val packageVersion: String? = null,
     val vendorEmail: String? = null,
     val vendorPhone: String? = null,
-    val vision: String? = null
+    val vision: String? = null,
+    val lang: String? = null
 )

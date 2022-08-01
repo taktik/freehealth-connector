@@ -340,7 +340,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) authorNihii: String?,
         @RequestParam(required = false) authorSsin: String?,
         @RequestParam(required = false) isGlobal: Boolean?,
-        @RequestParam(required = false) breakTheGlassReason: String?
+        @RequestParam(required = false) breakTheGlassReason: String?,
+        @RequestParam(required = false) transactionTypes: List<String>?
     ): List<TransactionSummaryDto> {
         return hubService.getTransactionsList(
             endpoint = endpoint,
@@ -359,7 +360,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
             authorNihii = authorNihii,
             authorSsin = authorSsin,
             isGlobal = isGlobal ?: false,
-            breakTheGlassReason = breakTheGlassReason
+            breakTheGlassReason = breakTheGlassReason,
+            transactionTypes = transactionTypes
         )
     }
 
