@@ -65,7 +65,8 @@ interface RecipeV4Service {
         vendorEmail: String? = null,
         vendorPhone: String? = null,
         vision: String? = null,
-        expirationDate: LocalDateTime? = null
+        expirationDate: LocalDateTime? = null,
+        lang: String?
     ): Prescription
 
     fun listOpenPrescriptions(

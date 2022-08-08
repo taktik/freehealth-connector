@@ -37,9 +37,6 @@ import org.taktik.freehealth.middleware.domain.memberdata.MemberDataList
 import org.taktik.freehealth.middleware.dto.memberdata.FacetDto
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataResponse
 import org.taktik.freehealth.middleware.dto.memberdata.MemberDataBatchRequestDto
-import org.taktik.freehealth.middleware.dto.memberdata.MemberDataListDto
-import org.taktik.freehealth.middleware.dto.memberdata.MemberDataResponseDto
-import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.icure.cin.saml.extensions.Facet
 import java.time.Instant
@@ -195,6 +192,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
         @RequestParam(required = false) hcpQuality: String?,
+        @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) endDate: Long?,
         @RequestParam(required = false) hospitalized: Boolean?,
@@ -208,6 +206,7 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
             hcpQuality = hcpQuality ?: "medicalhouse",
             hcpNihii = hcpNihii,
             hcpName = hcpName,
+            hcpSsin = hcpSsin,
             startDate = startDate,
             endDate = endDate?.let { Instant.ofEpochMilli(it) } ?: ZonedDateTime.ofInstant(startDate, ZoneId.of(mcnTimezone)).truncatedTo(ChronoUnit.DAYS).plusDays(1).toInstant(),
             passPhrase = passPhrase,
@@ -224,12 +223,16 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
+        @RequestParam(required = false) hcpQuality: String?,
+        @RequestParam(required = false) hcpSsin: String?,
         @RequestParam messageNames: List<String>?) : MemberDataList? {
             return memberDataService.getMemberDataMessages(
                 keystoreId = keystoreId,
                 tokenId = tokenId,
                 passPhrase = passPhrase,
+                hcpQuality = hcpQuality,
                 hcpNihii = hcpNihii,
+                hcpSsin = hcpSsin,
                 hcpName = hcpName,
                 messageNames = messageNames)
         }
@@ -241,14 +244,19 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
+        @RequestParam(required = false) hcpQuality: String?,
+        @RequestParam(required = false) hcpSsin: String?,
         @RequestBody mdaMessagesReference: List<String>) : Boolean?{
         return memberDataService.confirmMemberDataMessages(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
+            hcpQuality = hcpQuality,
             hcpNihii = hcpNihii,
             hcpName = hcpName,
-            mdaMessagesReference = mdaMessagesReference)
+            hcpSsin = hcpSsin,
+            mdaMessagesReference = mdaMessagesReference
+        )
         }
 
 
@@ -259,14 +267,19 @@ class MemberDataController(val memberDataService: MemberDataService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
+        @RequestParam(required = false) hcpQuality: String?,
+        @RequestParam(required = false) hcpSsin: String?,
         @RequestBody mdaAcksHashes: List<String>): Boolean?{
         return memberDataService.confirmMemberDataAcks(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
+            hcpQuality = hcpQuality,
             hcpNihii = hcpNihii,
             hcpName = hcpName,
-            mdaAcksHashes = mdaAcksHashes)
+            hcpSsin = hcpSsin,
+            mdaAcksHashes = mdaAcksHashes
+        )
     }
 
 }
