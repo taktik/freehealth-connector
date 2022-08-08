@@ -32,7 +32,7 @@ public class UserAgentHandler extends AbstractSOAPHandler {
                mimeHeaders.removeHeader("User-Agent");
             }
 
-            String value = this.config.getProperty("org.taktik.connector.technical.handler.user-agent.value", "Ehealth Technical") + " (" + applicationProps.getProperty("application.version", "unknown") + ")";
+            String value = this.config.getProperty("org.taktik.connector.technical.handler.user-agent.value", "Ehealth Technical");
             LOG.debug("Adding MIME header [User-Agent] with value [" + value + "]");
             mimeHeaders.addHeader("User-Agent", value);
          }
