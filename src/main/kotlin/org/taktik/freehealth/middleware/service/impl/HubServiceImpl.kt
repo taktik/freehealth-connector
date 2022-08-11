@@ -290,6 +290,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         patientEidCardNumber: String?,
         patientIsiCardNumber: String?,
         hubPackageId: String?,
+        therLinkType: String?,
         from: Long?,
         to: Long?
     ): PutTherapeuticLinkResponse {
@@ -308,7 +309,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                         cd = CDTHERAPEUTICLINK().apply {
                             s = CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE
                             sv = "1.0"
-                            value = "gpconsultation"
+                            therLinkType?.let{value = therLinkType}?:run{value = "gpconsultation"}
                         }
                         hcparty = HCPartyIdType().apply {
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  hcpNihii })
@@ -349,6 +350,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         hcpSsin: String,
         hcpZip: String,
         patientSsin: String,
+        therLinkType: String?,
         patientEidCardNumber: String?,
         patientIsiCardNumber: String?,
         hubPackageId: String?
@@ -369,7 +371,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                     cd = CDTHERAPEUTICLINK().apply {
                         s = CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE
                         sv = "1.0"
-                        value = "gpconsultation"
+                        therLinkType?.let{value = therLinkType}?:run{value = "gpconsultation"}
                     }
                     hcparty = HCPartyIdType().apply {
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  hcpNihii })

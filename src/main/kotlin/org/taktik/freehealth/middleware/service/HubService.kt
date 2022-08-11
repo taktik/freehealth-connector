@@ -123,6 +123,7 @@ interface HubService {
         patientEidCardNumber: String?,
         patientIsiCardNumber: String?,
         hubPackageId: String?,
+        therLinkType: String?,
         from: Long?,
         to: Long?
     ): PutTherapeuticLinkResponse
@@ -343,6 +344,7 @@ interface HubService {
         hcpSsin: String,
         hcpZip: String,
         patientSsin: String,
+        therLinkType: String?,
         patientEidCardNumber: String?,
         patientIsiCardNumber: String?,
         hubPackageId: String?): RevokeTherapeuticLinkResponse
