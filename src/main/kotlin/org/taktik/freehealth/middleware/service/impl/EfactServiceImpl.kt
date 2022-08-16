@@ -470,8 +470,8 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             `package` = PackageType().apply {
                 name = ValueRefString().apply { value = config.getProperty("genericasync.invoicing.package.name") }
                 license = LicenseType().apply {
-                    this.username = principal?.mcnLicense ?: config.getProperty("mycarenet.license.username")
-                    this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
+                    this.username = principal?.mcnLicense ?: config.getProperty("mycarenet.licence." + quality + ".username")
+                    this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.licence." + quality + ".password")
                 }
             }
             careProvider = CareProviderType().apply {
