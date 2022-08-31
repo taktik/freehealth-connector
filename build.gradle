@@ -25,7 +25,7 @@ buildscript {
 		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
 		classpath('com.taktik.gradle:gradle-plugin-docker-java:1.2.0')
-		classpath('com.taktik.gradle:gradle-plugin-git-version:2.0.0')
+		classpath('com.taktik.gradle:gradle-plugin-git-version:2.0.1')
 		classpath('com.github.ben-manes:gradle-versions-plugin:0.17.0') // version 0.18.0 is incompatible with Spring Boot (see https://github.com/spring-gradle-plugins/spring-build-conventions/issues/44)
 	}
 }
@@ -50,8 +50,33 @@ targetCompatibility = 1.8
 compileKotlin {
 	kotlinOptions.jvmTarget = "1.8"
 }
+
 compileTestKotlin {
 	kotlinOptions.jvmTarget = "1.8"
+}
+
+bootJar {
+	manifest {
+		attributes(
+				'Built-By'       : System.getProperties()["user.name"],
+				'Build-Revision'  : gitVersion,
+				'Created-By'      : "Gradle ${gradle.gradleVersion}",
+				'Build-Jdk'       : "${System.getProperties()["java.version"]} (${System.getProperties()["java.vendor"]} ${System.getProperties()["java.vm.version"]})",
+				'Build-OS'        : "${System.getProperties()["os.name"]} ${System.getProperties()["os.arch"]} ${System.getProperties()["os.version"]}"
+		)
+	}
+}
+
+jar {
+	manifest {
+		attributes(
+				'Built-By'       : System.getProperties()["user.name"],
+				'Build-Revision'  : gitVersion,
+				'Created-By'      : "Gradle ${gradle.gradleVersion}",
+				'Build-Jdk'       : "${System.getProperties()["java.version"]} (${System.getProperties()["java.vendor"]} ${System.getProperties()["java.vm.version"]})",
+				'Build-OS'        : "${System.getProperties()["os.name"]} ${System.getProperties()["os.arch"]} ${System.getProperties()["os.version"]}"
+		)
+	}
 }
 
 repositories {

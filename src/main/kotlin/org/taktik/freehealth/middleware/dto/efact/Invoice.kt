@@ -40,4 +40,8 @@ class Invoice {
 
     var internshipNihii: String? = null
     var gnotionNihii: String? = null
+
+    var admissionDate: Long? = null //yyyyMMdd
+    var locationNihii: String? = null
+    var locationService: Int? = null
 }

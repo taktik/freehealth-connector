@@ -1,191 +1,64 @@
 Manifest-Version: 1.0
-Implementation-Title: 00. schematron-core
-Implementation-Version: 1.7.1
+Implementation-Title: Connector Business Mycarenetmedadmin
+Maven-Artifact-Id: connector-business-mycarenetmedadmin
+Implementation-Version: 4.0.2
 Archiver-Version: Plexus Archiver
-Built-By: sysjdss
+Built-By: smals-jdss
+Build-Time: 2021-10-05T09:42:01Z
 CMDB-Catalog-Part: 
-Maven-Artifact-Id: schematron-core
-Compile-Jdk: 1.6
-Build-Time: 2020-09-07 07:46:30
-Build-Jdk: 1.7.0_40
-Created-By: Apache Maven 3.1.1
+Created-By: Apache Maven 3.2.5
+Build-Jdk: 1.8.0_101
 Specification-Version: 1.0.0
-Maven-Group-Id: be.fgov.ehealth.schematron
+Maven-Group-Id: be.fgov.ehealth.connector
 
-Name: be/fgov/ehealth/schematron/utils/XmlUtils.class
-SHA-256-Digest: fmytDtPxa8wpTE8ioUhxvUpiZTBPiBDC0s3A3WyI8DY=
+Name: be/ehealth/businessconnector/medadmin/domain/RejectXmlProcessedG
+ etResponse.class
+SHA-256-Digest: 9NQFrBaQtpGtomAe8Cj6T9smOfNO6h9sETPJb66zHKY=
 
-Name: be/fgov/ehealth/schematron/utils/PhysicalLocation.class
-SHA-256-Digest: CPTHt4GPMBXTL/Pj+37P/Icn27X1IbXWGtZsqAlHz0I=
+Name: disclaimer/release.notes.business-mycarenetmedadmin.txt
+SHA-256-Digest: BkkYyHR2k3AcRDgChCaMyFJQqf8n9I2LMcYTBKfwtY0=
 
-Name: skeleton1-6_XT.xsl
-SHA-256-Digest: f8GRRBPjg9NR0lnyMbx2lVtUX5KYhmV+jy8tvxbvpMg=
+Name: be/ehealth/businessconnector/medadmin/session/impl/MedadminServi
+ ceImpl.class
+SHA-256-Digest: YSwzLhY3TxNi95j7GpoHhQEmXv+CInhkZfMlBC/d4Bw=
 
-Name: iso_schematron_message_xslt2.xsl
-SHA-256-Digest: NkA6IT47p1wH8UgH8lxalwU+nO/BW6M3oxTeahVnZdA=
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-myca
+ renetmedadmin/pom.properties
+SHA-256-Digest: ozN+NSXQUaU+WzMm2pWVe+v+oEMH1cDSEj+T97UCQdE=
 
-Name: iso_schematron_message.xsl
-SHA-256-Digest: NQal4z3EuZ/5QVoMFbJqma2SKg4+hzm/Db283+0l0kU=
+Name: be/ehealth/businessconnector/medadmin/session/MedAdminService.cl
+ ass
+SHA-256-Digest: 8p+t9gvLyEp5J3TR4YogF56FxHEhgLjE9eY6IOrKx3g=
 
-Name: iso_schematron_skeleton_for_saxon.xsl
-SHA-256-Digest: KufaFAoVvGYwMnwTcf8JVwECm2bVZTl4vPGbfYKVYww=
+Name: be/ehealth/businessconnector/medadmin/domain/M4ACnfXmlProcessedG
+ etResponse.class
+SHA-256-Digest: jEU5khxh9x98OsznbWkPHer1VBkenAQiQ6Y8Lpic9JI=
 
-Name: be/fgov/ehealth/schematron/utils/LogicalPhysicalMap.class
-SHA-256-Digest: EkJTilVVQisElCUidR8uXNaWbg1sgUNsHmwwPWWJ/1s=
+Name: be/ehealth/businessconnector/medadmin/domain/M4ACnfXmlProcessedM
+ sgResponse.class
+SHA-256-Digest: xuvxZxMddJRr0tdihCw84kSZnzRcgv1mhHoQcE1Llu4=
 
-Name: META-INF/maven/be.fgov.ehealth.schematron/schematron-core/pom.pr
- operties
-SHA-256-Digest: cAO3iLq3TpuwpsBwVUPUmFixXKafo/DHCWgKbdEjvIc=
+Name: be/ehealth/businessconnector/medadmin/domain/M4AXmlProcessedGetR
+ esponse.class
+SHA-256-Digest: hw/pZ2clZbkBXngXjCuaP9EEfXfluRSZnZd04Ab1nA8=
 
-Name: be/fgov/ehealth/schematron/utils/XSLTURIFinder.class
-SHA-256-Digest: 6BbLXCWZAiolP3wAmBPye16oDGaiFcWSNsp6AtApBsA=
+Name: be/ehealth/businessconnector/medadmin/domain/RejectXmlProcessedM
+ sgResponse.class
+SHA-256-Digest: 3ulTNgkG2U+Y+4eeAvYrmD1c1RhPcFusFtlS6qga0oU=
 
-Name: sch-messages-nl.xhtml
-SHA-256-Digest: q7vDc+ptQMFdR0GxGWr8DmEc1OeO77B1pO/6E0wFPGg=
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-myca
+ renetmedadmin/pom.xml
+SHA-256-Digest: GRsvGYpmC0Rs0Qj2S6iJuRBgltDxA25CmrCkwhfYCr8=
 
-Name: be/fgov/ehealth/schematron/SchematronSession.class
-SHA-256-Digest: HzluMfixQEMThVe47Rh8uKG6gyUlHC5BhoJ/2xwFgAw=
+Name: be/ehealth/businessconnector/medadmin/domain/M4AXmlProcessedMsgR
+ esponse.class
+SHA-256-Digest: vdUcXVfCrk9FRV4VHzg8aa0gaQcLJrn1FCQcVw8DVks=
 
-Name: iso_svrl_1.6.xsl
-SHA-256-Digest: 1BqeUvvZDKp9u9Pntx+4vn4r+hHwRPk687q+14ZS1js=
+Name: be/ehealth/businessconnector/medadmin/session/impl/MedadminServi
+ ceImplementationFactory.class
+SHA-256-Digest: 3OQmn7I5ysqmGozLE4j6UzDpozXZ/f2cl+aoJ7IE4ts=
 
-Name: ExtractSchFromXSD-2.xsl
-SHA-256-Digest: G8/ecNtKNSc6zo6vza4pHEW5ZsExrX3Z/cTEYu7cLD0=
-
-Name: be/fgov/ehealth/schematron/validator/Validator.class
-SHA-256-Digest: ExlR1iFAVpa1rQpx3nuUjfAyeHePnzx5pihy+s+N6YU=
-
-Name: be/fgov/ehealth/schematron/validator/ValidatorFactory.class
-SHA-256-Digest: ctGT8dsiHrMnUoRT10pL/YxECLWFMn+JRVyPEQFn/+k=
-
-Name: sch-messages-en.xhtml
-SHA-256-Digest: 8CbIrRzidAZmyYxPkah0C+KER32/hh5qtvuhi1JQUO4=
-
-Name: META-INF/maven/be.fgov.ehealth.schematron/schematron-core/pom.xm
- l
-SHA-256-Digest: Gs+18PXWqcXa24s+C7JIbDPOk+JLNjJUvHQxmflH9DE=
-
-Name: sch_to_xml.xslt
-SHA-256-Digest: kQAO8HVnZZ+j5kH3Km1lyO/x/PI2oBxhpS/UzX/yNis=
-
-Name: be/fgov/ehealth/schematron/validator/impl/ValidatorImpl.class
-SHA-256-Digest: n9s55d3rR7Qu5MEvaKsSE53JOV9dKPOvlsw0N+w11PY=
-
-Name: META-INF/sun-jaxb.episode
-SHA-256-Digest: /ZoSwaiT7SuC4SHTGuU7KI8Alrg0bnPH9hFx4BOgphU=
-
-Name: ExtractSchFromRNG-2.xsl
-SHA-256-Digest: aSJKKyor1WY3yrw/WGmsgIL+UWKggU+5CuHbIH8HcFs=
-
-Name: be/fgov/ehealth/schematron/utils/EnrichmentFilter.class
-SHA-256-Digest: xouCeMZMXUKZxzKd5bHzuG1EpWxpLsVrlsW5vJc9tlE=
-
-Name: iso_schematron_skeleton.xsl
-SHA-256-Digest: BJ38c2REBwsRZYocZ1L4TFrIxWDRJONvpXMauItci7A=
-
-Name: org/oclc/purl/dsdl/svrl/Ns.class
-SHA-256-Digest: jPJ0pwb2xUEQFmkl3Pr7xe9EqUAkbwGCD7GXGITTpfg=
-
-Name: be/fgov/ehealth/schematron/utils/SVRLXMLWriter.class
-SHA-256-Digest: mn1EACzSVdgTw6XKhHrSPqTd+YZ2CPtOjeQvj1eVVrY=
-
-Name: org/oclc/purl/dsdl/svrl/SuccessfulReport.class
-SHA-256-Digest: 8miI8NiLatuf9aCyF/cz5/A7acnFyo4xboZEH922B+E=
-
-Name: be/fgov/ehealth/schematron/utils/NamespacePrefixMappings.class
-SHA-256-Digest: TqcrkhzMMgjlvGs+T786gRWy4iI4swuogBWMG2pv4GM=
-
-Name: be/fgov/ehealth/schematron/utils/TreeContext.class
-SHA-256-Digest: rjm7Bcm4euCHUqXcK7FJn72sToZWVHi/OEkBrogga/c=
-
-Name: be/fgov/ehealth/schematron/exception/InitialisationException.cla
- ss
-SHA-256-Digest: X7pKWeFoBFO/iggY0aElWdSiXGLxFyC2g3D3boc5WXs=
-
-Name: iso_svrl_for_xslt2.xsl
-SHA-256-Digest: 7N831aILNktXxDTlAIar5YLbUrhjU9Uojypv5Ng1vCk=
-
-Name: org/oclc/purl/dsdl/svrl/SchematronOutput.class
-SHA-256-Digest: Ol5mAUBAs3svxmxAdRwJwScC8/wuep/Qv4u07TeVmNU=
-
-Name: schematron-message1-6_XT.xsl
-SHA-256-Digest: C4jds1ayrPJGdllyI7cJ5XKAKWc9+xl3uINTKYuAEnA=
-
-Name: org/oclc/purl/dsdl/svrl/ObjectFactory.class
-SHA-256-Digest: 68KIraX8M3PJiqS0UMnp5T601c4bFZkboQ2uGym15e0=
-
-Name: sch-messages-de.xhtml
-SHA-256-Digest: 3jMZ0vLulyJX4iJ0gDoFP2weK9Eku9avClumkwZzIcU=
-
-Name: sch-messages-fr.xhtml
-SHA-256-Digest: AaF9F7BFZKjDwXSBGGJvECW701DqJ2Jul6lK+OaAOXg=
-
-Name: be/fgov/ehealth/schematron/utils/Interim.class
-SHA-256-Digest: BAGN0MWEcQp6UkuzvxqlEq6GefrMyPAJiZ5yM3G8d8k=
-
-Name: be/fgov/ehealth/schematron/utils/SVRLHandler.class
-SHA-256-Digest: c0W5ztxXPmO0bAFgXsHs2CflHgGkD4btQ4+1ybyJlAE=
-
-Name: org/oclc/purl/dsdl/svrl/NsPrefixInAttributeValues.class
-SHA-256-Digest: fgvO+/bXQiwcT3aIUujAmgYaNZSB31A2sJpKBKF7gYc=
-
-Name: be/fgov/ehealth/schematron/domain/SchematronResult.class
-SHA-256-Digest: sDNLbcl//1GPI8x8hkgu+exy0VvN2w4nj+fkEjFAzpM=
-
-Name: org/oclc/purl/dsdl/svrl/FiredRule.class
-SHA-256-Digest: zctDuNOYsj4+eyj04ZJ538sdL34aWikeNN1nHTaSRas=
-
-Name: bindings/jaxb/svrl-bindings.xjb
-SHA-256-Digest: r+Tpvnhtpb1GW/CT+qN0ZZyc8a+HDoLWc+hErRMoIzU=
-
-Name: org/oclc/purl/dsdl/svrl/ActivePattern.class
-SHA-256-Digest: T+pxq6Yqo8Cs0synSGfsI4PuhRBiItNAzetHD+zYl2k=
-
-Name: be/fgov/ehealth/schematron/utils/LocationAnalyzer.class
-SHA-256-Digest: z3dKbv28WOgpZUtiLyGRaXIlej21qO1M5rZ5Dc0kxJc=
-
-Name: iso_svrl_for_xslt1.xsl
-SHA-256-Digest: 8h/qJd++5LFI2bVf1fOq7JLTwnolXK+wX//RepTnE78=
-
-Name: be/fgov/ehealth/schematron/SchematronSessionFactory.class
-SHA-256-Digest: YxhTVDd0HiFDNAbVcM2zH5cFaJh3I7NEHH3lb1SYX3I=
-
-Name: be/fgov/ehealth/schematron/utils/SvrlHarvestHandler.class
-SHA-256-Digest: suk9QZf0IWm5SwSVBW2zo7wnHFPiU6wbsh6vnFq3vn4=
-
-Name: org/oclc/purl/dsdl/svrl/FailedAssert.class
-SHA-256-Digest: n81w+mr9dHdyg6bOuDEF+gYJlgCsxAzu42lqUWQYMIM=
-
-Name: org/oclc/purl/dsdl/svrl/package-info.class
-SHA-256-Digest: wSIpZanwYLKZVWFcsgOdGPAaL6bQo1fbB73UIDLnUxM=
-
-Name: svrl.xsd
-SHA-256-Digest: 3CFaxTjWheEA8KIYRalf1QhZ1R/lXwerzPbNQ3DqWrY=
-
-Name: iso_dsdl_include.xsl
-SHA-256-Digest: v+uXToIa6l++PCBHJSD6NthALZ9i5ej/nYRqOt/V00Q=
-
-Name: be/fgov/ehealth/schematron/domain/SchematronConfig.class
-SHA-256-Digest: AfKupDygooTrwGNWlk6vlksqAyMmD3iUmrI18An/uEw=
-
-Name: org/oclc/purl/dsdl/svrl/DiagnosticReference.class
-SHA-256-Digest: HMfuzT+At4pTdmubtibroEof4UStd9nc4eTVFvpVH7g=
-
-Name: be/fgov/ehealth/schematron/utils/Utils.class
-SHA-256-Digest: qen6tb7mfZRKIEz8B3d6rNnkUE+agdzyl2OtRNy8Jlk=
-
-Name: sch-messages-cs.xhtml
-SHA-256-Digest: pmga1pBudCVTQG3GVB9QkQveh0pFylKyU6qPjzIkZY0=
-
-Name: iso_schematron_skeleton_for_xslt1.xsl
-SHA-256-Digest: UQFCALMs+E1y5pkNUEhiy7P/ZqZAZX+IGUH+L0t3KBM=
-
-Name: iso_abstract_expand.xsl
-SHA-256-Digest: ygNmg90IJhgpVpNnojX3Nb98W8Co5eR/jWDfNr952+w=
-
-Name: be/fgov/ehealth/schematron/impl/SchematronSessionImpl.class
-SHA-256-Digest: SwlOF7RZJSpLeyxNZgnLpl6mcfyEHMSZSQD0bg4nvcA=
-
-Name: be/fgov/ehealth/schematron/utils/ValidatorErrorListener.class
-SHA-256-Digest: UnLAwjGCc2kUsXOIWfPObxM0iJB63vtPnqzLzy2zMnQ=
+Name: be/ehealth/businessconnector/medadmin/session/MedadminSessionSer
+ viceFactory.class
+SHA-256-Digest: AkB48gYmzxqQxwXtvHu6xYVWxed/LEg27OuNJyYuC04=
 

@@ -23,6 +23,7 @@ package org.taktik.freehealth.middleware
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.scheduling.annotation.EnableScheduling
+import org.taktik.freehealth.application.utils.JarUtils
 import java.io.File
 
 @SpringBootApplication
@@ -30,7 +31,13 @@ import java.io.File
 class MiddlewareApplication
 
 fun main(args: Array<String>) {
-    //Extract important files
+    //Extract important files and set version property
+    val manifest = JarUtils.getManifest()
+    manifest?.let {
+        val version = manifest.mainAttributes.getValue("Build-revision")
+        version?.trim { it <= ' ' } ?: ""
+    }?.let { System.setProperty("fhc.version", it) }
+
     val root = File("/opt/ehealth").apply { mkdirs() }
     listOf("acpt", "prod").forEach { dir ->
         val sdir = File(root, dir).apply { mkdirs() }
