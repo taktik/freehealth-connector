@@ -2,8 +2,8 @@
 <!-- 
 Property : eHealth
 Author   : eh068
-Date     : 2022-05-09
-Version 1.5
+Date     : 2022-08-29
+Version 1.8
 
 -->
 <iso:schema 	xmlns="http://purl.oclc.org/dsdl/schematron"
@@ -288,9 +288,6 @@ Version 1.5
 			</iso:assert>
 		</iso:rule>
 		<iso:rule context="kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]//kmehr:item[kmehr:cd[@S='CD-ITEM' and .='incapacity']]/kmehr:content[kmehr:incapacity/kmehr:incapacityreason/kmehr:cd[@S='CD-INCAPACITYREASON' and .='pregnancy']]">
-			<iso:assert test="../../count(kmehr:item/kmehr:cd[@S='CD-ITEM' and .='diagnosis']) &gt; 0" id="Incapacity" role="ERROR" flag="structure"  >
-				Incapacity reason "pregnancy" is only allowed if a diagnosis is present. (Number: <iso:value-of select="../../count(kmehr:item/kmehr:cd[@S='CD-ITEM' and .='diagnosis'])"/>)
-			</iso:assert>
 			<iso:assert test="not(kmehr:incapacity/kmehr:cd[@S='CD-INCAPACITY' and .='school' or .='swim' or .='schoolsports' or .='heavyphysicalactivity'])" id="Incapacity" role="ERROR" flag="structure"  >
 				The incapacity reason "pregnancy" is not allowed for student/pupil.
 			</iso:assert>
@@ -400,6 +397,9 @@ Version 1.5
 			<iso:assert test="../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encountertype']]/kmehr:content/kmehr:cd[@S='CD-ENCOUNTER' and .='hospital']" id="Discharge datetime" role="ERROR" flag="structure"  >
 				Discharge datetime is allowed only if the value of CD-ENCOUNTER is "hospital". (Value: <iso:value-of select="../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encountertype']]/kmehr:content/kmehr:cd[@S='CD-ENCOUNTER']"/>)
 			</iso:assert>
+			<iso:assert test="kmehr:content/kmehr:date ge (../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encounterdatetime']]/kmehr:content/kmehr:date)[1]" id="Discharge datetime" role="ERROR" flag="structure"  >
+				Discharge datetime must be bigger or equal to encounter datetime.
+			</iso:assert>
 		</iso:rule>
 	</iso:pattern>
 
@@ -428,9 +428,6 @@ Version 1.5
 	<iso:pattern id="expectedbirthgivingdate.structure.checks">
 		<iso:title>Expected birth giving date structure checks</iso:title>
 		<iso:rule context="kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]//kmehr:item[kmehr:cd[@S='LOCAL' and @SL='MMEDIATT-ITEM' and .='expectedbirthgivingdate']]">
-			<iso:assert test="count(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']]) &gt; 0" id="Expected birth giving date" role="ERROR" flag="structure"  >
-				Expected birth giving date is allowed only if a diagnosis is present. (Number: <iso:value-of select="count(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']])"/>)
-			</iso:assert>
 			<iso:assert test="count(kmehr:content[kmehr:date]) = 1" id="Expected birth giving date" role="ERROR" flag="structure"  >
 				Expected birth giving date must contain one (and only one) date content. (Number: <iso:value-of select="count(kmehr:content[kmehr:date])"/>)
 			</iso:assert>
@@ -444,9 +441,6 @@ Version 1.5
 	<iso:pattern id="maternityleave.structure.checks">
 		<iso:title>Maternity leave structure checks</iso:title>
 		<iso:rule context="kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]//kmehr:item[kmehr:cd[@S='LOCAL' and @SL='MMEDIATT-ITEM' and .='maternityleave']]">
-			<iso:assert test="count(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']]) &gt; 0" id="Maternity leave" role="ERROR" flag="structure"  >
-				Maternity leave is allowed only if a diagnosis is present. (Number: <iso:value-of select="count(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']])"/>)
-			</iso:assert>
 			<iso:assert test="kmehr:beginmoment" id="Maternity leave" role="ERROR" flag="structure"  >
 				Maternity leave item must have a "beginmoment".
 			</iso:assert>
