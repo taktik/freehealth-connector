@@ -25,9 +25,13 @@ class UserAgentInterceptorFilter : Filter {
         chain: FilterChain
     ) {
         val req = request as HttpServletRequest
-        req.getHeader(HttpHeaders.USER_AGENT)?.let {
+        (req.getHeader("X-User-Agent") ?: req.getHeader(HttpHeaders.USER_AGENT))?.let {
             userAgent.set(it)
         }
+        (req.getHeader("X-From"))?.let {
+            xFrom.set(it)
+        }
+
         chain.doFilter(request, response)
     } // other methods
 
@@ -35,9 +39,15 @@ class UserAgentInterceptorFilter : Filter {
 
     companion object {
         private val userAgent: ThreadLocal<String> = ThreadLocal()
+        private val xFrom: ThreadLocal<String> = ThreadLocal()
 
         fun getUserAgent(): String? {
             return userAgent.get()
         }
+
+        fun getXfrom(): String? {
+            return xFrom.get()
+        }
+
     }
 }

@@ -38,8 +38,21 @@ public class UserAgentHandler extends AbstractSOAPHandler {
 
             String fromRequest = UserAgentInterceptorFilter.Companion.getUserAgent();
 
-            LOG.debug("Adding MIME header [User-Agent] with value [" + value + "]");
-            mimeHeaders.addHeader("User-Agent", fromRequest != null ? fromRequest + "/" + value : value);
+            String combinedValue = fromRequest != null ? fromRequest + "/" + value : value;
+            LOG.debug("Adding MIME header [User-Agent] with value [" + combinedValue + "]");
+            mimeHeaders.addHeader("User-Agent", combinedValue);
+
+            String fromValue = UserAgentInterceptorFilter.Companion.getXfrom();
+            if (fromValue != null) {
+               String[] froms = mimeHeaders.getHeader("From");
+               if (ArrayUtils.isNotEmpty(froms)) {
+                  LOG.info("Removing MIME header [From] with value [" + StringUtils.join(froms, ",") + "]");
+                  mimeHeaders.removeHeader("From");
+               }
+
+               LOG.debug("Adding MIME header [From] with value [" + fromValue + "]");
+               mimeHeaders.addHeader("User-Agent", fromValue);
+            }
          }
       }
 
