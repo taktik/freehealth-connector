@@ -2,8 +2,8 @@
 <!-- 
 Property : eHealth
 Author   : eh068
-Date     : 2022-08-29
-Version 1.8
+Date     : 2022-09-20
+Version 1.10
 
 -->
 <iso:schema 	xmlns="http://purl.oclc.org/dsdl/schematron"
@@ -127,26 +127,6 @@ Version 1.8
 				Patient must have a usual language.
 			</iso:assert>
 		</iso:rule>
-		<iso:rule context="kmehr:patient/kmehr:birthdate">
-			<iso:assert test="not(//kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]//kmehr:item[kmehr:cd[@S='CD-ITEM' and .='incapacity']]/kmehr:content[kmehr:incapacity/kmehr:cd[@S='CD-INCAPACITY' and .='school' or .='swim' or .='schoolsports' or .='heavyphysicalactivity']])" id="Patient" role="ERROR" flag="structure"  >
-				A birthdate is not allowed for student/pupil.
-			</iso:assert>
-		</iso:rule>
-		<iso:rule context="kmehr:patient/kmehr:address">
-			<iso:assert test="not(//kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]//kmehr:item[kmehr:cd[@S='CD-ITEM' and .='incapacity']]/kmehr:content[kmehr:incapacity/kmehr:cd[@S='CD-INCAPACITY' and .='school' or .='swim' or .='schoolsports' or .='heavyphysicalactivity']])" id="Patient" role="ERROR" flag="structure"  >
-				A careaddress is not allowed for student/pupil.
-			</iso:assert>
-		</iso:rule>
-		<iso:rule context="kmehr:patient/kmehr:telecom">
-			<iso:assert test="count(//kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]/kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']]) &gt; 0" id="Patient" role="ERROR" flag="structure"  >
-				A telecom is only allowed when a diagnosis is present.
-			</iso:assert>
-		</iso:rule>
-		<iso:rule context="kmehr:patient/kmehr:profession">
-			<iso:assert test="count(//kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]/kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']]) &gt; 0" id="Patient" role="ERROR" flag="structure"  >
-				A profession is only allowed when a diagnosis is present.
-			</iso:assert>
-		</iso:rule>
 	</iso:pattern>
 
 	<!-- TRANSACTION -->
@@ -163,11 +143,6 @@ Version 1.8
 			</iso:assert>
 			<iso:assert test="kmehr:cd[@S='CD-TRANSACTION-TYPE' and .='incapacity' or .='incapacityextension' or .='incapacityrelapse']" id="Transaction" role="ERROR" flag="structure" >
 				Transaction type must be one of these: "incapacity", "incapacityextension", "incapacityrelapse". (Actual: <iso:value-of select="kmehr:cd[@S='CD-TRANSACTION-TYPE']"/>)
-			</iso:assert>
-		</iso:rule>
-		<iso:rule context="kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]/kmehr:cd[@S='CD-TRANSACTION-TYPE' and .='incapacityrelapse']">
-			<iso:assert test="not(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='incapacity']]/kmehr:content[kmehr:incapacity/kmehr:cd[@S='CD-INCAPACITY' and .='school' or .='swim' or .='schoolsports' or .='heavyphysicalactivity']])" id="Incapacity" role="ERROR" flag="structure"  >
-				An incapacity relapse is not allowed for student/pupil.
 			</iso:assert>
 		</iso:rule>
 	</iso:pattern>
@@ -283,14 +258,6 @@ Version 1.8
 			<iso:assert test="../count(kmehr:content[kmehr:date]) = 1" id="Incapacity" role="ERROR" flag="structure"  >
 				Incapacity item must contain one (and only one) date content if incapacity reason is "workaccident" or "occupationaldisease". (Number: <iso:value-of select="../count(kmehr:content[kmehr:date])"/>)
 			</iso:assert>
-			<iso:assert test="not(kmehr:incapacity/kmehr:cd[@S='CD-INCAPACITY' and .='school' or .='swim' or .='schoolsports' or .='heavyphysicalactivity'])" id="Incapacity" role="ERROR" flag="structure"  >
-				The incapacity reasons "occupationaldisease" and "workaccident" are not allowed for student/pupil.
-			</iso:assert>
-		</iso:rule>
-		<iso:rule context="kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]//kmehr:item[kmehr:cd[@S='CD-ITEM' and .='incapacity']]/kmehr:content[kmehr:incapacity/kmehr:incapacityreason/kmehr:cd[@S='CD-INCAPACITYREASON' and .='pregnancy']]">
-			<iso:assert test="not(kmehr:incapacity/kmehr:cd[@S='CD-INCAPACITY' and .='school' or .='swim' or .='schoolsports' or .='heavyphysicalactivity'])" id="Incapacity" role="ERROR" flag="structure"  >
-				The incapacity reason "pregnancy" is not allowed for student/pupil.
-			</iso:assert>
 		</iso:rule>
 	</iso:pattern>
 
@@ -300,9 +267,6 @@ Version 1.8
 		<iso:rule context="kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]/kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']]">
 			<iso:assert test="count(kmehr:content[kmehr:cd]) + count(kmehr:content[kmehr:text]) &gt; 0" id="Diagnosis" role="ERROR" flag="structure"  >
 				Diagnosis item must contain at least one (and only one) cd or text content. (Number: <iso:value-of select="count(kmehr:content[kmehr:cd])"/>)
-			</iso:assert>
-			<iso:assert test="not(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='incapacity']]/kmehr:content[kmehr:incapacity/kmehr:cd[@S='CD-INCAPACITY' and .='school' or .='swim' or .='schoolsports' or .='heavyphysicalactivity']])" id="Diagnosis" role="ERROR" flag="structure"  >
-				A diagnosis is not allowed for student/pupil.
 			</iso:assert>
 			<iso:assert test="kmehr:content/kmehr:cd[@S = 'CD-SNOMED']" id="Diagnosis" role="WARNING" flag="structure"  >
 				CD-SNOMED should be used for codified content.
@@ -338,20 +302,12 @@ Version 1.8
 				A "Contact Person" content can contain only element "person". (Element: "<iso:value-of select="local-name()"/>")
 			</iso:assert>
 		</iso:rule>
-		<iso:rule context="kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]//kmehr:item[kmehr:cd[@S='CD-ITEM' and .='contactperson']]/kmehr:content/kmehr:person/kmehr:telecom">
-			<iso:assert test="count(//kmehr:transaction/kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']]) &gt; 0" id="Contact person" role="ERROR" flag="structure"  >
-				A telecom is allowed only if a diagnosis is present. (Number: <iso:value-of select="count(//kmehr:transaction/kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']])"/>)
-			</iso:assert>
-		</iso:rule>
 	</iso:pattern>
 
 	<!-- ENCOUNTERTYPE -->
 	<iso:pattern id="encountertype.structure.checks">
 		<iso:title>Encounter type structure checks</iso:title>
 		<iso:rule context="kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]//kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encountertype']]">
-			<iso:assert test="count(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']]) &gt; 0" id="Encounter type" role="ERROR" flag="structure"  >
-				Encounter type is allowed only if a diagnosis is present. (Number: <iso:value-of select="count(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']])"/>)
-			</iso:assert>
 			<iso:assert test="count(kmehr:content[kmehr:cd[@S='CD-ENCOUNTER']]) = 1" id="Encounter type" role="ERROR" flag="structure"  >
 				Encounter type must contain one (and only one) cd content with codified encounter. (Number: <iso:value-of select="count(kmehr:content[kmehr:cd])"/>)
 			</iso:assert>
@@ -375,9 +331,6 @@ Version 1.8
 			<iso:assert test="count(kmehr:content[kmehr:date]) = 1" id="Encounter datetime" role="ERROR" flag="structure"  >
 				Encounter datetime must contain one (and only one) date content. (Number: <iso:value-of select="count(kmehr:content[kmehr:date])"/>)
 			</iso:assert>
-			<iso:assert test="count(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']]) &gt; 0" id="Encounter datetime" role="ERROR" flag="structure"  >
-				Encounter datetime is allowed only if a diagnosis is present. (Number: <iso:value-of select="count(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']])"/>)
-			</iso:assert>
 			<iso:assert test="../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encountertype']]/kmehr:content/kmehr:cd[@S='CD-ENCOUNTER' and .='hospital']" id="Encounter datetime" role="ERROR" flag="structure"  >
 				Encounter datetime is allowed only if the value of CD-ENCOUNTER is "hospital". (Value: <iso:value-of select="../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encountertype']]/kmehr:content/kmehr:cd[@S='CD-ENCOUNTER']"/>)
 			</iso:assert>
@@ -391,13 +344,10 @@ Version 1.8
 			<iso:assert test="count(kmehr:content[kmehr:date]) = 1" id="Discharge datetime" role="ERROR" flag="structure"  >
 				Discharge datetime must contain one (and only one) datecontent. (Number: <iso:value-of select="count(kmehr:content[kmehr:date])"/>)
 			</iso:assert>
-			<iso:assert test="count(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']]) &gt; 0" id="Discharge datetime" role="ERROR" flag="structure"  >
-				Discharge datetime is allowed only if a diagnosis is present. (Number: <iso:value-of select="count(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']])"/>)
-			</iso:assert>
 			<iso:assert test="../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encountertype']]/kmehr:content/kmehr:cd[@S='CD-ENCOUNTER' and .='hospital']" id="Discharge datetime" role="ERROR" flag="structure"  >
 				Discharge datetime is allowed only if the value of CD-ENCOUNTER is "hospital". (Value: <iso:value-of select="../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encountertype']]/kmehr:content/kmehr:cd[@S='CD-ENCOUNTER']"/>)
 			</iso:assert>
-			<iso:assert test="kmehr:content/kmehr:date ge (../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encounterdatetime']]/kmehr:content/kmehr:date)[1]" id="Discharge datetime" role="ERROR" flag="structure"  >
+			<iso:assert test="kmehr:content/kmehr:date[1] ge (../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encounterdatetime']]/kmehr:content/kmehr:date)[1]" id="Discharge datetime" role="ERROR" flag="structure"  >
 				Discharge datetime must be bigger or equal to encounter datetime.
 			</iso:assert>
 		</iso:rule>
@@ -409,9 +359,6 @@ Version 1.8
 		<iso:rule context="kmehr:transaction[kmehr:cd[@S='CD-TRANSACTION' and .='notification']]//kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encounterlocation']]">
 			<iso:assert test="count(kmehr:content/kmehr:hcparty) = 1" id="Encounter location" role="ERROR" flag="structure"  >
 				Encounter location must have one (and only one) content with "hcparty" element. (Number: <iso:value-of select="count(kmehr:content/kmehr:hcparty)"/>)
-			</iso:assert>
-			<iso:assert test="count(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']]) &gt; 0" id="Encounter location" role="ERROR" flag="structure"  >
-				Encounter location is allowed only if a diagnosis is present. (Number: <iso:value-of select="count(../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='diagnosis']])"/>)
 			</iso:assert>
 			<iso:assert test="../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encountertype']]/kmehr:content/kmehr:cd[@S='CD-ENCOUNTER' and .='hospital']" id="Encounter location" role="ERROR" flag="structure"  >
 				Encounter location is allowed only if the value of CD-ENCOUNTER is "hospital". (Value: <iso:value-of select="../kmehr:item[kmehr:cd[@S='CD-ITEM' and .='encountertype']]/kmehr:content/kmehr:cd[@S='CD-ENCOUNTER']"/>)
