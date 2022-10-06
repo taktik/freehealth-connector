@@ -345,7 +345,6 @@ object KmehrPrescriptionHelperV4 {
                             })
                             compound.substanceProduct?.let { (substanceCode, name) ->
                                 substance = SubstanceType().apply {
-                                    substancename = name
                                     substanceCode?.let {
                                         cd = CDSUBSTANCE().apply {
                                             s = CDSUBSTANCEschemes.fromValue(substanceCode.type)
