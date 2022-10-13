@@ -60,7 +60,6 @@ class RecipeStories {
 
     private var hcp: HealthcareParty = RecipeTestUtils.createHealthcareParty()
     private val patient = RecipeTestUtils.createPatient()
-    private val validator by lazy { KmehrValidator(recipeService) }
 
     init {
         System.setProperty("spring.output.ansi.enabled", "always")
@@ -250,7 +249,7 @@ class RecipeStories {
 
     private fun createPrescription(prescription: PrescriptionExample, notification: String? = null, feedbackRequested: Boolean = false): Prescription {
         val executorId = null
-        val createdPrescription = recipeService.createPrescription(keystoreId!!, tokenId!!, passPhrase!!, "persphysican", nihii!!, prescription.patient, prescription.hcp, feedbackRequested, prescription.medications, recipeService.inferPrescriptionType(prescription.medications, null), notification, executorId, "1.0", prescription.deliveryDate)
+        val createdPrescription = recipeService.createPrescription(keystoreId!!, tokenId!!, passPhrase!!, "persphysican", nihii!!, prescription.patient, prescription.hcp, feedbackRequested, prescription.medications, recipeService.inferPrescriptionType(prescription.medications, null), notification, executorId, "1.0", prescription.deliveryDate, lang = "fr")
         return createdPrescription
     }
 
