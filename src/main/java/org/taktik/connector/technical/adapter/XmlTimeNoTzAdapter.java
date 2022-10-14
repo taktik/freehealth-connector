@@ -12,13 +12,24 @@ import java.text.MessageFormat;
 
 public class XmlTimeNoTzAdapter extends XmlTimeAdapter {
    public static DateTimeZone noTimeZone = DateTimeZone.forOffsetMillis(0);
-   Log log = LogFactory.getLog(XmlTimeNoTzAdapter.class);
+   private final static String regex = "(\\d{2}):(\\d{2}):(\\d{2})\\..+";
+   private static final Log log = LogFactory.getLog(XmlTimeNoTzAdapter.class);
 
    public DateTime unmarshal(String value) throws Exception {
       if (value == null) return null;
-      DateTime dateTime = LocalDateTime.parse(value, ISODateTimeFormat.localTimeParser()).toDateTime(noTimeZone);
-      log.debug(MessageFormat.format("Unmarshal {0} to {1}", value, dateTime));
-      return dateTime;
+      try {
+         DateTime dateTime = LocalDateTime.parse(value, ISODateTimeFormat.localTimeParser()).toDateTime(noTimeZone);
+         log.debug(MessageFormat.format("Unmarshal {0} to {1}", value, dateTime));
+         return dateTime;
+      } catch (Exception var3) {
+         log.warn(MessageFormat.format("Unable to parse time {0}", value));
+
+         if (value.matches(regex)) {
+            return this.unmarshal(value.replaceAll(regex, "$1:$2:$3"));
+         } else {
+            return DateUtils.parseTime(value);
+         }
+      }
    }
 
    public String marshal(DateTime value) throws Exception {
