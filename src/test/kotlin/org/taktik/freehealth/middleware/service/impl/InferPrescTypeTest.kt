@@ -41,7 +41,6 @@ class InferPrescTypeTest {
 
     private lateinit var hcp: HealthcareParty
     private val patient = RecipeTestUtils.createPatient()
-    private val validator by lazy { KmehrValidator(recipeService) }
 
     init {
         System.setProperty("spring.output.ansi.enabled", "always")

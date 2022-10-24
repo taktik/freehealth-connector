@@ -113,7 +113,6 @@ class RecipeServiceImplTest {
 
     private lateinit var hcp: HealthcareParty
     private val patient = RecipeTestUtils.createPatient()
-    private val validator by lazy { KmehrValidator(recipeService) }
 
     init {
         System.setProperty("spring.output.ansi.enabled", "always")
@@ -138,7 +137,7 @@ class RecipeServiceImplTest {
             listOf(medication),
             LocalDateTime.now(), KmehrPrescriptionConfig(), "doctor", LocalDateTime.now().plusDays(60))
 
-	    validator.validatePrescription(kmehrPrescription, listOf(medication))
+	    //validator.validatePrescription(kmehrPrescription, listOf(medication))
     }
 
 	@Test

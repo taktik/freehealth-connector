@@ -733,6 +733,8 @@ class HubTokenServiceImpl(keyDepotService: KeyDepotService) : HubTokenService, C
         JaxbContextFactory.initJaxbContext(PutPatientResponse::class.java)
         JaxbContextFactory.initJaxbContext(PutTherapeuticLinkRequest::class.java)
         JaxbContextFactory.initJaxbContext(PutTherapeuticLinkResponse::class.java)
+        JaxbContextFactory.initJaxbContext(PutTransactionSetRequest::class.java)
+        JaxbContextFactory.initJaxbContext(PutTransactionSetResponse::class.java)
         JaxbContextFactory.initJaxbContext(PutTransactionRequest::class.java)
         JaxbContextFactory.initJaxbContext(PutTransactionResponse::class.java)
         JaxbContextFactory.initJaxbContext(RequestPublicationRequest::class.java)

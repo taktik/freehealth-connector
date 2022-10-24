@@ -68,7 +68,7 @@ class DataAttributeServiceControllerTest : EhealthTest() {
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), DaasResponse::class.java, passPhrase)
 
         assert(daas.statusCodeValue == 200)
-        assert(!daas.body.destinations.find { it -> it["Channel"] == "paper" && it["daas:Id"] == "0820563481" && it["Dataset"] == "a" }.isNullOrEmpty())
+        assert(!daas.body.destinations?.find { it -> it["Channel"] == "paper" && it["daas:Id"] == "0820563481" && it["Dataset"] == "a" }.isNullOrEmpty())
     }
 
     @Test
@@ -88,8 +88,8 @@ class DataAttributeServiceControllerTest : EhealthTest() {
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), DaasResponse::class.java, passPhrase)
 
         assert(daas.statusCodeValue == 200)
-        assert(!daas.body.destinations.find { it -> it["Channel"]!!.contains("ehBox") && it["daas:Id"] == "0820563481" && it["Dataset"] == "a" }.isNullOrEmpty())
-        assert(!daas.body.destinations.find { it -> it["Channel"]!!.contains("ehBox") && it["daas:Id"] == "1990002015" && it["Dataset"] == "a" }.isNullOrEmpty())
+        assert(!daas.body.destinations?.find { it -> it["Channel"]!!.contains("ehBox") && it["daas:Id"] == "0820563481" && it["Dataset"] == "a" }.isNullOrEmpty())
+        assert(!daas.body.destinations?.find { it -> it["Channel"]!!.contains("ehBox") && it["daas:Id"] == "1990002015" && it["Dataset"] == "a" }.isNullOrEmpty())
     }
 
     @Test
@@ -109,7 +109,7 @@ class DataAttributeServiceControllerTest : EhealthTest() {
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), DaasResponse::class.java, passPhrase)
 
         assert(daas.statusCodeValue == 200)
-        assert(!daas.body.destinations.find { it -> it["Channel"] == "paper" && it["daas:Id"] == "0820563481" && it["Dataset"] == "a" }.isNullOrEmpty())
+        assert(!daas.body.destinations?.find { it -> it["Channel"] == "paper" && it["daas:Id"] == "0820563481" && it["Dataset"] == "a" }.isNullOrEmpty())
     }
 
     @Test
@@ -129,8 +129,8 @@ class DataAttributeServiceControllerTest : EhealthTest() {
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), DaasResponse::class.java, passPhrase)
 
         assert(daas.statusCodeValue == 200)
-        assert(!daas.body.destinations.find { it -> it["Channel"] == "paper" && it["daas:Id"] == "0820563481" && it["Dataset"] == "a" }.isNullOrEmpty())
-        assert(!daas.body.destinations.find { it -> it["Channel"]!!.contains("ehBox") && it["daas:Id"] == "1990002015" && it["Dataset"] == "a" }.isNullOrEmpty())
+        assert(!daas.body.destinations?.find { it -> it["Channel"] == "paper" && it["daas:Id"] == "0820563481" && it["Dataset"] == "a" }.isNullOrEmpty())
+        assert(!daas.body.destinations?.find { it -> it["Channel"]!!.contains("ehBox") && it["daas:Id"] == "1990002015" && it["Dataset"] == "a" }.isNullOrEmpty())
     }
 
     @Test
@@ -150,7 +150,7 @@ class DataAttributeServiceControllerTest : EhealthTest() {
             HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), DaasResponse::class.java, passPhrase)
 
         assert(daas.statusCodeValue == 200)
-        assert(!daas.body.destinations.find { it -> it["Channel"] == "paper" && it["daas:Id"] == "0820563481" && it["Dataset"] == "a" }.isNullOrEmpty())
-        assert(!daas.body.destinations.find { it -> it["Channel"]!!.contains("ehBox") && it["daas:Id"] == "0541691352" && it["Dataset"] == "b" }.isNullOrEmpty())
+        assert(!daas.body.destinations?.find { it -> it["Channel"] == "paper" && it["daas:Id"] == "0820563481" && it["Dataset"] == "a" }.isNullOrEmpty())
+        assert(!daas.body.destinations?.find { it -> it["Channel"]!!.contains("ehBox") && it["daas:Id"] == "0541691352" && it["Dataset"] == "b" }.isNullOrEmpty())
     }
 }

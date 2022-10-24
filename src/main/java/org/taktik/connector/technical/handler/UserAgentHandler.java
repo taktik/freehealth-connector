@@ -1,5 +1,6 @@
 package org.taktik.connector.technical.handler;
 
+import org.springframework.web.servlet.handler.UserRoleAuthorizationInterceptor;
 import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.Configuration;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
@@ -13,6 +14,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.taktik.freehealth.middleware.web.UserAgentInterceptorFilter;
 
 public class UserAgentHandler extends AbstractSOAPHandler {
    private static final String HEADER_NAME = "User-Agent";
@@ -32,9 +34,25 @@ public class UserAgentHandler extends AbstractSOAPHandler {
                mimeHeaders.removeHeader("User-Agent");
             }
 
-            String value = this.config.getProperty("org.taktik.connector.technical.handler.user-agent.value", "Ehealth Technical") + " (" + applicationProps.getProperty("application.version", "unknown") + ")";
-            LOG.debug("Adding MIME header [User-Agent] with value [" + value + "]");
-            mimeHeaders.addHeader("User-Agent", value);
+            String value = this.config.getProperty(KEY_USER_AGENT, DEFAULT_USER_AGENT);
+
+            String fromRequest = UserAgentInterceptorFilter.Companion.getUserAgent();
+
+            String combinedValue = fromRequest != null ? fromRequest + "/" + value : value;
+            LOG.debug("Adding MIME header [User-Agent] with value [" + combinedValue + "]");
+            mimeHeaders.addHeader("User-Agent", combinedValue);
+
+            String fromValue = UserAgentInterceptorFilter.Companion.getXfrom();
+            if (fromValue != null) {
+               String[] froms = mimeHeaders.getHeader("From");
+               if (ArrayUtils.isNotEmpty(froms)) {
+                  LOG.info("Removing MIME header [From] with value [" + StringUtils.join(froms, ",") + "]");
+                  mimeHeaders.removeHeader("From");
+               }
+
+               LOG.debug("Adding MIME header [From] with value [" + fromValue + "]");
+               mimeHeaders.addHeader("User-Agent", fromValue);
+            }
          }
       }
 

@@ -37,7 +37,7 @@ object Record30Description : RecordOrSegmentDescription() {
             pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "5", "date premier jour facture", null, "N", pos, 8)
             pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "6a,6b", "date dernier jour facture (partie 1 et 2)", null, "N", pos, 8)
             pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "7", "numero mutualite d'affiliation", null, "N", pos, 3)
-            pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "8a,8b", "identification beneficiaire (partie 1 et 2)", null, "N", pos, 13)  //Forced to N so that it is padded with 0s
+            pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "8a,8b", "identification beneficiaire (partie 1 et 2)", null, "N", pos, 13)
             pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "9", "sexe beneficiaire", null, "N", pos, 1)
             pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "10", "accouchement", null, "N", pos, 1)
             pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "11", "reference numero de compte financier", null, "N", pos, 1)

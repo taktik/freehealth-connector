@@ -1,0 +1,43 @@
+*********************************************************
+* eHealth Business Mycarenet Medadmin  RELEASE NOTES    *
+*********************************************************
+3.19.1 release (april 2020)
+ . improvement      Added a new method for retrieving REJECT messages
+
+3.19.0 release (april 2020)
+ . internal release
+
+3.16.1 release (october 2018)
+ . Initial official release
+ . improvement      The service interface has been altered to require the input of an InputReference
+                         - Modified classes: 
+                            be/ehealth/businessconnector/medadmin/session/MedAdminService
+                            be/ehealth/businessconnector/medadmin/session/impl/MedadminServiceImpl
+                            be/ehealth/businessconnector/medadmin/session/MedAdminGetAsyncIntegrationTest
+                            be/ehealth/businessconnector/medadmin/session/MedAdminPostAsyncIntegrationTest
+ . improvement      The xml business response is by default validated against the xsd. To disable the following property can be added: 
+                        genericasync.medadmin.validation.incoming.businessresponse=false
+                         - Modified class: 
+                             be/ehealth/businessconnector/medadmin/session/impl/MedadminServiceImpl
+                             
+3.16.0 release (september 2018)
+ . internal release 
+                             
+3.16.0-beta-3 release (june 2018)
+  . Initial beta release
+  . The following cases could not be validated end-to-end in the pilot env (for an official connector release, mycarenet will provide valid tests scenarios):
+        - End to end post and get of a M4A_XML message of type SingleSpecificTechnicalCareRequest/SingleSpecificTechnicalCareResponse with valid business content.
+        - Get of a M4A_XML message of type MedAdminResponseList.
+        - Get of a M4A_XML message of type SingleNurseContractualCareUpdate.
+  . Other issues during validation:     
+        - Only oa 500 and oa 600 respond to requests.
+        - oa 500 responds with invalid blob id: "attribute 'Id' on element 'ns2:Detail' is not valid with respect to its type, 'NCName'".
+
+3.16.0-beta-2 release (june 2018)
+ . internal release 
+    
+3.16.0-beta-1 release (june 2018)
+ . internal release 
+         
+3.16.0-beta-0 release (june 2018)
+ . internal release        
