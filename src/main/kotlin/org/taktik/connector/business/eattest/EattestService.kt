@@ -37,4 +37,10 @@ interface EattestService {
     fun sendAttestion(token: SAMLToken, request: be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationRequest): be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationResponse
     @Throws(exceptionClasses = [TechnicalConnectorException::class])
     fun cancelAttestion(token: SAMLToken, request: CancelAttestationRequest): CancelAttestationResponse
+
+    //v3
+    @Throws(exceptionClasses = [TechnicalConnectorException::class])
+    fun sendAttestion(token: SAMLToken, request: be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationRequest): be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationResponse
+    @Throws(exceptionClasses = [TechnicalConnectorException::class])
+    fun cancelAttestion(token: SAMLToken, request: be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationRequest): be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationResponse
 }
