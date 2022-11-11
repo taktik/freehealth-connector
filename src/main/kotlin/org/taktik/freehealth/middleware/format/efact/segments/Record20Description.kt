@@ -64,7 +64,7 @@ object Record20Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "38,39", "ReferenceMutualiteNumeroDeCompteFinancierAPartie1et2", null, "A", pos, 22)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "40", "Reserve", null, "N", pos, 2)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "41", "AnneeEtMoisDeFacturationPrecedente", "previousInvoicingYearMonth", "N", pos, 6)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "42,43a,43b,44,45", "DonneesDeReferenceReseauOuCarteSisPartie1_2_3_4et5", null, "N", pos, 48)  //Forced to N so that it is padded with 0s
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "42,43a,43b,44,45", "DonneesDeReferenceReseauOuCarteSisPartie1_2_3_4et5", null, "A", pos, 48)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "46", "Reserve", null, "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "47", "Date de facturation", null, "N", pos, 8)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "48", "Reserve", null, "N", pos, 1)
