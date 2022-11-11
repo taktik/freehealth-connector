@@ -61,7 +61,7 @@ class ReaderSession(reader: Reader) {
     fun readInt(label: String, length: Int): Int {
         val segment = read(label, length)
         try {
-            return Integer.parseInt(segment)
+            return Integer.parseInt(segment.trim())
         } catch (e: NumberFormatException) {
             log.error("Could not convert segment '$segment' into an integer, for the field '$label'")
         }

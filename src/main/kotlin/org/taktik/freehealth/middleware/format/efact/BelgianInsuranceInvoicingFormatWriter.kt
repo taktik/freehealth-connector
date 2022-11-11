@@ -333,6 +333,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         val destCode = getDestCode(insuranceCode, sender)
         val relatedDestCode = if (relatedInvoiceIoCode != null) getDestCode(relatedInvoiceIoCode, sender) else null
 
+        var paymentApproval = this.getInsurabilityParameters(patient, InsuranceParameter.paymentapproval);
+
         ws.write("18", destCode)
         ws.write("20", startOfCoveragePeriod)
         ws.write("24", invoiceNumber)
@@ -343,6 +345,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("34", relatedBatchSendNumber)
         ws.write("37", relatedDestCode)
         ws.write("41", relatedBatchYearMonth)
+        ws.write("42", (if (sender.isSpecialist && paymentApproval != null) paymentApproval else "0").padStart(48,'0'))
         ws.write("47", (if (magneticInvoice!!) formattedCreationDate else "00000000"))
 
         ws.writeFieldsWithCheckSum()
