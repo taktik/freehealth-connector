@@ -1,6 +1,6 @@
 package be.fgov.ehealth.mycarenet.attest.protocol.v3;
 
-import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendRequestType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendRequestType;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

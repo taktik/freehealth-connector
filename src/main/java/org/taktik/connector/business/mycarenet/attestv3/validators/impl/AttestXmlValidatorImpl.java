@@ -5,13 +5,13 @@ import be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationRequest;
 import be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationResponse;
 import be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationRequest;
 import be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationResponse;
-import be.fgov.ehealth.mycarenet.commons.core.v3.BlobType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.OriginType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType;
-import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType;
-import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendRequestType;
-import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendResponseType;
+import be.fgov.ehealth.mycarenet.commons.core.v4.BlobType;
+import be.fgov.ehealth.mycarenet.commons.core.v4.CommonInputType;
+import be.fgov.ehealth.mycarenet.commons.core.v4.OriginType;
+import be.fgov.ehealth.mycarenet.commons.core.v4.RequestType;
+import be.fgov.ehealth.mycarenet.commons.core.v4.RoutingType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendRequestType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendResponseType;
 
 public class AttestXmlValidatorImpl extends XMLValidatorImpl {
    private static final String COMMONS_CORE_XSD = "/ehealth-mycarenetcommons/XSD/mycarenet-commons-core-4_0.xsd";
