@@ -14,7 +14,7 @@ import be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationRequest;
 import be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationResponse;
 import be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationRequest;
 import be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationResponse;
-import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendRequestType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendRequestType;
 import javax.xml.soap.SOAPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

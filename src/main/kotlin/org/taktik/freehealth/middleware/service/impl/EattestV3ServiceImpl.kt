@@ -27,57 +27,17 @@ import be.fgov.ehealth.messageservices.mycarenet.core.v1.RequestType
 import be.fgov.ehealth.messageservices.mycarenet.core.v1.SendTransactionRequest
 import be.fgov.ehealth.messageservices.mycarenet.core.v1.SendTransactionResponse
 import be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationRequest
-import be.fgov.ehealth.mycarenet.commons.core.v3.CareProviderType
-import be.fgov.ehealth.mycarenet.commons.core.v3.CareReceiverIdType
-import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType
-import be.fgov.ehealth.mycarenet.commons.core.v3.IdType
-import be.fgov.ehealth.mycarenet.commons.core.v3.LicenseType
-import be.fgov.ehealth.mycarenet.commons.core.v3.NihiiType
-import be.fgov.ehealth.mycarenet.commons.core.v3.OriginType
-import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
-import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType
-import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENT
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENTschemes
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENTschemes.CD_NIHDI
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENTschemes.CD_NIHDI_RELATEDSERVICE
+import be.fgov.ehealth.mycarenet.commons.core.v4.*
+import be.fgov.ehealth.mycarenet.commons.core.v4.PackageType
+import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.*
+import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENTschemes.*
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDCONTENTschemes.LOCAL
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDERRORMYCARENETschemes
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDHCPARTY
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDITEM
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDITEMschemes.CD_ITEM
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDITEMschemes.CD_ITEM_MYCARENET
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDSEX
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDSEXvalues
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDSTANDARD
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDTRANSACTION
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDUNIT
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDUNITschemes
 import be.fgov.ehealth.standards.kmehr.mycarenet.dt.v1.TextType
-import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.IDHCPARTY
-import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.IDHCPARTYschemes
-import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.IDKMEHR
-import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.IDKMEHRschemes
-import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.IDPATIENT
-import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.IDPATIENTschemes
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.AuthorType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.ContentType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.CostType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.FolderType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.HcpartyType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.HeaderType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.ItemType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.Kmehrmessage
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.PersonType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.QuantityType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.RecipientType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.SenderType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.SexType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.StandardType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.TransactionType
-import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.UnitType
+import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.*
+import be.fgov.ehealth.standards.kmehr.mycarenet.schema.v1.*
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError
@@ -92,7 +52,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.mycarenet.attest.domain.AttestV3BuilderResponse
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
-import org.taktik.connector.business.mycarenet.attest.mappers.BlobMapper
+import org.taktik.connector.business.mycarenet.attestv3.mappers.BlobMapper
 import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
@@ -130,10 +90,9 @@ import java.io.ByteArrayInputStream
 import java.io.StringWriter
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.UUID
+import java.util.*
 import javax.xml.bind.JAXBContext
+import javax.xml.datatype.DatatypeFactory
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerException
@@ -143,6 +102,7 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
+
 
 @Service
 class EattestV3ServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : EattestV3Service {
@@ -243,7 +203,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
 
                 this.commonInput = CommonInputType().apply {
                     request =
-                        be.fgov.ehealth.mycarenet.commons.core.v3.RequestType()
+                        be.fgov.ehealth.mycarenet.commons.core.v4.RequestType()
                             .apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
                     this.inputReference = inputReference
                     origin = OriginType().apply {
@@ -378,9 +338,14 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
 
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val inputReference = InputReference().inputReference
+        val attribute = be.fgov.ehealth.mycarenet.commons.core.v4.AttributeType()
+        attribute.key = "urn:be:cin:nippin:attemptNbr"
+        attribute.value = 0
 
         val now = DateTime.now().withMillisOfSecond(0)
-        val refDateTime = dateTime(referenceDate) ?: now
+        val calendar = GregorianCalendar()
+        calendar.time = (dateTime(referenceDate) ?: now).toDate()
+        val refDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar)
         val requestAuthorNihii = guardPostNihii ?: hcpNihii
 
         return extractEtk(credential)?.let {
@@ -428,19 +393,20 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             "none",
                             detailId,
                             "text/xml",
-                            null as String?,
+                            "E-ATTEST",
+                            "3.0",
                             "encryptedForKnownBED"
                               )
-                blob.messageName = "E-ATTEST-V3"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
                 val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
                 this.commonInput = CommonInputType().apply {
                     request =
-                        be.fgov.ehealth.mycarenet.commons.core.v3.RequestType()
+                        be.fgov.ehealth.mycarenet.commons.core.v4.RequestType()
                             .apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
                     this.inputReference = inputReference
+                    this.attribute.add(attribute)
                     origin = OriginType().apply {
                         `package` = PackageType().apply {
                             license = LicenseType().apply {
@@ -612,7 +578,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         val requestAuthorCdHcParty = if (guardPostNihii?.isEmpty() != false) "persphysician" else "guardpost"
 
         return SendTransactionRequest().apply {
-            messageProtocoleSchemaVersion = BigDecimal("1.25")
+            messageProtocoleSchemaVersion = BigDecimal("1.34")
             request = RequestType().apply {
                 id =
                     IDKMEHR().apply {
@@ -624,7 +590,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = requestAuthorNihii.padEnd(11, '0') })
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
                         cds.add(CDHCPARTY().apply {
-                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                             requestAuthorCdHcParty
                         })
                         if (guardPostNihii?.isEmpty() != false) {
@@ -643,7 +609,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     standard =
                         StandardType().apply {
                             cd =
-                                CDSTANDARD().apply { s = "CD-STANDARD"; sv = "1.26"; value = "20180601" }
+                                CDSTANDARD().apply { s = "CD-STANDARD"; sv = "1.35"; value = "20210120" }
                         }
                     ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                     date = refDateTime; time = refDateTime
@@ -655,7 +621,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             })
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
                             cds.add(CDHCPARTY().apply {
-                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                 requestAuthorCdHcParty
                             })
                             if (guardPostNihii?.isEmpty() != false) {
@@ -669,7 +635,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     recipients.add(RecipientType().apply {
                         hcparties.add(HcpartyType().apply {
                             cds.add(CDHCPARTY().apply {
-                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                 "application"
                             })
                             name = "mycarenet"
@@ -712,7 +678,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                     traineeSupervisorSsin
                                 })
                                 cds.add(CDHCPARTY().apply {
-                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                     "persphysician"
                                 })
                                 firstname = traineeSupervisorFirstName
@@ -730,7 +696,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                     hcpSsin
                                 })
                                 cds.add(CDHCPARTY().apply {
-                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                     "persphysician"
                                 })
                                 firstname = hcpFirstName
@@ -742,7 +708,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                             (trnsId++).toString()
                         })
-                        cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MYCARENET; sv = "1.4"; value = "cga" })
+                        cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MYCARENET; sv = "1.5"; value = "cga" })
                         date = refDateTime; time = refDateTime
                         traineeSupervisorNihii?.let {
                             this.author = supervisor
@@ -757,7 +723,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 (itemId++).toString()
                             })
                             cds.add(CDITEM().apply {
-                                s = CD_ITEM_MYCARENET; sv = "1.4"; value =
+                                s = CD_ITEM_MYCARENET; sv = "1.6"; value =
                                 "patientpaid"
                             })
                             cost = CostType().apply {
@@ -786,7 +752,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                    (itemId++).toString()
                                })
                                cds.add(CDITEM().apply {
-                                   s = CD_ITEM_MYCARENET; sv = "1.4"; value =
+                                   s = CD_ITEM_MYCARENET; sv = "1.6"; value =
                                    "supplement"
                                })
                                cost = CostType().apply {
@@ -808,7 +774,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                (itemId++).toString()
                            })
                            cds.add(CDITEM().apply {
-                               s = CD_ITEM_MYCARENET; sv = "1.4"; value =
+                               s = CD_ITEM_MYCARENET; sv = "1.6"; value =
                                "paymentreceivingparty"
                            })
                            contents.add(ContentType().apply {
@@ -824,7 +790,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 (itemId++).toString()
                             })
                             cds.add(CDITEM().apply {
-                                s = CD_ITEM_MYCARENET; sv = "1.4"; value =
+                                s = CD_ITEM_MYCARENET; sv = "1.6"; value =
                                 "treatmentreason"
                             })
                             contents.add(ContentType().apply {
@@ -846,7 +812,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                "1.14"; value = "persphysician"
+                                "1.16"; value = "persphysician"
                             })
                             firstname = hcpFirstName
                             familyname = hcpLastName
@@ -863,7 +829,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                "1.14"; value = "persphysician"
+                                "1.16"; value = "persphysician"
                             })
                             firstname = traineeSupervisorFirstName
                             familyname = traineeSupervisorLastName
@@ -875,7 +841,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 (trnsId++).toString()
                             })
                             cds.add(CDTRANSACTION().apply {
-                                s = CD_TRANSACTION_MYCARENET; sv = "1.4"; value =
+                                s = CD_TRANSACTION_MYCARENET; sv = "1.5"; value =
                                 "cgd"
                             })
                             date = refDateTime; time = refDateTime
@@ -964,7 +930,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                             })
                                             cds.add(CDHCPARTY().apply {
                                                 s =
-                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                                 loc.cdHcParty
                                             })
                                         }
@@ -1000,7 +966,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                             }
                                             cds.add(CDHCPARTY().apply {
                                                 s =
-                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                                 req.hcp!!.cdHcParty
                                             })
                                             firstname = req.hcp!!.firstName ?: ""
@@ -1042,7 +1008,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                             }
                                             cds.add(CDHCPARTY().apply {
                                                 s =
-                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                                 gmdm.cdHcParty ?: "persphysician"
                                             })
                                             firstname = gmdm.firstName ?: ""
@@ -1057,7 +1023,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                         (itemId++).toString()
                                     })
                                     cds.add(CDITEM().apply {
-                                        s = CD_ITEM_MYCARENET; sv = "1.4"; value =
+                                        s = CD_ITEM_MYCARENET; sv = "1.6"; value =
                                         "internship"
                                     })
                                     contents.addAll(listOf(ContentType().apply {
@@ -1075,7 +1041,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                             }
                                             cds.add(CDHCPARTY().apply {
                                                 s =
-                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                                                    CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                                 intern.cdHcParty
                                             })
                                             firstname = intern.firstName ?: ""
@@ -1089,7 +1055,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                         s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                         (itemId++).toString()
                                     })
-                                    cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.4"; value = "documentidentity" })
+                                    cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.6"; value = "documentidentity" })
                                     contents.addAll(listOf(ContentType().apply {
                                         date = (dateTime(cr.date) ?: now)
                                         time =
@@ -1167,7 +1133,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         val refDateTime = dateTime(referenceDate) ?: now
 
         return SendTransactionRequest().apply {
-            messageProtocoleSchemaVersion = BigDecimal("1.25")
+            messageProtocoleSchemaVersion = BigDecimal("1.34")
             request = RequestType().apply {
                 id =
                     IDKMEHR().apply {
@@ -1179,7 +1145,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
                         cds.add(CDHCPARTY().apply {
-                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                            s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                             "persphysician"
                         })
                         firstname = hcpFirstName
@@ -1194,7 +1160,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     standard =
                         StandardType().apply {
                             cd =
-                                CDSTANDARD().apply { s = "CD-STANDARD"; sv = "1.26"; value = "20180601" }
+                                CDSTANDARD().apply { s = "CD-STANDARD"; sv = "1.35"; value = "20210120" }
                         }
                     ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = "1" })
                     date = refDateTime; time = refDateTime
@@ -1206,7 +1172,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             })
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
                             cds.add(CDHCPARTY().apply {
-                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                 "persphysician"
                             })
                             firstname = hcpFirstName
@@ -1216,7 +1182,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     recipients.add(RecipientType().apply {
                         hcparties.add(HcpartyType().apply {
                             cds.add(CDHCPARTY().apply {
-                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                                s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                 "application"
                             })
                             name = "mycarenet"
@@ -1259,7 +1225,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                     traineeSupervisorSsin
                                 })
                                 cds.add(CDHCPARTY().apply {
-                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                     "persphysician"
                                 })
                                 firstname = traineeSupervisorFirstName
@@ -1277,7 +1243,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                     hcpSsin
                                 })
                                 cds.add(CDHCPARTY().apply {
-                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.14"; value =
+                                    s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                     "persphysician"
                                 })
                                 firstname = hcpFirstName
@@ -1289,7 +1255,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                             (trnsId++).toString()
                         })
-                        cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MYCARENET; sv = "1.4"; value = "cgacancellation" })
+                        cds.add(CDTRANSACTION().apply { s = CD_TRANSACTION_MYCARENET; sv = "1.5"; value = "cgacancellation" })
                         date = refDateTime; time = refDateTime
                         traineeSupervisorNihii?.let {
                             this.author = supervisor
@@ -1304,7 +1270,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 (itemId++).toString()
                             })
                             cds.add(CDITEM().apply {
-                                s = CD_ITEM_MYCARENET; sv = "1.4"; value =
+                                s = CD_ITEM_MYCARENET; sv = "1.6"; value =
                                 "invoicingnumber"
                             })
                             contents.addAll(listOf(

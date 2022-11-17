@@ -4,7 +4,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationResponse;
 import be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationResponse;
-import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendRequestType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendRequestType;
 
 public interface AttestService {
    SendAttestationResponse sendAttestion(SAMLToken var1, SendRequestType var2) throws TechnicalConnectorException;
