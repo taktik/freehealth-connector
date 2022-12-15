@@ -18,7 +18,7 @@ public class XmlDateNoTzAdapter extends XmlDateAdapter {
    }
 
    public DateTime unmarshal(String value) throws Exception {
-      DateTime dateTime = DateTime.parse(value, ISODateTimeFormat.localDateParser());
+      DateTime dateTime = DateTime.parse(value.replaceAll("\\+[0-9][0-9]:[0-9][0-9]$", ""), ISODateTimeFormat.localDateParser());
       log.debug(MessageFormat.format("Unmarshal {0} to {1}", value, dateTime));
       return dateTime;
    }
