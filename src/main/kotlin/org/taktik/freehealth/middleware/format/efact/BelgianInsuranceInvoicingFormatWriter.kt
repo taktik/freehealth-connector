@@ -302,7 +302,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         val ct1 = if (tc1String != null && tc1String != "") Integer.valueOf(tc1String) else 0
         val tc2String = getInsurabilityParameters(patient, InsuranceParameter.tc2)
         val ct2 = if (tc2String != null && tc2String != "") Integer.valueOf(tc2String) else 0
-        var noSIS: String? = if (!patient.ssin.isNullOrBlank()) patient.ssin!!.replace("[^0-9]".toRegex(), "").padStart(13, '0') else if (patient.ssin.isNullOrBlank() && !identificationNumber.isNullOrBlank()) identificationNumber else ""
+        var noSIS: String? = if (!patient.ssin.isNullOrBlank()) patient.ssin!!.replace("[^0-9]".toRegex(), "") else if (patient.ssin.isNullOrBlank() && !identificationNumber.isNullOrBlank()) identificationNumber else ""
 
 
         ws.write("2", recordNumber)
@@ -543,7 +543,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         assert(formattedCreationDate.length == 8)
 
         var identificationNumber: String? = getInsurabilityIdentificationNumber(patient);
-        var noSIS: String? = if (!patient.ssin.isNullOrBlank()) patient.ssin!!.replace("[^0-9]".toRegex(), "").padStart(13, '0') else if (patient.ssin.isNullOrBlank() && !identificationNumber.isNullOrBlank()) identificationNumber else ""
+        var noSIS: String? = if (!patient.ssin.isNullOrBlank()) patient.ssin!!.replace("[^0-9]".toRegex(), "") else if (patient.ssin.isNullOrBlank() && !identificationNumber.isNullOrBlank()) identificationNumber else ""
         val nf11 = DecimalFormat("00000000000")
         val nf9 = DecimalFormat("000000000")
 

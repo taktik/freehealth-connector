@@ -47,7 +47,6 @@ class CreatePrescriptionTest {
 
     private lateinit var hcp: HealthcareParty
     private val patient = RecipeTestUtils.createPatient()
-    private val validator by lazy { KmehrValidator(recipeService) }
 
     init {
         System.setProperty("spring.output.ansi.enabled", "always")
@@ -96,7 +95,7 @@ class CreatePrescriptionTest {
         //InsurabilityInfo infos = generalInsurabilityLogic.getGeneralInsurabity(niss, null, null, "T@kt1k1Cur3", "/Users/aduchate/ehealth/keystore", "SSIN=79121430944 20121128-151901.acc-p12");
 
         val type = recipeService.inferPrescriptionType(medications, null)
-        val infos = recipeService.createPrescription(keystoreId!!, tokenId!!, passPhrase!!, "persphysician", hcp.nihii!!, patient, hcp, true, medications, type, null, null, "1.0", LocalDateTime.now())
+        val infos = recipeService.createPrescription(keystoreId!!, tokenId!!, passPhrase!!, "persphysician", hcp.nihii!!, patient, hcp, true, medications, type, null, null, "1.0", LocalDateTime.now(), lang = "fr")
         return infos
     }
 

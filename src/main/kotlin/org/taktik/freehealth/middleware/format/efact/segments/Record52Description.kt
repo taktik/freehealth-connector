@@ -36,7 +36,7 @@ object Record52Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "5", "Date de prestation", "prestationDate", "N", pos, 8)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "6a,6b", "Date de lecture document identite electronique (1 et 2)", "eidDate", "N", pos, 8)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "7", "reserve", null, "N", pos, 3)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "8a,8b", "Numero NISS du patient sauf en cas de convention internationale ou nouveaux-nes (1 et 2)", "patientINSS", "A", pos, 13)  //Forced to A so that it is padded with blank spaces
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "8a,8b", "Numero NISS du patient sauf en cas de convention internationale ou nouveaux-nes (1 et 2)", "patientINSS", "N", pos, 13)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "9", "reserve", null, "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "10", "Type de support document identite electronique", "eidSupportType", "A", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "11", "Type de lecture document identite electronique", "eidReadingType", "A", pos, 1)
