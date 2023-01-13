@@ -30,5 +30,6 @@ enum class InvoicingTreatmentReasonCode private constructor(val code: Int) {
     ProfessionalDisease(60),
     WorkAccident(70),
     Accident(80),
+    OtherAccident(90),
     Other(0)
 }
