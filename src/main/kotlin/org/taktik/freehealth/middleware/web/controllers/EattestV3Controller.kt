@@ -31,10 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
-import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EattestV3Service
 import java.util.UUID
-import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/eattestv3")
@@ -53,8 +51,8 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
+        @RequestParam date: Long,
         @RequestParam(required = false) treatmentReason: String?,
-        @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
@@ -62,6 +60,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam(required = false) guardPostNihii: String?,
         @RequestParam(required = false) guardPostSsin: String?,
         @RequestParam(required = false) guardPostName: String?,
+        @RequestParam(required = false) attemptNbr: Int?,
         @RequestBody attest: Eattest
     ) = eattestService.sendAttestV3(
         keystoreId,
@@ -84,7 +83,8 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         patientFirstName,
         patientLastName,
         patientGender,
-        null,
+        date,
+        attemptNbr,
         attest
     )
 
@@ -102,8 +102,8 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
+        @RequestParam date: Long,
         @RequestParam(required = false) treatmentReason: String?,
-        @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
@@ -111,6 +111,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam(required = false) guardPostNihii: String?,
         @RequestParam(required = false) guardPostSsin: String?,
         @RequestParam(required = false) guardPostName: String?,
+        @RequestParam(required = false) attemptNbr: Int?,
         @RequestBody attest: Eattest
     ): SendAttestResult? = eattestService.sendAttestV3(
         keystoreId,
@@ -133,7 +134,8 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         patientFirstName,
         patientLastName,
         patientGender,
-        null,
+        date,
+        attemptNbr,
         attest
     )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 

@@ -16,7 +16,6 @@ public final class BlobMapper {
       result.setHashValue(blob.getHashValue());
       result.setContentType(blob.getContentType());
       result.setContentEncryption(blob.getContentEncryption());
-      result.setMessageName(blob.getMessageName());
       result.setMessageVersion(blob.getMessageVersion());
       return result;
    }

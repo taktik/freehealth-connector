@@ -324,7 +324,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
-        referenceDate: Int?,
+        referenceDate: Long,
+        attemptNbr: Int?,
         attest: Eattest): SendAttestResultWithResponse? {
 
         val samlToken =
@@ -338,13 +339,14 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
 
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val inputReference = InputReference().inputReference
-        val attribute = be.fgov.ehealth.mycarenet.commons.core.v4.AttributeType()
-        attribute.key = "urn:be:cin:nippin:attemptNbr"
-        attribute.value = 0
+        val attribute = AttributeType().apply {
+            key = "urn:be:cin:nippin:attemptNbr"
+            value = attemptNbr
+        }
 
-        val now = DateTime.now().withMillisOfSecond(0)
+        val now = dateTime(referenceDate).withMillisOfSecond(0)
         val calendar = GregorianCalendar()
-        calendar.time = (dateTime(referenceDate) ?: now).toDate()
+        calendar.time = now.toDate()
         val refDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar)
         val requestAuthorNihii = guardPostNihii ?: hcpNihii
 
@@ -393,10 +395,11 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             "none",
                             detailId,
                             "text/xml",
-                            "E-ATTEST",
+                            null as String?,
                             "3.0",
                             "encryptedForKnownBED"
                               )
+                blob.messageName = "E-ATTEST"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
                 val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
@@ -568,9 +571,9 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         guardPostSsin: String?,
         guardPostName: String?,
         attest: Eattest,
-        referenceDate: Int?) : SendTransactionRequest {
+        referenceDate: Long) : SendTransactionRequest {
 
-        val refDateTime = dateTime(referenceDate) ?: now
+        val refDateTime = dateTime(referenceDate)
         val theDayBeforeRefDate = refDateTime.plusDays(-1)
 
         val requestAuthorNihii = guardPostNihii ?: hcpNihii
@@ -601,7 +604,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                         }
                     })
                 }
-                date = now; time = now
+                date = refDateTime; time = refDateTime
             }
 
             kmehrmessage = Kmehrmessage().apply {
@@ -911,6 +914,52 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 })
                                 cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "encounterdatetime" })
                                 contents.add(ContentType().apply { date = dateTime(code.date) ?: refDateTime })
+                                System.out.println("LE CODE REIM + REGSUPP POUR ")
+                                System.out.println(code.riziv)
+                                System.out.println(code.reimbursement)
+                                System.out.println(code.reglementarySupplement)
+                                BigDecimal.valueOf((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0))
+                                BigDecimal.valueOf((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0)).setScale(2, RoundingMode.CEILING)
+                            }, ItemType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                    (itemId++).toString()
+                                })
+                                cds.add(CDITEM().apply {
+                                    s = CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                    "patientpaid"
+                                })
+                                cost = CostType().apply {
+                                    decimal =
+                                        BigDecimal.valueOf((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0)).setScale(2, RoundingMode.CEILING)
+                                    unit = UnitType().apply {
+                                        cd =
+                                            CDUNIT().apply {
+                                                s = CDUNITschemes.CD_CURRENCY; sv = "1.0"; value =
+                                                "EUR"
+                                            }
+                                    }
+                                }
+                            }, ItemType().apply {
+                                ids.add(IDKMEHR().apply {
+                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                    (itemId++).toString()
+                                })
+                                cds.add(CDITEM().apply {
+                                    s = CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                    "supplement"
+                                })
+                                cost = CostType().apply {
+                                    decimal =
+                                        BigDecimal.valueOf(code.doctorSupplement ?: 0.0).setScale(2, RoundingMode.CEILING)
+                                    unit = UnitType().apply {
+                                        cd =
+                                            CDUNIT().apply {
+                                                s = CDUNITschemes.CD_CURRENCY; sv = "1.0"; value =
+                                                "EUR"
+                                            }
+                                    }
+                                }
                             }, code.location?.let { loc ->
                                 ItemType().apply {
                                     ids.add(IDKMEHR().apply {
@@ -1295,6 +1344,16 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
     private fun dateTime(intDate: Int?) = intDate?.let {
         DateTime(0).withYear(intDate / 10000).withMonthOfYear((intDate / 100) % 100)
             .withDayOfMonth(intDate % 100)
+    }
+
+    private fun dateTime(longDate: Long): DateTime = longDate.let {
+        val year: Int = (longDate / 10000000000).toInt()
+        val month: Int = ((longDate / 100000000) % 100).toInt()
+        val day: Int = ((longDate / 1000000) % 100).toInt()
+        val hour: Int = ((longDate / 10000) % 100).toInt()
+        val minutes: Int = ((longDate / 100) % 100).toInt()
+        val seconds: Int = (longDate % 100).toInt()
+        return DateTime(year, month, day, hour, minutes, seconds)
     }
 
     private fun extractError(sendTransactionRequest: ByteArray, ec: String, errorUrl: String?): Set<MycarenetError> {

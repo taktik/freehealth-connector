@@ -69,8 +69,6 @@ public class BlobType {
     protected String issuer;
     @XmlAttribute(name = "MessageVersion")
     protected String messageVersion;
-    @XmlAttribute(name = "MessageName")
-    protected String messageName;
 
     /**
      * Obtient la valeur de la propriété value.
@@ -308,10 +306,6 @@ public class BlobType {
      */
     public void setMessageVersion(String value) {
         this.messageVersion = value;
-    }
-
-    public void setMessageName(String value) {
-        this.messageName = value;
     }
 
 }
