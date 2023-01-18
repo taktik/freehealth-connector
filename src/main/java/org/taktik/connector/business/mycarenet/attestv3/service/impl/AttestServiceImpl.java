@@ -32,7 +32,7 @@ public class AttestServiceImpl implements AttestService, ConfigurationModuleBoot
 
    public final SendAttestationResponse sendAttestion(SAMLToken token, SendRequestType request) throws TechnicalConnectorException {
       try {
-         GenericRequest service = ServiceFactory.getAttestPort(token);
+         GenericRequest service = ServiceFactory.getAttestPort(token, "urn:be:fgov:ehealth:mycarenet:attest:protocol:v3:SendAttestation");
          service.setPayload((Object)request);
          GenericResponse xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service);
          return (SendAttestationResponse)xmlResponse.asObject(SendAttestationResponse.class);
@@ -43,7 +43,7 @@ public class AttestServiceImpl implements AttestService, ConfigurationModuleBoot
 
    public CancelAttestationResponse cancelAttestion(SAMLToken token, SendRequestType request) throws TechnicalConnectorException {
       try {
-         GenericRequest service = ServiceFactory.getAttestPort(token);
+         GenericRequest service = ServiceFactory.getAttestPort(token, "urn:be:fgov:ehealth:mycarenet:attest:protocol:v3:CancelAttestation");
          service.setPayload((Object)request);
          GenericResponse xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service);
          return (CancelAttestationResponse)xmlResponse.asObject(CancelAttestationResponse.class);

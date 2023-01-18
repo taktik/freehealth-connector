@@ -40,7 +40,7 @@ class EattestServiceImpl : EattestService, ConfigurationModuleBootstrap.ModuleBo
 
     override fun sendAttestion(token: SAMLToken, request: be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationRequest): be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationResponse {
         try {
-            val service = org.taktik.connector.business.mycarenet.attestv3.service.ServiceFactory.getAttestPort(token)
+            val service = org.taktik.connector.business.mycarenet.attestv3.service.ServiceFactory.getAttestPort(token, "urn:be:fgov:ehealth:mycarenet:attest:protocol:v3:SendAttestation")
             service.setPayload(request as Any)
             val pl = service.getPayload()
             val start = System.currentTimeMillis()
@@ -59,7 +59,7 @@ class EattestServiceImpl : EattestService, ConfigurationModuleBootstrap.ModuleBo
 
     override fun cancelAttestion(token: SAMLToken, request: be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationRequest): be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationResponse {
         try {
-            val service = org.taktik.connector.business.mycarenet.attestv3.service.ServiceFactory.getAttestPort(token)
+            val service = org.taktik.connector.business.mycarenet.attestv3.service.ServiceFactory.getAttestPort(token, "urn:be:fgov:ehealth:mycarenet:attest:protocol:v3:CancelAttestation")
             service.setPayload(request as Any)
             val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
