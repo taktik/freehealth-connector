@@ -20,9 +20,9 @@
 
 package org.taktik.freehealth.middleware.dto.eattest
 
+import org.joda.time.DateTime
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
-
 
 class SendAttestResultWithResponse(
     acknowledge: EattestAcknowledgeType? = null,
@@ -31,5 +31,6 @@ class SendAttestResultWithResponse(
     var xades: ByteArray?,
     commonOutput: CommonOutput? = null,
     mycarenetConversation: MycarenetConversation? = null,
-    var kmehrMessage: ByteArray?
-): SendAttestResult(acknowledge, invoicingNumber, attest, commonOutput, mycarenetConversation)
+    var kmehrMessage: ByteArray?,
+    timestamp: String? = null
+): SendAttestResult(acknowledge, invoicingNumber, attest, commonOutput, mycarenetConversation, timestamp)
