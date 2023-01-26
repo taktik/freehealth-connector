@@ -285,7 +285,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                         cancelAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                         cancelAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                     },
-                    kmehrMessage = blob.content
+                    kmehrMessage = blob.content,
+                    timestamp = now.toString("yyyyMMddHHmmss")
                                             )
             } ?: SendAttestResultWithResponse(
                 acknowledge = EattestAcknowledgeType(
@@ -299,7 +300,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     cancelAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     cancelAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                kmehrMessage = blob.content
+                kmehrMessage = blob.content,
+                timestamp = now.toString("yyyyMMddHHmmss")
                                              )
         }    }
 
@@ -324,7 +326,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
-        referenceDate: Long,
+        referenceDate: Long?,
         attemptNbr: Int?,
         attest: Eattest): SendAttestResultWithResponse? {
 
@@ -341,10 +343,10 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         val inputReference = InputReference().inputReference
         val attribute = AttributeType().apply {
             key = "urn:be:cin:nippin:attemptNbr"
-            value = attemptNbr
+            value = attemptNbr ?: 1
         }
 
-        val now = dateTime(referenceDate).withMillisOfSecond(0)
+        val now = dateTime(referenceDate)?.withMillisOfSecond(0) ?: DateTime.now().withMillisOfSecond(0)
         val calendar = GregorianCalendar()
         calendar.time = now.toDate()
         val refDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar)
@@ -522,7 +524,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                         sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                         sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                     },
-                    kmehrMessage = encryptedKnownContent?.businessContent?.value
+                    kmehrMessage = encryptedKnownContent?.businessContent?.value,
+                    timestamp = now.toString("yyyyMMddHHmmss")
                                             )
             } ?: SendAttestResultWithResponse(
                 acknowledge = EattestAcknowledgeType(
@@ -536,7 +539,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                kmehrMessage = encryptedKnownContent?.businessContent?.value
+                kmehrMessage = encryptedKnownContent?.businessContent?.value,
+                timestamp = now.toString("yyyyMMddHHmmss")
                                              )
         }
 
@@ -571,9 +575,9 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         guardPostSsin: String?,
         guardPostName: String?,
         attest: Eattest,
-        referenceDate: Long) : SendTransactionRequest {
+        referenceDate: Long?) : SendTransactionRequest {
 
-        val refDateTime = dateTime(referenceDate)
+        val refDateTime = dateTime(referenceDate) ?: now
         val theDayBeforeRefDate = refDateTime.plusDays(-1)
 
         val requestAuthorNihii = guardPostNihii ?: hcpNihii
@@ -1346,14 +1350,14 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
             .withDayOfMonth(intDate % 100)
     }
 
-    private fun dateTime(longDate: Long): DateTime = longDate.let {
+    private fun dateTime(longDate: Long?) = longDate?.let {
         val year: Int = (longDate / 10000000000).toInt()
         val month: Int = ((longDate / 100000000) % 100).toInt()
         val day: Int = ((longDate / 1000000) % 100).toInt()
         val hour: Int = ((longDate / 10000) % 100).toInt()
         val minutes: Int = ((longDate / 100) % 100).toInt()
         val seconds: Int = (longDate % 100).toInt()
-        return DateTime(year, month, day, hour, minutes, seconds)
+        DateTime(year, month, day, hour, minutes, seconds)
     }
 
     private fun extractError(sendTransactionRequest: ByteArray, ec: String, errorUrl: String?): Set<MycarenetError> {
