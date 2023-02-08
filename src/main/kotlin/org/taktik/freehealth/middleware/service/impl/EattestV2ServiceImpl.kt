@@ -1364,10 +1364,11 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                     elements.forEach { it.value = textContent }
                     result.addAll(elements)
                 } else {
+                    log.error("Could not match MycarenetError to a specific error message; code: $ec ; path: $errorUrl");
                     result.add(
                         MycarenetError(
                             code = ec,
-                                path = curratedUrl,
+                            path = curratedUrl,
                             msgFr = "Erreur générique, xpath invalide",
                             msgNl = "Onbekend foutmelding, xpath ongeldig"
                                       )
@@ -1375,6 +1376,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                 }
             }
             } catch(e:Exception) {
+                log.error("Exception extracting error: $e; code: $ec ; path: $errorUrl");
                 result.add(
                     MycarenetError(
                         code = ec,
