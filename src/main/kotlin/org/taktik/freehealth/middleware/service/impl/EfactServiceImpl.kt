@@ -185,7 +185,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
                 }
                 rn =
-                    iv.writeRecordFooter(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, recordCodes, recordAmount, recordFee, recordSup, batch.magneticInvoice, invoice.admissionDate, invoice.locationNihii, invoice.locationService)
+                    iv.writeRecordFooter(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, recordCodes, recordAmount, recordFee, recordSup, batch.magneticInvoice, invoice.admissionDate, invoice.locationNihii, invoice.locationService)
                 recordsCountPerOA[0]++
                 metadata.recordsCount++
 

@@ -527,6 +527,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
     fun writeRecordFooter(recordNumber: Int,
                           sender: InvoiceSender,
                           invoiceNumber: Long?,
+                          treatmentReason: InvoicingTreatmentReasonCode,
                           invoiceRef: String,
                           patient: Patient,
                           insuranceCode: String,
@@ -571,6 +572,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("10", 3)
         ws.write("14", sender.nihii.toString().padEnd(11, '0'))
         ws.write("15", "+00000000000")
+        ws.write("17", treatmentReason.code)
 
         //Silly rules for this field
         val destCode = getDestCode(insuranceCode, sender)
