@@ -6,6 +6,7 @@ import org.taktik.connector.technical.config.ConfigValidator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.taktik.connector.technical.exception.CredentialException;
 
 public final class McnConfigUtil {
    private static final String PACKAGE_LICENSE_USERNAME = "package.license.username";
@@ -35,6 +36,16 @@ public final class McnConfigUtil {
 
       String userName = hcpQuality != null ? configValidator.getProperty(userNameKey) : null;
       String password = hcpQuality != null ? configValidator.getProperty(passwordKey) : null;
+
+      if(userName == null){
+         LOG.error("MCN license username for key "+ userNameKey + " is null");
+         throw new CredentialException(new Exception("MCN license information invalid"));
+      }
+      if(password == null){
+         LOG.error("MCN license password for key "+ passwordKey + " is null");
+         throw new CredentialException(new Exception("MCN license information invalid"));
+      }
+
 
       return new McnPackageInfo(userName.trim(), password.trim(), "rosa");
    }
