@@ -311,9 +311,9 @@ public class STSServiceImpl extends AbstractSTSService {
       List<Transform> transforms = new LinkedList<>();
       transforms.add(xmlSignatureFactory.newTransform("http://www.w3.org/2000/09/xmldsig#enveloped-signature", (TransformParameterSpec)null));
       transforms.add(xmlSignatureFactory.newTransform("http://www.w3.org/2001/10/xml-exc-c14n#", (C14NMethodParameterSpec)null));
-      Reference reference = xmlSignatureFactory.newReference("#" + requestId, xmlSignatureFactory.newDigestMethod("http://www.w3.org/2000/09/xmldsig#sha1", (DigestMethodParameterSpec)null), transforms, (String)null, (String)null);
+      Reference reference = xmlSignatureFactory.newReference("#" + requestId, xmlSignatureFactory.newDigestMethod("http://www.w3.org/2001/04/xmlenc#sha256", (DigestMethodParameterSpec)null), transforms, (String)null, (String)null);
       CanonicalizationMethod canonicalizationMethod = xmlSignatureFactory.newCanonicalizationMethod("http://www.w3.org/2001/10/xml-exc-c14n#", (C14NMethodParameterSpec)null);
-      SignatureMethod signatureMethod = xmlSignatureFactory.newSignatureMethod("http://www.w3.org/2000/09/xmldsig#rsa-sha1", (SignatureMethodParameterSpec)null);
+      SignatureMethod signatureMethod = xmlSignatureFactory.newSignatureMethod("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", (SignatureMethodParameterSpec)null);
       SignedInfo signedInfo = xmlSignatureFactory.newSignedInfo(canonicalizationMethod, signatureMethod, Collections.singletonList(reference));
       KeyInfoFactory keyInfoFactory = xmlSignatureFactory.getKeyInfoFactory();
       KeyInfo keyInfo = null;
