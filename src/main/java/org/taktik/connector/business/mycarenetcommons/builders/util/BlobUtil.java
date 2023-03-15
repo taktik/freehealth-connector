@@ -1,6 +1,6 @@
 package org.taktik.connector.business.mycarenetcommons.builders.util;
 
-import org.taktik.connector.business.mycarenetcommons.mapper.v3.SendRequestMapper;
+import org.taktik.connector.business.mycarenetcommons.mapper.v4.SendRequestMapper;
 import org.taktik.connector.business.mycarenetdomaincommons.domain.Blob;
 import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.ConfigValidator;
@@ -10,7 +10,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValue
 import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
-import be.fgov.ehealth.mycarenet.commons.core.v3.BlobType;
+import be.fgov.ehealth.mycarenet.commons.core.v4.BlobType;
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration;
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory;
 import java.util.ArrayList;
@@ -22,6 +22,20 @@ import org.w3._2005._05.xmlmime.Base64Binary;
 
 public class BlobUtil implements ConfigurationModuleBootstrap.ModuleBootstrapHook {
    public static Base64Binary generateXades(Credential credential, BlobType inValue, byte[] furnishedXades, String projectName) throws TechnicalConnectorException {
+      if (projectName == null) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL, "project name");
+      } else {
+         ConfigValidator props = ConfigFactory.getConfigValidator();
+         Boolean defaultValue = props.getBooleanProperty("${mycarenet.default.request.needxades}", false);
+         if (props.getBooleanProperty("mycarenet." + projectName + ".request.needxades", defaultValue)) {
+            return ArrayUtils.isEmpty(furnishedXades) ? generateXades(credential, inValue, projectName) : convertXadesToBinary(furnishedXades);
+         } else {
+            return null;
+         }
+      }
+   }
+
+   public static Base64Binary generateXades(Credential credential, be.fgov.ehealth.mycarenet.commons.core.v3.BlobType inValue, byte[] furnishedXades, String projectName) throws TechnicalConnectorException {
       if (projectName == null) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL, "project name");
       } else {
@@ -82,6 +96,10 @@ public class BlobUtil implements ConfigurationModuleBootstrap.ModuleBootstrapHoo
       return generateXades(credential, inValue, inValue.getId(), inValue.getContentEncoding(), inValue.getContentType(), projectName, platformName);
    }
 
+   public static Base64Binary generateXades(Credential credential, be.fgov.ehealth.mycarenet.commons.core.v3.BlobType inValue, String projectName, String platformName) throws TechnicalConnectorException {
+      return generateXades(credential, inValue, inValue.getId(), inValue.getContentEncoding(), inValue.getContentType(), projectName, platformName);
+   }
+
    private static Base64Binary generateXades(Credential credential, Object inValue, String id, String contentEncoding, String contentType, String projectName, String platformName) throws TechnicalConnectorException {
       ConfigValidator props = ConfigFactory.getConfigValidator();
       String xadesTypePropertyKey = platformName + "." + projectName + ".request.xadestype";
@@ -118,6 +136,10 @@ public class BlobUtil implements ConfigurationModuleBootstrap.ModuleBootstrapHoo
    }
 
    public static Base64Binary generateXades(Credential credential, BlobType inValue, String projectName) throws TechnicalConnectorException {
+      return generateXades(credential, inValue, projectName, "mycarenet");
+   }
+
+   public static Base64Binary generateXades(Credential credential, be.fgov.ehealth.mycarenet.commons.core.v3.BlobType inValue, String projectName) throws TechnicalConnectorException {
       return generateXades(credential, inValue, projectName, "mycarenet");
    }
 

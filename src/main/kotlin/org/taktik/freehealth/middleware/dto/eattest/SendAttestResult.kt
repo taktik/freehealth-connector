@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto.eattest
 
+import org.joda.time.DateTime
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 
@@ -28,5 +29,6 @@ open class SendAttestResult(
     var invoicingNumber: String? = null,
     var attest: Eattest? = null,
     var commonOutput: CommonOutput? = null,
-    var mycarenetConversation: MycarenetConversation? = null
+    var mycarenetConversation: MycarenetConversation? = null,
+    var timestamp: String? = null
 )

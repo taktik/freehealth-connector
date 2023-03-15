@@ -7,6 +7,7 @@ public class Blob {
    private byte[] content;
    private String contentType;
    private String messageName;
+   private String messageVersion;
    private byte[] hashValue;
    private byte[] xadesValue;
    private String contentEncryption;
@@ -60,6 +61,14 @@ public class Blob {
 
    public void setMessageName(String messageName) {
       this.messageName = messageName;
+   }
+
+   public String getMessageVersion() {
+      return this.messageVersion;
+   }
+
+   public void setMessageVersion(String messageVersion) {
+      this.messageVersion = messageVersion;
    }
 
    public boolean isHashTagRequired() {
