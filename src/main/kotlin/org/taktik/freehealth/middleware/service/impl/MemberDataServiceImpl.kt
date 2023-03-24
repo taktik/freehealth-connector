@@ -615,7 +615,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val request = MemberDataConsultationRequest().apply {
             commonInput = CommonInputType().apply {
                 request =
-                    RequestType().apply { isIsTest = true /*config.getProperty("endpoint.genins")?.contains("-acpt") ?: false*/ }
+                    RequestType().apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
                 inputReference = inputRef
                 origin = OriginType().apply {
                     `package` = PackageType().apply {

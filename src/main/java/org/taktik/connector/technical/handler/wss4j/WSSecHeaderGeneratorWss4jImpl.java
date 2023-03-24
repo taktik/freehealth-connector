@@ -92,7 +92,7 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
    public void sign(AbstractWsSecurityHandler.SignedParts... parts) throws TechnicalConnectorException {
       try {
          if (this.cred instanceof SAMLHolderOfKeyToken && StringUtils.isNotEmpty(this.assertionId)) {
-            this.sign.setSignatureAlgorithm("http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+            this.sign.setSignatureAlgorithm("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
             this.sign.setKeyIdentifierType(12);
             this.sign.setCustomTokenValueType("http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.0#SAMLAssertionID");
             this.sign.setCustomTokenId(this.assertionId);
@@ -114,24 +114,27 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
          }
 
       } catch (WSSecurityException var4) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HANDLER_ERROR, new Object[]{"unable to insert security header.", var4});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HANDLER_ERROR, "unable to insert security header.", var4);
       }
    }
 
    private void determineDigestAlgo() {
       if (this.ctx != null && StringUtils.isNotBlank((String)this.ctx.get("digest.method.algorithm"))) {
          this.sign.setDigestAlgo((String)this.ctx.get("digest.method.algorithm"));
-      } else {
+      } else if (this.ctx != null && this.ctx.get("javax.xml.ws.soap.http.soapaction.uri") != null && ((String) this.ctx.get("javax.xml.ws.soap.http.soapaction.uri")).contains(":recipe:")) {
          this.sign.setDigestAlgo(this.config.getProperty("default.digest.method.algorithm", "http://www.w3.org/2000/09/xmldsig#sha1"));
+      } else {
+         this.sign.setDigestAlgo(this.config.getProperty("default.digest.method.algorithm", "http://www.w3.org/2001/04/xmlenc#sha256"));
       }
-
    }
 
    private void determineSignatureAlgorithm() {
       if (this.ctx != null && StringUtils.isNotBlank((String)this.ctx.get("signature.method.algorithm"))) {
          this.sign.setSignatureAlgorithm((String)this.ctx.get("signature.method.algorithm"));
-      } else {
+      } else if (this.ctx != null && this.ctx.get("javax.xml.ws.soap.http.soapaction.uri") != null && ((String) this.ctx.get("javax.xml.ws.soap.http.soapaction.uri")).contains(":recipe:")) {
          this.sign.setSignatureAlgorithm(this.config.getProperty("default.signature.method.algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1"));
+      } else {
+         this.sign.setSignatureAlgorithm(this.config.getProperty("default.signature.method.algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"));
       }
    }
 

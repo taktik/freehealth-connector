@@ -1197,11 +1197,13 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
 
     private fun buildOriginType(nihii: String, ssin: String, firstname: String, lastname: String): OrigineType =
         OrigineType().apply {
+            val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+
             `package` = PackageType().apply {
                 name = ValueRefString().apply { value = config.getProperty("genericasync.dmg.package.name") }
                 license = LicenseType().apply {
-                    username = config.getProperty("mycarenet.license.username")
-                    password = config.getProperty("mycarenet.license.password")
+                    username = principal?.mcnLicense ?:  config.getProperty("mycarenet.license.username")
+                    password =  principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
                 }
             }
             careProvider = CareProviderType().apply {
