@@ -17,7 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.taktik.freehealth.middleware.web.UserAgentInterceptorFilter;
 
 public class UserAgentHandler extends AbstractSOAPHandler {
-   private static final String HEADER_NAME = "User-Agent";
+   private static final String USER_AGENT_HEADER_NAME = "User-Agent";
+   private static final String FROM_HEADER_NAME = "From";
    private static final Logger LOG = LoggerFactory.getLogger(UserAgentHandler.class);
    private static Properties applicationProps = new Properties();
    private Configuration config = ConfigFactory.getConfigValidator();
@@ -28,10 +29,10 @@ public class UserAgentHandler extends AbstractSOAPHandler {
       if (context.getMessage() != null) {
          MimeHeaders mimeHeaders = context.getMessage().getMimeHeaders();
          if (mimeHeaders != null) {
-            String[] agents = mimeHeaders.getHeader("User-Agent");
+            String[] agents = mimeHeaders.getHeader(USER_AGENT_HEADER_NAME);
             if (ArrayUtils.isNotEmpty(agents)) {
-               LOG.info("Removing MIME header [User-Agent] with value [" + StringUtils.join(agents, ",") + "]");
-               mimeHeaders.removeHeader("User-Agent");
+               LOG.info("Removing MIME header ["+USER_AGENT_HEADER_NAME+"] with value [" + StringUtils.join(agents, ",") + "]");
+               mimeHeaders.removeHeader(USER_AGENT_HEADER_NAME);
             }
 
             String value = this.config.getProperty(KEY_USER_AGENT, DEFAULT_USER_AGENT);
@@ -39,19 +40,19 @@ public class UserAgentHandler extends AbstractSOAPHandler {
             String fromRequest = UserAgentInterceptorFilter.Companion.getUserAgent();
 
             String combinedValue = fromRequest != null ? fromRequest + "/" + value : value;
-            LOG.debug("Adding MIME header [User-Agent] with value [" + combinedValue + "]");
-            mimeHeaders.addHeader("User-Agent", combinedValue);
+            LOG.debug("Adding MIME header ["+USER_AGENT_HEADER_NAME+"] with value [" + combinedValue + "]");
+            mimeHeaders.addHeader(USER_AGENT_HEADER_NAME, combinedValue);
 
             String fromValue = UserAgentInterceptorFilter.Companion.getXfrom();
             if (fromValue != null) {
-               String[] froms = mimeHeaders.getHeader("From");
+               String[] froms = mimeHeaders.getHeader(FROM_HEADER_NAME);
                if (ArrayUtils.isNotEmpty(froms)) {
-                  LOG.info("Removing MIME header [From] with value [" + StringUtils.join(froms, ",") + "]");
-                  mimeHeaders.removeHeader("From");
+                  LOG.info("Removing MIME header ["+FROM_HEADER_NAME+"] with value [" + StringUtils.join(froms, ",") + "]");
+                  mimeHeaders.removeHeader(FROM_HEADER_NAME);
                }
 
-               LOG.debug("Adding MIME header [From] with value [" + fromValue + "]");
-               mimeHeaders.addHeader("User-Agent", fromValue);
+               LOG.debug("Adding MIME header ["+FROM_HEADER_NAME+"] with value [" + fromValue + "]");
+               mimeHeaders.addHeader(FROM_HEADER_NAME, fromValue);
             }
          }
       }
