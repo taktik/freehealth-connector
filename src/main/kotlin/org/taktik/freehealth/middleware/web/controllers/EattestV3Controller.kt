@@ -156,6 +156,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam eAttestRef : String,
         @RequestParam reason : String,
         @RequestParam(required = false) date: Long?,
+        @RequestParam(required = false) attemptNbr: Int?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
@@ -180,7 +181,8 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
             patientGender,
             null,
             eAttestRef,
-            reason
+            reason,
+            attemptNbr
        )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 
     @DeleteMapping("/send/{patientSsin}/verbose")
@@ -200,6 +202,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam eAttestRef : String,
         @RequestParam reason : String,
         @RequestParam(required = false) date: Long?,
+        @RequestParam(required = false) attemptNbr: Int?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
@@ -224,6 +227,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
             patientGender,
             null,
             eAttestRef,
-            reason
+            reason,
+            attemptNbr
                                    )
 }

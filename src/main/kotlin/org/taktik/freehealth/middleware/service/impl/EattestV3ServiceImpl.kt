@@ -92,6 +92,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.*
 import javax.xml.bind.JAXBContext
+import javax.xml.datatype.DatatypeConstants
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
@@ -138,7 +139,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         patientGender: String,
         referenceDate: Int?,
         eAttestRef: String,
-        reason: String): SendAttestResultWithResponse? {
+        reason: String,
+        attemptNbr: Int?): SendAttestResultWithResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -150,8 +152,13 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
 
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val inputReference = InputReference().inputReference
+        val attribute = AttributeType().apply {
+            key = "urn:be:cin:nippin:attemptNbr"
+            value = attemptNbr ?: 1
+        }
 
-        val now = DateTime.now().withMillisOfSecond(0)
+        val instant = DateTime.now()
+        val now = DateTime(0).withYear(instant.year).withMonthOfYear(instant.monthOfYear).withDayOfMonth(instant.dayOfMonth).withHourOfDay(instant.hourOfDay).withMinuteOfHour(instant.minuteOfHour).withSecondOfMinute(instant.secondOfMinute).withMillisOfSecond(0)
         val refDateTime = dateTime(referenceDate) ?: now
 
         return extractEtk(credential)?.let {
@@ -206,6 +213,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                         be.fgov.ehealth.mycarenet.commons.core.v4.RequestType()
                             .apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
                     this.inputReference = inputReference
+                    this.attribute.add(attribute)
                     origin = OriginType().apply {
                         `package` = PackageType().apply {
                             license = LicenseType().apply {
@@ -346,10 +354,12 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
             value = attemptNbr ?: 1
         }
 
-        val now = dateTime(referenceDate)?.withMillisOfSecond(0) ?: DateTime.now().withMillisOfSecond(0)
+        val instant = DateTime.now()
+        val now = DateTime(0).withYear(instant.year).withMonthOfYear(instant.monthOfYear).withDayOfMonth(instant.dayOfMonth).withHourOfDay(instant.hourOfDay).withMinuteOfHour(instant.minuteOfHour).withSecondOfMinute(instant.secondOfMinute).withMillisOfSecond(0)
         val calendar = GregorianCalendar()
         calendar.time = now.toDate()
         val refDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar)
+        refDateTime.timezone = DatatypeConstants.FIELD_UNDEFINED
         val requestAuthorNihii = guardPostNihii ?: hcpNihii
 
         return extractEtk(credential)?.let {
@@ -1334,7 +1344,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 },
                                 ContentType().apply {
                                     cds.add(CDCONTENT().apply {
-                                        s = CDCONTENTschemes.LOCAL; sl = "NIHDI-CANCELLATION-REASON"; sv = "1.0"; l = "en";  value = reason
+                                        s = CDCONTENTschemes.LOCAL; sl = "NIHDI-CANCELLATION-REASON"; sv = "1.0";  value = reason
                                     })
                                 }))
                         }))
@@ -1357,7 +1367,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         val hour: Int = ((longDate / 10000) % 100).toInt()
         val minutes: Int = ((longDate / 100) % 100).toInt()
         val seconds: Int = (longDate % 100).toInt()
-        DateTime(year, month, day, hour, minutes, seconds)
+        DateTime(0).withYear(year).withMonthOfYear(month).withDayOfMonth(day).withHourOfDay(hour).withMinuteOfHour(minutes).withSecondOfMinute(seconds)
     }
 
     private fun extractError(sendTransactionRequest: ByteArray, ec: String, errorUrl: String?): Set<MycarenetError> {

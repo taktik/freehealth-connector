@@ -71,6 +71,7 @@ interface EattestV3Service {
         patientGender: String,
         referenceDate: Int?,
         eAttestRef: String,
-        reason: String
+        reason: String,
+        attemptNbr: Int?
                     ): SendAttestResultWithResponse?
 }
