@@ -38,6 +38,44 @@ import javax.xml.soap.SOAPException
 class EattestServiceImpl : EattestService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
     private val log = LoggerFactory.getLogger(EattestServiceImpl::class.java)
 
+    override fun sendAttestion(token: SAMLToken, request: be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationRequest): be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationResponse {
+        try {
+            val service = org.taktik.connector.business.mycarenet.attestv3.service.ServiceFactory.getAttestPort(token, "urn:be:fgov:ehealth:mycarenet:attest:protocol:v3:SendAttestation")
+            service.setPayload(request as Any)
+            val pl = service.getPayload()
+            val start = System.currentTimeMillis()
+            val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
+            val response = xmlResponse.asObject(be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationResponse::class.java) as be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationResponse
+            response.upstreamTiming = (stop - start).toInt();
+            response.soapRequest = xmlResponse.request
+            response.soapResponse = xmlResponse.soapMessage
+
+            return response
+        } catch (ex: SOAPException) {
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
+        }
+    }
+
+    override fun cancelAttestion(token: SAMLToken, request: be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationRequest): be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationResponse {
+        try {
+            val service = org.taktik.connector.business.mycarenet.attestv3.service.ServiceFactory.getAttestPort(token, "urn:be:fgov:ehealth:mycarenet:attest:protocol:v3:CancelAttestation")
+            service.setPayload(request as Any)
+            val start = System.currentTimeMillis()
+            val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
+            val response = xmlResponse.asObject(be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationResponse::class.java) as be.fgov.ehealth.mycarenet.attest.protocol.v3.CancelAttestationResponse
+
+            response.upstreamTiming = (stop - start).toInt();
+            response.soapRequest = xmlResponse.request
+            response.soapResponse = xmlResponse.soapMessage
+
+            return response
+        } catch (ex: SOAPException) {
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
+        }    }
+
+
     override fun sendAttestion(token: SAMLToken, request: be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationRequest): be.fgov.ehealth.mycarenet.attest.protocol.v2.SendAttestationResponse {
         try {
             val service = org.taktik.connector.business.mycarenet.attestv2.service.ServiceFactory.getAttestPort(token)

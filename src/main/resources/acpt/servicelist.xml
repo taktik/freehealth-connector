@@ -49,6 +49,10 @@
         <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/MyCareNet/eAttest/v2</Endpoint>
         <Endpoint Order="1" Status="INACTIVE">https://pilot.mycarenet.be:9443/ehealth/bcp/eattest/v2</Endpoint>
     </Service>
+    <Service Id="uddi:ehealth-fgov-be:business:mycareneteattest:v3" Name="MCN EATTEST V3">
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/MyCareNet/eAttest/v3</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://pilot.mycarenet.be:9443/ehealth/bcp/eattest/v3</Endpoint>
+    </Service>
     <Service Id="uddi:ehealth-fgov-be:business:memberdata:v1" Name="MCN MEMBERDATA V1">
         <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/MyCareNet/MemberData/v1</Endpoint>
         <Endpoint Order="1" Status="INACTIVE">https://pilot.mycarenet.be:9443/mycarenet/bed/bcp/memberData</Endpoint>

@@ -14,6 +14,6 @@ public interface BlobBuilder extends ConfigurableImplementation {
    Blob build(byte[] input, String encodingType, String id, String contentType) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
    Blob build(byte[] input, String encodingType, String id, String contentType, String messageName) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
    Blob build(byte[] input, String encodingType, String id, String contentType, String messageName, String contentEncryption) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
-
+   Blob build(byte[] input, String encodingType, String id, String contentType, String messageName, String messageVersion, String contentEncryption) throws InvalidBlobContentConnectorException, TechnicalConnectorException;
    byte[] checkAndRetrieveContent(Blob blob) throws TechnicalConnectorException;
 }

@@ -155,6 +155,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
     fun write400(oa: String, numericalRef: Long?, recordsCount: Long, codesNomenclature: List<Long>, amount: Long) {
         val ws = WriterSession(writer, Segment400Record95Description)
 
+        val numRef = if (numericalRef!!.toString().length > 12) numericalRef.toString().takeLast(12) else numericalRef.toString()
+
         val creationDate = LocalDateTime.now()
         val formattedCreationDate = creationDate.format(dtf)
         assert(formattedCreationDate.length == 8)
@@ -170,7 +172,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("4001", 0)
         ws.write("401", oa)
         ws.write("4011", 0)
-        ws.write("402", numericalRef!!)
+        ws.write("402", numRef)
         ws.write("4021", 0)
         ws.write("403", if (amount >= 0) "+" else "-")
         ws.write("404", Math.abs(amount))
@@ -367,6 +369,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         val creationDate = LocalDateTime.now()
         val formattedCreationDate = creationDate.format(dtf)
 
+        val isDentist = sender.nihii.toString().take(2).toInt() in 30..39
+
         assert(formattedCreationDate.length == 8)
 
         val nf11 = DecimalFormat("00000000000")
@@ -405,12 +409,13 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         if (sender.isMedicalHouse && icd.codeNomenclature == 109594L) ws.write("15", sender.nihii)
         //ws.write("16", if (sender.isMedicalHouse) 0 else if (icd.gnotionNihii == null || icd.gnotionNihii?.let { it.isEmpty() } == true) 1 else 4)
         ws.write("16",
-                 when {
-                     sender.isMedicalHouse && icd.codeNomenclature != 109594L -> 0
-                     icd.gnotionNihii?.isNotEmpty() == true -> 4
-                     icd.internshipNihii?.isNotEmpty() == true -> 5
-                     else -> 1
-                 })
+            when {
+                isDentist -> 1
+                sender.isMedicalHouse && icd.codeNomenclature != 109594L -> 0
+                icd.gnotionNihii?.isNotEmpty() == true -> 4
+                icd.internshipNihii?.isNotEmpty() == true -> 5
+                else -> 1
+            })
         ws.write("17", icd.relatedCode)
         ws.write("19",(if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
         if(icd.prescriberNorm?.code != 0 && icd.prescriberNorm?.code !=3 && icd.prescriberNorm?.code !=4) ws.write("20", icd.prescriptionDate)// todo enlever le code 4 quand on fera infi cfr bible factu pg 473
@@ -420,6 +425,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("26", (icd.prescriberNorm ?: InvoicingPrescriberCode.None).code)
         ws.write("27",(if (icd.patientFee >= 0) "+" else "-") + nf9.format(Math.abs(icd.patientFee)))
         ws.write("28", icd.invoiceRef)
+        ws.write("29", icd.anatomy ?: "00")
         ws.write("30",(if (icd.doctorSupplement >= 0) "+" else "-") + nf9.format(Math.abs(icd.doctorSupplement)))
         ws.write("32", icd.override3rdPayerCode?. let { if (it >= 0) it else 0 } ?: 0)
         ws.write("33", icd.personalInterventionCoveredByThirdPartyCode?. let { if (it >= 0) it else 0 } ?: 0)//MAF Zone 33 todo //Mettre 1 si a charge du medecin
@@ -445,6 +451,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
     @Throws(IOException::class)
     fun writeInvolvementRecordContent(recordNumber: Int,
+                                      sender: InvoiceSender,
                                       invoicingYear: Int?,
                                       invoicingMonth: Int?,
                                       patient: Patient,
@@ -453,6 +460,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         val creationDate = LocalDateTime.now()
         val formattedCreationDate = creationDate.format(dtf)
+
+        val isDentist = sender.nihii.toString().take(2).toInt() in 30..39
 
         assert(formattedCreationDate.length == 8)
 
@@ -480,6 +489,12 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("5", FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
         ws.write("8a", noSIS)
         ws.write("15", icd.doctorIdentificationNumber)
+        if (isDentist) {
+            ws.write("17", icd.relatedCode ?: 0)
+        }
+        else {
+            ws.write("17", 0)
+        }
         ws.write("19", (if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
         ws.write("27", "0000" + nf3.format(ct1) + nf3.format(ct2))
         ws.write("42", icd.insuranceRef)

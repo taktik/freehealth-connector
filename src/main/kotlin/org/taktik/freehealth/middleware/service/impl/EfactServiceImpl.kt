@@ -64,7 +64,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
     private val genAsyncService = GenAsyncServiceImpl("invoicing")
 
     override fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean): String {
-        require(batch.numericalRef?.let { it <= 999999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (12 positions max)" } ?: "numericalRef is missing" }
+        require(batch.numericalRef?.let { it <= 99999999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (14 positions max)" } ?: "numericalRef is missing" }
         requireNotNull(batch.sender) { "Sender cannot be null" }
         requireNotNull(batch.batchRef) { "BatchRef cannot be null" }
         requireNotNull(batch.fileRef) { "FileRef cannot be null"}
@@ -98,7 +98,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
 
     override fun makeFlatFileCoreWithMetadata(batch: InvoicesBatch, isTest: Boolean): FlatFileWithMetadata {
-        require(batch.numericalRef?.let { it <= 999999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (12 positions max)" } ?: "numericalRef is missing" }
+        require(batch.numericalRef?.let { it <= 99999999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (14 positions max)" } ?: "numericalRef is missing" }
         requireNotNull(batch.sender) { "Sender cannot be null" }
         requireNotNull(batch.batchRef) { "BatchRef cannot be null" }
         requireNotNull(batch.uniqueSendNumber) { "UniqueSendNumber cannot be null" }
@@ -162,7 +162,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
                     if (it.insuranceRef != null) {
                         rn =
-                            iv.writeInvolvementRecordContent(rn, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, it)
+                            iv.writeInvolvementRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, it)
                         recordCodes.add(it.codeNomenclature)
                         recordsCountPerOA[0]++
                         metadata.recordsCount++
