@@ -206,8 +206,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                 blob.messageName = "E-ATTEST-CANCEL"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
-
+                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnPackageName, samlToken.quality)
                 this.commonInput = CommonInputType().apply {
                     request =
                         be.fgov.ehealth.mycarenet.commons.core.v4.RequestType()
@@ -414,7 +413,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                 blob.messageName = "E-ATTEST"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnPackageName, samlToken.quality)
 
                 this.commonInput = CommonInputType().apply {
                     request =
