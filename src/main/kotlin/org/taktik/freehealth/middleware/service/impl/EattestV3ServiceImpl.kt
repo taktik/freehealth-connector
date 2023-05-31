@@ -201,8 +201,10 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             "none",
                             detailId,
                             "text/xml",
-                            null as String?
-                              )
+                            null as String?,
+                            "3.0",
+                            null
+                        )
                 blob.messageName = "E-ATTEST-CANCEL"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
