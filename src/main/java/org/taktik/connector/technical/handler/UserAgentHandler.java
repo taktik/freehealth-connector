@@ -51,7 +51,7 @@ public class UserAgentHandler extends AbstractSOAPHandler {
                }
 
                LOG.debug("Adding MIME header [From] with value [" + fromValue + "]");
-               mimeHeaders.addHeader("User-Agent", fromValue);
+               mimeHeaders.addHeader("From", fromValue);
             }
          }
       }
