@@ -121,9 +121,9 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
    private void determineDigestAlgo() {
       if (this.ctx != null && StringUtils.isNotBlank((String)this.ctx.get("digest.method.algorithm"))) {
          this.sign.setDigestAlgo((String)this.ctx.get("digest.method.algorithm"));
-      } else if (this.ctx != null && this.ctx.get("javax.xml.ws.soap.http.soapaction.uri") != null && ((String) this.ctx.get("javax.xml.ws.soap.http.soapaction.uri")).contains(":recipe:")) {
+      }/* else if (this.ctx != null && this.ctx.get("javax.xml.ws.soap.http.soapaction.uri") != null && ((String) this.ctx.get("javax.xml.ws.soap.http.soapaction.uri")).contains(":recipe:")) {
          this.sign.setDigestAlgo(this.config.getProperty("default.digest.method.algorithm", "http://www.w3.org/2000/09/xmldsig#sha1"));
-      } else {
+      }*/ else {
          this.sign.setDigestAlgo(this.config.getProperty("default.digest.method.algorithm", "http://www.w3.org/2001/04/xmlenc#sha256"));
       }
    }
@@ -131,9 +131,9 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
    private void determineSignatureAlgorithm() {
       if (this.ctx != null && StringUtils.isNotBlank((String)this.ctx.get("signature.method.algorithm"))) {
          this.sign.setSignatureAlgorithm((String)this.ctx.get("signature.method.algorithm"));
-      } else if (this.ctx != null && this.ctx.get("javax.xml.ws.soap.http.soapaction.uri") != null && ((String) this.ctx.get("javax.xml.ws.soap.http.soapaction.uri")).contains(":recipe:")) {
+      }/* else if (this.ctx != null && this.ctx.get("javax.xml.ws.soap.http.soapaction.uri") != null && ((String) this.ctx.get("javax.xml.ws.soap.http.soapaction.uri")).contains(":recipe:")) {
          this.sign.setSignatureAlgorithm(this.config.getProperty("default.signature.method.algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1"));
-      } else {
+      }*/ else {
          this.sign.setSignatureAlgorithm(this.config.getProperty("default.signature.method.algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"));
       }
    }
