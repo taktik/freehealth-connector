@@ -13,8 +13,8 @@
         <Endpoint Order="1" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/IAM/AttributeAuthority/v1</Endpoint>
     </Service>
     <Service Id="uddi:ehealth-fgov-be:business:iamsaml11tokenservice:v1" Name="I.AM STS SAML11">
-        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/IAM/SecurityTokenService/v1</Endpoint>
-        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/IAM/SecurityTokenService/v1</Endpoint>
+        <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/IAM/Saml11TokenService/v1</Endpoint>
+        <Endpoint Order="1" Status="INACTIVE">https://services-acpt.ehealth2.be/IAM/Saml11TokenService/v1</Endpoint>
     </Service>
     <Service Id="uddi:ehealth-fgov-be:business:iamsecuritytokenservice:v1" Name="I.AM STS WSTRUST">
         <Endpoint Order="0" Status="ACTIVE">https://services-acpt.ehealth.fgov.be/IAM/SecurityTokenService/v1</Endpoint>
