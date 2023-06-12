@@ -347,7 +347,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
-        val inputReference = InputReference().inputReference
+        val inputReference = referenceDate?.toString() ?: InputReference().inputReference
         val attribute = AttributeType().apply {
             key = "urn:be:cin:nippin:attemptNbr"
             value = attemptNbr ?: 1
