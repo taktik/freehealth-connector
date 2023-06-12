@@ -1,0 +1,114 @@
+Manifest-Version: 1.0
+Implementation-Title: Connector Business eAgreement
+Maven-Artifact-Id: connector-business-mycareneteagreement
+Implementation-Version: 4.3.0
+Compile-Jdk: 1.8
+Build-Time: 2023-04-04T21:04:10Z
+CMDB-Catalog-Part: 
+Build-Jdk-Spec: 11
+Created-By: Maven Jar Plugin 3.2.0
+Specification-Version: 1.0.0
+Maven-Group-Id: be.fgov.ehealth.connector
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-myca
+ reneteagreement/pom.xml
+SHA-256-Digest: 8jDYODLmsVCVnMzzj7DtjPxLUEvWTVWlu0C3CJH9D3A=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/builders/Respon
+ seObjectBuilderFactory.class
+SHA-256-Digest: OWxcBEVFQaQfmueyNRbq7BlKDoskeEw6c49yfkuj0+U=
+
+Name: disclaimer/release.notes.business-mycareneteagreement.txt
+SHA-256-Digest: aLPoCRdt4jgg+bd2fmDMSUZ7mbxADk4WSD8UpSkCvTI=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/builders/impl/E
+ ncryptedRequestObjectBuilderImpl.class
+SHA-256-Digest: Z5BUK8x7NlZoKLmc+SEo8HiYR4tupVItACjIJVr4I4M=
+
+Name: META-INF/connector.bootstrap
+SHA-256-Digest: 7QGZzjnmPVYD2r1ytTCoDba50k82Akw0Wcg546q9t94=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/builders/Respon
+ seObjectBuilder.class
+SHA-256-Digest: J423ZZYUF1A+IIy/0ty3fAJuDEh4+xUcgmB+A59+DsU=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/domain/AskAgree
+ mentBuilderRequest.class
+SHA-256-Digest: 8QOyyzOMUiXa2YNTL/oIve3LrX0YGZZYu/LNvS9Jkn8=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/domain/Agreemen
+ tBuilderRequest.class
+SHA-256-Digest: ahIF/J6xvMYp2d/S50o9SeCFCXHswCY3woCIrHimWuw=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-myca
+ reneteagreement/pom.properties
+SHA-256-Digest: cP1wmPhogypWW30oyxOM8SCotQksdUZ8j1L4VittHkI=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/session/impl/Ag
+ reementServiceImpl.class
+SHA-256-Digest: VHvbMl3J1hjRM24FMgIWDyvpW3Nvb6zxd0Ur+ZCaJk0=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/builders/impl/R
+ esponseObjectBuilderImpl.class
+SHA-256-Digest: 5bJfY9ttv+aAbmq2rEd3dLFMI7WyI4XOa+0zzKHJXmQ=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/domain/SignedEn
+ cryptedBuilderResponse.class
+SHA-256-Digest: dNhJmu+SmG+QurYWBnOtjCvEPXVIIDEL48g3zRQxzQY=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/domain/ConsultA
+ greementBuilderRequest.class
+SHA-256-Digest: L2eG19KcPP19Wy2XNwXeJxMyX7wl2QKNGKOFavwdAHo=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/validator/Agree
+ mentXmlValidatorImpl.class
+SHA-256-Digest: EG9F9EOLH7j+hbToq7VulDiquH46pR2ULmmLADPZYYo=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/service/Agreeme
+ ntService.class
+SHA-256-Digest: Er2AbY91lz4QJoQJkW+08hNXRzBvL5Sw95KGHqRucqQ=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/service/impl/Ag
+ reementServiceImpl.class
+SHA-256-Digest: Oi63w0AhMNBTVFH7iqd9wYuqurx69eKMF/MQ2jRVRcM=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/session/impl/Ag
+ reementServiceImplementationFactory.class
+SHA-256-Digest: xNjrDeKR+52MlvG5zL7DDHlYLyfh4m8OBVnVjCm2kFA=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/service/Service
+ Factory.class
+SHA-256-Digest: vtusXbHIugFIRXI6Yyr7YHT1NAhZGBX9tF5pjlDpFao=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/exception/Agree
+ mentBusinessConnectorExceptionValues.class
+SHA-256-Digest: prIIJHzvFZbrK8mCr7pOdDyoqgraPJafVw7gS0Mz98Q=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/exception/Agree
+ mentBusinessConnectorException.class
+SHA-256-Digest: /gnmFl02zYRvv8cVk9pBHBm7ni7hCCGOVGKzI4whJuY=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/builders/Reques
+ tObjectBuilderFactory.class
+SHA-256-Digest: v0ROYyt/aW1Ah15G503vgel0dC4zAL8kjVf+W1fhXb4=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/session/Agreeme
+ ntSessionServiceFactory.class
+SHA-256-Digest: riwvGeHpmHsHHpOpPZGKqI5OzBEE3Q1MVu4yIZNYKHI=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/util/AgreementC
+ onstants.class
+SHA-256-Digest: jkwEFtOO9vDhzL5Ky8+Ejq6zzOiayOFxQSj2Id3HezU=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/session/Agreeme
+ ntService.class
+SHA-256-Digest: /AQg6drkhab7DkTYnQ2LTJyFtO7Id6JOgYC7sM1Svaw=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/builders/Reques
+ tObjectBuilder.class
+SHA-256-Digest: e8MMazXpppmvwgWe4o5kdKZ/JNUzh6Byx8gOIX8RCfM=
+
+Name: be/ehealth/businessconnector/mycarenet/agreement/security/Agreem
+ entEncryptionUtil.class
+SHA-256-Digest: PN64029nt81b5557sFSyPQclP3qW2mxl/GV/yM0Kh/A=
+

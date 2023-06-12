@@ -1,0 +1,24 @@
+************************************************************
+* eHealth Business Mycarenet eAgreement RELEASE NOTES      *
+************************************************************
+4.0.2 release (october 2021)
+  . improvement     - add businessResponse field to get the business content of the response in a straightforward manner
+                        Source diff:
+                             M	mycareneteagreement/src/main/java/be/ehealth/businessconnector/mycarenet/agreement/domain/SignedEncryptedBuilderResponse.java
+  
+  . change          - Minor refactorings. Source diff:
+                             M	mycareneteagreement/src/main/java/be/ehealth/businessconnector/mycarenet/agreement/builders/impl/EncryptedRequestObjectBuilderImpl.java
+                             M	mycareneteagreement/src/main/java/be/ehealth/businessconnector/mycarenet/agreement/builders/impl/ResponseObjectBuilderImpl.java
+
+4.0.1 release (october 2021)
+  . internal partner release (not published on ehealth portal only distributed to Recipe, Reseau Santé Wallon and Vitalink)
+
+
+3.20.2 release (october 2020)
+  . Initial release
+ 
+3.20.1 release (september 2020)
+   . internal release
+   
+3.20.0 release (september 2020)
+   . internal release
