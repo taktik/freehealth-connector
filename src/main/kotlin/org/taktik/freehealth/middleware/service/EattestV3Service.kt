@@ -69,7 +69,7 @@ interface EattestV3Service {
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
-        referenceDate: Int?,
+        referenceDate: Long?,
         eAttestRef: String,
         reason: String,
         attemptNbr: Int?
