@@ -137,7 +137,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
-        referenceDate: Int?,
+        referenceDate: Long?,
         eAttestRef: String,
         reason: String,
         attemptNbr: Int?): SendAttestResultWithResponse? {
@@ -151,7 +151,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
-        val inputReference = InputReference().inputReference
+        val inputReference = referenceDate?.toString() ?:InputReference().inputReference
         val attribute = AttributeType().apply {
             key = "urn:be:cin:nippin:attemptNbr"
             value = attemptNbr ?: 1
@@ -159,7 +159,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
 
         val instant = DateTime.now()
         val now = DateTime(0).withYear(instant.year).withMonthOfYear(instant.monthOfYear).withDayOfMonth(instant.dayOfMonth).withHourOfDay(instant.hourOfDay).withMinuteOfHour(instant.minuteOfHour).withSecondOfMinute(instant.secondOfMinute).withMillisOfSecond(0)
-        val refDateTime = dateTime(referenceDate) ?: now
+        val refDateTime = now
 
         return extractEtk(credential)?.let {
             val sendTransactionRequest =
@@ -1207,7 +1207,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         traineeSupervisorLastName: String?,
         eAttestRef: String,
         reason: String,
-        referenceDate: Int?) : SendTransactionRequest {
+        referenceDate: Long?) : SendTransactionRequest {
 
         val refDateTime = dateTime(referenceDate) ?: now
 
@@ -1231,7 +1231,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                         familyname = hcpLastName
                     })
                 }
-                date = now; time = now
+                date = refDateTime; time = refDateTime
             }
 
             kmehrmessage = Kmehrmessage().apply {
@@ -1383,7 +1383,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         val hour: Int = ((longDate / 10000) % 100).toInt()
         val minutes: Int = ((longDate / 100) % 100).toInt()
         val seconds: Int = (longDate % 100).toInt()
-        DateTime(0).withYear(year).withMonthOfYear(month).withDayOfMonth(day).withHourOfDay(hour).withMinuteOfHour(minutes).withSecondOfMinute(seconds)
+        DateTime(0).withYear(year).withMonthOfYear(month).withDayOfMonth(day).withHourOfDay(hour).withMinuteOfHour(minutes).withSecondOfMinute(seconds).withMillisOfSecond(0)
     }
 
     private fun extractError(sendTransactionRequest: ByteArray, ec: String, errorUrl: String?): Set<MycarenetError> {
