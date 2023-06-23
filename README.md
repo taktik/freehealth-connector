@@ -9,7 +9,7 @@ go to http://127.0.0.1:8080/api/index.html for documentation
 
 ```
 You need to set the mycarenet license info in org.taktik.connector.technical.properties
-(mycarenet.license.username & mycarenet.license.password)
+(mycarenet.license.username & mycarenet.license.password). Make sure you have credentials adapted to the environment.
 
 ## Test config
 
