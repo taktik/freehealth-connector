@@ -1,7 +1,7 @@
-package org.taktik.connector.business.mycarenet.attestv3.service.impl;
+package org.taktik.connector.business.agreement.service.impl;
 
-import org.taktik.connector.business.mycarenet.attestv3.service.AttestService;
-import org.taktik.connector.business.mycarenet.attestv3.service.ServiceFactory;
+import org.taktik.connector.business.agreement.service.AttestService;
+import org.taktik.connector.business.agreement.service.ServiceFactory;
 import org.taktik.connector.technical.config.impl.ConfigurationModuleBootstrap;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;

@@ -52,7 +52,7 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
          this.sign = new WSSecSignature(config);
          return this;
       } catch (WSSecurityException var3) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HANDLER_ERROR, new Object[]{"unable to insert security header.", var3});
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HANDLER_ERROR, "unable to insert security header.", var3);
       }
    }
 

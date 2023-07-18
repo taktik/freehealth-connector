@@ -1,0 +1,80 @@
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:errors:core:v1" xmlns:soa="urn:be:fgov:ehealth:errors:soa:v1" targetNamespace="urn:be:fgov:ehealth:errors:soa:v1"
+  elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD 15. Errors
+ Specification-Version: 1.1
+ Implementation-Version: 1.1.4
+ Build-Time: 20190311-1148 
+ </xs:appinfo>
+ </xs:annotation>
+  
+  <xs:annotation>
+    <xs:documentation xml:lang="en">
+      This schema describes the structure of an error detail as it
+      is communicated by the SOA Platform to the consumer. This error detail might
+      be embedded in another structure. This is the case when the
+      SOAP
+      protocol is used. In that case this structure is
+      embedded in the Soap:Fault "detail" element
+    </xs:documentation>
+  </xs:annotation>
+  
+  <xs:import namespace="urn:be:fgov:ehealth:errors:core:v1" schemaLocation="ehealth-errors-schema-core-1_1.xsd" />
+  
+  <xs:element name="SystemError" type="soa:SystemErrorType" />
+  <xs:element name="BusinessError" type="soa:BusinessErrorType" />
+  
+  <xs:complexType name="SystemErrorType">
+    <xs:annotation>
+      <xs:documentation>
+        Type for SystemErrors.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="soa:SOAErrorType" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="BusinessErrorType">
+    <xs:annotation>
+      <xs:documentation>
+        Type for BusinessErrors.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="soa:SOAErrorType" />
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="SOAErrorType">
+    <xs:annotation>
+      <xs:documentation>
+        Common Type for ConsumerErrors.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="core:ErrorType">
+        <xs:sequence>
+          <xs:element name="Environment" type="soa:EnvironmentType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:simpleType name="EnvironmentType">
+    <xs:annotation>
+      <xs:documentation>
+        Supported environments.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Development" />
+      <xs:enumeration value="Test" />
+      <xs:enumeration value="Integration" />
+      <xs:enumeration value="Acceptation" />
+      <xs:enumeration value="Simulation" />
+      <xs:enumeration value="Production" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

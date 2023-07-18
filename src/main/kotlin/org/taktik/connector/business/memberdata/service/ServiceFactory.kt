@@ -18,7 +18,7 @@ object ServiceFactory {
     @Throws(TechnicalConnectorException::class)
     fun getMemberDataSyncPort(token: SAMLToken): GenericRequest {
         Validate.notNull(token, "Required parameter SAMLToken is null.")
-        return GenericRequest().setEndpoint(config.getProperty("endpoint.memberdata", "\$uddi{uddi:ehealth-fgov-be:business:mycarenetmemberdata:v1}")).setCredential(token, TokenType.SAML).addDefaulHandlerChain()
+        return GenericRequest().setEndpoint(config.getProperty(PROP_ENDPOINT_MEMBERDATASYNC, "\$uddi{uddi:ehealth-fgov-be:business:mycarenetmemberdata:v1}")).setCredential(token, TokenType.SAML).addDefaulHandlerChain()
     }
 
     init {
