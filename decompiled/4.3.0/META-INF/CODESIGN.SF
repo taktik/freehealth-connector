@@ -1,0 +1,80 @@
+Signature-Version: 1.0
+SHA-256-Digest-Manifest-Main-Attributes: 8krDNy7x/vKV16aeEs6Ejohoffm1+
+ b5R3o7dUbLsNzo=
+SHA-256-Digest-Manifest: 8pmPRNdWFwwluecqZjwag54fA8Ey3CoetifDGc+ghGo=
+Created-By: 1.8.0_281 (Oracle Corporation)
+
+Name: be/fgov/ehealth/mycarenet/agreement/protocol/v1/AskAgreementResp
+ onse.class
+SHA-256-Digest: re3egODW7yqaewNnrBseFBwBTZfPdR5uJyzVSEqsrlo=
+
+Name: ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd
+SHA-256-Digest: DLUpqHQda+nBjrd4xHbr7E7tD874eebIlRy+ahBnhtU=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-utilities-myc
+ areneteagreement/pom.xml
+SHA-256-Digest: 9XHq0kcL9SUk0u5Aqo5wFAwAenXgmkHMb9wycK74p1c=
+
+Name: bindings/jaxb/bindingsupport-basic.xjb
+SHA-256-Digest: X2LiG5pKhehfI7u0qvNK/CaeBbxEySsjz3B+WCL4QlU=
+
+Name: ehealth-mycarenet-agreement/XSD/mycarenet-agreement-protocol-1_1
+ .xsd
+SHA-256-Digest: 9K2vO0fLK3RD9e02xhNOjDbsmrGyMgVmDtysrCpR9sk=
+
+Name: properties-from-pom.properties
+SHA-256-Digest: zSQd5RNfePtk3fM5aZYldybRHOs4Z3lvx5flLP7jCbE=
+
+Name: external/XSD/xmlmime.xsd
+SHA-256-Digest: 2GyC76mSjhQfuZP+Mj8X3GNiFiPTcEsC/D6AzGy8ZPE=
+
+Name: ehealth-errors/XSD/ehealth-errors-schema-core-1_1.xsd
+SHA-256-Digest: fmpeR67bBNlnDUBDBqEo0uK0LpT5tmJXHRnImbNcdqI=
+
+Name: ehealth-commons/XSD/ehealth-commons-schema-encryption-2_0.xsd
+SHA-256-Digest: FIULKaYOFEJwqhqPyXF1uNdL7GuJOKzOQeHXUKNt7ig=
+
+Name: ehealth-mycarenetcommons/XSD/mycarenet-commons-protocol-3_0.xsd
+SHA-256-Digest: j60pkbcatQTiCFys9waxArfBvEe+NKzHhcI2chiVTeg=
+
+Name: external/XSD/xml.xsd
+SHA-256-Digest: oDBwn9LwgvRu8DDlMlgQoJyoSDjez3MmK8yOxfyoIog=
+
+Name: ehealth-mycarenetcommons/XSD/mycarenet-commons-core-3_0.xsd
+SHA-256-Digest: JoqOL7Z9cbzr/zV+iiOdOfIgq3nMFVztnFuEcVE8Jck=
+
+Name: META-INF/sun-jaxb.episode
+SHA-256-Digest: HKi48LHdz2RHmjt7xHYx4Qe6h6ZWMGAkwpuFeD0z3rk=
+
+Name: ehealth-errors/XSD/ehealth-errors-schema-soa-1_1.xsd
+SHA-256-Digest: NnlamOEsyi0AHj5hRWryy+MqODRYSjemyoygd0UG1SE=
+
+Name: be/fgov/ehealth/mycarenet/agreement/protocol/v1/ConsultAgreement
+ Response.class
+SHA-256-Digest: LoGQLAjn8iHau6JOycrSdeNdchRSS/gVBS1mqi4HDxk=
+
+Name: ehealth-commons/XSD/ehealth-commons-schema-core-2_0.xsd
+SHA-256-Digest: ITFrKsdc1BcxwLI98Zb+gyZTlJ1NIk2ZuoNUGuyQOaY=
+
+Name: be/fgov/ehealth/mycarenet/agreement/protocol/v1/ObjectFactory.cl
+ ass
+SHA-256-Digest: 8L1o6syLv5E5x3wmkwdtdAetudN0nQ0TmfQ4v7xMg0k=
+
+Name: be/fgov/ehealth/mycarenet/agreement/protocol/v1/AskAgreementRequ
+ est.class
+SHA-256-Digest: RFVb4LxLHMHekjHdBStIsgsyTDWhur+HRSnRMCtoU9g=
+
+Name: be/fgov/ehealth/mycarenet/agreement/protocol/v1/ConsultAgreement
+ Request.class
+SHA-256-Digest: zrpx05LzzKzXIifv1efj2kWEdEDGNhthR5WcWg9VQYE=
+
+Name: external/XSD/swaref.xsd
+SHA-256-Digest: U2zeVN1Mkuoi2Aj2SmGPmMjw6QKN3cdm658SFgqV0Uc=
+
+Name: bindings/jaxb/mycarenetagreement-bindings.xjb
+SHA-256-Digest: 1iG716RCHuo0+4e8ndSExCXzuAZTf8hMF4EAmZ08VPc=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-utilities-myc
+ areneteagreement/pom.properties
+SHA-256-Digest: OvF5ff3ous3pO31uHL4aLoV8xUnJ2Bm7pKC/b2ARtbQ=
+

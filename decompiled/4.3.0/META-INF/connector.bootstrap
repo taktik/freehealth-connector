@@ -1,0 +1,3 @@
+be.ehealth.businessconnector.mycarenet.memberdata.builders.impl.ResponseObjectBuilderImpl
+be.ehealth.businessconnector.mycarenet.memberdatacommons.builders.impl.EncryptedRequestObjectBuilderImpl
+be.ehealth.businessconnector.mycarenet.memberdatacommons.builders.impl.NotEncryptedRequestObjectBuilderImpl

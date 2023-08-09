@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit4.SpringRunner
+import org.taktik.connector.technical.adapter.XmlTimeNoTzAdapter
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 
 @RunWith(SpringRunner::class)
@@ -33,6 +34,12 @@ class HubControllerTest : EhealthTest() {
         Vitalink :  : https://vitalink-acpt.ehealth.fgov.be/vpmg/vitalink-gateway/IntraHubService
 
      */
+
+    @Test
+    fun checkTime() {
+        val ad = XmlTimeNoTzAdapter()
+        Assertions.assertThat(ad.marshal(ad.unmarshal("10:00")) == "10:00")
+    }
 
     @Test
     fun getPatient() {

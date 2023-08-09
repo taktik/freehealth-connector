@@ -27,7 +27,12 @@ open class XMLValidatorImpl : XMLValidator {
         }
     }
 
+
     companion object {
+        fun putXsdFileLocationForXmlObject(clazz: Class<*>, path: String) {
+            XSD_FILE_LOCATION_FOR_CLASS_MAP[clazz] = path
+        }
+
         val XSD_FILE_LOCATION_FOR_CLASS_MAP: MutableMap<Class<*>, String> = HashMap()
     }
 }

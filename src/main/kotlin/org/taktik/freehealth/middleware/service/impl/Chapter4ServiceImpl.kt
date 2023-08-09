@@ -622,7 +622,7 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
             val agreementResponse = AgreementResponse(commonOutput = commonOutput).apply {
                 this.mycarenetConversation = MycarenetConversation().apply {
                     response.soapRequest?.writeTo(this.soapRequestOutputStream())
-                    response.soapRequest?.writeTo(this.soapResponseOutputStream())
+                    response.soapResponse?.writeTo(this.soapResponseOutputStream())
                     this.transactionRequest = v1Message?.let {
                         MarshallerHelper(Kmehrrequest::class.java, Kmehrrequest::class.java).toXMLByteArray(Kmehrrequest().apply { this.kmehrmessage = it })
                     }.toString(Charsets.UTF_8)

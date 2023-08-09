@@ -1,0 +1,83 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:commons:core:v2" xmlns:swaref="http://ws-i.org/profiles/basic/1.1/xsd" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:be:fgov:ehealth:commons:core:v2" version="2.0">
+  <xs:complexType name="ActorType">
+    <xs:annotation>
+      <xs:documentation>Identifies the type of Actor</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" ref="core:Id"/>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" minOccurs="0" name="FirstName" type="xs:string"/>
+        <xs:element name="Name" type="xs:string"/>
+      </xs:sequence>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Author" type="core:AuthorType">
+    <xs:annotation>
+      <xs:documentation>Identifies the author of the message</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="AuthorType">
+    <xs:annotation>
+      <xs:documentation>Identifies the authorType of the message</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" ref="core:HcParty"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="HcParty" type="core:ActorType"/>
+  <xs:element name="Id" type="core:IdType">
+    <xs:annotation>
+      <xs:documentation>Identifier</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="IdType">
+    <xs:annotation>
+      <xs:documentation>Type of Identifier.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="Type" type="xs:anyURI" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:attributeGroup name="PaginationAttributeGroup">
+    <xs:attribute name="Offset" type="xs:int" use="required"/>
+    <xs:attribute name="MaxElements" type="xs:int" use="required"/>
+  </xs:attributeGroup>
+  <xs:element name="Patient" type="core:ActorType"/>
+  <xs:element name="Status" type="core:StatusType">
+    <xs:annotation>
+      <xs:documentation>Status of the requests</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="StatusCode" type="core:StatusCodeType"/>
+  <xs:complexType name="StatusCodeType">
+    <xs:annotation>
+      <xs:documentation>URI code of the status</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="core:StatusCode"/>
+    </xs:sequence>
+    <xs:attribute name="Value" type="xs:anyURI" use="required"/>
+  </xs:complexType>
+  <xs:element name="StatusDetail" type="core:StatusDetailType"/>
+  <xs:complexType name="StatusDetailType">
+    <xs:annotation>
+      <xs:documentation>Additional details of the status</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##any" processContents="strict"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="StatusMessage" type="xs:string"/>
+  <xs:complexType name="StatusType">
+    <xs:annotation>
+      <xs:documentation>StatusType of the requests</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="core:StatusCode"/>
+      <xs:element minOccurs="0" ref="core:StatusMessage"/>
+      <xs:element minOccurs="0" ref="core:StatusDetail"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -54,6 +54,7 @@ class AdminController(val addressbookService: AddressbookService) {
         }
         log.info("Log level: $logLevel")
         log.info("Package name: $packageName")
+
         return setLogLevel(logLevel, packageName)
     }
 

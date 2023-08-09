@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) eHealth -->
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns="urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1" xmlns:protocol="urn:be:fgov:ehealth:mycarenet:commons:protocol:v3" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" targetNamespace="urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD MCN  eAgreement
+ Specification-Version: 1.1
+ Implementation-Version: 1.1.0
+ Build-Time: 20201224-0942 
+ </xs:appinfo>
+ </xs:annotation>
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ </xs:annotation>
+	<!-- core elements and types -->
+	<xs:import namespace="urn:be:fgov:ehealth:mycarenet:commons:protocol:v3" schemaLocation="../../ehealth-mycarenetcommons/XSD/mycarenet-commons-protocol-3_0.xsd"/>
+	<!--eHealth commons protocol -->
+	<xs:element name="AskAgreementRequest" type="protocol:SendRequestType"/>
+	<xs:element name="AskAgreementResponse" type="protocol:SendResponseType"/>
+
+	<xs:element name="ConsultAgreementRequest" type="protocol:SendRequestType"/>
+	<xs:element name="ConsultAgreementResponse" type="protocol:SendResponseType"/>
+</xs:schema>

@@ -68,7 +68,7 @@ import javax.xml.transform.stream.StreamSource
 class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMap<UUID, SamlTokenResult>, val keyDepotService: KeyDepotService, val remoteKeystoreService: RemoteKeystoreService) : STSService {
     private val log = LogFactory.getLog(this.javaClass)
 
-    val freehealthStsService: org.taktik.connector.technical.service.sts.STSService = org.taktik.connector.technical.service.sts.impl.STSServiceImpl()
+    val freehealthStsService: org.taktik.connector.technical.service.sts.STSService = org.taktik.connector.technical.service.sts.impl.STSServiceWsTrustImpl()
     val transformerFactory: TransformerFactory = TransformerFactory.newInstance()
     val config: ConfigValidator = ConfigFactory.getConfigValidator()
 

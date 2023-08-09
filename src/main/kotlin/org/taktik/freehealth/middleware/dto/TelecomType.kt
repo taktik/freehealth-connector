@@ -29,7 +29,7 @@ import java.io.Serializable
  */
 @JsonDeserialize(using = TelecomTypeDeserializer::class)
 enum class TelecomType : Serializable {
-    mobile, phone, email, fax, skype, im, medibridge, ehealthbox, apicrypt, web, print, disk
+    mobile, phone, email, fax, skype, im, medibridge, ehealthbox, apicrypt, web, print, disk, other, pager
 }
 
 class TelecomTypeDeserializer:FailSafeEnumDeserializer<TelecomType>(TelecomType::class.java)

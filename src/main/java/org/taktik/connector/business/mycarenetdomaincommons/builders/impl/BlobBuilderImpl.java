@@ -81,6 +81,33 @@ public class BlobBuilderImpl implements BlobBuilder {
       }
    }
 
+   public Blob build(byte[] input, String encodingType, String id, String contentType, String messageName, String messageVersion, String contentEncryption) throws InvalidBlobContentConnectorException, TechnicalConnectorException {
+      if (input != null && input.length != 0) {
+         if (contentType != null && !contentType.isEmpty()) {
+            Blob newBlob = new Blob();
+            newBlob.setContentEncoding("none");
+            byte[] buff = input;
+            if (encodingType.equals("deflate")) {
+               newBlob.setContentEncoding(encodingType);
+               buff = ConnectorIOUtils.compress(input, "deflate");
+            }
+
+            newBlob.setContent(buff);
+            newBlob.setContentType(contentType);
+            newBlob.setId(id);
+            newBlob.setMessageName(messageName);
+            newBlob.setMessageVersion(messageVersion);
+            newBlob.setHashValue(null);
+            newBlob.setContentEncryption(contentEncryption);
+            return newBlob;
+         } else {
+            throw new InvalidBlobContentConnectorException(InvalidBlobContentConnectorExceptionValues.PARAMETER_NULL, null, "String contentType");
+         }
+      } else {
+         throw new InvalidBlobContentConnectorException(InvalidBlobContentConnectorExceptionValues.PARAMETER_NULL, null, "byte[] input");
+      }
+   }
+
    @Override
    public byte[] checkAndRetrieveContent(Blob blob) throws TechnicalConnectorException {
       if (blob == null) {

@@ -1,0 +1,55 @@
+<!-- Copyright (c) eHealth -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="urn:be:fgov:ehealth:errors:core:v1" targetNamespace="urn:be:fgov:ehealth:errors:core:v1"
+  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.1">
+ <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+ <xs:appinfo>
+ Implementation-Title: XSD 15. Errors
+ Specification-Version: 1.1
+ Implementation-Version: 1.1.4
+ Build-Time: 20190311-1148 
+ </xs:appinfo>
+ </xs:annotation>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd" />
+  <xs:complexType name="LocalisedStringType">
+    <xs:annotation>
+      <xs:documentation>
+        String of data in specified language.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute ref="xml:lang" use="optional" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="ErrorType">
+    <xs:annotation>
+      <xs:documentation>
+        Basic information on Error.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Origin" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The component/party that is at the cause of the error: consumer or provider, client or server.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Code" type="xs:string" />
+      <xs:element name="Message" type="core:LocalisedStringType" maxOccurs="unbounded" />
+      <xs:element name="Retry" type="xs:boolean" minOccurs="0" />
+      <xs:element name="Contact" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Unique number identifying this message.
+          If present, the ticket that was created for the client's request, leading to this Error, should be placed here.
+          Then this id can be used to trace back the message from request to
+          response.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+</xs:schema>
