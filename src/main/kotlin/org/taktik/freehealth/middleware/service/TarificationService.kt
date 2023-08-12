@@ -22,5 +22,7 @@ interface TarificationService {
                      traineeSupervisorLastName: String?,
                      guardPostNihii: String?,
                      guardPostSsin: String?,
+                     anatomy: String?,
+                     relatedService: String?,
                      codes: List<String>): TarificationConsultationResult
 }

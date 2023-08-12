@@ -38,6 +38,7 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.ByteArrayInputStream
 import java.io.UnsupportedEncodingException
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
 import javax.xml.namespace.NamespaceContext
@@ -74,6 +75,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                               traineeSupervisorLastName: String?,
                               guardPostNihii: String?,
                               guardPostSsin: String?,
+                              anatomy: String?,
+                              relatedService: String?,
                               codes: List<String>): TarificationConsultationResult {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -86,13 +89,16 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             val requestAuthorNihii = (guardPostNihii ?: hcpNihii).padEnd(11, '0')
             val requestAuthorSsin = guardPostSsin ?: hcpSsin
             val reqId = "${(guardPostNihii ?: hcpNihii).padEnd(11, '0')}.$kmehrUUID"
+            val isDentist = requestAuthorNihii.take(2).toInt() in 30..39
+            val quality = if (isDentist) "dentist" else "doctor"
+            val hcParty = if(isDentist) "persdentist" else "persphysician"
 
             //  The author is always the caller
             val author = AuthorType().apply {
                 hcparties.add(HcpartyType().apply {
-                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  hcpNihii })
+                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
                     ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
+                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = hcParty })
                     firstname = hcpFirstName
                     familyname = hcpLastName
                 })
@@ -101,9 +107,9 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             //  The supervisor
             val supervisor = AuthorType().apply {
                 hcparties.add(HcpartyType().apply {
-                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  traineeSupervisorNihii })
+                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = traineeSupervisorNihii })
                     ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = traineeSupervisorSsin })
-                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
+                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = hcParty })
                     firstname = traineeSupervisorFirstName
                     familyname = traineeSupervisorLastName
                 })
@@ -113,12 +119,13 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             val req = RetrieveTransactionRequest().apply {
 
                 this.request = RequestType().apply {
+                    if (isDentist) messageProtocoleSchemaVersion = BigDecimal("1.16")
                     id = IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = reqId }
                     this.author = AuthorType().apply {
                         hcparties.add(HcpartyType().apply {
-                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  requestAuthorNihii })
+                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = requestAuthorNihii })
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
-                            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = if (guardPostNihii?.isEmpty() != false) "persphysician" else "guardpost" })
+                            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = if (guardPostNihii?.isEmpty() != false) hcParty else "guardpost" })
                             firstname = hcpFirstName
                             familyname = hcpLastName
                         })
@@ -148,7 +155,21 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                             ItemType().apply {
                                 ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (h++).toString() })
                                 cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "claim" })
-                                contents.add(ContentType().apply { cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI; sv = "1.0"; value = code }) })
+                                contents.add(ContentType().apply {
+                                    cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI; sv = "1.0"; value = code })
+                                })
+                                if (isDentist) {
+                                    if (anatomy != null) {
+                                        contents.add(ContentType().apply {
+                                            cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_ISO_3950; sv = "1.0"; value = anatomy })
+                                        })
+                                    }
+                                    if (relatedService != null) {
+                                        contents.add(ContentType().apply {
+                                            cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value = relatedService })
+                                        })
+                                    }
+                                }
                             }
                         })
                         justification?.let { j ->
@@ -165,7 +186,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                 contents.add(ContentType().apply {
                                     hcparty = HcpartyType().apply {
                                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = g })
-                                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = "persphysician" })
+                                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = hcParty })
                                     }
                                 })
                             })
@@ -199,14 +220,16 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                 be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
                                     .apply { this.value = config.getProperty("mcn.registration.package.name") }
                             this.license = be.fgov.ehealth.mycarenet.commons.core.v2.LicenseType().apply {
-                                this.username = principal?.mcnLicense ?: config.getProperty("mycarenet.license.username")
-                                this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
+                                this.username = principal?.mcnLicense
+                                    ?: config.getProperty("mycarenet.license.username")
+                                this.password = principal?.mcnPassword
+                                    ?: config.getProperty("mycarenet.license.password")
                             }
                         }
 
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
-                                this.quality = if (guardPostNihii?.isEmpty() != false) "doctor" else "guardpost"
+                                this.quality = if (guardPostNihii?.isEmpty() != false) quality else "guardpost"
                                 this.value =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
                                         .apply { this.value = requestAuthorNihii }
