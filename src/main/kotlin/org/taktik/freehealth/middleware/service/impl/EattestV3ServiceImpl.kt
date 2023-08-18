@@ -764,7 +764,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                            Math.round((it.doctorSupplement ?: 0.0) * 100)
                                .toInt()
                         }.let {
-                           if (it !== 0) ItemType().apply {
+                          ItemType().apply {
                                ids.add(IDKMEHR().apply {
                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                    (itemId++).toString()
@@ -784,7 +784,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                            }
                                    }
                                }
-                           } else null
+                           }
                         },
                         ItemType().apply {
                            ids.add(IDKMEHR().apply {
