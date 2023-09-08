@@ -235,6 +235,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam(required = false) patientEidCardNumber: String?,
         @RequestParam(required = false) patientIsiCardNumber: String?,
+        @RequestParam(required = false) therLinkType: String?,
         @RequestParam(required = false) from: Long?,
         @RequestParam(required = false) to: Long?
     ) = hubService.registerTherapeuticLink(
@@ -251,6 +252,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         patientSsin = patientSsin,
         patientEidCardNumber = patientEidCardNumber,
         patientIsiCardNumber = patientIsiCardNumber,
+        therLinkType = therLinkType,
         from = from,
         to = to
     )
@@ -267,6 +269,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam hcpSsin: String,
         @RequestParam hcpZip: String,
         @PathVariable patientSsin: String,
+        @RequestParam(required = false) therLinkType: String?,
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam(required = false) patientEidCardNumber: String?,
         @RequestParam(required = false) patientIsiCardNumber: String?
@@ -281,6 +284,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpNihii = hcpNihii,
         hcpSsin = hcpSsin,
         hcpZip = hcpZip,
+        therLinkType = therLinkType,
         patientSsin = patientSsin,
         patientEidCardNumber = patientEidCardNumber,
         patientIsiCardNumber = patientIsiCardNumber
