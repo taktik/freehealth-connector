@@ -417,7 +417,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                                 },
                                 issueInstant = it.issueInstant,
                                 inResponseTo = it.inResponseTo,
-                                issuer = it.issuer.value,
+                                issuer = it.issuer?.value,
                                 responseId = it.id
                             )
                                 .apply {
